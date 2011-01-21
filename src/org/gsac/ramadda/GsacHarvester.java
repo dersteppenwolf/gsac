@@ -21,7 +21,6 @@
 package org.gsac.ramadda;
 
 
-import org.unavco.util.GeoUtils;
 
 import org.w3c.dom.*;
 
@@ -244,7 +243,10 @@ public class GsacHarvester extends WebHarvester {
             double       y             = Double.parseDouble(cols.get(col++));
             double       z             = Double.parseDouble(cols.get(col++));
             double       accuracy      = Double.parseDouble(cols.get(col++));
-            latLonAlt = GeoUtils.wgs84XYZToLatLonAlt(x, y, z, latLonAlt);
+            //jeffmc comment out so we can build            latLonAlt = GeoUtils.wgs84XYZToLatLonAlt(x, y, z, latLonAlt);
+            latLonAlt = null;
+
+
             long    date     = dttm.getTime();
             Entry   entry = typeHandler.findSiteEntry(siteId, wholesaler);
             boolean newEntry = (entry == null);

@@ -24,8 +24,6 @@ package org.gsac.ramadda;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
-import org.unavco.util.GeoUtils;
-
 import org.w3c.dom.*;
 
 

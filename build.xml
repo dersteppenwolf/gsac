@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="javadoc" name="UNAVCO">
+
+    <target name="init">
+        <property name="distdir" value="${basedir}/dist"/>
+        <mkdir dir="${distdir}"/>
+
+        <property name="dist_javadoc" value="${distdir}/javadoc"/>
+        <mkdir dir="${dist_javadoc}"/>
+
+        <property name="lib" value="${basedir}/lib"/>
+        <property name="srcdir" value="${basedir}/src"/>
+
+<!--
+used by the javadoc target
+-->
+        <property name="classpath" value="${lib}/servlet-api.jar:${lib}/unidatacommon.jar:${lib}/idv.jar:${lib}/repository.jar"/>
+
+    </target>
+
+
+
+    <target name="javadoc" depends="init">
+        <javadoc
+            Author="true"
+            Doctitle="UNAVCO"
+            Use="true"
+            Version="true" 
+            Windowtitle="UNAVCO"
+            classpath="${classpath}"
+            destdir="${dist_javadoc}"
+            maxmemory="512m"
+            sourcepath="${srcdir}">
+            <link href="http://java.sun.com/javase/6/docs/api/"/>
+            <package name="org.gsac.*"/>
+            <package name="gov.nasa.cddis.*"/>
+            <excludepackage name="org.gsac.ramadda"/>
+            <excludepackage name="org.gsac.template"/>
+        </javadoc>
+    </target>
+
+
+   <target name="clean" depends="init" >
+        <delete>
+            <fileset dir="${srcdir}" includes="**/*.class"/>
+        </delete>
+    </target>
+
+
+   <target name="purge" depends="init,clean" >
+     <delete dir="${distdir}"/>
+    </target>
+
+
+    <target name="gsac" depends="init">
+      <antcall target="gsac_gsl"/>
+      <antcall target="gsac_client"/>
+      <antcall target="gsac_cddis"/>
+      <antcall target="gsac_federated"/>
+      <antcall target="gsac_ramadda"/>
+    </target>
+
+
+    <target name="gsac_gsl" depends="init">
+      <echo message="Building GSL"/>
+      <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
+    </target>
+
+    <target name="gsac_client" depends="init">
+      <echo message="Building GSAC client"/>
+      <ant antfile="${srcdir}/org/gsac/client/build.xml" inheritAll="false"/>
+    </target>
+
+
+    <target name="gsac_ramadda" depends="init">
+      <echo message="Building GSAC RAMADDA"/>
+      <ant antfile="${srcdir}/org/gsac/ramadda/build.xml" inheritAll="false"/>
+    </target>
+
+    <target name="gsac_cddis" depends="init">
+      <echo message="Building GSAC CDDIS"/>
+      <ant antfile="${srcdir}/gov/nasa/cddis/gsac/build.xml" inheritAll="false"/>
+    </target>
+
+    <target name="gsac_federated" depends="init">
+      <echo message="Building GSAC Federated Repository"/>
+      <ant antfile="${srcdir}/org/gsac/federated/build.xml" inheritAll="false"/>
+    </target>
+
+</project>

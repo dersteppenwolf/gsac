@@ -21,7 +21,6 @@
 package org.gsac.ramadda;
 
 
-import org.unavco.util.GeoUtils;
 
 import org.w3c.dom.*;
 
