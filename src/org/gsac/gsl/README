@@ -1,0 +1,49 @@
+
+
+
+
+##### How to build #######
+
+All of the generated jar and zip files get put into "<root>/dist" directory as a peer of the src directory
+
+To compile everything (assuming you have ant installed):
+ant
+
+This creates a stand-alone gsacserver and a gsacws.war file in dist.
+
+
+To run the test  server:
+cd <root>/dist/gsacserver 
+See the README.gsacserver file to run the test server
+
+
+#### Other build targets #######
+To just compile the GSL source code:
+ant gsac
+
+To compile the GSL code and make ${dist}/gsacws.jar
+ant gsacjar
+
+To compile and zip up stand-alone Jetty based gsac server zip:
+ant gsacserver
+
+This makes ${dist}/gsacserver     and  ${dist}/gsacserver.zip
+
+To make the source and jar release (this release) do:
+ant release
+
+This makes ${dist}/gsacrelease.zip
+
+
+##### CLASSPATH #######
+See the classpath in build.xml  to see what jar files are required to compile and run the server
+${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar
+
+
+##### Running in development mode #######
+A simple way to compile and run the server is to just do:
+ant gsacserver
+This compiles the gsacserver and makes a  <root>/dist/gsacserver directory.
+cd to the <root>/dist/gsacserver directory and run the gsacserver.jar
+
+

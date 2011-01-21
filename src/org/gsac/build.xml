@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="../../.." default="help" name="GSAC Build">
+    <target name="init">
+        <property name="srcdir" value="${basedir}/src"/>
+        <property name="gsacdir" value="${basedir}/src/org/gsac"/>
+    </target>
+
+    <target name="help">
+      <echo  message="Run ant makerepository; to make the repository source package from the template"/>
+    </target>
+
+    <target name="makerepository" depends="init">
+      <mkdir dir="${srcdir}/${target.dir}"/>
+      <copy  overwrite="true" todir="${srcdir}/${target.dir}">
+          <fileset dir="${gsacdir}/template">
+             <exclude name="*.java"/>
+             <exclude name="*macros.properties"/>
+          </fileset>
+          <filterset>
+            <filter token="MACRO.BASENAME" value="${target.basename}"/>
+            <filter token="MACRO.NAME" value="${target.name}"/>
+            <filter token="MACRO.PACKAGE" value="${target.package}"/>
+            <filter token="MACRO.SRCDIR" value="${target.dir}"/>
+            <filter token="MACRO.PREFIX" value="${target.prefix}"/>
+            <filter token="MACRO.DBJAR" value="${target.dbdriver}"/>
+            <filter token="MACRO.DOTS" value="${target.dots}"/>
+          </filterset>
+        </copy>
+
+      <antcall target="copyjava" inheritAll="false">
+         <param name="file" value="DatabaseManager.java"/>
+      </antcall>
+      <antcall target="copyjava" inheritAll="false">
+        <param name="file" value="Repository.java"/>
+      </antcall>
+      <antcall target="copyjava" inheritAll="false">
+        <param name="file" value="Test.java"/>
+      </antcall>
+      <antcall target="copyjava" inheritAll="false">
+        <param name="file" value="ResourceManager.java"/>
+      </antcall>
+      <antcall target="copyjava" inheritAll="false">
+        <param name="file" value="Server.java"/>
+      </antcall>
+      <antcall target="copyjava" inheritAll="false">
+        <param name="file" value="SiteManager.java"/>
+      </antcall>
+       <echo message="Repository source package has been created"/>
+    </target>
+
+    <target name="makebuild" depends="init">
+      <copy  overwrite="true" file="${gsacdir}/template/build.xml" todir="${srcdir}/${target.dir}">
+          <filterset>
+            <filter token="MACRO.BASENAME" value="${target.basename}"/>
+            <filter token="MACRO.NAME" value="${target.name}"/>
+            <filter token="MACRO.PACKAGE" value="${target.package}"/>
+            <filter token="MACRO.SRCDIR" value="${target.dir}"/>
+            <filter token="MACRO.PREFIX" value="${target.prefix}"/>
+            <filter token="MACRO.DBJAR" value="${target.dbdriver}"/>
+            <filter token="MACRO.DOTS" value="${target.dots}"/>
+          </filterset>
+        </copy>
+    </target>
+
+
+   <target name="copyjava" depends="init">
+<!--
+For now set overwrite=true
+-->
+      <copy  overwrite="true" file="${gsacdir}/template/${file}" 
+             tofile="${srcdir}/${target.dir}/${target.prefix}${file}">
+          <filterset>
+            <filter token="MACRO.BASENAME" value="${target.basename}"/>
+            <filter token="MACRO.NAME" value="${target.name}"/>
+            <filter token="MACRO.PACKAGE" value="${target.package}"/>
+            <filter token="MACRO.SRCDIR" value="${target.dir}"/>
+            <filter token="MACRO.PREFIX" value="${target.prefix}"/>
+          </filterset>
+        </copy>
+   </target>
+
+</project>

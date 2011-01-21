@@ -1,0 +1,171 @@
+<h2>GSAC API</h2>
+
+The GSAC Repository supports a RESTful web service API that allows a client to make site and resource queries
+and get the results returned in a variety of formats.
+
+<br>&nbsp;<p>
+
+All of the URLS are based on the root path: 
+
+%<blockquote><i>${fullurlroot}</i></blockquote> 
+
+For querying sites you access:
+
+<blockquote><i>${fullurlroot}/site/search</i></blockquote> 
+
+For querying resources you access:
+<blockquote><i>${fullurlroot}/resource/search</i></blockquote> 
+
+
+The results can be returned in a variety of output formats using the &quot;output&quot; URL argument,  e.g.: 
+
+<blockquote><i>${fullurlroot}/site/search?...&amp;output=site.csv</i></blockquote> 
+
+
+The simplest way to see examples of this to make a 
+<a href="${fullurlroot}/site/form">Site query</a>
+or a 
+<a href="${fullurlroot}/resource/form">Resource query</a>.
+
+In the result html page under Search Again -&gt; Search Links is a list
+of the query results in the other formats available (e.g., CSV). 
+You can just cut and paste the desired URL into your scripts.
+
+<br>&nbsp;<p>
+
+The <a href="${fullurlroot}/repository/info">Repository Information</a> page lists all of the
+URL arguments  and their values for both site and resource queries. 
+
+
+
+<h3>URL Argument Types</h3>
+We have tried to be flexible with how URL arguments are used. 
+
+<ul>
+
+<a name="string"> <li> string - There may be none, one or more of a URL string argument:
+<blockquote> <i>
+    arg=p123&amp;arg=p456
+</i></blockquote>   
+
+Each argument may be a semi-colon delimited list of argument values:
+<blockquote> <i>
+    arg=p123;p456
+</i></blockquote>   
+
+Wild cards are supported:
+<blockquote><i>
+arg=p12*  - find values that begin with<br>
+arg=*123 - find values that end with<br>
+arg=*12* - find values that contain with<br>
+</i></blockquote> 
+
+As well as negation:
+<blockquote><i>
+arg=!p123
+</i></blockquote> 
+
+Also, one can specify the string search type with the &lt;arg&gt;.searchtype argument. This can take on the values:
+<blockquote><i>
+&lt;arg&gt;.searchtype=exact<br>
+&lt;arg&gt;.searchtype=beginswith<br>
+&lt;arg&gt;.searchtype=endswith<br>
+&lt;arg&gt;.searchtype=contains<br>
+</i></blockquote>
+
+<a name="enumeration"> <li> enumeration - Just like the string type but without the wildcard capabilities.
+
+
+
+<a name="boolean"> <li> boolean  - A boolean argument may be  undefined, &quot;true&quot; or &quot;false&quot;.
+
+<a name="date_range"> <li> date_range - 
+There are 2 arguments that may specified: &quot;&lt;arg&gt;.from&quot; and &quot;&lt;arg&gt;.to&quot;. There may be none, one or both of these. If specified the logic is:
+<blockquote><i>
+date value &ge; arg.from<br>
+date value &le; arg.to<br>
+</i></blockquote>
+
+
+The date string can be any of the following forms.
+See <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html">here</a> for information. 
+
+<blockquote><i>
+yyyy-doy  - year and 3 digit day of year<br>
+yyyy-MM-ddTHH:mm:ss Z<br>
+yyyyMMddTHHmmss Z<br>
+yyyy/MM/dd HH:mm:ss Z<br>
+yyyy-MM-dd HH:mm:ss Z<br>
+EEE MMM dd HH:mm:ss Z yyyy<br>
+yyyy-MM-ddTHH:mm:ss<br>
+yyyyMMddTHHmmss<br>
+yyyy/MM/dd HH:mm:ss<br>
+yyyy-MM-dd HH:mm:ss<br>
+yyyy-MM-ddTHH:mm Z<br>
+yyyyMMddTHHmm Z<br>
+yyyy/MM/dd HH:mm Z<br>
+yyyy-MM-dd HH:mm Z<br>
+yyyy-MM-ddTHH:mm<br>
+yyyyMMddTHHmm<br>
+yyyy/MM/dd HH:mm<br>
+yyyy-MM-dd HH:mm<br>
+yyyy-MM-dd<br>
+yyyy/MM/dd<br>
+yyyyMMdd<br>
+yyyy-MM<br>
+yyyyMM<br>
+yyyy/MM<br>
+yyyy<br>
+now<br>
+</i></blockquote>
+
+If a timezone is not specified then the date/time is assumed to be in UTC.
+<p>
+
+You can also specify values that are relative to the other date:
+<blockquote><i>
+-1 week, +3 days, -1 month, etc.
+</i></blockquote>
+
+For example, to find the last 2 weeks of data from current time you would use:
+<blockquote><i>
+arg.from=-2 weeks&amp;arg.to=now
+</i></blockquote>
+
+If you wanted to search 3 days into the future:
+<blockquote><i>
+arg.from=now&amp;arg.to=+3 days
+</i></blockquote>
+
+
+<a name="number_range"> <li> number_range - 
+There are 2 arguments that may specified: &quot;&lt;arg&gt;.min&quot; and &quot;&lt;arg&gt;.max&quot;. There may be none, one or both of these. If specified the logic is:
+<blockquote><i>
+value &ge; arg.min<br>
+value &le; arg.max<br>
+</i></blockquote>
+
+
+
+<a name="spatial_bounds"> <li> spatial_bounds -
+There are 4 arguments that may specified: 
+<blockquote><i>
+&lt;arg&gt;.north<br>
+&lt;arg&gt;.south<br>
+&lt;arg&gt;.east<br>
+&lt;arg&gt;.west<br>
+</i></blockquote>
+
+The values are assumed to be in degrees north (for latitude) and degrees east (for longitude).
+Not all arguments are needed. If specified the logic is:
+<blockquote><i>
+site location latitude &le; arg.north<br>
+site location latitude &ge; arg.south<br>
+site location longitude &le; arg.east<br>
+site location longitude &ge; arg.west<br>
+</i></blockquote> 
+ 
+
+
+
+</ul>

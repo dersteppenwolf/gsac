@@ -1,0 +1,3 @@
+alias unavco="java -Xmx512m org.unavco.projects.gsac.repository.UnavcoServer -port 8082"
+alias cddis="java -Xmx512m gov.nasa.cddis.gsac.CddisServer -port 8081"
+alias federated="java -Xmx512m org.gsac.federated.FederatedServer -port 8080"

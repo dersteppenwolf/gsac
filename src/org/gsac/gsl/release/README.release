@@ -1,0 +1,25 @@
+
+
+The ant script in the gsacrelease directory ends up calling:
+src/org/gsac/gsl/build.xml
+
+All of the generated jar and zip files get put into "<root>/dist" directory as a peer of the src directory
+See the README at: src/org/gsac/gsl/README for more information
+
+To compile everything (assuming you have ant installed):
+ant
+
+This creates a stand-alone gsacserver and a gsacws.war file in dist.
+
+To run the test  server:
+cd dist/gsacserver 
+java -Xmx512m -jar  gsacserver.jar
+
+See the dist/gsacserver/README.gsacserver file for more information on running the server
+
+
+
+
+
+
+

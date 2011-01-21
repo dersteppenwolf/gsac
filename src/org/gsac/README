@@ -1,0 +1,25 @@
+
+gsl:
+This is the core GSAC Service Layer implementation
+
+client:
+Java based client for accessing a GSAC repository
+
+
+template:
+You can generate a basic gsac repository package.
+
+Copy the example template/macros.properties file to your own file, e.g.:
+    cddismacros.properties
+
+Define the target package name, directory, etc., in the properties file
+
+Then run (from this directory, i.e., /src/org/gsac):
+ant -propertyfile <your property file> makerepository
+
+This will copy all of the source and resource files and place them in
+the specified target directory. 
+
+Now, the hard part... 
+You need to actually implement your repository. See the README file in the generated package.
+

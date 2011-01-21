@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+-->
+
+
+<project basedir="." default="all" name="GSAC">
+
+    <target name="init">
+        <property name="gsldir" value="${basedir}/src/org/gsac/gsl"/>
+        <property name="gslbuild" value="${gsldir}/build.xml"/>
+   </target>
+
+
+   <target name="clean" depends="init">
+       <ant inheritAll="false" antfile="${gslbuild}"  target="clean"/>
+    </target>
+
+   <target name="gsac" depends="init">
+       <ant inheritAll="false"  antfile="${gslbuild}" target="gsac"/>
+    </target>
+
+   <target name="gsacjar" depends="init">
+       <ant inheritAll="false"  antfile="${gslbuild}" target="gsacjar"/>
+    </target>
+
+   <target name="gsacserver" depends="init">
+       <ant inheritAll="false"  antfile="${gslbuild}" target="gsacserver"/>
+    </target>
+
+   <target name="gsacwar" depends="init">
+       <ant inheritAll="false"  antfile="${gslbuild}" target="gsacwar"/>
+    </target>
+
+   <target name="all" depends="init">
+       <ant inheritAll="false"  antfile="${gslbuild}" target="all"/>
+    </target>
+
+   <target name="release" depends="init">
+       <ant inheritAll="false"  antfile="${gslbuild}" target="release"/>
+    </target>
+
+</project>

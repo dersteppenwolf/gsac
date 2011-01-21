@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<project basedir="../../../../" default="gsacjar" name="GSAC Ramadda">
+
+    <target name="init">
+        <property name="distdir" value="${basedir}/dist"/>
+        <mkdir dir="${distdir}"/>
+
+        <property name="jars_dest" value="${distdir}"/>
+        <property name="jarfile" value="gsacplugin.jar"/>
+
+        <property name="srcdir" value="${basedir}/src"/>
+        <property name="libdir" value="${basedir}/lib"/>
+
+        <property name="classpath" value="${srcdir}:${libdir}/gsacws.jar:${libdir}/repository.jar:${libdir}/repositorylib.jar:${libdir}/idv.jar:${libdir}/unidatautil.jar:${libdir}/servlet-api.jar"/>
+
+        <property name="build.sysclasspath"    value="ignore" />
+
+        <!-- javac flags -->
+        <property name="javac.failonerror" value="true"/>
+        <property name="javac.fork" value="true"/>
+        <property name="javac.maxmemory" value="512m"/>
+
+
+    </target>
+
+
+    <target name="clean" depends="init" >
+        <delete>
+            <fileset dir="${srcdir}" includes="**/*.class"/>
+        </delete>
+    </target>
+
+
+    <target name="gsacjar" depends="init,clean">
+        <javac
+            classpath="${classpath}"
+            verbose="false"
+            debug="true"
+            deprecation="false" 
+            nowarn="true"
+            srcdir="${srcdir}"
+            failonerror="${javac.failonerror}"
+            fork="${javac.fork}"
+            memoryMaximumSize="${javac.maxmemory}"
+           target="1.5"
+        >
+        <include name="org/gsac/ramadda/**/*.java"/>
+        </javac>
+
+        <echo message="Making jar ${jars_dest}/${jarfile}"/>
+        <jar 
+            basedir="${srcdir}"
+            update="false"
+            compress="true"
+            jarfile="${jars_dest}/${jarfile}">
+            <include name="org/gsac/ramadda/**/*.class"/>
+            <include name="org/gsac/ramadda/htdocs/**/*"/>
+            <include name="org/gsac/ramadda/*.properties"/>
+<!--
+            <include name="org/gsac/ramadda/*.xml"/>
+-->
+	    </jar>
+    </target>
+
+
+
+    <target name="install" depends="gsacjar">
+        <copy overwrite="true"  todir="${user.home}/.unidata/repository/plugins">
+             <fileset file="${jars_dest}/gsacplugin.jar"/>
+        </copy>
+    </target>
+
+</project>

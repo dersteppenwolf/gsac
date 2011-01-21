@@ -1,0 +1,62 @@
+
+
+###########################################
+README from template package
+###########################################
+
+So hopefully you've managed to generated the repository source package.
+
+There are a number of things you need to do.
+
+
+### Database ###
+Change dbresources/gsacdb_test.properties and dbresources/gsacdb_production.properties
+to point to your database.
+The default is Oracle. 
+If you aren't using oracle change the getDriverClassName() method in FederatedDatabaseManager
+
+
+
+### Code changes ###
+The FederatedSiteManager and FederatedResourceManager classes will need to be changed
+to implement the queries. See those classes for more details
+See the CHANGEME in the comments to see what needs to be changed. 
+
+
+### HTML ###
+Change the resources/header.html & footer.html to the html you want to use for the header and footer
+
+
+### Building ###
+To build run a test release run:
+ant (or ant test_build)
+
+To build run a production release run:
+ant production_build
+
+The ant build targets will copy one of the (test or production) db properties files to:
+resources/gsacsb.properties
+
+It will also copy one of the files:
+resources/gsacserver_test.properties or resources/gsacserver_production.properties
+to:
+resources/gsacserver.properties
+
+You should put the hostname and port of the servers in the gsacserver_(test,production).properties
+files.
+
+The ant target  builds a .zip of a stand-alone gsac server and a gsacws.war
+
+To run the server:
+ant runserver
+
+
+##### Database Tables.java #########
+There is a nice utility to generate a Java class (Tables.java) that holds all of your
+database table names and columns.  This allows you to not have String table and column
+names permeate your code. This follows my motto of "make meaningful things meaningful"
+
+To generate the Tables.java code run:
+ant tables
+
+

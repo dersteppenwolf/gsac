@@ -1,0 +1,57 @@
+HEADER;Site query arguments.
+ARG_SITE_ID;mstring;The unique repository specific site identifier
+ARG_SITE_CODE;mstring;The short name of a site, e.g., 4 char code
+ARG_SITE_CODE_SEARCHTYPE;enum, exact, beginswith, endswith, contains;  How site code searches should be performed.
+ARG_SITE_NAME;mstring; The long name of a site
+ARG_SITE_NAME_SEARCHTYPE;enum, exact, beginswith, endswith, contains; How site name searches should be performed.
+ARG_SITE_STATUS;mstring;The status of the site
+ARG_SITE_TYPE;mstring;Type of site
+ARG_SITE_GROUP;mstring;The group a site may be a part of. 
+ARG_SITE_SORT_VALUE;enum, ARG_SITE_CODE, ARG_SITE_NAME, ARG_SITE_TYPE;The site metadata that the site results will be sorted on. 
+ARG_SITE_SORT_ORDER;enum, ascending, descending;The sort order.
+
+ARG_NORTH;lat;The northern bounds  of a spatial search.
+ARG_SOUTH;lat;The southern bounds  of a spatial search.
+ARG_EAST;lon;The eastern bounds of a spatial search.
+ARG_WEST;lon;The western bounds of a spatial search.
+
+HEADER;Extended site arguments.
+ARG_ANTENNA;mstring;
+ARG_REGION;mstring;
+ARG_DOME;mstring;
+ARG_RECEIVER;mstring;
+ARG_MONUMENT;mstring;
+ARG_SAMPLE_INTERVAL;numeric;
+ARG_HAS_METPACK;boolean;
+ARG_COUNTRY;mstring;
+ARG_CITY;mstring;
+ARG_STATE;mstring;
+ARG_TECTONICPLATE;mstring;
+
+
+HEADER;Resource arguments.
+ARG_RESOURCE_ID;mstring;The unique repository specific site identifier
+ARG_RESOURCE_TYPE;mstring;Type of resource
+ARG_RESOURCE_SIZEMIN;numeric;The minimum size of the file
+ARG_RESOURCE_SIZEMAX;numeric;The maximum size of the file
+ARG_RESOURCE_PUBLISHDATE_FROM;date;The minimum date when the resource was published to the archive
+ARG_RESOURCE_PUBLISHDATE_TO;date;The maximum date when the resource was published to the archive
+ARG_RESOURCE_DATADATE_FROM;date;The minimum date of the data contained by the resource.
+ARG_RESOURCE_DATADATE_TO;date;The maximum date of the data contained by the resource.
+ARG_RESOURCE_SORT_VALUE;enum, ARG_SITE_CODE, ARG_SITE_NAME, ARG_SITE_TYPE;The resource metadata that the resource results will be sorted on. 
+ARG_RESOURCE_SORT_ORDER;enum, ascending, descending;The sort order for resources.
+
+
+HEADER;General arguments.
+
+ARG_OUTPUT;enum;The output encoding of the results. e.g., site.html, site.csv, resource.csv,  etc.
+ARG_OFFSET;numeric;How many results to skip. Used for paging.
+ARG_LIMIT;numeric;How many results to show. Used for paging.
+
+ARG_DECORATE;boolean;Should the html results be decorated. i.e., placed within the repository's header/footer.
+ARG_GZIP;boolean;Should the results be zipped.
+ARG_WRAPXML;boolean;  Should the results be wrapped in a contents xml tag. Used for AJAX.
+
+ARG_METADATA_LEVEL;numeric;How much metadata should be added to the site or resource.
+
+

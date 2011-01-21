@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?> 
+     <jnlp 
+        spec="1.0+" 
+        codebase = "${codebase}" href="${href}"> 
+       <information> 
+         <title>GSAC File Downloader</title> 
+         <vendor>Unavco</vendor> 
+         <homepage href=" http://facility.unavco.org/data/gsacws"/> 
+         <description>GSAC File Downloader</description> 
+         <description kind="short">
+        </description> 
+        <icon href="${fullurlroot}/htdocs/webstart/unavco.jpg"/> 
+        <offline-allowed/> 
+       </information> 
+       <resources> 
+         <j2se version="1.6+" max-heap-size="1024m" /> 
+         <jar href="${fullurlroot}/htdocs/webstart/gsacdownloader.jar"/>
+         <jar href="${fullurlroot}/htdocs/webstart/unidatautil.jar"/>
+       </resources>
+       <application-desc main-class="org.gsac.gsl.downloader.FileDownloader">
+           <argument>${resourceurl}</argument>
+       </application-desc>           
+       <security>
+           <all-permissions/>
+       </security>
+     </jnlp> 

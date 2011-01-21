@@ -1,0 +1,267 @@
+/*
+ * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ */
+
+package org.gsac.gsl.output.site;
+import org.gsac.gsl.output.*;
+
+
+
+import org.gsac.gsl.*;
+import org.gsac.gsl.model.*;
+import org.gsac.gsl.util.*;
+
+import ucar.unidata.util.HtmlUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.TwoFacedObject;
+
+import java.io.*;
+
+import java.util.ArrayList;
+
+import java.util.Hashtable;
+import java.util.List;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+
+/**
+ * Class description
+ *
+ *
+ * @version        Enter version here..., Wed, May 19, '10
+ * @author         Enter your name here...
+ */
+public class HtmlSiteOutputHandler extends HtmlOutputHandler {
+
+    /** output id */
+    public static final String OUTPUT_SITE_HTML = "site.html";
+
+    /**
+     * ctor
+     *
+     * @param gsacServlet the servlet
+     */
+    public HtmlSiteOutputHandler(GsacServlet gsacServlet) {
+        super(gsacServlet);
+        getServlet().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_HTML,
+                "Site HTML"));
+        //        getServlet().addSiteOutput(new GsacOutput(this,
+        //                OUTPUT_SITE_DEFAULT, "Site Default"));
+    }
+
+
+
+    /**
+     * handle the request
+     *
+     * @param request the request
+     * @param response the response to write to
+     *
+     *
+     * @throws Exception on badness
+     */
+    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+            throws Exception {
+        StringBuffer sb = new StringBuffer();
+        if(!initHtml(request, response, sb)) return;
+
+        //        String uri = request.getRequestURI();
+        String uri = request.getGsacUrlPath();
+        if (request.defined(ARG_SEARCH_RESOURCES)) {
+            request.remove(ARG_OUTPUT);
+            request.remove(ARG_SEARCH_SITES);
+            String args        = request.getUrlArgs();
+            String redirectUrl = makeUrl(URL_RESOURCE_FORM) + "?" + args;
+            response.sendRedirect(redirectUrl);
+            response.endResponse();
+            return;
+        }
+
+        if (request.isGsacUrl(URL_SITE_FORM)) {
+            sb.append(HtmlUtil.p());
+            handleSearchForm(request, response, sb);
+        } else if (request.isGsacUrl(URL_SITE_SEARCH)) {
+            long t1 = System.currentTimeMillis();
+            getRepository().handleSiteRequest(request, response);
+            long t2 = System.currentTimeMillis();
+            checkMessage(request, response, sb);
+            handleSiteList(request, response, sb);
+            long t3 = System.currentTimeMillis();
+            //            System.err.println("time:" + (t2-t1) +" " + (t3-t2));
+        } else if (request.defined(ARG_SITEID)) {
+            GsacSite site = getRepository().getSite(request,
+                                request.get(ARG_SITEID, (String) null));
+            handleSingleSite(request, response, sb, site);
+        } else {
+            throw new UnknownRequestException("Unknown request:" + uri);
+        }
+        finishHtml(request, response, sb);
+    }
+
+
+    /**
+     * handle form
+     *
+     * @param request the request
+     * @param response the response to write to
+     * @param pw the appendable to write to
+     *
+     * @throws IOException on badness
+     * @throws ServletException on badness
+     */
+    public void handleSearchForm(GsacRequest request, GsacResponse response,
+                                 Appendable pw)
+            throws IOException, ServletException {
+
+        String url = makeUrl(URL_SITE_SEARCH);
+        pw.append(HtmlUtil.formPost(url,
+                                    HtmlUtil.attr("name", "searchform")));;
+
+        StringBuffer buttons = new StringBuffer();
+
+        if (getDoSite()) {
+            buttons.append(HtmlUtil.submit(msg("Find Sites"), ARG_SEARCH));
+        }
+        if (getDoResource()) {
+            buttons.append(HtmlUtil.space(8));
+            buttons.append(HtmlUtil.submit(msg("File Search Form"),
+                                      ARG_SEARCH_RESOURCES));
+        }
+
+        pw.append(buttons.toString());
+
+        getSiteSearchForm(request, pw);
+
+
+
+
+
+        StringBuffer resultsSB = new StringBuffer();
+        resultsSB.append(HtmlUtil.formTable());
+        getSiteOutputSelect(request, resultsSB);
+        getLimitSelect(request, resultsSB);
+        getSiteSortSelect(request, resultsSB);
+        resultsSB.append(HtmlUtil.formTableClose());
+        pw.append(getHeader(msg("Results")));
+        pw.append(HtmlUtil.makeShowHideBlock("", resultsSB.toString(),
+                                             false));
+
+        pw.append(buttons.toString());
+        pw.append(HtmlUtil.formClose());
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     * @param response the response to write to
+     * @param pw the appendable to write to
+     * @param site the  site
+     *
+     * @throws IOException on badness
+     * @throws ServletException on badness
+     */
+    public void handleSingleSite(GsacRequest request, GsacResponse response,
+                                 Appendable pw, GsacSite site)
+            throws IOException, ServletException {
+        if (site == null) {
+            pw.append(
+                getServlet().makeErrorDialog(msg("Could not find site")));
+            return;
+        }
+        getSiteHtml(request, pw, site, true, true, false);
+    }
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     * @param response the response to write to
+     * @param pw the appendable to write to
+     *
+     * @throws IOException on badness
+     * @throws ServletException on badness
+     */
+    public void handleSiteList(GsacRequest request, GsacResponse response,
+                               Appendable pw)
+            throws IOException, ServletException {
+        StringBuffer formBuffer  = new StringBuffer();
+
+        StringBuffer searchLinks = new StringBuffer();
+        for (GsacOutput output : getServlet().getSiteOutputs()) {
+            if (output.getId().equals(OUTPUT_SITE_HTML)) {
+                continue;
+            }
+            Hashtable<String, String> outputMap = new Hashtable<String,
+                                                      String>();
+            outputMap.put(ARG_OUTPUT, output.getId());
+            String suffix    = output.getFileSuffix();
+            String searchUrl = makeUrl(URL_SITE_SEARCH) + ((suffix != null)
+                    ? suffix
+                    : "") + "?" + request.getUrlArgs(outputMap);
+            searchLinks.append(HtmlUtil.href(searchUrl, output.getLabel()));
+            searchLinks.append(HtmlUtil.br());
+        }
+        formBuffer.append(
+            HtmlUtil.insetLeft(
+                HtmlUtil.makeShowHideBlock(
+                    msg("Search Links"),
+                    HtmlUtil.insetLeft(searchLinks.toString(), 10),
+                    false), 10));
+
+        handleSearchForm(request, response, formBuffer);
+        List<GsacSite> sites = response.getSites();
+        if (sites.size() == 0) {
+            pw.append(
+                getServlet().makeInformationDialog(msg("No sites found")));
+        }
+
+        String message = response.getQueryInfo();
+        if (message.length() > 0) {
+            pw.append(message);
+        }
+
+
+
+        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
+                                             formBuffer.toString(),
+                                             sites.size() == 0));
+
+        if (sites.size() == 0) {
+            return;
+        }
+
+        makeNextPrevHeader(request, response, pw);
+
+        StringBuffer listSB = new StringBuffer();
+        makeSiteHtmlTable(request, listSB, sites);
+        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(),
+                                             true));
+
+        String js = createSiteMap(request, sites, pw, 600, 400);
+        pw.append(HtmlUtil.script(js.toString()));
+
+    }
+
+
+
+}

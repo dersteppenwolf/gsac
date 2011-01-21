@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+-->
+
+
+<project basedir="../../../../" default="all" name="GSAC Client">
+
+    <target name="init">
+
+        <property name="distdir" value="${basedir}/dist"/>
+        <mkdir dir="${distdir}"/>
+
+        <!-- Where to put the jar files -->
+        <property name="jars_dest" value="${distdir}"/>
+
+        <property name="srcdir" value="${basedir}/src"/>
+
+        <property name="libdir" value="${basedir}/lib"/>
+
+        <property name="clientzip" value="${distdir}/gsacclient.zip"/>
+        <property name="clientjar" value="${distdir}/gsacclient.jar"/>
+
+        <property name="classpath" value="${libdir}/commons-dbcp-1.4.jar:${libdir}/commons-pool-1.5.4.jar:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar"/>
+
+        <!-- Where the .class files (and other files for the jars) go -->
+        <property name="compiledir" value="${srcdir}"/>
+        <mkdir dir="${compiledir}"/>
+
+
+        <!-- You can concatenate the calling process' classpath to the end (the
+        default) or use "ignore" to just use the classpath defined here. -->
+<!--        <property name="build.sysclasspath" value="last"/> -->
+        <property name="build.sysclasspath"    value="ignore" />
+
+        <!-- javac flags -->
+        <property name="failonerror" value="true"/>
+        <property name="fork" value="true"/>
+        <property name="maxmemory" value="512m"/>
+
+        <!-- Java source version -->
+        <property name="srcversion" value="1.6"/>
+    </target>
+
+   <target name="clean" depends="init" >
+        <delete>
+            <fileset dir="${compiledir}/org" includes="**/*.class"/>
+        </delete>
+    </target>
+
+
+    <target name="compile" depends="init">
+        <javac
+            classpath="${classpath}"
+            debug="true"
+            source="${srcversion}"
+            target="${srcversion}"
+            deprecation="false" 
+            destdir="${compiledir}"
+            failonerror="${failonerror}" 
+            srcdir="${srcdir}"
+            fork="${fork}"
+            memoryMaximumSize="${maxmemory}"
+        >
+            <include name="org/gsac/client/**/*.java"/>
+        </javac>
+    </target>
+
+    <target name="all" depends="init,clean,compile,release">
+    </target>
+
+
+
+   <target  name="release" depends="init,clean">
+        <jar
+            basedir="${compiledir}"
+            update="false"
+            compress="true"
+            jarfile="${clientjar}">
+           <manifest>
+              <attribute name="Implementation-Title" value="GSAC Client"/>
+              <attribute name="Implementation-Version" value="1.0"/>
+              <attribute name="Implementation-Vendor" value="UNAVCO"/>
+              <attribute name="Main-class" value="org.gsac.client.GsacClient"/>
+
+              <attribute name="Class-Path" value=""/>
+            </manifest> 
+            <include name="org/**/*.class"/>
+            <include name="org/gsac/gsl/**/*"/>
+            <zipfileset includes="**/*.class" src="lib/unidatautil.jar"/>
+        </jar>
+
+        <zip  destfile="${clientzip}">
+            <zipfileset dir="${basedir}" includes="dist/gsacclient.jar" fullpath="gsacclient/lib/gsacclient.jar"/>
+            <zipfileset dir="${basedir}" includes="src/org/gsac/client/gsacclient.sh" fullpath="gsacclient/gsacclient.sh"/>
+            <zipfileset dir="${basedir}" includes="src/org/gsac/client/README" fullpath="gsacclient/README"/>
+            <zipfileset dir="${basedir}" includes="src/org/gsac/client/example.properties" fullpath="gsacclient/gsac.properties"/>
+      </zip>
+   </target>
+
+
+
+
+</project>

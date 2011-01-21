@@ -1,0 +1,10 @@
+
+
+<api handler="org.gsac.ramadda.GsacApiHandler">
+      <property name="admin" value="false"/>
+
+<!-- Put these here so ramadda shows links (because of the toplevel=true) -->
+      <api request="/gsacws/site"           method="processGsacSiteRequest" toplevel="true" name="Search Sites"/>
+      <api request="/gsacws/resource"           method="processGsacResourceRequest" toplevel="true" name="Search Resources"/>
+      <api request="/gsacws/*"                    method="processGsacRequest" />
+</api>

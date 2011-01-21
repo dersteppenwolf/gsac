@@ -1,0 +1,21 @@
+
+
+To run the stand-alone gsac server do:
+java -Xmx512m -jar  gsacserver.jar
+
+This will start up the server on:
+http://localhost:8080/gsacws/station
+http://localhost:8080/gsacws/resource
+
+
+This will run the server with the ExampleGsacRepository which has some dummy stations and resources
+
+
+To run the server with your own GsacRepository do:
+java -Xmx512m -Dgsac.repository.class=your.gsacrepository.class.path  -jar gsacserver.jar
+
+
+
+
+
+

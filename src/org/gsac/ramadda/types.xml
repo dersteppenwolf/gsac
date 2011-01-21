@@ -1,0 +1,34 @@
+<types>
+
+  <type name="gsacsite"  description="GSAC Site" handler="org.gsac.ramadda.GsacSiteTypeHandler" >
+     <column name="siteid" type="string"     label="Site ID" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
+     <column name="source" type="string"     label="Source" columns="20"  showinhtml="true" cansearch="true" isindex="true"/>
+     <property name="icon" value="/gsac/gps.jpg"/>
+     <property name="form.show.location" value="true"/>
+     <property name="form.show.altitude" value="true"/>
+     <property name="form.show.resource" value="false"/>
+  </type>
+
+
+  <type name="gsacresource"  description="GSAC Resource" handler="org.gsac.ramadda.GsacResourceTypeHandler" category="GSAC Entries" foruser="false">
+     <column name="siteid" type="string"     label="Site ID" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
+     <property name="form.show.area" value="false"/>
+     <property name="form.show.location" value="false"/>
+     <property name="form.show.altitude" value="false"/>
+     <property name="form.show.altitude.top" value="false"/>
+  </type>
+
+
+  <type name="gsacstream"  super="gsacresource" description="GNSS Stream" handler="org.gsac.ramadda.GsacResourceTypeHandler" >
+     <property name="form.show.url" value="true"/>
+     <property name="form.label.url" value="GNSS Stream URL"/>
+     <property name="form.show.file" value="false"/>
+     <property name="form.show.date" value="false"/>
+     <property name="form.show.datatype" value="false"/>
+     <property name="form.show.resource" value="true"/>
+     <property name="form.show.resource.download" value="false"/>
+     <property name="form.show.resource.extra" value="false"/>
+     <property name="icon" value="/gsac/gps.jpg"/>
+  </type>
+
+</types>

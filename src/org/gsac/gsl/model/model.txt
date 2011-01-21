@@ -1,0 +1,48 @@
+
+Here is an overview of the GSAC data model. The idea is to maintain
+both agnosticsm/generality yet enable the data structures to hold a variety
+of metadata elements. With this model most if not all of the basic information
+that the DAI V1 and V2 shows the user can be held. Furthermore, the middleware
+can maintain agnosticsm when we add new types of information (e.g., through
+new types of metadata elements). 
+
+The sticky thing is when one needs to encode  new types of metadata.
+For some things (e.g., json, some xml) it can be done through reflection
+but other things (like showing the metadata in html) can require some
+knowledge of the content (e.g., gnssequipment).
+
+
+Gsac Site: Represents some place on the earth.
+        Site Id: unique to the repository identifier (monument id)
+        Site code: short name of the site, e.g., 4 character code
+        Name: human readable name
+        Type: site type 
+        Status: site status
+        Earth location: latitude/longitude/elevation
+        From date/to date: date range of site's existence
+        List of site groups: 0 or more groups
+        List of metadata: 0 or more metadata elements (see below)
+
+Note: The site type, site status and  site groups are string id/label pairs.
+
+Gsac Resource: Represents some data resource - a URL, a real time stream url, etc.
+        Resource id: unique to the repository id
+        File info: url, file size, md5
+        Site ID: Id of the Gsac site associated with this resource
+        Publish time: date when the resource was added to the repository
+        Start time/End time: date range of the data  the resource holds. Just defaults to publish date 
+                             if not available.
+        Type: resource type - id/label pair
+        List of metadata: 0 or more metadata elements (see below)
+
+
+Metadata: All metadata elements have a type and a label
+          Link metadata: A URL
+               Image metadata: ISA Link metadata and also has an image group (e.g., QC, Site Photo, etc)
+               Icon metadata: represents an icon to use for this site
+          Property: a simple String name/value pair.  A catch all
+          Gnss Equipment: Slipping into domain specificity here. Holds, antenna/receiver/dome info 
+                          and a date range. 
+           ...
+
+

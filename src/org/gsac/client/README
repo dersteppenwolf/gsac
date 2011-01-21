@@ -1,0 +1,114 @@
+
+You can run the GsacClient either through the given gsacclient.sh (change permissions on it):
+gsacclient.sh.jar <arguments>
+
+or directly using java:
+java -jar lib/gsacclient.jar <arguments>
+
+To see the command line arguments:
+gsacclient.sh -help
+
+You can specify any number of arguments that will always be used when running the client.
+Just edit the gsac.properties file in the release directory. e.g., uncomment the line:
+
+      server=http://facility.unavco.org/gsacws
+
+You can also specify a properties file of the same format on the command line:
+
+      gsacclient.sh -properties <some properties file>
+
+If you don't have a server defined in the gsac.properties file specify it with -server.
+You just use the url path leading up to the gsacapi, e.g.:
+
+      -server http://facility.unavco.org/gsacws
+
+Some example calls:
+
+List out the repository information from UNAVCO:
+
+      gsacclient.sh -server http://facility.unavco.org/gsacws -info
+
+List out the repository information from SOPAC:
+
+      gsacclient.sh -server http://geoappdev02.ucsd.edu/gsacws -info
+
+
+For the following examples we'll assume we're hitting the server defined in gsac.properties (Unavco by default).
+
+
+Now you can either do searchs for sites or searches for resources. You specify this with:
+-site
+or:
+-resource
+
+##########################################
+Site searches
+##########################################
+
+Wild card site code:
+
+      gsacclient.sh  -site -site.code "p12*"
+
+
+Bounding box search: 
+
+      gsacclient.sh  -site -bbox -115 30 -100 40
+
+bbox is: west south east north
+
+
+If you want to get more then the default 1000 results add -limit <count>, e.g.:
+
+      gsacclient.sh  -site -limit 1500
+
+##########################################
+File searches
+##########################################
+
+Site code search that gets files
+
+      gsacclient.sh  -resource -site.code p123
+
+
+Absolute time range file search for p123
+
+      gsacclient.sh  -resource site.code p123 -resource.datadate.from 2010-09-01 -resource.datadate.to 2010-09-15
+
+
+Absolute time range file search for p123 return the ftp urls (the -output url)
+
+      gsacclient.sh  -resource -output url site.code p123 -resource.datadate.from 2010-09-01 -resource.datadate.to 2010-09-15
+
+
+Time relative file search for p123
+
+      gsacclient.sh  -resource site.code p123 -resource.datadate.from "-1 month" -resource.datadate.to now
+
+Search on file type. .e.g. just get RINEX and HATANAKA files ("4" is the rinex type at unavco. "5" is hatanaka. We will be changing this)
+
+      gsacclient.sh -resource -output url site.code p123 -resource.datadate.from 2010-09-01 -resource.datadate.to 2010-09-15 -resource.type 4 -resource.type 5
+
+
+##########################################
+File searches with downloads
+##########################################
+You can also have the client  download the files with the -download argument, e.g.:
+
+    gsacclient.sh  -download destination_directory  -site.code p123  -limit 10
+
+The above will do a resource query, retrieve the file FTP urls and download the files into the destination_directory.
+It will maintain the original directory structure of the FTP file paths. To have all of the files put into a single directory
+use the -keep_paths argument:
+
+    gsacclient.sh  -download destination_directory  -keep_paths false -site.code p123  -limit 10
+
+
+
+
+
+
+
+
+
+
+

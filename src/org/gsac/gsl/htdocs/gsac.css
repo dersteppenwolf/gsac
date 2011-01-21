@@ -1,0 +1,390 @@
+
+body {
+     margin: 0;
+}
+
+.gsaccontent {
+   font-size: 12pt;
+   font-family: Arial, Helvetica, sans-serif;       
+   color: black;
+   margin: 0px;
+   padding: 10px;
+}
+
+td {
+   font-size: 12pt;
+}
+
+
+.separator {
+   font-size: 9pt;
+}
+
+.tooltip-inner {
+   padding:2px;
+   padding-bottom:0px;
+   padding-right:0px;
+   background-color : #f6f6f6;
+   margin:0px;
+}
+
+.tooltip-link-inner {
+   border : 1px black solid;
+   margin:0px;
+   padding:1px;
+   background-color : #ffffff;
+}
+
+
+.tooltip-outer {
+   border : 1px #666 solid;
+   margin:0px;
+   position: absolute; 
+   visibility: hidden; 
+   z-index: 1;
+  -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=5, OffY=5, Color='gray');
+  -ms-filter:"progid:DXImageTransform.Microsoft.dropshadow(OffX=5, OffY=5, Color='gray')";
+}
+
+
+
+.firstletternav {
+   font-size: 10pt;
+   text-decoration:none;
+}
+
+.navheader {
+  margin: 10px;
+  #font-weight: bold;
+}
+
+
+
+.filesize {
+    font-family: monospace;       
+}
+
+.gsacheader {
+   align:center;
+}
+
+
+.input, .password, .fileinput,.textarea,.select {
+  border : 1px #888888 solid;
+}
+
+.formheader {
+   border-bottom : 1px #bcbcbc solid;
+   background: #ececec;
+   font-weight: bold;
+   margin:0px;
+   padding:0px;
+   padding-top:2px;
+   padding-bottom:0px;
+   padding-left:6px;
+   padding-right:20px;
+}
+
+
+
+.tableheader {
+  font-weight: bold;
+
+}
+
+.formlabel, .formlabeltop {
+  font-weight: bold;
+}
+
+.required {
+   background: #ffaaaa;
+}
+
+
+.requireddisabled {
+        border : 0px #888888 solid;
+        background: #ffaaaa;
+}
+
+.requiredlabel {
+   color: #ff0000;
+}
+
+.input:focus, .textarea:focus {
+	background: #fffeec;
+}
+
+
+.disabledinput {
+        border : 0px #888888 solid;
+	background: #dfdfdf;
+}
+
+
+.plain {
+    font-weight: normal;
+}
+
+.hidden {
+   visibility: hidden; 
+   display:none;
+}
+
+.hiddeninput {
+  border :none;
+}
+
+
+.tab_titles {
+   margin:0px;
+   padding:0px;
+}
+
+.tab_contents {
+   border-left : 1px #000000 solid;
+   border-right : 1px #000000 solid;
+   border-bottom : 1px #000000 solid;
+   border-top : 1px #000000 solid;
+   margin:0px;
+   padding:0px;
+
+
+
+}
+
+.tab_contents_noborder {
+   border-top : 1px #000000 solid;
+}
+
+.tab_content_fixedheight_off {
+   min-height: 100px;
+   max-height: 200px; 
+   overflow-y: auto;
+   padding:5;
+}
+
+
+
+.tab_content_fixedheight_on {
+   background-color:#ffffff;
+   min-height: 100px;
+   max-height: 200px; 
+   overflow-y: auto;
+   padding:5;
+}
+
+
+.tab_content_off {
+   padding:5;
+}
+
+.tab_content_on {
+   background-color:#ffffff;
+   padding:5;
+}
+
+
+.tab_title_on {
+   background-color:#ffffff;
+   border: 1px #000 solid;
+   border-bottom:2px #ffffff  solid;
+   font-weight: bold;
+   margin-bottom:0px;
+   margin-left:3px;
+   margin-right:3px;
+   padding-bottom:0;
+   padding-top:2;
+   padding-left:6;
+   padding-right:6;
+}
+
+
+.tab_title_off {
+   background-color:#dddddd;
+   border-left: 1px #000000 solid;
+   border-right: 1px #000000 solid;
+   border-top: 1px #000000 solid;
+   border-bottom:1px #000000  solid;
+
+   font-weight: bold;
+   margin-left:3px;
+   margin-right:3px;
+   margin-bottom:1px;
+
+   padding-bottom:0;
+   padding-top:2;
+   padding-left:6;
+   padding-right:6;
+
+}
+
+
+
+.tab_title_on a {
+	color:#000000;
+	text-decoration: none;
+}
+
+
+.tab_title_off a {
+	color:#000000;
+	text-decoration: none;
+}
+
+
+.innernote {
+   padding-top:10px;
+}
+
+.popup a:hover {
+   text-decoration: underline;
+}
+
+.popup {
+   padding:1px;
+   text-decoration: none;
+   border : 1px #000 solid;
+   background-color : #FFFFFF;
+   position: absolute; 
+   visibility: hidden; 
+   z-index: 1;
+}
+
+
+
+
+.note {
+  z-index: 1;
+  margin:10px;
+  padding-bottom:5px;
+  padding-left:5px;
+  border : 1px black solid;
+  background-color : #ffffcc;
+//Shadow effect
+  /* offset left, top, thickness, color with alpha */
+  -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  /* IE */
+  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=5, OffY=5, Color='gray');
+  /* slightly different syntax for IE8 */
+  -ms-filter:"progid:DXImageTransform.Microsoft.dropshadow(OffX=5, OffY=5, Color='gray')";
+}
+
+
+
+
+.notetext {
+}
+
+
+
+
+
+
+.cpYearNavigation,
+.cpMonthNavigation {
+			background-color:#006699;
+			text-align:center;
+			vertical-align:center;
+			text-decoration:none;
+			color:#FFFFFF;
+			font-weight:bold;
+			}
+
+.cpMonthNavigation  a {
+        color: white;
+}
+
+	.cpDayColumnHeader,
+	.cpYearNavigation,
+	.cpMonthNavigation,
+	.cpCurrentMonthDate,
+	.cpCurrentMonthDateDisabled,
+	.cpOtherMonthDate,
+	.cpOtherMonthDateDisabled,
+	.cpCurrentDate,
+	.cpCurrentDateDisabled,
+	.cpTodayText,
+	.cpTodayTextDisabled,
+	.cpText
+			{
+			font-family:arial;
+			font-size:8pt;
+			}
+
+
+	TD.cpDayColumnHeader
+			{
+			text-align:right;
+			border:solid thin #6677DD;
+			border-width:0 0 1 0;
+			}
+	.cpCurrentMonthDate,
+	.cpOtherMonthDate,
+	.cpCurrentDate
+			{
+			text-align:right;
+			text-decoration:none;
+			}
+	.cpCurrentMonthDateDisabled,
+	.cpOtherMonthDateDisabled,
+	.cpCurrentDateDisabled
+			{
+			color:#D0D0D0;
+			text-align:right;
+			text-decoration:line-through;
+			}
+	.cpCurrentMonthDate
+			{
+			color:#6677DD;
+			font-weight:bold;
+			}
+	.cpCurrentDate
+			{
+			color: #FFFFFF;
+			font-weight:bold;
+			}
+	.cpOtherMonthDate
+			{
+			color:#808080;
+			}
+	TD.cpCurrentDate
+			{
+			color:#FFFFFF;
+			background-color: #6677DD;
+			border-width:1;
+			border:solid thin #000000;
+			}
+	TD.cpCurrentDateDisabled
+			{
+			border-width:1;
+			border:solid thin #FFAAAA;
+			}
+	TD.cpTodayText,
+	TD.cpTodayTextDisabled
+			{
+			border:solid thin #6677DD;
+			border-width:1 0 0 0;
+			}
+	A.cpTodayText,
+	SPAN.cpTodayTextDisabled
+			{
+			height:20px;
+			}
+	A.cpTodayText
+			{
+			color:#6677DD;
+			font-weight:bold;
+			}
+	SPAN.cpTodayTextDisabled
+			{
+			color:#D0D0D0;
+			}
+	.cpBorder
+			{
+			border:solid thin #6677DD;
+			}

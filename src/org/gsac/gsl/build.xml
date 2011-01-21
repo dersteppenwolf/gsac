@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+-->
+
+
+<project basedir="../../../../" default="all" name="GSAC">
+
+    <target name="init">
+
+        <property name="distdir" value="${basedir}/dist"/>
+        <mkdir dir="${distdir}"/>
+
+
+
+        <!-- Where to put the jar files -->
+        <property name="jars_dest" value="${distdir}"/>
+
+        <property name="srcdir" value="${basedir}/src"/>
+
+        <property name="libdir" value="${basedir}/lib"/>
+        <property name="gsldir" value="${basedir}/src/org/gsac/gsl"/>
+        <property name="gsacwsjar" value="${libdir}/gsacws.jar"/>
+
+        <property name="gsacserver" value="gsacserver"/>
+        <property name="gsacserverdir" value="${distdir}/${gsacserver}"/>
+        <mkdir dir="${gsacserverdir}"/>
+
+        <property name="gsacserverjar" value="${gsacserverdir}/${gsacserver}.jar"/>
+        <property name="gsacserverzip" value="${jars_dest}/${gsacserver}.zip"/>
+
+        <property name="gsacrelease" value="${jars_dest}/gsacrelease.zip"/>
+
+        <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
+        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
+
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar"/>
+
+        <!-- Where the .class files (and other files for the jars) go -->
+        <property name="compiledir" value="${srcdir}"/>
+        <mkdir dir="${compiledir}"/>
+
+
+        <!-- You can concatenate the calling process' classpath to the end (the
+        default) or use "ignore" to just use the classpath defined here. -->
+<!--        <property name="build.sysclasspath" value="last"/> -->
+        <property name="build.sysclasspath"    value="ignore" />
+
+        <!-- javac flags -->
+        <property name="failonerror" value="true"/>
+        <property name="fork" value="true"/>
+        <property name="maxmemory" value="512m"/>
+
+        <!-- Java source version -->
+        <property name="srcversion" value="1.6"/>
+
+       <property name="downloaderjar" value="${srcdir}/org/gsac/gsl/htdocs/webstart/gsacdownloader.jar"/>
+
+    </target>
+
+   <target name="clean" depends="init" >
+        <delete>
+            <fileset dir="${compiledir}/org" includes="**/*.class"/>
+        </delete>
+    </target>
+
+
+    <target name="compile" depends="init">
+        <javac
+            classpath="${classpath}"
+            debug="true"
+            source="${srcversion}"
+            target="${srcversion}"
+            deprecation="false" 
+            destdir="${compiledir}"
+            failonerror="${failonerror}" 
+            srcdir="${srcdir}"
+            fork="${fork}"
+            memoryMaximumSize="${maxmemory}"
+        >
+            <include name="org/gsac/gsl/**/*.java"/>
+        </javac>
+    </target>
+
+
+   <target name="gsacjar" depends="init,compile">
+     <echo message="Building jar: ${gsacwsjar}"/>
+        <jar
+            basedir="${compiledir}"
+            update="false"
+            compress="true"
+            jarfile="${gsacwsjar}">
+            <include name="org/**/*.class"/>
+            <include name="org/gsac/gsl/**/*"/>
+        </jar>
+   </target>
+
+
+   <target name="gsacserver" depends="init,gsacjar">
+        <jar
+            compress="true"
+            update="false"
+            destfile="${gsacserverjar}">
+           <manifest>
+              <attribute name="Implementation-Title" value="Stand alone GSAC server"/>
+              <attribute name="Implementation-Version" value="1.0"/>
+              <attribute name="Implementation-Vendor" value="UNAVCO"/>
+              <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
+
+              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  ${commons-dbcp.jar} log4j-1.2.15.jar oracleDriver.jar ${commons-pool.jar} jetty.jar jetty-util.jar  servlet-api.jar gson-1.5.jar"/>
+            </manifest> 
+        </jar>
+        
+         <copy failonerror="true"  file="${gsacserverjar}"  todir="${gsacserverdir}"/>
+         <copy failonerror="true"  file="${gsacwsjar}"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/unidatautil.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/log4j-1.2.15.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/oracleDriver.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/jetty.jar"  todir="${gsacserverdir}"/>
+
+         <copy failonerror="true" file="${libdir}/jetty-util.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/gson-1.5.jar"  todir="${gsacserverdir}"/>
+
+         <copy failonerror="true" file="${libdir}/servlet-api.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="false" file="${srcdir}/org/gsac/gsl/release/README.gsacserver"  todir="${gsacserverdir}"/>
+
+        <zip  destfile="${gsacserverzip}" >
+           <zipfileset dir="${gsacserverdir}" prefix="${gsacserver}"/>
+       </zip>
+   </target>
+
+
+    <target name="all" depends="init,clean,compile,gsacjar,gsacserver">
+       <echo message="GSAC server has been built. To run:"/>
+       <echo message="      cd ${distdir}/gsacserver"/>
+       <echo message="      java -Xmx512m -jar gsacserver.jar"/>
+    </target>
+
+
+   <target  name="release" depends="init,clean">
+        <zip  destfile="${gsacrelease}">
+            <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/README.release" fullpath="gsacrelease/README"/>
+            <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/releasebuild.xml" fullpath="gsacrelease/build.xml"/>
+            <zipfileset dir="${basedir}" includes="src/org/gsac/**/*"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/unidatautil.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/${commons-dbcp.jar}"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/${commons-pool.jar}"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/log4j-1.2.15.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/oracleDriver.jar"  prefix="gsacrelease"/>
+
+            <zipfileset dir="${basedir}"  includes="lib/jetty.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/gson-1.5.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/jetty-util.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/servlet-api.jar"  prefix="gsacrelease"/>
+        </zip>
+   </target>
+
+
+   <target name="downloader" depends="init,clean">
+        <javac
+            classpath="${classpath}"
+            debug="true"
+            source="${srcversion}"
+            target="${srcversion}"
+            deprecation="false" 
+            destdir="${compiledir}"
+            failonerror="${failonerror}" 
+            srcdir="${srcdir}"
+            fork="${fork}"
+            memoryMaximumSize="${maxmemory}"
+        >
+            <include name="org/gsac/gsl/downloader/*.java"/>
+        </javac>
+        <jar
+            basedir="${compiledir}"
+            update="false"
+            compress="true"
+            jarfile="${downloaderjar}">
+            <include name="org/**/*.class"/>
+        </jar>
+        <property name="keydir" value="${user.home}/unavco"/>
+        <property name="sign_keystore" value="${keydir}/.keystore"/>
+        <property name="keypassfile" value="${keydir}/.keypass"/>
+        <property file="${keypassfile}"/>
+        <available file="${keypassfile}" property="sign_password" value="${key.password}"/>
+	<echo message="signing jar"/>
+<!--
+storetype="pkcs12"
+-->
+        <signjar alias="idv" jar="${downloaderjar}" 
+            keystore="${sign_keystore}" storepass="${sign_password}"/>
+	<copy file="${libdir}/unidatautil.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
+        <signjar alias="idv" jar="${srcdir}/org/gsac/gsl/htdocs/webstart/unidatautil.jar"
+            keystore="${sign_keystore}" storepass="${sign_password}"/>
+
+   </target>
+
+</project>

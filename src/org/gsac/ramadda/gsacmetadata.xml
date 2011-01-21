@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<metadata>
+  <handler category="DIF" class="org.unavco.gsac.ramadda.GsacMetadataHandler">
+
+<!--
+    <type       name="Data Center"       searchable="false"       id="dif.data_center" dif.tag="Data_Center">
+      <element name="Short Name" dif.tag="Short_Name"/>
+      <element name="Long Name" dif.tag="Long_Name"/>
+      <element datatype="url" name="URL" dif.tag="Data_Center_URL"/>
+      <element name="Set ID" dif.tag="Data_Set_ID"/>
+      <element         datatype="group"         name="Personnel"         subname="Personnel Record" dif.tag="Personnel">
+        <element  datatype="group"         name="Roles"         subname="Role" dif.tag="Role">
+          <element datatype="enumerationplus"           name="Role"
+             values="investigator:Investigator,technicalcontact:Technical Contact,difauthor:DIF Author"/>
+         <template type="dif"><![CDATA[<Role>${Role.label}</Role>]]></template>
+      </element>
+      <element name="First Name" dif.tag="First_Name"/>
+      <element name="Middle Name" dif.tag="Middle_Name"/>
+      <element name="Last Name" searchable="false" dif.tag="Last_Name"/>
+      <element datatype="email" name="Email" dif.tag="Email"/>
+      <element  datatype="group"         name="Phone Numbers"  subname="Phone Number" dif.tag="Phone">
+        <element name="" id="number"/>
+	<template type="dif"><![CDATA[<Phone>${number}</Phone>]]></template>
+      </element>
+      <element  datatype="group"         name="Fax Numbers"         subname="Fax Number" dif.tag="Fax">
+        <element name="" id="number"/>
+        <template type="dif"><![CDATA[<Fax>${number}</Fax>]]></template>
+      </element>
+      <element group="Address" name="Address"         rows="3" dif.tag="Address"/>
+      <element name="City" dif.tag="City"/>
+      <element name="State or Province" dif.tag="Province_or_State"/>
+      <element name="Postal Code" dif.tag="Postal_Code"/>
+      <element name="Country" dif.tag="Country"/>
+      <template type="dif" file="/ucar/unidata/repository/resources/metadata/dif/template_dif_personnel.xml"/>
+</element>
+
+<template type="dif"><![CDATA[
+<Data_Center>
+<Data_Center_Name><Short_Name>${Short_Name}</Short_Name>
+<Long_Name>${Long_Name}</Long_Name>
+<Data_Center_URL>${URL}</Data_Center_URL>
+<Data_Set_ID>${Set_ID}</Data_Set_ID>
+</Data_Center_Name>
+${Personnel}
+</Data_Center>
+]]></template>
+    </type>
+
+    <type
+       name="Quality"
+       searchable="false"
+       id="dif.quality">
+      <element name="Quality" rows="5"/>
+      <template type="dif"><![CDATA[<Quality>${Quality}</Quality>]]></template>
+    </type>
+-->
+
+
+  </handler>
+
+
+
+
+</metadata>
