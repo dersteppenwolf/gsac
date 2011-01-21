@@ -1,0 +1,62 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: cddis
+-- ------------------------------------------------------
+-- Server version	5.0.77
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Temporary table structure for view `vlbi_exp2009`
+--
+
+DROP TABLE IF EXISTS `vlbi_exp2009`;
+/*!50001 DROP VIEW IF EXISTS `vlbi_exp2009`*/;
+/*!50001 CREATE TABLE `vlbi_exp2009` (
+  `experiment` varchar(15),
+  `experiment_code` char(6),
+  `start_date` date,
+  `start_time` char(5),
+  `duration` decimal(3,1),
+  `stations` varchar(50),
+  `station_code` char(2),
+  `activity` char(1),
+  `schedule_agency` varchar(4),
+  `correlator` varchar(4),
+  `correlator_status` varchar(7),
+  `processing_factor` decimal(4,1),
+  `database_code` char(2),
+  `submitting_agency` varchar(6),
+  `delay_days` smallint(4) unsigned,
+  `mark4_number` smallint(4) unsigned
+) ENGINE=MyISAM */;
+
+--
+-- Final view structure for view `vlbi_exp2009`
+--
+
+/*!50001 DROP TABLE `vlbi_exp2009`*/;
+/*!50001 DROP VIEW IF EXISTS `vlbi_exp2009`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`noll`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vlbi_exp2009` AS select `e`.`experiment` AS `experiment`,`e`.`experiment_code` AS `experiment_code`,`e`.`start_date` AS `start_date`,`e`.`start_time` AS `start_time`,`e`.`duration` AS `duration`,`e`.`stations` AS `stations`,`v`.`station_code` AS `station_code`,`s`.`activity` AS `activity`,`e`.`schedule_agency` AS `schedule_agency`,`e`.`correlator` AS `correlator`,`e`.`correlator_status` AS `correlator_status`,`e`.`processing_factor` AS `processing_factor`,`e`.`database_code` AS `database_code`,`e`.`submitting_agency` AS `submitting_agency`,`e`.`delay_days` AS `delay_days`,`e`.`mark4_number` AS `mark4_number` from ((`vlbi_experiments` `e` join `vlbi_expstations` `s`) join `vlbi_va` `v`) where ((`e`.`experiment` = `s`.`experiment`) and (`e`.`experiment_code` = `s`.`experiment_code`) and (`s`.`station_code` = `v`.`va`) and (`e`.`start_date` between _latin1'2009-01-01' and _latin1'2010-01-01')) */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-09-10 21:18:44

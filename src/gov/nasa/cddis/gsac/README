@@ -1,0 +1,18 @@
+
+
+
+
+The CddisSiteManager handles the site requests. CddisResourceManager handles the resource (e.g., file) requests.
+
+Both of these classes uses the CddisType class. In that class are a set of defined instances:
+TYPE_GNSS
+TYPE_DORIS
+TYPE_SLR
+TYPE_VLBI
+
+The CddisType class holds database information (e.g., site table, site code column, resource table, etc) about the particular data type.
+
+
+
+
+

@@ -1,0 +1,54 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: cddis
+-- ------------------------------------------------------
+-- Server version	5.0.77
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `site_prare`
+--
+
+DROP TABLE IF EXISTS `site_prare`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_prare` (
+  `site_name` varchar(25) NOT NULL,
+  `prare` varchar(4) NOT NULL default '',
+  PRIMARY KEY  (`site_name`,`prare`),
+  KEY `site_name` (`site_name`),
+  KEY `prare` (`prare`),
+  CONSTRAINT `site_prare_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `site_prare`
+--
+
+LOCK TABLES `site_prare` WRITE;
+/*!40000 ALTER TABLE `site_prare` DISABLE KEYS */;
+INSERT INTO `site_prare` VALUES ('Ascension Island','ASC'),('Buenos Aires','BUE'),('Jakarta','DJA'),('Fairbanks','FAI'),('Falkland Island','FAL'),('Fortaleza','FOR'),('Hartebeesthoek','HAR'),('Kerguelen','KER'),('Matera','MAT'),('McMurdo','MUR'),('Ny Alesund','NYA'),('Bangalore','P'),('Bremerhaven','P'),('Galapagos Island','P'),('Greenbelt','P'),('Hofn','P'),('Kitab','P'),('Kokee Park','P'),('Monte Venda','P'),('Narsarsuaq','P'),('O\'Higgins','P'),('Stavanger','P'),('PTF (Venice, Ita','PTF'),('Seychelles','SEY'),('Stuttgart','STG'),('Syowa','SYO'),('Tristan De Cunha','TRI'),('Tromso','TRO'),('Ulaanbaatar','ULA'),('Wettzell','WET'),('Azores','X'),('Bermuda','X'),('Easter Island','X'),('Esperanza','X'),('Georg-Neumayer','X'),('Haleakala','X'),('Huahine','X'),('Jan Mayen','X'),('Kavalur','X'),('Kwajalein','X'),('Lampedusa','X'),('Newfoundland','X'),('Noto','X'),('Townsville','X'),('Trapani','X'),('Trindade','X');
+/*!40000 ALTER TABLE `site_prare` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-09-13 13:05:25

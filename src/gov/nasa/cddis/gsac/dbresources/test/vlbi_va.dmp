@@ -1,0 +1,52 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: cddis
+-- ------------------------------------------------------
+-- Server version	5.0.77
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `vlbi_va`
+--
+
+DROP TABLE IF EXISTS `vlbi_va`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_va` (
+  `va` char(2) NOT NULL,
+  `station_code` char(2) NOT NULL,
+  KEY `va` (`va`),
+  KEY `station_code` (`station_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `vlbi_va`
+--
+
+LOCK TABLES `vlbi_va` WRITE;
+/*!40000 ALTER TABLE `vlbi_va` DISABLE KEYS */;
+INSERT INTO `vlbi_va` VALUES ('Va','Br'),('Va','Fd'),('Va','Hn'),('Va','Kp'),('Va','La'),('Va','Mk'),('Va','Nl'),('Va','Ov'),('Va','Pt'),('Va','Sc'),('Cg','Cg'),('Ch','Ch'),('Cn','Cn'),('Da','Da'),('Dm','Dm'),('Dw','Dw'),('Eb','Eb'),('El','El'),('Ev','Ev'),('Fd','Fd'),('Fl','Fl'),('Fo','Fo'),('Fs','Fs'),('Ft','Ft'),('G1','G1'),('G3','G3'),('Ga','Ga'),('Gb','Gb'),('Gc','Gc'),('Gd','Gd'),('Gf','Gf'),('Gg','Gg'),('Gi','Gi'),('Gu','Gu'),('Gm','Gm'),('Gn','Gn'),('Go','Go'),('Gr','Gr'),('Gt','Gt'),('Gv','Gv'),('Gz','Gz'),('H7','H7'),('Hc','Hc'),('Hf','Hf'),('Hg','Hg'),('Hh','Hh'),('Hk','Hk'),('Hn','Hn'),('Ho','Ho'),('Hp','Hp'),('Hr','Hr'),('Hs','Hs'),('It','It'),('J1','J1'),('Jb','Jb'),('Jv','Jv'),('Ky','Ky'),('K1','K1'),('K3','K3'),('Ka','Ka'),('Kb','Kb'),('Kg','Kg'),('Ki','Ki'),('Kk','Kk'),('Kl','Kl'),('Km','Km'),('Kn','Kn'),('Ko','Ko'),('Kp','Kp'),('Kr','Kr'),('Ks','Ks'),('Kt','Kt'),('Ku','Ku'),('Kw','Kw'),('Kz','Kz'),('La','La'),('Le','Le'),('M2','M2'),('Ma','Ma'),('Mc','Mc'),('Md','Md'),('13','13'),('14','14'),('15','15'),('45','45'),('61','61'),('65','65'),('Ai','Ai'),('Ap','Ap'),('Ar','Ar'),('As','As'),('At','At'),('Au','Au'),('Az','Az'),('Ba','Ba'),('Bd','Bd'),('Bb','Bb'),('Be','Be'),('Bl','Bl'),('Bo','Bo'),('Br','Br'),('Bs','Bs'),('Ca','Ca'),('Cc','Cc'),('Cd','Cd'),('Ce','Ce'),('Me','Me'),('Mg','Mg'),('Mh','Mh'),('Mi','Mi'),('Mk','Mk'),('Ml','Ml'),('Mm','Mm'),('Mn','Mn'),('Mo','Mo'),('Mp','Mp'),('Mq','Mq'),('Mr','Mr'),('Ms','Ms'),('Mt','Mt'),('Mu','Mu'),('Mv','Mv'),('My','My'),('Mz','Mz'),('N6','N6'),('Nb','Nb'),('Nl','Nl'),('Nm','Nm'),('No','No'),('Nt','Nt'),('Nx','Nx'),('Ny','Ny'),('O8','O8'),('Oc','Oc'),('Oh','Oh'),('Om','Om'),('On','On'),('Oo','Oo'),('Or','Or'),('Ov','Ov'),('Pa','Pa'),('Pb','Pb'),('Pe','Pe'),('Pf','Pf'),('Pl','Pl'),('Pn','Pn'),('Pr','Pr'),('Pt','Pt'),('Pv','Pv'),('Qb','Qb'),('Qu','Qu'),('Ri','Ri'),('Ro','Ro'),('Rz','Rz'),('S1','S1'),('S3','S3'),('Sb','Sb'),('Sc','Sc'),('Se','Se'),('Sg','Sg'),('Sh','Sh'),('Si','Si'),('Sj','Sj'),('Sm','Sm'),('Sn','Sn'),('So','So'),('Sp','Sp'),('Ss','Ss'),('St','St'),('Su','Su'),('Sv','Sv'),('Sy','Sy'),('T3','T3'),('Ta','Ta'),('Tc','Tc'),('Tg','Tg'),('Ti','Ti'),('Tj','Tj'),('Tk','Tk'),('Tl','Tl'),('Tn','Tn'),('Tm','Tm'),('To','To'),('Tr','Tr'),('Ts','Ts'),('Ud','Ud'),('Ur','Ur'),('Us','Us'),('Uu','Uu'),('Uz','Uz'),('Va','Va'),('Vb','Vb'),('Ve','Ve'),('Vi','Vi'),('Vm','Vm'),('Vo','Vo'),('Vr','Vr'),('Vs','Vs'),('Wb','Wb'),('Wf','Wf'),('Wh','Wh'),('Wt','Wt'),('Wz','Wz'),('Y1','Y1'),('Y2','Y2'),('Ya','Ya'),('Yb','Yb'),('Ye','Ye'),('Yk','Yk'),('Ym','Ym'),('Yu','Yu'),('Zc','Zc');
+/*!40000 ALTER TABLE `vlbi_va` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-09-13 13:06:49

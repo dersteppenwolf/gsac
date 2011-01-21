@@ -1,0 +1,973 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: cddis
+-- ------------------------------------------------------
+-- Server version	5.0.77
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `coordinates_slr`
+--
+
+DROP TABLE IF EXISTS `coordinates_slr`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `coordinates_slr` (
+  `station` smallint(4) unsigned NOT NULL,
+  `latitude` varchar(20) default NULL,
+  `longitude` varchar(20) default NULL,
+  `x_component` varchar(20) default NULL,
+  `y_component` varchar(20) default NULL,
+  `z_component` varchar(20) default NULL,
+  `ellipsoid_height` varchar(15) default NULL,
+  `elevation` varchar(15) default NULL,
+  `coordinate_datum` varchar(10) default NULL,
+  `ellipsoid_datum` varchar(10) default NULL,
+  `elevation_datum` varchar(10) default NULL,
+  `survey_source` varchar(30) default NULL,
+  `survey_date` date default NULL,
+  `comments` varchar(80) default NULL,
+  `cur_date` date default NULL,
+  KEY `station` (`station`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `doris_2010`
+--
+
+DROP TABLE IF EXISTS `doris_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `doris_2010` (
+  `s_date` date NOT NULL default '0000-00-00',
+  `s_time` time NOT NULL default '00:00:00',
+  `e_date` date default NULL,
+  `e_time` time default NULL,
+  `station` varchar(4) NOT NULL default '',
+  `num_obs` smallint(4) default NULL,
+  `satellite` varchar(10) NOT NULL default '',
+  `file_name` varchar(15) default NULL,
+  PRIMARY KEY  (`satellite`,`s_date`,`s_time`,`station`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `eccentricities_slr`
+--
+
+DROP TABLE IF EXISTS `eccentricities_slr`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `eccentricities_slr` (
+  `station` smallint(4) unsigned NOT NULL,
+  `east_component` varchar(10) default NULL,
+  `north_component` varchar(10) default NULL,
+  `up_component` varchar(10) default NULL,
+  `x_component` varchar(10) default NULL,
+  `y_component` varchar(10) default NULL,
+  `z_component` varchar(10) default NULL,
+  `survey_source` varchar(30) default NULL,
+  `survey_date` date default NULL,
+  `comments` varchar(80) default NULL,
+  `cur_date` date default NULL,
+  `revision_date` date default NULL,
+  KEY `station` (`station`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `gps_tracking2010`
+--
+
+DROP TABLE IF EXISTS `gps_tracking2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `gps_tracking2010` (
+  `monument_name` varchar(4) NOT NULL default '',
+  `start_date` date NOT NULL default '0000-00-00',
+  `start_time` varchar(15) default NULL,
+  `end_date` date default NULL,
+  `end_time` varchar(15) default NULL,
+  `observation_interval` smallint(4) unsigned default NULL,
+  `no_observations` smallint(5) unsigned default NULL,
+  `observation_types` varchar(20) default NULL,
+  `receiver_number` varchar(12) default NULL,
+  `receiver_type` varchar(20) default NULL,
+  `receiver_version` varchar(20) default NULL,
+  `antenna_number` varchar(12) default NULL,
+  `antenna_type` varchar(20) default NULL,
+  `x_position` varchar(15) default NULL,
+  `y_position` varchar(15) default NULL,
+  `z_position` varchar(15) default NULL,
+  `antenna_height` varchar(15) default NULL,
+  `antenna_east` varchar(15) default NULL,
+  `antenna_north` varchar(15) default NULL,
+  `observer` varchar(20) default NULL,
+  `agency` varchar(40) default NULL,
+  `program` varchar(20) default NULL,
+  `program_operator` varchar(20) default NULL,
+  `marker_name` varchar(60) default NULL,
+  `domes_number` varchar(9) default NULL,
+  `file_name` varchar(15) default NULL,
+  `gnss_type` varchar(2) default NULL,
+  `hour_delay` smallint(3) unsigned default NULL,
+  `no_obsexp` smallint(5) unsigned default NULL,
+  `no_obs` smallint(5) unsigned default NULL,
+  `no_obsdel` smallint(5) unsigned default NULL,
+  `data_pct` tinyint(3) unsigned default NULL,
+  `avg_mp1` decimal(4,2) default NULL,
+  `avg_mp2` decimal(4,2) default NULL,
+  `position_difference` decimal(4,2) default NULL,
+  `no_slips` smallint(4) unsigned default NULL,
+  `data_version` tinyint(1) unsigned default NULL,
+  PRIMARY KEY  (`monument_name`,`start_date`),
+  KEY `monument_name` (`monument_name`),
+  KEY `start_date` (`start_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `gps_week`
+--
+
+DROP TABLE IF EXISTS `gps_week`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `gps_week` (
+  `start_date` date NOT NULL,
+  `gps_week` smallint(4) unsigned NOT NULL,
+  PRIMARY KEY  (`start_date`),
+  KEY `gps_week` (`gps_week`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `gpsdelay_tracking2010`
+--
+
+DROP TABLE IF EXISTS `gpsdelay_tracking2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `gpsdelay_tracking2009` (
+  `monument_name` char(4) NOT NULL,
+  `start_date` datetime NOT NULL,
+  `ARCHIVE_TIME` datetime NOT NULL,
+  PRIMARY KEY  (`monument_name`,`start_date`),
+  KEY `start_date` (`start_date`),
+  KEY `ARCHIVE_TIME` (`ARCHIVE_TIME`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `hourly_tracking2010`
+--
+
+DROP TABLE IF EXISTS `hourly_tracking2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `hourly_tracking2010` (
+  `monument_name` char(4) NOT NULL,
+  `start_date` date NOT NULL,
+  `start_hour` char(1) NOT NULL,
+  `archive_time` datetime NOT NULL,
+  PRIMARY KEY  (`monument_name`,`start_date`,`start_hour`),
+  KEY `start_date` (`start_date`),
+  KEY `archive_time` (`archive_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `ivs_nscodes`
+--
+
+DROP TABLE IF EXISTS `ivs_nscodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `ivs_nscodes` (
+  `site_name` varchar(20) NOT NULL,
+  `ivs_code` char(2) NOT NULL,
+  `vlbi_name` varchar(8) NOT NULL,
+  `domes_number` char(9) NOT NULL,
+  `station` smallint(4) unsigned default NULL,
+  `site_type` char(1) default NULL,
+  `site_namedes` varchar(50) default NULL,
+  KEY `site_name` (`site_name`),
+  KEY `ivs_code` (`ivs_code`),
+  KEY `vlbi_name` (`vlbi_name`),
+  KEY `domes_number` (`domes_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `leo_tracking2010`
+--
+
+DROP TABLE IF EXISTS `leo_tracking2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `leo_tracking2010` (
+  `monument_name` varchar(4) NOT NULL,
+  `start_date` date NOT NULL,
+  `start_hour` char(1) NOT NULL,
+  `start_minute` char(2) NOT NULL,
+  `archive_time` datetime NOT NULL,
+  PRIMARY KEY  (`monument_name`,`start_date`,`start_hour`,`start_minute`),
+  KEY `start_date` (`start_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `leosat_tracking2010`
+--
+
+DROP TABLE IF EXISTS `leosat_tracking2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `leosat_tracking2010` (
+  `satellite_name` char(4) NOT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
+  `observation_interval` smallint(4) unsigned NOT NULL,
+  `no_observations` tinyint(2) unsigned NOT NULL,
+  `observation_types` varchar(20) NOT NULL,
+  `receiver_type` varchar(20) NOT NULL,
+  `receiver_version` varchar(20) NOT NULL,
+  `antenna_type` varchar(20) NOT NULL,
+  `marker_name` varchar(60) NOT NULL,
+  PRIMARY KEY  (`satellite_name`,`start_date`),
+  KEY `start_date` (`start_date`),
+  KEY `end_date` (`end_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `occupancy_slr`
+--
+
+DROP TABLE IF EXISTS `occupancy_slr`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `occupancy_slr` (
+  `station` smallint(4) unsigned NOT NULL,
+  `system` varchar(10) NOT NULL,
+  `name` char(6) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `designator` varchar(8) default NULL,
+  `domes_number` varchar(9) default NULL,
+  `survey_date` date default NULL,
+  `eccentricity_date` date default NULL,
+  `calibration_date` date default NULL,
+  `comments` varchar(80) default NULL,
+  `cur_date` date default NULL,
+  KEY `station` (`station`),
+  KEY `system` (`system`),
+  KEY `designator` (`designator`),
+  KEY `start_date` (`start_date`),
+  KEY `end_date` (`end_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `occupancy_vlbi`
+--
+
+DROP TABLE IF EXISTS `occupancy_vlbi`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `occupancy_vlbi` (
+  `station` smallint(4) unsigned NOT NULL,
+  `system` varchar(10) NOT NULL,
+  `designator` varchar(8) default NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `comments` varchar(80) default NULL,
+  KEY `station` (`station`),
+  KEY `system` (`system`),
+  KEY `designator` (`designator`),
+  KEY `start_date` (`start_date`),
+  KEY `end_date` (`end_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellites_2010`
+--
+
+DROP TABLE IF EXISTS `satellites_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellites_2010` (
+  `satellite` varchar(15) NOT NULL,
+  `s_date` datetime NOT NULL,
+  `s_sec` char(7) NOT NULL,
+  `e_date` datetime NOT NULL,
+  `e_sec` char(7) NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `num_obs` smallint(5) unsigned NOT NULL,
+  `designator` char(8) NOT NULL,
+  `data_version` char(1) NOT NULL,
+  `wavelength` char(4) NOT NULL,
+  `sat_no` int(7) unsigned NOT NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`),
+  KEY `sat_no` (`sat_no`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`),
+  KEY `e_date` (`e_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellitesfrcrd_2010`
+--
+
+DROP TABLE IF EXISTS `satellitesfrcrd_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellitesfrcrd_2010` (
+  `satellite` varchar(15) NOT NULL,
+  `satellite_cospar` int(7) unsigned NOT NULL,
+  `satellite_norad` smallint(5) unsigned NOT NULL,
+  `satellite_sic` smallint(4) unsigned NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `s_date` datetime NOT NULL,
+  `e_date` datetime NOT NULL,
+  `num_pts` smallint(5) unsigned NOT NULL,
+  `designator` char(8) NOT NULL,
+  `sch` char(1) NOT NULL,
+  `sci` char(1) NOT NULL,
+  `wavelength` smallint(4) unsigned NOT NULL,
+  `fr_length` char(3) NOT NULL,
+  `epoch_timescale` char(1) NOT NULL,
+  `target_type` char(1) default NULL,
+  `troprefraction_applied` char(1) default NULL,
+  `com_applied` char(1) default NULL,
+  `amplitude_applied` char(1) default NULL,
+  `stationsysdelay_applied` char(1) default NULL,
+  `satsysdelay_applied` char(1) default NULL,
+  `rangetype_ind` char(1) default NULL,
+  `dataquality_ind` char(1) default NULL,
+  `release_flag` char(1) default NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`,`wavelength`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`),
+  KEY `e_date` (`e_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellitesnpt_1994`
+--
+
+DROP TABLE IF EXISTS `satellitesnpt_1994`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellitesnpt_1994` (
+  `satellite` varchar(15) NOT NULL,
+  `s_date` datetime NOT NULL,
+  `s_sec` char(7) NOT NULL,
+  `e_date` datetime NOT NULL,
+  `e_sec` char(7) NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `num_obs` smallint(5) unsigned NOT NULL,
+  `designator` char(8) NOT NULL,
+  `version` char(1) NOT NULL,
+  `tape_no` char(6) NOT NULL,
+  `file_no` tinyint(2) unsigned NOT NULL,
+  `data_version` char(1) NOT NULL,
+  `sat_no` int(7) unsigned NOT NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`),
+  KEY `sat_no` (`sat_no`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`),
+  KEY `e_date` (`e_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellitesnptcrd_2010`
+--
+
+DROP TABLE IF EXISTS `satellitesnptcrd_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellitesnptcrd_2010` (
+  `satellite` varchar(15) NOT NULL,
+  `satellite_cospar` int(7) unsigned NOT NULL,
+  `satellite_norad` smallint(5) unsigned NOT NULL,
+  `satellite_sic` smallint(4) unsigned NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `s_date` datetime NOT NULL,
+  `e_date` datetime NOT NULL,
+  `num_pts` smallint(5) unsigned NOT NULL,
+  `designator` char(8) NOT NULL,
+  `sch` char(1) NOT NULL,
+  `sci` char(1) NOT NULL,
+  `wavelength` decimal(7,3) unsigned NOT NULL,
+  `npt_length` smallint(6) unsigned NOT NULL,
+  `epoch_timescale` char(1) NOT NULL,
+  `target_type` char(1) default NULL,
+  `troprefraction_applied` char(1) default NULL,
+  `com_applied` char(1) default NULL,
+  `amplitude_applied` char(1) default NULL,
+  `stationsysdelay_applied` char(1) default NULL,
+  `satsysdelay_applied` char(1) default NULL,
+  `rangetype_ind` char(1) default NULL,
+  `dataquality_ind` char(1) default NULL,
+  `release_flag` char(1) default NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`,`wavelength`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`),
+  KEY `e_date` (`e_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellitespass2_2010`
+--
+
+DROP TABLE IF EXISTS `satellitespass2_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellitespass2_2010` (
+  `satellite` varchar(15) NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `s_date` datetime NOT NULL,
+  `num_pts` smallint(5) unsigned NOT NULL,
+  `npt_length` smallint(3) unsigned NOT NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellitespasst_2010`
+--
+
+DROP TABLE IF EXISTS `satellitespasst_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellitespasst_2010` (
+  `satellite` varchar(15) NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `s_date` datetime NOT NULL,
+  `e_date` datetime NOT NULL,
+  `num_pts` smallint(5) unsigned NOT NULL,
+  `npt_length` smallint(3) unsigned NOT NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `satellitesql_2010`
+--
+
+DROP TABLE IF EXISTS `satellitesql_2010`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `satellitesql_2010` (
+  `satellite` varchar(15) NOT NULL,
+  `station` smallint(4) unsigned NOT NULL,
+  `s_date` datetime NOT NULL,
+  `e_date` datetime NOT NULL,
+  `num_pts` smallint(5) unsigned NOT NULL,
+  `designator` char(8) NOT NULL,
+  `scf` char(1) NOT NULL,
+  `wavelength` smallint(4) unsigned NOT NULL,
+  `npt_indicator` char(1) NOT NULL,
+  `epoch_timescale` char(1) NOT NULL,
+  `system_cal` char(1) NOT NULL,
+  `data_type` char(1) NOT NULL,
+  `source` varchar(10) NOT NULL,
+  `insert_date` date NOT NULL,
+  `file_name` varchar(20) NOT NULL,
+  `release_flag` char(1) default NULL,
+  PRIMARY KEY  (`satellite`,`station`,`s_date`,`wavelength`),
+  KEY `station` (`station`),
+  KEY `s_date` (`s_date`),
+  KEY `e_date` (`e_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `satellitesql_status`
+--
+
+DROP TABLE IF EXISTS `satellitesql_status`;
+/*!50001 DROP VIEW IF EXISTS `satellitesql_status`*/;
+/*!50001 CREATE TABLE `satellitesql_status` (
+  `satellite` varchar(15),
+  `station` smallint(6) unsigned,
+  `s_date` datetime,
+  `e_date` datetime,
+  `num_pts` smallint(6) unsigned
+) ENGINE=MyISAM */;
+
+--
+-- Table structure for table `site_doris`
+--
+
+DROP TABLE IF EXISTS `site_doris`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_doris` (
+  `site_name` varchar(25) NOT NULL,
+  `doris` char(4) NOT NULL,
+  `domes_number` char(9) default NULL,
+  PRIMARY KEY  (`doris`),
+  KEY `site_name` (`site_name`),
+  KEY `domes_number` (`domes_number`),
+  CONSTRAINT `site_doris_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `site_gnss`
+--
+
+DROP TABLE IF EXISTS `site_gnss`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_gnss` (
+  `site_name` varchar(25) NOT NULL,
+  `monument_name` char(4) NOT NULL,
+  `domes_number` char(9) default NULL,
+  `gps` varchar(1) default NULL,
+  `igs` varchar(4) default NULL,
+  `global` varchar(1) default NULL,
+  `high_rate` varchar(1) default NULL,
+  `hourly` varchar(1) default NULL,
+  `glonass` varchar(1) default NULL,
+  PRIMARY KEY  (`site_name`,`monument_name`),
+  KEY `monument_name` (`monument_name`),
+  KEY `domes_number` (`domes_number`),
+  CONSTRAINT `site_gnss_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `site_info_doris`
+--
+
+DROP TABLE IF EXISTS `site_info_doris`;
+/*!50001 DROP VIEW IF EXISTS `site_info_doris`*/;
+/*!50001 CREATE TABLE `site_info_doris` (
+  `site_name` varchar(25),
+  `latitude` varchar(6),
+  `longitude` varchar(7),
+  `latitude_decimal` varchar(6),
+  `longitude_decimal` varchar(7),
+  `state` varchar(2),
+  `country` varchar(25),
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA'),
+  `doris` char(4),
+  `domes_number` char(9)
+) ENGINE=MyISAM */;
+
+--
+-- Temporary table structure for view `site_info_gnss`
+--
+
+DROP TABLE IF EXISTS `site_info_gnss`;
+/*!50001 DROP VIEW IF EXISTS `site_info_gnss`*/;
+/*!50001 CREATE TABLE `site_info_gnss` (
+  `site_name` varchar(25),
+  `latitude` varchar(6),
+  `longitude` varchar(7),
+  `latitude_decimal` varchar(6),
+  `longitude_decimal` varchar(7),
+  `state` varchar(2),
+  `country` varchar(25),
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA'),
+  `monument_name` char(4),
+  `domes_number` char(9),
+  `gps` varchar(1),
+  `glonass` varchar(1),
+  `igs` varchar(4),
+  `global` varchar(1),
+  `high_rate` varchar(1),
+  `hourly` varchar(1)
+) ENGINE=MyISAM */;
+
+--
+-- Temporary table structure for view `site_info_prare`
+--
+
+DROP TABLE IF EXISTS `site_info_prare`;
+/*!50001 DROP VIEW IF EXISTS `site_info_prare`*/;
+/*!50001 CREATE TABLE `site_info_prare` (
+  `site_name` varchar(25),
+  `latitude` varchar(6),
+  `longitude` varchar(7),
+  `latitude_decimal` varchar(6),
+  `longitude_decimal` varchar(7),
+  `state` varchar(2),
+  `country` varchar(25),
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA'),
+  `prare` varchar(4)
+) ENGINE=MyISAM */;
+
+--
+-- Temporary table structure for view `site_info_slr`
+--
+
+DROP TABLE IF EXISTS `site_info_slr`;
+/*!50001 DROP VIEW IF EXISTS `site_info_slr`*/;
+/*!50001 CREATE TABLE `site_info_slr` (
+  `site_name` varchar(25),
+  `latitude` varchar(6),
+  `longitude` varchar(7),
+  `latitude_decimal` varchar(6),
+  `longitude_decimal` varchar(7),
+  `state` varchar(2),
+  `country` varchar(25),
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA'),
+  `slr` varchar(4),
+  `station` smallint(4) unsigned,
+  `domes_number` char(9),
+  `site_type` varchar(1)
+) ENGINE=MyISAM */;
+
+--
+-- Temporary table structure for view `site_info_vlbi`
+--
+
+DROP TABLE IF EXISTS `site_info_vlbi`;
+/*!50001 DROP VIEW IF EXISTS `site_info_vlbi`*/;
+/*!50001 CREATE TABLE `site_info_vlbi` (
+  `site_name` varchar(25),
+  `latitude` varchar(6),
+  `longitude` varchar(7),
+  `latitude_decimal` varchar(6),
+  `longitude_decimal` varchar(7),
+  `state` varchar(2),
+  `country` varchar(25),
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA'),
+  `vlbi` varchar(8),
+  `ivs_code` char(2),
+  `vlbi_name` varchar(8),
+  `station` smallint(4) unsigned,
+  `domes_number` char(9),
+  `site_type` varchar(1)
+) ENGINE=MyISAM */;
+
+--
+-- Table structure for table `site_information`
+--
+
+DROP TABLE IF EXISTS `site_information`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_information` (
+  `site_name` varchar(25) NOT NULL,
+  `site_number` smallint(4) unsigned default NULL,
+  `latitude` varchar(6) default NULL,
+  `longitude` varchar(7) default NULL,
+  `latitude_decimal` varchar(6) default NULL,
+  `longitude_decimal` varchar(7) default NULL,
+  `state` varchar(2) default NULL,
+  `country` varchar(25) NOT NULL,
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA') default NULL,
+  PRIMARY KEY  (`site_name`),
+  KEY `country` (`country`),
+  KEY `region` (`region`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `site_information_full`
+--
+
+DROP TABLE IF EXISTS `site_information_full`;
+/*!50001 DROP VIEW IF EXISTS `site_information_full`*/;
+/*!50001 CREATE TABLE `site_information_full` (
+  `site_name` varchar(25),
+  `latitude` varchar(6),
+  `longitude` varchar(7),
+  `latitude_decimal` varchar(6),
+  `longitude_decimal` varchar(7),
+  `state` varchar(2),
+  `country` varchar(25),
+  `region` set('AF','ANT','ASIA','ATL','AUS','CA','EU','NA','PAC','SA'),
+  `gnss_name` char(4),
+  `gnss_domes` char(9),
+  `gps` varchar(1),
+  `glonass` varchar(1),
+  `igs` varchar(4),
+  `global` varchar(1),
+  `high_rate` varchar(1),
+  `hourly` varchar(1),
+  `slr_name` varchar(4),
+  `slr_station` smallint(4) unsigned,
+  `slr_domes` char(9),
+  `slr_sitetype` varchar(1),
+  `vlbi_name` varchar(8),
+  `vlbi_domes` char(9),
+  `ivs_code` char(2),
+  `vlbi_fullname` varchar(8),
+  `vlbi_station` smallint(4) unsigned,
+  `vlbi_sitetype` varchar(1),
+  `doris_name` char(4),
+  `doris_domes` char(9),
+  `prare_name` varchar(4)
+) ENGINE=MyISAM */;
+
+--
+-- Table structure for table `site_prare`
+--
+
+DROP TABLE IF EXISTS `site_prare`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_prare` (
+  `site_name` varchar(25) NOT NULL,
+  `prare` varchar(4) NOT NULL default '',
+  PRIMARY KEY  (`site_name`,`prare`),
+  KEY `site_name` (`site_name`),
+  KEY `prare` (`prare`),
+  CONSTRAINT `site_prare_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `site_slr`
+--
+
+DROP TABLE IF EXISTS `site_slr`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_slr` (
+  `site_name` varchar(25) NOT NULL,
+  `slr` varchar(4) default NULL,
+  `station` smallint(4) unsigned default NULL,
+  `domes_number` char(9) default NULL,
+  `site_type` varchar(1) default NULL,
+  KEY `site_name` (`site_name`),
+  KEY `slr` (`slr`),
+  KEY `station` (`station`),
+  KEY `domes_number` (`domes_number`),
+  CONSTRAINT `site_slr_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `site_vlbi`
+--
+
+DROP TABLE IF EXISTS `site_vlbi`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_vlbi` (
+  `site_name` varchar(25) NOT NULL,
+  `vlbi` varchar(8) NOT NULL,
+  `ivs_code` char(2) default NULL,
+  `vlbi_name` varchar(8) default NULL,
+  `station` smallint(4) unsigned default NULL,
+  `domes_number` char(9) default NULL,
+  `site_type` varchar(1) default NULL,
+  KEY `site_name` (`site_name`),
+  KEY `station` (`station`),
+  KEY `ivs_code` (`ivs_code`),
+  KEY `domes_number` (`domes_number`),
+  CONSTRAINT `site_vlbi_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `vlbi_corrcodes`
+--
+
+DROP TABLE IF EXISTS `vlbi_corrcodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_corrcodes` (
+  `corr_code` varchar(4) NOT NULL default '',
+  `correlator` varchar(100) default NULL,
+  PRIMARY KEY  (`corr_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vlbi_exp2010`
+--
+
+DROP TABLE IF EXISTS `vlbi_exp2010`;
+/*!50001 DROP VIEW IF EXISTS `vlbi_exp2010`*/;
+/*!50001 CREATE TABLE `vlbi_exp2010` (
+  `experiment` varchar(15),
+  `experiment_code` char(6),
+  `start_date` date,
+  `start_time` char(5),
+  `duration` decimal(3,1),
+  `stations` varchar(50),
+  `station_code` char(2),
+  `activity` char(1),
+  `schedule_agency` varchar(4),
+  `correlator` varchar(4),
+  `correlator_status` varchar(7),
+  `processing_factor` decimal(4,1),
+  `database_code` char(2),
+  `submitting_agency` varchar(6),
+  `delay_days` smallint(4) unsigned,
+  `mark4_number` smallint(4) unsigned
+) ENGINE=MyISAM */;
+
+--
+-- Table structure for table `vlbi_experiments`
+--
+
+DROP TABLE IF EXISTS `vlbi_experiments`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_experiments` (
+  `experiment` varchar(15) NOT NULL,
+  `experiment_code` char(6) NOT NULL,
+  `start_date` date NOT NULL,
+  `start_time` char(5) NOT NULL,
+  `duration` decimal(3,1) default NULL,
+  `stations` varchar(50) NOT NULL,
+  `schedule_agency` varchar(4) default NULL,
+  `correlator` varchar(4) default NULL,
+  `correlator_status` varchar(7) default NULL,
+  `processing_factor` decimal(4,1) default NULL,
+  `database_code` char(2) default NULL,
+  `submitting_agency` varchar(6) default NULL,
+  `delay_days` smallint(4) unsigned default NULL,
+  `mark4_number` smallint(4) unsigned default NULL,
+  KEY `experiment` (`experiment`),
+  KEY `experiment_code` (`experiment_code`),
+  KEY `start_date` (`start_date`),
+  KEY `stations` (`stations`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vlbi_expfull`
+--
+
+DROP TABLE IF EXISTS `vlbi_expfull`;
+/*!50001 DROP VIEW IF EXISTS `vlbi_expfull`*/;
+/*!50001 CREATE TABLE `vlbi_expfull` (
+  `experiment` varchar(15),
+  `experiment_code` char(6),
+  `start_date` date,
+  `start_time` char(5),
+  `duration` decimal(3,1),
+  `stations` varchar(50),
+  `station_code` char(2),
+  `activity` char(1),
+  `schedule_agency` varchar(4),
+  `correlator` varchar(4),
+  `correlator_status` varchar(7),
+  `processing_factor` decimal(4,1),
+  `database_code` char(2),
+  `submitting_agency` varchar(6),
+  `delay_days` smallint(4) unsigned,
+  `mark4_number` smallint(4) unsigned
+) ENGINE=MyISAM */;
+
+--
+-- Table structure for table `vlbi_expstations`
+--
+
+DROP TABLE IF EXISTS `vlbi_expstations`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_expstations` (
+  `experiment` varchar(15) NOT NULL,
+  `experiment_code` char(6) NOT NULL,
+  `station_code` char(2) NOT NULL,
+  `activity` char(1) NOT NULL,
+  KEY `experiment` (`experiment`),
+  KEY `experiment_code` (`experiment_code`),
+  KEY `station_code` (`station_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `vlbi_sessioncodes`
+--
+
+DROP TABLE IF EXISTS `vlbi_sessioncodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_sessioncodes` (
+  `session_code` varchar(4) NOT NULL,
+  `session_description` varchar(100) NOT NULL,
+  KEY `session_code` (`session_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `vlbi_skedcodes`
+--
+
+DROP TABLE IF EXISTS `vlbi_skedcodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_skedcodes` (
+  `skedcode` varchar(4) NOT NULL,
+  `skedule_agency` char(100) NOT NULL,
+  KEY `skedcode` (`skedcode`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `vlbi_statuscodes`
+--
+
+DROP TABLE IF EXISTS `vlbi_statuscodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_statuscodes` (
+  `status_code` varchar(10) NOT NULL,
+  `status` varchar(100) NOT NULL,
+  KEY `status_code` (`status_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `vlbi_submitcodes`
+--
+
+DROP TABLE IF EXISTS `vlbi_submitcodes`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_submitcodes` (
+  `submit_code` varchar(4) NOT NULL,
+  `submitting_agency` varchar(100) NOT NULL,
+  KEY `submit_code` (`submit_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `vlbi_va`
+--
+
+DROP TABLE IF EXISTS `vlbi_va`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `vlbi_va` (
+  `va` char(2) NOT NULL,
+  `station_code` char(2) NOT NULL,
+  KEY `va` (`va`),
+  KEY `station_code` (`station_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+

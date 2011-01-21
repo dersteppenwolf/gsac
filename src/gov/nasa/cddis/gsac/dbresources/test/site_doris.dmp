@@ -1,0 +1,55 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: cddis
+-- ------------------------------------------------------
+-- Server version	5.0.77
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `site_doris`
+--
+
+DROP TABLE IF EXISTS `site_doris`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_doris` (
+  `site_name` varchar(25) NOT NULL,
+  `doris` char(4) NOT NULL,
+  `domes_number` char(9) default NULL,
+  PRIMARY KEY  (`doris`),
+  KEY `site_name` (`site_name`),
+  KEY `domes_number` (`domes_number`),
+  CONSTRAINT `site_doris_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `site_doris`
+--
+
+LOCK TABLES `site_doris` WRITE;
+/*!40000 ALTER TABLE `site_doris` DISABLE KEYS */;
+INSERT INTO `site_doris` VALUES ('Terre Adelie','ADEA','91501S001'),('Terre Adelie','ADEB','91501S002'),('Terre Adelie','ADFB','91501S003'),('Ajaccio','AJAB','10077S002'),('Ile Amsterdam','AMSA','91401S001'),('Ile Amsterdam','AMSB','91401S002'),('Ile Amsterdam','AMTB','91401S003'),('Ile Amsterdam','AMUB','91401S004'),('Arequipa','AREA','42202S005'),('Arequipa','AREB','42202S006'),('Arequipa','ARFB','42202S007'),('Arlit','ARLA','33710S001'),('Arlit','ARMA','33710S002'),('Ascension Island','ASDB','30602S004'),('Badary','BADA','12338S001'),('Badary','BADB','12338S002'),('Belgrano','BELB','66018S001'),('Belgrano','BEMB','66018S002'),('Betio','BETB','50305S001'),('Cachoeira Paulista','CACB','41609S001'),('Cachoeira Paulista','CADB','41609S002'),('Cariquima','CARB','41710S001'),('Chatham Island','CHAB','50207S001'),('Cibinong','CIBB','23101S001'),('Cibinong','CICB','23101S002'),('Cibinong','CIDB','23101S003'),('Colombo','COLA','23501S001'),('Crozet Island','CROB','91301S001'),('Crozet Island','CRPB','91301S002'),('Crozet Island','CRQB','91301S003'),('Dakar','DAKA','34101S004'),('Dionysos','DIOA','12602S011'),('Dionysos','DIOB','12602S012'),('Djibouti','DJCB',''),('Djibouti','DJIA','39901S002'),('Djibouti','DJIB','39901S003'),('Easter Island','EASA','41703S008'),('Easter Island','EASB','41703S009'),('Mount Everest','EVEB','21501S001'),('Fairbanks','FAIA','40408S004'),('Fairbanks','FAIB','40408S005'),('Flores','FLOA','31901S001'),('Futuna','FUTB','92902S001'),('Galapagos Island','GALA','42004S001'),('Gavdos','GAVB','12618S001'),('Goldstone','GOLA','40405S035'),('Goldstone','GOMA','40405S005'),('Goldstone','GOMB','40405S037'),('Grasse','GR3B','10002M006'),('Greenbelt','GREB','40451S176'),('Guam','GUAB','50501S001'),('Hartebeesthoek','HBKA','30302S202'),('Hartebeesthoek','HBKB','30302S006'),('Hartebeesthoek','HBLA','30302S005'),('Hartebeesthoek','HBLB','30302S006'),('Hartebeesthoek','HBMB','30302S008'),('Sainte-Helene','HELA','30606S002'),('Sainte-Helene','HELB','30606S003'),('Sainte-Helene','HEMB','30606S004'),('Huahine','HUAA','92202S009'),('Hawaian V','HVOA','40476S001'),('Iquique','IQUB','41708S001'),('Jiufeng','JIUB','21602S005'),('Kerguelen','KERA','91201S002'),('Kerguelen','KERB','91201S003'),('Kerguelen','KESB','91201S004'),('Kerguelen','KETB','91201S005'),('Kitab','KITA','12334S004'),('Kitab','KITB','12334S005'),('Kitab','KIUB','12334S006'),('Kokee Park','KOKA','40424S008'),('Kokee Park','KOLB','40424S009'),('Krasnoyarsk','KRAB','12349S001'),('Krasnoyarsk','KRBB','12349S002'),('Kourou','KRUA','97301S005'),('Kourou','KRUB','97301S004'),('Kourou','KRVB','97301S004'),('Libreville','LIBA','32809S002'),('Libreville','LIBB','32809S003'),('Libreville','LICB','32809S004'),('Lifou','LIFB','92722S001'),('Seychelles','MAHB','39801S005'),('Male','MALB','22901S002'),('Male','MALD',''),('Manila','MANA','22006S001'),('Manila','MANB','22006S002'),('Marion Island','MARA','30313S001'),('Marion Island','MARB','30313S002'),('Marion Island','MATB','30313S003'),('Metsahovi','META','10503S013'),('Metsahovi','METB','10503S015'),('Miami','MIAB','49914S003'),('Monument Peak','MONB','40497S008'),('Monument Peak','MOOB','40497S009'),('Port Moresby','MORA','51001S001'),('Port Moresby','MORB','51001S002'),('Mount Stromlo','MSOB','50119S002'),('Mount Stromlo','MSPB','50119S004'),('Noumea','NOUA','92701S001'),('Noumea','NOUB','92701S002'),('Noumea','NOWB','92701S003'),('Tidbinbilla/Orroral','ORRA','50103S201'),('Tidbinbilla/Orroral','ORRB','50103S202'),('Ottawa','OTTA','40102S005'),('Ottawa','OTTB','40102S011'),('Tahiti','PAPB','92201S007'),('Tahiti','PAQB','92201S008'),('Paramushir','PASB','12339S001'),('Tahiti','PATB','92201S010'),('Ponta Delgada','PDLB','31906S001'),('Ponta Delgada','PDMB','31906S002'),('Purple Mountain','PURA','21604S003'),('Rapa','RAQB','92403S001'),('La Reunion','REUA','97401S001'),('La Reunion','REUB','97401S002'),('Reykjavik','REYA','10202S001'),('Reykjavik','REYB','10202S002'),('Reykjavik','REZB','10202S003'),('Richmond','RICA','40499S015'),('Richmond','RIDA','40499S016'),('Rikitea','RIKB','92301S002'),('Rikitea','RILB','92301S003'),('Rio Grande','RIOA','41507S003'),('Rio Grande','RIOB','41507S004'),('Rio Grande','RIPB','41507S005'),('Rio Grande','RIQB','41507S006'),('Rothera','ROTA','66007S001'),('Rothera','ROTB','66007S002'),('Rothera','ROUB','66007S003'),('Yuzhno-Sakhalinsk','SAKA','12329S001'),('Yuzhno-Sakhalinsk','SAKB','12329S002'),('Palmeira','SALB','39601S002'),('Santa Maria','SAMB','31903S001'),('Santiago','SANA','41705S007'),('Santiago','SANB','41705S009'),('Santiago','SAOB','41705S008'),('Puerto Ayora, Galapagos','SCRB','42005S001'),('Signy Island','SIGA','30607S001'),('Socorro Island','SOCA','40503S002'),('Socorro Island','SODA','40503S003'),('Socorro Island','SODB','40503S004'),('Ny Alesund','SPIA','10317S002'),('Ny Alesund','SPIB','10317S004'),('Ny Alesund','SPJB','10317S005'),('Saint John\'s','STJB','40101S002'),('Syowa','SYOB','66006S001'),('Syowa','SYPB','66006S003'),('Tanna','TANB','92802S001'),('Thule','THUB','43001S005'),('Toulouse','TLHA','10003S003'),('Toulouse','TLIA','10003S003'),('Toulouse','TLSA','10003S001'),('Toulouse','TLSB','10003S005'),('Tristan De Cunha','TRIA','30604S001'),('Tristan De Cunha','TRIB','30604S002'),('Tromso','TROA','10302S010'),('Waimea','WAIA','40475S001'),('Wallis','WALA','92901S001'),('Wettzell','WETB','14201S042'),('Yaragadee','YARA','50107S006'),('Yaragadee','YARB','50107S010'),('Yaragadee','YASB','50107S011'),('Yellowknife','YELA','40127S007'),('Yellowknife','YELB','40127S008'),('Yellowknife','YEMB','40127S009');
+/*!40000 ALTER TABLE `site_doris` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-09-13 13:05:17

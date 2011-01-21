@@ -1,0 +1,58 @@
+-- MySQL dump 10.11
+--
+-- Host: localhost    Database: cddis
+-- ------------------------------------------------------
+-- Server version	5.0.77
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `site_slr`
+--
+
+DROP TABLE IF EXISTS `site_slr`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `site_slr` (
+  `site_name` varchar(25) NOT NULL,
+  `slr` varchar(4) default NULL,
+  `station` smallint(4) unsigned default NULL,
+  `domes_number` char(9) default NULL,
+  `site_type` varchar(1) default NULL,
+  KEY `site_name` (`site_name`),
+  KEY `slr` (`slr`),
+  KEY `station` (`station`),
+  KEY `domes_number` (`domes_number`),
+  CONSTRAINT `site_slr_ibfk_1` FOREIGN KEY (`site_name`) REFERENCES `site_information` (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `site_slr`
+--
+
+LOCK TABLES `site_slr` WRITE;
+/*!40000 ALTER TABLE `site_slr` DISABLE KEYS */;
+INSERT INTO `site_slr` VALUES ('Ajaccio','AJAF',7848,'10077M002','M'),('Algonquin','S',7410,'40104M003','M'),('Altay','ALTL',1879,'12372S001','F'),('American Samoa','S',7096,'50503M001','F'),('Ankara','S',7589,'20805M001','M'),('Apache Point','APOL',7045,'','F'),('Arequipa','AREL',7403,'42202M003','F'),('Arequipa','S',7907,'','F'),('Askites','S',7510,'12612M001','M'),('Austin','S',7890,'40412M001','M'),('Balkhash','S',1869,'12343S001','F'),('Bar Giyyora','S',7530,'20702M001','F'),('Basovizza','S',7550,'12718M002','M'),('Bear Lake','S',7046,'40438M002','M'),('Bear Lake','S',7082,'40438M001','M'),('Beijing','BEIA',7357,'21601S005','M'),('Beijing','BEIL',7249,'21601S004','F'),('Beijing','BEIT',7343,'21601M002','M'),('Bermuda','S',7067,'','F'),('Borowiec','BORL',7811,'12205S001','F'),('Brest','BREF',7604,'10004M002','M'),('Burnie','BURF',7370,'50186M001','M'),('Cabo San Lucas','S',7882,'40505M001','M'),('Cagliari','CGLL',7548,'12725S013','F'),('Cerro Tololo','S',7401,'41706M001','M'),('Changchun','CHAL',7237,'21611S001','F'),('Chania','CHAF',7830,'12617M002','M'),('Chichi Jima','S',7844,'21732S002','M'),('Concepcion','CONL',7405,'41719M001','F'),('Dionysos','S',7940,'12602S001','F'),('Dionysos','S',7515,'12602M002','M'),('Diyarbakir','S',7575,'20801M001','M'),('Dodair/Doudaira','S',7935,'21705S001','M'),('Dunaovcy','S',1866,'12347S001','M'),('Easter Island','S',7061,'41703M001','F'),('Easter Island','S',7097,'41703M002','F'),('Ensenada','S',7883,'40506M001','F'),('Evpatoria','S',1867,'12344S001','F'),('Flagstaff','S',7891,'40491M002','M'),('Flagstaff','S',7261,'40491M003','M'),('Goldstone','S',7085,'40405M001','F'),('Goldstone Mars','S',7115,'40405M002','F'),('Grand Turk','S',7068,'43602M002','F'),('Grasse','GRSL',7835,'10002S001','F'),('Grasse','GRSF',7846,'10002M004','M'),('Grasse','GRAF',7829,'10002S017','M'),('Grasse','GRSM',7845,'10002S002','F'),('Graz','GRZL',7839,'11001S002','F'),('Greenbelt','GODL',7105,'40451M105','F'),('Greenbelt','GO4T',7130,'40451M116','M'),('Greenbelt','',7103,'40451M103','M'),('Greenbelt','',7104,'40451M104','M'),('Greenbelt','',7102,'40451M102','M'),('Greenbelt','',7101,'40451M101','F'),('Greenbelt','',7100,'40451M106','M'),('Greenbelt','',7065,'40451M108','M'),('Greenbelt','',7083,'40451M122','M'),('Greenbelt','',7919,'40451M121','M'),('Greenbelt','',7918,'40451M120','M'),('Greenbelt','',7917,'40451M119','M'),('Greenbelt','',7889,'40451M118','M'),('Greenbelt','',7920,'40451M117','F'),('Greenbelt','GO1L',7125,'40451M114','F'),('Greenbelt','',7106,'40451M113','F'),('Greenbelt','',7063,'40451M112','F'),('Greenbelt','S',7127,'','M'),('Greenbelt','S',7899,'','M'),('Greenbelt','S',7126,'','M'),('Greenbelt','',7108,'40451M125','M'),('Greenbelt','',7064,'40451M107','M'),('Hachijo Jima','S',7309,'','M'),('Haleakala','HALL',7210,'40445M001','F'),('Haleakala','S',7120,'','F'),('Haleakala','HA4T',7119,'40445M004','F'),('Hartebeesthoek','HARL',7501,'30302M003','F'),('Helwan','HLWL',7831,'30101S001','F'),('Helwan','S',7801,'','M'),('Herstmonceux','HERL',7840,'13212S001','F'),('Hiroo','S',7313,'','M'),('Huahine','S',7123,'92202M004','M'),('Huahine','S',7121,'','M'),('Isigaki Shima','S',7307,'21736S001','M'),('Isigaki Shima','S',7307,'21736S003','M'),('Isigaki Shima','S',7307,'21736S005','M'),('Isigaki Shima','S',7307,'21736S004','M'),('Iwo Jima','S',7305,'','M'),('Karitsa','S',7520,'12614M001','M'),('Kashima','KASL',7335,'21701M002','F'),('Katavia','S',7512,'12615M001','M'),('Katzively','KTZL',1893,'12337S006','F'),('Kiev','GLSL',1824,'12356S001','F'),('Koganei','KOGC',7308,'21704S002','F'),('Koganei','KOGL',7328,'21704M001','M'),('Komsomolsk-Na-Amure','KOML',1868,'12341S001','F'),('Kootwijk','S',7833,'13504S001','M'),('Kootwijk','S',8833,'13504M002','F'),('Kunming','KUNL',7820,'21609S002','F'),('Kwajalein','S',7092,'50505M001','F'),('La Grande','S',7411,'40132M001','M'),('Lampedusa','S',7544,'12706M001','M'),('Lhasa','LHAL',7356,'21613M003','M'),('Lviv','LVIL',1831,'12368S001','F'),('Maidanak','MAID',1863,'12340S001','F'),('Maidanak','MAIL',1864,'12340S002','F'),('Makura Saki','S',7323,'','M'),('Matera','MATL',7939,'12734S001','F'),('Matera','MATM',7941,'12734S008','F'),('Matera','S',7540,'','M'),('Matera','S',7541,'','M'),('Mazatlan','S',7122,'40504M001','F'),('McDonald','MDOL',7080,'40442M006','F'),('McDonald','S',7897,'','M'),('McDonald','S',7885,'','M'),('McDonald','S',7850,'','M'),('McDonald','S',7206,'','F'),('McDonald','S',7086,'','F'),('McDonald','S',7999,'','M'),('Medicina','S',7546,'12711M002','M'),('Melengiclik','S',7580,'20803M001','M'),('Mendeleevo','MDVL',1870,'12309S001','F'),('Mendeleevo','MDVS',1874,'12309S003','F'),('Metsahovi','METL',7806,'10503S014','F'),('Metsahovi','S',7805,'','F'),('Minami Daito Jima','S',7304,'','M'),('Minami Tori Shima','S',7300,'21733S001','M'),('Miura','MIUL',7337,'21739M001','F'),('Mojave','S',7265,'40405M006','M'),('Mojave','S',7288,'40405M013','M'),('Monte Generoso','S',7590,'14005M002','M'),('Monte Venda','S',7542,'12749M001','M'),('Monument Peak','MONL',7110,'40497M001','F'),('Monument Peak','S',7220,'','M'),('Monument Peak','S',7274,'','M'),('Mount Hopkins','S',7888,'40434M002','F'),('Mount Hopkins','S',7921,'','F'),('Mount Stromlo','STL3',7825,'50119S003','F'),('Mount Stromlo','STRK',7826,'50119S007','E'),('Mount Stromlo','STRL',7849,'50119S001','F'),('Mount Wilson','S',7895,'','M'),('Natal','S',7929,'41604S001','F'),('Noto','S',7543,'12717M001','M'),('Oga','S',7321,'','M'),('Oki Gunto','S',7303,'','M'),('Okinawa (JHD)','S',7301,'21709S001','M'),('Olifontsfontein','S',7902,'30304S001','F'),('Ondrejov','S',1148,'','F'),('Otay Mountain','S',7035,'40436M003','M'),('Otay Mountain','S',7062,'40436M002','M'),('Owens Valley','S',7853,'40439M004','M'),('Owens Valley','S',7084,'40439M003','M'),('Owens Valley','S',7114,'40439M001','M'),('Paris','PARF',7828,'','M'),('Pasadena','S',7896,'40400M001','M'),('Patrick','S',7069,'40417M002','M'),('Patrick','S',7081,'40417M001','M'),('Platteville','S',7112,'40496M001','M'),('Potsdam','POTL',7836,'14106S009','F'),('Potsdam','POT3',7841,'14106S011','F'),('Potsdam','S',1181,'','F'),('Punta Sa Menta','S',7545,'12725M002','M'),('Quincy','S',7051,'40433M001','F'),('Quincy','S',7886,'40433M005','M'),('Quincy','S',7109,'40433M002','F'),('Richmond','S',7295,'40499M002','M'),('Riga','RIGL',1884,'12302S002','F'),('Riga','S',7560,'','M'),('Riga','S',1885,'','F'),('Riyadh','RIYL',7832,'20101S001','F'),('Roumelli','S',7517,'12613M001','M'),('San Fernando','SFEL',7824,'13402S007','F'),('San Fernando','SFEF',7823,'13402M005','M'),('San Juan','SJUL',7406,'41508S003','F'),('Santiago','S',7404,'41705M004','F'),('Santiago','S',7400,'','M'),('Santiago De Cuba','S',1953,'40701S001','F'),('Sarapul','S',1871,'12357S001','M'),('Shanghai','SHAL',7837,'21605S001','F'),('Shanghai','SHAL',7821,'21605S010','F'),('Simeiz','SIML',1873,'12337S003','F'),('Simeiz','S',7561,'','M'),('Simosato','SISL',7838,'21726S001','F'),('Sofia','S',7505,'11101M001','M'),('Stafford','STAL',7865,'49654M001','E'),('Sutherland','S',7502,'30314M001','M'),('Tahiti','THTL',7124,'92201M007','F'),('Tanegashima','GMSL',7358,'21749S001','F'),('Tateyama','TATL',7339,'21740M001','F'),('Tidbinbilla','S',7944,'','M'),('Tidbinbilla/Orroral','S',7843,'50103S007','F'),('Tidbinbilla/Orroral','S',7943,'50103S003','F'),('Tromso','S',7602,'10302M002','M'),('Tsushima','S',7302,'21735S001','M'),('Tyosi','S',7322,'','M'),('Urumqi','URUL',7355,'21612M002','M'),('Vandenberg','S',7111,'40420M001','M'),('Vandenberg','S',7887,'40420M004','M'),('Vernal','S',7892,'40492M001','M'),('Wakkanai','S',7320,'','F'),('Wallops Island','S',7066,'','F'),('Wallops Island','S',7070,'','F'),('Westford','S',7091,'40440M001','M'),('Wettzell','WETL',8834,'14201S018','F'),('Wettzell','S',7834,'','F'),('Wettzell','S',7599,'','M'),('Wettzell','S',7597,'','M'),('Wettzell','S',7596,'','M'),('Wettzell','WETT',7594,'14201M200','F'),('Wrightwood','OCTL',7040,'49901S001','E'),('Wuhan','WUHL',7231,'21602S004','F'),('Wuhan','S',7236,'','F'),('Xrisokalaria','S',7525,'12616M001','M'),('Yaragadee','YARL',7090,'50107M001','F'),('Yaragadee','S',7847,'','F'),('Yigilca','S',7587,'20804M001','M'),('Yozgat','S',7585,'20802M001','M'),('Yuma','S',7894,'40493M001','M'),('Zimmerwald','ZIML',7810,'14001S007','F');
+/*!40000 ALTER TABLE `site_slr` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-09-13 13:05:05
