@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="javadoc" name="UNAVCO">
+<project basedir="." default="gsac" name="UNAVCO">
 
     <target name="init">
         <property name="distdir" value="${basedir}/dist"/>
