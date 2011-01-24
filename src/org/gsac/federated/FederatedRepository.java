@@ -163,14 +163,16 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
 
         servers.add(
             new GsacRepositoryInfo(
-                "http://facility.unavco.org/gsacws", "UNAVCO GSAC Development Server",
+                "http://facdev.unavco.org:9090/gsacws", "UNAVCO GSAC Development Server",
                 "http://www.unavco.org/favicon.ico"));
 
+/*
         servers.add(
             new GsacRepositoryInfo(
                                    "http://geoappdev02.ucsd.edu/gsacws",
                                    "SOPAC GSAC Development Server",
                                    "http://sopac.ucsd.edu/favicon.ico"));
+*/
     }
 
 
