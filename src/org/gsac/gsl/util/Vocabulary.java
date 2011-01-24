@@ -57,6 +57,12 @@ public class Vocabulary {
     private Hashtable<String, String> internalToExternal =
         new Hashtable<String, String>();
 
+    /**
+       bean ctor
+     */
+    public Vocabulary() {
+    }
+
 
     /**
      * _more_
