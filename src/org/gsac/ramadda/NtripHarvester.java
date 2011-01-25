@@ -131,7 +131,7 @@ public class NtripHarvester extends Harvester {
     protected void processEntry(HarvesterEntry urlEntry, List<Entry> entries)
             throws Exception {
         String baseGroupId = urlEntry.getBaseGroupId();
-        Group  baseGroup   = ((baseGroupId.length() == 0)
+        Entry  baseGroup   = ((baseGroupId.length() == 0)
                               ? null
                               : getEntryManager().findGroup(null,
                                   baseGroupId));
@@ -148,7 +148,7 @@ public class NtripHarvester extends Harvester {
      *
      * @throws Exception _more_
      */
-    protected void processSourceTable(HarvesterEntry urlEntry, Group baseGroup)
+    protected void processSourceTable(HarvesterEntry urlEntry, Entry baseGroup)
             throws Exception {
         GsacSiteTypeHandler siteTypeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(

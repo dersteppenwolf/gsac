@@ -109,7 +109,7 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
      * @throws Exception _more_
      */
     public void initializeEntryFromForm(Request request, Entry entry,
-                                        Group parent, boolean newEntry)
+                                        Entry parent, boolean newEntry)
             throws Exception {
         super.initializeEntryFromForm(request, entry, parent, newEntry);
         if ( !newEntry) {

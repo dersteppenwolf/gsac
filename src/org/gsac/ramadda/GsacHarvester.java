@@ -125,7 +125,7 @@ public class GsacHarvester extends WebHarvester {
     protected void processEntry(HarvesterEntry urlEntry, List<Entry> entries)
             throws Exception {
         String baseGroupId = urlEntry.getBaseGroupId();
-        Group  baseGroup   = ((baseGroupId.length() == 0)
+        Entry  baseGroup   = ((baseGroupId.length() == 0)
                               ? null
                               : getEntryManager().findGroup(null,
                                   baseGroupId));
@@ -153,7 +153,7 @@ public class GsacHarvester extends WebHarvester {
      *
      * @throws Exception _more_
      */
-    protected void processDHFFile(HarvesterEntry urlEntry, Group baseGroup)
+    protected void processDHFFile(HarvesterEntry urlEntry, Entry baseGroup)
             throws Exception {
         GsacSiteTypeHandler siteTypeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(
@@ -208,7 +208,7 @@ public class GsacHarvester extends WebHarvester {
      *
      * @throws Exception _more_
      */
-    protected void processMCFile(HarvesterEntry urlEntry, Group baseGroup,
+    protected void processMCFile(HarvesterEntry urlEntry, Entry baseGroup,
                                  List<Entry> entries)
             throws Exception {
 
