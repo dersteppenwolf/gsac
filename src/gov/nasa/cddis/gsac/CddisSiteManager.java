@@ -243,6 +243,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                                   CddisType type, List<Clause> clauses,
                                   StringBuffer msgBuff, int count)
             throws Exception {
+        SqlUtil.debug = true;
         int          limit      = request.getLimit();
         int          offset     = request.getOffset();
 
@@ -354,6 +355,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         String       siteCodeColumn = type.getSiteCodeColumn();
         List         args           = null;
         List<Clause> clauses        = new ArrayList<Clause>();
+        clauses.add(Clause.isNotNull(siteCodeColumn));
         addBBOXSearchCriteria(request, clauses,
                               tableName + "." + COL_LATITUDE_DECIMAL,
                               tableName + "." + COL_LONGITUDE_DECIMAL,
