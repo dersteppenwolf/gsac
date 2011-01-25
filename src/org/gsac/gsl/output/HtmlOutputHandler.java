@@ -732,12 +732,21 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
 
         response.startResponse(GsacResponse.MIME_HTML);
 
+        boolean hasCssMacro = false;
 
+        String cssLink = HtmlUtil.cssLink(makeHtdocsUrl("/gsac.css"));
         if (shouldDecorate(request)) {
-            sb.append(getRepository().getHtmlHeader(request));
+            String header = getRepository().getHtmlHeader(request);
+            hasCssMacro = header.indexOf("${gsac.css}")>=0;
+            if(hasCssMacro) {
+                header = header.replace("${gsac.css}", cssLink);
+            }
+            sb.append(header);
         }
         sb.append("\n");
-        sb.append(HtmlUtil.cssLink(makeHtdocsUrl("/gsac.css")));
+        if(!hasCssMacro) {
+            sb.append(cssLink);
+        }
         sb.append("\n");
         sb.append(
             HtmlUtil.cssLink(
@@ -1156,7 +1165,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                 IconMetadata.getIconMetadata(site.getMetadata())) {
             return iconMetadata.getUrl();
         }
-        return getServlet().getAbsoluteUrl(getServlet().iconUrl("/site.jpg"));
+        return getServlet().getAbsoluteUrl(getServlet().iconUrl("/site.png"));
     }
 
 
