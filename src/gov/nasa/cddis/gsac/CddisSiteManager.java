@@ -162,6 +162,8 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
             return;
         }
 
+
+
         int          count      = 0;
         StringBuffer msgBuff    = new StringBuffer();
         List<String> tableNames = new ArrayList<String>();
@@ -173,6 +175,19 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         //First, go through each of the types and get the query clauses.
         //If any of them added type specific search then we only search for that type
         //So we clear out the clauses and just use the one
+
+        if(request.defined(ARG_SITE_ID)) {
+            for (String siteId : (List<String>) (List<String>) request.getList(ARG_SITE_ID)) {
+                appendSearchCriteria(msgBuff, "Site Id=", siteId);
+                GsacSite site = getSite(siteId);
+                if(site!=null) {
+                    response.addSite(site);
+                }
+            }
+            setSearchCriteriaMessage(response, msgBuff);
+            return;
+        }
+
         for (CddisType type : siteTypes) {
             boolean[] addedAnySpecificTypeClauses = { false };
             List<Clause> clauses = getSiteClauses(request, response, type,
