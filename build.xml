@@ -54,36 +54,36 @@ used by the javadoc target
 
 
     <target name="gsac" depends="init">
-      <antcall target="gsac_gsl"/>
-      <antcall target="gsac_client"/>
-      <antcall target="gsac_cddis"/>
-      <antcall target="gsac_federated"/>
-      <antcall target="gsac_ramadda"/>
+      <antcall target="gsl"/>
+      <antcall target="client"/>
+      <antcall target="cddis"/>
+      <antcall target="federated"/>
+      <antcall target="ramadda"/>
     </target>
 
 
-    <target name="gsac_gsl" depends="init">
+    <target name="gsl" depends="init">
       <echo message="Building GSL"/>
       <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
     </target>
 
-    <target name="gsac_client" depends="init">
+    <target name="client" depends="init">
       <echo message="Building GSAC client"/>
       <ant antfile="${srcdir}/org/gsac/client/build.xml" inheritAll="false"/>
     </target>
 
 
-    <target name="gsac_ramadda" depends="init">
+    <target name="ramadda" depends="init">
       <echo message="Building GSAC RAMADDA"/>
       <ant antfile="${srcdir}/org/gsac/ramadda/build.xml" inheritAll="false"/>
     </target>
 
-    <target name="gsac_cddis" depends="init">
+    <target name="cddis" depends="init">
       <echo message="Building GSAC CDDIS"/>
       <ant antfile="${srcdir}/gov/nasa/cddis/gsac/build.xml" inheritAll="false"/>
     </target>
 
-    <target name="gsac_federated" depends="init">
+    <target name="federated" depends="init">
       <echo message="Building GSAC Federated Repository"/>
       <ant antfile="${srcdir}/org/gsac/federated/build.xml" inheritAll="false"/>
     </target>
