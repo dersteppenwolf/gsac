@@ -363,6 +363,8 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception _more_
      */
     public void initServlet(GsacServlet servlet) throws Exception {
+    	
+    	System.err.println("GsacRepository.initServlet");
         LogUtil.setTestMode(true);
         this.servlet = servlet;
         InputStream inputStream;
@@ -425,26 +427,37 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        String dir = getProperty(PROP_GSACDIRECTORY, (String) null);
+        String dir = getProperty(PROP_GSACDIRECTORY, (String) null);      
+        
         if (dir != null) {
             gsacDirectory = new File(dir);
+        	System.err.println("GSAC: gsacDirectory from properties file: " + gsacDirectory);
         } else {
             String userHome = System.getProperty("user.home");
+        	System.err.println("GSAC: attempt to set gsacDirectory from user.home system property: " + userHome);
             if (userHome != null) {
                 File localDir = new File(userHome + "/.gsac");
                 if (localDir.exists()) {
                     gsacDirectory = localDir;
-                }
+                    System.err.println("GSAC: gsacDirectory from userHome/.gsac: " + gsacDirectory);
+                } else {
+                	System.err.println("GSAC: userHome/.gsac directory does not exist: " + userHome + "/.gsac; no gsacDirectory set");                    
+                }                
+            } else {
+            	System.err.println("GSAC: user.home system property is null, no gsacDirectory set");                                    
             }
         }
 
+
+        System.err.println("GSAC: using gsacDirectory: " + gsacDirectory);
         if (gsacDirectory != null) {
+
             initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
                                            + "/gsac.properties");
             System.err.println("GSAC: looking for: " + localPropertiesFile);
             if (localPropertiesFile.exists()) {
-                System.err.println("GSAC: loading: " + localPropertiesFile);
+                System.err.println("GSAC: loading " + localPropertiesFile);
                 properties.load(new FileInputStream(localPropertiesFile));
             }
         }
@@ -463,6 +476,7 @@ public class GsacRepository implements GsacConstants {
      * @param gsacDir _more_
      */
     public void initLogDir(File gsacDir) {
+    	System.err.println("GsacRepository.initLogDir");
         logDirectory = new File(gsacDirectory.toString() + "/logs");
         if ( !logDirectory.exists()) {
             logDirectory.mkdir();
@@ -1936,7 +1950,9 @@ public class GsacRepository implements GsacConstants {
     public void logAccess(GsacRequest request, String what) {
         String ip      = request.getOriginatingIP();
         String uri     = request.getRequestURI();
-        String message = ip + " " + uri;
+        String method  = request.getMethod();
+        int response = 200; // always set to this in GsacResponse.startResponse()
+        String message = ip + " " + uri + " " + method + " " + response;
         if (logDirectory != null) {
             getAccessLogger().info(message);
         } else {
