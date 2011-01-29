@@ -70,6 +70,12 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
     public static final String GSAC_COL_ID = TABLE_GSACSITE + "."
                                              + GenericTypeHandler.COL_ID;
 
+    public static final String GSAC_COL_SITEID = TABLE_GSACSITE + ".siteid";
+
+    public static final String GSAC_COL_STATUS = TABLE_GSACSITE + ".status";
+
+    public static final String GSAC_COL_SOURCE = TABLE_GSACSITE + ".source";
+
     /** _more_          */
     public static final String GSAC_COL_WHOLESALER = TABLE_GSACSITE
                                                      + ".wholesaler";
@@ -117,6 +123,18 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
         }
         //        initializeNewEntry(entry);
     }
+
+    /**                                                                                                                          
+     * _more_                                                                                                                    
+     *                                                                                                                           
+     * @param id _more_                                                                                                          
+     *                                                                                                                           
+     * @return _more_                                                                                                            
+     */
+    public Entry createEntry(String id) {
+        return new Entry(id, this, true);
+    }
+
 
     /**
      * _more_

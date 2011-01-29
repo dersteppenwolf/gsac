@@ -368,7 +368,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      *
      * @return the clause
      */
-    public Clause getStringSearchClause(String searchType, String column,
+    public static Clause getStringSearchClause(String searchType, String column,
                                         String value) {
         boolean not = value.startsWith("!");
         if (not) {

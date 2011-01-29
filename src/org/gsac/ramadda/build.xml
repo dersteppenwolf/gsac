@@ -62,6 +62,16 @@
             <exclude name="org/gsac/ramadda/gsacapi.xml"/>
 -->
 	    </jar>
+        <jar 
+            basedir="${libdir}"
+            update="true"
+            compress="true"
+            jarfile="${jars_dest}/${jarfile}">
+            <zipfileset  src="${libdir}/gsacws.jar"/>
+	    </jar>
+
+
+
     </target>
 
 

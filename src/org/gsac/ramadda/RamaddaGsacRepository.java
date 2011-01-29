@@ -23,6 +23,7 @@ package org.gsac.ramadda;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.metadata.LinkMetadata;
 
 import org.w3c.dom.*;
 
@@ -126,7 +127,6 @@ public class RamaddaGsacRepository extends GsacRepository {
 
 
 
-
     /**
      * _more_
      *
@@ -184,32 +184,26 @@ public class RamaddaGsacRepository extends GsacRepository {
         boolean                doJoin             = false;
         tables.add(GsacSiteTypeHandler.TABLE_GSACSITE);
 
-        if (request.defined(ARG_SITEID)) {
-            clauses.add(Clause.eq(GsacSiteTypeHandler.GSAC_COL_ID,
-                                  request.get(ARG_SITEID, (String) null)));
+        StringBuffer msgBuff = new StringBuffer();
+        if (request.defined(GsacArgs.ARG_SITE_CODE)) {
+            getSiteManager().addStringSearch(request, GsacArgs.ARG_SITE_CODE, GsacArgs.ARG_SITE_CODE_SEARCHTYPE,
+                            msgBuff, "Site Code",
+                            GsacSiteTypeHandler.GSAC_COL_SITEID,clauses);
         }
 
-        if (request.defined(ARG_NORTH) || request.defined(ARG_SOUTH)
-                || request.defined(ARG_EAST) || request.defined(ARG_WEST)) {
+        if (request.defined(GsacArgs.ARG_SITE_NAME)) {
             doJoin = true;
-            List<Clause> areaClauses = new ArrayList<Clause>();
-            if (request.defined(ARG_NORTH)) {
-                areaClauses.add(Clause.le(Tables.ENTRIES.COL_SOUTH,
-                                          request.get(ARG_NORTH, 0.0)));
-            }
-            if (request.defined(ARG_SOUTH)) {
-                areaClauses.add(Clause.ge(Tables.ENTRIES.COL_SOUTH,
-                                          request.get(ARG_SOUTH, 0.0)));
-            }
-            if (request.defined(ARG_WEST)) {
-                areaClauses.add(Clause.ge(Tables.ENTRIES.COL_WEST,
-                                          request.get(ARG_WEST, 0.0)));
-            }
-            if (request.defined(ARG_EAST)) {
-                areaClauses.add(Clause.le(Tables.ENTRIES.COL_WEST,
-                                          request.get(ARG_EAST, 0.0)));
-            }
+            getSiteManager().addStringSearch(request, GsacArgs.ARG_SITE_NAME, GsacArgs.ARG_SITE_CODE_SEARCHTYPE,
+                                             msgBuff, "Site Name",
+                                             Tables.ENTRIES.COL_DESCRIPTION,clauses);
+        }
+
+        List<Clause> areaClauses = new ArrayList<Clause>();
+        if(getSiteManager().addBBOXSearchCriteria(request,
+                                                  areaClauses, Tables.ENTRIES.COL_SOUTH,
+                                                  Tables.ENTRIES.COL_WEST, msgBuff)) {
             clauses.addAll(areaClauses);
+            doJoin = true;
         }
 
 
@@ -218,6 +212,8 @@ public class RamaddaGsacRepository extends GsacRepository {
             clauses.add(Clause.join(Tables.ENTRIES.COL_ID,
                                     GsacSiteTypeHandler.GSAC_COL_ID));
         }
+        System.err.println (clauses);
+        getSiteManager().setSearchCriteriaMessage(response, msgBuff);
         processSiteRequest(response, clauses, tables);
     }
 
@@ -258,12 +254,30 @@ public class RamaddaGsacRepository extends GsacRepository {
             Entry entry = getRepository().getEntryManager().getEntry(null,
                               id);
             Object[] values = entry.getValues();
-            response.addSite(new GsacSite(entry.getId(),
-                    (String) values[0], entry.getName(), entry.getNorth(),
-                    entry.getWest(), entry.getAltitudeTop()));
+
+
+            response.addSite(makeSite(entry));
         }
     }
 
+
+    public GsacSite doGetSite(String siteId) throws Exception {
+        Entry entry = getRepository().getEntryManager().getEntry(getRepository().getTmpRequest(),siteId);
+        if(entry==null) return null;
+        return makeSite(entry);
+    }
+
+    public GsacSite makeSite(Entry entry) throws Exception {
+        Object[] values = entry.getValues();
+        GsacSite site = new GsacSite(entry.getId(),
+                                     (String) entry.getValue(0,""), entry.getName(), entry.getNorth(),
+                                     entry.getWest(), entry.getAltitudeTop());
+        String entryUrl = getRepository().absoluteUrl(getRepository().getTmpRequest().entryUrl(getRepository().URL_ENTRY_SHOW, entry));
+        site.addMetadata(new LinkMetadata(entryUrl, "RAMADDA Entry"));
+
+
+        return site;
+    }
 
     /**
      * _more_

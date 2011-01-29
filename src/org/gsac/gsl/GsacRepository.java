@@ -382,7 +382,6 @@ public class GsacRepository implements GsacConstants {
                 properties.load(inputStream);
             }
         }
-        System.err.println("props:" + properties);
 
         inputStream = getResourceInputStream(
             getLocalResourcePath("/header.html"));
@@ -1226,20 +1225,32 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public String getInternalVocabulary(String type) {
-        return IOUtil.readContents(getLocalResourcePath("/vocabulary/" + type + ".properties"),"");
+    public String getInternalVocabulary(String type)   {
+        return readVocabulary(getLocalResourcePath("/vocabulary/" + type + ".properties"));
     }
 
 
-    public String getInternalVocabularyMap(String type) {
-        return IOUtil.readContents(getLocalResourcePath("/vocabulary/" + type + ".map"),"");
+    public String getInternalVocabularyMap(String type)    {
+        return readVocabulary(getLocalResourcePath("/vocabulary/" + type + ".map"));
     }
 
 
-    public String getExternalVocabulary(String type) {
-        return IOUtil.readContents(getCoreResourcePath("/vocabulary/" + type + ".properties"),"");
+    public String getExternalVocabulary(String type)    {
+        return readVocabulary(getCoreResourcePath("/vocabulary/" + type + ".properties"));
     }
 
+    public String readVocabulary(String path)   {
+        try {
+            InputStream is = getResourceInputStream(path);
+            if(is==null) {
+                System.err.println ("Failed to read vocabulary for:" + path);
+                return "";
+            }
+            return IOUtil.readContents(is);
+        } catch(Exception exc) {
+            throw new RuntimeException(exc);
+        }
+    }
 
 
 
@@ -1263,7 +1274,7 @@ public class GsacRepository implements GsacConstants {
         HashSet<String> internalMap   = new HashSet<String>();
 
         String[] vocabularyContents = { getExternalVocabulary(type),
-                                     getInternalVocabulary(type) };
+                                        getInternalVocabulary(type) };
 
         for (int i = 0; i < vocabularyContents.length; i++) {
             for (List<String> toks : tokenizeVocabulary(vocabularyContents[i])) {

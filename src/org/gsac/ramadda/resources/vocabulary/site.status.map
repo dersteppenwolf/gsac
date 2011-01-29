@@ -1,0 +1,12 @@
+#
+#Canonical core values for  site.status
+#This maps the gsac value to a description
+#
+
+
+active=active
+inactive=inactive
+
+
+
+

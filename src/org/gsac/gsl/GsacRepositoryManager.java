@@ -249,31 +249,37 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      * @param lonCol _more_
      * @param msgBuff _more_
      */
-    public void addBBOXSearchCriteria(GsacRequest request,
+    public boolean  addBBOXSearchCriteria(GsacRequest request,
                                       List<Clause> clauses, String latCol,
                                       String lonCol, StringBuffer msgBuff) {
 
         double value;
+        boolean addedAny = false;
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latCol,
                                   value = request.get(ARG_NORTH, 0.0)));
             appendSearchCriteria(msgBuff, "north&lt;=", "" + value);
+            addedAny = true;
         }
         if (request.defined(ARG_SOUTH)) {
             clauses.add(Clause.ge(latCol,
                                   value = request.get(ARG_SOUTH, 0.0)));
             appendSearchCriteria(msgBuff, "south&gt;=", "" + value);
+            addedAny = true;
         }
         if (request.defined(ARG_EAST)) {
             clauses.add(Clause.le(lonCol,
                                   value = request.get(ARG_EAST, 0.0)));
             appendSearchCriteria(msgBuff, "east&lt;=", "" + value);
+            addedAny = true;
         }
         if (request.defined(ARG_WEST)) {
             clauses.add(Clause.ge(lonCol,
                                   value = request.get(ARG_WEST, 0.0)));
             appendSearchCriteria(msgBuff, "west&gt;=", "" + value);
+            addedAny = true;
         }
+        return addedAny;
     }
 
 
@@ -408,8 +414,8 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                     value           = value.substring(0, value.length() - 1);
                 }
                 valueClauses.add(
-                    getDatabaseManager().getStringSearchClause(
-                        searchTypeToUse, column, value));
+                                 GsacDatabaseManager.getStringSearchClause(
+                                                                           searchTypeToUse, column, value));
 
             }
             if (valueClauses.size() > 0) {
