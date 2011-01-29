@@ -59,6 +59,10 @@ import java.util.List;
  */
 public class GsacResourceTypeHandler extends GenericTypeHandler {
 
+    public static final String TYPE_STREAM = "gsacstream";
+
+
+
     /**
      * _more_
      *
@@ -126,4 +130,26 @@ public class GsacResourceTypeHandler extends GenericTypeHandler {
                                              + HtmlUtil.input(id, siteId,
                                                  HtmlUtil.SIZE_10)));
     }
+
+    public static final String COL_SITEID = "siteid";
+
+    public void  formatColumnHtmlValue(Request request, Entry entry, Column column, StringBuffer tmpSb,  Object[]values) throws Exception {
+        if(column.getName().equals(COL_SITEID)) {
+            String siteId = (String) values[column.getOffset()];
+            if(siteId==null || siteId.length()==0) {
+                tmpSb.append(msg("Undefined"));
+                return;
+            }
+            Entry siteEntry = getEntryManager().getEntry(request, siteId);
+            if(siteEntry == null) {
+                tmpSb.append(msg("Undefined"));
+                return;
+            }
+            tmpSb.append(HtmlUtil.href(request.entryUrl(getRepository().URL_ENTRY_SHOW, siteEntry),  siteEntry.getName()));
+        }
+    }
+
+
+
+
 }

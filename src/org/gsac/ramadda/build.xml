@@ -55,11 +55,11 @@
             update="false"
             compress="true"
             jarfile="${jars_dest}/${jarfile}">
-            <include name="org/gsac/ramadda/**/*.class"/>
+            <include name="org/gsac/ramadda/**/*"/>
             <include name="org/gsac/ramadda/htdocs/**/*"/>
-            <include name="org/gsac/ramadda/*.properties"/>
+            <exclude name="org/gsac/ramadda/*.java"/>
 <!--
-            <include name="org/gsac/ramadda/*.xml"/>
+            <exclude name="org/gsac/ramadda/gsacapi.xml"/>
 -->
 	    </jar>
     </target>
@@ -67,7 +67,7 @@
 
 
     <target name="install" depends="gsacjar">
-        <copy overwrite="true"  todir="${user.home}/.unidata/repository/plugins">
+        <copy overwrite="true"  todir="${user.home}/.ramadda/plugins">
              <fileset file="${jars_dest}/gsacplugin.jar"/>
         </copy>
     </target>

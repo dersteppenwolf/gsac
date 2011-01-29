@@ -157,7 +157,7 @@ public class GsacHarvester extends WebHarvester {
             throws Exception {
         GsacSiteTypeHandler siteTypeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(
-                GsacSiteTypeHandler.TYPE_GSACSITE, false, false);
+                GsacSiteTypeHandler.TYPE_SITE, false, false);
         //        GsacResourceTypeHandler resourceTypeHandler = 
         String contents = IOUtil.readContents(urlEntry.getUrl(), getClass(),
                               null);
@@ -214,7 +214,7 @@ public class GsacHarvester extends WebHarvester {
 
         GsacSiteTypeHandler typeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(
-                GsacSiteTypeHandler.TYPE_GSACSITE, false, false);
+                GsacSiteTypeHandler.TYPE_SITE, false, false);
         String contents = IOUtil.readContents(urlEntry.getUrl(), getClass(),
                               null);
         if (contents == null) {

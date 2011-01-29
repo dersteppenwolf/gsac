@@ -3,7 +3,7 @@
   <type name="gsacsite"  description="GSAC Site" handler="org.gsac.ramadda.GsacSiteTypeHandler" >
      <column name="siteid" type="string"     label="Site ID" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
      <column name="source" type="string"     label="Source" columns="20"  showinhtml="true" cansearch="true" isindex="true"/>
-     <property name="icon" value="/gsac/gps.jpg"/>
+     <property name="icon" value="/gsac/site.png"/>
      <property name="form.show.location" value="true"/>
      <property name="form.show.altitude" value="true"/>
      <property name="form.show.resource" value="false"/>
@@ -11,7 +11,7 @@
 
 
   <type name="gsacresource"  description="GSAC Resource" handler="org.gsac.ramadda.GsacResourceTypeHandler" category="GSAC Entries" foruser="false">
-     <column name="siteid" type="string"     label="Site ID" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
+     <column name="siteid" type="string"     label="Site" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
      <property name="form.show.area" value="false"/>
      <property name="form.show.location" value="false"/>
      <property name="form.show.altitude" value="false"/>

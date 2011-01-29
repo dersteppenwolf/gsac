@@ -55,7 +55,7 @@ public abstract class ResourceManager extends GsacRepositoryManager {
      *
      * @param repository the repository
      */
-    public ResourceManager(GsacRepositoryImpl repository) {
+    public ResourceManager(GsacRepository repository) {
         super(repository);
     }
 

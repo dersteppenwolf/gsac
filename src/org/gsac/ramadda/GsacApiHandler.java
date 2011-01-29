@@ -81,6 +81,8 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
         super(repository);
         gsacRepository = new RamaddaGsacRepository(this);
         gsacServlet = new GsacServlet(gsacRepository, 8080, new Properties());
+        gsacServlet.initServlet();
+        gsacRepository.initServlet(gsacServlet);
     }
 
 
@@ -95,7 +97,7 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
      */
     public Result processGsacRequest(Request request) throws Exception {
         GsacRequest gsacRequest =
-            new GsacRequest(null, request.getHttpServletRequest(),
+            new GsacRequest(gsacRepository, request.getHttpServletRequest(),
                             request.getHttpServletResponse());
         gsacRequest.putProperty("request", request);
         gsacServlet.doGet(gsacRequest);

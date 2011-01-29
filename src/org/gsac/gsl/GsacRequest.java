@@ -26,6 +26,7 @@ import org.gsac.gsl.util.Vocabulary;
 
 
 import ucar.unidata.util.DateUtil;
+import ucar.unidata.util.Misc;
 
 import java.io.IOException;
 
@@ -603,6 +604,15 @@ public class GsacRequest implements GsacConstants {
      */
     public List getList(String key) {
         return get(key, new ArrayList());
+    }
+
+
+    public double getLatLon(String key, double dflt) {
+        String result = (String) getValue(key, (String) null);
+        if ((result == null) || (result.trim().length() == 0)) {
+            return dflt;
+        }
+        return Misc.decodeLatLon(result);
     }
 
 

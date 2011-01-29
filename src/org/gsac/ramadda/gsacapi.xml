@@ -4,7 +4,7 @@
       <property name="admin" value="false"/>
 
 <!-- Put these here so ramadda shows links (because of the toplevel=true) -->
-      <api request="/gsacws/site"           method="processGsacSiteRequest" toplevel="true" name="Search Sites"/>
-      <api request="/gsacws/resource"           method="processGsacResourceRequest" toplevel="true" name="Search Resources"/>
-      <api request="/gsacws/*"                    method="processGsacRequest" />
+      <api request="/gsacapi/site/form"           method="processGsacSiteRequest" toplevel="true" name="Search Sites"/>
+      <api request="/gsacapi/resource/form"           method="processGsacResourceRequest" toplevel="true" name="Search Resources"/>
+      <api request="/gsacapi/*"                    method="processGsacRequest" />
 </api>

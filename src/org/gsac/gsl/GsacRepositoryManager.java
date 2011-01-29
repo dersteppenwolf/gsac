@@ -65,7 +65,7 @@ import java.util.List;
 public abstract class GsacRepositoryManager implements GsacConstants {
 
     /** The repository */
-    private GsacRepositoryImpl repository;
+    private GsacRepository repository;
 
     /**
      * For enumerated values that have a value and a label (e.g., resource type)
@@ -81,7 +81,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      *
      * @param repository the repository
      */
-    public GsacRepositoryManager(GsacRepositoryImpl repository) {
+    public GsacRepositoryManager(GsacRepository repository) {
         this.repository = repository;
     }
 

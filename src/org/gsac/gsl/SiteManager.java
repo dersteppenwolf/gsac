@@ -69,7 +69,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
      *
      * @param repository the repository
      */
-    public SiteManager(GsacRepositoryImpl repository) {
+    public SiteManager(GsacRepository repository) {
         super(repository);
     }
 
@@ -343,27 +343,27 @@ public abstract class SiteManager extends GsacRepositoryManager {
                                      StringBuffer msgBuff) {
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latitudeColumn,
-                                  request.get(ARG_NORTH, 0.0)));
+                                  request.getLatLon(ARG_NORTH, 0.0)));
             appendSearchCriteria(msgBuff, "north&lt;=",
-                                 "" + request.get(ARG_NORTH, 0.0));
+                                 "" + request.getLatLon(ARG_NORTH, 0.0));
         }
         if (request.defined(ARG_SOUTH)) {
             clauses.add(Clause.ge(latitudeColumn,
-                                  request.get(ARG_SOUTH, 0.0)));
+                                  request.getLatLon(ARG_SOUTH, 0.0)));
             appendSearchCriteria(msgBuff, "south&gt;=",
-                                 "" + request.get(ARG_SOUTH, 0.0));
+                                 "" + request.getLatLon(ARG_SOUTH, 0.0));
         }
         if (request.defined(ARG_EAST)) {
             clauses.add(Clause.le(longitudeColumn,
-                                  request.get(ARG_EAST, 0.0)));
+                                  request.getLatLon(ARG_EAST, 0.0)));
             appendSearchCriteria(msgBuff, "east&lt;=",
-                                 "" + request.get(ARG_EAST, 0.0));
+                                 "" + request.getLatLon(ARG_EAST, 0.0));
         }
         if (request.defined(ARG_WEST)) {
             clauses.add(Clause.ge(longitudeColumn,
-                                  request.get(ARG_WEST, 0.0)));
+                                  request.getLatLon(ARG_WEST, 0.0)));
             appendSearchCriteria(msgBuff, "west&gt;=",
-                                 "" + request.get(ARG_WEST, 0.0));
+                                 "" + request.getLatLon(ARG_WEST, 0.0));
         }
     }
 

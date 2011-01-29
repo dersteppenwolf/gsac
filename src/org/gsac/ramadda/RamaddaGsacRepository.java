@@ -63,7 +63,7 @@ import java.util.List;
  * @author IDV Development Team
  * @version $Revision: 1.3 $
  */
-public class RamaddaGsacRepository extends GsacRepositoryImpl {
+public class RamaddaGsacRepository extends GsacRepository {
 
     /** _more_ */
     GsacApiHandler apiHandler;
@@ -86,6 +86,10 @@ public class RamaddaGsacRepository extends GsacRepositoryImpl {
      */
     public String getUrlBase() {
         return getRepository().getUrlBase();
+    }
+
+    public String getPackagePath() {
+        return "/org/gsac/ramadda";
     }
 
     /**
@@ -117,7 +121,7 @@ public class RamaddaGsacRepository extends GsacRepositoryImpl {
      */
     private GsacSiteTypeHandler getSiteTypeHandler() throws Exception {
         return (GsacSiteTypeHandler) getRepository().getTypeHandler(
-            GsacSiteTypeHandler.TYPE_GSACSITE, false, false);
+            GsacSiteTypeHandler.TYPE_SITE, false, false);
     }
 
 
@@ -217,6 +221,13 @@ public class RamaddaGsacRepository extends GsacRepositoryImpl {
         processSiteRequest(response, clauses, tables);
     }
 
+
+    public List<Capability> doGetSiteQueryCapabilities() {
+        List<Capability> capabilities = new ArrayList<Capability>();
+        getSiteManager().addDefaultSiteCapabilities(capabilities);
+        return capabilities;
+    }
+
     /**
      * _more_
      *
@@ -262,9 +273,10 @@ public class RamaddaGsacRepository extends GsacRepositoryImpl {
      *
      * @return _more_
      */
-    public StringBuffer decorateHtml(GsacRequest gsacRequest,
-                                     StringBuffer sb) {
+    public Appendable decorateHtml(GsacRequest gsacRequest,
+                                     Appendable buffer) {
         try {
+            StringBuffer sb =  (StringBuffer) buffer;
             Result  result  = new Result("GSAC", sb);
             Request request = (Request) gsacRequest.getProperty("request");
             if (request == null) {

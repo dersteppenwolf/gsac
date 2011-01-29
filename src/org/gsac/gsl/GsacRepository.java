@@ -34,6 +34,7 @@ import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.util.HtmlUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
@@ -363,10 +364,12 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception _more_
      */
     public void initServlet(GsacServlet servlet) throws Exception {
-    	
-    	System.err.println("GsacRepository.initServlet");
-        LogUtil.setTestMode(true);
         this.servlet = servlet;
+        init();
+    }
+
+    public void init() throws Exception {
+        LogUtil.setTestMode(true);
         InputStream inputStream;
         //load property files first
         String[] propertyFiles = { "/org/gsac/gsl/resources/gsac.properties",
@@ -374,13 +377,14 @@ public class GsacRepository implements GsacConstants {
                                    getLocalResourcePath(
                                        "/gsacserver.properties") };
         for (String file : propertyFiles) {
-            inputStream = servlet.getResourceInputStream(file);
+            inputStream = getResourceInputStream(file);
             if (inputStream != null) {
                 properties.load(inputStream);
             }
         }
+        System.err.println("props:" + properties);
 
-        inputStream = servlet.getResourceInputStream(
+        inputStream = getResourceInputStream(
             getLocalResourcePath("/header.html"));
         if (inputStream != null) {
             htmlHeader = IOUtil.readContents(inputStream);
@@ -388,7 +392,7 @@ public class GsacRepository implements GsacConstants {
                                             getUrlBase() + URL_BASE);
         }
 
-        inputStream = servlet.getResourceInputStream(
+        inputStream = getResourceInputStream(
             getLocalResourcePath("/footer.html"));
         if (inputStream != null) {
             htmlFooter = IOUtil.readContents(inputStream);
@@ -399,7 +403,7 @@ public class GsacRepository implements GsacConstants {
         String[] files = { "/org/gsac/gsl/resources/phrases.properties",
                            getLocalResourcePath("/phrases.properties") };
         for (String file : files) {
-            inputStream = servlet.getResourceInputStream(file);
+            inputStream = getResourceInputStream(file);
             if (inputStream != null) {
                 msgProperties.load(inputStream);
             }
@@ -427,8 +431,7 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        String dir = getProperty(PROP_GSACDIRECTORY, (String) null);      
-        
+        String dir = getProperty(PROP_GSACDIRECTORY, (String) null);
         if (dir != null) {
             gsacDirectory = new File(dir);
         	System.err.println("GSAC: gsacDirectory from properties file: " + gsacDirectory);
@@ -463,11 +466,36 @@ public class GsacRepository implements GsacConstants {
         }
 
 
+
         getSiteQueryCapabilities();
         getResourceQueryCapabilities();
 
         getRepositoryInfo();
     }
+
+
+    public InputStream getResourceInputStream(String path) throws Exception {
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            inputStream = GsacRepository.class.getResourceAsStream(path);
+        }
+
+
+        if (inputStream == null) {
+            List classLoaders = Misc.getClassLoaders();
+            for (int i = 0; i < classLoaders.size(); i++) {
+                try {
+                    ClassLoader cl = (ClassLoader) classLoaders.get(i);
+                    inputStream = cl.getResourceAsStream(path);
+                    if (inputStream != null) {
+                        break;
+                    }
+                } catch (Exception exc) {}
+            }
+        }
+        return inputStream;
+    }
+
 
 
     /**
@@ -476,7 +504,6 @@ public class GsacRepository implements GsacConstants {
      * @param gsacDir _more_
      */
     public void initLogDir(File gsacDir) {
-    	System.err.println("GsacRepository.initLogDir");
         logDirectory = new File(gsacDirectory.toString() + "/logs");
         if ( !logDirectory.exists()) {
             logDirectory.mkdir();
@@ -771,9 +798,15 @@ public class GsacRepository implements GsacConstants {
         if ( !fileTail.startsWith("/")) {
             fileTail = "/" + fileTail;
         }
+        String packagePath = getPackagePath();
+        return packagePath + "/resources" + fileTail;
+    }
+
+
+    public String getPackagePath() {
         String packageName = getClass().getPackage().getName();
         packageName = "/" + packageName.replace(".", "/");
-        return packageName + "/resources" + fileTail;
+        return packageName;
     }
 
 
@@ -796,9 +829,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public String getLocalHtdocsPath(String fileTail) {
-        String packageName = getClass().getPackage().getName();
-        packageName = "/" + packageName.replace(".", "/");
-        return packageName + "/htdocs/" + fileTail;
+        return getPackagePath() + "/htdocs/" + fileTail;
     }
 
     /**
@@ -866,7 +897,11 @@ public class GsacRepository implements GsacConstants {
      * @return the site manager
      */
     public SiteManager doMakeSiteManager() {
-        return null;
+        return new SiteManager(this) {
+            public  GsacSite getSite(String siteId) throws Exception {
+                return null;
+            }
+        };
     }
 
 

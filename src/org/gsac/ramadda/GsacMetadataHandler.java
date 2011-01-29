@@ -18,7 +18,7 @@
  * 
  */
 
-package org.unavco.gsac.ramadda;
+package org.gsac.ramadda;
 
 
 import org.w3c.dom.*;
@@ -57,6 +57,9 @@ import java.util.List;
  * @version $Revision: 1.3 $
  */
 public class GsacMetadataHandler extends MetadataHandler {
+
+    public static final String TYPE_STREAM_FORMAT = "gsac.stream.format";
+    public static final String TYPE_STREAM_SOURCE = "gsac.stream.source";
 
 
     /**

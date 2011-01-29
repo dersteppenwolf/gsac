@@ -117,7 +117,6 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      * @throws Exception on badness
      */
     public GsacServlet() throws Exception {
-        System.err.println("GsacServlet.ctor");
     }
 
 
