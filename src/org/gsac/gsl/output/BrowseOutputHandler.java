@@ -61,23 +61,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
     /** _more_ */
     public static final String WHAT_TYPES = "types";
 
-    /** what are we listing */
-    public static final String WHAT_SITE_CODES = "site.code";
-
-    /** what are we listing */
-    public static final String WHAT_SITE_GROUPS = "site.group";
-
-    /** what are we listing */
-    public static final String WHAT_SITE_TYPES = "site.type";
-
-    /** what are we listing */
-    public static final String WHAT_SITE_STATUS = "site.status";
-
-    /** xml tag */
-    public static final String TAG_GROUPS = "groups";
-
-    /** xml tag */
-    public static final String TAG_GROUP = "group";
 
     /** xml attribute */
     public static final String ATTR_ID = "id";
@@ -94,15 +77,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
     /** xml listing */
     public static final String OUTPUT_BROWSE_XML = "browse.xml";
 
-
-
-    /** _more_ */
-    private static String[] WHATS;
-
-    /** _more_ */
-    private static String[] LABELS;
-
-
+    /** _more_          */
     private List<Capability> browseCapabilities;
 
 
@@ -117,8 +92,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
 
         getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_HTML,
                 "HTML"));
-        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_DEFAULT,
-                "Default"));
+        getServlet().addBrowseOutput(new GsacOutput(this,
+                OUTPUT_BROWSE_DEFAULT, "Default"));
         getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_CSV,
                 "CSV"));
         getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_XML,
@@ -129,59 +104,20 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      * _more_
      */
     private void checkInit() {
-        if(browseCapabilities == null) {
-            List<Capability> tmp = new ArrayList<Capability>();
-
-            GsacRepositoryInfo       gri     = getRepository().getRepositoryInfo();
+        if (browseCapabilities == null) {
+            List<Capability>   tmp = new ArrayList<Capability>();
+            GsacRepositoryInfo gri = getRepository().getRepositoryInfo();
+            for (CapabilityCollection collection : gri.getCollections()) {
+                for (Capability capability : collection.getCapabilities()) {
+                    if (capability.isEnumeration()
+                            || capability.getBrowse()) {
+                        tmp.add(capability);
+                    }
+                }
+            }
             browseCapabilities = tmp;
         }
     }
-
-    /**
-     * _more_
-     *
-     * @param request _more_
-     * @param response _more_
-     * @param output _more_
-     *
-     * @throws Exception _more_
-     */
-    /*
-    public void handleTypesRequest(GsacRequest request,
-                                   GsacResponse response, String output)
-            throws Exception {
-
-        List things = new ArrayList();
-
-        for(Capability cap: browseCapabilities) {
-            String id = cap.
-            //Skip site codes
-            if (id.equals(WHAT_SITE_CODES)) {
-                continue;
-            }
-            String label = msg(LABELS[i]);
-            things.add(new IdLabel(id, label));
-        }
-        List<Capability> capabilities =
-            getRepository().getSiteQueryCapabilities();
-
-        for (Capability capability : capabilities) {
-            if ( !capability.isEnumeration()) {
-                continue;
-            }
-            String id    = capability.getId();
-            String label = capability.getLabel();
-            things.add(new IdLabel(id, label));
-        }
-
-        if (output.equals(OUTPUT_BROWSE_CSV)) {
-            handleCsvRequest(request, response, WHAT_TYPES, things);
-        } else {
-            handleXmlRequest(request, response, WHAT_TYPES, things);
-        }
-    }
-
-*/
 
 
     /**
@@ -192,77 +128,54 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleBrowseRequest(GsacRequest request, GsacResponse response)
+    public void handleBrowseRequest(GsacRequest request,
+                                    GsacResponse response)
             throws Exception {
         List   things    = null;
-        String what      = request.get(ARG_BROWSE_WHAT, WHAT_SITE_TYPES);
+        String what      = request.get(ARG_BROWSE_WHAT, "");
         String searchArg = null;
         String output    = request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT);
-        if (what.equals(WHAT_SITE_GROUPS)) {
-            things    = getRepository().getSiteGroups();
-            searchArg = ARG_SITE_GROUP;
-        } else if (what.equals(WHAT_TYPES)) {
-            //            handleTypesRequest(request, response, output);
-            return;
-        } else if (what.equals(WHAT_SITE_CODES)) {
-            handleSiteCodeRequest(request, response, output);
-            return;
-        } else if (what.equals(WHAT_SITE_TYPES)) {
-            things    = getRepository().getSiteTypes();
-            searchArg = ARG_SITE_TYPE;
-        } else if (what.equals(WHAT_SITE_STATUS)) {
-            things    = getRepository().getSiteStatuses();
-            searchArg = ARG_SITE_STATUS;
-        } else {
-            List<Capability> capabilities =
-                getRepository().getSiteQueryCapabilities();
-            for (Capability capability : capabilities) {
-                if ( !capability.isEnumeration()) {
-                    continue;
+        for (Capability capability : browseCapabilities) {
+            if (what.equals(capability.getId())) {
+                if (capability.isEnumeration()) {
+                    handleEnumerationRequest(request, response, capability);
+                } else {
+                    handleStringRequest(request, response, capability);
                 }
-                String arg = capability.getId();
-                if (arg.equals(what)) {
-                    searchArg = arg;
-                    things    = capability.getEnums();
-                    break;
-                }
+                return;
             }
         }
 
-        if (output.equals(OUTPUT_BROWSE_HTML)
-                || output.equals(OUTPUT_BROWSE_DEFAULT)) {
-            handleHtmlRequest(request, response, what, things, searchArg);
-        } else if (output.equals(OUTPUT_BROWSE_CSV)) {
-            handleCsvRequest(request, response, what, things);
-        } else if (output.equals(OUTPUT_BROWSE_XML)) {
-            handleXmlRequest(request, response, what, things);
-        } else {
-            throw new IllegalArgumentException("Unknown output type:"
-                    + output);
-        }
+        StringBuffer html = new StringBuffer();
+        initHtml(request, response, html);
+        html.append(getHeader(request, null));
+        finishHtml(request, response, html);
     }
 
 
     /**
-     * handle the site listing by site code letter
+     * handle the listing by beginning of string  letter
      *
      * @param request the request
      * @param response the response
      * @param output output type
+     * @param capability _more_
      *
      * @throws Exception on badness
      */
-    public void handleSiteCodeRequest(GsacRequest request,
-                                      GsacResponse response, String output)
+    public void handleStringRequest(GsacRequest request,
+                                    GsacResponse response,
+                                    Capability capability)
             throws Exception {
         String       letter = request.get(ARG_LETTER, "A").toUpperCase();
         StringBuffer html   = new StringBuffer();
         initHtml(request, response, html);
-        html.append(getHeader(request, WHAT_SITE_CODES));
+        html.append(getHeader(request, capability));
         String[] letters = {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
         };
+        String       id    = capability.getId();
 
         List<String> links = new ArrayList<String>();
         for (String l : letters) {
@@ -271,8 +184,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                         HtmlUtil.cssClass("firstletternav")));
             } else {
                 String url = getServlet().getUrl(URL_BROWSE_BASE) + "?"
-                             + ARG_BROWSE_WHAT + "=" + WHAT_SITE_CODES + "&"
-                             + ARG_LETTER + "=" + l;
+                             + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
+                             + "=" + l;
                 links.add(HtmlUtil.href(url, l,
                                         HtmlUtil.cssClass("firstletternav")));
             }
@@ -287,14 +200,15 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         Hashtable<String, String> outputMap = new Hashtable<String, String>();
 
         GsacRequest               searchRequest = new GsacRequest(request);
-        searchRequest.put(ARG_SITE_CODE, letter);
-        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
+        searchRequest.put(capability.getId(), letter + "*");
+        //        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
         searchRequest.put(ARG_LIMIT, 10000 + "");
+
         getRepository().handleSiteRequest(searchRequest, response);
         List<GsacSite> sites = response.getSites();
         if (sites.size() == 0) {
             html.append(
-                getServlet().makeInformationDialog(msg("No sites found")));
+                getServlet().makeInformationDialog(msg("No results found")));
         } else {
             makeSiteHtmlTable(request, html, sites);
         }
@@ -306,35 +220,18 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      *
      * @param request the request
      * @param what what are we viewing
+     * @param capability _more_
      *
      * @return nav header
      */
-    public String getHeader(GsacRequest request, String what) {
+    public String getHeader(GsacRequest request, Capability capability) {
         List<String> links = new ArrayList<String>();
 
-        for (int i = 0; i < WHATS.length; i++) {
-            String id    = WHATS[i];
-            String label = msg(LABELS[i]);
-            if (what.equals(id)) {
-                String lbl = HtmlUtil.b(label);
-                links.add(lbl);
-            } else {
-                links.add(HtmlUtil.href(getServlet().getUrl(URL_BROWSE_BASE)
-                                        + "?" + ARG_BROWSE_WHAT + "="
-                                        + id, label));
-            }
-        }
-
-
-        List<Capability> capabilities =
-            getRepository().getSiteQueryCapabilities();
-        for (Capability capability : capabilities) {
-            if ( !capability.isEnumeration()) {
-                continue;
-            }
-            String id    = capability.getId();
-            String label = capability.getLabel();
-            if (what.equals(id)) {
+        for (Capability cap : browseCapabilities) {
+            String id    = cap.getId();
+            String label = cap.getLabel();
+            if ((capability != null)
+                    && capability.getId().equals(cap.getId())) {
                 String lbl = HtmlUtil.b(label);
                 links.add(lbl);
             } else {
@@ -348,7 +245,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                         HtmlUtil.cssClass("navheader"),
                                         StringUtil.join("&nbsp;|&nbsp;",
                                             links));
-
+        /*
         String baseUrl = getServlet().getUrl(URL_BROWSE_BASE);
         if ( !what.equals(WHAT_SITE_CODES)) {
             String suffix = "/" + what.replace(".", "_");
@@ -369,7 +266,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
 
             navHeader += urls;
         }
-
+        */
         return navHeader;
     }
 
@@ -381,21 +278,28 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      * @param response the response
      * @param what what are  we listing
      * @param things the named things we are listing
-     * @param arg the url arg that we do a site search on
+     * @param arg the url arg that we do a search on
+     * @param capability _more_
      *
      * @throws Exception on badness
      */
-    public void handleHtmlRequest(GsacRequest request, GsacResponse response,
-                                  String what, List things, String arg)
+    public void handleEnumerationRequest(GsacRequest request,
+                                         GsacResponse response,
+                                         Capability capability)
             throws Exception {
 
+        List         things      = capability.getEnums();
         StringBuffer sb          = new StringBuffer();
         String       firstLetter = null;
         List<String> header      = new ArrayList<String>();
-        String       url         = makeUrl(URL_SITE_SEARCH);
+        String       url         =
+            capability.getCollection().getRelativeUrl();
+        String       id          = capability.getId();
+
         sb.append(HtmlUtil.form(url, HtmlUtil.attr("name", "searchform")));;
+
         sb.append(HtmlUtil.submit(msg("Search"), ARG_SEARCH));
-        sb.append(HtmlUtil.br());
+        sb.append("<div style=\"margin:10px;margin-left:15px;\">");
         StringBuffer letterBuffer = new StringBuffer();
         for (NamedThing thing : (List<NamedThing>) things) {
             String thingName = thing.getName();
@@ -416,14 +320,15 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                     sb.append(HtmlUtil.br());
                 }
             }
-            sb.append(HtmlUtil.checkbox(arg, thing.getId(), false));
+            sb.append(HtmlUtil.checkbox(id, thing.getId(), false));
             sb.append(HtmlUtil.space(2));
-            sb.append(getSearchLink(thing, arg));
+            sb.append(getSearchLink(thing, url, id));
             sb.append(HtmlUtil.br());
         }
+        sb.append("</div>");
         StringBuffer html = new StringBuffer();
         initHtml(request, response, html);
-        html.append(getHeader(request, what));
+        html.append(getHeader(request, capability));
         if ((things.size() > 10) && (header.size() > 4)) {
             String headerHtml =
                 StringUtil.join(

@@ -58,6 +58,7 @@ public class Capability {
     /** _more_ */
     public static final String ATTR_COLUMNS = "columns";
 
+    /** _more_          */
     public static final String ATTR_BROWSE = "browse";
 
     /** _more_ */
@@ -96,6 +97,7 @@ public class Capability {
     public static final String TYPE_DATERANGE = "date_range";
 
 
+    /** _more_          */
     public static final String TYPE_NUMBERRANGE = "number_range";
 
     /** _more_ */
@@ -122,6 +124,7 @@ public class Capability {
     /** _more_ */
     private int columns = 30;
 
+    /** _more_          */
     private boolean browse = false;
 
     /** _more_ */
@@ -137,8 +140,11 @@ public class Capability {
     private List<GsacRepositoryInfo> repositories =
         new ArrayList<GsacRepositoryInfo>();
 
-    /** _more_          */
+    /** _more_ */
     private String suffixLabel = "";
+
+    /** _more_          */
+    private CapabilityCollection collection;
 
 
     /**
@@ -176,9 +182,18 @@ public class Capability {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param label _more_
+     * @param vocabulary _more_
+     * @param allowMultiples _more_
+     */
     public Capability(String id, String label, Vocabulary vocabulary,
                       boolean allowMultiples) {
-        this(id, label, TYPE_ENUMERATION, vocabulary.getValues(), allowMultiples);
+        this(id, label, TYPE_ENUMERATION, vocabulary.getValues(),
+             allowMultiples);
         this.vocabulary = vocabulary;
     }
 
@@ -215,34 +230,39 @@ public class Capability {
 
 
     /**
-       Set the Vocabulary property.
-
-       @param value The new value for Vocabulary
-    **/
-    public void setVocabulary (Vocabulary value) {
+     *  Set the Vocabulary property.
+     *
+     *  @param value The new value for Vocabulary
+     */
+    public void setVocabulary(Vocabulary value) {
         //Only set the vocabulary if it has values
-        if(value.hasValues()) {
+        if (value.hasValues()) {
             vocabulary = value;
         }
     }
 
     /**
-       Get the Vocabulary property.
-
-       @return The Vocabulary
-    **/
-    public Vocabulary getVocabulary () {
-	return vocabulary;
+     *  Get the Vocabulary property.
+     *
+     *  @return The Vocabulary
+     */
+    public Vocabulary getVocabulary() {
+        return vocabulary;
     }
 
 
 
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     */
     public void printDescription(PrintWriter pw) {
-	if(type.equals(TYPE_DATERANGE)) {
-	    pw.println(label +": "+  id+".from" + " " + id+".to");
-	} else {
-	    pw.println(label +": "+  id);
-	}
+        if (type.equals(TYPE_DATERANGE)) {
+            pw.println(label + ": " + id + ".from" + " " + id + ".to");
+        } else {
+            pw.println(label + ": " + id);
+        }
     }
 
 
@@ -269,9 +289,14 @@ public class Capability {
 
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean enumsOk() {
         if (isEnumeration()) {
-            return getEnums().size()>0;
+            return getEnums().size() > 0;
         }
         return true;
     }
@@ -285,18 +310,16 @@ public class Capability {
      */
     public void toXml(Appendable sb) throws Exception {
         StringBuffer attrs = new StringBuffer(XmlUtil.attrs(ATTR_ID, id,
-                                                            ATTR_TYPE, type, ATTR_LABEL, label));
+                                 ATTR_TYPE, type, ATTR_LABEL, label));
 
         if (group != null) {
             attrs.append(XmlUtil.attrs(ATTR_GROUP, group));
         }
-        if(columns!=0) {
-            attrs.append(XmlUtil.attrs(ATTR_COLUMNS,
-                                       "" + columns));
+        if (columns != 0) {
+            attrs.append(XmlUtil.attrs(ATTR_COLUMNS, "" + columns));
         }
-        if(browse) {
-            attrs.append(XmlUtil.attrs(ATTR_BROWSE,
-                                       "" + browse));
+        if (browse) {
+            attrs.append(XmlUtil.attrs(ATTR_BROWSE, "" + browse));
         }
         if (isEnumeration()) {
             attrs.append(XmlUtil.attrs(ATTR_ALLOWMULTIPLES,
@@ -309,7 +332,7 @@ public class Capability {
                 String valueAttrs = XmlUtil.attrs(ATTR_ID, object.getId());
                 if ( !object.labelSameAsId()) {
                     valueAttrs += XmlUtil.attrs(ATTR_LABEL,
-                                                object.getLabel());
+                            object.getLabel());
                 }
                 sb.append(XmlUtil.tag(TAG_VALUE, valueAttrs));
                 sb.append("\n");
@@ -333,9 +356,8 @@ public class Capability {
      * @return _more_
      */
     public static List<Capability> mergeCapabilities(
-                                                     List<Capability> capabilities,
-                                                     Hashtable<String, Capability> used) {
-
+            List<Capability> capabilities,
+            Hashtable<String, Capability> used) {
         List<Capability> results = new ArrayList<Capability>();
         for (Capability capability : capabilities) {
             results.add(mergeCapability(capability, used));
@@ -353,13 +375,13 @@ public class Capability {
      */
     public static Capability mergeCapability(Capability capability,
                                              Hashtable<String,
-                                             Capability> used) {
+                                                 Capability> used) {
         Capability existingCapability = used.get(capability.getId());
         if (existingCapability != null) {
             if ( !capability.getType().equals(existingCapability.getType())) {
                 throw new IllegalArgumentException(
-                                                   "Capability type mismatch:" + existingCapability + " != "
-                                                   + capability);
+                    "Capability type mismatch:" + existingCapability + " != "
+                    + capability);
             }
             if (existingCapability.getType().equals(TYPE_ENUMERATION)) {
                 System.err.println("Merging " + existingCapability.getId());
@@ -431,7 +453,7 @@ public class Capability {
      */
     public static Capability makeBooleanCapability(SearchInfo info) {
         return Capability.makeBooleanCapability(info.getUrlArg(),
-                                                info.getLabel());
+                info.getLabel());
     }
 
 
@@ -480,6 +502,25 @@ public class Capability {
     public String getId() {
         return id;
     }
+
+    /**
+     *  Set the Collection property.
+     *
+     *  @param value The new value for Collection
+     */
+    public void setCollection(CapabilityCollection value) {
+        collection = value;
+    }
+
+    /**
+     *  Get the Collection property.
+     *
+     *  @return The Collection
+     */
+    public CapabilityCollection getCollection() {
+        return collection;
+    }
+
 
     /**
      *  Set the Label property.
@@ -535,8 +576,8 @@ public class Capability {
      *  @return The Enums
      */
     public List<IdLabel> getEnums() {
-        if(vocabulary!=null) {
-            System.err.println("Got vocab:" +vocabulary.getValues());
+        if (vocabulary != null) {
+            System.err.println("Got vocab:" + vocabulary.getValues());
             return vocabulary.getValues();
         }
 
@@ -563,21 +604,21 @@ public class Capability {
     }
 
     /**
-       Set the Browse property.
-
-       @param value The new value for Browse
-    **/
-    public void setBrowse (boolean value) {
-	browse = value;
+     *  Set the Browse property.
+     *
+     *  @param value The new value for Browse
+     */
+    public void setBrowse(boolean value) {
+        browse = value;
     }
 
     /**
-       Get the Browse property.
-
-       @return The Browse
-    **/
-    public boolean getBrowse () {
-	return browse;
+     *  Get the Browse property.
+     *
+     *  @return The Browse
+     */
+    public boolean getBrowse() {
+        return browse;
     }
 
 

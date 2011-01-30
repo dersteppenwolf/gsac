@@ -104,10 +104,10 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     /** _more_ */
     private boolean haveInitialized = false;
 
-    /** _more_          */
+    /** _more_ */
     private int numConnections = 0;
 
-    /** _more_          */
+    /** _more_ */
     private Date startDate = new Date();
 
     /**
@@ -116,8 +116,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      *
      * @throws Exception on badness
      */
-    public GsacServlet() throws Exception {
-    }
+    public GsacServlet() throws Exception {}
 
 
     /**
@@ -561,8 +560,8 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      * @return _more_
      */
     public GsacOutputHandler getBrowseOutputHandler(GsacRequest request) {
-        return getOutputHandler(request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT),
-                                listOutputMap);
+        return getOutputHandler(
+            request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT), listOutputMap);
     }
 
 
@@ -584,6 +583,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     }
 
 
+    /** _more_          */
     List conns = new ArrayList();
 
     /**

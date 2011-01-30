@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 
 
 import org.gsac.gsl.database.*;
-import org.w3c.dom.*;
 
 
 import org.gsac.gsl.model.*;
@@ -33,10 +32,12 @@ import org.gsac.gsl.output.*;
 
 import org.gsac.gsl.util.*;
 
+import org.w3c.dom.*;
+
 import ucar.unidata.util.HtmlUtil;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlUtil;
@@ -208,7 +209,8 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public List<String> externalToInternal(String vocabularyId, String value) {
+    public List<String> externalToInternal(String vocabularyId,
+                                           String value) {
         Vocabulary vocabulary = getVocabulary(vocabularyId);
         if (vocabulary != null) {
             return vocabulary.externalToInternal(value);
@@ -264,7 +266,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public List<String> convertToInternal(Vocabulary vocabulary, String key,
-                                   List<String> incoming) {
+                                          List<String> incoming) {
         if (vocabulary == null) {
             return incoming;
         }
@@ -368,7 +370,13 @@ public class GsacRepository implements GsacConstants {
         init();
     }
 
+    /**
+     * _more_
+     *
+     * @throws Exception _more_
+     */
     public void init() throws Exception {
+
         LogUtil.setTestMode(true);
         InputStream inputStream;
         //load property files first
@@ -383,16 +391,16 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        inputStream = getResourceInputStream(
-            getLocalResourcePath("/header.html"));
+        inputStream =
+            getResourceInputStream(getLocalResourcePath("/header.html"));
         if (inputStream != null) {
             htmlHeader = IOUtil.readContents(inputStream);
             htmlHeader = htmlHeader.replace("${urlroot}",
                                             getUrlBase() + URL_BASE);
         }
 
-        inputStream = getResourceInputStream(
-            getLocalResourcePath("/footer.html"));
+        inputStream =
+            getResourceInputStream(getLocalResourcePath("/footer.html"));
         if (inputStream != null) {
             htmlFooter = IOUtil.readContents(inputStream);
             htmlFooter = htmlFooter.replace("${urlroot}",
@@ -433,20 +441,28 @@ public class GsacRepository implements GsacConstants {
         String dir = getProperty(PROP_GSACDIRECTORY, (String) null);
         if (dir != null) {
             gsacDirectory = new File(dir);
-        	System.err.println("GSAC: gsacDirectory from properties file: " + gsacDirectory);
+            System.err.println("GSAC: gsacDirectory from properties file: "
+                               + gsacDirectory);
         } else {
             String userHome = System.getProperty("user.home");
-        	System.err.println("GSAC: attempt to set gsacDirectory from user.home system property: " + userHome);
+            System.err.println(
+                "GSAC: attempt to set gsacDirectory from user.home system property: "
+                + userHome);
             if (userHome != null) {
                 File localDir = new File(userHome + "/.gsac");
                 if (localDir.exists()) {
                     gsacDirectory = localDir;
-                    System.err.println("GSAC: gsacDirectory from userHome/.gsac: " + gsacDirectory);
+                    System.err.println(
+                        "GSAC: gsacDirectory from userHome/.gsac: "
+                        + gsacDirectory);
                 } else {
-                	System.err.println("GSAC: userHome/.gsac directory does not exist: " + userHome + "/.gsac; no gsacDirectory set");                    
-                }                
+                    System.err.println(
+                        "GSAC: userHome/.gsac directory does not exist: "
+                        + userHome + "/.gsac; no gsacDirectory set");
+                }
             } else {
-            	System.err.println("GSAC: user.home system property is null, no gsacDirectory set");                                    
+                System.err.println(
+                    "GSAC: user.home system property is null, no gsacDirectory set");
             }
         }
 
@@ -470,9 +486,19 @@ public class GsacRepository implements GsacConstants {
         getResourceQueryCapabilities();
 
         getRepositoryInfo();
+
     }
 
 
+    /**
+     * _more_
+     *
+     * @param path _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public InputStream getResourceInputStream(String path) throws Exception {
         InputStream inputStream = getClass().getResourceAsStream(path);
         if (inputStream == null) {
@@ -572,60 +598,59 @@ public class GsacRepository implements GsacConstants {
      */
     public List<GsacRepositoryInfo> getServers() {
         List<GsacRepositoryInfo> list = servers.get();
-        if (list == null) {
-            synchronized (servers) {
-                list = new ArrayList<GsacRepositoryInfo>();
-                doMakeServerInfoList(list);
-                List<GsacRepositoryInfo> goodList =
-                    new ArrayList<GsacRepositoryInfo>();
-                Hashtable<String, Capability> usedSiteCapabilities =
-                    new Hashtable<String, Capability>();
-                Hashtable<String, Capability> usedResourceCapabilities =
-                    new Hashtable<String, Capability>();
-                boolean anyErrors = false;
-                for (GsacRepositoryInfo info : list) {
-                    try {
-                        initRemoteRepository(info, usedSiteCapabilities,
-                                             usedResourceCapabilities);
-                        goodList.add(info);
-                    } catch (Exception exc) {
-                        anyErrors = true;
-                        logError("Initializing remote repository:" + info,
-                                 null);
-                    }
+        if (list != null) {
+            return new ArrayList<GsacRepositoryInfo>(list);
+        }
+        synchronized (servers) {
+            list = new ArrayList<GsacRepositoryInfo>();
+            doMakeServerInfoList(list);
+            List<GsacRepositoryInfo> goodList =
+                new ArrayList<GsacRepositoryInfo>();
+            Hashtable<String, Hashtable<String, Capability>> collectionToUsedCapabilities =
+                new Hashtable<String, Hashtable<String, Capability>>();
+            boolean anyErrors = false;
+            for (GsacRepositoryInfo info : list) {
+                try {
+                    initRemoteRepository(info, collectionToUsedCapabilities);
+                    goodList.add(info);
+                } catch (Exception exc) {
+                    anyErrors = true;
+                    logError("Initializing remote repository:" + info, null);
                 }
-                //If there were any errors then reset the ttl for the list holder
-                //to check back in 15 minutes
-                //else if no errors then set it to the default 60
-                if (anyErrors) {
-                    servers.setTimeThreshold(TTLCache.MS_IN_A_MINUTE * 15);
-                } else {
-                    servers.setTimeThreshold(TTLCache.MS_IN_AN_HOUR * 6);
-                }
-                list = goodList;
-                servers.put(list);
+            }
+            //If there were any errors then reset the ttl for the list holder
+            //to check back in 15 minutes
+            //else if no errors then set it to the default 60
+            if (anyErrors) {
+                servers.setTimeThreshold(TTLCache.MS_IN_A_MINUTE * 15);
+            } else {
+                servers.setTimeThreshold(TTLCache.MS_IN_AN_HOUR * 6);
+            }
+            list = goodList;
+            servers.put(list);
 
-                for (Hashtable caps : new Hashtable[] { usedSiteCapabilities,
-                        usedResourceCapabilities }) {
-                    for (Enumeration keys = caps.keys();
-                            keys.hasMoreElements(); ) {
-                        Capability capability =
-                            (Capability) caps.get(keys.nextElement());
-                        String group = null;
-                        System.err.println(capability);
-                        if (capability.getRepositories().size() == 1) {
-                            group =
-                                capability.getRepositories().get(0).getName();
+            for (Enumeration collectionKeys =
+                    collectionToUsedCapabilities.keys();
+                    collectionKeys.hasMoreElements(); ) {
+                Hashtable<String, Capability> caps =
+                    collectionToUsedCapabilities.get(
+                        collectionKeys.nextElement());
+                for (Enumeration keys =
+                        caps.keys(); keys.hasMoreElements(); ) {
+                    Capability capability =
+                        (Capability) caps.get(keys.nextElement());
+                    String group = null;
+                    if (capability.getRepositories().size() == 1) {
+                        group = capability.getRepositories().get(0).getName();
+                    } else {
+                        group = "Remote Repositories";
+                    }
+                    if (group != null) {
+                        if (capability.hasGroup()) {
+                            capability.setGroup(group + ": "
+                                    + capability.getGroup());
                         } else {
-                            group = "Remote Repositories";
-                        }
-                        if (group != null) {
-                            if (capability.hasGroup()) {
-                                capability.setGroup(group + ": "
-                                        + capability.getGroup());
-                            } else {
-                                capability.setGroup(group);
-                            }
+                            capability.setGroup(group);
                         }
                     }
                 }
@@ -641,17 +666,18 @@ public class GsacRepository implements GsacConstants {
      * @param info _more_
      * @param usedSiteCapabilities _more_
      * @param usedResourceCapabilities _more_
+     * @param collectionToUsedCapabilities _more_
      *
      * @throws Exception _more_
      */
     private void initRemoteRepository(
             GsacRepositoryInfo info,
-            Hashtable<String, Capability> usedSiteCapabilities,
-            Hashtable<String, Capability> usedResourceCapabilities)
+            Hashtable<String,
+                      Hashtable<String,
+                                Capability>> collectionToUsedCapabilities)
             throws Exception {
         GsacRepositoryInfo gri = (GsacRepositoryInfo) getRemoteObject(info,
-                                     URL_REPOSITORY_VIEW, "",
-                                     OUTPUT_GSACXML);
+                                     URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
         info.initWith(gri);
         /*
         //TODO:
@@ -671,7 +697,7 @@ public class GsacRepository implements GsacConstants {
         for (Capability capability : resourceCapabilities) {
             capability.addRepository(info);
         }
-*/
+        */
 
     }
 
@@ -806,6 +832,11 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getPackagePath() {
         String packageName = getClass().getPackage().getName();
         packageName = "/" + packageName.replace(".", "/");
@@ -901,7 +932,7 @@ public class GsacRepository implements GsacConstants {
      */
     public SiteManager doMakeSiteManager() {
         return new SiteManager(this) {
-            public  GsacSite getSite(String siteId) throws Exception {
+            public GsacSite getSite(String siteId) throws Exception {
                 return null;
             }
         };
@@ -1105,10 +1136,11 @@ public class GsacRepository implements GsacConstants {
         File     f = null;
         String[] s = new String[] { "" };
 
-        for(CapabilityCollection collection: gri.getCollections()) {
+        for (CapabilityCollection collection : gri.getCollections()) {
             for (Capability capability : collection.getCapabilities()) {
                 if (capability.isEnumeration()) {
-                    printVocabulary(f, capability.getId(), capability.getEnums());
+                    printVocabulary(f, capability.getId(),
+                                    capability.getEnums());
                 }
             }
         }
@@ -1228,29 +1260,53 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public String getInternalVocabulary(String type)   {
-        return readVocabulary(getLocalResourcePath("/vocabulary/" + type + ".properties"));
+    public String getInternalVocabulary(String type) {
+        return readVocabulary(getLocalResourcePath("/vocabulary/" + type
+                + ".properties"));
     }
 
 
-    public String getInternalVocabularyMap(String type)    {
-        return readVocabulary(getLocalResourcePath("/vocabulary/" + type + ".map"));
+    /**
+     * _more_
+     *
+     * @param type _more_
+     *
+     * @return _more_
+     */
+    public String getInternalVocabularyMap(String type) {
+        return readVocabulary(getLocalResourcePath("/vocabulary/" + type
+                + ".map"));
     }
 
 
-    public String getExternalVocabulary(String type)    {
-        return readVocabulary(getCoreResourcePath("/vocabulary/" + type + ".properties"));
+    /**
+     * _more_
+     *
+     * @param type _more_
+     *
+     * @return _more_
+     */
+    public String getExternalVocabulary(String type) {
+        return readVocabulary(getCoreResourcePath("/vocabulary/" + type
+                + ".properties"));
     }
 
-    public String readVocabulary(String path)   {
+    /**
+     * _more_
+     *
+     * @param path _more_
+     *
+     * @return _more_
+     */
+    public String readVocabulary(String path) {
         try {
             InputStream is = getResourceInputStream(path);
-            if(is==null) {
-                System.err.println ("Failed to read vocabulary for:" + path);
+            if (is == null) {
+                System.err.println("Failed to read vocabulary for:" + path);
                 return "";
             }
             return IOUtil.readContents(is);
-        } catch(Exception exc) {
+        } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
     }
@@ -1268,19 +1324,21 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public Vocabulary getVocabularyFromType(String type) {
+
         Hashtable<String, List<String>> externalToInternal =
             new Hashtable<String, List<String>>();
         Hashtable<String, String> internalToExternal = new Hashtable<String,
-                                                         String>();
-        List<IdLabel>   vocabulary = new ArrayList<IdLabel>();
-        HashSet<String> coreMap    = new HashSet<String>();
-        HashSet<String> internalMap   = new HashSet<String>();
+                                                           String>();
+        List<IdLabel>   vocabulary  = new ArrayList<IdLabel>();
+        HashSet<String> coreMap     = new HashSet<String>();
+        HashSet<String> internalMap = new HashSet<String>();
 
         String[] vocabularyContents = { getExternalVocabulary(type),
                                         getInternalVocabulary(type) };
 
         for (int i = 0; i < vocabularyContents.length; i++) {
-            for (List<String> toks : tokenizeVocabulary(vocabularyContents[i])) {
+            for (List<String> toks :
+                    tokenizeVocabulary(vocabularyContents[i])) {
                 String value = toks.get(0);
                 String label = ((toks.size() == 2)
                                 ? toks.get(1)
@@ -1295,15 +1353,15 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        List<IdLabel> values = new ArrayList<IdLabel>();
-        boolean hasMapping = false;
+        List<IdLabel> values     = new ArrayList<IdLabel>();
+        boolean       hasMapping = false;
         for (List<String> toks :
-                 tokenizeVocabulary(getInternalVocabularyMap(type))) {
+                tokenizeVocabulary(getInternalVocabularyMap(type))) {
             hasMapping = true;
-            String coreValue        = toks.get(0);
+            String coreValue           = toks.get(0);
             String internalValueString = ((toks.size() == 2)
-                                       ? toks.get(1)
-                                       : "");
+                                          ? toks.get(1)
+                                          : "");
             //If there is a core value defined for a internal repository that is not in the core list then add it
             if ( !coreMap.contains(coreValue)
                     && !internalMap.contains(coreValue)) {
@@ -1315,8 +1373,8 @@ public class GsacRepository implements GsacConstants {
                 internalValues = new ArrayList<String>();
                 externalToInternal.put(coreValue, internalValues);
             }
-            List<String> internalToks = StringUtil.split(internalValueString, ",",
-                                         true, true);
+            List<String> internalToks = StringUtil.split(internalValueString,
+                                            ",", true, true);
             for (String internalTok : internalToks) {
                 internalToExternal.put(internalTok, coreValue);
             }
@@ -1333,12 +1391,13 @@ public class GsacRepository implements GsacConstants {
         //First we add all the wildcards plus any non-wildcard that should be included
         //Next we go through the wildcards and only include those that have a non-wildcard match
         List<IdLabel> valuesWithoutWildcards = new ArrayList<IdLabel>();
-        List<IdLabel> valuesWithBoth = new ArrayList<IdLabel>();
+        List<IdLabel> valuesWithBoth         = new ArrayList<IdLabel>();
         for (IdLabel value : vocabulary) {
-            boolean isWildcard  = Vocabulary.isWildcard(value.getId());
-            if (internalMap.contains(value.getId())|| isWildcard || !hasMapping) {
+            boolean isWildcard = Vocabulary.isWildcard(value.getId());
+            if (internalMap.contains(value.getId()) || isWildcard
+                    || !hasMapping) {
                 valuesWithBoth.add(value);
-                if(!isWildcard) {
+                if ( !isWildcard) {
                     valuesWithoutWildcards.add(value);
                 }
             } else {
@@ -1347,12 +1406,13 @@ public class GsacRepository implements GsacConstants {
         }
 
         for (IdLabel value : valuesWithBoth) {
-            boolean isWildcard  = Vocabulary.isWildcard(value.getId());
-            if(!isWildcard  || !hasMapping) {
+            boolean isWildcard = Vocabulary.isWildcard(value.getId());
+            if ( !isWildcard || !hasMapping) {
                 values.add(value);
             } else {
                 //Check if there is anything in the list that matches a wildcard
-                String s =  value.getId().substring(0, value.getId().length() - 1);
+                String s = value.getId().substring(0,
+                               value.getId().length() - 1);
                 for (IdLabel nonWildcardValue : valuesWithoutWildcards) {
                     if (nonWildcardValue.getId().startsWith(s)) {
                         values.add(value);
@@ -1366,6 +1426,7 @@ public class GsacRepository implements GsacConstants {
                                           internalToExternal);
         vocabularies.put(type, vocab);
         return vocab;
+
     }
 
 
@@ -1374,10 +1435,12 @@ public class GsacRepository implements GsacConstants {
      *
      * @param path _more_
      *
+     * @param contents _more_
+     *
      * @return _more_
      */
     private List<List<String>> tokenizeVocabulary(String contents) {
-        List<List<String>> lines    = new ArrayList<List<String>>();
+        List<List<String>> lines = new ArrayList<List<String>>();
         for (String line : StringUtil.split(contents, "\n", true, true)) {
             if (line.startsWith("#")) {
                 continue;
@@ -1405,8 +1468,13 @@ public class GsacRepository implements GsacConstants {
                     getRepositoryName());
 
             gri.setDescription(getRepositoryDescription());
-            gri.addCollection(new CapabilityCollection("site", "Site Query", getServlet().getAbsoluteUrl(getUrlBase() + URL_SITE_SEARCH), getSiteQueryCapabilities()));
-            gri.addCollection(new CapabilityCollection("resource", "Resource Query", getServlet().getAbsoluteUrl(getUrlBase() + URL_RESOURCE_SEARCH), getResourceQueryCapabilities()));
+            gri.addCollection(new CapabilityCollection("site", "Site Query",
+                    getServlet().getAbsoluteUrl(getUrlBase()
+                        + URL_SITE_SEARCH), getSiteQueryCapabilities()));
+            gri.addCollection(new CapabilityCollection("resource",
+                    "Resource Query",
+                    getServlet().getAbsoluteUrl(getUrlBase()
+                        + URL_RESOURCE_SEARCH), getResourceQueryCapabilities()));
             myInfo = gri;
             printVocabularies(gri);
         }
@@ -1998,10 +2066,10 @@ public class GsacRepository implements GsacConstants {
      * @param what _more_
      */
     public void logAccess(GsacRequest request, String what) {
-        String ip      = request.getOriginatingIP();
-        String uri     = request.getRequestURI();
-        String method  = request.getMethod();
-        int response = 200; // always set to this in GsacResponse.startResponse()
+        String ip     = request.getOriginatingIP();
+        String uri    = request.getRequestURI();
+        String method = request.getMethod();
+        int response = 200;  // always set to this in GsacResponse.startResponse()
         String message = ip + " " + uri + " " + method + " " + response;
         if (logDirectory != null) {
             getAccessLogger().info(message);
@@ -2246,7 +2314,7 @@ public class GsacRepository implements GsacConstants {
         pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
                               XmlUtil.getCdata(gri.getDescription())));
 
-        for(CapabilityCollection collection: gri.getCollections()) {
+        for (CapabilityCollection collection : gri.getCollections()) {
             collection.toXml(pw);
         }
 
@@ -2376,10 +2444,10 @@ public class GsacRepository implements GsacConstants {
     private void showRepositoryInfo(GsacRequest request, Appendable pw,
                                     GsacRepositoryInfo info, boolean showList)
             throws Exception {
-        int    cnt            = 0;
+        int          cnt    = 0;
 
-        String[] urls = { info.getUrl()};
-        String[]     labels = { "Base URL"};
+        String[]     urls   = { info.getUrl() };
+        String[]     labels = { "Base URL" };
         StringBuffer tmp;
         pw.append(HtmlUtil.formTable());
         for (int i = 0; i < urls.length; i++) {
@@ -2390,22 +2458,24 @@ public class GsacRepository implements GsacConstants {
 
         StringBuffer sb = new StringBuffer();
 
-        for(CapabilityCollection collection: info.getCollections()) {
+        for (CapabilityCollection collection : info.getCollections()) {
             cnt = 0;
             sb  = new StringBuffer();
-            sb.append("<b>" + msgLabel("URL")+"</b> " + collection.getUrl());
+            sb.append("<b>" + msgLabel("URL") + "</b> "
+                      + collection.getUrl());
             for (Capability capability : collection.getCapabilities()) {
                 if (cnt++ == 0) {
                     pw.append(HtmlUtil.p());
                     pw.append(getHeader(msg(collection.getName())));
                     sb.append(
-                              "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td><b>Values</b></td></tr>");
+                        "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td><b>Values</b></td></tr>");
                 }
                 showCapabilityInfo(sb, capability, collection.getUrl());
             }
             if (cnt > 0) {
                 sb.append("</table>");
-                pw.append(HtmlUtil.makeShowHideBlock("", sb.toString(), false));
+                pw.append(HtmlUtil.makeShowHideBlock("", sb.toString(),
+                        false));
             }
         }
     }

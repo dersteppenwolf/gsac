@@ -27,10 +27,12 @@ import ucar.unidata.xml.XmlUtil;
 
 import java.io.PrintWriter;
 
+import java.net.URL;
+
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 
@@ -49,41 +51,73 @@ public class CapabilityCollection {
 
     /** _more_ */
     public static final String ATTR_ID = "id";
-    public static final String ATTR_URL= "url";
 
+    /** _more_          */
+    public static final String ATTR_URL = "url";
+
+    /** _more_          */
     private String name;
+
+    /** _more_          */
     private String id;
+
+    /** _more_          */
     private String url;
+
+    /** _more_          */
     private List<Capability> capabilities;
 
+    /** _more_          */
     private HashSet<String> used;
 
-    public CapabilityCollection() {
+    /**
+     * _more_
+     */
+    public CapabilityCollection() {}
+
+
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param name _more_
+     * @param url _more_
+     * @param capabilities _more_
+     */
+    public CapabilityCollection(String id, String name, String url,
+                                List<Capability> capabilities) {
+        this.id   = id;
+        this.name = name;
+        this.url  = url;
+        setCapabilities(capabilities);
+        this.used = getUsedSet(capabilities);
     }
 
-
-    public CapabilityCollection(String id, String name,   String url,  List<Capability> capabilities) {
-        this.id=id;
-        this.name=name;
-        this.url=url;
-        this.capabilities=capabilities;
-        this.used= getUsedSet(capabilities);
-    }
-
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     */
     public void printDescription(PrintWriter pw) {
-        pw.println("name: " +name);
-        pw.println("url: " +url);
+        pw.println("name: " + name);
+        pw.println("url: " + url);
         for (Capability capability : capabilities) {
-	    pw.print("\t");
-	    capability.printDescription(pw);
+            pw.print("\t");
+            capability.printDescription(pw);
         }
     }
 
-    public void toXml(Appendable sb)
-        throws Exception {
+    /**
+     * _more_
+     *
+     * @param sb _more_
+     *
+     * @throws Exception _more_
+     */
+    public void toXml(Appendable sb) throws Exception {
         sb.append(XmlUtil.openTag(TAG_CAPABILITIES,
-                                  XmlUtil.attrs(ATTR_NAME, name, ATTR_ID,
-                                                id, ATTR_URL, url)));
+                                  XmlUtil.attrs(ATTR_NAME, name, ATTR_ID, id,
+                                      ATTR_URL, url)));
         for (Capability capability : capabilities) {
             capability.toXml(sb);
         }
@@ -92,10 +126,24 @@ public class CapabilityCollection {
 
 
 
+    /**
+     * _more_
+     *
+     * @param capability _more_
+     *
+     * @return _more_
+     */
     public boolean isUsed(Capability capability) {
         return used.contains(capability.getId());
     }
 
+    /**
+     * _more_
+     *
+     * @param capabilities _more_
+     *
+     * @return _more_
+     */
     private HashSet getUsedSet(List<Capability> capabilities) {
         HashSet used = new HashSet<String>();
         if (capabilities == null) {
@@ -109,6 +157,13 @@ public class CapabilityCollection {
 
 
 
+    /**
+     * _more_
+     *
+     * @param capability _more_
+     *
+     * @return _more_
+     */
     public boolean isCapabilityUsed(Capability capability) {
         if (used == null) {
             return false;
@@ -118,75 +173,93 @@ public class CapabilityCollection {
 
 
     /**
-       Set the Name property.
-
-       @param value The new value for Name
-    **/
-    public void setName (String value) {
-	name = value;
+     *  Set the Name property.
+     *
+     *  @param value The new value for Name
+     */
+    public void setName(String value) {
+        name = value;
     }
 
     /**
-       Get the Name property.
-
-       @return The Name
-    **/
-    public String getName () {
-	return name;
+     *  Get the Name property.
+     *
+     *  @return The Name
+     */
+    public String getName() {
+        return name;
     }
 
     /**
-       Set the Id property.
-
-       @param value The new value for Id
-    **/
-    public void setId (String value) {
-	id = value;
+     *  Set the Id property.
+     *
+     *  @param value The new value for Id
+     */
+    public void setId(String value) {
+        id = value;
     }
 
     /**
-       Get the Id property.
-
-       @return The Id
-    **/
-    public String getId () {
-	return id;
+     *  Get the Id property.
+     *
+     *  @return The Id
+     */
+    public String getId() {
+        return id;
     }
 
     /**
-       Set the Url property.
-
-       @param value The new value for Url
-    **/
-    public void setUrl (String value) {
-	url = value;
+     *  Set the Url property.
+     *
+     *  @param value The new value for Url
+     */
+    public void setUrl(String value) {
+        url = value;
     }
 
     /**
-       Get the Url property.
-
-       @return The Url
-    **/
-    public String getUrl () {
-	return url;
+     * _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
+    public String getRelativeUrl() throws Exception {
+        URL tmp = new URL(url);
+        return tmp.getPath();
     }
 
     /**
-       Set the Capabilities property.
-
-       @param value The new value for Capabilities
-    **/
-    public void setCapabilities (List<Capability> value) {
-	capabilities = value;
+     *  Get the Url property.
+     *
+     *  @return The Url
+     */
+    public String getUrl() {
+        return url;
     }
 
     /**
-       Get the Capabilities property.
+     *  Set the Capabilities property.
+     *
+     *  @param value The new value for Capabilities
+     */
+    public void setCapabilities(List<Capability> value) {
+        capabilities = value;
+        if (capabilities != null) {
+            for (Capability capability : capabilities) {
+                capability.setCollection(this);
+            }
+        }
 
-       @return The Capabilities
-    **/
-    public List<Capability> getCapabilities () {
-	return capabilities;
+    }
+
+    /**
+     *  Get the Capabilities property.
+     *
+     *  @return The Capabilities
+     */
+    public List<Capability> getCapabilities() {
+        return capabilities;
     }
 
 

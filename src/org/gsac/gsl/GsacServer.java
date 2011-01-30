@@ -79,8 +79,8 @@ public class GsacServer {
                 properties.put(toks[0], toks[1]);
             }
         }
-        GsacServlet  gsacServlet = doMakeServlet(port,
-                                                 properties);
+        GsacServlet              gsacServlet = doMakeServlet(port,
+                                                   properties);
 
         Server                   server      = new Server(port);
         HandlerCollection        handlers    = new HandlerCollection();

@@ -248,12 +248,15 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      * @param latCol _more_
      * @param lonCol _more_
      * @param msgBuff _more_
+     *
+     * @return _more_
      */
-    public boolean  addBBOXSearchCriteria(GsacRequest request,
-                                      List<Clause> clauses, String latCol,
-                                      String lonCol, StringBuffer msgBuff) {
+    public boolean addBBOXSearchCriteria(GsacRequest request,
+                                         List<Clause> clauses, String latCol,
+                                         String lonCol,
+                                         StringBuffer msgBuff) {
 
-        double value;
+        double  value;
         boolean addedAny = false;
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latCol,
@@ -414,8 +417,8 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                     value           = value.substring(0, value.length() - 1);
                 }
                 valueClauses.add(
-                                 GsacDatabaseManager.getStringSearchClause(
-                                                                           searchTypeToUse, column, value));
+                    GsacDatabaseManager.getStringSearchClause(
+                        searchTypeToUse, column, value));
 
             }
             if (valueClauses.size() > 0) {

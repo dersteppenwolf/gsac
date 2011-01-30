@@ -34,36 +34,42 @@ import java.util.concurrent.*;
  * Tester
  */
 public class GsacTest implements Runnable {
+
+    /** _more_          */
     static String[] URLS = { "http://${server}/gsacws/gsacapi/site/view?site.id=18126_P100",
                              "http://${server}/gsacws/gsacapi/site/search/sites.kml?output=site.kml&limit=1000&site.code=p12*",
                              "http://${server}/gsacws/gsacapi/site/search/sites.csv?output=site.csv&limit=1000&site.code=p12*",
                              "http://${server}/gsacws/gsacapi/site/search?limit=1000&site.code=p*" };
 
+    /** _more_          */
     String[] urls;
 
-    /** _more_          */
+    /** _more_ */
     static int cnt = 0;
 
-    /** _more_          */
+    /** _more_ */
     static int NUM_THREADS = 2;
 
-    /** _more_          */
+    /** _more_ */
     private String server;
 
-    /** _more_          */
+    /** _more_ */
     private static long startTime;
 
+    /** _more_          */
     private long pause = 0;
 
     /**
      * _more_
      *
      * @param server _more_
+     * @param urls _more_
+     * @param pause _more_
      */
     public GsacTest(String server, String[] urls, long pause) {
         this.server = server;
-        this.urls = urls;
-        this.pause = pause;
+        this.urls   = urls;
+        this.pause  = pause;
     }
 
     /**
@@ -74,11 +80,13 @@ public class GsacTest implements Runnable {
             for (String url : urls) {
                 try {
                     url = url.trim();
-                    if(url.length()==0) continue;
+                    if (url.length() == 0) {
+                        continue;
+                    }
                     url = url.replace("${server}", server);
                     System.err.println("reading:" + url);
                     String contents = IOUtil.readContents(url, getClass());
-                    if(pause>0) {
+                    if (pause > 0) {
                         Misc.sleep(pause);
                     }
                 } catch (Exception exc) {
@@ -96,9 +104,16 @@ public class GsacTest implements Runnable {
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param msg _more_
+     */
     private static void usage(String msg) {
         System.err.println("Error:" + msg);
-        System.err.println("Usage: java GsacTest -pause <milliseconds to sleep between url fetches> -server <server name> -threads <number of threads> -urls <url file>" + msg);
+        System.err.println(
+            "Usage: java GsacTest -pause <milliseconds to sleep between url fetches> -server <server name> -threads <number of threads> -urls <url file>"
+            + msg);
         System.exit(1);
     }
 
@@ -110,24 +125,33 @@ public class GsacTest implements Runnable {
      * @throws Exception _more_
      */
     public static void main(String[] args) throws Exception {
-        String[] urls = URLS;
-        long pause = 0;
+        String[] urls  = URLS;
+        long     pause = 0;
         startTime = System.currentTimeMillis();
-        String server = "localhost:8080";
-        int numThreads = NUM_THREADS;
-        for(int i=0;i<args.length;i++) {
-            if(args[i].equals("-server")) {
-                if(i>=args.length-1) usage("Missing -server argument");
+        String server     = "localhost:8080";
+        int    numThreads = NUM_THREADS;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-server")) {
+                if (i >= args.length - 1) {
+                    usage("Missing -server argument");
+                }
                 server = args[++i];
-            } else if(args[i].equals("-threads")) {
-                if(i>=args.length-1) usage("Missing -threads argument");
+            } else if (args[i].equals("-threads")) {
+                if (i >= args.length - 1) {
+                    usage("Missing -threads argument");
+                }
                 numThreads = Integer.parseInt(args[++i]);
-            } else if(args[i].equals("-pause")) {
-                if(i>=args.length-1) usage("Missing -pause argument");
-                pause  = (long)Integer.parseInt(args[++i]);
-            } else if(args[i].equals("-urls")) {
-                if(i>=args.length-1) usage("Missing -urls argument");
-                urls = IOUtil.readContents(args[++i], GsacTest.class).split("\n");
+            } else if (args[i].equals("-pause")) {
+                if (i >= args.length - 1) {
+                    usage("Missing -pause argument");
+                }
+                pause = (long) Integer.parseInt(args[++i]);
+            } else if (args[i].equals("-urls")) {
+                if (i >= args.length - 1) {
+                    usage("Missing -urls argument");
+                }
+                urls = IOUtil.readContents(args[++i],
+                                           GsacTest.class).split("\n");
             } else {
                 usage("Unknown argument: " + args[i]);
             }
@@ -135,8 +159,9 @@ public class GsacTest implements Runnable {
 
 
 
-	//	numThreads = 1;
-        System.err.println ("Running with " + numThreads +" threads  pause=" +pause);
+        //      numThreads = 1;
+        System.err.println("Running with " + numThreads + " threads  pause="
+                           + pause);
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         for (int i = 0; i < numThreads; i++) {
             executor.submit(new GsacTest(server, urls, pause));

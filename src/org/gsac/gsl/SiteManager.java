@@ -406,7 +406,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
 
-    /** _more_          */
+    /** _more_ */
     public static final String GROUP_SITE_QUERY = "Site Query";
 
     /**
@@ -416,23 +416,17 @@ public abstract class SiteManager extends GsacRepositoryManager {
      */
     public void addDefaultSiteCapabilities(List<Capability> capabilities) {
         String       help = HtmlOutputHandler.stringSearchHelp;
-        Capability siteCode;
-        Capability siteName;
+        Capability   siteCode;
+        Capability   siteName;
 
         Capability[] dflt = {
-            siteCode = initCapability(
-                new Capability(
-                    ARG_SITE_CODE, "Site Code",
-                    Capability.TYPE_STRING), GROUP_SITE_QUERY,
-                                             "Short name of the site",
-                                             "Short name of the site. "
-                                             + help),
-            initCapability(
-                           siteName = new Capability(
-                    ARG_SITE_NAME, "Site Name",
-                    Capability.TYPE_STRING), GROUP_SITE_QUERY,
-                                             "Name of the site",
-                                             "Name of site." + help),
+            siteCode = initCapability(new Capability(ARG_SITE_CODE,
+                "Site Code", Capability.TYPE_STRING), GROUP_SITE_QUERY,
+                    "Short name of the site",
+                    "Short name of the site. " + help),
+            initCapability(siteName = new Capability(ARG_SITE_NAME,
+                "Site Name", Capability.TYPE_STRING), GROUP_SITE_QUERY,
+                    "Name of the site", "Name of site." + help),
             initCapability(
                 new Capability(
                     ARG_SITE_TYPE, "Site Type",
@@ -443,7 +437,8 @@ public abstract class SiteManager extends GsacRepositoryManager {
                 new Capability(
                     ARG_SITE_STATUS, "Site Status",
                     IdLabel.toList(getRepository().getSiteStatuses()),
-                    true), GROUP_SITE_QUERY, "", "",makeVocabulary(ARG_SITE_STATUS)),
+                    true), GROUP_SITE_QUERY, "", "",
+                           makeVocabulary(ARG_SITE_STATUS)),
             initCapability(
                 new Capability(
                     ARG_SITE_GROUP, "Site Group",

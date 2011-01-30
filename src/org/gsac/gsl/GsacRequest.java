@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
@@ -84,6 +84,7 @@ public class GsacRequest implements GsacConstants {
     /** _more_ */
     private String gsacUrlPath;
 
+    /** _more_          */
     private boolean useVocabulary = true;
 
     /**
@@ -136,21 +137,21 @@ public class GsacRequest implements GsacConstants {
 
 
     /**
-       Set the UseVocabulary property.
-
-       @param value The new value for UseVocabulary
-    **/
-    public void setUseVocabulary (boolean value) {
-	useVocabulary = value;
+     *  Set the UseVocabulary property.
+     *
+     *  @param value The new value for UseVocabulary
+     */
+    public void setUseVocabulary(boolean value) {
+        useVocabulary = value;
     }
 
     /**
-       Get the UseVocabulary property.
-
-       @return The UseVocabulary
-    **/
-    public boolean getUseVocabulary () {
-	return useVocabulary;
+     *  Get the UseVocabulary property.
+     *
+     *  @return The UseVocabulary
+     */
+    public boolean getUseVocabulary() {
+        return useVocabulary;
     }
 
 
@@ -166,16 +167,33 @@ public class GsacRequest implements GsacConstants {
         return httpServletResponse.getOutputStream();
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean isFederatedRequest() {
         return defined(ARG_REMOTEREPOSITORY);
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getOriginatingIP() {
-        if(defined(ARG_IP)) return get(ARG_IP, "");
+        if (defined(ARG_IP)) {
+            return get(ARG_IP, "");
+        }
         return getRequestIP();
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getRequestIP() {
         return httpServletRequest.getRemoteAddr();
 
@@ -460,15 +478,21 @@ public class GsacRequest implements GsacConstants {
             return dflt;
         }
 
-        Vocabulary vocabulary = (useVocabulary?gsacRepository.getVocabulary(key):null);
-        if(vocabulary!=null) {
-            if(result instanceof List) {
-                return gsacRepository.convertToInternal(vocabulary, key, (List<String>)result);
-            } else if(result instanceof String) {
+        Vocabulary vocabulary = (useVocabulary
+                                 ? gsacRepository.getVocabulary(key)
+                                 : null);
+        if (vocabulary != null) {
+            if (result instanceof List) {
+                return gsacRepository.convertToInternal(vocabulary, key,
+                        (List<String>) result);
+            } else if (result instanceof String) {
                 List<String> tmp = new ArrayList<String>();
                 tmp.add((String) result);
-                List<String> tmpResult =  gsacRepository.convertToInternal(vocabulary, key, tmp);
-                if(tmpResult.size()==1) return tmpResult.get(0);
+                List<String> tmpResult =
+                    gsacRepository.convertToInternal(vocabulary, key, tmp);
+                if (tmpResult.size() == 1) {
+                    return tmpResult.get(0);
+                }
                 return tmpResult;
             }
         }
@@ -577,7 +601,8 @@ public class GsacRequest implements GsacConstants {
      *
      * @return _more_
      */
-    public List<String> getUpperAndLowerCaseDelimiterSeparatedList(String key) {
+    public List<String> getUpperAndLowerCaseDelimiterSeparatedList(
+            String key) {
         List<String> values = (List<String>) getList(key);
         List<String> result = new ArrayList<String>();
         for (String value : values) {
@@ -607,6 +632,14 @@ public class GsacRequest implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param key _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
     public double getLatLon(String key, double dflt) {
         String result = (String) getValue(key, (String) null);
         if ((result == null) || (result.trim().length() == 0)) {
@@ -854,8 +887,8 @@ public class GsacRequest implements GsacConstants {
      * @throws java.text.ParseException _more_
      */
     public Date parseDate(String dttm) throws java.text.ParseException {
-	//Check for yyyy-DDD. DateUtil.parse does not support day of year
-	return DateUtil.parse(dttm);
+        //Check for yyyy-DDD. DateUtil.parse does not support day of year
+        return DateUtil.parse(dttm);
     }
 
 

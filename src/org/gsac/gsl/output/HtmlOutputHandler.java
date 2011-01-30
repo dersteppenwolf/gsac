@@ -54,14 +54,18 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class  HtmlOutputHandler extends GsacOutputHandler {
+public class HtmlOutputHandler extends GsacOutputHandler {
 
+    /** _more_          */
     public static final String stringSearchHelp =
         "semi-colon separated list: p123;p456,  wildcards: p12* *123 *12* negate: !p123";
 
-    public static final  String dateHelp = "e.g., yyyy-mm-dd,  now, -1 week, +3 days, etc.";
+    /** _more_          */
+    public static final String dateHelp =
+        "e.g., yyyy-mm-dd,  now, -1 week, +3 days, etc.";
 
-    public static final  String timeHelp   = "hh:mm:ss Z, e.g. 20:15:00 MST";
+    /** _more_          */
+    public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
     /** _more_ */
     private static final String MAP_JS_MICROSOFT =
@@ -88,9 +92,8 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
         HtmlUtil.setBlockHideShowImage(getServlet().iconUrl("/minus.gif"),
                                        getServlet().iconUrl("/plus.gif"));
 
-        HtmlUtil.setInlineHideShowImage(
-            getServlet().iconUrl("/minus.gif"),
-            getServlet().iconUrl("/plus.gif"));
+        HtmlUtil.setInlineHideShowImage(getServlet().iconUrl("/minus.gif"),
+                                        getServlet().iconUrl("/plus.gif"));
 
 
     }
@@ -413,6 +416,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                                       List<Capability> capabilities,
                                       boolean forSite)
             throws IOException {
+
         request = new GsacRequest(request);
         request.setUseVocabulary(false);
         String capabilityGroup;
@@ -421,11 +425,13 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
             new Hashtable<String, StringBuffer>();
         StringBuffer capBuff;
         for (Capability capability : capabilities) {
-            if(!capability.enumsOk()) continue;
+            if ( !capability.enumsOk()) {
+                continue;
+            }
             String tooltip = capability.getTooltip();
-            String arg    = capability.getId();
-            String widget = null;
-            String suffix = capability.getSuffixLabel();
+            String arg     = capability.getId();
+            String widget  = null;
+            String suffix  = capability.getSuffixLabel();
             capabilityGroup = capability.getGroup();
             if (capabilityGroup == null) {
                 capabilityGroup = "Advanced Site Query";
@@ -449,39 +455,43 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                                              : "");
                 }
 
-            } else if (capability.getType().equals(Capability.TYPE_NUMBERRANGE)) {
-                String min = arg+".min";
-                String max = arg+".max";
-                widget = " " + msgLabel("Min")
-                    + HtmlUtil.input(min,
-                                     request.get(min, "") + "",
+            } else if (capability.getType().equals(
+                    Capability.TYPE_NUMBERRANGE)) {
+                String min = arg + ".min";
+                String max = arg + ".max";
+                widget =
+                    " " + msgLabel("Min")
+                    + HtmlUtil.input(min, request.get(min, "") + "",
                                      HtmlUtil.SIZE_5) + HtmlUtil.space(2)
-                    + msgLabel("Max")
-                    + HtmlUtil.input(max,
-                                     request.get(max,"") + "", HtmlUtil.SIZE_5);
+                                         + msgLabel("Max")
+                                         + HtmlUtil.input(max,
+                                             request.get(max, "") + "",
+                                             HtmlUtil.SIZE_5);
 
-            } else if (capability.getType().equals(Capability.TYPE_DATERANGE)) {
-                Date fromDate = null;
-                Date toDate   = null;
+            } else if (capability.getType().equals(
+                    Capability.TYPE_DATERANGE)) {
+                Date   fromDate = null;
+                Date   toDate   = null;
                 String img = HtmlUtil.img(getServlet().iconUrl("/range.gif"));
-                String dateInput1 = makeDateInput(request,arg+".from",
-                                                  "searchform", fromDate, null, false);
-                String dateInput2 = makeDateInput(request, arg+".to",
-                                                  "searchform", toDate, null, false);
-                widget = dateInput1 + HtmlUtil.space(1) + img + HtmlUtil.space(1)
-                    + dateInput2;
+                String dateInput1 = makeDateInput(request, arg + ".from",
+                                        "searchform", fromDate, null, false);
+                String dateInput2 = makeDateInput(request, arg + ".to",
+                                        "searchform", toDate, null, false);
+                widget = dateInput1 + HtmlUtil.space(1) + img
+                         + HtmlUtil.space(1) + dateInput2;
             } else if (capability.getType().equals(Capability.TYPE_STRING)) {
                 String searchType = HtmlUtil.makeToggleInline("",
                                         getSearchTypeSelect(request,
                                             arg + SEARCHTYPE_SUFFIX), false);
-                widget = HtmlUtil.input(
-                    arg, request.get(arg, ""),
-                    HtmlUtil.title(tooltip!=null?tooltip:stringSearchHelp)
-                    + HtmlUtil.attr(
-                        HtmlUtil.ATTR_WIDTH,
-                        "" + capability.getColumns())) + searchType;
+                widget = HtmlUtil.input(arg, request.get(arg, ""),
+                                        HtmlUtil.title((tooltip != null)
+                        ? tooltip
+                        : stringSearchHelp) + HtmlUtil.attr(
+                            HtmlUtil.ATTR_WIDTH,
+                            "" + capability.getColumns())) + searchType;
 
-            } else if (capability.getType().equals(Capability.TYPE_SPATIAL_BOUNDS)) {
+            } else if (capability.getType().equals(
+                    Capability.TYPE_SPATIAL_BOUNDS)) {
                 widget = makeMapSelector(request, arg, true, "", "");
             } else if (capability.getType().equals(Capability.TYPE_BOOLEAN)) {
                 String[][] enums = new String[][] {
@@ -509,14 +519,15 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
             }
             if (widget != null) {
                 String desc = capability.getDescription();
-                if(desc==null) {
+                if (desc == null) {
                     desc = "";
                 } else {
-                    desc = HtmlUtil.img(getServlet().iconUrl("/help.png"),desc)+" ";
+                    desc = HtmlUtil.img(getServlet().iconUrl("/help.png"),
+                                        desc) + " ";
                 }
                 capBuff.append(
                     HtmlUtil.formEntryTop(
-                                          msgLabel(capability.getLabel()), widget+suffix));
+                        msgLabel(capability.getLabel()), widget + suffix));
             } else {
                 getRepository().logError("Unknown capability:" + capability,
                                          null);
@@ -528,10 +539,11 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
             capBuff = capabilityGroupMap.get(capGroup);
             capBuff.append(HtmlUtil.formTableClose());
             pw.append(getHeader(msg(capGroup)));
-            pw.append(HtmlUtil.makeShowHideBlock("",
-                                                 capBuff.toString(), cnt==0));
+            pw.append(HtmlUtil.makeShowHideBlock("", capBuff.toString(),
+                    cnt == 0));
             cnt++;
         }
+
     }
 
 
@@ -551,6 +563,13 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param header _more_
+     *
+     * @return _more_
+     */
     public String getHeader(String header) {
         return getRepository().getHeader(header);
     }
@@ -595,10 +614,12 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
             List<String> labelList = new ArrayList<String>();
             List<String> urlList   = new ArrayList<String>();
 
-            String[] labels = { "Sites", "Browse", "Files", "Info", "Help" };
-            String[] urls = { URL_SITE_FORM, URL_BROWSE_BASE, URL_RESOURCE_FORM,
-                              URL_REPOSITORY_VIEW, URL_HELP + "/index.html" };
-            String[] keys = { HEADER_SITE, HEADER_BROWSE, HEADER_RESOURCE,
+            String[] labels = { "Search Sites", "Search Files", "Browse",
+                                "Information", "Help" };
+            String[] urls = { URL_SITE_FORM, URL_RESOURCE_FORM,
+                              URL_BROWSE_BASE, URL_REPOSITORY_VIEW,
+                              URL_HELP + "/index.html" };
+            String[] keys = { HEADER_SITE, HEADER_RESOURCE, HEADER_BROWSE,
                               HEADER_INFO, HEADER_HELP };
             for (int i = 0; i < labels.length; i++) {
                 if (getRepository().isCapable(keys[i])) {
@@ -669,7 +690,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     public String getGroupSearchLink(SiteGroup group) {
-        return getSearchLink(group, ARG_SITE_GROUP);
+        return getSearchLink(group, makeUrl(URL_SITE_SEARCH), ARG_SITE_GROUP);
     }
 
 
@@ -678,15 +699,17 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
      * _more_
      *
      * @param thing _more_
+     * @param url _more_
      * @param arg _more_
      *
      * @return _more_
      */
-    public String getSearchLink(NamedThing thing, String arg) {
-        return HtmlUtil.href(HtmlUtil.url(makeUrl(URL_SITE_SEARCH),
-                                          new String[] { arg,
+    public String getSearchLink(NamedThing thing, String url, String arg) {
+        return HtmlUtil.href(HtmlUtil.url(url, new String[] { arg,
                 thing.getId() }), thing.getName());
     }
+
+
 
 
     /**
@@ -718,10 +741,12 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
      * @param response _more_
      * @param sb Buffer to append to
      *
+     *
+     * @return _more_
      * @throws Exception On badness
      */
     public boolean initHtml(GsacRequest request, GsacResponse response,
-                         Appendable sb)
+                            Appendable sb)
             throws Exception {
         if (request.get(ARG_WRAPXML, false)) {
             response.startResponse(GsacResponse.MIME_XML);
@@ -734,17 +759,17 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
 
         boolean hasCssMacro = false;
 
-        String cssLink = HtmlUtil.cssLink(makeHtdocsUrl("/gsac.css"));
+        String  cssLink     = HtmlUtil.cssLink(makeHtdocsUrl("/gsac.css"));
         if (shouldDecorate(request)) {
             String header = getRepository().getHtmlHeader(request);
-            hasCssMacro = header.indexOf("${gsac.css}")>=0;
-            if(hasCssMacro) {
+            hasCssMacro = header.indexOf("${gsac.css}") >= 0;
+            if (hasCssMacro) {
                 header = header.replace("${gsac.css}", cssLink);
             }
             sb.append(header);
         }
         sb.append("\n");
-        if(!hasCssMacro) {
+        if ( !hasCssMacro) {
             sb.append(cssLink);
         }
         sb.append("\n");
@@ -790,7 +815,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
         sb.append("<div class=\"gsaccontent\">");
         appendHeader(request, response, sb);
 
-        if(!getRepository().checkRequest(request, response, sb)) {
+        if ( !getRepository().checkRequest(request, response, sb)) {
             finishHtml(request, response, sb);
             return false;
         }
@@ -808,6 +833,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
      * @param sb Buffer to append to
      * @param width _more_
      * @param height _more_
+     * @param forSelection _more_
      *
      * @throws IOException On badness
      */
@@ -815,29 +841,44 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                         Appendable sb, int width, int height,
                         boolean forSelection)
             throws IOException {
-        sb.append(HtmlUtil.cssLink(makeHtdocsUrl("/openlayers/theme/default/google.css")));
-        sb.append(HtmlUtil.cssLink(makeHtdocsUrl("/openlayers/theme/default/style.css")));
-        sb.append(HtmlUtil.importJS("http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"));
-        sb.append(HtmlUtil.importJS("http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"));
-        sb.append(HtmlUtil.importJS("http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
-        sb.append(HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
+        sb.append(
+            HtmlUtil.cssLink(
+                makeHtdocsUrl("/openlayers/theme/default/google.css")));
+        sb.append(
+            HtmlUtil.cssLink(
+                makeHtdocsUrl("/openlayers/theme/default/style.css")));
+        sb.append(
+            HtmlUtil.importJS(
+                "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"));
+        sb.append(
+            HtmlUtil.importJS(
+                "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"));
+        sb.append(
+            HtmlUtil.importJS(
+                "http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
+        sb.append(
+            HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
         sb.append(HtmlUtil.importJS(makeHtdocsUrl("/repositorymap.js")));
         sb.append(HtmlUtil.div("",
                                HtmlUtil.style("width:" + width
-                                              + "px; height:" + height + "px") + " "
-                               + HtmlUtil.id(mapVarName)));
-        sb.append(HtmlUtil.div("",
-                               HtmlUtil.style("border:2px #888888 solid; width:" + width
                                    + "px; height:" + height + "px") + " "
                                        + HtmlUtil.id(mapVarName)));
+        sb.append(
+            HtmlUtil.div(
+                "",
+                HtmlUtil.style(
+                    "border:2px #888888 solid; width:" + width
+                    + "px; height:" + height + "px") + " "
+                        + HtmlUtil.id(mapVarName)));
 
 
         sb.append("\n");
         StringBuffer js = new StringBuffer();
-        js.append("var " + mapVarName +" = new RepositoryMap('" +mapVarName +"');\n");
-        js.append("var map = " + mapVarName+";\n");
-        if(!forSelection) {
-            js.append("map.initMap(" + forSelection+");\n");
+        js.append("var " + mapVarName + " = new RepositoryMap('" + mapVarName
+                  + "');\n");
+        js.append("var map = " + mapVarName + ";\n");
+        if ( !forSelection) {
+            js.append("map.initMap(" + forSelection + ");\n");
         }
         sb.append(HtmlUtil.script(js.toString()));
         sb.append("\n");
@@ -878,10 +919,12 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                                   boolean popup, String extraLeft,
                                   String extraTop, double[][] marker) {
         return makeMapSelector(arg, popup, extraLeft, extraTop,
-                               new String[] { request.get(arg + ARG_SOUTH_SUFFIX, ""),
-                request.get(arg + ARG_NORTH_SUFFIX, ""),
-                request.get(arg + ARG_EAST_SUFFIX, ""),
-                request.get(arg + ARG_WEST_SUFFIX, "") }, marker);
+                               new String[] {
+                                   request.get(arg + ARG_SOUTH_SUFFIX, ""),
+                                   request.get(arg + ARG_NORTH_SUFFIX, ""),
+                                   request.get(arg + ARG_EAST_SUFFIX, ""),
+                                   request.get(arg + ARG_WEST_SUFFIX,
+                                   "") }, marker);
     }
 
 
@@ -939,16 +982,17 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
         sb.append(HtmlUtil.br());
         String widget;
         if (snew == null) {
-            widget = HtmlUtil.makeLatLonBox(arg+ARG_SOUTH_SUFFIX,
-                                            arg+ARG_NORTH_SUFFIX, 
-                                            arg+ARG_EAST_SUFFIX,
-                                            arg+ARG_WEST_SUFFIX,"", "", "", "");
+            widget = HtmlUtil.makeLatLonBox(arg + ARG_SOUTH_SUFFIX,
+                                            arg + ARG_NORTH_SUFFIX,
+                                            arg + ARG_EAST_SUFFIX,
+                                            arg + ARG_WEST_SUFFIX, "", "",
+                                            "", "");
         } else if (snew.length == 4) {
-            widget = HtmlUtil.makeLatLonBox(arg+ARG_SOUTH_SUFFIX,
-                                            arg+ARG_NORTH_SUFFIX, 
-                                            arg+ARG_EAST_SUFFIX,
-                                            arg+ARG_WEST_SUFFIX,
-                                            snew[0], snew[1], snew[2], snew[3]);
+            widget = HtmlUtil.makeLatLonBox(arg + ARG_SOUTH_SUFFIX,
+                                            arg + ARG_NORTH_SUFFIX,
+                                            arg + ARG_EAST_SUFFIX,
+                                            arg + ARG_WEST_SUFFIX, snew[0],
+                                            snew[1], snew[2], snew[3]);
         } else {
             widget = " Lat: "
                      + HtmlUtil.input(arg + "_lat", snew[0],
@@ -966,10 +1010,10 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
 
 
 
-        String mapVarName =  "mapselector" + HtmlUtil.blockCnt++;
-        String rightSide   = null;
-        String clearLink = HtmlUtil.mouseClickHref(mapVarName + ".selectionClear();",
-                               msg("Clear"));
+        String mapVarName = "mapselector" + HtmlUtil.blockCnt++;
+        String rightSide  = null;
+        String clearLink = HtmlUtil.mouseClickHref(mapVarName
+                               + ".selectionClear();", msg("Clear"));
         String initParams = HtmlUtil.squote(arg) + "," + (popup
                 ? "1"
                 : "0");
@@ -979,19 +1023,19 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
         } catch (Exception exc) {}
 
         if (popup) {
-            rightSide = makeStickyPopup(msg("Select"),
-                                                        sb.toString(),
-                                                        mapVarName + ".selectionPopupInit();") + HtmlUtil.space(2) + clearLink
-                                      + HtmlUtil.space(2)
-                                      + HtmlUtil.space(2) + extraTop;
+            rightSide = makeStickyPopup(
+                msg("Select"), sb.toString(),
+                mapVarName + ".selectionPopupInit();") + HtmlUtil.space(2)
+                    + clearLink + HtmlUtil.space(2) + HtmlUtil.space(2)
+                    + extraTop;
         } else {
-            rightSide = clearLink + HtmlUtil.space(2) 
-                + HtmlUtil.br() + sb.toString();
+            rightSide = clearLink + HtmlUtil.space(2) + HtmlUtil.br()
+                        + sb.toString();
         }
 
         StringBuffer script = new StringBuffer();
-        script.append(mapVarName+".setSelection(" + initParams+ ");\n");
-        if(markerLatLons!=null) {
+        script.append(mapVarName + ".setSelection(" + initParams + ");\n");
+        if (markerLatLons != null) {
             /*
             script.append("var markerLine = new Polyline([");
             for(int i=0;i<markerLatLons[0].length;i++) {
@@ -1334,7 +1378,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                 //                            + equipment.getXyzOffset()[1] + "/"
                 //                            + equipment.getXyzOffset()[2]);
 
-                buff.append(""+equipment.getXyzOffset()[2]);
+                buff.append("" + equipment.getXyzOffset()[2]);
                 buff.append("&nbsp;</td>");
                 buff.append("</tr>");
             }
@@ -1575,11 +1619,10 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
             mapInfo = mapInfo.replace("\"", "\\\"");
             mapInfo = mapInfo.replace("/script", "\\/script");
             String url = getIconUrl(site);
-            js.append("var siteInfo = \"" +   mapInfo+"\";\n");
-            js.append(mapVarName+".addMarker('" +site.getId() +"'," +
-                      jsLLP(site.getLatitude(), site.getLongitude()) +"," +
-                      "\"" +url +"\"" + "," +
-                      "siteInfo);\n");
+            js.append("var siteInfo = \"" + mapInfo + "\";\n");
+            js.append(mapVarName + ".addMarker('" + site.getId() + "',"
+                      + jsLLP(site.getLatitude(), site.getLongitude()) + ","
+                      + "\"" + url + "\"" + "," + "siteInfo);\n");
         }
         return js.toString();
     }
@@ -1646,14 +1689,14 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
                                 String formName, Date date, String timezone,
                                 boolean includeTime) {
 
-        String           dateArg    = request.get(name, "");
-        String           timeArg    = request.get(name + ".time", "");
-        String           dateString = ((date == null)
-                                       ? dateArg
-                                       : formatDate(date));
-        String           timeString = ((date == null)
-                                       ? timeArg
-                                       : formatTime(date));
+        String dateArg    = request.get(name, "");
+        String timeArg    = request.get(name + ".time", "");
+        String dateString = ((date == null)
+                             ? dateArg
+                             : formatDate(date));
+        String timeString = ((date == null)
+                             ? timeArg
+                             : formatTime(date));
 
         return HtmlUtil.input(
             name, dateString,

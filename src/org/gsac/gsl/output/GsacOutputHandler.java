@@ -58,7 +58,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /** _more_ */
     protected SimpleDateFormat dateSdf = makeDateFormat("yyyy-MM-dd");
 
-    protected SimpleDateFormat dateTimeSdf = makeDateFormat("yyyy-MM-dd HH:mm");
+    /** _more_          */
+    protected SimpleDateFormat dateTimeSdf =
+        makeDateFormat("yyyy-MM-dd HH:mm");
 
     /** _more_ */
     protected SimpleDateFormat timeSdf = makeDateFormat("HH:mm:ss z");
@@ -262,32 +264,51 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String formatDate(Date date) {
-        synchronized(dateSdf) {
+        synchronized (dateSdf) {
             return dateSdf.format(date);
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
     public String formatTime(Date date) {
-        synchronized(timeSdf) {
+        synchronized (timeSdf) {
             return timeSdf.format(date);
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
     public String formatDateTime(Date date) {
-        synchronized(dateTimeSdf) {
+        synchronized (dateTimeSdf) {
             return dateTimeSdf.format(date);
         }
     }
 
     /**
-       Cut and pasted from GsacRepositoryManager
+     *  Cut and pasted from GsacRepositoryManager
+     *
+     * @param request _more_
+     * @param response _more_
+     * @param htmlBuff _more_
      */
-    public void checkMessage(GsacRequest request, GsacResponse response, Appendable htmlBuff) {
+    public void checkMessage(GsacRequest request, GsacResponse response,
+                             Appendable htmlBuff) {
         String message = response.getMessage();
-        if(message.length()>0) {
+        if (message.length() > 0) {
             try {
                 htmlBuff.append(message);
-            } catch(Exception exc) {
+            } catch (Exception exc) {
                 throw new RuntimeException(exc);
             }
         }
@@ -419,7 +440,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception _more_
      */
-    public void handleBrowseRequest(GsacRequest gsacRequest) throws Exception {
+    public void handleBrowseRequest(GsacRequest gsacRequest)
+            throws Exception {
         handleBrowseRequest(gsacRequest, doMakeResponse(gsacRequest));
     }
 
@@ -432,7 +454,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @throws Exception _more_
      */
     public void handleBrowseRequest(GsacRequest gsacRequest,
-                                  GsacResponse gsacResponse)
+                                    GsacResponse gsacResponse)
             throws Exception {
         throw new IllegalArgumentException("not implemented");
     }
@@ -557,8 +579,16 @@ public abstract class GsacOutputHandler implements GsacConstants {
         return makeUrl(URL_RESOURCE_VIEW + "?" + args);
     }
 
+    /**
+     * _more_
+     *
+     * @param resource _more_
+     *
+     * @return _more_
+     */
     public String makeResourceUrl(GsacResource resource) {
-        return makeResourceUrl(HtmlUtil.arg(ARG_RESOURCE_ID, resource.getId()));
+        return makeResourceUrl(HtmlUtil.arg(ARG_RESOURCE_ID,
+                                            resource.getId()));
     }
 
 

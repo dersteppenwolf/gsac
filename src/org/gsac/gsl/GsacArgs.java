@@ -177,7 +177,7 @@ public interface GsacArgs {
     public static final String ARG_RESOURCE_SIZEMIN = ARG_RESOURCE_SIZE
                                                       + ".min";
 
-    /** _more_          */
+    /** _more_ */
     public static final String ARG_RESOURCE_FILESIZE = ARG_RESOURCE_PREFIX
                                                        + "filesize";
 
@@ -318,7 +318,7 @@ public interface GsacArgs {
     public static final String SEARCHTYPE_CONTAINS = "contains";
 
 
-    /** _more_          */
+    /** _more_ */
     public static final String ARG_IP = "ip";
 
 

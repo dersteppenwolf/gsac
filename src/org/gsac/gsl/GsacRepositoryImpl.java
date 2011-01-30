@@ -47,7 +47,7 @@ import java.util.Properties;
  *
  *
  * @version        $version$, Thu, Oct 28, '10
- * @author         Enter your name here...    
+ * @author         Enter your name here...
  */
 public class GsacRepositoryImpl extends GsacRepository {
 

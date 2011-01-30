@@ -39,15 +39,16 @@ public interface GsacConstants extends GsacArgs {
     public static final String PROP_REPOSITORY_CLASS =
         "gsac.repository.class";
 
-    /** _more_          */
+    /** _more_ */
     public static final String PROP_BASEURL = "gsac.baseurl";
 
+    /** _more_          */
     public static final String PROP_GSACDIRECTORY = "gsac.directory";
 
-    /** _more_          */
+    /** _more_ */
     public static final String PROP_REPOSITORY_NAME = "gsac.repository.name";
 
-    /** _more_          */
+    /** _more_ */
     public static final String PROP_REPOSITORY_DESCRIPTION =
         "gsac.repository.description";
 
@@ -111,7 +112,10 @@ public interface GsacConstants extends GsacArgs {
     public static final String OUTPUT_RESOURCE_DEFAULT =
         HtmlResourceOutputHandler.OUTPUT_RESOURCE_HTML;
 
+    /** _more_          */
     public static final String OUTPUT_XML = "xml";
+
+    /** _more_          */
     public static final String OUTPUT_GSACXML = "gsacxml";
 
 

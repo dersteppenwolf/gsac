@@ -22,8 +22,8 @@ package org.gsac.gsl;
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.util.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.util.*;
 
 
 import ucar.unidata.sql.Clause;
@@ -197,18 +197,38 @@ public abstract class ResourceManager extends GsacRepositoryManager {
 
     }
 
-    public void addDefaultResourceCapabilities(List<Capability> capabilities) {
+    /**
+     * _more_
+     *
+     * @param capabilities _more_
+     */
+    public void addDefaultResourceCapabilities(
+            List<Capability> capabilities) {
         Capability cap;
-        Capability[] dflt =  {
-            initCapability(new Capability(ARG_RESOURCE_TYPE, "Resource Type", IdLabel.toList(getRepository().getResourceTypes()),true),"Resource Query", "Type of file or resource",
-                           null, getRepository().getVocabulary(ARG_RESOURCE_TYPE,true)
-),
-            initCapability(new Capability(ARG_RESOURCE_DATADATE, "Data Date", Capability.TYPE_DATERANGE),"Resource Query", "Date the data this resource holds was collected"),
-            initCapability(new Capability(ARG_RESOURCE_PUBLISHDATE, "Publish Date", Capability.TYPE_DATERANGE),"Resource Query", "Date when this resource was first published to the repository"),
-            initCapability(cap = new Capability(ARG_RESOURCE_FILESIZE, "File Size", Capability.TYPE_NUMBERRANGE),"Resource Query", "File size")
-        };
+        Capability[] dflt = { initCapability(new Capability(ARG_RESOURCE_TYPE,
+                                "Resource Type",
+                                IdLabel.toList(getRepository().getResourceTypes()),
+                                true), "Resource Query",
+                                    "Type of file or resource", null,
+                                    getRepository().getVocabulary(ARG_RESOURCE_TYPE,
+                                        true)),
+                              initCapability(new Capability(ARG_RESOURCE_DATADATE,
+                                  "Data Date",
+                                  Capability
+                                      .TYPE_DATERANGE), "Resource Query",
+                                          "Date the data this resource holds was collected"),
+                              initCapability(new Capability(ARG_RESOURCE_PUBLISHDATE,
+                                  "Publish Date",
+                                  Capability
+                                      .TYPE_DATERANGE), "Resource Query",
+                                          "Date when this resource was first published to the repository"),
+                              initCapability(cap = new Capability(ARG_RESOURCE_FILESIZE,
+                                  "File Size",
+                                  Capability
+                                      .TYPE_NUMBERRANGE), "Resource Query",
+                                          "File size") };
         cap.setSuffixLabel("&nbsp;(bytes)");
-        for(Capability capability: dflt) {
+        for (Capability capability : dflt) {
             capabilities.add(capability);
         }
     }
