@@ -83,7 +83,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /** _more_ */
-    private List<GsacOutput> listOutputs = new ArrayList<GsacOutput>();
+    private List<GsacOutput> browseOutputs = new ArrayList<GsacOutput>();
 
     /** list output handlers */
     private Hashtable<String, GsacOutput> listOutputMap =
@@ -267,7 +267,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         new JsonResourceOutputHandler(this);
         new DownloaderResourceOutputHandler(this);
         new ZipResourceOutputHandler(this);
-        new ListOutputHandler(this);
+        new BrowseOutputHandler(this);
         new RssResourceOutputHandler(this);
         new XmlResourceOutputHandler(this);
 
@@ -471,10 +471,10 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      *
      * @param output output type
      */
-    public void addListOutput(GsacOutput output) {
+    public void addBrowseOutput(GsacOutput output) {
         if (getProperty(output.getProperty("enabled"), true)) {
             listOutputMap.put(output.getId(), output);
-            listOutputs.add(output);
+            browseOutputs.add(output);
         }
     }
 
@@ -560,8 +560,8 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacOutputHandler getListOutputHandler(GsacRequest request) {
-        return getOutputHandler(request.get(ARG_OUTPUT, OUTPUT_LIST_DEFAULT),
+    public GsacOutputHandler getBrowseOutputHandler(GsacRequest request) {
+        return getOutputHandler(request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT),
                                 listOutputMap);
     }
 
@@ -631,8 +631,8 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
                                    new GsacResponse(gsacRequest));
             } else if (uri.indexOf(URL_HELP) >= 0) {
                 handleHelpRequest(gsacRequest, new GsacResponse(gsacRequest));
-            } else if (uri.indexOf(URL_LIST_BASE) >= 0) {
-                handleListRequest(gsacRequest);
+            } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
+                handleBrowseRequest(gsacRequest);
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleHtdocsRequest(gsacRequest);
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
@@ -825,9 +825,9 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleListRequest(GsacRequest request) throws Exception {
-        GsacOutputHandler outputHandler = getListOutputHandler(request);
-        outputHandler.handleListRequest(request);
+    public void handleBrowseRequest(GsacRequest request) throws Exception {
+        GsacOutputHandler outputHandler = getBrowseOutputHandler(request);
+        outputHandler.handleBrowseRequest(request);
     }
 
 
@@ -932,8 +932,8 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      *
      * @return _more_
      */
-    public List<GsacOutput> getListOutputs() {
-        return listOutputs;
+    public List<GsacOutput> getBrowseOutputs() {
+        return browseOutputs;
     }
 
 

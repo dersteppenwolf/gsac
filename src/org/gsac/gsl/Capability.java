@@ -39,8 +39,6 @@ import java.util.List;
  */
 public class Capability {
 
-    /** _more_ */
-    public static final String TAG_CAPABILITIES = "capabilities";
 
     /** _more_ */
     public static final String TAG_CAPABILITY = "capability";
@@ -59,6 +57,8 @@ public class Capability {
 
     /** _more_ */
     public static final String ATTR_COLUMNS = "columns";
+
+    public static final String ATTR_BROWSE = "browse";
 
     /** _more_ */
     public static final String ATTR_GROUP = "group";
@@ -121,6 +121,8 @@ public class Capability {
 
     /** _more_ */
     private int columns = 30;
+
+    private boolean browse = false;
 
     /** _more_ */
     private String group;
@@ -265,29 +267,7 @@ public class Capability {
 
 
 
-    /**
-     * _more_
-     *
-     * @param sb _more_
-     * @param capabilities _more_
-     * @param name _more_
-     * @param type _more_
-     * @param url _more_
-     *
-     * @throws Exception _more_
-     */
-    public static void toXml(Appendable sb, List<Capability> capabilities,
-                             String name, String type, String url)
-        throws Exception {
-        sb.append(XmlUtil.openTag(TAG_CAPABILITIES,
-                                  XmlUtil.attrs(ATTR_NAME, name, ATTR_TYPE,
-                                                type, ATTR_URL, url)));
-        for (Capability capability : capabilities) {
-            capability.toXml(sb);
-        }
 
-        sb.append(XmlUtil.closeTag(TAG_CAPABILITIES));
-    }
 
     public boolean enumsOk() {
         if (isEnumeration()) {
@@ -309,6 +289,14 @@ public class Capability {
 
         if (group != null) {
             attrs.append(XmlUtil.attrs(ATTR_GROUP, group));
+        }
+        if(columns!=0) {
+            attrs.append(XmlUtil.attrs(ATTR_COLUMNS,
+                                       "" + columns));
+        }
+        if(browse) {
+            attrs.append(XmlUtil.attrs(ATTR_BROWSE,
+                                       "" + browse));
         }
         if (isEnumeration()) {
             attrs.append(XmlUtil.attrs(ATTR_ALLOWMULTIPLES,
@@ -573,6 +561,26 @@ public class Capability {
     public boolean getAllowMultiples() {
         return allowMultiples;
     }
+
+    /**
+       Set the Browse property.
+
+       @param value The new value for Browse
+    **/
+    public void setBrowse (boolean value) {
+	browse = value;
+    }
+
+    /**
+       Get the Browse property.
+
+       @return The Browse
+    **/
+    public boolean getBrowse () {
+	return browse;
+    }
+
+
 
     /**
      *  Set the Columns property.

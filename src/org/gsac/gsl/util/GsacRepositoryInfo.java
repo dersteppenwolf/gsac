@@ -27,6 +27,7 @@ import org.gsac.gsl.model.*;
 import java.util.HashSet;
 import java.io.PrintWriter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -52,17 +53,7 @@ public class GsacRepositoryInfo {
     /** _more_ */
     private String icon;
 
-    /** _more_ */
-    private List<Capability> siteCapabilities;
-
-    /** _more_          */
-    private HashSet<String> siteCapabilitiesUsed;
-
-    /** _more_ */
-    private List<Capability> resourceCapabilities;
-
-    /** _more_          */
-    private HashSet<String> resourceCapabilitiesUsed;
+    private List<CapabilityCollection> collections = new ArrayList<CapabilityCollection>();
 
     private int errorCnt = 0;
 
@@ -107,18 +98,15 @@ public class GsacRepositoryInfo {
         pw.println("name: " +name);
         pw.println("url: " +url);
         pw.println(description);
-        pw.println("Site capabilities:");
-        for (Capability capability : siteCapabilities) {
-	    pw.print("\t");
-	    capability.printDescription(pw);
+        for (CapabilityCollection collection : collections) {
+	    collection.printDescription(pw);
         }
-        pw.println("Resource capabilities:");
-        for (Capability capability : resourceCapabilities) {
-	    pw.print("\t");
-	    capability.printDescription(pw);
-        }
-
     }
+
+    public void addCollection(CapabilityCollection collection) {
+        collections.add(collection);
+    }
+
 
     public int getErrorCount() {
         return errorCnt;
@@ -144,8 +132,7 @@ public class GsacRepositoryInfo {
         if ((that.description != null) && (that.description.length() > 0)) {
             this.description = that.description;
         }
-        this.siteCapabilities     = that.siteCapabilities;
-        this.resourceCapabilities = that.resourceCapabilities;
+        this.collections  = that.collections;
     }
 
 
@@ -184,57 +171,34 @@ public class GsacRepositoryInfo {
     }
 
 
+    /**
+       Set the Collections property.
+
+       @param value The new value for Collections
+    **/
+    public void setCollections (List<CapabilityCollection> value) {
+	collections = value;
+    }
 
     /**
-     * _more_
-     *
-     * @param capabilities _more_
-     *
-     * @return _more_
-     */
-    private HashSet getUsedSet(List<Capability> capabilities) {
-        HashSet used = new HashSet<String>();
-        if (capabilities == null) {
-            return used;
+       Get the Collections property.
+
+       @return The Collections
+    **/
+    public List<CapabilityCollection> getCollections () {
+	return collections;
+    }
+
+
+
+    public CapabilityCollection getCollection(String id) {
+        for (CapabilityCollection collection : collections) {
+            if(collection.getId().equals(id)) return collection;
         }
-        for (Capability capability : capabilities) {
-            used.add(capability.getId());
-        }
-        return used;
+        return null;
     }
 
-    /**
-     * _more_
-     *
-     * @param capability _more_
-     *
-     * @return _more_
-     */
-    public boolean isSiteCapabilityUsed(Capability capability) {
-        if (siteCapabilitiesUsed == null) {
-            return false;
-        }
-        return siteCapabilitiesUsed.contains(capability.getId());
-    }
 
-    /**
-     *  Set the SiteCapabilities property.
-     *
-     *  @param value The new value for SiteCapabilities
-     */
-    public void setSiteCapabilities(List<Capability> value) {
-        siteCapabilities     = value;
-        siteCapabilitiesUsed = getUsedSet(siteCapabilities);
-    }
-
-    /**
-     *  Get the SiteCapabilities property.
-     *
-     *  @return The SiteCapabilities
-     */
-    public List<Capability> getSiteCapabilities() {
-        return siteCapabilities;
-    }
 
     /**
      * _more_
@@ -243,30 +207,10 @@ public class GsacRepositoryInfo {
      *
      * @return _more_
      */
-    public boolean isResourceCapabilityUsed(Capability capability) {
-        if (resourceCapabilitiesUsed == null) {
-            return false;
-        }
-        return resourceCapabilitiesUsed.contains(capability.getId());
-    }
-
-    /**
-     *  Set the ResourceCapabilities property.
-     *
-     *  @param value The new value for ResourceCapabilities
-     */
-    public void setResourceCapabilities(List<Capability> value) {
-        resourceCapabilities     = value;
-        resourceCapabilitiesUsed = getUsedSet(resourceCapabilities);
-    }
-
-    /**
-     *  Get the ResourceCapabilities property.
-     *
-     *  @return The ResourceCapabilities
-     */
-    public List<Capability> getResourceCapabilities() {
-        return resourceCapabilities;
+    public boolean isCapabilityUsed(String collectionId, Capability capability) {
+        CapabilityCollection collection =getCollection(collectionId);
+        if(collection==null) return false;
+        return collection.isUsed(capability);
     }
 
     /**

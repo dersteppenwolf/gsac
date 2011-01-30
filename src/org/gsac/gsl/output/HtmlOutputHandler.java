@@ -596,7 +596,7 @@ public class  HtmlOutputHandler extends GsacOutputHandler {
             List<String> urlList   = new ArrayList<String>();
 
             String[] labels = { "Sites", "Browse", "Files", "Info", "Help" };
-            String[] urls = { URL_SITE_FORM, URL_LIST_BASE, URL_RESOURCE_FORM,
+            String[] urls = { URL_SITE_FORM, URL_BROWSE_BASE, URL_RESOURCE_FORM,
                               URL_REPOSITORY_VIEW, URL_HELP + "/index.html" };
             String[] keys = { HEADER_SITE, HEADER_BROWSE, HEADER_RESOURCE,
                               HEADER_INFO, HEADER_HELP };

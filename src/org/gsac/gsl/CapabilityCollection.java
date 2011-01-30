@@ -1,0 +1,193 @@
+/*
+ * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ */
+
+package org.gsac.gsl;
+
+
+import org.gsac.gsl.util.*;
+
+import ucar.unidata.xml.XmlUtil;
+
+import java.io.PrintWriter;
+
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.List;
+
+
+
+/**
+ * Defines a query capability. Takes an id, query type (e.g., enumeration, boolean, string), a label, etc.
+ */
+public class CapabilityCollection {
+
+    /** _more_ */
+    public static final String TAG_CAPABILITIES = "capabilities";
+
+
+    /** _more_ */
+    public static final String ATTR_NAME = "name";
+
+    /** _more_ */
+    public static final String ATTR_ID = "id";
+    public static final String ATTR_URL= "url";
+
+    private String name;
+    private String id;
+    private String url;
+    private List<Capability> capabilities;
+
+    private HashSet<String> used;
+
+    public CapabilityCollection() {
+    }
+
+
+    public CapabilityCollection(String id, String name,   String url,  List<Capability> capabilities) {
+        this.id=id;
+        this.name=name;
+        this.url=url;
+        this.capabilities=capabilities;
+        this.used= getUsedSet(capabilities);
+    }
+
+    public void printDescription(PrintWriter pw) {
+        pw.println("name: " +name);
+        pw.println("url: " +url);
+        for (Capability capability : capabilities) {
+	    pw.print("\t");
+	    capability.printDescription(pw);
+        }
+    }
+
+    public void toXml(Appendable sb)
+        throws Exception {
+        sb.append(XmlUtil.openTag(TAG_CAPABILITIES,
+                                  XmlUtil.attrs(ATTR_NAME, name, ATTR_ID,
+                                                id, ATTR_URL, url)));
+        for (Capability capability : capabilities) {
+            capability.toXml(sb);
+        }
+        sb.append(XmlUtil.closeTag(TAG_CAPABILITIES));
+    }
+
+
+
+    public boolean isUsed(Capability capability) {
+        return used.contains(capability.getId());
+    }
+
+    private HashSet getUsedSet(List<Capability> capabilities) {
+        HashSet used = new HashSet<String>();
+        if (capabilities == null) {
+            return used;
+        }
+        for (Capability capability : capabilities) {
+            used.add(capability.getId());
+        }
+        return used;
+    }
+
+
+
+    public boolean isCapabilityUsed(Capability capability) {
+        if (used == null) {
+            return false;
+        }
+        return used.contains(capability.getId());
+    }
+
+
+    /**
+       Set the Name property.
+
+       @param value The new value for Name
+    **/
+    public void setName (String value) {
+	name = value;
+    }
+
+    /**
+       Get the Name property.
+
+       @return The Name
+    **/
+    public String getName () {
+	return name;
+    }
+
+    /**
+       Set the Id property.
+
+       @param value The new value for Id
+    **/
+    public void setId (String value) {
+	id = value;
+    }
+
+    /**
+       Get the Id property.
+
+       @return The Id
+    **/
+    public String getId () {
+	return id;
+    }
+
+    /**
+       Set the Url property.
+
+       @param value The new value for Url
+    **/
+    public void setUrl (String value) {
+	url = value;
+    }
+
+    /**
+       Get the Url property.
+
+       @return The Url
+    **/
+    public String getUrl () {
+	return url;
+    }
+
+    /**
+       Set the Capabilities property.
+
+       @param value The new value for Capabilities
+    **/
+    public void setCapabilities (List<Capability> value) {
+	capabilities = value;
+    }
+
+    /**
+       Get the Capabilities property.
+
+       @return The Capabilities
+    **/
+    public List<Capability> getCapabilities () {
+	return capabilities;
+    }
+
+
+}

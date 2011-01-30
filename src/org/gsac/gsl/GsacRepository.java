@@ -653,6 +653,8 @@ public class GsacRepository implements GsacConstants {
                                      URL_REPOSITORY_VIEW, "",
                                      OUTPUT_GSACXML);
         info.initWith(gri);
+        /*
+        //TODO:
         List<Capability> siteCapabilities;
         List<Capability> resourceCapabilities;
         info.setSiteCapabilities(siteCapabilities =
@@ -669,6 +671,8 @@ public class GsacRepository implements GsacConstants {
         for (Capability capability : resourceCapabilities) {
             capability.addRepository(info);
         }
+*/
+
     }
 
 
@@ -1100,12 +1104,11 @@ public class GsacRepository implements GsacConstants {
         //        File f = new File("vocabulary");
         File     f = null;
         String[] s = new String[] { "" };
-        List<Capability>[] caps = new List[] { gri.getSiteCapabilities(),
-                gri.getResourceCapabilities() };
-        for (List<Capability> capList : caps) {
-            for (Capability cap : capList) {
-                if (cap.isEnumeration()) {
-                    printVocabulary(f, cap.getId(), cap.getEnums());
+
+        for(CapabilityCollection collection: gri.getCollections()) {
+            for (Capability capability : collection.getCapabilities()) {
+                if (capability.isEnumeration()) {
+                    printVocabulary(f, capability.getId(), capability.getEnums());
                 }
             }
         }
@@ -1400,9 +1403,10 @@ public class GsacRepository implements GsacConstants {
                 new GsacRepositoryInfo(
                     getServlet().getAbsoluteUrl(getUrlBase()),
                     getRepositoryName());
+
             gri.setDescription(getRepositoryDescription());
-            gri.setSiteCapabilities(getSiteQueryCapabilities());
-            gri.setResourceCapabilities(getResourceQueryCapabilities());
+            gri.addCollection(new CapabilityCollection("site", "Site Query", getServlet().getAbsoluteUrl(getUrlBase() + URL_SITE_SEARCH), getSiteQueryCapabilities()));
+            gri.addCollection(new CapabilityCollection("resource", "Resource Query", getServlet().getAbsoluteUrl(getUrlBase() + URL_RESOURCE_SEARCH), getResourceQueryCapabilities()));
             myInfo = gri;
             printVocabularies(gri);
         }
@@ -2241,14 +2245,11 @@ public class GsacRepository implements GsacConstants {
 
         pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
                               XmlUtil.getCdata(gri.getDescription())));
-        Capability.toXml(pw, gri.getSiteCapabilities(), "Site Search",
-                         "site",
-                         getServlet().getAbsoluteUrl(getUrlBase()
-                             + URL_SITE_SEARCH));
-        Capability.toXml(pw, gri.getResourceCapabilities(),
-                         "Resource Search", "resource",
-                         getServlet().getAbsoluteUrl(getUrlBase()
-                             + URL_RESOURCE_SEARCH));
+
+        for(CapabilityCollection collection: gri.getCollections()) {
+            collection.toXml(pw);
+        }
+
         pw.append(XmlUtil.closeTag(TAG_REPOSITORY));
         response.endResponse();
     }
@@ -2376,15 +2377,10 @@ public class GsacRepository implements GsacConstants {
                                     GsacRepositoryInfo info, boolean showList)
             throws Exception {
         int    cnt            = 0;
-        String siteSearch     = info.getUrl() + URL_SITE_SEARCH;
-        String resourceSearch = info.getUrl() + URL_RESOURCE_SEARCH;
-        String[] urls = { info.getUrl(), siteSearch,
-                          info.getUrl() + URL_RESOURCE_SEARCH };
-        String[]     labels = { "Base URL", "Site Query", "Resource Query" };
+
+        String[] urls = { info.getUrl()};
+        String[]     labels = { "Base URL"};
         StringBuffer tmp;
-
-
-
         pw.append(HtmlUtil.formTable());
         for (int i = 0; i < urls.length; i++) {
             pw.append(HtmlUtil.formEntry(msgLabel(labels[i]), urls[i]));
@@ -2392,45 +2388,26 @@ public class GsacRepository implements GsacConstants {
         pw.append(HtmlUtil.formTableClose());
 
 
-
-
         StringBuffer sb = new StringBuffer();
-        for (Capability capability : info.getSiteCapabilities()) {
-            if (cnt++ == 0) {
-                pw.append(HtmlUtil.p());
-                pw.append(getHeader(msg("Site Query URL Arguments")));
-                sb.append(
-                    "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td><b>Values</b></td></tr>");
+
+        for(CapabilityCollection collection: info.getCollections()) {
+            cnt = 0;
+            sb  = new StringBuffer();
+            sb.append("<b>" + msgLabel("URL")+"</b> " + collection.getUrl());
+            for (Capability capability : collection.getCapabilities()) {
+                if (cnt++ == 0) {
+                    pw.append(HtmlUtil.p());
+                    pw.append(getHeader(msg(collection.getName())));
+                    sb.append(
+                              "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td><b>Values</b></td></tr>");
+                }
+                showCapabilityInfo(sb, capability, collection.getUrl());
             }
-            showCapabilityInfo(sb, capability, siteSearch);
-        }
-
-        if (cnt > 0) {
-            sb.append("</table>");
-            pw.append(HtmlUtil.makeShowHideBlock("", sb.toString(), false));
-        }
-
-        sb  = new StringBuffer();
-        cnt = 0;
-        for (Capability capability : info.getResourceCapabilities()) {
-            if (cnt++ == 0) {
-                pw.append(HtmlUtil.p());
-                pw.append(getHeader(msg("Resource Query URL Arguments")));
-                sb.append(
-                    "<table width=100%  cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td><b>Values</b></td></tr>");
+            if (cnt > 0) {
+                sb.append("</table>");
+                pw.append(HtmlUtil.makeShowHideBlock("", sb.toString(), false));
             }
-            showCapabilityInfo(sb, capability, resourceSearch);
         }
-
-        if (cnt > 0) {
-            sb.append("</table>");
-            pw.append(HtmlUtil.makeShowHideBlock("", sb.toString(), false));
-        }
-
-
-
-
-
     }
 
 

@@ -50,7 +50,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class ListOutputHandler extends HtmlOutputHandler {
+public class BrowseOutputHandler extends HtmlOutputHandler {
 
     /** url arg of what we are listing */
     public static final String ARG_BROWSE_WHAT = "what";
@@ -63,7 +63,6 @@ public class ListOutputHandler extends HtmlOutputHandler {
 
     /** what are we listing */
     public static final String WHAT_SITE_CODES = "site.code";
-
 
     /** what are we listing */
     public static final String WHAT_SITE_GROUPS = "site.group";
@@ -87,13 +86,13 @@ public class ListOutputHandler extends HtmlOutputHandler {
     public static final String ATTR_NAME = "name";
 
     /** output id */
-    public static final String OUTPUT_LIST_HTML = "list.html";
+    public static final String OUTPUT_BROWSE_HTML = "browse.html";
 
     /** csv listing */
-    public static final String OUTPUT_LIST_CSV = "list.csv";
+    public static final String OUTPUT_BROWSE_CSV = "browse.csv";
 
     /** xml listing */
-    public static final String OUTPUT_LIST_XML = "list.xml";
+    public static final String OUTPUT_BROWSE_XML = "browse.xml";
 
 
 
@@ -104,24 +103,25 @@ public class ListOutputHandler extends HtmlOutputHandler {
     private static String[] LABELS;
 
 
+    private List<Capability> browseCapabilities;
+
 
     /**
      * ctor
      *
      * @param gsacServlet the servlet
      */
-    public ListOutputHandler(GsacServlet gsacServlet) {
+    public BrowseOutputHandler(GsacServlet gsacServlet) {
         super(gsacServlet);
         checkInit();
 
-
-        getServlet().addListOutput(new GsacOutput(this, OUTPUT_LIST_HTML,
+        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_HTML,
                 "HTML"));
-        getServlet().addListOutput(new GsacOutput(this, OUTPUT_LIST_DEFAULT,
+        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_DEFAULT,
                 "Default"));
-        getServlet().addListOutput(new GsacOutput(this, OUTPUT_LIST_CSV,
+        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_CSV,
                 "CSV"));
-        getServlet().addListOutput(new GsacOutput(this, OUTPUT_LIST_XML,
+        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_XML,
                 "XML"));
     }
 
@@ -129,15 +129,11 @@ public class ListOutputHandler extends HtmlOutputHandler {
      * _more_
      */
     private void checkInit() {
-        if (WHATS == null) {
-            List<String> whats  = new ArrayList<String>();
-            List<String> labels = new ArrayList<String>();
-            if (getDoSiteCode()) {
-                whats.add(WHAT_SITE_CODES);
-                labels.add("Codes");
-            }
-            LABELS = Misc.listToStringArray(labels);
-            WHATS  = Misc.listToStringArray(whats);
+        if(browseCapabilities == null) {
+            List<Capability> tmp = new ArrayList<Capability>();
+
+            GsacRepositoryInfo       gri     = getRepository().getRepositoryInfo();
+            browseCapabilities = tmp;
         }
     }
 
@@ -150,14 +146,15 @@ public class ListOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception _more_
      */
+    /*
     public void handleTypesRequest(GsacRequest request,
                                    GsacResponse response, String output)
             throws Exception {
 
         List things = new ArrayList();
 
-        for (int i = 0; i < WHATS.length; i++) {
-            String id = WHATS[i];
+        for(Capability cap: browseCapabilities) {
+            String id = cap.
             //Skip site codes
             if (id.equals(WHAT_SITE_CODES)) {
                 continue;
@@ -177,12 +174,14 @@ public class ListOutputHandler extends HtmlOutputHandler {
             things.add(new IdLabel(id, label));
         }
 
-        if (output.equals(OUTPUT_LIST_CSV)) {
+        if (output.equals(OUTPUT_BROWSE_CSV)) {
             handleCsvRequest(request, response, WHAT_TYPES, things);
         } else {
             handleXmlRequest(request, response, WHAT_TYPES, things);
         }
     }
+
+*/
 
 
     /**
@@ -193,17 +192,17 @@ public class ListOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleListRequest(GsacRequest request, GsacResponse response)
+    public void handleBrowseRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         List   things    = null;
         String what      = request.get(ARG_BROWSE_WHAT, WHAT_SITE_TYPES);
         String searchArg = null;
-        String output    = request.get(ARG_OUTPUT, OUTPUT_LIST_DEFAULT);
+        String output    = request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT);
         if (what.equals(WHAT_SITE_GROUPS)) {
             things    = getRepository().getSiteGroups();
             searchArg = ARG_SITE_GROUP;
         } else if (what.equals(WHAT_TYPES)) {
-            handleTypesRequest(request, response, output);
+            //            handleTypesRequest(request, response, output);
             return;
         } else if (what.equals(WHAT_SITE_CODES)) {
             handleSiteCodeRequest(request, response, output);
@@ -230,12 +229,12 @@ public class ListOutputHandler extends HtmlOutputHandler {
             }
         }
 
-        if (output.equals(OUTPUT_LIST_HTML)
-                || output.equals(OUTPUT_LIST_DEFAULT)) {
+        if (output.equals(OUTPUT_BROWSE_HTML)
+                || output.equals(OUTPUT_BROWSE_DEFAULT)) {
             handleHtmlRequest(request, response, what, things, searchArg);
-        } else if (output.equals(OUTPUT_LIST_CSV)) {
+        } else if (output.equals(OUTPUT_BROWSE_CSV)) {
             handleCsvRequest(request, response, what, things);
-        } else if (output.equals(OUTPUT_LIST_XML)) {
+        } else if (output.equals(OUTPUT_BROWSE_XML)) {
             handleXmlRequest(request, response, what, things);
         } else {
             throw new IllegalArgumentException("Unknown output type:"
@@ -271,7 +270,7 @@ public class ListOutputHandler extends HtmlOutputHandler {
                 links.add(HtmlUtil.span(HtmlUtil.b(l),
                                         HtmlUtil.cssClass("firstletternav")));
             } else {
-                String url = getServlet().getUrl(URL_LIST_BASE) + "?"
+                String url = getServlet().getUrl(URL_BROWSE_BASE) + "?"
                              + ARG_BROWSE_WHAT + "=" + WHAT_SITE_CODES + "&"
                              + ARG_LETTER + "=" + l;
                 links.add(HtmlUtil.href(url, l,
@@ -320,7 +319,7 @@ public class ListOutputHandler extends HtmlOutputHandler {
                 String lbl = HtmlUtil.b(label);
                 links.add(lbl);
             } else {
-                links.add(HtmlUtil.href(getServlet().getUrl(URL_LIST_BASE)
+                links.add(HtmlUtil.href(getServlet().getUrl(URL_BROWSE_BASE)
                                         + "?" + ARG_BROWSE_WHAT + "="
                                         + id, label));
             }
@@ -339,7 +338,7 @@ public class ListOutputHandler extends HtmlOutputHandler {
                 String lbl = HtmlUtil.b(label);
                 links.add(lbl);
             } else {
-                links.add(HtmlUtil.href(getServlet().getUrl(URL_LIST_BASE)
+                links.add(HtmlUtil.href(getServlet().getUrl(URL_BROWSE_BASE)
                                         + "?" + ARG_BROWSE_WHAT + "="
                                         + id, label));
             }
@@ -350,20 +349,20 @@ public class ListOutputHandler extends HtmlOutputHandler {
                                         StringUtil.join("&nbsp;|&nbsp;",
                                             links));
 
-        String baseUrl = getServlet().getUrl(URL_LIST_BASE);
+        String baseUrl = getServlet().getUrl(URL_BROWSE_BASE);
         if ( !what.equals(WHAT_SITE_CODES)) {
             String suffix = "/" + what.replace(".", "_");
             String urls = HtmlUtil.href(
                               baseUrl + suffix + ".csv" + "?"
                               + request.getUrlArgs(
-                                  ARG_OUTPUT, OUTPUT_LIST_CSV), HtmlUtil.img(
+                                  ARG_OUTPUT, OUTPUT_BROWSE_CSV), HtmlUtil.img(
                                   getServlet().iconUrl("/xls.png"),
                                   msg("Download CSV file"))) + " "
                                       + HtmlUtil.href(
                                           baseUrl + suffix + ".xml" + "?"
                                           + request.getUrlArgs(
                                               ARG_OUTPUT,
-                                              OUTPUT_LIST_XML), HtmlUtil.img(
+                                              OUTPUT_BROWSE_XML), HtmlUtil.img(
                                                   getServlet().iconUrl(
                                                       "/xml.png"), msg(
                                                       "Download XML file")));

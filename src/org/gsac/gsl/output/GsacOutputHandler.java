@@ -419,8 +419,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception _more_
      */
-    public void handleListRequest(GsacRequest gsacRequest) throws Exception {
-        handleListRequest(gsacRequest, doMakeResponse(gsacRequest));
+    public void handleBrowseRequest(GsacRequest gsacRequest) throws Exception {
+        handleBrowseRequest(gsacRequest, doMakeResponse(gsacRequest));
     }
 
     /**
@@ -431,7 +431,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception _more_
      */
-    public void handleListRequest(GsacRequest gsacRequest,
+    public void handleBrowseRequest(GsacRequest gsacRequest,
                                   GsacResponse gsacResponse)
             throws Exception {
         throw new IllegalArgumentException("not implemented");

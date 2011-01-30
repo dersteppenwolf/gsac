@@ -416,8 +416,11 @@ public abstract class SiteManager extends GsacRepositoryManager {
      */
     public void addDefaultSiteCapabilities(List<Capability> capabilities) {
         String       help = HtmlOutputHandler.stringSearchHelp;
+        Capability siteCode;
+        Capability siteName;
+
         Capability[] dflt = {
-            initCapability(
+            siteCode = initCapability(
                 new Capability(
                     ARG_SITE_CODE, "Site Code",
                     Capability.TYPE_STRING), GROUP_SITE_QUERY,
@@ -425,7 +428,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
                                              "Short name of the site. "
                                              + help),
             initCapability(
-                new Capability(
+                           siteName = new Capability(
                     ARG_SITE_NAME, "Site Name",
                     Capability.TYPE_STRING), GROUP_SITE_QUERY,
                                              "Name of the site",
@@ -452,6 +455,8 @@ public abstract class SiteManager extends GsacRepositoryManager {
                     Capability.TYPE_SPATIAL_BOUNDS), GROUP_SITE_QUERY,
                         "Spatial bounds within which the site lies")
         };
+        siteCode.setBrowse(true);
+        siteName.setBrowse(true);
         for (Capability capability : dflt) {
             capabilities.add(capability);
         }

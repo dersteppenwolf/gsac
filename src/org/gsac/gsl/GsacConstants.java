@@ -83,7 +83,7 @@ public interface GsacConstants extends GsacArgs {
 
 
     /** _more_ */
-    public static final String URL_LIST_BASE = URL_BASE + "/list";
+    public static final String URL_BROWSE_BASE = URL_BASE + "/browse";
 
 
     /** Url path for repository queries */
@@ -105,7 +105,7 @@ public interface GsacConstants extends GsacArgs {
         HtmlSiteOutputHandler.OUTPUT_SITE_HTML;
 
     /** _more_ */
-    public static final String OUTPUT_LIST_DEFAULT = "list.default";
+    public static final String OUTPUT_BROWSE_DEFAULT = "browse.default";
 
     /** _more_ */
     public static final String OUTPUT_RESOURCE_DEFAULT =
