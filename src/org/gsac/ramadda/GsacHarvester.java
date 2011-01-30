@@ -25,9 +25,9 @@ package org.gsac.ramadda;
 import org.w3c.dom.*;
 
 
-import ucar.unidata.repository.*;
-import ucar.unidata.repository.auth.User;
-import ucar.unidata.repository.harvester.*;
+import org.ramadda.repository.*;
+import org.ramadda.repository.auth.User;
+import org.ramadda.repository.harvester.*;
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
