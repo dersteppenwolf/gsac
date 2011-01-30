@@ -55,6 +55,9 @@ public interface GsacConstants extends GsacArgs {
     /** The top-level url path */
     public static final String URL_BASE = "/gsacapi";
 
+    public static final String URL_STATS_BASE = URL_BASE + "/stats";
+
+
     /** Url path for site queries */
     public static final String URL_SITE_BASE = URL_BASE + "/site";
 

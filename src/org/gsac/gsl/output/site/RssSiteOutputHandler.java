@@ -97,9 +97,9 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public RssSiteOutputHandler(GsacServlet gsacServlet) {
+    public RssSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_RSS,
+        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_RSS,
                 "Site GSAC RSS", "/sites.rss", true));
     }
 
@@ -133,7 +133,7 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
             }
             String title = site.getLabel();
             pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
-            String url =getServlet().getAbsoluteUrl(makeSiteUrl(site));
+            String url =getRepository().getAbsoluteUrl(makeSiteUrl(site));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
             pw.append(XmlUtil.tag(TAG_RSS_GUID, "", url));
             EarthLocation el = site.getEarthLocation();

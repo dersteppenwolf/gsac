@@ -98,9 +98,9 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public RssResourceOutputHandler(GsacServlet gsacServlet) {
+    public RssResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addResourceOutput(new GsacOutput(this, OUTPUT_RESOURCE_RSS,
+        getRepository().addResourceOutput(new GsacOutput(this, OUTPUT_RESOURCE_RSS,
                 "Resource GSAC RSS", "/resources.rss", true));
     }
 
@@ -134,7 +134,7 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
             }
             String title = resource.getType() +" - " +IOUtil.getFileTail(resource.getFileInfo().getUrl());
             pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
-            String url =getServlet().getAbsoluteUrl(makeResourceUrl(resource));
+            String url =getRepository().getAbsoluteUrl(makeResourceUrl(resource));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
             pw.append(XmlUtil.tag(TAG_RSS_GUID, "", url));
 

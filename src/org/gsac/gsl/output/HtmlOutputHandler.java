@@ -87,13 +87,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet The servlet
      */
-    public HtmlOutputHandler(GsacServlet gsacServlet) {
+    public HtmlOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        HtmlUtil.setBlockHideShowImage(getServlet().iconUrl("/minus.gif"),
-                                       getServlet().iconUrl("/plus.gif"));
+        HtmlUtil.setBlockHideShowImage(iconUrl("/minus.gif"),
+                                       iconUrl("/plus.gif"));
 
-        HtmlUtil.setInlineHideShowImage(getServlet().iconUrl("/minus.gif"),
-                                        getServlet().iconUrl("/plus.gif"));
+        HtmlUtil.setInlineHideShowImage(iconUrl("/minus.gif"),
+                                        iconUrl("/plus.gif"));
 
 
     }
@@ -287,7 +287,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void getSiteOutputSelect(GsacRequest request, Appendable pw)
             throws IOException {
         List outputs = new ArrayList();
-        for (GsacOutput output : getServlet().getSiteOutputs()) {
+        for (GsacOutput output : getRepository().getSiteOutputs()) {
             if (output.getForUser()) {
                 outputs.add(new TwoFacedObject(output.getLabel(),
                         output.getId()));
@@ -315,7 +315,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void getResourceOutputSelect(GsacRequest request, Appendable pw)
             throws IOException {
         List outputs = new ArrayList();
-        for (GsacOutput output : getServlet().getResourceOutputs()) {
+        for (GsacOutput output : getRepository().getResourceOutputs()) {
             if (output.getForUser()) {
                 outputs.add(new TwoFacedObject(output.getLabel(),
                         output.getId()));
@@ -472,7 +472,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     Capability.TYPE_DATERANGE)) {
                 Date   fromDate = null;
                 Date   toDate   = null;
-                String img = HtmlUtil.img(getServlet().iconUrl("/range.gif"));
+                String img = HtmlUtil.img(iconUrl("/range.gif"));
                 String dateInput1 = makeDateInput(request, arg + ".from",
                                         "searchform", fromDate, null, false);
                 String dateInput2 = makeDateInput(request, arg + ".to",
@@ -522,7 +522,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 if (desc == null) {
                     desc = "";
                 } else {
-                    desc = HtmlUtil.img(getServlet().iconUrl("/help.png"),
+                    desc = HtmlUtil.img(iconUrl("/help.png"),
                                         desc) + " ";
                 }
                 capBuff.append(
@@ -1104,7 +1104,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                HtmlUtil.call(
                                    "hideElementById",
                                    HtmlUtil.squote(compId))), HtmlUtil.img(
-                                       getServlet().iconUrl(
+                                       iconUrl(
                                            "/close.gif")), "");
         contents = cLink + HtmlUtil.br() + contents;
 
@@ -1209,7 +1209,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 IconMetadata.getIconMetadata(site.getMetadata())) {
             return iconMetadata.getUrl();
         }
-        return getServlet().getAbsoluteUrl(getServlet().iconUrl("/site.png"));
+        return getRepository().getAbsoluteUrl(iconUrl("/site.png"));
     }
 
 
@@ -1734,8 +1734,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                         "yyyy-MM-dd"))) + "return false;";
         return HtmlUtil
             .href("#", HtmlUtil
-                .img(getServlet()
-                    .iconUrl("/calendar.png"), " Choose date", HtmlUtil
+                .img(getRepository().iconUrl("/calendar.png"), " Choose date", HtmlUtil
                     .attr(HtmlUtil.ATTR_BORDER, "0")), HtmlUtil
                         .onMouseClick(call) + HtmlUtil
                         .attrs(HtmlUtil.ATTR_NAME, anchorName, HtmlUtil
@@ -1878,7 +1877,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String   event1 = events[0];
             String   event2 = events[1];
             String dartImg =
-                HtmlUtil.img(getServlet().iconUrl("/blank.gif"),
+                HtmlUtil.img(iconUrl("/blank.gif"),
                              "Click to show details",
                              HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "10")
                              + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")
@@ -1964,7 +1963,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                         SORT_ORDER_ASCENDING).equals(
                                             SORT_ORDER_ASCENDING);
                 String img = orderCapable
-                             ? getServlet().iconUrl(ascending
+                             ? iconUrl(ascending
                         ? "/updart.png"
                         : "/downdart.png")
                              : "";

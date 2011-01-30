@@ -86,17 +86,17 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public BrowseOutputHandler(GsacServlet gsacServlet) {
+    public BrowseOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         checkInit();
 
-        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_HTML,
+        getRepository().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_HTML,
                 "HTML"));
-        getServlet().addBrowseOutput(new GsacOutput(this,
+        getRepository().addBrowseOutput(new GsacOutput(this,
                 OUTPUT_BROWSE_DEFAULT, "Default"));
-        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_CSV,
+        getRepository().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_CSV,
                 "CSV"));
-        getServlet().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_XML,
+        getRepository().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_XML,
                 "XML"));
     }
 
@@ -183,7 +183,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                 links.add(HtmlUtil.span(HtmlUtil.b(l),
                                         HtmlUtil.cssClass("firstletternav")));
             } else {
-                String url = getServlet().getUrl(URL_BROWSE_BASE) + "?"
+                String url = getRepository().getUrl(URL_BROWSE_BASE) + "?"
                              + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
                              + "=" + l;
                 links.add(HtmlUtil.href(url, l,
@@ -208,7 +208,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         List<GsacSite> sites = response.getSites();
         if (sites.size() == 0) {
             html.append(
-                getServlet().makeInformationDialog(msg("No results found")));
+                getRepository().makeInformationDialog(msg("No results found")));
         } else {
             makeSiteHtmlTable(request, html, sites);
         }
@@ -235,7 +235,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                 String lbl = HtmlUtil.b(label);
                 links.add(lbl);
             } else {
-                links.add(HtmlUtil.href(getServlet().getUrl(URL_BROWSE_BASE)
+                links.add(HtmlUtil.href(getRepository().getUrl(URL_BROWSE_BASE)
                                         + "?" + ARG_BROWSE_WHAT + "="
                                         + id, label));
             }
@@ -246,21 +246,21 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                         StringUtil.join("&nbsp;|&nbsp;",
                                             links));
         /*
-        String baseUrl = getServlet().getUrl(URL_BROWSE_BASE);
+        String baseUrl = getRepository().getUrl(URL_BROWSE_BASE);
         if ( !what.equals(WHAT_SITE_CODES)) {
             String suffix = "/" + what.replace(".", "_");
             String urls = HtmlUtil.href(
                               baseUrl + suffix + ".csv" + "?"
                               + request.getUrlArgs(
                                   ARG_OUTPUT, OUTPUT_BROWSE_CSV), HtmlUtil.img(
-                                  getServlet().iconUrl("/xls.png"),
+                                  iconUrl("/xls.png"),
                                   msg("Download CSV file"))) + " "
                                       + HtmlUtil.href(
                                           baseUrl + suffix + ".xml" + "?"
                                           + request.getUrlArgs(
                                               ARG_OUTPUT,
                                               OUTPUT_BROWSE_XML), HtmlUtil.img(
-                                                  getServlet().iconUrl(
+                                                  iconUrl(
                                                       "/xml.png"), msg(
                                                       "Download XML file")));
 

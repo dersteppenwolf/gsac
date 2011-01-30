@@ -68,7 +68,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
 
     /** _more_ */
-    private GsacServlet gsacServlet;
+    private GsacRepository gsacRepository;
 
     /** _more_ */
     private DecimalFormat sizeFormat = new DecimalFormat("####0.00");
@@ -111,10 +111,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacServlet _more_
      */
-    public GsacOutputHandler(GsacServlet gsacServlet) {
-        this.gsacServlet = gsacServlet;
+    public GsacOutputHandler(GsacRepository gsacRepository) {
+        this.gsacRepository = gsacRepository;
 
         doSite           = getRepository().isCapable(HEADER_SITE);
         doResource       = getRepository().isCapable(HEADER_RESOURCE);
@@ -324,7 +323,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String iconUrl(String icon) {
-        return getServlet().iconUrl(icon);
+        return getRepository().iconUrl(icon);
     }
 
 
@@ -354,7 +353,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String msg(String msg) {
-        return getServlet().msg(msg);
+        return getRepository().msg(msg);
     }
 
     /**
@@ -374,7 +373,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public GsacRepository getRepository() {
-        return gsacServlet.getRepository();
+        return gsacRepository;
     }
 
     /**
@@ -513,14 +512,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         return sizeFormat.format(bytes / 1000000000.0) + "&nbsp;GB";
     }
 
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public GsacServlet getServlet() {
-        return gsacServlet;
-    }
+
 
     /**
      * _more_
@@ -602,7 +594,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     public String makeUrl(String suffix) {
         String url = getRepository().getUrlBase() + suffix;
         if (shouldUrlsBeAbsolute()) {
-            url = gsacServlet.getAbsoluteUrl(url);
+            url = getRepository().getAbsoluteUrl(url);
         }
         return url;
     }

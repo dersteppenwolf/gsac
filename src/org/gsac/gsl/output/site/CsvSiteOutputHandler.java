@@ -51,9 +51,9 @@ public class CsvSiteOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public CsvSiteOutputHandler(GsacServlet gsacServlet) {
+    public CsvSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_CSV,
+        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_CSV,
                 "Site CSV", "/sites.csv", true));
     }
 

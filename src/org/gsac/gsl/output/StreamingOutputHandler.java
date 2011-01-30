@@ -45,7 +45,7 @@ public class StreamingOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public StreamingOutputHandler(GsacServlet gsacServlet) {
+    public StreamingOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
     }
 

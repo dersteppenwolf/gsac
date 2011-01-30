@@ -67,9 +67,9 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public ZipResourceOutputHandler(GsacServlet gsacServlet) {
+    public ZipResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addResourceOutput(new GsacOutput(this,
+        getRepository().addResourceOutput(new GsacOutput(this,
                 OUTPUT_RESOURCE_ZIP, "Resource Zip File", "/resources.zip",
                 true));
 
@@ -91,7 +91,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
 
         //Check the size
         long totalSize = 0;
-        long maxSize = getServlet().getProperty(PROP_MAXSIZE, SIZE_THRESHOLD);
+        long maxSize = getRepository().getProperty(PROP_MAXSIZE, SIZE_THRESHOLD);
         for (GsacResource resource : response.getResources()) {
             if (resource.getFileInfo().getType() != FileInfo.TYPE_FILE) {
                 continue;
@@ -101,7 +101,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
                 StringBuffer sb = new StringBuffer();
                 initHtml(request, response, sb);
                 sb.append(
-                    getServlet().makeErrorDialog(
+                    getRepository().makeErrorDialog(
                         "Requested # bytes &gt; " + SIZE_THRESHOLD));
                 finishHtml(request, response, sb);
                 return;

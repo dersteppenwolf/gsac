@@ -59,11 +59,11 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public HtmlSiteOutputHandler(GsacServlet gsacServlet) {
+    public HtmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_HTML,
+        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_HTML,
                 "Site HTML"));
-        //        getServlet().addSiteOutput(new GsacOutput(this,
+        //        getRepository().addSiteOutput(new GsacOutput(this,
         //                OUTPUT_SITE_DEFAULT, "Site Default"));
     }
 
@@ -185,7 +185,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             throws IOException, ServletException {
         if (site == null) {
             pw.append(
-                getServlet().makeErrorDialog(msg("Could not find site")));
+                getRepository().makeErrorDialog(msg("Could not find site")));
             return;
         }
         getSiteHtml(request, pw, site, true, true, false);
@@ -207,7 +207,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer formBuffer  = new StringBuffer();
 
         StringBuffer searchLinks = new StringBuffer();
-        for (GsacOutput output : getServlet().getSiteOutputs()) {
+        for (GsacOutput output : getRepository().getSiteOutputs()) {
             if (output.getId().equals(OUTPUT_SITE_HTML)) {
                 continue;
             }
@@ -232,7 +232,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         List<GsacSite> sites = response.getSites();
         if (sites.size() == 0) {
             pw.append(
-                getServlet().makeInformationDialog(msg("No sites found")));
+                getRepository().makeInformationDialog(msg("No sites found")));
         }
 
         String message = response.getQueryInfo();

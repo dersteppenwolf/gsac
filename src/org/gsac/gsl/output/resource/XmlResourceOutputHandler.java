@@ -53,9 +53,9 @@ public class XmlResourceOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public XmlResourceOutputHandler(GsacServlet gsacServlet) {
+    public XmlResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addResourceOutput(new GsacOutput(this, OUTPUT_RESOURCE_XML,
+        getRepository().addResourceOutput(new GsacOutput(this, OUTPUT_RESOURCE_XML,
                 "Resource GSAC XML", "/resources.xml", true));
     }
 

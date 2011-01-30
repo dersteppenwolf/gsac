@@ -60,11 +60,11 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public HtmlResourceOutputHandler(GsacServlet gsacServlet) {
+    public HtmlResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addResourceOutput(new GsacOutput(this,
+        getRepository().addResourceOutput(new GsacOutput(this,
                 OUTPUT_RESOURCE_HTML, "Resource HTML"));
-        //        getServlet().addResourceOutput(new GsacOutput(this,
+        //        getRepository().addResourceOutput(new GsacOutput(this,
         //                OUTPUT_RESOURCE_DEFAULT, "Resource Default"));
     }
 
@@ -200,7 +200,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),
                                     HtmlUtil.attr("name", "searchform")));;
 
-        String blankImg = getServlet().iconUrl("/blank.gif");
+        String blankImg = iconUrl("/blank.gif");
         //Put a blank image submit input here so any Enter key pressed does not
         //default to a site submit button search
         pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
@@ -259,7 +259,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
             StringBuffer searchLinks = new StringBuffer();
             GsacRequest  tmpRequest  = new GsacRequest(request);
-            for (GsacOutput output : getServlet().getResourceOutputs()) {
+            for (GsacOutput output : getRepository().getResourceOutputs()) {
                 if (output.getId().equals(OUTPUT_RESOURCE_HTML)) {
                     continue;
                 }
@@ -386,7 +386,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             }
             if (cnt == 0) {
                 sb.append(
-                    getServlet().makeInformationDialog(
+                    getRepository().makeInformationDialog(
                         msg("No files found")));
             } else {
                 sb.append("<tr><td colspan=2></td>");

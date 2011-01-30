@@ -23,12 +23,19 @@ package org.gsac.gsl;
 
 import org.apache.log4j.Logger;
 
+import java.lang.management.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.text.DecimalFormat;
 
 import org.gsac.gsl.database.*;
 
 
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
+import org.gsac.gsl.output.resource.*;
+import org.gsac.gsl.output.site.*;
+
 
 import org.gsac.gsl.util.*;
 
@@ -186,6 +193,42 @@ public class GsacRepository implements GsacConstants {
     private File gsacDirectory;
 
 
+    /** _more_ */
+    private int numConnections = 0;
+
+    /** _more_ */
+    private Date startDate = new Date();
+
+
+    /** _more_ */
+    private HtmlOutputHandler htmlOutputHandler;
+
+    /** _more_ */
+    private List<GsacOutput> siteOutputs = new ArrayList<GsacOutput>();
+
+    /** site output handlers */
+    private Hashtable<String, GsacOutput> siteOutputMap =
+        new Hashtable<String, GsacOutput>();
+
+    /** _more_ */
+    private List<GsacOutput> resourceOutputs = new ArrayList<GsacOutput>();
+
+    /** resource output handlers */
+    private Hashtable<String, GsacOutput> resourceOutputMap =
+        new Hashtable<String, GsacOutput>();
+
+
+    /** _more_ */
+    private List<GsacOutput> browseOutputs = new ArrayList<GsacOutput>();
+
+    /** list output handlers */
+    private Hashtable<String, GsacOutput> listOutputMap =
+        new Hashtable<String, GsacOutput>();
+
+
+
+
+
     /**
      * noop constructor
      */
@@ -200,6 +243,109 @@ public class GsacRepository implements GsacConstants {
     public GsacRepository(GsacServlet servlet) {
         this.servlet = servlet;
     }
+
+
+    /**
+     * Add output type for sites
+     *
+     * @param output site output type
+     */
+    public void addSiteOutput(GsacOutput output) {
+        if (getProperty(output.getProperty("enabled"), true)) {
+            siteOutputMap.put(output.getId(), output);
+            siteOutputs.add(output);
+        }
+    }
+
+
+
+    /**
+     * add output type for resources
+     *
+     * @param output resource output type
+     */
+    public void addResourceOutput(GsacOutput output) {
+        if (getProperty(output.getProperty("enabled"), true)) {
+            resourceOutputMap.put(output.getId(), output);
+            resourceOutputs.add(output);
+        }
+    }
+
+    /**
+     * add output type for listing
+     *
+     * @param output output type
+     */
+    public void addBrowseOutput(GsacOutput output) {
+        if (getProperty(output.getProperty("enabled"), true)) {
+            listOutputMap.put(output.getId(), output);
+            browseOutputs.add(output);
+        }
+    }
+
+
+
+
+    /**
+     * Find the site output handler
+     *
+     *
+     * @param output output type
+     * @param map map to use
+     *
+     * @return site output handler
+     */
+    public GsacOutputHandler getOutputHandler(String output,
+            Hashtable<String, GsacOutput> map) {
+        GsacOutput gsacOutput = map.get(output);
+        if (gsacOutput == null) {
+            throw new IllegalArgumentException("Unknown output type:"
+                    + output);
+        }
+        return gsacOutput.getOutputHandler();
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     *
+     * @return _more_
+     */
+    public GsacOutputHandler getSiteOutputHandler(GsacRequest request) {
+        return getOutputHandler(request.get(ARG_OUTPUT, OUTPUT_SITE_DEFAULT),
+                                siteOutputMap);
+    }
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     *
+     * @return _more_
+     */
+    public GsacOutputHandler getResourceOutputHandler(GsacRequest request) {
+        return getOutputHandler(
+            request.get(ARG_OUTPUT, OUTPUT_RESOURCE_DEFAULT),
+            resourceOutputMap);
+    }
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     *
+     * @return _more_
+     */
+    public GsacOutputHandler getBrowseOutputHandler(GsacRequest request) {
+        return getOutputHandler(
+            request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT), listOutputMap);
+    }
+
+
+
 
     /**
      * _more_
@@ -481,6 +627,25 @@ public class GsacRepository implements GsacConstants {
         }
 
 
+        htmlOutputHandler = new HtmlSiteOutputHandler(this);
+        new KmlSiteOutputHandler(this);
+        new CsvSiteOutputHandler(this);
+        new RssSiteOutputHandler(this);
+        new AtomSiteOutputHandler(this);
+        new JsonSiteOutputHandler(this);
+        new XmlSiteOutputHandler(this);
+
+
+        new HtmlResourceOutputHandler(this);
+        new CsvResourceOutputHandler(this);
+        new WgetResourceOutputHandler(this);
+        new UrlResourceOutputHandler(this);
+        new JsonResourceOutputHandler(this);
+        new DownloaderResourceOutputHandler(this);
+        new ZipResourceOutputHandler(this);
+        new BrowseOutputHandler(this);
+        new RssResourceOutputHandler(this);
+        new XmlResourceOutputHandler(this);
 
         getSiteQueryCapabilities();
         getResourceQueryCapabilities();
@@ -488,6 +653,7 @@ public class GsacRepository implements GsacConstants {
         getRepositoryInfo();
 
     }
+
 
 
     /**
@@ -1030,6 +1196,295 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+
+    public GsacRepository getRepository() {
+        return this;
+    }
+
+
+
+    /**
+     * Main entry point
+     *
+     *
+     * @param gsacRequest the request
+     *
+     * @throws IOException On badness
+     * @throws ServletException On badness
+     */
+    public void handleRequest(GsacRequest request) 
+            throws IOException, ServletException {
+        String uri = request.getRequestURI();
+
+        //TODO: What to do with a head request
+        if (request.getMethod().toUpperCase().equals("HEAD")) {
+            System.err.println("****** head:" + uri);
+            return;
+        }
+
+        try {
+            boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
+            if (serviceRequest) {
+                numConnections++;
+                //                getRepository().logInfo("start url:" + uri);
+            }
+            String what = "other";
+            if (uri.indexOf(URL_SITE_BASE) >= 0) {
+                what = URL_SITE_BASE;
+                handleSiteRequest(request);
+                //            } else if(uri.indexOf("connections")) {
+                //                System.err.println ("getting connection");
+                //            for(int i=0;i<30;i++)
+                //                conns.add(getRepository().getDatabaseManager().getConnection());
+            } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
+                what = URL_RESOURCE_BASE;
+                handleResourceRequest(request);
+            } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
+                handleBrowseRequest(request);
+            } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
+                handleStatsRequest(request, new GsacResponse(request));
+            } else if (uri.indexOf(URL_HELP) >= 0) {
+                handleHelpRequest(request, new GsacResponse(request));
+            } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
+                handleHtdocsRequest(request);
+            } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
+                getRepository().handleViewRequest(request,
+                        new GsacResponse(request));
+            } else {
+                throw new UnknownRequestException("");
+                //                getRepository().logError("Unknown request:" + uri, null);
+            }
+            //Only log the access if its actuall a service request (as opposed to htdocs requests)
+            if (serviceRequest) {
+                getRepository().logAccess(request, what);
+                //                System.err.println (getRepository().getDatabaseManager().getPoolStats());
+                //                System.out.println("http://${server}" + request.toString());
+            }
+        } catch (UnknownRequestException exc) {
+            getRepository().logError("Unknown request:" + uri + "?"
+                                     + request.getUrlArgs(), null);
+            request.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                  "Unknown request:" + uri);
+        } catch (java.net.SocketException sexc) {
+            //Ignore the client closing the connection
+        } catch (Exception exc) {
+            Throwable thr = LogUtil.getInnerException(exc);
+            getRepository().logError("Error processing request:" + uri + "?"
+                                     + request.getUrlArgs(), thr);
+            try {
+                request.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "An error occurred:" + thr);
+            } catch (Exception ignoreThisOne) {}
+        }
+    }
+
+
+    /**
+     * handle a resource request
+     *
+     * @param request the request
+     *
+     * @throws Exception On badness
+     */
+    public void handleBrowseRequest(GsacRequest request) throws Exception {
+        GsacOutputHandler outputHandler = getBrowseOutputHandler(request);
+        outputHandler.handleBrowseRequest(request);
+    }
+
+
+
+
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     *
+     * @throws Exception On badness
+     */
+    public void handleHtdocsRequest(GsacRequest request) throws Exception {
+        String      uri         = request.getRequestURI();
+        int idx = uri.indexOf(URL_HTDOCS_BASE) + URL_HTDOCS_BASE.length();
+        String      path        = uri.substring(idx);
+
+        InputStream inputStream = null;
+        String[] paths = new String[] {
+                             getRepository().getLocalHtdocsPath(path),
+                             "/org/gsac/gsl/htdocs" + path };
+
+        for (String fullPath : paths) {
+            try {
+                inputStream = getResourceInputStream(fullPath);
+                if (inputStream != null) {
+                    break;
+                }
+            } catch (Exception exc) {}
+        }
+
+        if (inputStream == null) {
+            request.sendError(HttpServletResponse.SC_NOT_FOUND,
+                              "Could not find:" + path);
+            return;
+        }
+        if (uri.endsWith(".js") || uri.endsWith(".jnlp")) {
+            String content = IOUtil.readContents(inputStream);
+            inputStream.close();
+            content = content.replace("${urlroot}",
+                                      getRepository().getUrlBase()
+                                      + URL_BASE);
+            content =
+                content.replace("${fullurlroot}",
+                                getAbsoluteUrl(getRepository().getUrlBase()
+                                    + URL_BASE));
+            inputStream = new ByteArrayInputStream(content.getBytes());
+        }
+        OutputStream outputStream = request.getOutputStream();
+        IOUtil.writeTo(inputStream, outputStream);
+        IOUtil.close(outputStream);
+    }
+
+
+
+
+    /**
+     * handle a site request
+     *
+     * @param gsacRequest the request
+     *
+     * @throws Exception On badness
+     */
+    public void handleSiteRequest(GsacRequest gsacRequest) throws Exception {
+        GsacOutputHandler outputHandler = getSiteOutputHandler(gsacRequest);
+        outputHandler.handleSiteRequest(gsacRequest);
+    }
+
+
+
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    HtmlOutputHandler getHtmlOutputHandler() {
+        return htmlOutputHandler;
+    }
+
+
+
+    /**
+     * handle a resource request
+     *
+     * @param gsacRequest the request
+     *
+     * @throws Exception On badness
+     */
+    public void handleResourceRequest(GsacRequest gsacRequest)
+            throws Exception {
+        GsacOutputHandler outputHandler =
+            getResourceOutputHandler(gsacRequest);
+        outputHandler.handleResourceRequest(gsacRequest);
+    }
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     *
+     * @throws Exception _more_
+     */
+    public void handleHelpRequest(GsacRequest request, GsacResponse response)
+            throws Exception {
+        String path = request.getGsacUrlPath().substring(URL_HELP.length());
+        if (path.length() == 0) {
+            path = "/index.html";
+        }
+
+        InputStream inputStream = getResourceInputStream("/org/gsac/gsl/help"
+                                      + path);
+        if (inputStream == null) {
+            //TODO:         inputStream = getRepository().getResourceInputStream(path);
+        }
+        if ( !path.endsWith(".html")) {
+            OutputStream outputStream = request.getOutputStream();
+            IOUtil.writeTo(inputStream, outputStream);
+            IOUtil.close(outputStream);
+            IOUtil.close(inputStream);
+            return;
+        }
+
+        StringBuffer sb = new StringBuffer();
+        htmlOutputHandler.initHtml(request, response, sb);
+        String contents = "Could not read file:" + path;
+        if (inputStream != null) {
+            contents = IOUtil.readContents(inputStream);
+            inputStream.close();
+            contents = contents.replace("${urlroot}",
+                                        getRepository().getUrlBase()
+                                        + URL_BASE);
+            contents =
+                contents.replace("${fullurlroot}",
+                                 getAbsoluteUrl(getRepository().getUrlBase()
+                                     + URL_BASE));
+        }
+        sb.append(contents);
+        htmlOutputHandler.finishHtml(request, response, sb);
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     *
+     * @throws Exception _more_
+     */
+    public void handleStatsRequest(GsacRequest request, GsacResponse response)
+            throws Exception {
+        response.startResponse(GsacResponse.MIME_TEXT);
+        request.put(ARG_DECORATE, "false");
+        StringBuffer sb = new StringBuffer();
+        htmlOutputHandler.initHtml(request, response, sb);
+
+        sb.append(HtmlUtil.formTable());
+        DecimalFormat fmt         = new DecimalFormat("#0");
+
+        double        totalMemory = (double) Runtime.getRuntime().maxMemory();
+        double        freeMemory  =
+            (double) Runtime.getRuntime().freeMemory();
+        double highWaterMark = (double) Runtime.getRuntime().totalMemory();
+        double        usedMemory  = (highWaterMark - freeMemory);
+        totalMemory = totalMemory / 1000000.0;
+        usedMemory  = usedMemory / 1000000.0;
+        sb.append(HtmlUtil.formEntry("Total Memory Available:",
+                                     fmt.format(totalMemory) + " (MB)"));
+        sb.append(HtmlUtil.formEntry("Used Memory:",
+                                     fmt.format(usedMemory) + " (MB)"));
+
+        sb.append(HtmlUtil.formEntry("# Requests:", "" + numConnections));
+        sb.append(HtmlUtil.formEntry("Start Time:", "" + startDate));
+
+
+        long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
+        sb.append(HtmlUtil.formEntry("Up Time:",
+                                     fmt.format((double) (uptime / 1000
+                                         / 60)) + " " + msg("minutes")));
+
+        getRepository().addStats(sb);
+        sb.append(HtmlUtil.formTableClose());
+
+        sb.append(LogUtil.getStackDump(true));
+        htmlOutputHandler.finishHtml(request, response, sb);
+    }
+
+
+
+
+
+
     /**
      * gets called for resource requests
      *
@@ -1466,7 +1921,6 @@ public class GsacRepository implements GsacConstants {
                 new GsacRepositoryInfo(
                     getServlet().getAbsoluteUrl(getUrlBase()),
                     getRepositoryName());
-
             gri.setDescription(getRepositoryDescription());
             gri.addCollection(new CapabilityCollection("site", "Site Query",
                     getServlet().getAbsoluteUrl(getUrlBase()
@@ -1476,7 +1930,7 @@ public class GsacRepository implements GsacConstants {
                     getServlet().getAbsoluteUrl(getUrlBase()
                         + URL_RESOURCE_SEARCH), getResourceQueryCapabilities()));
             myInfo = gri;
-            printVocabularies(gri);
+            //            printVocabularies(gri);
         }
         return myInfo;
     }
@@ -2129,7 +2583,7 @@ public class GsacRepository implements GsacConstants {
         }
         String icon = info.getIcon();
         if (icon == null) {
-            icon = getServlet().iconUrl("/favicon.ico");
+            icon = iconUrl("/favicon.ico");
         }
         return HtmlUtil.href(getRemoteUrl(object),
                              HtmlUtil.img(icon, "View at " + info.getName()));
@@ -2349,12 +2803,12 @@ public class GsacRepository implements GsacConstants {
         GsacRepositoryInfo       gri     = getRepositoryInfo();
         StringBuffer             sb      = new StringBuffer();
 
-        getServlet().getHtmlOutputHandler().initHtml(request, response, sb);
+        getHtmlOutputHandler().initHtml(request, response, sb);
         sb.append(gri.getName());
         sb.append(HtmlUtil.br());
         sb.append(gri.getDescription());
         sb.append(HtmlUtil.p());
-        sb.append(HtmlUtil.href(getServlet().getUrl(URL_REPOSITORY_VIEW)
+        sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW)
                                 + "?" + ARG_OUTPUT
                                 + "=xml", msg("Repository information xml")));
 
@@ -2403,7 +2857,7 @@ public class GsacRepository implements GsacConstants {
         tmp.append(
             HtmlUtil.row(
                 HtmlUtil.colspan(HtmlUtil.b(msg("Site Outputs")), 2)));
-        for (GsacOutput output : getServlet().getSiteOutputs()) {
+        for (GsacOutput output : getSiteOutputs()) {
             if (output.getForUser()) {
                 tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
                         ARG_OUTPUT + "=" + output.getId())));
@@ -2413,7 +2867,7 @@ public class GsacRepository implements GsacConstants {
         tmp.append(
             HtmlUtil.row(
                 HtmlUtil.colspan(HtmlUtil.b(msg("Resource Outputs")), 2)));
-        for (GsacOutput output : getServlet().getResourceOutputs()) {
+        for (GsacOutput output : getResourceOutputs()) {
             if (output.getForUser()) {
                 tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
                         ARG_OUTPUT + "=" + output.getId())));
@@ -2427,7 +2881,7 @@ public class GsacRepository implements GsacConstants {
                 msg("Web Service API Documentation"),
                 HtmlUtil.insetDiv(contents.toString(), 0, 20, 0, 0), false));
 
-        getServlet().getHtmlOutputHandler().finishHtml(request, response, sb);
+        getHtmlOutputHandler().finishHtml(request, response, sb);
 
     }
 
@@ -2576,7 +3030,7 @@ public class GsacRepository implements GsacConstants {
         } else if (type.equals(Capability.TYPE_BOOLEAN)) {
             message.append("true<br>false<br>");
         } else {}
-        type = HtmlUtil.href(getServlet().getUrl(URL_HELP) + "/api.html#"
+        type = HtmlUtil.href(getUrl(URL_HELP) + "/api.html#"
                              + type, type);
         sb.append(HtmlUtil.rowTop(HtmlUtil.cols(capability.getLabel(), id,
                 type, message.toString())));
@@ -2591,16 +3045,6 @@ public class GsacRepository implements GsacConstants {
 
 
 
-    /**
-     * _more_
-     *
-     * @param s _more_
-     *
-     * @return _more_
-     */
-    public String msg(String s) {
-        return getServlet().msg(s);
-    }
 
     /**
      * _more_
@@ -2631,6 +3075,154 @@ public class GsacRepository implements GsacConstants {
         exceptArgs.add(ARG_OUTPUT);
         return request.getUrlArgs(newArg, exceptArgs);
     }
+
+
+    public String getAbsoluteUrl(String path) {
+        return servlet.getAbsoluteUrl(path);
+    }
+
+
+    /**
+     * Make the icon url. This prepends the url base/icons to the given icon.
+     *
+     * @param icon icon
+     *
+     * @return icon url
+     */
+    public String iconUrl(String icon) {
+        return getUrl(URL_HTDOCS_BASE + "/icons" + icon);
+    }
+
+
+    /**
+     * preprend the url base to  the given path
+     *
+     * @param path path
+     *
+     * @return full url
+     */
+    public String getUrl(String path) {
+        return getRepository().getUrlBase() + path;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param path _more_
+     * @param args _more_
+     *
+     * @return _more_
+     */
+    public String getUrl(String path, String[] args) {
+        return HtmlUtil.url(getRepository().getUrlBase() + path, args);
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public List<GsacOutput> getSiteOutputs() {
+        return siteOutputs;
+    }
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public List<GsacOutput> getResourceOutputs() {
+        return resourceOutputs;
+    }
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public List<GsacOutput> getBrowseOutputs() {
+        return browseOutputs;
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param h _more_
+     *
+     * @return _more_
+     */
+    public String makeInformationDialog(String h) {
+        return makeDialog(h, "/information.png", true);
+    }
+
+    /**
+     * _more_
+     *
+     * @param h _more_
+     *
+     * @return _more_
+     */
+    public String makeWarningDialog(String h) {
+        return makeDialog(h, "/warning.png", true);
+    }
+
+    /**
+     * _more_
+     *
+     * @param h _more_
+     *
+     * @return _more_
+     */
+    public String makeErrorDialog(String h) {
+        return makeDialog(h, "/error.png", true);
+    }
+
+    /**
+     * _more_
+     *
+     * @param h _more_
+     * @param icon _more_
+     * @param showClose _more_
+     *
+     * @return _more_
+     */
+    public String makeDialog(String h, String icon, boolean showClose) {
+        String html =
+            HtmlUtil.jsLink(HtmlUtil.onMouseClick("hide('messageblock')"),
+                            HtmlUtil.img(iconUrl("/close.gif")));
+        if ( !showClose) {
+            html = "&nbsp;";
+        }
+        h = "<div class=\"innernote\"><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td valign=\"top\">"
+            + HtmlUtil.img(iconUrl(icon)) + HtmlUtil.space(2)
+            + "</td><td valign=\"bottom\"><span class=\"notetext\">" + h
+            + "</span></td></tr></table></div>";
+        return "\n<table border=\"0\" id=\"messageblock\"><tr><td><div class=\"note\"><table><tr valign=top><td>"
+               + h + "</td><td>" + html + "</td></tr></table>"
+               + "</div></td></tr></table>\n";
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param msg _more_
+     *
+     * @return _more_
+     */
+    public String msg(String msg) {
+        String newMsg = getRepository().translatePhrase(msg);
+        if (newMsg != null) {
+            return newMsg;
+        }
+        return msg;
+    }
+
 
 
 

@@ -58,9 +58,9 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public AtomSiteOutputHandler(GsacServlet gsacServlet) {
+    public AtomSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_ATOM,
+        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_ATOM,
                 "Site GSAC ATOM", "/sites.atom", true));
     }
 
@@ -91,7 +91,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                    String[][]links) {
         */
         for (GsacSite site: response.getSites()) {
-            String url =getServlet().getAbsoluteUrl(makeSiteUrl(site));
+            String url =getRepository().getAbsoluteUrl(makeSiteUrl(site));
             EarthLocation el = site.getEarthLocation();
             /*
             if(el!=null) {

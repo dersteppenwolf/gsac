@@ -54,9 +54,9 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet servlet
      */
-    public DownloaderResourceOutputHandler(GsacServlet gsacServlet) {
+    public DownloaderResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getServlet().addResourceOutput(new GsacOutput(this,
+        getRepository().addResourceOutput(new GsacOutput(this,
                 OUTPUT_RESOURCE_DOWNLOAD, "Download Files",
                 "/resources.jnlp", true));
     }
@@ -89,7 +89,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
         String codebase = makeUrl(URL_RESOURCE_SEARCH);
         String href     = "resources.jnlp?" + request.getUrlArgs();
         response.startResponse(GsacResponse.MIME_JNLP);
-        InputStream inputStream = getServlet().getResourceInputStream(
+        InputStream inputStream = getRepository().getResourceInputStream(
                                       "/org/gsac/gsl/resources/gsac.jnlp");
         String      contents   = IOUtil.readContents(inputStream);
         GsacRequest newRequest = new GsacRequest(request);
@@ -98,7 +98,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
         String dataUrl = makeUrl(URL_RESOURCE_SEARCH + "?"
                                  + newRequest.getUrlArgs());
         String fullUrlRoot =
-            getServlet().getAbsoluteUrl(getRepository().getUrlBase()
+            getRepository().getAbsoluteUrl(getRepository().getUrlBase()
                                         + URL_BASE);
         //Do this a couple of times
         contents = contents.replace("${fullurlroot}", fullUrlRoot);
