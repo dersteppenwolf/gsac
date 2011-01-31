@@ -1954,6 +1954,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         boolean orderCapable = getRepository().isCapable(orderArg);
         String  sortBy       = request.get(valueArg, "");
         for (int i = 0; i < labels.length; i++) {
+            if(labels[i]==null) continue;
             sb.append("<td " + extra+"  nowrap>");
             if ( !sortCapable || (sortValues[i].length() == 0)) {
                 sb.append(labels[i]);

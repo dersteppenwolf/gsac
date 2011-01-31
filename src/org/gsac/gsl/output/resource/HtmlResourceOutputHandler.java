@@ -298,15 +298,20 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             int  cnt  = 0;
             for (GsacResource resource : response.getResources()) {
                 GsacSite site = resource.getSite();
+                if ((site == null) && (resource.getSiteID() != null)) {
+                    site = getRepository().getSite(request,
+                            resource.getSiteID());
+                }
                 if (cnt == 0) {
+                    boolean includeExtraCol = (site!=null &&  getRepository().getRemoteHref(site).length()>0);
                     sb.append(
                         "<table class=\"result-table\" cellspacing=0 cellpadding=4 border=0 xwidth=100%>");
                     String[] labels = new String[] {
-                        "", msg("Type"), msg("File"), msg("Site"),
+                        (includeExtraCol?"":null), msg("Type"), msg("File"), msg("Site"),
                         msg("Date"), msg("File size")
                     };
                     String[] sortValues = new String[] {
-                        "", SORT_RESOURCE_TYPE, "", "",
+                        (includeExtraCol?"":null), SORT_RESOURCE_TYPE, "", "",
                         SORT_RESOURCE_PUBLISHDATE, SORT_RESOURCE_SIZE
                     };
                     makeSortHeader(request, sb, ARG_RESOURCE_PREFIX, labels,
@@ -315,17 +320,15 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
                 }
                 cnt++;
-                if ((site == null) && (resource.getSiteID() != null)) {
-                    site = getRepository().getSite(request,
-                            resource.getSiteID());
-                }
                 openEntryRow(sb, resource.getRepositoryId(),
                              URL_RESOURCE_VIEW, ARG_RESOURCE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
-                sb.append(
-                    HtmlUtil.col(getRepository().getRemoteHref(resource)));
+                String remoteHref=getRepository().getRemoteHref(resource);
+                if(remoteHref.length()>0) {
+                    sb.append(HtmlUtil.col(remoteHref));
+                }
                 if (resource.getType() != null) {
                     sb.append(HtmlUtil.col(resource.getType().getName()));
                 } else {
