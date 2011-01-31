@@ -182,7 +182,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public boolean getDoSiteStatus() {
-        return doSiteStatus && (getRepository().getSiteStatuses().size() > 0);
+        return doSiteStatus;
     }
 
     /**
@@ -191,7 +191,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public boolean getDoSiteGroup() {
-        return doSiteGroup && (getRepository().getSiteGroups().size() > 0);
+        return doSiteGroup;
     }
 
     /**
@@ -200,7 +200,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public boolean getDoSiteType() {
-        return doSiteType && (getRepository().getSiteTypes().size() > 0);
+        return doSiteType;
     }
 
 

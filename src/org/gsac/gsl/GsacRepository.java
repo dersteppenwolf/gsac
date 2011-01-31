@@ -77,11 +77,6 @@ import java.util.zip.*;
  *
  * However, this class can also make use of a GsacDatabaseManager, SiteManager and ResourceManager
  * classes.
- * There are a number of other methods (e.g., getSite, getSiteTypes, etc.) where this
- * class implements a cache for the results (e.g., caching the GsacSite). If it cannot find the
- * requested object in the cache then it ends up calling a doGet... method, e.g., getSite ends up
- * calling doGetSite. Derived classes should overwrite the appropriate doGet methods. At a minumum doGetSite
- * needs to be overwritten.
  *
  * All of the other doGet methods are optional. But if your repository has, for example,
  * site types that you want to list and search on  then overwrite the  doGetSiteTypes method.
@@ -100,15 +95,6 @@ public class GsacRepository implements GsacConstants {
 
     /** _more_ */
     private File logDirectory;
-
-    /** cache id */
-    private static final String PROP_SITEGROUPS = "prop.sitegroups";
-
-    /** cache id */
-    private static final String PROP_SITETYPES = "prop.sitetypes";
-
-    /** cache id */
-    private static final String PROP_SITESTATUSES = "prop.sitestatuses";
 
     /** cache id */
     private static final String PROP_SITECAPABILITIES =
@@ -222,7 +208,7 @@ public class GsacRepository implements GsacConstants {
     private List<GsacOutput> browseOutputs = new ArrayList<GsacOutput>();
 
     /** list output handlers */
-    private Hashtable<String, GsacOutput> listOutputMap =
+    private Hashtable<String, GsacOutput> browseOutputMap =
         new Hashtable<String, GsacOutput>();
 
 
@@ -278,12 +264,10 @@ public class GsacRepository implements GsacConstants {
      */
     public void addBrowseOutput(GsacOutput output) {
         if (getProperty(output.getProperty("enabled"), true)) {
-            listOutputMap.put(output.getId(), output);
+            browseOutputMap.put(output.getId(), output);
             browseOutputs.add(output);
         }
     }
-
-
 
 
     /**
@@ -306,7 +290,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
     /**
      * _more_
      *
@@ -318,6 +301,7 @@ public class GsacRepository implements GsacConstants {
         return getOutputHandler(request.get(ARG_OUTPUT, OUTPUT_SITE_DEFAULT),
                                 siteOutputMap);
     }
+
 
     /**
      * _more_
@@ -332,6 +316,7 @@ public class GsacRepository implements GsacConstants {
             resourceOutputMap);
     }
 
+
     /**
      * _more_
      *
@@ -341,9 +326,8 @@ public class GsacRepository implements GsacConstants {
      */
     public GsacOutputHandler getBrowseOutputHandler(GsacRequest request) {
         return getOutputHandler(
-            request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT), listOutputMap);
+            request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT), browseOutputMap);
     }
-
 
 
 
@@ -1232,10 +1216,6 @@ public class GsacRepository implements GsacConstants {
             if (uri.indexOf(URL_SITE_BASE) >= 0) {
                 what = URL_SITE_BASE;
                 handleSiteRequest(request);
-                //            } else if(uri.indexOf("connections")) {
-                //                System.err.println ("getting connection");
-                //            for(int i=0;i<30;i++)
-                //                conns.add(getRepository().getDatabaseManager().getConnection());
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
                 what = URL_RESOURCE_BASE;
                 handleResourceRequest(request);
@@ -1347,6 +1327,19 @@ public class GsacRepository implements GsacConstants {
 
 
 
+
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    HtmlOutputHandler getHtmlOutputHandler() {
+        return htmlOutputHandler;
+    }
+
+
+
     /**
      * handle a site request
      *
@@ -1359,17 +1352,6 @@ public class GsacRepository implements GsacConstants {
         outputHandler.handleSiteRequest(gsacRequest);
     }
 
-
-
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    HtmlOutputHandler getHtmlOutputHandler() {
-        return htmlOutputHandler;
-    }
 
 
 
@@ -2210,120 +2192,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-    /**
-     * Get the list of available site groups. This keeps the list around in a local cache.
-     * If it cannot find the list then it calls doGetSiteGroups
-     *
-     * @return Site groups
-     */
-    public List<SiteGroup> getSiteGroups() {
-        List<SiteGroup> siteGroups =
-            (List<SiteGroup>) cache.get(PROP_SITEGROUPS);
-        if (siteGroups == null) {
-            siteGroups = doGetSiteGroups();
-            cache.put(PROP_SITEGROUPS, siteGroups);
-        }
-        return siteGroups;
-    }
-
-    /**
-     * Get the list of site groups. Derived classes should overwrite this method.
-     *
-     * @return list of site groups
-     */
-    public List<SiteGroup> doGetSiteGroups() {
-        if (getSiteManager() != null) {
-            return getSiteManager().doGetSiteGroups();
-        }
-        return new ArrayList<SiteGroup>();
-    }
-
-
-    /**
-     * Get list of site types. Look in cache first. If not there then call doGetSiteTypes
-     *
-     * @return list of site types
-     */
-    public List<SiteType> getSiteTypes() {
-        List<SiteType> siteTypes = (List<SiteType>) cache.get(PROP_SITETYPES);
-        if (siteTypes == null) {
-            siteTypes = doGetSiteTypes();
-            cache.put(PROP_SITETYPES, siteTypes);
-        }
-        return siteTypes;
-    }
-
-
-
-    /**
-     * Get the list of site types. Derived classes should overwrite this method.
-     *
-     * @return list of site types
-     */
-    public List<SiteType> doGetSiteTypes() {
-        if (getSiteManager() != null) {
-            return getSiteManager().doGetSiteTypes();
-        }
-        return new ArrayList<SiteType>();
-    }
-
-
-
-    /**
-     * Get list of site statuses. Look in cache first. If not there then call doGetSiteStatuses
-     *
-     * @return list of site statuses
-     */
-    public List<SiteStatus> getSiteStatuses() {
-        List<SiteStatus> siteStatuses =
-            (List<SiteStatus>) cache.get(PROP_SITESTATUSES);
-        if (siteStatuses == null) {
-            siteStatuses = doGetSiteStatuses();
-            cache.put(PROP_SITESTATUSES, siteStatuses);
-        }
-        return siteStatuses;
-    }
-
-    /**
-     * Get the list of site statuses. Derived classes should overwrite this method.
-     *
-     * @return list of site statuses
-     */
-    public List<SiteStatus> doGetSiteStatuses() {
-        if (getSiteManager() != null) {
-            return getSiteManager().doGetSiteStatuses();
-        }
-        return new ArrayList<SiteStatus>();
-    }
-
-
-    /**
-     * Get the list of resource types
-     *
-     * @return resource types
-     */
-    public List<ResourceType> getResourceTypes() {
-        List<ResourceType> resourceTypes =
-            (List<ResourceType>) cache.get(PROP_RESOURCETYPES);
-        if (resourceTypes == null) {
-            resourceTypes = doGetResourceTypes();
-            cache.put(PROP_RESOURCETYPES, resourceTypes);
-        }
-        return resourceTypes;
-    }
-
-
-    /**
-     * Get the list of resource types. Derived classes should overwrite this method.
-     *
-     * @return list of resource types
-     */
-    public List<ResourceType> doGetResourceTypes() {
-        if (getResourceManager() != null) {
-            return getResourceManager().doGetResourceTypes();
-        }
-        return new ArrayList<ResourceType>();
-    }
 
 
     /**

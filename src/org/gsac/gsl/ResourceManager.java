@@ -137,14 +137,6 @@ public abstract class ResourceManager extends GsacRepositoryManager {
 
 
 
-    /**
-     * Create the list of resource types that are shown to the user
-     *
-     * @return resource types
-     */
-    public List<ResourceType> doGetResourceTypes() {
-        return new ArrayList<ResourceType>();
-    }
 
     /**
      * Add full metadata to the resource
@@ -207,11 +199,11 @@ public abstract class ResourceManager extends GsacRepositoryManager {
         Capability cap;
         Capability[] dflt = { initCapability(new Capability(ARG_RESOURCE_TYPE,
                                 "Resource Type",
-                                IdLabel.toList(getRepository().getResourceTypes()),
-                                true), "Resource Query",
-                                    "Type of file or resource", null,
-                                    getRepository().getVocabulary(ARG_RESOURCE_TYPE,
-                                        true)),
+                                                            new ArrayList<IdLabel>(),
+                                                            true), "Resource Query",
+                                             "Type of file or resource", null,
+                                             getRepository().getVocabulary(ARG_RESOURCE_TYPE,
+                                                                           true)),
                               initCapability(new Capability(ARG_RESOURCE_DATADATE,
                                   "Data Date",
                                   Capability

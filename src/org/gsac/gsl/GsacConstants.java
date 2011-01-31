@@ -35,6 +35,11 @@ import org.gsac.gsl.output.site.HtmlSiteOutputHandler;
  */
 public interface GsacConstants extends GsacArgs {
 
+
+
+
+
+
     /** _more_ */
     public static final String PROP_REPOSITORY_CLASS =
         "gsac.repository.class";
@@ -169,6 +174,16 @@ public interface GsacConstants extends GsacArgs {
 
     /** _more_ */
     public static final String HEADER_INFO = "header.info";
+
+
+
+
+    public static final String RESULT_SITE  = "result.site";
+    public static final String RESULT_RESOURCE  = "result.resource";
+    public static final String RESULT_BROWSE  = "result.browse";
+
+    public static final String[] URL_BASES = {URL_SITE_BASE, URL_RESOURCE_BASE, URL_BROWSE_BASE};
+
 
 
 }

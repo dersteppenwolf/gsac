@@ -277,40 +277,6 @@ public abstract class SiteManager extends GsacRepositoryManager {
     public void doGetFullSiteMetadata(GsacSite gsacSite) throws Exception {}
 
     /**
-     * Get the site group list
-     *
-     * @return site group list
-     */
-    public List<SiteGroup> doGetSiteGroups() {
-        //default is to do nothing
-        return new ArrayList<SiteGroup>();
-    }
-
-
-    /**
-     * Get the list of site types
-     *
-     * @return list of site types
-     */
-    public List<SiteType> doGetSiteTypes() {
-        //        return getRepository().readProperties(getRepository().getLocalVocabularyPath(ARG_SITE_TYPE));
-        //default is to do nothing
-        return new ArrayList<SiteType>();
-    }
-
-
-    /**
-     * Get the list of site statuses.
-     *
-     * @return list of site statuses
-     */
-    public List<SiteStatus> doGetSiteStatuses() {
-        //default is to do nothing
-        return new ArrayList<SiteStatus>();
-    }
-
-
-    /**
      * Get the extra site search capabilities. This
      * calls makeCapabilities to actually make them
      *
@@ -430,19 +396,19 @@ public abstract class SiteManager extends GsacRepositoryManager {
             initCapability(
                 new Capability(
                     ARG_SITE_TYPE, "Site Type",
-                    IdLabel.toList(getRepository().getSiteTypes()),
+                    new ArrayList<IdLabel>(),
                     true), GROUP_SITE_QUERY, "Type of the site", null,
                            makeVocabulary(ARG_SITE_TYPE)),
             initCapability(
                 new Capability(
                     ARG_SITE_STATUS, "Site Status",
-                    IdLabel.toList(getRepository().getSiteStatuses()),
+                    new ArrayList<IdLabel>(),
                     true), GROUP_SITE_QUERY, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
             initCapability(
                 new Capability(
                     ARG_SITE_GROUP, "Site Group",
-                    IdLabel.toList(getRepository().getSiteGroups()),
+                    new ArrayList<IdLabel>(),
                     true), GROUP_SITE_QUERY, null),
             initCapability(
                 new Capability(
