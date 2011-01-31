@@ -100,7 +100,7 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
             new GsacRequest(gsacRepository, request.getHttpServletRequest(),
                             request.getHttpServletResponse());
         gsacRequest.putProperty("request", request);
-        gsacServlet.doGet(gsacRequest);
+        gsacRepository.handleRequest(gsacRequest);
         Result result = new Result();
         result.setNeedToWrite(false);
         return result;

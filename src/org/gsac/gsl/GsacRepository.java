@@ -1181,9 +1181,6 @@ public class GsacRepository implements GsacConstants {
 
 
 
-    public GsacRepository getRepository() {
-        return this;
-    }
 
 
 
@@ -1228,20 +1225,20 @@ public class GsacRepository implements GsacConstants {
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleHtdocsRequest(request);
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
-                getRepository().handleViewRequest(request,
+                handleViewRequest(request,
                         new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
-                //                getRepository().logError("Unknown request:" + uri, null);
+                //                logError("Unknown request:" + uri, null);
             }
             //Only log the access if its actuall a service request (as opposed to htdocs requests)
             if (serviceRequest) {
-                getRepository().logAccess(request, what);
-                //                System.err.println (getRepository().getDatabaseManager().getPoolStats());
+                logAccess(request, what);
+                //                System.err.println (getDatabaseManager().getPoolStats());
                 //                System.out.println("http://${server}" + request.toString());
             }
         } catch (UnknownRequestException exc) {
-            getRepository().logError("Unknown request:" + uri + "?"
+            logError("Unknown request:" + uri + "?"
                                      + request.getUrlArgs(), null);
             request.sendError(HttpServletResponse.SC_NOT_FOUND,
                                   "Unknown request:" + uri);
@@ -1249,7 +1246,7 @@ public class GsacRepository implements GsacConstants {
             //Ignore the client closing the connection
         } catch (Exception exc) {
             Throwable thr = LogUtil.getInnerException(exc);
-            getRepository().logError("Error processing request:" + uri + "?"
+            logError("Error processing request:" + uri + "?"
                                      + request.getUrlArgs(), thr);
             try {
                 request.sendError(
@@ -1290,7 +1287,7 @@ public class GsacRepository implements GsacConstants {
 
         InputStream inputStream = null;
         String[] paths = new String[] {
-                             getRepository().getLocalHtdocsPath(path),
+                             getLocalHtdocsPath(path),
                              "/org/gsac/gsl/htdocs" + path };
 
         for (String fullPath : paths) {
@@ -1311,11 +1308,11 @@ public class GsacRepository implements GsacConstants {
             String content = IOUtil.readContents(inputStream);
             inputStream.close();
             content = content.replace("${urlroot}",
-                                      getRepository().getUrlBase()
+                                      getUrlBase()
                                       + URL_BASE);
             content =
                 content.replace("${fullurlroot}",
-                                getAbsoluteUrl(getRepository().getUrlBase()
+                                getAbsoluteUrl(getUrlBase()
                                     + URL_BASE));
             inputStream = new ByteArrayInputStream(content.getBytes());
         }
@@ -1387,7 +1384,7 @@ public class GsacRepository implements GsacConstants {
         InputStream inputStream = getResourceInputStream("/org/gsac/gsl/help"
                                       + path);
         if (inputStream == null) {
-            //TODO:         inputStream = getRepository().getResourceInputStream(path);
+            //TODO:         inputStream = getResourceInputStream(path);
         }
         if ( !path.endsWith(".html")) {
             OutputStream outputStream = request.getOutputStream();
@@ -1404,11 +1401,11 @@ public class GsacRepository implements GsacConstants {
             contents = IOUtil.readContents(inputStream);
             inputStream.close();
             contents = contents.replace("${urlroot}",
-                                        getRepository().getUrlBase()
+                                        getUrlBase()
                                         + URL_BASE);
             contents =
                 contents.replace("${fullurlroot}",
-                                 getAbsoluteUrl(getRepository().getUrlBase()
+                                 getAbsoluteUrl(getUrlBase()
                                      + URL_BASE));
         }
         sb.append(contents);
@@ -1455,7 +1452,7 @@ public class GsacRepository implements GsacConstants {
                                      fmt.format((double) (uptime / 1000
                                          / 60)) + " " + msg("minutes")));
 
-        getRepository().addStats(sb);
+        addStats(sb);
         sb.append(HtmlUtil.formTableClose());
 
         sb.append(LogUtil.getStackDump(true));
@@ -3008,7 +3005,7 @@ public class GsacRepository implements GsacConstants {
      * @return full url
      */
     public String getUrl(String path) {
-        return getRepository().getUrlBase() + path;
+        return getUrlBase() + path;
     }
 
 
@@ -3021,7 +3018,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public String getUrl(String path, String[] args) {
-        return HtmlUtil.url(getRepository().getUrlBase() + path, args);
+        return HtmlUtil.url(getUrlBase() + path, args);
     }
 
 
@@ -3122,7 +3119,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public String msg(String msg) {
-        String newMsg = getRepository().translatePhrase(msg);
+        String newMsg = translatePhrase(msg);
         if (newMsg != null) {
             return newMsg;
         }

@@ -83,11 +83,21 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                 continue;
             }
             for (GsacRepositoryInfo info : new ArrayList<GsacRepositoryInfo>(serversToUse)) {
-                boolean hasCapability = (forSite
-                                         ? info.isSiteCapabilityUsed(
-                                             capability)
-                                         : info.isResourceCapabilityUsed(
-                                             capability));
+                boolean hasCapability = false;
+                for(CapabilityCollection collection: info.getCollections ()) {
+                    if(forSite) {
+                        if(collection.getId().equals("site") && collection.isUsed(capability)) {
+                            hasCapability = true;
+                            break;
+                        }
+                    } else {
+                        if(collection.getId().equals("site") && collection.isUsed(capability)) {
+                            hasCapability = true;
+                            break;
+                        }
+                    }
+
+                }
                 if ( !hasCapability) {
                     System.err.println("    Excluding " + info.getName());
                     serversToUse.remove(info);
@@ -124,7 +134,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
     public boolean checkRequest(GsacRequest request, GsacResponse response,
                                 Appendable sb) throws Exception {
         if(getServers().size()==0) {
-            sb.append(getServlet().makeErrorDialog("No remote servers are available"));
+            sb.append(makeErrorDialog("No remote servers are available"));
             return false;
         }
         return true;

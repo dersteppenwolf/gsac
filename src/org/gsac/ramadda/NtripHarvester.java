@@ -174,6 +174,10 @@ public class NtripHarvester extends WebHarvester {
                                               null);
 
 
+        if(contents == null) {
+            logHarvesterInfo("Unable to read source table:" + url);
+            return;
+        }
         //Don't ask...
         contents = contents.replaceAll("<br>","");
 
@@ -187,6 +191,7 @@ public class NtripHarvester extends WebHarvester {
         Hashtable<String,Entry> siteMap = new Hashtable<String,Entry>();
         int myCnt=0;
         int lineCnt=0;
+        boolean tooMany = toks.size()>100;
         for(;lineCnt<toks.size();lineCnt++) {
             String line = toks.get(lineCnt).trim();
             if(lineCnt==0) {

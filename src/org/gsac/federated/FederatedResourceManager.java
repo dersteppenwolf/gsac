@@ -169,8 +169,9 @@ public class FederatedResourceManager extends ResourceManager {
         HashSet          seen         = new HashSet();
         for (GsacRepositoryInfo info :
                 getFederatedRepository().getServers()) {
-            if (info.getResourceCapabilities() != null) {
-                for (Capability capability : info.getResourceCapabilities()) {
+            CapabilityCollection collection = info.getCollection("resource");
+            if (collection != null) {
+                for (Capability capability : collection.getCapabilities()) {
                     if (seen.contains(capability.getId())) {
                         continue;
                     }

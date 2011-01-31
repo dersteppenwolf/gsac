@@ -169,8 +169,9 @@ public class FederatedSiteManager extends SiteManager {
         HashSet          seen         = new HashSet();
         for (GsacRepositoryInfo info :
                 getFederatedRepository().getServers()) {
-            if (info.getSiteCapabilities() != null) {
-                for (Capability capability : info.getSiteCapabilities()) {
+            CapabilityCollection collection = info.getCollection("site");
+            if (collection != null) {
+                for (Capability capability : collection.getCapabilities()) {
                     if (seen.contains(capability.getId())) {
                         continue;
                     }
