@@ -35,13 +35,13 @@ import java.util.concurrent.*;
  */
 public class GsacTest implements Runnable {
 
-    /** _more_          */
+    /** _more_ */
     static String[] URLS = { "http://${server}/gsacws/gsacapi/site/view?site.id=18126_P100",
                              "http://${server}/gsacws/gsacapi/site/search/sites.kml?output=site.kml&limit=1000&site.code=p12*",
                              "http://${server}/gsacws/gsacapi/site/search/sites.csv?output=site.csv&limit=1000&site.code=p12*",
                              "http://${server}/gsacws/gsacapi/site/search?limit=1000&site.code=p*" };
 
-    /** _more_          */
+    /** _more_ */
     String[] urls;
 
     /** _more_ */
@@ -56,7 +56,7 @@ public class GsacTest implements Runnable {
     /** _more_ */
     private static long startTime;
 
-    /** _more_          */
+    /** _more_ */
     private long pause = 0;
 
     /**

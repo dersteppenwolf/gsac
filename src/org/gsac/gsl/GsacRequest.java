@@ -84,7 +84,7 @@ public class GsacRequest implements GsacConstants {
     /** _more_ */
     private String gsacUrlPath;
 
-    /** _more_          */
+    /** _more_ */
     private boolean useVocabulary = true;
 
     /**

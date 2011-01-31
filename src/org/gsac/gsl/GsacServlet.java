@@ -220,8 +220,9 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
         getRepository().logInfo("GsacServlet: running repository:"
                                 + gsacRepository.getClass().getName());
-        getRepository().logInfo("GsacServlet: url:"
-                                + getAbsoluteUrl(gsacRepository.getUrl(URL_SITE_FORM)));
+        getRepository().logInfo(
+            "GsacServlet: url:"
+            + getAbsoluteUrl(gsacRepository.getUrl(URL_SITE_FORM)));
     }
 
 

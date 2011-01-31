@@ -52,22 +52,22 @@ public class CapabilityCollection {
     /** _more_ */
     public static final String ATTR_ID = "id";
 
-    /** _more_          */
+    /** _more_ */
     public static final String ATTR_URL = "url";
 
-    /** _more_          */
+    /** _more_ */
     private String name;
 
-    /** _more_          */
+    /** _more_ */
     private String id;
 
-    /** _more_          */
+    /** _more_ */
     private String url;
 
-    /** _more_          */
+    /** _more_ */
     private List<Capability> capabilities;
 
-    /** _more_          */
+    /** _more_ */
     private HashSet<String> used;
 
     /**

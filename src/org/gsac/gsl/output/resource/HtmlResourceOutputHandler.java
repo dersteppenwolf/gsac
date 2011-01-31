@@ -220,7 +220,10 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                                              + URL_HTDOCS_BASE
                                              + "/CalendarPopup.js"));
 
-        addCapabilitiesToForm(request, pw, getRepository().getResourceQueryCapabilities(), false);
+        CapabilityCollection resourceCollection = getRepository().getCapabilityCollection(CAPABILITIES_RESOURCE);
+        if(resourceCollection!=null) {
+            addCapabilitiesToForm(request, pw, resourceCollection, false);
+        }
         getSiteSearchForm(request, pw);
 
         StringBuffer resultsSB = new StringBuffer();

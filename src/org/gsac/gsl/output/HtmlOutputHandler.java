@@ -370,16 +370,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public void getSiteSearchForm(GsacRequest request, Appendable pw)
             throws IOException {
-        List<Capability> capabilities =
-            getRepository().getSiteQueryCapabilities();
-        /*
-        String codeSearchType = HtmlUtil.makeToggleInline("",
-                                    getSearchTypeSelect(request,
-                                        ARG_SITE_CODE_SEARCHTYPE), false);
-        */
         getRepository().addToSiteSearchForm(request, pw);
         getRepositorySelect(request, pw);
-        addCapabilitiesToForm(request, pw, capabilities, true);
+        CapabilityCollection collection = getRepository().getCapabilityCollection(CAPABILITIES_SITE);
+        if(collection!=null) {
+            addCapabilitiesToForm(request, pw, collection, true);
+        }
+
         /*
         String[] haikus = {
             "",
@@ -413,10 +410,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @throws IOException _more_
      */
     public void addCapabilitiesToForm(GsacRequest request, Appendable pw,
-                                      List<Capability> capabilities,
+                                      CapabilityCollection collection,
                                       boolean forSite)
             throws IOException {
 
+        List<Capability> capabilities = collection.getCapabilities();
         request = new GsacRequest(request);
         request.setUseVocabulary(false);
         String capabilityGroup;

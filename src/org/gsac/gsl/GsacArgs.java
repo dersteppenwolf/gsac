@@ -268,6 +268,7 @@ public interface GsacArgs {
     public static final String ARG_WEST = ARG_BBOX + ARG_WEST_SUFFIX;
 
 
+    /** _more_ */
     public static final String ARG_CAPABILITY = "capability";
 
 

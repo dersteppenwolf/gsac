@@ -458,7 +458,6 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      * _more_
      *
      * @param results _more_
-     * @param site _more_
      * @param metadataThing _more_
      * @param cols _more_
      *

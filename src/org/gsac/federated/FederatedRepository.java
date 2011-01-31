@@ -75,9 +75,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             GsacRequest request, boolean forSite) {
         List<GsacRepositoryInfo> serversToUse =
             new ArrayList<GsacRepositoryInfo>(super.getServers(request));
-        List<Capability> capabilities = forSite
-                                        ? getSiteQueryCapabilities()
-                                        : getResourceQueryCapabilities();
+        List<Capability> capabilities = getCapabilityCollection(forSite? CAPABILITIES_SITE:CAPABILITIES_RESOURCE).getCapabilities();
         for (Capability capability : capabilities) {
             if ( !request.defined(capability.getId())) {
                 continue;
@@ -86,12 +84,12 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                 boolean hasCapability = false;
                 for(CapabilityCollection collection: info.getCollections ()) {
                     if(forSite) {
-                        if(collection.getId().equals("site") && collection.isUsed(capability)) {
+                        if(collection.getId().equals(CAPABILITIES_SITE) && collection.isUsed(capability)) {
                             hasCapability = true;
                             break;
                         }
                     } else {
-                        if(collection.getId().equals("site") && collection.isUsed(capability)) {
+                        if(collection.getId().equals(CAPABILITIES_SITE) && collection.isUsed(capability)) {
                             hasCapability = true;
                             break;
                         }

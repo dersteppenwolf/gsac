@@ -393,23 +393,19 @@ public abstract class SiteManager extends GsacRepositoryManager {
             initCapability(siteName = new Capability(ARG_SITE_NAME,
                 "Site Name", Capability.TYPE_STRING), GROUP_SITE_QUERY,
                     "Name of the site", "Name of site." + help),
+            initCapability(new Capability(ARG_SITE_TYPE, "Site Type",
+                                          new ArrayList<IdLabel>(),
+                                          true), GROUP_SITE_QUERY,
+                                              "Type of the site", null,
+                                              makeVocabulary(ARG_SITE_TYPE)),
             initCapability(
                 new Capability(
-                    ARG_SITE_TYPE, "Site Type",
-                    new ArrayList<IdLabel>(),
-                    true), GROUP_SITE_QUERY, "Type of the site", null,
-                           makeVocabulary(ARG_SITE_TYPE)),
-            initCapability(
-                new Capability(
-                    ARG_SITE_STATUS, "Site Status",
-                    new ArrayList<IdLabel>(),
+                    ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
                     true), GROUP_SITE_QUERY, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
-            initCapability(
-                new Capability(
-                    ARG_SITE_GROUP, "Site Group",
-                    new ArrayList<IdLabel>(),
-                    true), GROUP_SITE_QUERY, null),
+            initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
+                                          new ArrayList<IdLabel>(),
+                                          true), GROUP_SITE_QUERY, null),
             initCapability(
                 new Capability(
                     ARG_BBOX, "Bounds",

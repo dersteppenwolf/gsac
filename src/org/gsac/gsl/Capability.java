@@ -58,7 +58,7 @@ public class Capability {
     /** _more_ */
     public static final String ATTR_COLUMNS = "columns";
 
-    /** _more_          */
+    /** _more_ */
     public static final String ATTR_BROWSE = "browse";
 
     /** _more_ */
@@ -97,7 +97,7 @@ public class Capability {
     public static final String TYPE_DATERANGE = "date_range";
 
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_NUMBERRANGE = "number_range";
 
     /** _more_ */
@@ -124,7 +124,7 @@ public class Capability {
     /** _more_ */
     private int columns = 30;
 
-    /** _more_          */
+    /** _more_ */
     private boolean browse = false;
 
     /** _more_ */
@@ -143,7 +143,7 @@ public class Capability {
     /** _more_ */
     private String suffixLabel = "";
 
-    /** _more_          */
+    /** _more_ */
     private CapabilityCollection collection;
 
 

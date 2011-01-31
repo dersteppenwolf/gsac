@@ -55,10 +55,10 @@ public class GsacResponse {
     /** _more_ */
     public static final String MIME_XML = "text/xml";
 
-    /** _more_          */
+    /** _more_ */
     public static final String MIME_RSS = "application/rss+xml";
 
-    /** _more_          */
+    /** _more_ */
     public static final String MIME_ATOM = "application/atom+xml";
 
     /** _more_ */
@@ -102,7 +102,7 @@ public class GsacResponse {
     /** _more_ */
     public StringBuffer message = new StringBuffer();
 
-    /** _more_          */
+    /** _more_ */
     public StringBuffer queryInfo = new StringBuffer();
 
     /**

@@ -23,11 +23,6 @@ package org.gsac.gsl;
 
 import org.apache.log4j.Logger;
 
-import java.lang.management.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.text.DecimalFormat;
-
 import org.gsac.gsl.database.*;
 
 
@@ -52,8 +47,12 @@ import ucar.unidata.xml.XmlUtil;
 import java.io.*;
 import java.io.InputStream;
 
+import java.lang.management.*;
+
 import java.net.URL;
 import java.net.URLConnection;
+
+import java.text.DecimalFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +65,9 @@ import java.util.Properties;
 
 import java.util.zip.*;
 
+import javax.servlet.*;
+import javax.servlet.http.*;
+
 
 /**
  * This provides a default implementation of the GsacRepository interface.
@@ -77,11 +79,6 @@ import java.util.zip.*;
  *
  * However, this class can also make use of a GsacDatabaseManager, SiteManager and ResourceManager
  * classes.
- *
- * All of the other doGet methods are optional. But if your repository has, for example,
- * site types that you want to list and search on  then overwrite the  doGetSiteTypes method.
- * All of these objects (SiteType, SiteStatus, ResourceType, etc.) all take the form of having an id
- * and a name (or label). The HTML output handlers make search form inputs from these id/labels pairs.
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
@@ -467,7 +464,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public String encodeObject(Object object) throws Exception {
         return XmlEncoder.encodeObject(object);
@@ -481,7 +478,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public Object decodeObject(String xml) throws Exception {
         return XmlEncoder.decodeXml(xml);
@@ -493,7 +490,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @param servlet the servlet
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void initServlet(GsacServlet servlet) throws Exception {
         this.servlet = servlet;
@@ -503,7 +500,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void init() throws Exception {
 
@@ -631,8 +628,6 @@ public class GsacRepository implements GsacConstants {
         new RssResourceOutputHandler(this);
         new XmlResourceOutputHandler(this);
 
-        getSiteQueryCapabilities();
-        getResourceQueryCapabilities();
 
         getRepositoryInfo();
 
@@ -647,7 +642,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public InputStream getResourceInputStream(String path) throws Exception {
         InputStream inputStream = getClass().getResourceAsStream(path);
@@ -732,7 +727,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public boolean checkRequest(GsacRequest request, GsacResponse response,
                                 Appendable sb)
@@ -814,11 +809,9 @@ public class GsacRepository implements GsacConstants {
      * _more_
      *
      * @param info _more_
-     * @param usedSiteCapabilities _more_
-     * @param usedResourceCapabilities _more_
      * @param collectionToUsedCapabilities _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     private void initRemoteRepository(
             GsacRepositoryInfo info,
@@ -902,7 +895,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public GsacRepositoryInfo retrieveRepositoryInfo(String repositoryUrl)
             throws Exception {
@@ -1188,12 +1181,12 @@ public class GsacRepository implements GsacConstants {
      * Main entry point
      *
      *
-     * @param gsacRequest the request
+     * @param request _more_
      *
      * @throws IOException On badness
      * @throws ServletException On badness
      */
-    public void handleRequest(GsacRequest request) 
+    public void handleRequest(GsacRequest request)
             throws IOException, ServletException {
         String uri = request.getRequestURI();
 
@@ -1225,8 +1218,7 @@ public class GsacRepository implements GsacConstants {
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleHtdocsRequest(request);
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
-                handleViewRequest(request,
-                        new GsacResponse(request));
+                handleViewRequest(request, new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
                 //                logError("Unknown request:" + uri, null);
@@ -1238,16 +1230,16 @@ public class GsacRepository implements GsacConstants {
                 //                System.out.println("http://${server}" + request.toString());
             }
         } catch (UnknownRequestException exc) {
-            logError("Unknown request:" + uri + "?"
-                                     + request.getUrlArgs(), null);
+            logError("Unknown request:" + uri + "?" + request.getUrlArgs(),
+                     null);
             request.sendError(HttpServletResponse.SC_NOT_FOUND,
-                                  "Unknown request:" + uri);
+                              "Unknown request:" + uri);
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection
         } catch (Exception exc) {
             Throwable thr = LogUtil.getInnerException(exc);
             logError("Error processing request:" + uri + "?"
-                                     + request.getUrlArgs(), thr);
+                     + request.getUrlArgs(), thr);
             try {
                 request.sendError(
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -1286,9 +1278,8 @@ public class GsacRepository implements GsacConstants {
         String      path        = uri.substring(idx);
 
         InputStream inputStream = null;
-        String[] paths = new String[] {
-                             getLocalHtdocsPath(path),
-                             "/org/gsac/gsl/htdocs" + path };
+        String[] paths = new String[] { getLocalHtdocsPath(path),
+                                        "/org/gsac/gsl/htdocs" + path };
 
         for (String fullPath : paths) {
             try {
@@ -1307,13 +1298,10 @@ public class GsacRepository implements GsacConstants {
         if (uri.endsWith(".js") || uri.endsWith(".jnlp")) {
             String content = IOUtil.readContents(inputStream);
             inputStream.close();
-            content = content.replace("${urlroot}",
-                                      getUrlBase()
-                                      + URL_BASE);
-            content =
-                content.replace("${fullurlroot}",
-                                getAbsoluteUrl(getUrlBase()
-                                    + URL_BASE));
+            content = content.replace("${urlroot}", getUrlBase() + URL_BASE);
+            content = content.replace("${fullurlroot}",
+                                      getAbsoluteUrl(getUrlBase()
+                                          + URL_BASE));
             inputStream = new ByteArrayInputStream(content.getBytes());
         }
         OutputStream outputStream = request.getOutputStream();
@@ -1372,7 +1360,7 @@ public class GsacRepository implements GsacConstants {
      * @param request _more_
      * @param response _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleHelpRequest(GsacRequest request, GsacResponse response)
             throws Exception {
@@ -1401,12 +1389,10 @@ public class GsacRepository implements GsacConstants {
             contents = IOUtil.readContents(inputStream);
             inputStream.close();
             contents = contents.replace("${urlroot}",
-                                        getUrlBase()
-                                        + URL_BASE);
-            contents =
-                contents.replace("${fullurlroot}",
-                                 getAbsoluteUrl(getUrlBase()
-                                     + URL_BASE));
+                                        getUrlBase() + URL_BASE);
+            contents = contents.replace("${fullurlroot}",
+                                        getAbsoluteUrl(getUrlBase()
+                                            + URL_BASE));
         }
         sb.append(contents);
         htmlOutputHandler.finishHtml(request, response, sb);
@@ -1419,7 +1405,7 @@ public class GsacRepository implements GsacConstants {
      * @param request _more_
      * @param response _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleStatsRequest(GsacRequest request, GsacResponse response)
             throws Exception {
@@ -1505,12 +1491,10 @@ public class GsacRepository implements GsacConstants {
      * This method will first look in the local siteCache for the site.
      * If not found it calls doGetSite which should be overwritten by derived classes
      *
-     * @param request The request
      * @param siteId site id
      *
      * @return The site or null if not found
      *
-     * @throws Exception On badness
      */
     public GsacSite getSiteFromCache(String siteId) {
         return siteCache.get(siteId);
@@ -1525,7 +1509,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public GsacSite getSite(GsacRequest request, String siteId)
             throws Exception {
@@ -1662,7 +1646,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public List<IdLabel> readProperties(String path) throws Exception {
         InputStream inputStream = servlet.getResourceInputStream(path);
@@ -1867,7 +1851,6 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param path _more_
      *
      * @param contents _more_
      *
@@ -1901,15 +1884,15 @@ public class GsacRepository implements GsacConstants {
                     getServlet().getAbsoluteUrl(getUrlBase()),
                     getRepositoryName());
             gri.setDescription(getRepositoryDescription());
-            gri.addCollection(new CapabilityCollection("site", "Site Query",
+            gri.addCollection(new CapabilityCollection(CAPABILITIES_SITE,
+                    "Site Query",
                     getServlet().getAbsoluteUrl(getUrlBase()
-                        + URL_SITE_SEARCH), getSiteQueryCapabilities()));
-            gri.addCollection(new CapabilityCollection("resource",
+                        + URL_SITE_SEARCH), doGetSiteQueryCapabilities()));
+            gri.addCollection(new CapabilityCollection(CAPABILITIES_RESOURCE,
                     "Resource Query",
                     getServlet().getAbsoluteUrl(getUrlBase()
-                        + URL_RESOURCE_SEARCH), getResourceQueryCapabilities()));
+                        + URL_RESOURCE_SEARCH), doGetResourceQueryCapabilities()));
             myInfo = gri;
-            //            printVocabularies(gri);
         }
         return myInfo;
     }
@@ -1962,7 +1945,7 @@ public class GsacRepository implements GsacConstants {
      * @param request _more_
      * @param gsacResource _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void getResourceMetadata(GsacRequest request,
                                     GsacResource gsacResource)
@@ -2003,7 +1986,7 @@ public class GsacRepository implements GsacConstants {
      * @param level _more_
      * @param gsacResource _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void doGetFullResourceMetadata(int level,
                                           GsacResource gsacResource)
@@ -2192,23 +2175,6 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * get list of extra capabilities for searching on sites. This looks in the cache.
-     * If not found calls doGetSiteQueryCapabilities
-     *
-     * @return site query capabilities
-     */
-    public List<Capability> getSiteQueryCapabilities() {
-        List<Capability> caps =
-            (List<Capability>) cache.get(PROP_SITECAPABILITIES);
-        if (caps == null) {
-            caps = doGetSiteQueryCapabilities();
-            cache.put(PROP_SITECAPABILITIES, caps);
-        }
-        return caps;
-    }
-
-
-    /**
      * Derived classes should overwrite this to provide site query capabilities if any
      *
      * @return capabilities
@@ -2220,24 +2186,16 @@ public class GsacRepository implements GsacConstants {
         return new ArrayList<Capability>();
     }
 
-
-
     /**
-     * get list of extra capabilities for searching on resources. This looks in the cache.
-     * If not found calls doGetResourceQueryCapabilities
+     * _more_
      *
-     * @return resource query capabilities
+     * @param id _more_
+     *
+     * @return _more_
      */
-    public List<Capability> getResourceQueryCapabilities() {
-        List<Capability> caps =
-            (List<Capability>) cache.get(PROP_RESOURCECAPABILITIES);
-        if (caps == null) {
-            caps = doGetResourceQueryCapabilities();
-            cache.put(PROP_RESOURCECAPABILITIES, caps);
-        }
-        return caps;
+    public CapabilityCollection getCapabilityCollection(String id) {
+        return getRepositoryInfo().getCollection(id);
     }
-
 
     /**
      * Derived classes should overwrite this to provide resource query capabilities
@@ -2264,7 +2222,6 @@ public class GsacRepository implements GsacConstants {
         //                       HtmlUtil.input(ARG_CITY,
         //                       request.get(ARG_CITY, (String) null)));
     }
-
 
 
 
@@ -2435,8 +2392,6 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param site _more_
-     *
      * @param object _more_
      *
      * @return _more_
@@ -2457,8 +2412,6 @@ public class GsacRepository implements GsacConstants {
 
     /**
      * _more_
-     *
-     * @param site _more_
      *
      * @param object _more_
      *
@@ -2500,7 +2453,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public Object getRemoteObject(GsacRepositoryInfo info, String urlPath,
                                   String urlArgs, String output)
@@ -2526,7 +2479,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public Object getRemoteObject(String repositoryUrl, String urlPath,
                                   String urlArgs, String output)
@@ -2556,75 +2509,48 @@ public class GsacRepository implements GsacConstants {
      * @param request _more_
      * @param response _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleCapabilitiesRequest(GsacRequest request,
                                           GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
-        PrintWriter pw = response.getPrintWriter();
-
-        if (request.get(ARG_OUTPUT, "").equals(OUTPUT_GSACXML)) {
-            GsacRepositoryInfo gri = getRepositoryInfo();
-            String             xml = encodeObject(gri);
-            pw.print(xml);
-            response.endResponse();
-            return;
-        }
-
-
-        Document doc  = XmlUtil.makeDocument();
-        Element  root = XmlUtil.create(doc, TAG_CAPABILITIES);
-        for (int i = 0; i < 2; i++) {
-            String           tag;
-            List<Capability> capabilities;
-            if (i == 0) {
-                capabilities = getSiteQueryCapabilities();
-                tag          = TAG_SITECAPABILITY;
-            } else {
-                capabilities = getResourceQueryCapabilities();
-                tag          = TAG_RESOURCECAPABILITY;
-            }
-
-            for (Capability capability : capabilities) {
-                Element node = XmlUtil.create(doc, tag, root, new String[] {
-                    ATTR_TYPE, capability.getType(), ATTR_ID,
-                    capability.getId(), ATTR_LABEL, capability.getLabel()
-                });
-                if (capability.isEnumeration()) {
-                    for (IdLabel idLabel : capability.getEnums()) {
-                        XmlUtil.create(doc, TAG_ENUMERATION, node,
-                                       new String[] { ATTR_ID,
-                                idLabel.getId(), ATTR_LABEL,
-                                idLabel.getLabel() });
-                    }
-                }
-            }
-        }
-        XmlUtil.toString(root, pw);
+        PrintWriter pw  = response.getPrintWriter();
+        String      xml = encodeObject(getRepositoryInfo());
+        pw.print(xml);
         response.endResponse();
     }
 
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     *
+     * @throws Exception On badness
+     */
     public void handleCapabilityRequest(GsacRequest request,
-                                      GsacResponse response)
+                                        GsacResponse response)
             throws Exception {
-        
-        String capabilityId = request.get(ARG_CAPABILITY,"");
+
+        String capabilityId = request.get(ARG_CAPABILITY, "");
         response.startResponse(GsacResponse.MIME_CSV);
-        GsacRepositoryInfo gri = getRepositoryInfo();
-        PrintWriter pw = response.getPrintWriter();
-        Capability capability = gri.getCapability(capabilityId);
-        if(capability==null) {
-            throw new IllegalArgumentException("Could not find capability:" + capabilityId);
+        GsacRepositoryInfo gri        = getRepositoryInfo();
+        PrintWriter        pw         = response.getPrintWriter();
+        Capability         capability = gri.getCapability(capabilityId);
+        if (capability == null) {
+            throw new IllegalArgumentException("Could not find capability:"
+                    + capabilityId);
         }
 
-        if(!capability.isEnumeration()) {
-            throw new IllegalArgumentException("Capability is not an eumeration");
+        if ( !capability.isEnumeration()) {
+            throw new IllegalArgumentException(
+                "Capability is not an eumeration");
         }
 
-        for(IdLabel idLabel: capability.getEnums()) {
+        for (IdLabel idLabel : capability.getEnums()) {
             pw.append(idLabel.getId());
             pw.append(",");
             pw.append(idLabel.getLabel());
@@ -2640,7 +2566,7 @@ public class GsacRepository implements GsacConstants {
      * @param request _more_
      * @param response _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleViewRequestXml(GsacRequest request,
                                      GsacResponse response)
@@ -2676,10 +2602,9 @@ public class GsacRepository implements GsacConstants {
      * _more_
      *
      * @param request _more_
-     * @param pw _more_
      * @param response _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleViewRequest(GsacRequest request, GsacResponse response)
             throws Exception {
@@ -2692,7 +2617,7 @@ public class GsacRepository implements GsacConstants {
             handleCapabilitiesRequest(request, response);
             return;
         }
-        if(request.defined(ARG_CAPABILITY)) {
+        if (request.defined(ARG_CAPABILITY)) {
             handleCapabilityRequest(request, response);
             return;
         }
@@ -2706,8 +2631,8 @@ public class GsacRepository implements GsacConstants {
         sb.append(HtmlUtil.br());
         sb.append(gri.getDescription());
         sb.append(HtmlUtil.p());
-        sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW)
-                                + "?" + ARG_OUTPUT
+        sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?"
+                                + ARG_OUTPUT
                                 + "=xml", msg("Repository information xml")));
 
         sb.append("<p>\n");
@@ -2791,7 +2716,7 @@ public class GsacRepository implements GsacConstants {
      * @param info _more_
      * @param showList _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     private void showRepositoryInfo(GsacRequest request, Appendable pw,
                                     GsacRepositoryInfo info, boolean showList)
@@ -2851,7 +2776,7 @@ public class GsacRepository implements GsacConstants {
      * @param capability _more_
      * @param url _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     private void showCapabilityInfo(Appendable sb, Capability capability,
                                     String url)
@@ -2866,17 +2791,21 @@ public class GsacRepository implements GsacConstants {
         String type = capability.getType();
         if (capability.isEnumeration()) {
             StringBuffer sb2 = new StringBuffer();
-            String capabilityUrl =HtmlUtil.url(getUrl(URL_REPOSITORY_VIEW)+"/capability.csv",
-                                               new String[]{
-                                                   ARG_CAPABILITY, capability.getId()});
-            sb2.append(HtmlUtil.href(capabilityUrl,HtmlUtil.img(iconUrl("/csv.png"),msg("CSV"))));
+            String capabilityUrl = HtmlUtil.url(getUrl(URL_REPOSITORY_VIEW)
+                                       + "/capability.csv", new String[] {
+                                           ARG_CAPABILITY,
+                                           capability.getId() });
+            sb2.append(HtmlUtil.href(capabilityUrl,
+                                     HtmlUtil.img(iconUrl("/csv.png"),
+                                         msg("CSV"))));
             sb2.append(HtmlUtil.space(1));
             if (capability.getAllowMultiples()) {
                 sb2.append("Zero or more of:");
             } else {
                 sb2.append("Zero or one of:");
             }
-            sb2.append("<table border=1 cellspacing=0 cellpadding=2 class=enumtable>");
+            sb2.append(
+                "<table border=1 cellspacing=0 cellpadding=2 class=enumtable>");
             for (IdLabel idLabel : capability.getEnums()) {
                 String value = idLabel.getId();
                 String label = idLabel.getLabel();
@@ -2933,8 +2862,7 @@ public class GsacRepository implements GsacConstants {
         } else if (type.equals(Capability.TYPE_BOOLEAN)) {
             message.append("true<br>false<br>");
         } else {}
-        type = HtmlUtil.href(getUrl(URL_HELP) + "/api.html#"
-                             + type, type);
+        type = HtmlUtil.href(getUrl(URL_HELP) + "/api.html#" + type, type);
         sb.append(HtmlUtil.rowTop(HtmlUtil.cols(capability.getLabel(), id,
                 type, message.toString())));
 
@@ -2980,6 +2908,13 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param path _more_
+     *
+     * @return _more_
+     */
     public String getAbsoluteUrl(String path) {
         return servlet.getAbsoluteUrl(path);
     }

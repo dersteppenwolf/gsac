@@ -197,13 +197,14 @@ public abstract class ResourceManager extends GsacRepositoryManager {
     public void addDefaultResourceCapabilities(
             List<Capability> capabilities) {
         Capability cap;
-        Capability[] dflt = { initCapability(new Capability(ARG_RESOURCE_TYPE,
-                                "Resource Type",
-                                                            new ArrayList<IdLabel>(),
-                                                            true), "Resource Query",
-                                             "Type of file or resource", null,
-                                             getRepository().getVocabulary(ARG_RESOURCE_TYPE,
-                                                                           true)),
+        Capability[] dflt = { initCapability(
+                                new Capability(
+                                    ARG_RESOURCE_TYPE, "Resource Type",
+                                    new ArrayList<IdLabel>(),
+                                    true), "Resource Query",
+                                           "Type of file or resource", null,
+                                           getRepository().getVocabulary(
+                                               ARG_RESOURCE_TYPE, true)),
                               initCapability(new Capability(ARG_RESOURCE_DATADATE,
                                   "Data Date",
                                   Capability

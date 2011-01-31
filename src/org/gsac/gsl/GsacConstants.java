@@ -47,7 +47,7 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String PROP_BASEURL = "gsac.baseurl";
 
-    /** _more_          */
+    /** _more_ */
     public static final String PROP_GSACDIRECTORY = "gsac.directory";
 
     /** _more_ */
@@ -60,6 +60,7 @@ public interface GsacConstants extends GsacArgs {
     /** The top-level url path */
     public static final String URL_BASE = "/gsacapi";
 
+    /** _more_ */
     public static final String URL_STATS_BASE = URL_BASE + "/stats";
 
 
@@ -120,10 +121,10 @@ public interface GsacConstants extends GsacArgs {
     public static final String OUTPUT_RESOURCE_DEFAULT =
         HtmlResourceOutputHandler.OUTPUT_RESOURCE_HTML;
 
-    /** _more_          */
+    /** _more_ */
     public static final String OUTPUT_XML = "xml";
 
-    /** _more_          */
+    /** _more_ */
     public static final String OUTPUT_GSACXML = "gsacxml";
 
 
@@ -138,12 +139,6 @@ public interface GsacConstants extends GsacArgs {
 
     /** _more_ */
     public static final String TAG_CAPABILITIES = "capabilities";
-
-    /** _more_ */
-    public static final String TAG_SITECAPABILITY = "sitecapability";
-
-    /** _more_ */
-    public static final String TAG_RESOURCECAPABILITY = "resourcecapability";
 
     /** _more_ */
     public static final String TAG_ENUMERATION = "enum";
@@ -178,12 +173,24 @@ public interface GsacConstants extends GsacArgs {
 
 
 
-    public static final String RESULT_SITE  = "result.site";
-    public static final String RESULT_RESOURCE  = "result.resource";
-    public static final String RESULT_BROWSE  = "result.browse";
+    /** _more_ */
+    public static final String RESULT_SITE = "result.site";
 
-    public static final String[] URL_BASES = {URL_SITE_BASE, URL_RESOURCE_BASE, URL_BROWSE_BASE};
+    /** _more_ */
+    public static final String RESULT_RESOURCE = "result.resource";
+
+    /** _more_ */
+    public static final String RESULT_BROWSE = "result.browse";
+
+    /** _more_ */
+    public static final String[] URL_BASES = { URL_SITE_BASE,
+            URL_RESOURCE_BASE, URL_BROWSE_BASE };
 
 
+    /** _more_ */
+    public static final String CAPABILITIES_SITE = "site";
+
+    /** _more_ */
+    public static final String CAPABILITIES_RESOURCE = "resource";
 
 }
