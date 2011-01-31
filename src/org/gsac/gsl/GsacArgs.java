@@ -268,6 +268,8 @@ public interface GsacArgs {
     public static final String ARG_WEST = ARG_BBOX + ARG_WEST_SUFFIX;
 
 
+    public static final String ARG_CAPABILITY = "capability";
+
 
     /** output type. e.g., site.html, resource.csv, etc" */
     public static final String ARG_OUTPUT = "output";

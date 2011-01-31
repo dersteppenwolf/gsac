@@ -1,19 +1,19 @@
 
 var root = "${urlroot}";
 var urlroot = "${urlroot}";
-var icon_close = "${urlroot}/icons/close.gif";
-var icon_rightarrow = "${urlroot}/icons/grayrightarrow.gif";
+var icon_close = "${urlroot}/htdocs/icons/close.gif";
+var icon_rightarrow = "${urlroot}/htdocs/icons/grayrightarrow.gif";
 
-var icon_downdart ="${urlroot}/icons/downdart.gif";
-//var icon_downdart ="${urlroot}/icons/bullet_arrow_down.png";
-var icon_rightdart ="${urlroot}/icons/rightdart.gif";
+var icon_downdart ="${urlroot}/htdocs/icons/downdart.gif";
+//var icon_downdart ="${urlroot}/htdocs/icons/bullet_arrow_down.png";
+var icon_rightdart ="${urlroot}/htdocs/icons/rightdart.gif";
 
-var icon_progress = "${urlroot}/icons/progress.gif";
-var icon_information = "${urlroot}/icons/information.png";
-var icon_folderclosed = "${urlroot}/icons/folderclosed.png";
-var icon_folderopen = "${urlroot}/icons/togglearrowdown.gif";
-var icon_menuarrow = "${urlroot}/icons/downdart.gif";
-var icon_blank = "${urlroot}/icons/blank.gif";
+var icon_progress = "${urlroot}/htdocs/icons/progress.gif";
+var icon_information = "${urlroot}/htdocs/icons/information.png";
+var icon_folderclosed = "${urlroot}/htdocs/icons/folderclosed.png";
+var icon_folderopen = "${urlroot}/htdocs/icons/togglearrowdown.gif";
+var icon_menuarrow = "${urlroot}/htdocs/icons/downdart.gif";
+var icon_blank = "${urlroot}/htdocs/icons/blank.gif";
 
 
 
@@ -592,19 +592,19 @@ function EntryFormList(formId,img,selectId, initialOn) {
     this.entryRows = new Array();
     this.lastEntryRowClicked=null;
     groups[formId] = this;
-    groupList[groupList.length] = this;
+    groupList.push(this);
     this.formId = formId;
     this.toggleImg  = img;
     this.on = initialOn;
     this.entries = new Array();
 
     this.groupAddEntry = function(entryId) {
-        this.entries[this.entries.length] = entryId;
+        this.entries.push(entryId);
     }
 
     this.addEntryRow = function(entryRow) {
         this.groupAddEntry(entryRow.cbxWrapperId);
-        this.entryRows[this.entryRows.length] = entryRow;
+        this.entryRows.push(entryRow);
         if(!this.on) {
             hideObject(entryRow.cbx);
         } else {
@@ -1604,6 +1604,147 @@ function alertContents() {
         }
     }
 }
+
+
+
+function entryRowOver(entryId) {
+    var rowId = "row_" +entryId;
+    var divId = "div_" + entryId;
+    var imgId = "img_" + entryId;
+    row = util.getDomObject(rowId);
+    if(!row) {
+        return;
+    }
+
+    //    row.style.backgroundColor = "#edf5ff";
+
+    row.style.backgroundColor = "#f6f6f6";
+    row.style.backgroundColor = "#e6e6e6";
+    var img = util.getDomObject(imgId);
+    if(img) {
+        img.obj.src =  icon_downdart;
+    }
+}
+
+
+
+
+
+
+
+
+
+function entryRowOut(entryId) {
+
+    var rowId = "row_" +entryId;
+
+    var divId = "div_" + entryId;
+
+    var imgId = "img_" + entryId;
+
+    row = util.getDomObject(rowId);
+
+    if(!row) return;
+
+    row.style.backgroundColor = "#fff";
+
+    var img = util.getDomObject(imgId);
+
+    if(img) {
+
+        img.obj.src =  icon_blank;
+
+    }
+
+}
+
+
+
+function entryRowClick(event, entryId, url) {
+
+    var rowId = "row_" +entryId;
+
+    var divId = "div_" + entryId;
+
+    var imgId = "img_" + entryId;
+
+    row = util.getDomObject(divId);
+
+    if(!row) {
+
+        return;
+
+    }
+
+    div = util.getDomObject("tooltipdiv");
+
+    if(!div) {
+
+        return;
+
+    }
+
+    var img = util.getDomObject(imgId);
+
+    if(img) {
+
+        img.obj.src =  icon_progress;
+
+    }
+
+    util.loadXML( url, entryHandleXml,entryId);
+
+}
+
+
+
+
+
+function entryHandleXml(request,entryId) {
+
+    var rowId = "row_" +entryId;
+
+    var divId = "div_" + entryId;
+
+    var imgId = "img_" + entryId;
+
+    var img = util.getDomObject(imgId);
+
+    if(img) {
+
+        img.obj.src =  icon_blank;
+
+    }
+
+
+
+    row = util.getDomObject(divId);
+
+    if(!row) return;
+
+    div = util.getDomObject("tooltipdiv");
+
+    if(!div) return;
+
+    var xmlDoc=request.responseXML.documentElement;
+
+    text = getChildText(xmlDoc);
+
+    div.style["left"]  =util.getLeft(row.obj)+"px";
+
+    div.style["top"]  =util.getBottom(row.obj)+"px";
+
+    div.obj.innerHTML = "<div class=tooltip-inner><div id=\"tooltipwrapper\" ><table><tr valign=top><img width=\"16\" onmousedown=\"hideEntryPopup();\" id=\"tooltipclose\"  src=" + icon_close +"></td><td>" + text+"</table></div></div>";
+
+    checkTabs(text);
+
+    showObject(div);
+
+}
+
+
+
+
 
 
 

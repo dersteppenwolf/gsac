@@ -189,6 +189,17 @@ public class GsacRepositoryInfo {
 	return collections;
     }
 
+    
+    public Capability getCapability(String capabilityId) {
+        for (CapabilityCollection collection : collections) {
+            for (Capability capability : collection.getCapabilities()) {
+                if(capability.getId().equals(capabilityId)) {
+                    return capability;
+                }
+            }
+        }
+        return null;
+    }
 
 
     public CapabilityCollection getCollection(String id) {

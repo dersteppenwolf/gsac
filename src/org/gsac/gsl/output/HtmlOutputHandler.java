@@ -1757,13 +1757,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void makeSiteHtmlTable(GsacRequest request, StringBuffer sb,
                                   List<GsacSite> sites) {
 
-
-        if (SITE_TABLE_LABELS == null) {
+        if (sites.size()>0 && SITE_TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
-            //Add two blank columns
-            labels.add("");
-            sortValues.add("");
+            String remoteHref = getRepository().getRemoteHref(sites.get(0));
+            if(remoteHref.length()>0) {            
+                labels.add("");
+                sortValues.add("");
+            }
             labels.add("");
             sortValues.add("");
             if (getDoSiteCode()) {
@@ -1799,7 +1800,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     sb.append(HtmlUtil.submit(msg("View Selected Sites"),
                             ARG_SEARCH));
                     sb.append(HtmlUtil.space(2));
-                    sb.append("<table cellspacing=0 cellpadding=4 border=0>");
+                    sb.append("<table class=\"result-table\" cellspacing=0 cellpadding=4 border=0>");
                     //                    sb.append(HtmlUtil.submit(msg("ViewSearch Files"), ARG_SEARCH_RESOURCES));
                     makeSortHeader(request, sb, ARG_SITE_PREFIX,
                                    SITE_TABLE_LABELS, SITE_TABLE_SORTVALUES);
@@ -1813,7 +1814,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String cbx = HtmlUtil.checkbox(ARG_SITEID, site.getSiteId(),
                                            false);
             sb.append(HtmlUtil.col(cbx));
-            sb.append(HtmlUtil.col(getRepository().getRemoteHref(site)));
+            String remoteHref = getRepository().getRemoteHref(site);
+            if(remoteHref.length()>0) {            
+                sb.append(HtmlUtil.col(remoteHref));
+            }
             sb.append(HtmlUtil.col(href));
             sb.append(HtmlUtil.col(site.getName()));
 
@@ -1846,9 +1850,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(formatElevation(site.getElevation()));
             sb.append("</td>");
             if (getDoSiteGroup()) {
-                sb.append(HtmlUtil.col(getGroupHtml(site.getSiteGroups(),
-                        true)));
+                sb.append(HtmlUtil.col(getGroupHtml(site.getSiteGroups(),true)));
             }
+
 
             sb.append("</tr>\n");
         }
@@ -1873,7 +1877,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String   rowId  = "row_" + id;
             String   divId  = "div_" + id;
             String   imgId  = "img_" + id;
-            String[] events = getEntryEventJS(id, baseUrl, urlArg);
+            String[] events = getEntryEventJS(id,  baseUrl, urlArg);
             String   event1 = events[0];
             String   event2 = events[1];
             String dartImg =
@@ -1905,7 +1909,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @return _more_
      */
-    public String[] getEntryEventJS(String entryId, String baseUrl,
+    public String[] getEntryEventJS(String entryId,  String baseUrl,
                                     String urlArg) {
         String xmlUrl = HtmlUtil.url(makeUrl(baseUrl), new String[] { urlArg,
                 entryId, ARG_WRAPXML, "true", });
@@ -1913,7 +1917,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             HtmlUtil.call(
                                 "entryRowOver",
                                 HtmlUtil.squote(
-                                    entryId))) + HtmlUtil.onMouseOut(
+                                                entryId))) + HtmlUtil.onMouseOut(
                                         HtmlUtil.call(
                                             "entryRowOut",
                                             HtmlUtil.squote(entryId)));
@@ -1941,15 +1945,16 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                String prefix, String[] labels,
                                String[] sortValues)
             throws IOException {
+        String extra = " class=\"result-header\" ";
         sb.append("<tr>");
-        sb.append(HtmlUtil.col(""));
+        sb.append(HtmlUtil.col("", extra));
         String  valueArg     = prefix + ARG_SORT_VALUE_SUFFIX;
         String  orderArg     = prefix + ARG_SORT_ORDER_SUFFIX;
         boolean sortCapable  = getRepository().isCapable(valueArg);
         boolean orderCapable = getRepository().isCapable(orderArg);
         String  sortBy       = request.get(valueArg, "");
         for (int i = 0; i < labels.length; i++) {
-            sb.append("<td class=tableheader nowrap>");
+            sb.append("<td " + extra+"  nowrap>");
             if ( !sortCapable || (sortValues[i].length() == 0)) {
                 sb.append(labels[i]);
                 continue;

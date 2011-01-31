@@ -398,11 +398,6 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     }
 
 
-    /** _more_          */
-    List conns = new ArrayList();
-
-
-
 
     /**
      * process post
@@ -420,7 +415,6 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
                                       response);
         gsacRepository.handleRequest(gsacRequest);
     }
-
 
 
 

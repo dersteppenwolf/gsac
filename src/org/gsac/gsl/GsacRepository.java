@@ -2609,6 +2609,34 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+
+    public void handleCapabilityRequest(GsacRequest request,
+                                      GsacResponse response)
+            throws Exception {
+        
+        String capabilityId = request.get(ARG_CAPABILITY,"");
+        response.startResponse(GsacResponse.MIME_CSV);
+        GsacRepositoryInfo gri = getRepositoryInfo();
+        PrintWriter pw = response.getPrintWriter();
+        Capability capability = gri.getCapability(capabilityId);
+        if(capability==null) {
+            throw new IllegalArgumentException("Could not find capability:" + capabilityId);
+        }
+
+        if(!capability.isEnumeration()) {
+            throw new IllegalArgumentException("Capability is not an eumeration");
+        }
+
+        for(IdLabel idLabel: capability.getEnums()) {
+            pw.append(idLabel.getId());
+            pw.append(",");
+            pw.append(idLabel.getLabel());
+            pw.append("\n");
+        }
+        response.endResponse();
+    }
+
+
     /**
      * _more_
      *
@@ -2667,6 +2695,11 @@ public class GsacRepository implements GsacConstants {
             handleCapabilitiesRequest(request, response);
             return;
         }
+        if(request.defined(ARG_CAPABILITY)) {
+            handleCapabilityRequest(request, response);
+            return;
+        }
+
         List<GsacRepositoryInfo> servers = getServers();
         GsacRepositoryInfo       gri     = getRepositoryInfo();
         StringBuffer             sb      = new StringBuffer();
@@ -2836,12 +2869,17 @@ public class GsacRepository implements GsacConstants {
         String type = capability.getType();
         if (capability.isEnumeration()) {
             StringBuffer sb2 = new StringBuffer();
+            String capabilityUrl =HtmlUtil.url(getUrl(URL_REPOSITORY_VIEW)+"/capability.csv",
+                                               new String[]{
+                                                   ARG_CAPABILITY, capability.getId()});
+            sb2.append(HtmlUtil.href(capabilityUrl,HtmlUtil.img(iconUrl("/csv.png"),msg("CSV"))));
+            sb2.append(HtmlUtil.space(1));
             if (capability.getAllowMultiples()) {
                 sb2.append("Zero or more of:");
             } else {
                 sb2.append("Zero or one of:");
             }
-            sb2.append("<table border=1 cellspacing=0 cellpadding=2>");
+            sb2.append("<table border=1 cellspacing=0 cellpadding=2 class=enumtable>");
             for (IdLabel idLabel : capability.getEnums()) {
                 String value = idLabel.getId();
                 String label = idLabel.getLabel();

@@ -50,6 +50,47 @@ td {
 }
 
 
+.enumtable {
+   border-color: #600;
+   border-width: 0 0 1px 1px;
+   border-style: solid;
+}
+
+
+.enumtable td {
+    padding:7px;
+    padding-bottom:2px;
+    border-color: #600;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    margin: 0;
+}
+
+
+
+.result-table {
+   border-color: #600;
+   border-width: 0 0 1px 1px;
+   border-style: solid;
+}
+
+
+
+
+.result-table td {
+    padding:7px;
+    padding-bottom:2px;
+    border-color: #600;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    margin: 0;
+}
+
+.result-header {
+   background-color:#c3d9ff;
+   font-weight: bold;
+}
+
 
 .firstletternav {
    font-size: 10pt;
@@ -87,7 +128,6 @@ td {
    padding-left:6px;
    padding-right:20px;
 }
-
 
 
 .tableheader {

@@ -300,7 +300,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 GsacSite site = resource.getSite();
                 if (cnt == 0) {
                     sb.append(
-                        "<table cellspacing=0 cellpadding=4 border=0 xwidth=100%>");
+                        "<table class=\"result-table\" cellspacing=0 cellpadding=4 border=0 xwidth=100%>");
                     String[] labels = new String[] {
                         "", msg("Type"), msg("File"), msg("Site"),
                         msg("Date"), msg("File size")

@@ -245,28 +245,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                         HtmlUtil.cssClass("navheader"),
                                         StringUtil.join("&nbsp;|&nbsp;",
                                             links));
-        /*
-        String baseUrl = getRepository().getUrl(URL_BROWSE_BASE);
-        if ( !what.equals(WHAT_SITE_CODES)) {
-            String suffix = "/" + what.replace(".", "_");
-            String urls = HtmlUtil.href(
-                              baseUrl + suffix + ".csv" + "?"
-                              + request.getUrlArgs(
-                                  ARG_OUTPUT, OUTPUT_BROWSE_CSV), HtmlUtil.img(
-                                  iconUrl("/xls.png"),
-                                  msg("Download CSV file"))) + " "
-                                      + HtmlUtil.href(
-                                          baseUrl + suffix + ".xml" + "?"
-                                          + request.getUrlArgs(
-                                              ARG_OUTPUT,
-                                              OUTPUT_BROWSE_XML), HtmlUtil.img(
-                                                  iconUrl(
-                                                      "/xml.png"), msg(
-                                                      "Download XML file")));
-
-            navHeader += urls;
-        }
-        */
         return navHeader;
     }
 
