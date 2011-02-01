@@ -51,7 +51,7 @@ td {
 
 
 .enumtable {
-   border-color: #600;
+   border-color: #666;
    border-width: 0 0 1px 1px;
    border-style: solid;
 }
@@ -60,7 +60,7 @@ td {
 .enumtable td {
     padding:7px;
     padding-bottom:2px;
-    border-color: #600;
+    border-color: #666;
     border-width: 1px 1px 0 0;
     border-style: solid;
     margin: 0;
@@ -69,7 +69,7 @@ td {
 
 
 .result-table {
-   border-color: #600;
+   border-color: #666;
    border-width: 0 0 1px 1px;
    border-style: solid;
 }
@@ -80,7 +80,7 @@ td {
 .result-table td {
     padding:7px;
     padding-bottom:2px;
-    border-color: #600;
+    border-color: #666;
     border-width: 1px 1px 0 0;
     border-style: solid;
     margin: 0;
