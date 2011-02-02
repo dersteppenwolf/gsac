@@ -72,10 +72,10 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      * @return _more_
      */
     private List<GsacRepositoryInfo> getApplicableServers(
-            GsacRequest request, boolean forSite) {
+            GsacRequest request, String collectionType) {
         List<GsacRepositoryInfo> serversToUse =
             new ArrayList<GsacRepositoryInfo>(super.getServers(request));
-        List<Capability> capabilities = getCapabilityCollection(forSite? CAPABILITIES_SITE:CAPABILITIES_RESOURCE).getCapabilities();
+        List<Capability> capabilities = getCapabilityCollection(collectionType).getCapabilities();
         for (Capability capability : capabilities) {
             if ( !request.defined(capability.getId())) {
                 continue;
@@ -83,18 +83,10 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             for (GsacRepositoryInfo info : new ArrayList<GsacRepositoryInfo>(serversToUse)) {
                 boolean hasCapability = false;
                 for(CapabilityCollection collection: info.getCollections ()) {
-                    if(forSite) {
-                        if(collection.getId().equals(CAPABILITIES_SITE) && collection.isUsed(capability)) {
-                            hasCapability = true;
-                            break;
-                        }
-                    } else {
-                        if(collection.getId().equals(CAPABILITIES_SITE) && collection.isUsed(capability)) {
-                            hasCapability = true;
-                            break;
-                        }
+                    if(collection.getId().equals(collectionType) && collection.isCapabilityUsed(capability)) {
+                        hasCapability = true;
+                        break;
                     }
-
                 }
                 if ( !hasCapability) {
                     System.err.println("    Excluding " + info.getName());
@@ -113,7 +105,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      * @return _more_
      */
     public List<GsacRepositoryInfo> getSiteServers(GsacRequest request) {
-        return getApplicableServers(request, true);
+        return getApplicableServers(request, CAPABILITIES_SITE);
     }
 
 
@@ -125,7 +117,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      * @return _more_
      */
     public List<GsacRepositoryInfo> getResourceServers(GsacRequest request) {
-        return getApplicableServers(request, false);
+        return getApplicableServers(request, CAPABILITIES_RESOURCE);
     }
 
 
@@ -158,22 +150,21 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
-/*
         servers.add(
             new GsacRepositoryInfo(
-                "http://localhost:8082/gsacws", "UNAVCO@local host",
+                "http://localhost:8081/gsacws", "UNAVCO@local host",
                 "http://www.unavco.org/favicon.ico"));
         servers.add(
             new GsacRepositoryInfo(
-                "http://localhost:8081/gsacws", "CDDIS@local host",
+                "http://localhost:8082/gsacws", "CDDIS@local host",
                 "http://cddis.nasa.gov/favicon.ico"));
-*/
+        /*
 
         servers.add(
             new GsacRepositoryInfo(
                 "http://facdev.unavco.org:9090/gsacws", "UNAVCO GSAC Development Server",
                 "http://www.unavco.org/favicon.ico"));
-
+        */
 /*
         servers.add(
             new GsacRepositoryInfo(

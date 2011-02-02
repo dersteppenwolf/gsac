@@ -83,6 +83,10 @@ function RepositoryMap (mapId, params) {
                          map_google_hybrid,
                          map_google_satellite
                          ];
+            this.mapLayers = [
+                         map_wms_openlayers,
+                         map_yahoo,
+                         map_wms_topographic];
         }
 
             

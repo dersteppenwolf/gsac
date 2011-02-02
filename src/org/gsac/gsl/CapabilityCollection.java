@@ -67,6 +67,7 @@ public class CapabilityCollection {
     /** _more_ */
     private List<Capability> capabilities;
 
+
     /** _more_ */
     private HashSet<String> used;
 
@@ -133,7 +134,10 @@ public class CapabilityCollection {
      *
      * @return _more_
      */
-    public boolean isUsed(Capability capability) {
+    public boolean isCapabilityUsed(Capability capability) {
+        if(used == null) {
+            used = getUsedSet(capabilities);
+        }
         return used.contains(capability.getId());
     }
 
@@ -157,19 +161,7 @@ public class CapabilityCollection {
 
 
 
-    /**
-     * _more_
-     *
-     * @param capability _more_
-     *
-     * @return _more_
-     */
-    public boolean isCapabilityUsed(Capability capability) {
-        if (used == null) {
-            return false;
-        }
-        return used.contains(capability.getId());
-    }
+
 
 
     /**

@@ -760,7 +760,9 @@ public class GsacRepository implements GsacConstants {
                     goodList.add(info);
                 } catch (Exception exc) {
                     anyErrors = true;
-                    logError("Initializing remote repository:" + info, null);
+                    System.err.println("Initializing remote repository:" + info + " " +exc);
+                    exc.printStackTrace();
+                    logError("Initializing remote repository:" + info, exc);
                 }
             }
             //If there were any errors then reset the ttl for the list holder
@@ -820,28 +822,21 @@ public class GsacRepository implements GsacConstants {
                                 Capability>> collectionToUsedCapabilities)
             throws Exception {
         GsacRepositoryInfo gri = (GsacRepositoryInfo) getRemoteObject(info,
-                                     URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
+                                                                      URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
         info.initWith(gri);
-        /*
-        //TODO:
-        List<Capability> siteCapabilities;
-        List<Capability> resourceCapabilities;
-        info.setSiteCapabilities(siteCapabilities =
-            Capability.mergeCapabilities(gri.getSiteCapabilities(),
-                                         usedSiteCapabilities));
-        info.setResourceCapabilities(resourceCapabilities =
-            Capability.mergeCapabilities(gri.getResourceCapabilities(),
-                                         usedResourceCapabilities));
 
-        for (Capability capability : siteCapabilities) {
-            capability.addRepository(info);
+        for (CapabilityCollection collection : gri.getCollections()) {
+            Hashtable<String, Capability> used = collectionToUsedCapabilities.get(collection.getId());
+            if(used == null ) {
+                used =  new Hashtable<String, Capability>();
+                collectionToUsedCapabilities.put(collection.getId(), used);
+            }
+
+            List<Capability> mergedCapabilities =Capability.mergeCapabilities(
+                                                                              collection.getCapabilities(),
+                                                                              used);
+            //            capability.addRepository(info);
         }
-
-        for (Capability capability : resourceCapabilities) {
-            capability.addRepository(info);
-        }
-        */
-
     }
 
 
@@ -1893,6 +1888,12 @@ public class GsacRepository implements GsacConstants {
                     getServlet().getAbsoluteUrl(getUrlBase()
                         + URL_RESOURCE_SEARCH), doGetResourceQueryCapabilities()));
             myInfo = gri;
+            for (CapabilityCollection collection : gri.getCollections()) {
+                for (Capability capability : collection.getCapabilities()) {
+                    String  key    = "capability." + capability.getId();
+                    properties.put(key,"true");
+                }
+            }
         }
         return myInfo;
     }
@@ -2653,7 +2654,7 @@ public class GsacRepository implements GsacConstants {
         StringBuffer             sb      = new StringBuffer();
 
         getHtmlOutputHandler().initHtml(request, response, sb);
-        sb.append(gri.getName());
+        sb.append(getHeader(gri.getName()));
         sb.append(HtmlUtil.br());
         sb.append(gri.getDescription());
         sb.append(HtmlUtil.p());
@@ -2664,18 +2665,7 @@ public class GsacRepository implements GsacConstants {
         sb.append("<p>\n");
 
         StringBuffer contents = new StringBuffer();
-        if (servers.size() > 0) {
-            sb.append("Remote repositories:<ul>");
-            for (GsacRepositoryInfo info : servers) {
-                sb.append("<li>");
-                sb.append(HtmlUtil.href(info.getUrl() + URL_SITE_FORM,
-                                        info.getName()));
-                showRepositoryInfo(request, sb, info, false);
-            }
-            sb.append("</ul>");
-        } else {
-            showRepositoryInfo(request, contents, gri, true);
-        }
+        showRepositoryInfo(request, contents, gri, true);
 
         StringBuffer tmp = new StringBuffer();
         contents.append(HtmlUtil.p());
@@ -2729,6 +2719,29 @@ public class GsacRepository implements GsacConstants {
             HtmlUtil.makeShowHideBlock(
                 msg("Web Service API Documentation"),
                 HtmlUtil.insetDiv(contents.toString(), 0, 20, 0, 0), false));
+
+
+
+
+        sb.append(HtmlUtil.p());
+        if (servers.size() > 0) {
+            sb.append(getHeader(msg("Remote repositories")));
+            for (GsacRepositoryInfo info : servers) {
+                StringBuffer repSB = new StringBuffer();
+                showRepositoryInfo(request, repSB, info, false);
+                String label = HtmlUtil.href(info.getUrl() + URL_REPOSITORY_VIEW,
+                                             info.getName());
+                
+                sb.append(HtmlUtil.makeShowHideBlock(label, HtmlUtil.insetDiv(
+                                                                              repSB.toString(),0,20,0,0),
+                                                     false));
+
+                sb.append("<p>");
+            }
+            sb.append("</ul>");
+        } else {
+            //            showRepositoryInfo(request, contents, gri, true);
+        }
 
         getHtmlOutputHandler().finishHtml(request, response, sb);
 

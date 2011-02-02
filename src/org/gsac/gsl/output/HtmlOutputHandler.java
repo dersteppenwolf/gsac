@@ -67,12 +67,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /** _more_          */
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
-    /** _more_ */
-    private static final String MAP_JS_MICROSOFT =
-        "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1";
-
-    /** _more_ */
-    private static final String MAP_ID_MICROSOFT = "microsoft";
 
 
     /** _more_ */
@@ -848,12 +842,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append(
             HtmlUtil.importJS(
                 "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"));
-        sb.append(
-            HtmlUtil.importJS(
-                "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"));
-        sb.append(
-            HtmlUtil.importJS(
-                "http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
+        //        sb.append(
+        //            HtmlUtil.importJS(
+        //                "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"));
+        //        sb.append(
+        //            HtmlUtil.importJS(
+        //                "http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
         sb.append(
             HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
         sb.append(HtmlUtil.importJS(makeHtdocsUrl("/repositorymap.js")));
@@ -1525,8 +1519,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (metadata instanceof PropertyMetadata) {
             PropertyMetadata mtd = (PropertyMetadata) metadata;
-            pw.append(HtmlUtil.formEntry(mtd.getLabel() + ":",
-                                         mtd.getValue()));
+            String value = mtd.getValue();
+            if(value.indexOf("\n")>=0) {
+                pw.append(HtmlUtil.formEntryTop(mtd.getLabel() + ":",
+                                                HtmlUtil.makeShowHideBlock(msg(""),"<pre>" + value+"</pre>" , false)));
+                                                
+            } else {
+                pw.append(HtmlUtil.formEntry(mtd.getLabel() + ":",
+                                             value));
+            }
             return;
         }
     }
@@ -1618,7 +1619,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             mapInfo = mapInfo.replace("/script", "\\/script");
             String url = getIconUrl(site);
             js.append("var siteInfo = \"" + mapInfo + "\";\n");
-            js.append(mapVarName + ".addMarker('" + site.getId() + "',"
+            String entryId = site.getId();
+            entryId = cleanIdForJS(entryId);
+            js.append(mapVarName + ".addMarker('" + entryId + "',"
                       + jsLLP(site.getLatitude(), site.getLongitude()) + ","
                       + "\"" + url + "\"" + "," + "siteInfo);\n");
         }
@@ -1760,11 +1763,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             List<String> sortValues = new ArrayList<String>();
             String remoteHref = getRepository().getRemoteHref(sites.get(0));
             if(remoteHref.length()>0) {            
-                labels.add("");
-                sortValues.add("");
+                //                labels.add("");
+                //                sortValues.add("");
             }
-            labels.add("");
-            sortValues.add("");
+            //            labels.add("");
+            //            sortValues.add("");
             if (getDoSiteCode()) {
                 labels.add(msg("Site&nbsp;Code"));
                 sortValues.add(SORT_SITE_CODE);
@@ -1811,11 +1814,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             openEntryRow(sb, site.getSiteId(), URL_SITE_VIEW, ARG_SITEID);
             String cbx = HtmlUtil.checkbox(ARG_SITEID, site.getSiteId(),
                                            false);
+            
             sb.append(HtmlUtil.col(cbx));
             String remoteHref = getRepository().getRemoteHref(site);
             if(remoteHref.length()>0) {            
                 sb.append(HtmlUtil.col(remoteHref));
             }
+            sb.append("</tr></table>\n");
             sb.append(HtmlUtil.col(href));
             sb.append(HtmlUtil.col(site.getName()));
 
@@ -1826,8 +1831,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     sb.append(HtmlUtil.col(""));
                 }
             }
-
-
             sb.append("<td>");
             if (site.getFromDate() != null) {
                 sb.append(formatDate(site.getFromDate()));
@@ -1836,7 +1839,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             } else {
                 sb.append("N/A");
             }
-
             sb.append("</td>");
 
 
@@ -1847,8 +1849,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(",");
             sb.append(formatElevation(site.getElevation()));
             sb.append("</td>");
+
             if (getDoSiteGroup()) {
-                sb.append(HtmlUtil.col(getGroupHtml(site.getSiteGroups(),true)));
+                sb.append(HtmlUtil.col(getGroupHtml(site.getSiteGroups(),true)+"&nbsp;"));
             }
 
 
@@ -1887,12 +1890,20 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("<tr valign=\"top\" " + HtmlUtil.id(rowId) + " "
                       + event1 + ">");
 
-            sb.append(HtmlUtil.col(dartImg,
-                                   " align=center valign=center width=12 "
-                                   + HtmlUtil.id(divId) + event2));
+            sb.append("<td  " + HtmlUtil.id(divId) +event2+"><table border=1 class=\"innerresult-table\" cellpadding=0 cellspacing=0><tr>");
+            sb.append(HtmlUtil.col(dartImg));
+            //            sb.append(HtmlUtil.col(dartImg,
+            //                                   " align=center valign=center width=12 "
+            //                                   + HtmlUtil.id(divId) + event2));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
+    }
+
+
+    private String cleanIdForJS(String s) {
+        s = s.replace("'","\\'");
+        return s;
     }
 
 
@@ -1911,6 +1922,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                     String urlArg) {
         String xmlUrl = HtmlUtil.url(makeUrl(baseUrl), new String[] { urlArg,
                 entryId, ARG_WRAPXML, "true", });
+        entryId = cleanIdForJS(entryId);
+
         String event1 = HtmlUtil.onMouseOver(
                             HtmlUtil.call(
                                 "entryRowOver",
@@ -1945,7 +1958,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             throws IOException {
         String extra = " class=\"result-header\" ";
         sb.append("<tr>");
-        sb.append(HtmlUtil.col("", extra));
+        sb.append(HtmlUtil.col("&nbsp;", extra));
         String  valueArg     = prefix + ARG_SORT_VALUE_SUFFIX;
         String  orderArg     = prefix + ARG_SORT_ORDER_SUFFIX;
         boolean sortCapable  = getRepository().isCapable(valueArg);

@@ -167,7 +167,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                     GsacResponse response,
                                     Capability capability)
             throws Exception {
-        String       letter = request.get(ARG_LETTER, "A").toUpperCase();
+        String       letter = request.get(ARG_LETTER, "").toUpperCase();
         StringBuffer html   = new StringBuffer();
         initHtml(request, response, html);
         html.append(getHeader(request, capability));
@@ -199,18 +199,20 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                     links)));
         Hashtable<String, String> outputMap = new Hashtable<String, String>();
 
-        GsacRequest               searchRequest = new GsacRequest(request);
-        searchRequest.put(capability.getId(), letter + "*");
-        //        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
-        searchRequest.put(ARG_LIMIT, 10000 + "");
+        if(letter.length()>0) {
+            GsacRequest               searchRequest = new GsacRequest(request);
+            searchRequest.put(capability.getId(), letter + "*");
+            //        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
+            searchRequest.put(ARG_LIMIT, 10000 + "");
 
-        getRepository().handleSiteRequest(searchRequest, response);
-        List<GsacSite> sites = response.getSites();
-        if (sites.size() == 0) {
-            html.append(
-                getRepository().makeInformationDialog(msg("No results found")));
-        } else {
-            makeSiteHtmlTable(request, html, sites);
+            getRepository().handleSiteRequest(searchRequest, response);
+            List<GsacSite> sites = response.getSites();
+            if (sites.size() == 0) {
+                html.append(
+                            getRepository().makeInformationDialog(msg("No results found")));
+            } else {
+                makeSiteHtmlTable(request, html, sites);
+            }
         }
         finishHtml(request, response, html);
     }

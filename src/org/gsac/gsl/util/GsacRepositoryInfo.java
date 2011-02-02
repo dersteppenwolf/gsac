@@ -221,7 +221,7 @@ public class GsacRepositoryInfo {
     public boolean isCapabilityUsed(String collectionId, Capability capability) {
         CapabilityCollection collection =getCollection(collectionId);
         if(collection==null) return false;
-        return collection.isUsed(capability);
+        return collection.isCapabilityUsed(capability);
     }
 
     /**

@@ -114,7 +114,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
         this.gsacRepository = gsacRepository;
-
         doSite           = getRepository().isCapable(HEADER_SITE);
         doResource       = getRepository().isCapable(HEADER_RESOURCE);
         doSiteCode       = getRepository().isCapable(ARG_SITE_CODE);
