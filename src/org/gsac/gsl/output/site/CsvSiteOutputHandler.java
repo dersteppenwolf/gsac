@@ -45,6 +45,9 @@ public class CsvSiteOutputHandler extends GsacOutputHandler {
     /** output id */
     public static final String OUTPUT_SITE_CSV = "site.csv";
 
+    /** output id */
+    public static final String OUTPUT_SITE_CODELATLON = "site.codelatlon";
+
 
     /**
      * _more_
@@ -55,6 +58,8 @@ public class CsvSiteOutputHandler extends GsacOutputHandler {
         super(gsacServlet);
         getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_CSV,
                 "Site CSV", "/sites.csv", true));
+        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_CODELATLON,
+                "Site Code/Lat/Lon", "/sites.csv", true));
     }
 
 
@@ -74,22 +79,37 @@ public class CsvSiteOutputHandler extends GsacOutputHandler {
             throws IOException, ServletException {
         response.startResponse(GsacResponse.MIME_CSV);
         PrintWriter pw = response.getPrintWriter();
+        boolean codeLatLon = request.get(ARG_OUTPUT,"").equals(OUTPUT_SITE_CODELATLON);
+        String delimiter = request.get(ARG_DELIMITER,",");
+
         try {
-            pw.print(
-                "#repositoryid, site code, name, latitude, longitude, elevation\n");
-            for (GsacSite site : response.getSites()) {
-                pw.print(site.getSiteId());
-                pw.print(",");
-                pw.print(site.getSiteCode());
-                pw.print(",");
-                pw.print(site.getName().replace(",", "\\,"));
-                pw.print(",");
-                pw.print(site.getLatitude());
-                pw.print(",");
-                pw.print(site.getLongitude());
-                pw.print(",");
-                pw.print(site.getElevation());
-                pw.print("\n");
+            if(codeLatLon) {
+                for (GsacSite site : response.getSites()) {
+                    pw.print(site.getSiteCode());
+                    pw.print(delimiter);
+                    pw.print(delimiter);
+                    pw.print(site.getLatitude());
+                    pw.print(",");
+                    pw.print(site.getLongitude());
+                    pw.print("\n");
+                }
+            } else {
+                pw.print(
+                         "#repositoryid, site code, name, latitude, longitude, elevation\n");
+                for (GsacSite site : response.getSites()) {
+                    pw.print(site.getSiteId());
+                    pw.print(",");
+                    pw.print(site.getSiteCode());
+                    pw.print(",");
+                    pw.print(site.getName().replace(",", "\\,"));
+                    pw.print(",");
+                    pw.print(site.getLatitude());
+                    pw.print(",");
+                    pw.print(site.getLongitude());
+                    pw.print(",");
+                    pw.print(site.getElevation());
+                    pw.print("\n");
+                }
             }
         } finally {
             response.endResponse();
