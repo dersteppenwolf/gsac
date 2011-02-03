@@ -610,7 +610,7 @@ public class GsacRepository implements GsacConstants {
 
         htmlOutputHandler = new HtmlSiteOutputHandler(this);
         new KmlSiteOutputHandler(this);
-        new CsvSiteOutputHandler(this);
+        new TextSiteOutputHandler(this);
         new RssSiteOutputHandler(this);
         new AtomSiteOutputHandler(this);
         new JsonSiteOutputHandler(this);

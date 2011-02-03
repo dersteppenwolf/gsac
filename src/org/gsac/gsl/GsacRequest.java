@@ -522,7 +522,7 @@ public class GsacRequest implements GsacConstants {
             return ((List) result).size() > 0;
         }
         String sresult = (String) result;
-        if (sresult.trim().length() == 0) {
+        if (sresult.length() == 0) {
             return false;
         }
         return true;
@@ -552,7 +552,7 @@ public class GsacRequest implements GsacConstants {
         } else {
             result = o.toString();
         }
-        if ((result == null) || (result.trim().length() == 0)) {
+        if ((result == null) || (result.length() == 0)) {
             return dflt;
         }
         return result;
@@ -581,7 +581,7 @@ public class GsacRequest implements GsacConstants {
         List<String> result = new ArrayList<String>();
         for (String value : values) {
             for (String subValue : value.split(DELIMITER)) {
-                subValue = subValue.trim();
+                //                subValue = subValue.trim();
                 if (subValue.length() > 0) {
                     result.add(subValue);
                 }
@@ -608,7 +608,7 @@ public class GsacRequest implements GsacConstants {
         for (String value : values) {
             for (String subValue : value.split(DELIMITER)) {
                 //NOTE: Should we trim here?
-                subValue = subValue.trim();
+                //                subValue = subValue.trim();
                 if (subValue.length() > 0) {
                     result.add(subValue);
                     result.add(subValue.toLowerCase());

@@ -336,6 +336,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      */
     public String getAbsoluteUrl(String path) {
         String hostname = getRepository().getHostname();
+        //        hostname = "localhost";
         if (hostname == null) {
             hostname = getLocalHostname();
         }
