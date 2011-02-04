@@ -308,7 +308,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 if (cnt == 0) {
                     boolean includeExtraCol = (site!=null &&  getRepository().getRemoteHref(site).length()>0);
                     sb.append(
-                        "<table class=\"result-table\" cellspacing=0 cellpadding=4 border=0 xwidth=100%>");
+                        "<table class=\"result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
                     String[] labels = new String[] {
                         (includeExtraCol?"":null), msg("Type"), msg("File"), msg("Site"),
                         msg("Date"), msg("File size")
@@ -327,11 +327,11 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                              URL_RESOURCE_VIEW, ARG_RESOURCE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
-
                 String remoteHref=getRepository().getRemoteHref(resource);
                 if(remoteHref.length()>0) {
                     sb.append(HtmlUtil.col(remoteHref));
                 }
+                sb.append("</tr></table></td>\n");
                 if (resource.getType() != null) {
                     sb.append(HtmlUtil.col(resource.getType().getName()));
                 } else {
@@ -375,7 +375,6 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 }
 
 
-
                 if (resource.getFileInfo().getFileSize() > 0) {
                     sb.append("<td align=\"right\" class=\"filesize\">");
                     size += resource.getFileInfo().getFileSize();
@@ -395,10 +394,10 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                     getRepository().makeInformationDialog(
                         msg("No files found")));
             } else {
-                sb.append("<tr><td colspan=2></td>");
+                sb.append("<tr><td>&nbsp;</td>");
                 sb.append("<td align=right>" + cnt + HtmlUtil.space(1)
                           + msg("files") + "</td>");
-                sb.append("<td colspan=3></td>");
+                sb.append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
                 sb.append("<td align=\"right\" class=\"filesize\">");
                 if (size > 0) {
                     sb.append("" + formatFileSize(size));

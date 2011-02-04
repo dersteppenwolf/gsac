@@ -2226,6 +2226,8 @@ public class GsacRepository implements GsacConstants {
 
 
 
+    boolean readHtmlEveryTime  =false;
+
     /**
      * Override this to return the html header to use for html pages
      *
@@ -2234,19 +2236,18 @@ public class GsacRepository implements GsacConstants {
      * @return html header
      */
     public String getHtmlHeader(GsacRequest request) {
-        /*
-        try {
-        InputStream inputStream =
-            getResourceInputStream(getLocalResourcePath("/header.html"));
-        if (inputStream != null) {
-            htmlHeader = IOUtil.readContents(inputStream);
-            htmlHeader = htmlHeader.replace("${urlroot}",
-                                            getUrlBase() + URL_BASE);
-            inputStream.close();
+        if(readHtmlEveryTime) {
+            try {
+                InputStream inputStream =
+                    getResourceInputStream(getLocalResourcePath("/header.html"));
+                if (inputStream != null) {
+                    htmlHeader = IOUtil.readContents(inputStream);
+                    htmlHeader = htmlHeader.replace("${urlroot}",
+                                                    getUrlBase() + URL_BASE);
+                    inputStream.close();
+                }
+            } catch(Exception exc){}
         }
-        } catch(Exception exc){}
-        */
-
         return htmlHeader;
     }
 
@@ -2258,18 +2259,18 @@ public class GsacRepository implements GsacConstants {
      * @return html footer
      */
     public String getHtmlFooter(GsacRequest request) {
-        /*
-        try {
-        InputStream inputStream =
-            getResourceInputStream(getLocalResourcePath("/footer.html"));
-        if (inputStream != null) {
-            htmlFooter = IOUtil.readContents(inputStream);
-            htmlFooter = htmlFooter.replace("${urlroot}",
-                                            getUrlBase() + URL_BASE);
-            inputStream.close();
+        if(readHtmlEveryTime) {
+            try {
+                InputStream inputStream =
+                    getResourceInputStream(getLocalResourcePath("/footer.html"));
+                if (inputStream != null) {
+                    htmlFooter = IOUtil.readContents(inputStream);
+                    htmlFooter = htmlFooter.replace("${urlroot}",
+                                                    getUrlBase() + URL_BASE);
+                    inputStream.close();
+                }
+            } catch(Exception exc){}
         }
-        } catch(Exception exc){}
-        */
 
         return htmlFooter;
     }

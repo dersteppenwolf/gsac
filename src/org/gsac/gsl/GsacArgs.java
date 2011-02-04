@@ -67,6 +67,12 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
 
+    /** _more_ */
+    public static final String ARG_SITE_DATE = ARG_SITE_PREFIX
+                                                          + "date";
+
+    public static final String ARG_SITE_DATE_FROM = ARG_SITE_DATE + ".from";
+    public static final String ARG_SITE_DATE_TO = ARG_SITE_DATE + ".to";
 
 
 

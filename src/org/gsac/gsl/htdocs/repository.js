@@ -260,7 +260,6 @@ function mouseDown(event) {
 	objectToHide = popupObject;
         setTimeout("hidePopupObject()",500);
     }
-
     event = util.getEvent(event);
     mouseIsDown = 1;
     mouseMoveCnt =0;
@@ -1661,37 +1660,21 @@ function entryRowOut(entryId) {
 
 
 function entryRowClick(event, entryId, url) {
-
     var rowId = "row_" +entryId;
-
     var divId = "div_" + entryId;
-
     var imgId = "img_" + entryId;
-
     row = util.getDomObject(divId);
-
     if(!row) {
-
         return;
-
     }
-
     div = util.getDomObject("tooltipdiv");
-
     if(!div) {
-
         return;
-
     }
-
     var img = util.getDomObject(imgId);
-
     if(img) {
-
         img.obj.src =  icon_progress;
-
     }
-
     util.loadXML( url, entryHandleXml,entryId);
 
 }
@@ -1701,45 +1684,27 @@ function entryRowClick(event, entryId, url) {
 
 
 function entryHandleXml(request,entryId) {
-
     var rowId = "row_" +entryId;
-
     var divId = "div_" + entryId;
-
     var imgId = "img_" + entryId;
-
     var img = util.getDomObject(imgId);
-
     if(img) {
-
         img.obj.src =  icon_blank;
-
     }
 
-
-
     row = util.getDomObject(divId);
-
     if(!row) return;
-
     div = util.getDomObject("tooltipdiv");
-
     if(!div) return;
-
     var xmlDoc=request.responseXML.documentElement;
-
     text = getChildText(xmlDoc);
-
     div.style["left"]  =util.getLeft(row.obj)+"px";
+    var bottom = util.getBottom(row.obj);
 
-    div.style["top"]  =util.getBottom(row.obj)+"px";
-
+    div.style["top"]  = bottom+"px";
     div.obj.innerHTML = "<div class=tooltip-inner><div id=\"tooltipwrapper\" ><table><tr valign=top><img width=\"16\" onmousedown=\"hideEntryPopup();\" id=\"tooltipclose\"  src=" + icon_close +"></td><td>" + text+"</table></div></div>";
-
     checkTabs(text);
-
     showObject(div);
-
 }
 
 

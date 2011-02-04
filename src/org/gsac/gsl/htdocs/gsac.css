@@ -76,8 +76,8 @@ td {
 
 
 .result-table td {
-    padding:7px;
-    padding-bottom:2px;
+    padding:4px;
+    padding-bottom:1px;
     border-color: #666;
     border-width: 1px 1px 0 0;
     border-style: solid;
@@ -86,12 +86,14 @@ td {
 
 .innerresult-table  {
     border-width: 0 0 0 0;
+    padding:0;
+    margin: 0;
 }
 
 .innerresult-table td {
     padding:0px;
-    border-width: 0px 0px 0 0;
     margin: 0;
+    border-width: 0px 0px 0 0;
 }
 
 .result-header {

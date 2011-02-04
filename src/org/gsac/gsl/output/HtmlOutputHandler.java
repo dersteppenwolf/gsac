@@ -1801,7 +1801,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     sb.append(HtmlUtil.submit(msg("View Selected Sites"),
                             ARG_SEARCH));
                     sb.append(HtmlUtil.space(2));
-                    sb.append("<table class=\"result-table\" cellspacing=0 cellpadding=4 border=0>");
+                    sb.append("<table class=\"result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
                     //                    sb.append(HtmlUtil.submit(msg("ViewSearch Files"), ARG_SEARCH_RESOURCES));
                     makeSortHeader(request, sb, ARG_SITE_PREFIX,
                                    SITE_TABLE_LABELS, SITE_TABLE_SORTVALUES);
@@ -1820,7 +1820,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if(remoteHref.length()>0) {            
                 sb.append(HtmlUtil.col(remoteHref));
             }
-            sb.append("</tr></table>\n");
+            sb.append("</tr></table></td>\n");
             sb.append(HtmlUtil.col(href));
             sb.append(HtmlUtil.col(site.getName()));
 
@@ -1883,18 +1883,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String   event2 = events[1];
             String dartImg =
                 HtmlUtil.img(iconUrl("/blank.gif"),
-                             "Click to show details",
+                             "",
                              HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "10")
                              + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")
                              + HtmlUtil.id(imgId));
-            sb.append("<tr valign=\"top\" " + HtmlUtil.id(rowId) + " "
+            sb.append("<tr valign=\"bottom\" " + HtmlUtil.id(rowId) + " "
                       + event1 + ">");
 
-            sb.append("<td  " + HtmlUtil.id(divId) +event2+"><table border=1 class=\"innerresult-table\" cellpadding=0 cellspacing=0><tr>");
+            sb.append("<td  " + HtmlUtil.id(divId) +event2+"><table border=0 class=\"innerresult-table\" cellpadding=0 cellspacing=0><tr>");
             sb.append(HtmlUtil.col(dartImg));
-            //            sb.append(HtmlUtil.col(dartImg,
-            //                                   " align=center valign=center width=12 "
-            //                                   + HtmlUtil.id(divId) + event2));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
