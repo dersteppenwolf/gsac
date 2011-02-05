@@ -84,6 +84,37 @@ td {
     margin: 0;
 }
 
+
+.toolbar {
+     margin:1px;
+}
+
+.download-container {
+     padding:0px;
+     margin-bottom:4px;
+}
+
+.download-button:hover {
+     border : 1px #000 solid;
+}
+
+.download-button {
+     border : 1px #aaa solid;
+     margin:0px;
+     padding-top:3px;
+     padding-right:3px;
+     margin-bottom:2px;
+     background:url(${urlroot}/htdocs/icons/down_arrow.gif) no-repeat left center;
+     font-weight: bold;
+     background-color:#eee;
+     text-indent:14px;
+     font-size: 10pt;
+}
+
+table {
+      margin: 0px;
+}
+
 .innerresult-table  {
     border-width: 0 0 0 0;
     padding:0;
@@ -97,9 +128,15 @@ td {
 }
 
 .result-header {
-   background-color:#c3d9ff;
+   background-color:#e8e8e8;
    font-weight: bold;
+
 }
+
+.result-header, .result-header a {
+     color:#222;
+}
+
 
 
 .firstletternav {

@@ -62,9 +62,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      */
     public HtmlResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addResourceOutput(new GsacOutput(this,
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
                 OUTPUT_RESOURCE_HTML, "Resource HTML"));
-        //        getRepository().addResourceOutput(new GsacOutput(this,
+        //        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
         //                OUTPUT_RESOURCE_DEFAULT, "Resource Default"));
     }
 
@@ -228,7 +228,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
         StringBuffer resultsSB = new StringBuffer();
         resultsSB.append(HtmlUtil.formTable());
-        getResourceOutputSelect(request, resultsSB);
+        getOutputSelect(OUTPUT_GROUP_RESOURCE, request, resultsSB);
         getLimitSelect(request, resultsSB);
         getResourceSortSelect(request, resultsSB);
         resultsSB.append(HtmlUtil.formTableClose());
@@ -262,7 +262,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
             StringBuffer searchLinks = new StringBuffer();
             GsacRequest  tmpRequest  = new GsacRequest(request);
-            for (GsacOutput output : getRepository().getResourceOutputs()) {
+            StringBuffer toolbar = new StringBuffer();
+            
+            for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
                 if (output.getId().equals(OUTPUT_RESOURCE_HTML)) {
                     continue;
                 }
@@ -272,6 +274,20 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                                    + ((suffix != null)
                                       ? suffix
                                       : "") + "?" + tmpRequest.getUrlArgs();
+                if(output.getToolbarLabel()!=null) {
+                    String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                                                 HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, output.getId(),
+                                                                HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
+                                                                HtmlUtil.ATTR_VALUE,output.getToolbarLabel(),
+                                                                             HtmlUtil.ATTR_CLASS, "download-button",
+                                                                             HtmlUtil.ATTR_TITLE,output.getLabel()
+                                                     }));
+                    if(toolbar.length()>0)
+                        toolbar.append(HtmlUtil.space(2));
+                    toolbar.append(submit);
+
+                }
+
                 searchLinks.append(HtmlUtil.href(searchUrl,
                         output.getLabel()));
                 searchLinks.append(HtmlUtil.br());
@@ -295,17 +311,28 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
             Hashtable<String, String> override = new Hashtable<String,
                                                      String>();
-            override.put(ARG_OUTPUT, OUTPUT_RESOURCE_DEFAULT);
+            override.put(ARG_OUTPUT, OUTPUT_RESOURCE_HTML);
             makeNextPrevHeader(request, response, sb);
             long size = 0;
             int  cnt  = 0;
+
+
             for (GsacResource resource : response.getResources()) {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
                     site = getRepository().getSite(request,
-                            resource.getSiteID());
+                                                   resource.getSiteID());
                 }
                 if (cnt == 0) {
+                    //                    pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),
+                    request.remove(ARG_OUTPUT);
+                    sb.append(HtmlUtil.formPost(request.getUrl(null),
+                                                HtmlUtil.attr("name", "searchform")));;
+                    
+                    sb.append("<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=toolbar>");
+                    sb.append(toolbar);
+                    sb.append("</div></td></tr></table>");
+
                     boolean includeExtraCol = (site!=null &&  getRepository().getRemoteHref(site).length()>0);
                     sb.append(
                         "<table class=\"result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
@@ -327,6 +354,12 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                              URL_RESOURCE_VIEW, ARG_RESOURCE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
+
+                String cbx = HtmlUtil.checkbox(ARG_RESOURCE_ID, resource.getId(),
+                                               true);
+            
+                //                sb.append(HtmlUtil.col(cbx));
+
                 String remoteHref=getRepository().getRemoteHref(resource);
                 if(remoteHref.length()>0) {
                     sb.append(HtmlUtil.col(remoteHref));
@@ -405,6 +438,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 sb.append("</td>");
                 sb.append("</tr>\n");
                 sb.append("</table>\n");
+                sb.append(HtmlUtil.formClose());
             }
 
         } catch (Exception exc) {

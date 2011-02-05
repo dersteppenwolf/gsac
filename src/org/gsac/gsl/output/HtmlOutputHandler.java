@@ -278,10 +278,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @throws IOException On badness
      */
-    public void getSiteOutputSelect(GsacRequest request, Appendable pw)
+    public void getOutputSelect(String group, GsacRequest request, Appendable pw)
             throws IOException {
         List outputs = new ArrayList();
-        for (GsacOutput output : getRepository().getSiteOutputs()) {
+        for (GsacOutput output : getRepository().getOutputs(group)) {
             if (output.getForUser()) {
                 outputs.add(new TwoFacedObject(output.getLabel(),
                         output.getId()));
@@ -298,28 +298,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                              + msg("Compress result")));
     }
 
-    /**
-     * _more_
-     *
-     * @param request The request
-     * @param pw appendable to append to
-     *
-     * @throws IOException On badness
-     */
-    public void getResourceOutputSelect(GsacRequest request, Appendable pw)
-            throws IOException {
-        List outputs = new ArrayList();
-        for (GsacOutput output : getRepository().getResourceOutputs()) {
-            if (output.getForUser()) {
-                outputs.add(new TwoFacedObject(output.getLabel(),
-                        output.getId()));
-            }
-        }
-
-        pw.append(HtmlUtil.formEntry(msgLabel("Output"),
-                                     HtmlUtil.select(ARG_OUTPUT, outputs,
-                                         (String) null, "")));
-    }
 
     /**
      * _more_
@@ -446,7 +424,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                              ? " MULTIPLE SIZE=4"
                                              : "");
                 }
-
             } else if (capability.getType().equals(
                     Capability.TYPE_NUMBERRANGE)) {
                 String min = arg + ".min";
@@ -1349,7 +1326,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     dateString = HtmlUtil.href(
                         HtmlUtil.url(
                             makeUrl(URL_RESOURCE_FORM), new String[] {
-                        ARG_SITEID, site.getSiteId(),
+                        ARG_SITE_ID, site.getSiteId(),
+                        ARG_SITE_CODE, site.getSiteCode(),
                         ARG_RESOURCE_DATADATE_FROM,
                         formatDateTime(equipment.getFromDate()),
                         ARG_RESOURCE_DATADATE_TO,
@@ -1884,13 +1862,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String dartImg =
                 HtmlUtil.img(iconUrl("/blank.gif"),
                              "",
+                             event2 +
                              HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "10")
                              + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")
                              + HtmlUtil.id(imgId));
             sb.append("<tr valign=\"bottom\" " + HtmlUtil.id(rowId) + " "
                       + event1 + ">");
 
-            sb.append("<td  " + HtmlUtil.id(divId) +event2+"><table border=0 class=\"innerresult-table\" cellpadding=0 cellspacing=0><tr>");
+            sb.append("<td  " + HtmlUtil.id(divId)+"><table border=0 class=\"innerresult-table\" cellpadding=0 cellspacing=0><tr>");
             sb.append(HtmlUtil.col(dartImg));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);

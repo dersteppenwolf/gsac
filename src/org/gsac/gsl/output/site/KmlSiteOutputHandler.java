@@ -66,7 +66,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
      */
     public KmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_KML,
+        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_KML,
                 "Google Earth KML", "/sites.kml", true));
     }
 

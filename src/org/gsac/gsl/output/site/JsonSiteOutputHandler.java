@@ -58,7 +58,7 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
      */
     public JsonSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_JSON,
+        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_JSON,
                 "Site JSON", "/sites.json", true));
     }
 

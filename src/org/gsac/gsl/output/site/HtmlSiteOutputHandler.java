@@ -61,9 +61,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      */
     public HtmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_HTML,
+        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_HTML,
                 "Site HTML"));
-        //        getRepository().addSiteOutput(new GsacOutput(this,
+        //        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this,
         //                OUTPUT_SITE_DEFAULT, "Site Default"));
     }
 
@@ -156,7 +156,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer resultsSB = new StringBuffer();
         resultsSB.append(HtmlUtil.formTable());
-        getSiteOutputSelect(request, resultsSB);
+        getOutputSelect(OUTPUT_GROUP_SITE,request, resultsSB);
         getLimitSelect(request, resultsSB);
         getSiteSortSelect(request, resultsSB);
         resultsSB.append(HtmlUtil.formTableClose());
@@ -207,7 +207,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer formBuffer  = new StringBuffer();
 
         StringBuffer searchLinks = new StringBuffer();
-        for (GsacOutput output : getRepository().getSiteOutputs()) {
+
+        for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_SITE)) {
             if (output.getId().equals(OUTPUT_SITE_HTML)) {
                 continue;
             }

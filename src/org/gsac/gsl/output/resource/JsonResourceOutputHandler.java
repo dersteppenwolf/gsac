@@ -60,7 +60,7 @@ public class JsonResourceOutputHandler extends GsacOutputHandler {
      */
     public JsonResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addResourceOutput(new GsacOutput(this,
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
                 OUTPUT_RESOURCE_JSON, "Resource JSON", "/resources.json",
                 true));
     }

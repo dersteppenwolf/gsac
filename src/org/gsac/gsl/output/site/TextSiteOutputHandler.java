@@ -56,7 +56,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      */
     public TextSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_CSV,
+        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_CSV,
                 "Site CSV", "/sites.csv", true));
     }
 

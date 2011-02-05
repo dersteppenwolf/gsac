@@ -100,7 +100,7 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
      */
     public RssResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addResourceOutput(new GsacOutput(this, OUTPUT_RESOURCE_RSS,
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this, OUTPUT_RESOURCE_RSS,
                 "Resource GSAC RSS", "/resources.rss", true));
     }
 

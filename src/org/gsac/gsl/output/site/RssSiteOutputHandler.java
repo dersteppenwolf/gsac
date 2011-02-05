@@ -99,7 +99,7 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
      */
     public RssSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addSiteOutput(new GsacOutput(this, OUTPUT_SITE_RSS,
+        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_RSS,
                 "Site GSAC RSS", "/sites.rss", true));
     }
 

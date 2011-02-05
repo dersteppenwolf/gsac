@@ -183,14 +183,11 @@ util = new Util();
     }
 
   }
-  var htmlUtil = new HtmlUtil();
 
-
-
-
-
-
+var htmlUtil = new HtmlUtil();
 var blockCnt=0;
+
+
 function DomObject(name) {
     this.obj = null;
     // DOM level 1 browsers: IE 5+, NN 6+
@@ -221,26 +218,9 @@ function DomObject(name) {
 }
 
 
-
 function noop() {
 }
 
-
-
-
-
-var popupObject;
-document.onmousemove = mouseMove;
-document.onmousedown = mouseDown;
-document.onmouseup   = mouseUp;
-
-
-var mouseIsDown = 0;
-var dragSource;
-var draggedEntry;
-var draggedEntryName;
-var draggedEntryIcon;
-var mouseMoveCnt =0;
 var objectToHide;
 
 function hidePopupObject() {
@@ -252,181 +232,6 @@ function hidePopupObject() {
         popupObject = null;
     }
 }
-
-
-
-function mouseDown(event) {
-    if(popupObject) {
-	objectToHide = popupObject;
-        setTimeout("hidePopupObject()",500);
-    }
-    event = util.getEvent(event);
-    mouseIsDown = 1;
-    mouseMoveCnt =0;
-    return true;
-}
-
-
-
-function mouseUp(event) {
-    event = util.getEvent(event);
-    mouseIsDown = 0;
-    draggedEntry   = null;
-    util.setCursor('default');
-    var obj = util.getDomObject('floatdiv');
-    if(obj) {
-        var dragSourceObj= util.getDomObject(dragSource);
-        if(dragSourceObj) {
-            var tox = util.getLeft(dragSourceObj.obj);
-            var toy = util.getTop(dragSourceObj.obj);
-            var fromx = parseInt(obj.style.left);
-            var fromy = parseInt(obj.style.top);
-            var steps = 10;
-            var dx=(tox-fromx)/steps;
-            var dy=(toy-fromy)/steps;
-            flyBackAndHide('floatdiv',0,steps,fromx,fromy,dx,dy);
-        } else {
-            hideObject(obj);
-        }
-    }
-    return true;
-}
-
-
-
-
-function flyBackAndHide(id, step,steps,fromx,fromy,dx,dy) {
-    var obj = util.getDomObject(id);
-    if(!obj) {
-        return;
-    }
-    step=step+1;
-    obj.style.left = fromx+dx*step+"px";
-    obj.style.top = fromy+dy*step+"px";
-    var opacity = 80*(steps-step)/steps;
-    //    util.print(opacity);
-    //    obj.style.filter="alpha(opacity="+opacity+")";
-    //    obj.style.opacity="0." + opacity;
-
-    if(step<steps) {
-        var callback = "flyBackAndHide('" + id +"'," + step+","+steps+","+fromx+","+fromy+","+dx+","+dy+");"
-        setTimeout(callback,30);
-    } else {
-        setTimeout("finalHide('" + id+"')",150);
-        //        hideObject(obj);
-    }
-}
-
-function finalHide(id) {
-    var obj = util.getDomObject(id);
-    if(!obj) {
-        return;
-    }
-    hideObject(obj);
-    obj.style.filter="alpha(opacity=80)";
-    obj.style.opacity="0.8";
-}
-
-function mouseMove(event) {
-    event = util.getEvent(event);
-    if(draggedEntry && mouseIsDown) {
-        mouseMoveCnt++;
-        var obj = util.getDomObject('floatdiv');
-        if(mouseMoveCnt==6) {
-            util.setCursor('move');
-        }
-        if(mouseMoveCnt>=6&& obj) {
-            moveFloatDiv(util.getEventX(event),util.getEventY(event));
-        }
-    }    
-    return false;
-}
-
-
-
-
-
-
-function moveFloatDiv(x,y) {
-    var obj = util.getDomObject('floatdiv');
-    if(obj) {
-        if(obj.style.visibility!="visible") {
-            obj.style.visibility = "visible";
-            obj.style.display = "block";
-            var icon = "";
-            if(draggedEntryIcon) {
-                icon = "<img src=\"" +draggedEntryIcon+"\"/> ";
-            }
-            obj.obj.innerHTML = icon +draggedEntryName+"<br>Drag to a group to copy/move/associate";
-        }
-        obj.style.top = y;
-        obj.style.left = x+10;
-    }
-}
-
-
-function mouseOverOnEntry(event, entryId, targetId) {
-    event = util.getEvent(event);
-    if(entryId == draggedEntry) return;
-    if(mouseIsDown)  {
-        var obj = util.getDomObject(targetId);
-        if(!obj)  return;
-        //       if(obj.style && obj.style.borderBottom) {
-        obj.style.borderBottom="2px black solid";
-        //        }
-    }
-}
-
-function mouseOutOnEntry(event, entryId,targetId) {
-    event = util.getEvent(event);
-    if(entryId == draggedEntry) return;
-    var obj = util.getDomObject(targetId);
-    if(!obj)  return;
-    if(mouseIsDown)  {
-        obj.style.borderBottom="";
-    }
-}
-
-
-
-
-function mouseDownOnEntry(event, entryId, name, sourceIconId, icon) {
-    event = util.getEvent(event);
-    dragSource  = sourceIconId;
-    draggedEntry = entryId;
-    draggedEntryName=name;
-    draggedEntryIcon = icon;
-    mouseIsDown = 1;
-    if(event.preventDefault) {
-        event.preventDefault();
-    } else {
-	event.returnValue = false;
-        return false;
-    }
-}
-
-
-function mouseUpOnEntry(event, entryId, targetId) {
-    event = util.getEvent(event);
-    if(entryId == draggedEntry) {
-        return;
-    }
-    var obj = util.getDomObject(targetId);
-    if(!obj)  {
-        return;
-    }
-    if(mouseIsDown)  {
-        obj.style.borderBottom="";
-    }
-    if(draggedEntry && draggedEntry!=entryId) {
-        url = "${urlroot}/entry/copy?action=action.move&from=" + draggedEntry +"&to=" + entryId;
-        //	alert(url);
-	window.open(url,'move window','') ;
-        //        document.location = url;
-    }
-}
-
-
 
 
 
@@ -702,7 +507,6 @@ function EntryFormList(formId,img,selectId, initialOn) {
             }
         }
 
-
         for(i=0;i<this.entries.length;i++) {
             obj = util.getDomObject(this.entries[i]);
             if(!obj) continue;
@@ -717,7 +521,6 @@ function EntryFormList(formId,img,selectId, initialOn) {
 
 
 function entryRowCheckboxClicked(event,cbxId) {
-
     var cbx = util.getDomObject(cbxId);
     if(!cbx) return;
     cbx = cbx.obj;
@@ -725,113 +528,6 @@ function entryRowCheckboxClicked(event,cbxId) {
     var visibilityGroup = groups[cbx.form.id];
     if(visibilityGroup) {
         visibilityGroup.checkboxClicked(event,cbxId);
-    }
-}
-
-function initEntryListForm(formId) {
-    var visibilityGroup = groups[formId];
-    if(visibilityGroup) {
-        visibilityGroup.on = 0;
-        visibilityGroup.setVisbility();
-    }
-}
-
-
-function EntryRow (entryId, rowId, cbxId,cbxWrapperId) {
-    this.entryId = entryId;
-
-    this.onColor = "#FFFFCC";
-    this.overColor = "#f6f6f6";
-    this.overColor = "#edf5ff";
-    this.overColor = "#ffffee";
-    this.overColor = "#f4f4f4";
-    this.rowId = rowId;
-    this.cbxId = cbxId;
-    this.cbxWrapperId = cbxWrapperId;
-    this.cbx = util.getDomObject(cbxId);
-    this.row = util.getDomObject(rowId);
-    if(this.row) {
-        this.row = this.row.obj;
-    }
-
-
-    if(this.cbx) {
-        this.cbx = this.cbx.obj;
-        var form = this.cbx.form;
-        if(form) {
-            var visibilityGroup = groups[form.id];
-            if(visibilityGroup) {
-                visibilityGroup.addEntryRow(this);
-            }
-        } else {
-            hideObject(this.cbx);
-        }
-    }
-
-
-    this.setCheckbox = function(value) {
-        if(this.cbx) this.cbx.checked = value;
-        this.setRowColor();
-    }
-
-    this.getCheckboxValue = function() {
-        if(this.cbx) return this.cbx.checked;
-        return 0;		
-    }
-        
-    this.setRowColor = function() {
-        if(this.cbx && this.cbx.checked) {
-            this.row.style.backgroundColor = this.onColor;		
-        } else {
-            this.row.style.backgroundColor = "#ffffff";
-        }
-    }
-
-
-    this.mouseOver = function(event) {
-        img = util.getDomObject("entrymenuarrow_" +rowId);
-        if(img) {
-            img.obj.src =  icon_menuarrow;
-        }
-        
-        this.row.style.backgroundColor = this.overColor;
-        this.row.style.border =  "1px #ddd  dotted";
-    }
-
-    this.mouseClick = function(event) {
-        left = util.getLeft(this.row);
-        eventX = util.getEventX(event);
-        //Don't pick up clicks on the left side
-        if(eventX-left<150) return;
-        var url = "${urlroot}/entry/show?entryid=" + entryId +"&output=metadataxml";
-	util.loadXML( url, this.handleTooltip,this);
-    }
-
-    this.handleTooltip = function(request,entryRow) {
-        var xmlDoc=request.responseXML.documentElement;
-        text = getChildText(xmlDoc);
-        div = util.getDomObject("tooltipdiv");
-        if(!div) return;
-        util.setPosition(obj, util.getLeft(entryRow.row), util.getBottom(entryRow.row));
-
-        div.obj.innerHTML = "<div class=tooltip-inner><div id=\"tooltipwrapper\" ><table><tr valign=top><img width=\"16\" onmousedown=\"hideEntryPopup();\" id=\"tooltipclose\"  src=" + icon_close +"></td><td>" + text+"</table></div></div>";
-
-        checkTabs(text);
-        showObject(div);
-
-    }
-
-
-
-    this.mouseOut = function(event) {
-        img = util.getDomObject("entrymenuarrow_" +rowId);
-        if(img) {
-            img.obj.src =  icon_blank;
-        }
-        this.setRowColor();
-        //        mouseOutOnEntry(event, "", rowId);
-        //        this.row.style.borderBottom =  "1px #fff  solid";
-        this.row.style.border =  "1px #fff  solid";
     }
 }
 
@@ -856,50 +552,6 @@ function checkTabs(html) {
         html = html.substring(idx+20);
     }
 }
-
-function xxxcheckTabs(html) {
-    var re = new RegExp("(tabId[0-9]+)");
-    var m = re.exec(html);
-    if (m != null) {
-        var s =   m[m.length-1];
-        jQuery(function(){
-                jQuery('#'+ s).tabs();
-            });
-    }
-}
-
-
-function hideEntryPopup() {
-    hideObject(util.getDomObject("tooltipdiv"));
-}
-
-function findEntryRow(rowId) {
-    for(i=0;i<groupList.length;i++) {
-        var entryRow = groupList[i].findEntryRow(rowId);
-        if(entryRow) return entryRow;
-    }
-    return null;
-}
-
-
-function entryRowOver(rowId) {
-    var entryRow = findEntryRow(rowId);
-    if(entryRow) entryRow.mouseOver();
-}
-
-
-function entryRowOut(rowId) {
-    var entryRow = findEntryRow(rowId);
-    if(entryRow) entryRow.mouseOut();
-}
-
-function entryRowClick(event,rowId) {
-    var entryRow = findEntryRow(rowId);
-    if(entryRow) entryRow.mouseClick(event);
-}
-
-
-
 
 
 function indexOf(array,object) {
@@ -1083,62 +735,6 @@ function scrollObject(id,cnt,lastHeight) {
 
 
 
-var selectors = new Array();
-
-function Selector(event, id, allEntries, selecttype, localeId) {
-    this.id = id;
-    this.localeId = localeId;
-    this.allEntries = allEntries;
-    this.selecttype = selecttype;
-    this.textComp = util.getDomObject(id);
-    this.hiddenComp = util.getDomObject(id+"_hidden");
-
-    this.clearInput = function() {
-	if(this.hiddenComp) {
-            this.hiddenComp.obj.value =""
-        }
-	if(this.textComp) {
-            this.textComp.obj.value =""
-        }
-    }
-
-
-    if (!this.textComp) {
-//	alert("cannot find text comp " + id);
-	return false;
-    }
-
-    event = util.getEvent(event);
-    x = util.getEventX(event);
-    y = util.getEventY(event);
-
-
-    var link = util.getDomObject(id+'.selectlink');
-    if(!link) {
-	return false;
-    }
-    this.div = util.getDomObject('selectdiv');
-    if(!this.div) {
-	return false;
-    }
-
-    if(link && link.obj.offsetLeft && link.obj.offsetWidth) {
-        x= util.getLeft(link.obj);
-        y = link.obj.offsetHeight+util.getTop(link.obj) + 2;
-    } else {
-        x+=20;
-    }
-
-    util.setPosition(this.div, x+10,y);
-    showObject(this.div);
-    url = "${urlroot}/entry/show?output=selectxml&selecttype=" + this.selecttype+"&allentries=" + this.allEntries+"&target=" + id+"&noredirect=true";
-    if(localeId) {
-        url = url+"&localeid=" + localeId;
-    }
-    util.loadXML( url, handleSelect,id);
-    return false;
-}
-
 
 
 function insertText(id,value) {
@@ -1147,56 +743,6 @@ function insertText(id,value) {
 	insertAtCursor(textComp.obj, value);
     }
 }
-
-function selectClick(id,entryId,value) {
-    selector = selectors[id];
-    if (selector.selecttype=="wikilink") {
-        insertAtCursor(selector.textComp.obj,"[[" +entryId+"|"+value+"]]");
-    } else if (selector.selecttype=="entryid") {
-        insertTagsInner(selector.textComp.obj, "{{import " +entryId+" "," }}","importtype");
-    } else { 
-        if(selector.hiddenComp) {
-            selector.hiddenComp.obj.value =entryId;
-
-        }
-        selector.textComp.obj.value =value;
-	if(selector.textComp.obj.value) {
-	        selector.textComp.obj.value =value;
-	} else {
-	        selector.textComp.obj.innerHtml =value;
-	}
-    }
-    selectCancel();
-}
-
-function selectCancel() {
-    var div = util.getDomObject('selectdiv');
-    if(!div)return false;
-    hideObject(div);
-}
-
-
-
-function selectInitialClick(event, id,allEntries,selecttype, localeId) {
-    selectors[id] = new Selector(event,id,allEntries,selecttype,localeId);
-    return false;
-}
-
-
-function clearSelect(id) {
-    selector = selectors[id];
-    if(selector) selector.clearInput();
-}
-
-
-function handleSelect(request, id) {
-    selector = selectors[id];
-    var xmlDoc=request.responseXML.documentElement;
-    text = getChildText(xmlDoc);
-    var close = "<a href=\"javascript:selectCancel();\"><img border=0 src=" + icon_close + "></a>";
-    selector.div.obj.innerHTML = "<table width=100%><tr><td align=right>" + close +"</table>" +text;
-}
-
 
 
 
@@ -1614,11 +1160,8 @@ function entryRowOver(entryId) {
     if(!row) {
         return;
     }
-
     //    row.style.backgroundColor = "#edf5ff";
-
-    row.style.backgroundColor = "#f6f6f6";
-    row.style.backgroundColor = "#e6e6e6";
+    row.style.backgroundColor = "#ffffaa";
     var img = util.getDomObject(imgId);
     if(img) {
         img.obj.src =  icon_downdart;

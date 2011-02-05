@@ -54,9 +54,10 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
      */
     public WgetResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addResourceOutput(new GsacOutput(this,
-                OUTPUT_RESOURCE_WGET, "Resource Wget Script",
-                "/resources.sh", true));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
+                OUTPUT_RESOURCE_WGET, "Wget Script",
+                                                         "/resources.sh", true,
+                                                         "Wget Script"));
 
     }
 

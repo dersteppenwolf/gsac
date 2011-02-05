@@ -90,13 +90,11 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         checkInit();
 
-        getRepository().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_HTML,
+        getRepository().addOutput(OUTPUT_GROUP_BROWSE, new GsacOutput(this, OUTPUT_BROWSE_HTML,
                 "HTML"));
-        getRepository().addBrowseOutput(new GsacOutput(this,
-                OUTPUT_BROWSE_DEFAULT, "Default"));
-        getRepository().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_CSV,
+        getRepository().addOutput(OUTPUT_GROUP_BROWSE, new GsacOutput(this, OUTPUT_BROWSE_CSV,
                 "CSV"));
-        getRepository().addBrowseOutput(new GsacOutput(this, OUTPUT_BROWSE_XML,
+        getRepository().addOutput(OUTPUT_GROUP_BROWSE, new GsacOutput(this, OUTPUT_BROWSE_XML,
                 "XML"));
     }
 
@@ -134,7 +132,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         List   things    = null;
         String what      = request.get(ARG_BROWSE_WHAT, "");
         String searchArg = null;
-        String output    = request.get(ARG_OUTPUT, OUTPUT_BROWSE_DEFAULT);
+        String output    = request.get(ARG_OUTPUT, OUTPUT_BROWSE_HTML);
         for (Capability capability : browseCapabilities) {
             if (what.equals(capability.getId())) {
                 if (capability.isEnumeration()) {
