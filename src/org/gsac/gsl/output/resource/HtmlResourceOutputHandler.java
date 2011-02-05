@@ -205,15 +205,28 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         //default to a site submit button search
         pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
 
-        StringBuffer buttons = new StringBuffer();
+        StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
         if (getDoResource()) {
+            buttons.append("<td>");
             buttons.append(HtmlUtil.submit(msg("Find Files"), ARG_SEARCH));
+            buttons.append("</td>");
         }
         if (getDoSite()) {
-            buttons.append(HtmlUtil.space(8));
-            buttons.append(HtmlUtil.submit(msg("Site Search Form"), ARG_SEARCH_SITES));
+            buttons.append("<td align=right>");
+            String switchForm = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                                             HtmlUtil.cssClass("gobutton") +
+                                             HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, ARG_SEARCH_SITES,
+                                                                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
+                                                                         HtmlUtil.ATTR_VALUE,msg("Site Search Form"),
+                                                                             HtmlUtil.ATTR_CLASS, "download-button",
+                                                                             HtmlUtil.ATTR_TITLE, msg("Go to the site search form"),
+                                                     }));
+
+            buttons.append(switchForm);
+            buttons.append("</td>");
         }
 
+        buttons.append("</tr></table>");
         pw.append(buttons.toString());
 
         pw.append(HtmlUtil.importJS(getRepository().getUrlBase()

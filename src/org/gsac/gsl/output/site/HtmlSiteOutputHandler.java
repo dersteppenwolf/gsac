@@ -135,16 +135,28 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         pw.append(HtmlUtil.formPost(url,
                                     HtmlUtil.attr("name", "searchform")));;
 
-        StringBuffer buttons = new StringBuffer();
+        StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
 
         if (getDoSite()) {
+            buttons.append("<td>");
             buttons.append(HtmlUtil.submit(msg("Find Sites"), ARG_SEARCH));
+            buttons.append("</td>");
         }
         if (getDoResource()) {
-            buttons.append(HtmlUtil.space(8));
-            buttons.append(HtmlUtil.submit(msg("File Search Form"),
-                                      ARG_SEARCH_RESOURCES));
+            buttons.append("<td align=right>");
+            String switchForm = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                                             HtmlUtil.cssClass("gobutton") +
+                                             HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, ARG_SEARCH_RESOURCES,
+                                                                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
+                                                                         HtmlUtil.ATTR_VALUE,msg("File Search Form"),
+                                                                             HtmlUtil.ATTR_CLASS, "download-button",
+                                                                             HtmlUtil.ATTR_TITLE, msg("Go to the file search form"),
+                                                     }));
+
+            buttons.append(switchForm);
+            buttons.append("</td>");
         }
+        buttons.append("</tr></table>");
 
         pw.append(buttons.toString());
 

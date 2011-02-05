@@ -66,14 +66,6 @@ import javax.servlet.http.*;
 /**
  * This provides a default implementation of the GsacRepository interface.
  *
- * At a minimum you need to create a derived class that implements the methods: <pre>
- * handleSiteRequest
- * handleResourceRequest
- * </pre>
- *
- * However, this class can also make use of a GsacDatabaseManager, SiteManager and ResourceManager
- * classes.
- *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 public class GsacRepository implements GsacConstants {
@@ -1149,12 +1141,15 @@ public class GsacRepository implements GsacConstants {
             String what = "other";
             if (uri.indexOf(URL_SITE_BASE) >= 0) {
                 what = URL_SITE_BASE;
-                handleSiteRequest(request);
+                GsacOutputHandler outputHandler = getOutputHandler(OUTPUT_GROUP_SITE, request);
+                outputHandler.handleSiteRequest(request);
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
                 what = URL_RESOURCE_BASE;
-                handleResourceRequest(request);
+                GsacOutputHandler outputHandler =  getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
+                outputHandler.handleResourceRequest(request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
-                handleBrowseRequest(request);
+                GsacOutputHandler outputHandler = getOutputHandler(OUTPUT_GROUP_BROWSE, request);
+                outputHandler.handleBrowseRequest(request);
             } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
                 handleStatsRequest(request, new GsacResponse(request));
             } else if (uri.indexOf(URL_HELP) >= 0) {
@@ -1191,22 +1186,6 @@ public class GsacRepository implements GsacConstants {
             } catch (Exception ignoreThisOne) {}
         }
     }
-
-
-    /**
-     * handle a resource request
-     *
-     * @param request the request
-     *
-     * @throws Exception On badness
-     */
-    public void handleBrowseRequest(GsacRequest request) throws Exception {
-        GsacOutputHandler outputHandler = getOutputHandler(OUTPUT_GROUP_BROWSE, request);
-        outputHandler.handleBrowseRequest(request);
-    }
-
-
-
 
 
     /**
@@ -1268,22 +1247,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
-    /**
-     * handle a site request
-     *
-     * @param gsacRequest the request
-     *
-     * @throws Exception On badness
-     */
-    public void handleSiteRequest(GsacRequest gsacRequest) throws Exception {
-        GsacOutputHandler outputHandler = getOutputHandler(OUTPUT_GROUP_SITE, gsacRequest);
-        outputHandler.handleSiteRequest(gsacRequest);
-    }
-
-
-
-
     /**
      * handle a resource request
      *
@@ -1293,8 +1256,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleResourceRequest(GsacRequest gsacRequest)
             throws Exception {
-        GsacOutputHandler outputHandler =  getOutputHandler(OUTPUT_GROUP_RESOURCE, gsacRequest);
-        outputHandler.handleResourceRequest(gsacRequest);
+
     }
 
     /**
