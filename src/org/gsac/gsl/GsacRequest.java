@@ -700,10 +700,17 @@ public class GsacRequest implements GsacConstants {
         if ((result == null) || (result.trim().length() == 0)) {
             return dflt;
         }
+        result = result.toLowerCase().trim();
         int multiplier = 1;
-        if (result.endsWith("K")) {
+        if (result.endsWith("k")) {
             multiplier = 1000;
-            result     = result.substring(0, result.length() - 1).trim();
+            result     = result.substring(0, result.length() - 1).trim(); 
+        } else if (result.endsWith("mb")) {
+            multiplier = 1000*1000;
+            result     = result.substring(0, result.length() - 2).trim();
+        } else if (result.endsWith("gb")) {
+            multiplier = 1000*1000*1000;
+            result     = result.substring(0, result.length() - 2).trim();
         }
         return new Integer(result).intValue() * multiplier;
     }

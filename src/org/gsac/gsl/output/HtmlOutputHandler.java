@@ -1237,21 +1237,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                          site.getStatus().getName()));
         }
 
-        if (site.getFromDate() != null) {
-            String dateString = formatDate(site.getFromDate()) + " - "
-                                + formatDate(site.getToDate());
-            pw.append(HtmlUtil.formEntry(msgLabel("Date Range"), dateString));
-        }
-
-        if (getDoSiteGroup()) {
-            List<SiteGroup> groups = site.getSiteGroups();
-            if (groups.size() > 0) {
-                pw.append(HtmlUtil.formEntryTop(msgLabel((groups.size() == 1)
-                        ? "Group"
-                        : "Groups"), getGroupHtml(groups, false)));
-            }
-        }
-
         String js = null;
         if (includeMap) {
             StringBuffer mapSB = new StringBuffer();
@@ -1266,6 +1251,22 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     formatLatLon(site.getLatitude()) + ","
                     + formatLatLon(site.getLongitude()) + ","
                     + site.getElevation() + mapSB));
+        }
+
+
+        if (site.getFromDate() != null) {
+            String dateString = formatDate(site.getFromDate()) + " - "
+                                + formatDate(site.getToDate());
+            pw.append(HtmlUtil.formEntry(msgLabel("Date Range"), dateString));
+        }
+
+        if (getDoSiteGroup()) {
+            List<SiteGroup> groups = site.getSiteGroups();
+            if (groups.size() > 0) {
+                pw.append(HtmlUtil.formEntryTop(msgLabel((groups.size() == 1)
+                        ? "Group"
+                        : "Groups"), getGroupHtml(groups, false)));
+            }
         }
 
 
@@ -1385,6 +1386,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                  Hashtable state)
             throws IOException {
 
+        if(!metadata.getForDisplay()) return;
 
         if (metadata instanceof MetadataGroup) {
             MetadataGroup      group = (MetadataGroup) metadata;
@@ -1747,7 +1749,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             //            labels.add("");
             //            sortValues.add("");
             if (getDoSiteCode()) {
-                labels.add(msg("Site&nbsp;Code"));
+                labels.add(msg("Site Code").replace(" ","&nbsp;"));
                 sortValues.add(SORT_SITE_CODE);
             }
             labels.add(msg("Name"));
@@ -1756,9 +1758,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 labels.add(msg("Type"));
                 sortValues.add(SORT_SITE_TYPE);
             }
-            labels.add(msg("Date Range"));
+            labels.add(msg("Location")+" (lat,lon,m)");
             sortValues.add("");
-            labels.add(msg("Location"));
+            labels.add(msg("Date Range"));
             sortValues.add("");
             if (getDoSiteGroup()) {
                 labels.add(msg("Groups"));
@@ -1789,10 +1791,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
             String href = makeSiteHref(site);
-            openEntryRow(sb, site.getSiteId(), URL_SITE_VIEW, ARG_SITEID);
+            openEntryRow(sb, site.getSiteId(), URL_SITE_VIEW, ARG_SITE_ID);
             String cbx = HtmlUtil.checkbox(ARG_SITEID, site.getSiteId(),
                                            false);
             
+            String clickEvent = getEntryEventJS(site.getSiteId(),  URL_SITE_VIEW, ARG_SITE_ID)[1];
             sb.append(HtmlUtil.col(cbx));
             String remoteHref = getRepository().getRemoteHref(site);
             if(remoteHref.length()>0) {            
@@ -1800,16 +1803,26 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sb.append("</tr></table></td>\n");
             sb.append(HtmlUtil.col(href));
-            sb.append(HtmlUtil.col(site.getName()));
+            sb.append(HtmlUtil.col(site.getName(),clickEvent));
 
             if (getDoSiteType()) {
                 if (site.getType() != null) {
-                    sb.append(HtmlUtil.col(site.getType().getName()));
+                    sb.append(HtmlUtil.col(site.getType().getName(),clickEvent));
                 } else {
-                    sb.append(HtmlUtil.col(""));
+                    sb.append(HtmlUtil.col("&nbsp;",clickEvent));
                 }
             }
-            sb.append("<td>");
+
+
+            sb.append("<td " + clickEvent+">");
+            sb.append(formatLatLon(site.getLatitude()));
+            sb.append(",");
+            sb.append(formatLatLon(site.getLongitude()));
+            sb.append(",");
+            sb.append(formatElevation(site.getElevation()));
+            sb.append("</td>");
+
+            sb.append("<td " + clickEvent+">");
             if (site.getFromDate() != null) {
                 sb.append(formatDate(site.getFromDate()));
                 sb.append(" - ");
@@ -1819,14 +1832,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sb.append("</td>");
 
-
-            sb.append("<td>");
-            sb.append(formatLatLon(site.getLatitude()));
-            sb.append(",");
-            sb.append(formatLatLon(site.getLongitude()));
-            sb.append(",");
-            sb.append(formatElevation(site.getElevation()));
-            sb.append("</td>");
 
             if (getDoSiteGroup()) {
                 sb.append(HtmlUtil.col(getGroupHtml(site.getSiteGroups(),true)+"&nbsp;"));

@@ -256,32 +256,42 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                          String lonCol,
                                          StringBuffer msgBuff) {
 
+        StringBuffer tmpMsgBuff = new StringBuffer();
         double  value;
         boolean addedAny = false;
+        int cnt = 0;
         if (request.defined(ARG_NORTH)) {
+            cnt++;
             clauses.add(Clause.le(latCol,
                                   value = request.get(ARG_NORTH, 0.0)));
-            appendSearchCriteria(msgBuff, "north&lt;=", "" + value);
+            appendSearchCriteria(tmpMsgBuff, "north&lt;=", "" + value);
             addedAny = true;
         }
         if (request.defined(ARG_SOUTH)) {
+            cnt++;
             clauses.add(Clause.ge(latCol,
                                   value = request.get(ARG_SOUTH, 0.0)));
-            appendSearchCriteria(msgBuff, "south&gt;=", "" + value);
+            appendSearchCriteria(tmpMsgBuff, "south&gt;=", "" + value);
             addedAny = true;
         }
         if (request.defined(ARG_EAST)) {
+            cnt++;
             clauses.add(Clause.le(lonCol,
                                   value = request.get(ARG_EAST, 0.0)));
-            appendSearchCriteria(msgBuff, "east&lt;=", "" + value);
+            appendSearchCriteria(tmpMsgBuff, "east&lt;=", "" + value);
             addedAny = true;
         }
         if (request.defined(ARG_WEST)) {
+            cnt++;
             clauses.add(Clause.ge(lonCol,
                                   value = request.get(ARG_WEST, 0.0)));
-            appendSearchCriteria(msgBuff, "west&gt;=", "" + value);
+            appendSearchCriteria(tmpMsgBuff, "west&gt;=", "" + value);
             addedAny = true;
         }
+
+
+
+
         return addedAny;
     }
 
@@ -315,6 +325,11 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         for (String value : list) {
             if (labelGroup != null) {
                 value = getLabel(labelGroup, value);
+                IdLabel idLabel = getRepository().internalToExternal(labelGroup, value);
+                if(idLabel!=null) {
+                    value = idLabel.getLabel();
+                }
+
             }
             value = value.trim();
             if (seen.contains(value.toLowerCase())) {

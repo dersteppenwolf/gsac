@@ -368,6 +368,8 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
+                String clickEvent = getEntryEventJS(resource.getId(),  URL_RESOURCE_VIEW, ARG_RESOURCE_ID)[1];
+
                 String cbx = HtmlUtil.checkbox(ARG_RESOURCE_ID, resource.getId(),
                                                true);
             
@@ -379,9 +381,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 }
                 sb.append("</tr></table></td>\n");
                 if (resource.getType() != null) {
-                    sb.append(HtmlUtil.col(resource.getType().getName()));
+                    sb.append(HtmlUtil.col(resource.getType().getName(),clickEvent));
                 } else {
-                    sb.append(HtmlUtil.col("N/A"));
+                    sb.append(HtmlUtil.col("N/A",clickEvent));
                 }
 
                 String url = resource.getFileInfo().getUrl();
@@ -413,16 +415,16 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                     Date startTime = resource.getStartTime();
                     Date endTime   = resource.getEndTime();
                     if ((endTime == null) || endTime.equals(startTime)) {
-                        sb.append(HtmlUtil.col(formatDate(startTime)));
+                        sb.append(HtmlUtil.col(formatDate(startTime),clickEvent));
                     } else {
                         sb.append(HtmlUtil.col(formatDate(startTime) + " - "
-                                + formatDate(endTime)));
+                                               + formatDate(endTime),clickEvent));
                     }
                 }
 
 
                 if (resource.getFileInfo().getFileSize() > 0) {
-                    sb.append("<td align=\"right\" class=\"filesize\">");
+                    sb.append("<td align=\"right\" class=\"filesize\" " + clickEvent +">");
                     size += resource.getFileInfo().getFileSize();
                     sb.append(
                         "" + formatFileSize(

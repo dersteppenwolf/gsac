@@ -307,30 +307,50 @@ public abstract class SiteManager extends GsacRepositoryManager {
                                      String latitudeColumn,
                                      String longitudeColumn,
                                      StringBuffer msgBuff) {
+        int cnt = 0;
+        StringBuffer tmpMsgBuff = new StringBuffer();
         if (request.defined(ARG_NORTH)) {
+            cnt++;
             clauses.add(Clause.le(latitudeColumn,
                                   request.getLatLon(ARG_NORTH, 0.0)));
-            appendSearchCriteria(msgBuff, "north&lt;=",
+            appendSearchCriteria(tmpMsgBuff, "north&lt;=",
                                  "" + request.getLatLon(ARG_NORTH, 0.0));
         }
         if (request.defined(ARG_SOUTH)) {
+            cnt++;
             clauses.add(Clause.ge(latitudeColumn,
                                   request.getLatLon(ARG_SOUTH, 0.0)));
-            appendSearchCriteria(msgBuff, "south&gt;=",
+            appendSearchCriteria(tmpMsgBuff, "south&gt;=",
                                  "" + request.getLatLon(ARG_SOUTH, 0.0));
         }
         if (request.defined(ARG_EAST)) {
+            cnt++;
             clauses.add(Clause.le(longitudeColumn,
                                   request.getLatLon(ARG_EAST, 0.0)));
-            appendSearchCriteria(msgBuff, "east&lt;=",
+            appendSearchCriteria(tmpMsgBuff, "east&lt;=",
                                  "" + request.getLatLon(ARG_EAST, 0.0));
         }
         if (request.defined(ARG_WEST)) {
+            cnt++;
             clauses.add(Clause.ge(longitudeColumn,
                                   request.getLatLon(ARG_WEST, 0.0)));
-            appendSearchCriteria(msgBuff, "west&gt;=",
+            appendSearchCriteria(tmpMsgBuff, "west&gt;=",
                                  "" + request.getLatLon(ARG_WEST, 0.0));
         }
+        if(cnt==4) {
+            msgBuff.append("<tr valign=center><td><b>Bounds=</b></td>" +
+                           "<td><table border=0><tr><td colspan=2 align=center>" +
+                           request.get(ARG_NORTH, 0.0) +"</td></tr><tr><td>" +
+                           request.get(ARG_WEST, 0.0)+"</td><td>" +
+                           request.get(ARG_EAST, 0.0) +"</td></tr>" +
+                           "<tr><td colspan=2 align=center>" +
+                           request.get(ARG_SOUTH, 0.0) +"</td></tr></table>" +
+                           "</td></tr>\n");
+        } else {
+            msgBuff.append(tmpMsgBuff);
+        }
+
+
     }
 
     /**

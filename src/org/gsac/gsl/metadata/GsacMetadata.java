@@ -52,7 +52,7 @@ public class GsacMetadata {
     /** the label */
     private String label;
 
-
+    private boolean forDisplay = true;
 
     /**
      * _more_
@@ -81,6 +81,25 @@ public class GsacMetadata {
         this.type  = type;
         this.label = label;
     }
+
+    /**
+       Set the ForDisplay property.
+
+       @param value The new value for ForDisplay
+    **/
+    public void setForDisplay (boolean value) {
+	forDisplay = value;
+    }
+
+    /**
+       Get the ForDisplay property.
+
+       @return The ForDisplay
+    **/
+    public boolean getForDisplay () {
+	return forDisplay;
+    }
+
 
 
     /**
