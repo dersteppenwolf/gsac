@@ -223,6 +223,11 @@ function noop() {
 
 var objectToHide;
 
+function hideEntryPopup() {
+    hideObject(util.getDomObject("tooltipdiv"));
+}
+
+
 function hidePopupObject() {
     if(objectToHide!=popupObject) {
 	return;
@@ -1161,7 +1166,7 @@ function entryRowOver(entryId) {
         return;
     }
     //    row.style.backgroundColor = "#edf5ff";
-    row.style.backgroundColor = "#ffffaa";
+    row.style.backgroundColor = "#ffffdd";
     var img = util.getDomObject(imgId);
     if(img) {
         img.obj.src =  icon_downdart;
@@ -1221,6 +1226,7 @@ function entryRowClick(event, entryId, url) {
     util.loadXML( url, entryHandleXml,entryId);
 
 }
+
 
 
 
