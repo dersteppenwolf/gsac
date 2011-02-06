@@ -778,6 +778,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         sb.append(HtmlUtil.importJS(getRepository().getUrlBase()
                                     + URL_HTDOCS_BASE + "/repository.js"));
+        sb.append(HtmlUtil.importJS(getRepository().getUrlBase()
+                                    + URL_HTDOCS_BASE + "/CalendarPopup.js"));
         sb.append(HtmlUtil.div("",
                                HtmlUtil.id("tooltipdiv")
                                + HtmlUtil.cssClass("tooltip-outer")));
