@@ -74,8 +74,10 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             if (firstTime) {
-                response.startResponse(GsacResponse.MIME_TEXT);
+                response.startResponse("application/x-sh");
+                response.setReturnFilename("gsacwget.sh");
             }
+
             PrintWriter pw = response.getPrintWriter();
             pw.print("wget ");
             pw.print(resource.getFileInfo().getUrl());

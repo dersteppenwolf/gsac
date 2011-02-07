@@ -110,6 +110,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
         }
 
         response.startResponse(GsacResponse.MIME_ZIP);
+        response.setReturnFilename("gsacresults.zip");
         ZipOutputStream zos = new ZipOutputStream(
                                   new BufferedOutputStream(
                                       request.getOutputStream(), 10000));
