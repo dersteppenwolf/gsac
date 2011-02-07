@@ -139,6 +139,13 @@ public class GsacResponse {
         response.setStatus(200);
     }
 
+    public void setReturnFilename(String filename) {
+        HttpServletResponse response = request.getHttpServletResponse();
+        response.setHeader("Content-disposition","attachment; filename=" + filename);
+    }
+
+
+
     /**
      * _more_
      *
