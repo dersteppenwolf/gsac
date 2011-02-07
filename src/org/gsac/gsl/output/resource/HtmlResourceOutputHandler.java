@@ -82,7 +82,24 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
     public void handleResourceRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
+
         StringBuffer sb = new StringBuffer();
+        try {
+            handleResourceRequestInner(request, response, sb);
+
+        } catch(IllegalArgumentException iae) {
+            sb.append(getRepository().makeErrorDialog("An error has occurred:<br>" + iae.getMessage()));
+
+            handleSearchForm(request, response, sb);
+            finishHtml(request, response, sb);
+        }
+    }
+
+
+    public void handleResourceRequestInner(GsacRequest request,
+                                           GsacResponse response, StringBuffer sb)
+            throws Exception {
+
         if(!initHtml(request, response, sb)) return;
 
         String uri = request.getRequestURI();

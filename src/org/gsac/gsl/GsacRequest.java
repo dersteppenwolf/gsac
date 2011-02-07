@@ -645,7 +645,12 @@ public class GsacRequest implements GsacConstants {
         if ((result == null) || (result.trim().length() == 0)) {
             return dflt;
         }
-        return Misc.decodeLatLon(result);
+
+        double v= Misc.decodeLatLon(result);
+        if(Double.isNaN(v)) {
+            throw new IllegalArgumentException("Bad argument value:" + result +" for arg:" + key);
+        }
+        return v;
     }
 
 
