@@ -267,7 +267,7 @@ public class GsacRepository implements GsacConstants {
             //See if we have an output id as a submit button name
             for(GsacOutput output: outputGroup.outputs) {
                 if(request.defined(output.getId())) 
-                    return getOutputHandler(output.getId(), group);
+                    return getOutputHandler(group, output.getId());
             }
             arg  =  outputGroup.outputs.get(0).getId();
         }
