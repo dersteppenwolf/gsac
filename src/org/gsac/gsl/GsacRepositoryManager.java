@@ -775,4 +775,85 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     public String orderByDescending(String col) {
         return " ORDER BY  " + col + " DESC ";
     }
+
+
+    /**
+     * Add basic bounding box query clauses to the list of clauses
+     * and append to the search criteria msgBuff
+     * This looks for the ARG_NORTH/ARG_SOUTH/ARG_EAST/ARG_WEST
+     * url arguments and does a simple bounds query
+     *
+     * @param request The request
+     * @param clauses list of clauses  to add to
+     * @param latitudeColumn column name for latitude
+     * @param longitudeColumn column name for longitude
+     * @param msgBuff search criteria message buffer
+     */
+    public void addBoundingBoxSearch(GsacRequest request,
+                                     List<Clause> clauses,
+                                     String latitudeColumn,
+                                     String longitudeColumn,
+                                     StringBuffer msgBuff) {
+        int cnt = 0;
+        StringBuffer tmpMsgBuff = new StringBuffer();
+        if (request.defined(ARG_NORTH)) {
+            cnt++;
+            clauses.add(Clause.le(latitudeColumn,
+                                  request.getLatLon(ARG_NORTH, 0.0)));
+            appendSearchCriteria(tmpMsgBuff, "north&lt;=",
+                                 "" + request.getLatLon(ARG_NORTH, 0.0));
+        }
+        if (request.defined(ARG_SOUTH)) {
+            cnt++;
+            clauses.add(Clause.ge(latitudeColumn,
+                                  request.getLatLon(ARG_SOUTH, 0.0)));
+            appendSearchCriteria(tmpMsgBuff, "south&gt;=",
+                                 "" + request.getLatLon(ARG_SOUTH, 0.0));
+        }
+        if (request.defined(ARG_EAST)) {
+            cnt++;
+            clauses.add(Clause.le(longitudeColumn,
+                                  normalizeLongitude(request.getLatLon(ARG_EAST, 0.0))));
+            appendSearchCriteria(tmpMsgBuff, "east&lt;=",
+                                 "" + normalizeLongitude(request.getLatLon(ARG_EAST, 0.0)));
+        }
+        if (request.defined(ARG_WEST)) {
+            cnt++;
+            clauses.add(Clause.ge(longitudeColumn,
+                                  normalizeLongitude(request.getLatLon(ARG_WEST, 0.0))));
+            appendSearchCriteria(tmpMsgBuff, "west&gt;=",
+                                 "" + normalizeLongitude(request.getLatLon(ARG_WEST, 0.0)));
+        }
+        if(cnt==4) {
+            msgBuff.append("<tr valign=center><td><b>Bounds=</b></td>" +
+                           "<td><table border=0><tr><td colspan=2 align=center>" +
+                           request.get(ARG_NORTH, 0.0) +"</td></tr><tr><td>" +
+                           normalizeLongitude(request.get(ARG_WEST, 0.0))+"</td><td>" +
+                           normalizeLongitude(request.get(ARG_EAST, 0.0)) +"</td></tr>" +
+                           "<tr><td colspan=2 align=center>" +
+                           request.get(ARG_SOUTH, 0.0) +"</td></tr></table>" +
+                           "</td></tr>\n");
+        } else {
+            msgBuff.append(tmpMsgBuff);
+        }
+
+
+    }
+
+
+
+    /**                                                                         
+     * Normalize the longitude to lie between +/-180                            
+     * @param lon east latitude in degrees                                      
+     * @return normalized lon                                                   
+     */
+    static public double normalizeLongitude(double lon) {
+        if ((lon < -180.) || (lon > 180.)) {
+            return Math.IEEEremainder(lon, 360.0);
+        } else {
+            return lon;
+        }
+    }
+
+
 }
