@@ -577,7 +577,6 @@ public class Capability {
      */
     public List<IdLabel> getEnums() {
         if (vocabulary != null) {
-            System.err.println("Got vocab:" + vocabulary.getValues());
             return vocabulary.getValues();
         }
 
