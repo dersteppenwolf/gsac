@@ -1,3 +1,16 @@
+
+<style type="text/css">
+pre {
+   margin-top:10px;
+   margin-bottom:10px;
+   margin-left:30px;
+   font-style:italic;     
+}
+li {
+margin-top:10px;
+}
+</style>
+
 <h2>GSAC API</h2>
 
 The GSAC Repository supports a RESTful web service API that allows a client to make site and resource queries
@@ -5,27 +18,27 @@ and get the results returned in a variety of formats.
 
 <br>&nbsp;<p>
 
-All of the URLS are based on the root path: 
+All of the URLS are based on the root path, e.g.: 
 
-%<blockquote><i>${fullurlroot}</i></blockquote> 
+<pre>${fullurlroot}</pre> 
 
 For querying sites you access:
 
-<blockquote><i>${fullurlroot}/site/search</i></blockquote> 
+<pre>${fullurlroot}/site/search</pre> 
 
 For querying resources you access:
-<blockquote><i>${fullurlroot}/resource/search</i></blockquote> 
+<pre>${fullurlroot}/resource/search</pre> 
 
 
 The results can be returned in a variety of output formats using the &quot;output&quot; URL argument,  e.g.: 
 
-<blockquote><i>${fullurlroot}/site/search?...&amp;output=site.csv</i></blockquote> 
+<pre>${fullurlroot}/site/search?...&amp;output=site.csv</pre> 
 
 
 The simplest way to see examples of this to make a 
-<a href="${fullurlroot}/site/form">Site query</a>
+<a href="${urlroot}/site/form">Site query</a>
 or a 
-<a href="${fullurlroot}/resource/form">Resource query</a>.
+<a href="${urlroot}/resource/form">Resource query</a>.
 
 In the result html page under Search Again -&gt; Search Links is a list
 of the query results in the other formats available (e.g., CSV). 
@@ -33,7 +46,7 @@ You can just cut and paste the desired URL into your scripts.
 
 <br>&nbsp;<p>
 
-The <a href="${fullurlroot}/repository/info">Repository Information</a> page lists all of the
+The <a href="${urlroot}/repository/info">Repository Information</a> page lists all of the
 URL arguments  and their values for both site and resource queries. 
 
 
@@ -44,34 +57,34 @@ We have tried to be flexible with how URL arguments are used.
 <ul>
 
 <a name="string"> <li> string - There may be none, one or more of a URL string argument:
-<blockquote> <i>
+<pre>
     arg=p123&amp;arg=p456
-</i></blockquote>   
+</pre>   
 
 Each argument may be a semi-colon delimited list of argument values:
-<blockquote> <i>
+<pre>
     arg=p123;p456
-</i></blockquote>   
+</pre>   
 
 Wild cards are supported:
-<blockquote><i>
-arg=p12*  - find values that begin with<br>
-arg=*123 - find values that end with<br>
-arg=*12* - find values that contain with<br>
-</i></blockquote> 
+<pre>
+arg=p12*  - find values that begin with
+arg=*123 - find values that end with
+arg=*12* - find values that contain with
+</pre> 
 
 As well as negation:
-<blockquote><i>
+<pre>
 arg=!p123
-</i></blockquote> 
+</pre> 
 
 Also, one can specify the string search type with the &lt;arg&gt;.searchtype argument. This can take on the values:
-<blockquote><i>
-&lt;arg&gt;.searchtype=exact<br>
-&lt;arg&gt;.searchtype=beginswith<br>
-&lt;arg&gt;.searchtype=endswith<br>
-&lt;arg&gt;.searchtype=contains<br>
-</i></blockquote>
+<pre>
+&lt;arg&gt;.searchtype=exact
+&lt;arg&gt;.searchtype=beginswith
+&lt;arg&gt;.searchtype=endswith
+&lt;arg&gt;.searchtype=contains
+</pre>
 
 <a name="enumeration"> <li> enumeration - Just like the string type but without the wildcard capabilities.
 
@@ -81,89 +94,89 @@ Also, one can specify the string search type with the &lt;arg&gt;.searchtype arg
 
 <a name="date_range"> <li> date_range - 
 There are 2 arguments that may specified: &quot;&lt;arg&gt;.from&quot; and &quot;&lt;arg&gt;.to&quot;. There may be none, one or both of these. If specified the logic is:
-<blockquote><i>
-date value &ge; arg.from<br>
-date value &le; arg.to<br>
-</i></blockquote>
+<pre>
+date value &ge; arg.from
+date value &le; arg.to
+</pre>
 
 
 The date string can be any of the following forms.
 See <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html">here</a> for information. 
 
-<blockquote><i>
-yyyy-doy  - year and 3 digit day of year<br>
-yyyy-MM-ddTHH:mm:ss Z<br>
-yyyyMMddTHHmmss Z<br>
-yyyy/MM/dd HH:mm:ss Z<br>
-yyyy-MM-dd HH:mm:ss Z<br>
-EEE MMM dd HH:mm:ss Z yyyy<br>
-yyyy-MM-ddTHH:mm:ss<br>
-yyyyMMddTHHmmss<br>
-yyyy/MM/dd HH:mm:ss<br>
-yyyy-MM-dd HH:mm:ss<br>
-yyyy-MM-ddTHH:mm Z<br>
-yyyyMMddTHHmm Z<br>
-yyyy/MM/dd HH:mm Z<br>
-yyyy-MM-dd HH:mm Z<br>
-yyyy-MM-ddTHH:mm<br>
-yyyyMMddTHHmm<br>
-yyyy/MM/dd HH:mm<br>
-yyyy-MM-dd HH:mm<br>
-yyyy-MM-dd<br>
-yyyy/MM/dd<br>
-yyyyMMdd<br>
-yyyy-MM<br>
-yyyyMM<br>
-yyyy/MM<br>
-yyyy<br>
-now<br>
-</i></blockquote>
+<pre>
+yyyy-doy  - year and 3 digit day of year
+yyyy-MM-ddTHH:mm:ss Z
+yyyyMMddTHHmmss Z
+yyyy/MM/dd HH:mm:ss Z
+yyyy-MM-dd HH:mm:ss Z
+EEE MMM dd HH:mm:ss Z yyyy
+yyyy-MM-ddTHH:mm:ss
+yyyyMMddTHHmmss
+yyyy/MM/dd HH:mm:ss
+yyyy-MM-dd HH:mm:ss
+yyyy-MM-ddTHH:mm Z
+yyyyMMddTHHmm Z
+yyyy/MM/dd HH:mm Z
+yyyy-MM-dd HH:mm Z
+yyyy-MM-ddTHH:mm
+yyyyMMddTHHmm
+yyyy/MM/dd HH:mm
+yyyy-MM-dd HH:mm
+yyyy-MM-dd
+yyyy/MM/dd
+yyyyMMdd
+yyyy-MM
+yyyyMM
+yyyy/MM
+yyyy
+now
+</pre>
 
 If a timezone is not specified then the date/time is assumed to be in UTC.
 <p>
 
 You can also specify values that are relative to the other date:
-<blockquote><i>
+<pre>
 -1 week, +3 days, -1 month, etc.
-</i></blockquote>
+</pre>
 
 For example, to find the last 2 weeks of data from current time you would use:
-<blockquote><i>
+<pre>
 arg.from=-2 weeks&amp;arg.to=now
-</i></blockquote>
+</pre>
 
 If you wanted to search 3 days into the future:
-<blockquote><i>
+<pre>
 arg.from=now&amp;arg.to=+3 days
-</i></blockquote>
+</pre>
 
 
 <a name="number_range"> <li> number_range - 
 There are 2 arguments that may specified: &quot;&lt;arg&gt;.min&quot; and &quot;&lt;arg&gt;.max&quot;. There may be none, one or both of these. If specified the logic is:
-<blockquote><i>
-value &ge; arg.min<br>
-value &le; arg.max<br>
-</i></blockquote>
+<pre>
+value &ge; arg.min
+value &le; arg.max
+</pre>
 
 
 
 <a name="spatial_bounds"> <li> spatial_bounds -
 There are 4 arguments that may specified: 
-<blockquote><i>
-&lt;arg&gt;.north<br>
-&lt;arg&gt;.south<br>
-&lt;arg&gt;.east<br>
-&lt;arg&gt;.west<br>
-</i></blockquote>
+<pre>
+&lt;arg&gt;.north
+&lt;arg&gt;.south
+&lt;arg&gt;.east
+&lt;arg&gt;.west
+</pre>
 
 The values are assumed to be in degrees north (for latitude) and degrees east (for longitude).
 Not all arguments are needed. If specified the logic is:
-<blockquote><i>
-site location latitude &le; arg.north<br>
-site location latitude &ge; arg.south<br>
-site location longitude &le; arg.east<br>
-site location longitude &ge; arg.west<br>
-</i></blockquote> 
+<pre>
+site location latitude &le; arg.north
+site location latitude &ge; arg.south
+site location longitude &le; arg.east
+site location longitude &ge; arg.west
+</pre> 
  
 
 

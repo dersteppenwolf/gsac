@@ -233,19 +233,18 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             String label = cap.getLabel();
             if ((capability != null)
                     && capability.getId().equals(cap.getId())) {
-                String lbl = HtmlUtil.b(label);
-                links.add(lbl);
+                links.add(HtmlUtil.span(label, HtmlUtil.cssClass("gsac-header2-selected")));
             } else {
-                links.add(HtmlUtil.href(getRepository().getUrl(URL_BROWSE_BASE)
-                                        + "?" + ARG_BROWSE_WHAT + "="
-                                        + id, label));
+                String url = getRepository().getUrl(URL_BROWSE_BASE)+ "?" + ARG_BROWSE_WHAT + "=" + id;
+                links.add(HtmlUtil.href(url, label, HtmlUtil.cssClass("gsac-header2-notselected")));
             }
         }
 
+
+        String sep = HtmlUtil.span("|", HtmlUtil.cssClass("gsac2-header-separator");
         String navHeader = HtmlUtil.tag(HtmlUtil.TAG_CENTER,
-                                        HtmlUtil.cssClass("navheader"),
-                                        StringUtil.join("&nbsp;|&nbsp;",
-                                            links));
+                                        HtmlUtil.cssClass("gsac-header2"),
+                                        StringUtil.join(sep, links));
         return navHeader;
     }
 

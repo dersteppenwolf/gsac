@@ -34,7 +34,7 @@ public interface GsacArgs {
     public static final String ARG_UNDEFINED_VALUE = "";
 
     /** _more_ */
-    public static final String ARG_UNDEFINED_LABEL = "----";
+    public static final String ARG_UNDEFINED_LABEL = "-Any-";
 
     /** _more_ */
     public static final String ARG_SORT_VALUE_SUFFIX = "sortvalue";

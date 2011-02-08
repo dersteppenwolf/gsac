@@ -606,13 +606,20 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String url   = makeUrl(NAV_URLS[i]);
             String label = msg(NAV_LABELS[i]);
             if (uri.equals(url)) {
-                links.add(HtmlUtil.b(label));
+                links.add(HtmlUtil.span(label, HtmlUtil.cssClass("gsac-header-selected")));
             } else {
-                links.add(HtmlUtil.href(url, label));
+                links.add(HtmlUtil.href(url, label, HtmlUtil.cssClass("gsac-header-notselected")));
             }
         }
-        sb.append(HtmlUtil.center(StringUtil.join("&nbsp;|&nbsp;", links)));
+        
+        sb.append(HtmlUtil.tag(HtmlUtil.TAG_CENTER, HtmlUtil.cssClass("gsac-header"),
+                               StringUtil.join(getHeaderSeparator(), links))); 
     }
+
+    public String getHeaderSeparator() {
+        return HtmlUtil.span("|", HtmlUtil.cssClass("gsac-header-separator"));
+    }
+
 
     /**
      * _more_

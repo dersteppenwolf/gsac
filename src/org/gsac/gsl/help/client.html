@@ -1,0 +1,130 @@
+
+<style type="text/css">
+pre {
+   margin-top:10px;
+   margin-bottom:10px;
+   margin-left:30px;
+   font-style:italic;     
+}
+</style>
+
+<h3>GSAC Command Line Client</h3>
+There is a Java-based command line tool that allows you to do programmatic searches of a GSAC repository
+and download files.
+
+
+<h3>Dowload and Installation</h3>
+The GSAC command line client is available for download at the GSAC SourceForge site:
+<a href="http://sourceforge.net/projects/gsac/">http://sourceforge.net/projects/gsac</a>.
+Once downloaded simply unzip the file. This will create a directory called <i>gsacclient</i>.
+
+
+
+<h3>Running</h3>
+
+You can run the GsacClient either through the given gsacclient.sh (change permissions on it):
+<pre>gsacclient.sh.jar &lt;arguments&gt;</pre>
+
+or directly using java:
+<pre>java -jar lib/gsacclient.jar &lt;arguments&gt;</pre>
+
+To see the command line arguments:
+<pre>gsacclient.sh -help</pre>
+
+You can specify any number of arguments that will always be used when running the client.
+Just edit the gsac.properties file in the release directory. e.g., uncomment the line:
+<pre>server=http://facility.unavco.org/gsacws</pre>
+
+You can also specify a properties file of the same format on the command line:
+<pre>gsacclient.sh -properties &lt;some properties file&gt;</pre>
+
+If you don't have a server defined in the gsac.properties file specify it with -server.
+You just use the url path leading up to the gsacapi, e.g.:
+<pre>-server http://facility.unavco.org/gsacws</pre>
+
+<h3>Listing Repository Information</h3>
+
+List out the repository information from UNAVCO:
+<pre>gsacclient.sh -server http://facility.unavco.org/gsacws -info</pre>
+
+List out the repository information from SOPAC:
+<pre>gsacclient.sh -server http://geoappdev02.ucsd.edu/gsacws -info</pre>
+
+
+For the following examples we'll assume we're hitting the server defined in gsac.properties (Unavco by default).
+<p>
+
+Now you can either do searchs for sites or searches for resources. You specify this with:
+<pre>-site</pre>
+or:
+<pre>-resource</pre>
+
+<h3>Site searches</h3>
+
+Wild card site code:
+<pre>gsacclient.sh  -site -site.code "p12*"</pre>
+
+Bounding box search: 
+<pre>
+gsacclient.sh  -site -bbox -115 30 -100 40
+(note: bbox is west south east north)
+</pre>
+
+
+
+
+<p>
+If you want to get more then the default 1000 results add -limit &lt;count&gt;, e.g.:
+<pre>gsacclient.sh  -site -limit 1500</pre>
+
+<h3>File searches</h3>
+
+Site code search that gets files
+<pre>gsacclient.sh  -resource -site.code p123</pre>
+
+
+Absolute time range file search for p123
+<pre>
+gsacclient.sh  -resource site.code p123 
+               -resource.datadate.from 2010-09-01 
+               -resource.datadate.to 2010-09-15
+</pre>
+
+
+Absolute time range file search for p123 return the ftp urls (the -output url)
+
+<pre>
+gsacclient.sh  -resource -output url site.code p123 
+               -resource.datadate.from 2010-09-01 
+               -resource.datadate.to 2010-09-15</pre>
+
+Time relative file search for p123
+<pre>
+gsacclient.sh  -resource site.code p123 
+               -resource.datadate.from "-1 month" 
+               -resource.datadate.to now
+</pre>
+
+Search on file type. .e.g. just get RINEX and HATANAKA files ("4" is the rinex type at unavco. "5" is hatanaka. We will be changing this)
+
+<pre>
+gsacclient.sh -resource -output url site.code p123 
+              -resource.datadate.from 2010-09-01 
+              -resource.datadate.to 2010-09-15 
+              -resource.type 4 -resource.type 5</pre>
+
+
+<h3>File searches with downloads</h3>
+You can also have the client  download the files with the -download argument, e.g.:
+<pre>gsacclient.sh  -download destination_directory  -site.code p123  -limit 10</pre>
+
+The above will do a resource query, retrieve the file FTP urls and download the files into the destination_directory.
+It will maintain the original directory structure of the FTP file paths. To have all of the files put into a single directory
+use the -keep_paths argument:
+<pre>
+gsacclient.sh  -download destination_directory  
+               -keep_paths false 
+               -site.code p123  -limit 10
+</pre>
+
+
