@@ -7,24 +7,26 @@ body {
    font-size: 12pt;
    font-family: Arial, Helvetica, sans-serif;       
    color: black;
-   margin: 4px;
-   padding: 4px;
-   background-image:url('${urlroot}/htdocs/background.png');
+   margin: 0px;
+   padding: 0px;
 }
 
 .contents {
    margin: 10px;
    margin-top: 0px;
    background-color:#ffffff;
-   border: 1px #666666 solid;
+   min-height:500px;
 }
 
 .header {
    font-size: 16pt;
-   border-bottom: 2px #666666 solid;
-   background-color:#ffffff;
+   border-bottom: 2px #000 solid;
    text-align:center;
    padding:10px;
+   padding-top:15px;
+   padding-bottom:0px;
+   margin-bottom:10px;
+   background-image:url('${urlroot}/htdocs/background.png');
 }
 
 .header2 {
@@ -43,8 +45,9 @@ body {
 </head>
 
 <body>
-<table width=100% border=0 cellspacing=0 cellpadding=2>
-<tr valign=bottom><td>
+<div class="header">
+<table width=100% border=0 cellspacing=0 cellpadding=0>
+<tr valign=center><td>
 <a href="http://sopac.ucsd.edu"><img src="http://facility.unavco.org/data/gsacws/images/sopac.jpg" border="0" width="100"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <a href="http://www.unavco.org"><img src="http://facility.unavco.org/data/gsacws/images/unavco.jpg" border="0" width="100"></a>
@@ -57,10 +60,9 @@ body {
 &nbsp;&nbsp;&nbsp;&nbsp;
 <a href="http://geodesy.unr.edu/"><img src="http://facility.unavco.org/data/gsacws/images/unr.jpg" border="0" width="100"></a>
 </td>
-
 </tr>
 </table>
-
+</div>
 
 
 

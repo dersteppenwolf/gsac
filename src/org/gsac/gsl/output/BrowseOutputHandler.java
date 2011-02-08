@@ -241,7 +241,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         }
 
 
-        String sep = HtmlUtil.span("|", HtmlUtil.cssClass("gsac2-header-separator");
+        String sep = HtmlUtil.span("|", HtmlUtil.cssClass("gsac2-header-separator"));
         String navHeader = HtmlUtil.tag(HtmlUtil.TAG_CENTER,
                                         HtmlUtil.cssClass("gsac-header2"),
                                         StringUtil.join(sep, links));

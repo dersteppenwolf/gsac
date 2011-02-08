@@ -290,6 +290,9 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
 
+    public List<SiteGroup> doGetSiteGroups() {
+        return  new ArrayList<SiteGroup>();
+    }
 
     /**
      * Utility method to make a list of site statuses from the given
@@ -361,8 +364,9 @@ public abstract class SiteManager extends GsacRepositoryManager {
                     ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
                     true), GROUP_SITE_QUERY, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
+
             initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
-                                          new ArrayList<IdLabel>(),
+                                          IdLabel.toList(doGetSiteGroups()),
                                           true), GROUP_SITE_QUERY, null),
             initCapability(
                 new Capability(

@@ -158,6 +158,8 @@ public class GsacRepository implements GsacConstants {
     private Hashtable<String, Vocabulary> vocabularies =
         new Hashtable<String, Vocabulary>();
 
+    private List<Vocabulary> vocabularyList =  new ArrayList<Vocabulary>();
+
     /** _more_ */
     private File gsacDirectory;
 
@@ -401,6 +403,9 @@ public class GsacRepository implements GsacConstants {
      * @param vocabulary _more_
      */
     public void addVocabulary(Vocabulary vocabulary) {
+        if(vocabularies.get(vocabulary.getId())==null) {
+            vocabularyList.add(vocabulary);
+        }
         vocabularies.put(vocabulary.getId(), vocabulary);
     }
 
@@ -1146,6 +1151,7 @@ public class GsacRepository implements GsacConstants {
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
                 what = URL_RESOURCE_BASE;
                 GsacOutputHandler outputHandler =  getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
+
                 outputHandler.handleResourceRequest(request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 GsacOutputHandler outputHandler = getOutputHandler(OUTPUT_GROUP_BROWSE, request);
@@ -1256,7 +1262,6 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleResourceRequest(GsacRequest gsacRequest)
             throws Exception {
-
     }
 
     /**
@@ -1747,6 +1752,7 @@ public class GsacRepository implements GsacConstants {
 
         Vocabulary vocab = new Vocabulary(type, values, externalToInternal,
                                           internalToExternal);
+        vocabularyList.add(vocab);
         vocabularies.put(type, vocab);
         return vocab;
 
@@ -2129,7 +2135,7 @@ public class GsacRepository implements GsacConstants {
 
 
 
-    boolean readHtmlEveryTime  =false;
+    boolean readHtmlEveryTime  =true;
 
     /**
      * Override this to return the html header to use for html pages
@@ -2629,6 +2635,34 @@ public class GsacRepository implements GsacConstants {
         */
 
 
+        Appendable pw = sb;
+        pw.append(HtmlUtil.p());
+        StringBuffer vsb  = new StringBuffer();
+        for(Vocabulary vocabulary: vocabularyList) {
+            StringBuffer vvsb = new StringBuffer();
+            vvsb.append("<table>");
+            vvsb.append("<tr><td><b>External Name</b></td><td><b>ID</b></td><td></td><td><b>Internal</b></td></tr>");
+            for(IdLabel value: vocabulary.getValues()) {
+                List<String> internals = vocabulary.externalToInternal(value.getId());
+                if(internals!=null) {
+                    vvsb.append("<tr><td>" + value.getLabel() +"</td><td>" + value.getId() +"</td><td>=</td><td>" + StringUtil.join(",", internals));
+                } else {
+                    vvsb.append("<tr><td colspan=4>" + msgLabel("Local")+ value.getLabel() +" (" + value.getId() +")</td>");
+               }
+
+            }
+            vvsb.append("</table>");
+            vsb.append(HtmlUtil.makeShowHideBlock(vocabulary.getId(), HtmlUtil.insetDiv(vvsb.toString(), 0,20,0,0),
+                                                  false));
+            
+
+        }
+        pw.append(getHeader(msg("Vocabularies")));
+        pw.append(HtmlUtil.makeShowHideBlock("", HtmlUtil.insetDiv(vsb.toString(), 0,20,0,0),
+                                                 false));
+
+
+
 
 
         sb.append(HtmlUtil.p());
@@ -2702,6 +2736,9 @@ public class GsacRepository implements GsacConstants {
                         false));
             }
         }
+
+
+
     }
 
 
