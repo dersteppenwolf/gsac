@@ -257,11 +257,15 @@ input {
 
 .formheader {
    border-bottom : 1px #bcbcbc solid;
+   xborder-left : 1px #bcbcbc solid;
+   xborder-right : 1px #bcbcbc solid;
+   xborder-top : 1px #aaa solid;
    background: #ececec;
-   background: #f0f0f0;
+   background: #eee;
+
    font-weight: bold;
    margin:0px;
-   margin-top:4px;
+   margin-top:8px;
    padding:0px;
    padding-top:2px;
    padding-bottom:0px;
@@ -272,7 +276,6 @@ input {
 
 .tableheader {
   font-weight: bold;
-
 }
 
 .formlabel, .formlabeltop {

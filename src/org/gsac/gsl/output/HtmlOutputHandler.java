@@ -404,7 +404,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String suffix  = capability.getSuffixLabel();
             capabilityGroup = capability.getGroup();
             if (capabilityGroup == null) {
-                capabilityGroup = "Advanced Site Query";
+                capabilityGroup = "Advanced Query";
             }
             capBuff = capabilityGroupMap.get(capabilityGroup);
             if (capBuff == null) {

@@ -64,6 +64,11 @@ import java.util.List;
  */
 public abstract class SiteManager extends GsacRepositoryManager {
 
+    /** _more_ */
+    public static final String CAPABILITY_GROUP_SITE_QUERY = "Site Query";
+
+    public static final String CAPABILITY_GROUP_ADVANCED = "Advanced Site Query";
+
     /**
      * ctor
      *
@@ -333,8 +338,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
 
-    /** _more_ */
-    public static final String GROUP_SITE_QUERY = "Site Query";
+
 
     /**
      * _more_
@@ -348,30 +352,30 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
         Capability[] dflt = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
-                "Site Code", Capability.TYPE_STRING), GROUP_SITE_QUERY,
+                "Site Code", Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
                     "Short name of the site",
                     "Short name of the site. " + help),
             initCapability(siteName = new Capability(ARG_SITE_NAME,
-                "Site Name", Capability.TYPE_STRING), GROUP_SITE_QUERY,
+                "Site Name", Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
                     "Name of the site", "Name of site." + help),
             initCapability(new Capability(ARG_SITE_TYPE, "Site Type",
                                           new ArrayList<IdLabel>(),
-                                          true), GROUP_SITE_QUERY,
+                                          true), CAPABILITY_GROUP_SITE_QUERY,
                                               "Type of the site", null,
                                               makeVocabulary(ARG_SITE_TYPE)),
             initCapability(
                 new Capability(
                     ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
-                    true), GROUP_SITE_QUERY, "", "",
+                    true), CAPABILITY_GROUP_SITE_QUERY, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
 
             initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
                                           IdLabel.toList(doGetSiteGroups()),
-                                          true), GROUP_SITE_QUERY, null),
+                                          true), CAPABILITY_GROUP_SITE_QUERY, null),
             initCapability(
                 new Capability(
                     ARG_BBOX, "Bounds",
-                    Capability.TYPE_SPATIAL_BOUNDS), GROUP_SITE_QUERY,
+                    Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
                         "Spatial bounds within which the site lies")
         };
         siteCode.setBrowse(true);

@@ -40,6 +40,8 @@ import java.util.List;
 public class Capability {
 
 
+    public static final String DFLT_GROUP = "Advanced Query";
+
     /** _more_ */
     public static final String TAG_CAPABILITY = "capability";
 
@@ -65,6 +67,9 @@ public class Capability {
     public static final String ATTR_GROUP = "group";
 
     /** _more_ */
+    public static final String ATTR_TOOLTIP = "tooltip";
+
+    /** _more_ */
     public static final String ATTR_ID = "id";
 
     /** _more_ */
@@ -78,8 +83,6 @@ public class Capability {
 
     /** _more_ */
     public static final String ATTR_URL = "url";
-
-
 
     /** type */
     public static final String TYPE_ENUMERATION = "enumeration";
@@ -128,7 +131,7 @@ public class Capability {
     private boolean browse = false;
 
     /** _more_ */
-    private String group;
+    private String group = DFLT_GROUP;
 
     /** _more_ */
     private String tooltip;
@@ -162,8 +165,13 @@ public class Capability {
      */
     public Capability(String id, String label, String[] enums,
                       boolean allowMultiples) {
+        this(id, label, enums, allowMultiples, null);
+    }
+
+    public Capability(String id, String label, String[] enums,
+                      boolean allowMultiples, String group) {
         this(id, label, TYPE_ENUMERATION, IdLabel.toList(enums),
-             allowMultiples);
+             allowMultiples, group);
     }
 
 
@@ -192,8 +200,13 @@ public class Capability {
      */
     public Capability(String id, String label, Vocabulary vocabulary,
                       boolean allowMultiples) {
+        this(id, label, vocabulary, allowMultiples, null);
+    }
+
+    public Capability(String id, String label, Vocabulary vocabulary,
+                      boolean allowMultiples, String group) {
         this(id, label, TYPE_ENUMERATION, vocabulary.getValues(),
-             allowMultiples);
+             allowMultiples, group);
         this.vocabulary = vocabulary;
     }
 
@@ -206,7 +219,12 @@ public class Capability {
      * @param type The capability type
      */
     public Capability(String id, String label, String type) {
-        this(id, label, type, null, false);
+        this(id, label, type, null);
+    }
+
+
+    public Capability(String id, String label, String type, String group) {
+        this(id, label, type, null, false, group);
     }
 
 
@@ -221,11 +239,17 @@ public class Capability {
      */
     public Capability(String id, String label, String type,
                       List<IdLabel> enums, boolean allowMultiples) {
+        this(id, label, type, enums, allowMultiples, null);
+    }
+
+    public Capability(String id, String label, String type,
+                      List<IdLabel> enums, boolean allowMultiples, String group) {
         this.id             = id;
         this.label          = label;
         this.type           = type;
         this.enums          = enums;
         this.allowMultiples = allowMultiples;
+        this.group = group;
     }
 
 
@@ -314,6 +338,9 @@ public class Capability {
 
         if (group != null) {
             attrs.append(XmlUtil.attrs(ATTR_GROUP, group));
+        }
+        if (tooltip != null) {
+            attrs.append(XmlUtil.attrs(ATTR_TOOLTIP, tooltip));
         }
         if (columns != 0) {
             attrs.append(XmlUtil.attrs(ATTR_COLUMNS, "" + columns));
