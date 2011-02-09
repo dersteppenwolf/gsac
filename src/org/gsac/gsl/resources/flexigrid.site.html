@@ -2,32 +2,32 @@
 <table id="flex1" style="display:none"></table>
 
 <script type="text/javascript">// <![CDATA[
-			jQuery("#flex1").flexigrid
+			$("#flex1").flexigrid
 			(
 			{
-			url: '${data.url}',
+			url: 'search.xml',
 			dataType: 'xml',
 			colModel : [
-				{display: 'PNUM', name : 'pnum', width : 35, sortable : true, align: 'center'},
-				{display: 'Station Name', name : 'stnnickname', width : 122, sortable : true, align: 'center'},
-				{display: 'Seismometer Installed', name : 'stninsdate', width : 114, sortable : true, align: 'center'},
-				{display: 'Data Logger', name : 'digitmodel', width : 140, sortable : true, align: 'center',},
-				{display: 'Data Logger Install Date', name : 'digitinstalldate', width : 125, sortable : true, align: 'center'},
-				{display: 'Dataless Seed File', name : 'seedless', width : 120, sortable : false, align: 'center'}
+				{display: 'Site Code', name : 'sitecode', width : 100, sortable : true, align: 'left'},
+				{display: 'Site Name', name : 'sitename', width : 100, sortable : true, align: 'left'},
+				{display: 'Site Type', name : 'stninsdate', width : 100, sortable : true, align: 'left'},
+				{display: 'Location', name : 'digitmodel', width : 100, sortable : true, align: 'left',},
+				{display: 'Date', name : 'digitinstalldate', width : 100, sortable : true, align: 'left'},
+				{display: 'Groups', name : 'seedless', width : 100, sortable : false, align: 'left'}
 				],		
 			searchitems : [
-				{display: 'PNUM', name : 'pnum'},
-				{display: 'Station Name', name : 'stnnickname', isdefault: true}
+				{display: 'Site Code', name : 'sitecode'},
+				{display: 'Station Name', name : 'sitename', isdefault: true}
 				],
-			sortname: "pnum",
+			sortname: "sitecode",
 			sortorder: "asc",
 			usepager: false,
 			singleSelect: false,
 			vresize: false,
-			title: 'Borehole Seismic Data Links',
+			title: 'Site Search Results',
 			useRp: false,
 			rp: 20,
-			showTableToggleBtn: false,
+			showTableToggleBtn: true,
 			width: 750,
 			height: 470
 			}
