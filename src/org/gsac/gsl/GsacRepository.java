@@ -608,6 +608,7 @@ public class GsacRepository implements GsacConstants {
         new AtomSiteOutputHandler(this);
         new JsonSiteOutputHandler(this);
         new XmlSiteOutputHandler(this);
+        new FlexigridSiteOutputHandler(this);
 
 
         new HtmlResourceOutputHandler(this);

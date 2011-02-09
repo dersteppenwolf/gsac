@@ -599,6 +599,17 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
 
+    public String formatLatLon(GsacSite site) {
+        return formatLatLon(site.getLatitude()) + ","
+            + formatLatLon(site.getLongitude()) + ","
+            + site.getElevation();
+    }
+
+
+    public String formatDate(GsacSite site) {
+        return  formatDate(site.getFromDate()) + " - "
+            + formatDate(site.getToDate());
+    }
 
 
 

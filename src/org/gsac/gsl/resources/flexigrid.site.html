@@ -1,0 +1,36 @@
+
+<table id="flex1" style="display:none"></table>
+
+<script type="text/javascript">// <![CDATA[
+			jQuery("#flex1").flexigrid
+			(
+			{
+			url: '${data.url}',
+			dataType: 'xml',
+			colModel : [
+				{display: 'PNUM', name : 'pnum', width : 35, sortable : true, align: 'center'},
+				{display: 'Station Name', name : 'stnnickname', width : 122, sortable : true, align: 'center'},
+				{display: 'Seismometer Installed', name : 'stninsdate', width : 114, sortable : true, align: 'center'},
+				{display: 'Data Logger', name : 'digitmodel', width : 140, sortable : true, align: 'center',},
+				{display: 'Data Logger Install Date', name : 'digitinstalldate', width : 125, sortable : true, align: 'center'},
+				{display: 'Dataless Seed File', name : 'seedless', width : 120, sortable : false, align: 'center'}
+				],		
+			searchitems : [
+				{display: 'PNUM', name : 'pnum'},
+				{display: 'Station Name', name : 'stnnickname', isdefault: true}
+				],
+			sortname: "pnum",
+			sortorder: "asc",
+			usepager: false,
+			singleSelect: false,
+			vresize: false,
+			title: 'Borehole Seismic Data Links',
+			useRp: false,
+			rp: 20,
+			showTableToggleBtn: false,
+			width: 750,
+			height: 470
+			}
+			);
+
+// ]]></script>

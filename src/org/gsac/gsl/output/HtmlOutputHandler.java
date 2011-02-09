@@ -1257,15 +1257,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             pw.append(
                 HtmlUtil.formEntryTop(
                     msgLabel("Location"),
-                    formatLatLon(site.getLatitude()) + ","
-                    + formatLatLon(site.getLongitude()) + ","
-                    + site.getElevation() + mapSB));
+                    formatLatLon(site) + mapSB));
         }
 
 
         if (site.getFromDate() != null) {
-            String dateString = formatDate(site.getFromDate()) + " - "
-                                + formatDate(site.getToDate());
+            String dateString = formatDate(site);
             pw.append(HtmlUtil.formEntry(msgLabel("Date Range"), dateString));
         }
 

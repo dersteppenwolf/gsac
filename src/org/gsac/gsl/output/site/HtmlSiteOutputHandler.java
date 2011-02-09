@@ -54,6 +54,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     /** output id */
     public static final String OUTPUT_SITE_HTML = "site.html";
 
+    private String flexigridTemplate;
+
+
     /**
      * ctor
      *
@@ -112,6 +115,23 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             sb.append(HtmlUtil.p());
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_SITE_SEARCH)) {
+
+            /*
+            if(flexigridTemplate==null) {
+                flexigridTemplate  = getRepository().readResource("/flexigrid.site.html");
+            }
+
+            
+            sb.append(
+                      HtmlUtil.importJS(
+                                        makeHtdocsUrl("/flexigrid/flexigrid.js")));
+            Hashtable<String, String> outputMap = new Hashtable<String,
+                                                      String>();
+            outputMap.put(ARG_OUTPUT, FlexigridSiteOutputHandler.OUTPUT_SITE_FLEXIGRID);
+            String searchUrl = makeUrl(URL_SITE_SEARCH) +  "?" + request.getUrlArgs(outputMap);
+            
+            sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
+            */
             long t1 = System.currentTimeMillis();
             getRepository().handleSiteRequest(request, response);
             long t2 = System.currentTimeMillis();
