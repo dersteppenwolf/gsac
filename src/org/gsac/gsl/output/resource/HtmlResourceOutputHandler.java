@@ -176,7 +176,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 sb.append(HtmlUtil.formEntry(msgLabel("Site"),
                                              "<a href=\"" + siteUrl + "\">"
                                              + site.getName() + " "
-                                             + site.getLabel() + "</a>"));
+                                             + site.getLabel() + " (" + site.getSiteCode()+")" + "</a>"));
             }
         }
 
@@ -423,7 +423,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                                          + site.getSiteId());
                     sb.append(HtmlUtil.col("<a href=\"" + siteUrl + "\">"
                                            + site.getName() + " "
-                                           + site.getLabel() + "</a>"));
+                                           + site.getLabel() + " (" + site.getSiteCode()+")" + "</a>"));
                 }
 
                 if (resource.getStartTime() == null) {

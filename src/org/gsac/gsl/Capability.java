@@ -149,6 +149,7 @@ public class Capability {
     /** _more_ */
     private CapabilityCollection collection;
 
+    private String dflt;
 
     /**
      * _more_
@@ -730,6 +731,27 @@ public class Capability {
     public String getDescription() {
         return description;
     }
+
+    /**
+       Set the Default property.
+
+       @param value The new value for Default
+    **/
+    public void setDefault (String value) {
+        dflt = value;
+    }
+
+    /**
+       Get the Default property.
+
+       @return The Default
+    **/
+    public String getDefault () {
+	return dflt;
+    }
+
+
+
 
 
 }

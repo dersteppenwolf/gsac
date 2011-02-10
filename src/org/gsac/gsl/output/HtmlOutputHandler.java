@@ -309,9 +309,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     public String makeMultiSelect(GsacRequest request, String arg,
-                                  List enums) {
+                                  List enums, String dflt) {
         List<TwoFacedObject> tfos     = toTfoList(enums);
         List                 selected = request.getList(arg);
+        if(selected.size()==0 && dflt!=null) {
+            selected.add(dflt);
+        }
         if (enums.size() < 6) {
             StringBuffer sb = new StringBuffer();
             for (TwoFacedObject tfo : tfos) {
@@ -402,6 +405,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String arg     = capability.getId();
             String widget  = null;
             String suffix  = capability.getSuffixLabel();
+            String dflt = capability.getDefault();
             capabilityGroup = capability.getGroup();
             if (capabilityGroup == null) {
                 capabilityGroup = "Advanced Query";
@@ -415,17 +419,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if (capability.getType().equals(Capability.TYPE_ENUMERATION)) {
                 if (capability.getAllowMultiples()) {
                     widget = makeMultiSelect(request, arg,
-                                             capability.getEnums());
+                                             capability.getEnums(), dflt);
                 } else {
+                    List<TwoFacedObject> tfos = toTfo(capability.getEnums(), dflt==null);
                     widget = HtmlUtil.select(arg,
-                                             toTfo(capability.getEnums()),
-                                             request.get(arg, ""),
+                                             tfos,
+                                             request.get(arg, dflt),
                                              capability.getAllowMultiples()
                                              ? " MULTIPLE SIZE=4"
                                              : "");
                 }
             } else if (capability.getType().equals(
-                    Capability.TYPE_NUMBERRANGE)) {
+                                                   Capability.TYPE_NUMBERRANGE)) {
                 String min = arg + ".min";
                 String max = arg + ".max";
                 widget =
@@ -452,7 +457,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 String searchType = HtmlUtil.makeToggleInline("",
                                         getSearchTypeSelect(request,
                                             arg + SEARCHTYPE_SUFFIX), false);
-                widget = HtmlUtil.input(arg, request.get(arg, ""),
+                
+                widget = HtmlUtil.input(arg, request.get(arg, (dflt!=null?dflt:"")),
                                         HtmlUtil.title((tooltip != null)
                         ? tooltip
                         : stringSearchHelp) + HtmlUtil.attr(
@@ -551,9 +557,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     public static List<TwoFacedObject> toTfo(List<IdLabel> values) {
+        return toTfo(values, true);
+    }
+
+    public static List<TwoFacedObject> toTfo(List<IdLabel> values, boolean addAny) {
         List<TwoFacedObject> tfos = new ArrayList<TwoFacedObject>();
-        tfos.add(new TwoFacedObject(ARG_UNDEFINED_LABEL,
-                                    ARG_UNDEFINED_VALUE));
+        if(addAny) {
+            tfos.add(new TwoFacedObject(ARG_UNDEFINED_LABEL,
+                                        ARG_UNDEFINED_VALUE));
+        }
         for (IdLabel nv : values) {
             tfos.add(new TwoFacedObject(nv.getLabel(), nv.getId()));
         }
