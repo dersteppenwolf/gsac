@@ -584,7 +584,16 @@ public class GsacClient implements GsacConstants {
             if (foundIt) {
                 continue;
             }
-            queryArgs.add(new String[] { name, value});
+
+            if(value.startsWith("file:")) {
+                String contents = IOUtil.readContents(value.substring("file:".length()), getClass());
+                for(String line: StringUtil.split(contents,"\n",true,true)) {
+                    if(line.startsWith("#")) continue;
+                    queryArgs.add(new String[] { name, line});
+                }
+            } else {
+                queryArgs.add(new String[] { name, value});
+            }
         }
 
         if (getServer() == null) {
@@ -642,6 +651,9 @@ public class GsacClient implements GsacConstants {
         System.err.println("\tany number of query arguments, e.g.:");
         System.err.println("\t-site.code \"P12*\"");
         System.err.println("\t-" + ARG_BBOX + " west south east north");
+        System.err.println("\tnote: for any of the arguments you can specify a file that contains the argument values, e.g.:");
+        System.err.println("\t\t-site.code file:sites.txt");
+        System.err.println("\tWhere sites.txt contains site codes, one per line");
         System.exit(1);
     }
 
