@@ -153,26 +153,30 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         boolean doTest  = false;
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
         if(doTest) {
-        servers.add(
-            new GsacRepositoryInfo(
-                "http://localhost:8081/gsacws", "UNAVCO@local host",
-                "http://www.unavco.org/favicon.ico"));
-        servers.add(
-            new GsacRepositoryInfo(
-                "http://localhost:8082/gsacws", "CDDIS@local host",
-                "http://cddis.nasa.gov/favicon.ico"));
+            servers.add(
+                        new GsacRepositoryInfo(
+                                               "http://localhost:8081/gsacws", "UNAVCO@local host",
+                                               "http://www.unavco.org/favicon.ico"));
+            servers.add(
+                        new GsacRepositoryInfo(
+                                               "http://localhost:8082/gsacws", "CDDIS@local host",
+                                               "http://cddis.nasa.gov/favicon.ico"));
         } else {
             servers.add(
                         new GsacRepositoryInfo(
-                                               "http://facdev.unavco.org:9090/gsacws", "UNAVCO GSAC Development Server",
+                                               "http://facdev.unavco.org:9090/gsacws", "UNAVCO GSAC Server",
                                                "http://www.unavco.org/favicon.ico"));
-
-            /*
             servers.add(
                         new GsacRepositoryInfo(
-                                               "http://geoappdev02.ucsd.edu/gsacws",
-                                               "SOPAC GSAC Development Server",
-                                               "http://sopac.ucsd.edu/favicon.ico"));
+                                               "http://cddis.gsfc.nasa.gov/gsacws", "CDDIS GSAC Server",
+                                               "http://cddis.gsfc.nasa.gov/favicon.ico"));
+
+            /*
+              servers.add(
+              new GsacRepositoryInfo(
+              "http://geoappdev02.ucsd.edu/gsacws",
+              "SOPAC GSAC Development Server",
+              "http://sopac.ucsd.edu/favicon.ico"));
             */
         }
     }
