@@ -1,0 +1,46 @@
+
+body {
+  margin:0px;
+  padding:0px;
+}
+
+
+body, td, checkbox, html, a, div, span, h1, h2, h3, h4, h5, h6, p, ul, ol, li, blockquote, form, input, fieldset {
+    font-size:11px;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.header {
+  text-align:center;
+  margin:0px;
+  margin-bottom:3px;
+  padding:0px;
+  padding-top:2px;
+  padding-right:3px;
+  background-color:#eee;
+  border-bottom: 1px #000 solid;
+}
+
+
+.header-title  {
+  font-size: 12px;
+  color: black;
+  margin-top:5px;
+ font-weight: bold;
+}
+
+
+
+.contents {
+   margin:5px;
+}
+
+.formheader {
+ font-weight: bold;
+ border-bottom: 1px solid #000;
+}
+
+.formlabel {
+ font-weight: bold;
+}
+

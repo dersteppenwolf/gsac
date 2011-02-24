@@ -39,8 +39,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-
 import java.util.Hashtable;
+
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,13 @@ public class GsacRequest implements GsacConstants {
     /** _more_ */
     private boolean useVocabulary = true;
 
+    private boolean isMobile = false;
+
+
+    private Hashtable httpHeader= new Hashtable();
+
+
+
     /**
      * ctor
      */
@@ -116,6 +124,7 @@ public class GsacRequest implements GsacConstants {
         this.httpServletResponse = that.httpServletResponse;
         this.parameters          = new Hashtable(that.parameters);
         this.properties          = new Hashtable(that.properties);
+        this.httpHeader          = that.httpHeader;
     }
 
     /**
@@ -234,6 +243,45 @@ public class GsacRequest implements GsacConstants {
                 parameters.put(key, values);
             }
         }
+
+        for (Enumeration headerNames = httpServletRequest.getHeaderNames();
+             headerNames.hasMoreElements(); ) {
+            String name  = (String) headerNames.nextElement();
+            String value = httpServletRequest.getHeader(name);
+            httpHeader.put(name, value);
+        }
+
+
+        String ua = getUserAgent("").toLowerCase();
+        isMobile =  ua.indexOf("iphone")>=0;
+
+    }
+
+
+    public String getUserAgent(String dflt) {
+        String value =  getHeaderArg("User-Agent");
+        if(value == null) {
+            System.err.println("no user agent");
+            return dflt;
+        }
+        return value;
+    }
+
+
+    public String getHeaderArg(String name) {
+        if (httpHeader == null) {
+            return null;
+        }
+        String arg = (String) httpHeader.get(name);
+        if (arg == null) {
+            arg = (String) httpHeader.get(name.toLowerCase());
+        }
+        return arg;
+    }
+
+    public boolean isMobile() {
+        //        if(true) return true;
+        return isMobile;
     }
 
 

@@ -139,6 +139,13 @@ public class GsacRepository implements GsacConstants {
     /** html footer. Initialize in initServlet */
     private String htmlFooter = "</body></html>";
 
+    /** html header for mobile. Initialize in initServlet */
+    private String mobileHeader = "<html><body>";
+
+    /** html footer for mobile. Initialize in initServlet */
+    private String mobileFooter = "</body></html>";
+
+
     /** holds phrase translations */
     private Properties msgProperties = new Properties();
 
@@ -509,6 +516,11 @@ public class GsacRepository implements GsacConstants {
                 properties.load(inputStream);
             }
         }
+
+        mobileHeader = IOUtil.readContents("/org/gsac/gsl/resources/mobileheader.html",mobileHeader);
+        mobileFooter = IOUtil.readContents("/org/gsac/gsl/resources/mobilefooter.html",mobileFooter);
+        mobileHeader = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
+        mobileFooter = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
 
         inputStream =
             getResourceInputStream(getLocalResourcePath("/header.html"));
@@ -1094,7 +1106,13 @@ public class GsacRepository implements GsacConstants {
      * @return the resource manager
      */
     public ResourceManager doMakeResourceManager() {
-        return null;
+        return new ResourceManager(this) {
+            public void handleResourceRequest(GsacRequest request,  GsacResponse response)
+                throws Exception {}
+            public  GsacResource getResource(String resourceId)throws Exception {
+                return null;
+            }
+        };
     }
 
 
@@ -2193,8 +2211,8 @@ public class GsacRepository implements GsacConstants {
 
 
 
-    /** _more_          */
-    boolean readHtmlEveryTime = false;
+    /** LOOK:          */
+    boolean readHtmlEveryTime = true;
 
     /**
      * Override this to return the html header to use for html pages
@@ -2206,6 +2224,8 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlHeader(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
+                mobileHeader = IOUtil.readContents("/org/gsac/gsl/resources/mobileheader.html",mobileHeader);
+                mobileHeader = mobileHeader.replace("${urlroot}",   getUrlBase() + URL_BASE);
                 InputStream inputStream = getResourceInputStream(
                                               getLocalResourcePath(
                                                   "/header.html"));
@@ -2217,6 +2237,7 @@ public class GsacRepository implements GsacConstants {
                 }
             } catch (Exception exc) {}
         }
+        if(request.isMobile()) return mobileHeader;
         return htmlHeader;
     }
 
@@ -2230,6 +2251,8 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlFooter(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
+                mobileFooter = IOUtil.readContents("/org/gsac/gsl/resources/mobilefooter.html",mobileFooter);
+                mobileFooter = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
                 InputStream inputStream = getResourceInputStream(
                                               getLocalResourcePath(
                                                   "/footer.html"));
@@ -2242,6 +2265,7 @@ public class GsacRepository implements GsacConstants {
             } catch (Exception exc) {}
         }
 
+        if(request.isMobile()) return mobileFooter;
         return htmlFooter;
     }
 

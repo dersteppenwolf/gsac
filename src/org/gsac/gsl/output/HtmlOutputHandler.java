@@ -124,7 +124,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public void getLimitSelect(GsacRequest request, Appendable pw)
             throws IOException {
-        /*        pw.append(HtmlUtil.formEntry(msgLabel("Offset"),
+        
+        /*        pw.append(formEntry(request,msgLabel("Offset"),
                                      HtmlUtil.input(ARG_OFFSET, request.getOffset()+"",HtmlUtil.SIZE_5)
                                      + HtmlUtil.space(2) +
                                      msgLabel("Limit")
@@ -133,7 +134,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         */
 
 
-        pw.append(HtmlUtil.formEntry(msgLabel("Limit"),
+        pw.append(formEntry(request,msgLabel("Limit"),
                                      HtmlUtil.input(ARG_LIMIT,
                                          request.getLimit() + "",
                                          HtmlUtil.SIZE_5)));
@@ -214,7 +215,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                         SORT_ORDER_ASCENDING))) + " "
                                             + msg("Descending");
         }
-        pw.append(HtmlUtil.formEntry(msgLabel("Order By"),
+        pw.append(formEntry(request,msgLabel("Order By"),
                                      valueWidget + orderWidget));
     }
 
@@ -266,7 +267,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                         SORT_ORDER_ASCENDING))) + " "
                                             + msg("Descending");
         }
-        pw.append(HtmlUtil.formEntry(msgLabel("Order By"),
+        pw.append(formEntry(request,msgLabel("Order By"),
                                      valueWidget + orderWidget));
     }
 
@@ -288,11 +289,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
         }
 
-        pw.append(HtmlUtil.formEntry(msgLabel("Output"),
+        pw.append(formEntry(request,msgLabel("Output"),
                                      HtmlUtil.select(ARG_OUTPUT, outputs,
                                          (String) null, "")));
 
-        pw.append(HtmlUtil.formEntry("",
+        pw.append(formEntry(request,"",
                                      HtmlUtil.checkbox(ARG_GZIP, "true",
                                          false) + " "
                                              + msg("Compress result")));
@@ -501,7 +502,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                         desc) + " ";
                 }
                 capBuff.append(
-                    HtmlUtil.formEntryTop(
+                               formEntryTop(request,
                         msgLabel(capability.getLabel()), widget + suffix));
             } else {
                 getRepository().logError("Unknown capability:" + capability,
@@ -747,9 +748,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         boolean hasCssMacro = false;
 
-        String  cssLink     = HtmlUtil.cssLink(makeHtdocsUrl("/gsac.css"));
+        String  cssLink     = HtmlUtil.cssLink(makeHtdocsUrl(request.isMobile()?"/mobile.css":"/gsac.css"));
         if (shouldDecorate(request)) {
             String header = getRepository().getHtmlHeader(request);
+            
+            header = header.replace("${gsac.name}", getRepository().getRepositoryName());
             hasCssMacro = header.indexOf("${gsac.css}") >= 0;
             if (hasCssMacro) {
                 header = header.replace("${gsac.css}", cssLink);
@@ -1202,6 +1205,25 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         return getRepository().getAbsoluteUrl(iconUrl("/site.png"));
     }
 
+    public String formEntry(GsacRequest request, String label, String contents) {
+        if(request.isMobile()) {
+            return "<tr><td><div class=\"formlabel\">"+ label +"</div>" + contents +"</td></tr>";
+        } else {
+            return HtmlUtil.formEntry(label, contents);
+        }
+    }
+
+    public String formEntryTop(GsacRequest request, String label, String contents) {
+        if(request.isMobile()) {
+            return "<tr><td><div class=\"formlabel\">"+ label +"</div>" + contents +"</td></tr>";
+        } else {
+            return HtmlUtil.formEntryTop(label, contents);
+        }
+    }
+
+
+
+
 
     /**
      * _more_
@@ -1236,13 +1258,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                            ? makeSiteHref(site)
                            : site.getLabel());
         if (getDoSiteType()) {
-            pw.append(HtmlUtil.formEntry(msgLabel("Site Code"), siteCode));
+            pw.append(formEntry(request,msgLabel("Site Code"), siteCode));
         }
 
-        pw.append(HtmlUtil.formEntry(msgLabel("Name"), site.getName()));
+        pw.append(formEntry(request,msgLabel("Name"), site.getName()));
         if (site.getRepositoryInfo() != null) {
             pw.append(
-                HtmlUtil.formEntry(
+                      formEntry(request,
                     msgLabel("Repository"),
                     getRepository().getRemoteHref(site) + " "
                     + HtmlUtil.href(
@@ -1250,11 +1272,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                         site.getRepositoryInfo().getName())));
         }
         if (getDoSiteType() && (site.getType() != null)) {
-            pw.append(HtmlUtil.formEntry(msgLabel("Type"),
+            pw.append(formEntry(request,msgLabel("Type"),
                                          site.getType().getName()));
         }
         if (getDoSiteStatus() && (site.getStatus() != null)) {
-            pw.append(HtmlUtil.formEntry(msgLabel("Status"),
+            pw.append(formEntry(request,msgLabel("Status"),
                                          site.getStatus().getName()));
         }
 
@@ -1267,7 +1289,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                    mapSB, 400, 200);
             }
             pw.append(
-                HtmlUtil.formEntryTop(
+                      formEntryTop(request,
                     msgLabel("Location"),
                     formatLatLon(site) + mapSB));
         }
@@ -1275,13 +1297,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (site.getFromDate() != null) {
             String dateString = formatDate(site);
-            pw.append(HtmlUtil.formEntry(msgLabel("Date Range"), dateString));
+            pw.append(formEntry(request, msgLabel("Date Range"), dateString));
         }
 
         if (getDoSiteGroup()) {
             List<SiteGroup> groups = site.getSiteGroups();
             if (groups.size() > 0) {
-                pw.append(HtmlUtil.formEntryTop(msgLabel((groups.size() == 1)
+                pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
                         ? "Group"
                         : "Groups"), getGroupHtml(groups, false)));
             }
@@ -1373,7 +1395,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             if (cnt > 0) {
                 buff.append(HtmlUtil.formTableClose());
-                pw.append(HtmlUtil.formEntryTop(msgLabel("Equipment"),
+                pw.append(formEntryTop(request,msgLabel("Equipment"),
                         HtmlUtil.makeShowHideBlock("", buff.toString(),
                             false)));
             }
@@ -1457,7 +1479,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 tabHtml.append("\n\n");
                 //                                String tabHtml =  HtmlUtil.makeTabs(titles, tabs, true);
 
-                pw.append(HtmlUtil.formEntryTop(group.getLabel(),
+                pw.append(formEntryTop(request, group.getLabel(),
                         HtmlUtil.makeShowHideBlock("", tabHtml.toString(),
                             true)));
                 return;
@@ -1482,7 +1504,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 }
                 if (didone) {
                     buffer.append(HtmlUtil.formTableClose());
-                    pw.append(HtmlUtil.formEntryTop(group.getLabel(),
+                    pw.append(formEntryTop(request,group.getLabel(),
                             HtmlUtil.makeShowHideBlock("", buffer.toString(),
                                 true)));
                 }
@@ -1509,7 +1531,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (metadata instanceof LinkMetadata) {
             LinkMetadata mtd = (LinkMetadata) metadata;
-            pw.append(HtmlUtil.formEntry(msgLabel("Link"),
+            pw.append(formEntry(request,msgLabel("Link"),
                                          HtmlUtil.href(mtd.getUrl(),
                                              mtd.getLabel())));
             return;
@@ -1519,11 +1541,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             PropertyMetadata mtd = (PropertyMetadata) metadata;
             String value = mtd.getValue();
             if(value.indexOf("\n")>=0) {
-                pw.append(HtmlUtil.formEntryTop(mtd.getLabel() + ":",
+                pw.append(formEntryTop(request,mtd.getLabel() + ":",
                                                 HtmlUtil.makeShowHideBlock(msg(""),"<pre>" + value+"</pre>" , false)));
                                                 
             } else {
-                pw.append(HtmlUtil.formEntry(mtd.getLabel() + ":",
+                pw.append(formEntry(request,mtd.getLabel() + ":",
                                              value));
             }
             return;
