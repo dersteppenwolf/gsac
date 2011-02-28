@@ -218,11 +218,16 @@ public class RamaddaGsacRepository extends GsacRepository {
     }
 
 
-    public List<Capability> doGetSiteQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
-        getSiteManager().addDefaultSiteCapabilities(capabilities);
+    public List<Capability> doGetCapabilities(String type) {
+            List<Capability> capabilities = new ArrayList<Capability>();
+        if (type.equals(CAPABILITIES_SITE)) {
+            getSiteManager().addDefaultSiteCapabilities(capabilities);
+        } else if (type.equals(CAPABILITIES_RESOURCE)) {
+            getResourceManager().addDefaultResourceCapabilities(capabilities);
+        }
         return capabilities;
     }
+
 
     /**
      * _more_
@@ -253,6 +258,10 @@ public class RamaddaGsacRepository extends GsacRepository {
         for (String id : ids) {
             Entry entry = getRepository().getEntryManager().getEntry(null,
                               id);
+            if(entry==null) {
+                System.err.println("bad entry:" + id);
+                continue;
+            }
             Object[] values = entry.getValues();
 
 

@@ -104,6 +104,11 @@ public class NtripHarvester extends WebHarvester {
     }
 
 
+
+    public void addToEditForm(Request request, StringBuffer sb) throws Exception {
+        addBaseGroupSelect(ATTR_BASEGROUP, sb);
+    }
+
     /**
      * _more_
      *
@@ -117,7 +122,10 @@ public class NtripHarvester extends WebHarvester {
     protected void addEntryToForm(Request request, StringBuffer entrySB,
                                   HarvesterEntry urlEntry, int cnt)
         throws Exception {
-        addBaseFolderToForm(request, entrySB, urlEntry, cnt);
+        entrySB.append(HtmlUtil.formEntry(msgLabel("Parent Folder Name"),
+                                          HtmlUtil.input(ATTR_NAME + cnt, urlEntry.getName(),
+                                                         HtmlUtil.SIZE_80
+                                                         + HtmlUtil.title(templateHelp))));
     }
 
 
@@ -129,14 +137,14 @@ public class NtripHarvester extends WebHarvester {
      *
      * @throws Exception _more_
      */
-    protected void processEntry(HarvesterEntry urlEntry, List<Entry> entries)
+    protected boolean processEntry(HarvesterEntry urlEntry, List<Entry> entries)
         throws Exception {
-        String baseGroupId = urlEntry.getBaseGroupId();
-        Entry  baseGroup   = ((baseGroupId.length() == 0)
-                              ? null
-                              : getEntryManager().findGroup(null,
-                                                            baseGroupId));
+        String baseGroupName = urlEntry.getName();
+        Entry  rootGroup   = getBaseGroup();
+        User         user       = getUser();
+        Entry baseGroup =  getEntryManager().findEntryFromName(rootGroup.getFullName()+Entry.PATHDELIMITER+baseGroupName,user, true);
         processSourceTable(urlEntry, baseGroup, entries);
+        return true;
     }
 
 
@@ -161,10 +169,9 @@ public class NtripHarvester extends WebHarvester {
 
 
         User         user       = getUser();
-        //        Entry sitesEntry =  getEntryManager().findEntryFromName(baseGroup.getFullName()+Entry.PATHDELIMITER+"Sites",user, true);
-
         TypeHandler typeHandler = resourceTypeHandler;
         String url = urlEntry.getUrl();
+
         if(url.endsWith("/")) url = url.substring(0, url.length()-1);
         System.err.println("url:" + url);
         System.err.println("Processing source table:" + url);
@@ -174,6 +181,7 @@ public class NtripHarvester extends WebHarvester {
                                               null);
 
 
+
         if(contents == null) {
             logHarvesterInfo("Unable to read source table:" + url);
             return;
@@ -181,10 +189,8 @@ public class NtripHarvester extends WebHarvester {
         //Don't ask...
         contents = contents.replaceAll("<br>","");
 
-        if (contents == null) {
-            logHarvesterInfo("Could not read source table:" + url);
-            return;
-        }
+        System.err.println ("url:" + url);
+
         List<String> toks       = StringUtil.split(contents, "\n", false,
                                                    false);
 
@@ -223,7 +229,8 @@ public class NtripHarvester extends WebHarvester {
 
                 String mountPoint = cols.get(col++);
                 String feedUrl = url + "/" +mountPoint;
-                String identifier = cols.get(col++);
+                String identifier = cols.get(col++).trim();
+                if(identifier.length()==0) identifier = mountPoint;
                 String format     = cols.get(col++);
                 String formatDetails = cols.get(col++);
         
@@ -245,12 +252,14 @@ public class NtripHarvester extends WebHarvester {
                 if(siteId.indexOf("_")>=0) {
                     siteId = siteId.substring(0,siteId.indexOf("_"));
                 }
-
+                if(siteId.trim().length()==0) {
+                    continue;
+                }
                 Date now= new Date();
                 String sitePath = baseGroup.getFullName()+Entry.PATHDELIMITER+siteId;
                 Entry siteEntry = siteMap.get(sitePath);
                 if(siteEntry==null) {
-                    siteEntry = getEntryManager().findEntryFromName(sitePath,user, false);
+                    siteEntry = getEntryManager().findEntryFromName(sitePath, user, false);
                 } 
 
                 boolean newSite = false;
@@ -258,12 +267,16 @@ public class NtripHarvester extends WebHarvester {
                     newSite = true;
                     siteEntry = siteTypeHandler.createEntry(repository.getGUID());
                     siteEntry.initEntry(siteId, "", baseGroup, getUser(), new Resource(), "",
-                                    now.getTime(), now.getTime(), now.getTime(),
+                                        now.getTime(), now.getTime(), now.getTime(),
                                         now.getTime(), new Object[]{siteId, "active", url});
 
+                    System.err.println ("\t" +(newSite?"new site:" :"old site:") + siteEntry.getFullName());
                 }
                 siteMap.put(sitePath, siteEntry);
-                //Add the site if its new. Else store it if the location has changed
+
+
+
+                //Add the site if it is new. Else store it if the location has changed
                 boolean siteChanged = siteEntry.getNorth()!= latitude || siteEntry.getWest()!=longitude;
                 siteEntry.setLocation(latitude, longitude,0);
                 if(newSite) {
@@ -273,40 +286,46 @@ public class NtripHarvester extends WebHarvester {
                 }
 
                 boolean newEntry = false;
-                Entry entry = getEntryManager().findEntryFromName(siteEntry.getFullName()+Entry.PATHDELIMITER+identifier,user, false);
-                if(entry==null) {
+                Entry streamEntry = getEntryManager().findEntryFromName(siteEntry.getFullName()+Entry.PATHDELIMITER+identifier,user, false);
+                if(streamEntry==null) {
                     newEntry = true;
-                    entry = typeHandler.createEntry(repository.getGUID());
+                    streamEntry = typeHandler.createEntry(repository.getGUID());
                 } else {
                     //Use the old date
-                    now = new Date(entry.getCreateDate());
+                    now = new Date(streamEntry.getCreateDate());
                 }
+
                 Resource resource = new Resource(feedUrl);
-                entry.initEntry(identifier, "", siteEntry, getUser(), resource, "",
+                streamEntry.initEntry(identifier, "", siteEntry, getUser(), resource, "",
                                 now.getTime(), now.getTime(), now.getTime(),
                                 now.getTime(), new Object[]{siteEntry.getId()});
 
-                entry.setLocation(latitude, longitude,0);
+                if(newEntry) {
+                    System.err.println ("\t\t" +(newEntry?"new stream:" :"old stream:") + streamEntry.getFullName());
+                }
+                streamEntry.setLocation(latitude, longitude,0);
                 Metadata formatMetadata= new Metadata(getRepository().getGUID(),
-                                                      entry.getId(), GsacMetadataHandler.TYPE_STREAM_FORMAT, false, 
+                                                      streamEntry.getId(), GsacMetadataHandler.TYPE_STREAM_FORMAT, false, 
                                                       format, formatDetails,
                                                       "", "", "");
-                if(!entry.hasMetadata(formatMetadata)) {
-                    entry.addMetadata(formatMetadata);
+                if(!streamEntry.hasMetadata(formatMetadata)) {
+                    streamEntry.addMetadata(formatMetadata);
                 }
 
                 Metadata sourceMetadata=  new Metadata(getRepository().getGUID(),
-                                                       entry.getId(), GsacMetadataHandler.TYPE_STREAM_SOURCE, false, 
+                                                       streamEntry.getId(), GsacMetadataHandler.TYPE_STREAM_SOURCE, false, 
                                                        carrier, navSystem, network, country,"");
-                if(!entry.hasMetadata(sourceMetadata)) {
-                    entry.addMetadata(sourceMetadata);
+                if(!streamEntry.hasMetadata(sourceMetadata)) {
+                    streamEntry.addMetadata(sourceMetadata);
                 }
-                System.err.println ("id:" + identifier +" format:" + format +" url:" + feedUrl);
+                System.err.println ("\t\tid:" + identifier +" format:" + format +" url:" + feedUrl);
                 if(newEntry) {
-                    entries.add(entry);
+                    entries.add(streamEntry);
                 } else  {
-                    getEntryManager().storeEntry(entry);
+                    getEntryManager().storeEntry(streamEntry);
                 }
+
+                //For now stop at 50
                 if(myCnt++>50) break;
             } catch(Exception exc) {
                 System.err.println("Bad line:" + line);

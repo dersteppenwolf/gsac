@@ -122,7 +122,7 @@ public class GsacHarvester extends WebHarvester {
      *
      * @throws Exception _more_
      */
-    protected void processEntry(HarvesterEntry urlEntry, List<Entry> entries)
+    protected boolean processEntry(HarvesterEntry urlEntry, List<Entry> entries)
             throws Exception {
         String baseGroupId = urlEntry.getBaseGroupId();
         Entry  baseGroup   = ((baseGroupId.length() == 0)
@@ -140,6 +140,7 @@ public class GsacHarvester extends WebHarvester {
         } else {
             throw new IllegalArgumentException("Unknown file type:" + url);
         }
+        return true;
     }
 
 

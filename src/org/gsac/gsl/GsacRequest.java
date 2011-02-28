@@ -125,6 +125,7 @@ public class GsacRequest implements GsacConstants {
         this.parameters          = new Hashtable(that.parameters);
         this.properties          = new Hashtable(that.properties);
         this.httpHeader          = that.httpHeader;
+        this.isMobile            = that.isMobile;
     }
 
     /**

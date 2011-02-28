@@ -80,6 +80,9 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             if ( !request.defined(capability.getId())) {
                 continue;
             }
+            if(capability.getDefault()!=null && capability.getDefault().length()>0) {
+                continue;
+            }
             for (GsacRepositoryInfo info : new ArrayList<GsacRepositoryInfo>(serversToUse)) {
                 boolean hasCapability = false;
                 for(CapabilityCollection collection: info.getCollections ()) {
@@ -89,7 +92,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                     }
                 }
                 if ( !hasCapability) {
-                    System.err.println("    Excluding " + info.getName());
+                    System.err.println("    Excluding " + info.getName() +" it doesn't have:" + capability.getId());
                     serversToUse.remove(info);
                 }
             }
@@ -150,13 +153,15 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {
         
-        boolean doTest  = false;
+        boolean doTest  = true;
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
         if(doTest) {
+            /*
             servers.add(
                         new GsacRepositoryInfo(
                                                "http://localhost:8081/gsacws", "UNAVCO@local host",
                                                "http://www.unavco.org/favicon.ico"));
+            */
             servers.add(
                         new GsacRepositoryInfo(
                                                "http://localhost:8082/gsacws", "CDDIS@local host",
@@ -164,20 +169,18 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         } else {
             servers.add(
                         new GsacRepositoryInfo(
+                                               "http://cddis.gsfc.nasa.gov/gsacws", "CDDIS GSAC Server",
+                                               "http://cddis.gsfc.nasa.gov/favicon.ico"));
+            servers.add(
+                        new GsacRepositoryInfo(
                                                "http://facdev.unavco.org:9090/gsacws", "UNAVCO GSAC Server",
                                                "http://www.unavco.org/favicon.ico"));
             servers.add(
-                        new GsacRepositoryInfo(
-                                               "http://cddis.gsfc.nasa.gov/gsacws", "CDDIS GSAC Server",
-                                               "http://cddis.gsfc.nasa.gov/favicon.ico"));
-
-            /*
-              servers.add(
               new GsacRepositoryInfo(
-              "http://geoappdev02.ucsd.edu/gsacws",
-              "SOPAC GSAC Development Server",
-              "http://sopac.ucsd.edu/favicon.ico"));
-            */
+                                     "http://geoappdev02.ucsd.edu/gsacws",
+                                     "SOPAC GSAC Development Server",
+                                     "http://sopac.ucsd.edu/favicon.ico"));
+
         }
     }
 

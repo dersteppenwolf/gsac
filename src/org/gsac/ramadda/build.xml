@@ -55,6 +55,10 @@
             update="false"
             compress="true"
             jarfile="${jars_dest}/${jarfile}">
+<!--
+            <include name="org/gsac/ramadda/**/*.class"/>
+-->
+            <exclude name="org/gsac/ramadda/**/*.class"/>
             <include name="org/gsac/ramadda/**/*"/>
             <include name="org/gsac/ramadda/htdocs/**/*"/>
             <exclude name="org/gsac/ramadda/*.java"/>
