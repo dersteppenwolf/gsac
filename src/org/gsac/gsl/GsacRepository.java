@@ -1191,6 +1191,13 @@ public class GsacRepository implements GsacConstants {
     public void handleRequest(GsacRequest request)
             throws IOException, ServletException {
         String uri = request.getRequestURI();
+        int index = uri.indexOf("?");
+        if(index>=0) {
+            uri = uri.substring(0,index);
+        }
+        if(uri.endsWith("/")) {
+            uri = uri.substring(0,uri.length()-1);
+        }
 
         //TODO: What to do with a head request
         if (request.getMethod().toUpperCase().equals("HEAD")) {
@@ -1226,6 +1233,8 @@ public class GsacRepository implements GsacConstants {
                 handleHelpRequest(request, new GsacResponse(request));
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleHtdocsRequest(request);
+            } else if (uri.endsWith(URL_BASE)|| uri.equals(getUrlBase())) {
+                handleIndexRequest(request, new GsacResponse(request));
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
                 handleViewRequest(request, new GsacResponse(request));
             } else {
@@ -1327,6 +1336,24 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleResourceRequest(GsacRequest gsacRequest)
             throws Exception {}
+
+    public void handleIndexRequest(GsacRequest request, GsacResponse response)
+            throws Exception {
+        response.startResponse(GsacResponse.MIME_HTML);
+        StringBuffer sb = new StringBuffer();
+        htmlOutputHandler.initHtml(request, response, sb);
+
+        String[] files = {getLocalHtdocsPath("/index.html"),"/org/gsac/gsl/htdocs/index.html" };
+        for (String file : files) {
+            InputStream inputStream = getResourceInputStream(file);
+            if (inputStream != null) {
+                String contents = IOUtil.readContents(inputStream);
+                sb.append(contents);
+                break;
+            }
+        }
+        htmlOutputHandler.finishHtml(request, response, sb);
+    }
 
     /**
      * _more_
@@ -2212,7 +2239,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /** LOOK:          */
-    boolean readHtmlEveryTime = true;
+    boolean readHtmlEveryTime = false;
 
     /**
      * Override this to return the html header to use for html pages
