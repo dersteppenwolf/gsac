@@ -153,7 +153,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {
         
-        boolean doTest  = true;
+        boolean doTest  = false;
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
         if(doTest) {
             /*
@@ -169,7 +169,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         } else {
             servers.add(
                         new GsacRepositoryInfo(
-                                               "http://cddis.gsfc.nasa.gov/gsacws", "CDDIS GSAC Server",
+                                               "http://cddis.gsfc.nasa.gov/gsacws", 
+                                               "CDDIS GSAC Server",
                                                "http://cddis.gsfc.nasa.gov/favicon.ico"));
             servers.add(
                         new GsacRepositoryInfo(
@@ -178,7 +179,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             servers.add(
               new GsacRepositoryInfo(
                                      "http://geoappdev02.ucsd.edu/gsacws",
-                                     "SOPAC GSAC Development Server",
+                                     "SOPAC GSAC Server",
                                      "http://sopac.ucsd.edu/favicon.ico"));
 
         }
