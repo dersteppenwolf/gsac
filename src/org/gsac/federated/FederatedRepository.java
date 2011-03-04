@@ -30,6 +30,7 @@ import org.gsac.gsl.output.resource.*;
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 
 import java.util.ArrayList;
 
@@ -155,6 +156,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         
         boolean doTest  = false;
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
+        String serverList = getProperty("gsac.federated.servers",(String)null);
+
         if(doTest) {
             /*
             servers.add(
@@ -166,6 +169,19 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                         new GsacRepositoryInfo(
                                                "http://localhost:8082/gsacws", "CDDIS@local host",
                                                "http://cddis.nasa.gov/favicon.ico"));
+        } else if(serverList!=null) {
+            for(String server: StringUtil.split(serverList,",",true,true)) {
+                String url = getProperty("gsac.federated." + server +".url",(String)null);
+                if(url == null) {
+                    logError("No URL property defined for:" +"gsac.federated." + server +".url",null);
+                    continue;
+                }
+                logInfo("Loading remote server:" + url);
+                servers.add(
+                            new GsacRepositoryInfo(url,
+                                                   getProperty("gsac.federated." + server +".name",url),null));
+            }
+
         } else {
             servers.add(
                         new GsacRepositoryInfo(
