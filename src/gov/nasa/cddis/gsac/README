@@ -1,8 +1,25 @@
 
 
+##########################################
+Building
+##########################################
+
+To build just run:
+ant
+
+This will build a gsacws.war in the the top-level dist directory.
 
 
-The CddisSiteManager handles the site requests. CddisResourceManager handles the resource (e.g., file) requests.
+
+
+
+
+##########################################
+Code Organization
+##########################################
+
+CddisSiteManager handles the site requests. 
+CddisResourceManager handles the resource (e.g., file) requests.
 
 Both of these classes uses the CddisType class. In that class are a set of defined instances:
 TYPE_GNSS
