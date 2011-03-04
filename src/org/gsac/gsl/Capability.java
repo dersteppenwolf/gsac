@@ -106,6 +106,9 @@ public class Capability {
     /** _more_ */
     public static final String TYPE_SPATIAL_BOUNDS = "spatial_bounds";
 
+    public static final String TYPE_LABEL = "label";
+
+
     /** The vocabulary used. May be null */
     Vocabulary vocabulary;
 
