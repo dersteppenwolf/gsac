@@ -70,14 +70,16 @@ public class CddisType {
     public static final CddisType TYPE_GNSS =
         new CddisType(TYPE_NAME_GNSS, Tables.SITE_INFO_GNSS.table,
                       Tables.SITE_INFO_GNSS.COL_MONUMENT_NAME,
+                      Tables.SITE_INFO_GNSS.COL_DOMES_NUMBER,
                       Tables.GPS_TRACKING2009.table,
                       new String[] { Tables.GPS_TRACKING2009.COL_START_DATE,
-            Tables.GPS_TRACKING2009.COL_END_DATE });
+                                     Tables.GPS_TRACKING2009.COL_END_DATE });
 
     /** _more_ */
     public static final CddisType TYPE_DORIS =
         new CddisType(TYPE_NAME_DORIS, Tables.SITE_INFO_DORIS.table,
                       Tables.SITE_INFO_DORIS.COL_DORIS,
+                      Tables.SITE_INFO_DORIS.COL_DOMES_NUMBER,
                       Tables.DORIS_2009.table,
                       new String[] { Tables.DORIS_2009.COL_S_DATE,
             Tables.DORIS_2009.COL_E_DATE });
@@ -87,6 +89,7 @@ public class CddisType {
     public static final CddisType TYPE_SLR =
         new CddisType(TYPE_NAME_SLR, Tables.SITE_INFO_SLR.table,
                       Tables.SITE_INFO_SLR.COL_SLR,
+                      Tables.SITE_INFO_SLR.COL_DOMES_NUMBER,
                       Tables.SATELLITESQL_2009.table,
                       new String[] { Tables.SATELLITESQL_2009.COL_S_DATE,
             Tables.SATELLITESQL_2009.COL_E_DATE });
@@ -95,7 +98,9 @@ public class CddisType {
     /** _more_ */
     public static final CddisType TYPE_VLBI =
         new CddisType(TYPE_NAME_VLBI, Tables.SITE_INFO_VLBI.table,
-                      Tables.SITE_INFO_VLBI.COL_VLBI_NAME, null, null);
+                      Tables.SITE_INFO_VLBI.COL_VLBI_NAME, 
+                      Tables.SITE_INFO_VLBI.COL_DOMES_NUMBER,
+                      null, null);
 
 
     /** This is the list of types that we deal with */
@@ -117,6 +122,8 @@ public class CddisType {
     /** _more_ */
     private String siteCodeColumn;
 
+    private String domesNumberColumn;
+
     private String[] resourceDateColumns;
 
     /** _more_ */
@@ -131,11 +138,14 @@ public class CddisType {
      * @param siteCodeColumn _more_
      * @param resourceTable _more_
      */
-    public CddisType(String type, Tables siteTable, String siteCodeColumn, Tables resourceTable,
+    public CddisType(String type, Tables siteTable, String siteCodeColumn, 
+                     String domesNumberColumn,
+                     Tables resourceTable,
                      String[] resourceDateColumns) {
         this.type            = type;
         this.siteTable       = siteTable;
         this.siteCodeColumn  = siteCodeColumn;
+        this.domesNumberColumn  = domesNumberColumn;
         this.resourceTable   = resourceTable;
         this.resourceDateColumns = resourceDateColumns;
     }
@@ -149,6 +159,7 @@ public class CddisType {
         this.type            = that.type;
         this.siteTable       = that.siteTable;
         this.siteCodeColumn  = that.siteCodeColumn;
+        this.domesNumberColumn  = that.domesNumberColumn;
         this.resourceTable   = that.resourceTable;
         this.resourceDateColumns = that.resourceDateColumns;
     }
@@ -321,6 +332,10 @@ public class CddisType {
      */
     public String getSiteCodeColumn() {
         return siteCodeColumn;
+    }
+
+    public String getDomesNumberColumn() {
+        return domesNumberColumn;
     }
 
 

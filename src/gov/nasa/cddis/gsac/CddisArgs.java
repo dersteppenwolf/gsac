@@ -49,6 +49,11 @@ public interface CddisArgs {
                                               + "monument";
 
     /** _more_ */
+    public static final String ARG_DOMES_NUMBER =
+        GsacArgs.ARG_SITE_PREFIX + "domes_number";
+
+
+    /** _more_ */
     public static final String ARG_GNSS_DOMES_NUMBER =
         GsacArgs.ARG_SITE_PREFIX + "gnss_domes_number";
 

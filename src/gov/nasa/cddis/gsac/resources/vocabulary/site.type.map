@@ -1,0 +1,14 @@
+#
+#Canonical core values for  site.type
+#This maps the gsac value to a description
+#
+
+
+gnss.site.continuous=gnss
+
+slr.site=slr
+
+doris.site=doris
+
+vlbi.site=vlbi
+
