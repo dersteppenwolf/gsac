@@ -253,6 +253,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer searchLinks = new StringBuffer();
 
+        List<String> tabContents = new ArrayList<String>();
+        List<String> tabTitles = new ArrayList<String>();
+
         for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_SITE)) {
             if (output.getId().equals(OUTPUT_SITE_HTML)) {
                 continue;
@@ -267,12 +270,15 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             searchLinks.append(HtmlUtil.href(searchUrl, output.getLabel()));
             searchLinks.append(HtmlUtil.br());
         }
-        formBuffer.append(
+        /*        formBuffer.append(
             HtmlUtil.insetLeft(
                 HtmlUtil.makeShowHideBlock(
                     msg("Search Links"),
                     HtmlUtil.insetLeft(searchLinks.toString(), 10),
-                    false), 10));
+                    false), 10));*/
+
+
+
 
         handleSearchForm(request, response, formBuffer);
         List<GsacSite> sites = response.getSites();
@@ -282,15 +288,26 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
         String message = response.getQueryInfo();
-        if (message.length() > 0) {
-            pw.append(message);
+        if (message!=null && message.length() > 0) {
+            tabTitles.add(msg("Search Criteria"));
+            tabContents.add(message);
         }
 
+        tabTitles.add(msg("Search Again"));
+        tabContents.add(formBuffer.toString());
+
+        tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
+        tabTitles.add(msg("Search Links"));
 
 
-        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
-                                             formBuffer.toString(),
-                                             sites.size() == 0));
+        //        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
+        //                                             formBuffer.toString(),
+        //                                             sites.size() == 0));
+
+        StringBuffer tabs = new StringBuffer();
+        makeTabs(tabs, tabTitles, tabContents);
+        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
+                                             tabs.toString(), sites.size()==0));
 
         if (sites.size() == 0) {
             return;

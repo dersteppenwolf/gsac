@@ -225,8 +225,23 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
         if (getDoResource()) {
             buttons.append("<td>");
-            buttons.append(HtmlUtil.submit(msg("Find Files"), ARG_SEARCH));
+            buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
+            for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
+                if(output.getToolbarLabel()==null) { continue;}
+                String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                                             HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, output.getId(),
+                                                                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
+                                                                         HtmlUtil.ATTR_VALUE,output.getToolbarLabel(),
+                                                                         //HtmlUtil.ATTR_CLASS, "download-button",
+                                                                         HtmlUtil.ATTR_TITLE,output.getLabel()
+                                                 }));
+                buttons.append(HtmlUtil.space(2));
+                buttons.append(submit);
+            }
+
+
             buttons.append("</td>");
+            
         }
         if (getDoSite()) {
             buttons.append("<td align=right>");
@@ -290,6 +305,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         try {
             StringBuffer formBuffer  = new StringBuffer();
 
+            List<String> tabContents = new ArrayList<String>();
+            List<String> tabTitles = new ArrayList<String>();
+
             StringBuffer searchLinks = new StringBuffer();
             GsacRequest  tmpRequest  = new GsacRequest(request);
             StringBuffer toolbar = new StringBuffer();
@@ -323,21 +341,42 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 searchLinks.append(HtmlUtil.br());
             }
 
-            formBuffer.append(
+
+            /*            formBuffer.append(
                 HtmlUtil.insetLeft(
                     HtmlUtil.makeShowHideBlock(
-                        msg("Search Links"),
+                                               msg("Search Links"),                     
                         HtmlUtil.insetLeft(searchLinks.toString(), 10),
                         false), 10));
+            */
 
 
             handleSearchForm(request, response, formBuffer);
+
+
+
+            //            sb.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
+            //                    formBuffer.toString(), false));
+
             String message = response.getQueryInfo();
-            if (message.length() > 0) {
-                sb.append(message);
+            if (message!=null && message.length() > 0) {
+                tabTitles.add(msg("Search Criteria"));
+                tabContents.add(message);
             }
-            sb.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
-                    formBuffer.toString(), false));
+
+            tabTitles.add(msg("Search Again"));
+            tabContents.add(formBuffer.toString());
+
+            tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
+            tabTitles.add(msg("Search Links"));
+
+            StringBuffer tabs = new StringBuffer();
+            makeTabs(tabs, tabTitles, tabContents);
+
+
+            sb.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
+                                                 tabs.toString(), false));
+
 
             Hashtable<String, String> override = new Hashtable<String,
                                                      String>();

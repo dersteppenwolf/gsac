@@ -71,8 +71,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
                 OUTPUT_RESOURCE_ZIP, "Zip Files", "/resources.zip",
-                                                         true,
-                                                         "Zip Files"));
+                                                                       true,null/*"Zip Files"*/));
 
     }
 

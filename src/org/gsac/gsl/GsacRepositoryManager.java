@@ -152,8 +152,6 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                          StringBuffer msgBuff) {
         if (msgBuff.length() > 0) {
             String message = "<table>" + msgBuff + "</table>";
-            message = HtmlUtil.makeShowHideBlock("Search Criteria", message,
-                    false);
             response.setQueryInfo(message);
         }
     }

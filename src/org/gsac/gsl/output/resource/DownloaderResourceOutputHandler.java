@@ -60,7 +60,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,output = new GsacOutput(this,
                 OUTPUT_RESOURCE_DOWNLOAD, "Download Files via Webstart",
                                                                   "/resources.jnlp", true,
-                                                                  "Downloader"));
+                                                                  "Download Files"));
         
     }
 

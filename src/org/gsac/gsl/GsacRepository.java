@@ -305,6 +305,14 @@ public class GsacRepository implements GsacConstants {
     public GsacOutputHandler getOutputHandler(String group,
             GsacRequest request) {
         String arg = request.get(ARG_OUTPUT, (String) null);
+
+        for (GsacOutput output : getOutputs(group)) {
+            if (request.defined(output.getId())) {
+                arg = output.getId();
+                break;
+            }
+        }
+
         if (arg == null) {
             OutputGroup outputGroup = outputs.get(group);
             if (outputGroup == null) {
@@ -625,10 +633,10 @@ public class GsacRepository implements GsacConstants {
 
         new HtmlResourceOutputHandler(this);
         new CsvResourceOutputHandler(this);
+        new DownloaderResourceOutputHandler(this);
         new WgetResourceOutputHandler(this);
         new UrlResourceOutputHandler(this);
         new JsonResourceOutputHandler(this);
-        new DownloaderResourceOutputHandler(this);
         new ZipResourceOutputHandler(this);
         new BrowseOutputHandler(this);
         new RssResourceOutputHandler(this);
