@@ -1363,6 +1363,8 @@ public class GsacRepository implements GsacConstants {
         htmlOutputHandler.finishHtml(request, response, sb);
     }
 
+    private List<String> helpIndex;
+
     /**
      * _more_
      *
@@ -1373,6 +1375,13 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleHelpRequest(GsacRequest request, GsacResponse response)
             throws Exception {
+        if(helpIndex == null) {
+            InputStream inputStream = servlet.getResourceInputStream("/org/gsac/gsl/help/index.txt");
+            helpIndex = StringUtil.split(IOUtil.readContents(inputStream), "\n",
+                                         true, true);
+            inputStream.close();
+        }
+
         String path = request.getGsacUrlPath().substring(URL_HELP.length());
         if (path.length() == 0) {
             path = "/index.html";

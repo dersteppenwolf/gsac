@@ -201,24 +201,24 @@ public abstract class ResourceManager extends GsacRepositoryManager {
                                 new Capability(
                                     ARG_RESOURCE_TYPE, "Resource Type",
                                     new ArrayList<IdLabel>(),
-                                    true), "Resource Query",
+                                    true), "File Query",
                                            "Type of file or resource", null,
                                            getRepository().getVocabulary(
                                                ARG_RESOURCE_TYPE, true)),
                               initCapability(new Capability(ARG_RESOURCE_DATADATE,
                                   "Data Date",
                                   Capability
-                                      .TYPE_DATERANGE), "Resource Query",
+                                      .TYPE_DATERANGE), "File Query",
                                           "Date the data this resource holds was collected"),
                               initCapability(new Capability(ARG_RESOURCE_PUBLISHDATE,
                                   "Publish Date",
                                   Capability
-                                      .TYPE_DATERANGE), "Resource Query",
+                                      .TYPE_DATERANGE), "File Query",
                                           "Date when this resource was first published to the repository"),
                               initCapability(cap = new Capability(ARG_RESOURCE_FILESIZE,
                                   "File Size",
                                   Capability
-                                      .TYPE_NUMBERRANGE), "Resource Query",
+                                      .TYPE_NUMBERRANGE), "File Query",
                                           "File size") };
         cap.setSuffixLabel("&nbsp;(bytes)");
         for (Capability capability : dflt) {
