@@ -142,9 +142,8 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                 styleElement = KmlUtil.iconstyle(doc, styleId, url, 0.5);
                 iconMap.put(url, styleElement);
             } else {
-                styleId = XmlUtil.getAttribute(styleElement, "id");
+                styleId = XmlUtil.getAttribute(styleElement, "id","");
             }
-
 
             Element placemark = KmlUtil.placemark(groupElement,
                                     site.getLabel(), html.toString(),
