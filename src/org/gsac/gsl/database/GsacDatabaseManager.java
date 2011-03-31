@@ -42,7 +42,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -89,6 +88,10 @@ public abstract class GsacDatabaseManager implements GsacConstants,
 
     /** the datasource */
     private BasicDataSource dataSource;
+
+
+    Properties connectionProps = new Properties();
+
 
     /** _more_ */
     private int connectionCnt = 0;
@@ -203,6 +206,9 @@ public abstract class GsacDatabaseManager implements GsacConstants,
         jdbcUrl = jdbcUrl.replace("${username}", userName);
         jdbcUrl = jdbcUrl.replace("${password}", password);
 
+        connectionProps.put("user", userName);
+        connectionProps.put("password", password);
+
         //        System.err.println("GSAC: full jdbc url:" + jdbcUrl+":");
         //        System.err.println("GSAC: user name:" + userName+":");
         //        System.err.println("GSAC: password:" + password+":");
@@ -280,6 +286,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
                : driver;
     }
 
+
+
     /**
      * get a connection from the pool
      *
@@ -288,7 +296,10 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      * @throws Exception on badness
      */
     public Connection getConnection() throws Exception {
-        Connection connection = dataSource.getConnection();
+        Connection connection;
+        //TODO: lets try out not using the connection pooling
+        connection = DriverManager.getConnection(jdbcUrl, connectionProps);
+        //        connection = dataSource.getConnection();
         connectionCnt++;
         //        System.err.println ("open:" + connectionCnt);
         return connection;
@@ -306,8 +317,9 @@ public abstract class GsacDatabaseManager implements GsacConstants,
     public void closeConnection(Connection connection) {
         try {
             connectionCnt--;
-            //            System.err.println ("close:" + connectionCnt);
             connection.close();
+            if(connectionCnt>3)
+                System.err.println ("close:" + connectionCnt);
         } catch (Exception ignoreThis) {}
     }
 

@@ -3177,6 +3177,23 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    public static final void main(String[]args) throws Exception {
+        String[] urls ={
+            "http://localhost:8080/gsacws/gsacapi/site/search?site.group=Aegean+1989",
+            "http://localhost:8080/gsacws/gsacapi/site/view?site.id=15896_5340_0",
+            "http://localhost:8080/gsacws/gsacapi/site/search?site.status=decomissioned",
+            "http://localhost:8080/gsacws/gsacapi/site/search?site.monument=deep+foundation+mast",
+            "http://localhost:8080/gsacws/gsacapi/resource/search/resources.csv?output=resource.csv&resource.sortorder=ascending&site.code=p123&limit=1000&resource.datadate.to=2011-03-04&resource.datadate.from=2011-03-01&site.interval=interval.normal",
+        };
+        for(int i=0;i<1000;i++) {
+            for(String url: urls) {
+                System.out.println(i);
+                IOUtil.readContents(url);
+            }
+        }
+    }
+
+
 
 
 }
