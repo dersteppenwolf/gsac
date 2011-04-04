@@ -57,6 +57,10 @@ public class GsacRepositoryInfo {
 
     private int errorCnt = 0;
 
+    private int openRequestsCnt=0;
+
+    private Object REQUEST_MUTEX = new Object();
+
     /**
      * _more_
      */
@@ -120,6 +124,23 @@ public class GsacRepositoryInfo {
         errorCnt++;
     }
 
+
+    public int getOpenRequestsCount() {
+        return openRequestsCnt;
+    }
+
+    public void incrementOpenRequestsCount() {
+	synchronized(REQUEST_MUTEX) {
+	    openRequestsCnt++;
+	}
+    }
+
+    public void decrementOpenRequestsCount() {
+	synchronized(REQUEST_MUTEX) {
+	    openRequestsCnt--;
+	}
+    }
+
     /**
      * _more_
      *
@@ -132,7 +153,11 @@ public class GsacRepositoryInfo {
         if ((that.description != null) && (that.description.length() > 0)) {
             this.description = that.description;
         }
+        if ((that.icon != null) && (that.icon.length() > 0)) {
+            this.icon = that.icon;
+        }
         this.collections  = that.collections;
+
     }
 
 

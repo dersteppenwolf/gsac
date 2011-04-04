@@ -117,6 +117,7 @@
             <include name="gov/**/*.class"/>
             <include name="edu/**/*.class"/>
             <include name="${repository_relative_dir}/resources/**/*"/>
+            <include name="${repository_relative_dir}/htdocs/**/*"/>
            <manifest>
               <attribute name="Implementation-Title" value="Stand alone GSAC server"/>
               <attribute name="Implementation-Version" value="1.0"/>

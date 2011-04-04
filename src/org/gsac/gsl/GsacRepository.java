@@ -839,7 +839,10 @@ public class GsacRepository implements GsacConstants {
             throws Exception {
         GsacRepositoryInfo gri = (GsacRepositoryInfo) getRemoteObject(info,
                                      URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
+
+
         info.initWith(gri);
+
 
         for (CapabilityCollection collection : gri.getCollections()) {
             Hashtable<String, Capability> used =
@@ -951,6 +954,10 @@ public class GsacRepository implements GsacConstants {
         return getProperty(PROP_REPOSITORY_NAME, "GSAC Repository");
     }
 
+    public String getRepositoryIcon() {
+        return getProperty(PROP_REPOSITORY_ICON, (String) null);
+    }
+
     /**
      * _more_
      *
@@ -1018,7 +1025,9 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public String getLocalHtdocsPath(String fileTail) {
-        return getPackagePath() + "/htdocs/" + fileTail;
+	if(fileTail.startsWith("/"))
+	    return getPackagePath() + "/htdocs" + fileTail;
+	return getPackagePath() + "/htdocs/" + fileTail;
     }
 
     /**
@@ -1901,7 +1910,8 @@ public class GsacRepository implements GsacConstants {
             GsacRepositoryInfo gri =
                 new GsacRepositoryInfo(
                     getServlet().getAbsoluteUrl(getUrlBase()),
-                    getRepositoryName());
+                    getRepositoryName(),
+		    getRepositoryIcon());
             gri.setDescription(getRepositoryDescription());
             gri.addCollection(
                 new CapabilityCollection(
@@ -2505,7 +2515,6 @@ public class GsacRepository implements GsacConstants {
             //TODO: what to do here? remove it from the list?
             //After 10 errors
         }
-
     }
 
 
@@ -2525,7 +2534,10 @@ public class GsacRepository implements GsacConstants {
                                   String urlArgs, String output)
             throws Exception {
         try {
-            return getRemoteObject(info.getUrl(), urlPath, urlArgs, output);
+            Object results = getRemoteObject(info.getUrl(), urlPath, urlArgs, output);
+	    //If successful then reset the error count
+	    info.resetErrorCount();
+	    return results;
         } catch (Exception exc) {
             remoteRepositoryHadError(info);
             throw exc;
@@ -2533,6 +2545,9 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+
+
+    public static final int URL_TIMEOUT_SECONDS = 30;
 
 
     /**
@@ -2562,6 +2577,7 @@ public class GsacRepository implements GsacConstants {
             ARG_OUTPUT, output
         });
         URLConnection connection  = new URL(url).openConnection();
+	connection.setConnectTimeout(1000*URL_TIMEOUT_SECONDS);
         InputStream   inputStream = connection.getInputStream();
         if (zipit) {
             inputStream = new GZIPInputStream(inputStream);
@@ -3179,11 +3195,12 @@ public class GsacRepository implements GsacConstants {
 
     public static final void main(String[]args) throws Exception {
         String[] urls ={
-            "http://localhost:8080/gsacws/gsacapi/site/search?site.group=Aegean+1989",
-            "http://localhost:8080/gsacws/gsacapi/site/view?site.id=15896_5340_0",
-            "http://localhost:8080/gsacws/gsacapi/site/search?site.status=decomissioned",
-            "http://localhost:8080/gsacws/gsacapi/site/search?site.monument=deep+foundation+mast",
-            "http://localhost:8080/gsacws/gsacapi/resource/search/resources.csv?output=resource.csv&resource.sortorder=ascending&site.code=p123&limit=1000&resource.datadate.to=2011-03-04&resource.datadate.from=2011-03-01&site.interval=interval.normal",
+	    "http://localhost:8080/gsacfederated/gsacapi/site/search/sites.csv?site.code=p*&gsac.repository=http://cddis.gsfc.nasa.gov/gsacws&gsac.repository=http://facility.unavco.org/gsacws&gsac.repository=http://geoappdev02.ucsd.edu/gsacws&limit=1000&site.interval=interval.normal",
+	    //            "http://localhost:8080/gsacws/gsacapi/site/search?site.group=Aegean+1989",
+	    //            "http://localhost:8080/gsacws/gsacapi/site/view?site.id=15896_5340_0",
+	    //            "http://localhost:8080/gsacws/gsacapi/site/search?site.status=decomissioned",
+	    //            "http://localhost:8080/gsacws/gsacapi/site/search?site.monument=deep+foundation+mast",
+	    //            "http://localhost:8080/gsacws/gsacapi/resource/search/resources.csv?output=resource.csv&resource.sortorder=ascending&site.code=p123&limit=1000&resource.datadate.to=2011-03-04&resource.datadate.from=2011-03-01&site.interval=interval.normal",
         };
         for(int i=0;i<1000;i++) {
             for(String url: urls) {
