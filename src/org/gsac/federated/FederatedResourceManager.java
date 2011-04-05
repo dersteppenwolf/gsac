@@ -24,8 +24,8 @@ package org.gsac.federated;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
-import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.output.resource.*;
+import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.sql.Clause;
@@ -78,10 +78,11 @@ public class FederatedResourceManager extends ResourceManager {
     public void handleResourceRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
-        if(request.defined(ARG_RESOURCE_ID)) {
+        if (request.defined(ARG_RESOURCE_ID)) {
             List<String> ids = request.get(ARG_RESOURCE_ID, new ArrayList());
-            for(String id: ids) {
-                response.addResource(getRepository().getResource(request, id));
+            for (String id : ids) {
+                response.addResource(getRepository().getResource(request,
+                        id));
             }
             return;
         }

@@ -96,9 +96,9 @@ public class FederatedSiteManager extends SiteManager {
     public void handleSiteRequest(final GsacRequest request,
                                   final GsacResponse response)
             throws Exception {
-        if(request.defined(ARG_SITE_ID)) {
+        if (request.defined(ARG_SITE_ID)) {
             List<String> ids = request.get(ARG_SITE_ID, new ArrayList());
-            for(String id: ids) {
+            for (String id : ids) {
                 response.addSite(getRepository().getSite(request, id));
             }
             return;
@@ -112,7 +112,7 @@ public class FederatedSiteManager extends SiteManager {
 
     /**
      *
-     * @param siteId site id. 
+     * @param siteId site id.
      *
      * @return the site or null if not found
      *
