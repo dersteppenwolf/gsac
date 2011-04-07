@@ -18,7 +18,9 @@
  * 
  */
 
-package org.gsac.gsl.metadata;
+package org.gsac.gsl.metadata.gnss;
+
+import org.gsac.gsl.metadata.*;
 
 
 import org.gsac.gsl.util.*;
