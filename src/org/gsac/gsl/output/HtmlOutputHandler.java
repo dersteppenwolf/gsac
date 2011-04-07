@@ -23,6 +23,7 @@ package org.gsac.gsl.output;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
