@@ -22,7 +22,10 @@ package org.gsac.gsl.metadata;
 
 
 import org.gsac.gsl.util.*;
+import org.gsac.gsl.GsacRequest;
+import org.gsac.gsl.output.HtmlOutputHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +84,24 @@ public class GsacMetadata {
         this.type  = type;
         this.label = label;
     }
+
+    public void addHtml(GsacRequest request, 
+			HtmlOutputHandler outputHandler,
+			Appendable pw) 
+	throws IOException {
+	//NOOP
+	//Assume this is in a  2 column table. First column is
+	//the label. Second is the html content.
+	//Use outputHandler.formEntry (or formEntryTop)
+	//because this adds to the table or if the request is
+	//from an iphone then it handles the layout differently
+	//
+	//	pw.append(outputHandler.formEntry(request,
+	//					  outputHandler.msgLabel("Label"),
+	//					  "html goes here"));
+    }
+			    
+
 
     /**
        Set the ForDisplay property.

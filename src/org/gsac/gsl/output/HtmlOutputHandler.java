@@ -1550,6 +1550,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             return;
         }
+
+	metadata.addHtml(request, this,pw);
+
+
     }
 
     public void makeTabs(StringBuffer tabHtml, List<String> titles, List<String>tabs) {
