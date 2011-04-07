@@ -60,6 +60,13 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
     public static final int MAX_OPEN_REQUESTS = 10;
 
 
+    /** Max number of threads to use for remote queries */
+    private static final int MAX_THREADS = 5;
+
+    /** Singleton thread pool */
+    private ExecutorService executor;
+
+
     /**
      * ctor
      */
@@ -432,6 +439,20 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
 
 
     /**
+     * Create if needed and return the singleton thread pooler 
+     *
+     */
+    private synchronized ExecutorService getExecutor(List<RepositoryCallable> callables) {
+        if(executor == null) {
+            executor = Executors.newFixedThreadPool(MAX_THREADS);
+        }
+        return  executor;
+        //        return  Executors.newFixedThreadPool(callables.size());
+    }
+
+
+
+    /**
      * Execute the callables in parallel.
      *
      * @param callables list of callables to execute
@@ -443,8 +464,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                                  StringBuffer msgBuff)
             throws Exception {
         //Use one thread per callable
-        ExecutorService executor =
-            Executors.newFixedThreadPool(callables.size());
+        ExecutorService executor = getExecutor(callables);
         //This will return when they are all done or when the timeout was reached
         //The list of results corresponds to the list of callables
         List<Future<Boolean>> results = executor.invokeAll(callables,
@@ -462,8 +482,9 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             }
         }
 
+        //NOTE: Don't do this if we are using the singleton executor
         //This clears out any threads
-        executor.shutdownNow();
+        //        executor.shutdownNow();
 
     }
 
