@@ -398,8 +398,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
     public void handleSiteRequest(GsacRequest gsacRequest,
                                   GsacResponse gsacResponse)
             throws Exception {
+        long t1 = System.currentTimeMillis();
         getRepository().handleSiteRequest(gsacRequest, gsacResponse);
+        long t2 = System.currentTimeMillis();
         handleSiteResult(gsacRequest, gsacResponse);
+        long t3 = System.currentTimeMillis();
+        System.err.println("GSAC.handleSiteRequest time to read:" + (t2-t1) +" time to encode:" + (t3-t2) +" #sites:" + gsacResponse.getSites().size());
     }
 
 
