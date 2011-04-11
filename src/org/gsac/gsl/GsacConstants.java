@@ -37,27 +37,6 @@ public interface GsacConstants extends GsacArgs {
 
 
 
-
-
-
-    /** _more_ */
-    public static final String PROP_REPOSITORY_CLASS =
-        "gsac.repository.class";
-
-    /** _more_ */
-    public static final String PROP_BASEURL = "gsac.baseurl";
-
-    /** _more_ */
-    public static final String PROP_GSACDIRECTORY = "gsac.directory";
-
-    /** _more_ */
-    public static final String PROP_REPOSITORY_NAME = "gsac.repository.name";
-    public static final String PROP_REPOSITORY_ICON = "gsac.repository.icon";
-
-    /** _more_ */
-    public static final String PROP_REPOSITORY_DESCRIPTION =
-        "gsac.repository.description";
-
     /** The top-level url path */
     public static final String URL_BASE = "/gsacapi";
 

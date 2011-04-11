@@ -66,20 +66,30 @@ import javax.servlet.http.*;
 
 
 /**
- * This provides a default implementation of the GsacRepository interface.
+ * This is the base class for the GSL repository
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 public class GsacRepository implements GsacConstants {
 
-    /** _more_ */
-    private Logger LOG;
+    /** property  */
+    public static final String PROP_REPOSITORY_CLASS =
+        "gsac.repository.class";
 
-    /** _more_ */
-    private Logger ACCESSLOG;
+    /** property  */
+    public static final String PROP_BASEURL = "gsac.baseurl";
 
-    /** _more_ */
-    private File logDirectory;
+    /** property  */
+    public static final String PROP_GSACDIRECTORY = "gsac.directory";
+
+    /** property  */
+    public static final String PROP_REPOSITORY_NAME = "gsac.repository.name";
+    public static final String PROP_REPOSITORY_ICON = "gsac.repository.icon";
+
+    /** property  */
+    public static final String PROP_REPOSITORY_DESCRIPTION =
+        "gsac.repository.description";
+
 
     /** cache id */
     private static final String PROP_SITECAPABILITIES =
@@ -92,30 +102,44 @@ public class GsacRepository implements GsacConstants {
     /** cache id */
     private static final String PROP_RESOURCETYPES = "prop.resourcetypes";
 
-    /** _more_ */
+    /** property for host name. This is the external host name that is used for things like kml, etc,
+     where we need a full hostname/url
+    */
     private static final String PROP_HOSTNAME = "gsac.server.hostname";
 
-    /** _more_ */
+    /** property for port we run on */
     private static final String PROP_PORT = "gsac.server.port";
 
-    /** _more_ */
+    /** xml tag name for the repository info  */
     public static final String TAG_REPOSITORY = "repository";
 
-    /** _more_ */
+    /** xml tag name */
     public static final String TAG_DESCRIPTION = "description";
 
-    /** _more_ */
+    /** xml attribute */
     public static final String ATTR_NAME = "name";
 
-    /** _more_ */
+    /** xml attribute */
     public static final String ATTR_URL = "url";
-
 
 
     /** the servlet */
     private GsacServlet servlet;
 
-    /** the database manager_ */
+
+    /** logger */
+    private Logger LOG;
+
+    /** access logger */
+    private Logger ACCESSLOG;
+
+    /** Points to wehre to write logs to. May be null */
+    private File logDirectory;
+
+    /** local directory to write stuff to */
+    private File gsacDirectory;
+
+    /** the database manager */
     private GsacDatabaseManager databaseManager;
 
     /** the site manager */
@@ -157,65 +181,39 @@ public class GsacRepository implements GsacConstants {
     private TTLObject<List<GsacRepositoryInfo>> servers =
         new TTLObject<List<GsacRepositoryInfo>>(TTLCache.MS_IN_AN_HOUR * 6);
 
-    /** _more_ */
+    /** The base path of the url, e.g. /gsacws
+     This is repository specific, so, for example, the federated repository uses /gsacfederated
+    */
     private String urlBase;
 
-    /** _more_ */
+    /** This repositories information */
     private GsacRepositoryInfo myInfo;
 
-    /** _more_ */
-    private Hashtable<String, Vocabulary> vocabularies =
-        new Hashtable<String, Vocabulary>();
-
-    /** _more_          */
-    private List<Vocabulary> vocabularyList = new ArrayList<Vocabulary>();
-
-    /** _more_ */
-    private File gsacDirectory;
 
 
-    /** _more_ */
-    private int numConnections = 0;
 
-    /** _more_ */
+    /** Keeps track of the number of service requests for the stats page */
+    private int numServiceRequests = 0;
+
+    /** for the stats page */
     private Date startDate = new Date();
 
 
-    /** _more_ */
+    /** reference to html output handler */
     private HtmlOutputHandler htmlOutputHandler;
 
 
-    /**
-     * Class description
-     *
-     *
-     * @version        $version$, Tue, Feb 8, '11
-     * @author         Enter your name here...    
-     */
-    private static class OutputGroup {
+    /** Map of vocab id (usually the url argument id) to the vocabulary */
+    private Hashtable<String, Vocabulary> vocabularies =
+        new Hashtable<String, Vocabulary>();
 
-        /** _more_          */
-        private String id;
-
-        /** _more_          */
-        private List<GsacOutput> outputs = new ArrayList<GsacOutput>();
-
-        /** _more_          */
-        private Hashtable<String, GsacOutput> map = new Hashtable<String,
-                                                        GsacOutput>();
-
-        /**
-         * _more_
-         *
-         * @param id _more_
-         */
-        public OutputGroup(String id) {
-            this.id = id;
-        }
-    }
+    /** All the vocabularies     */
+    private List<Vocabulary> vocabularyList = new ArrayList<Vocabulary>();
 
 
-    /** _more_          */
+
+
+    /** map of ouput group id to output group   */
     private Hashtable<String, OutputGroup> outputs = new Hashtable<String,
                                                          OutputGroup>();
 
@@ -247,251 +245,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
-    /**
-     * Add output type
-     *
-     *
-     * @param group _more_
-     * @param output  output type
-     */
-    public void addOutput(String group, GsacOutput output) {
-        if (getProperty(output.getProperty("enabled"), true)) {
-            OutputGroup outputGroup = outputs.get(group);
-            if (outputGroup == null) {
-                outputs.put(group, outputGroup = new OutputGroup(group));
-            }
-            outputGroup.map.put(output.getId(), output);
-            outputGroup.outputs.add(output);
-        }
-    }
-
-
-    /**
-     * Find the output handler
-     *
-     *
-     *
-     * @param group _more_
-     * @param output output type
-     * @param map map to use
-     *
-     * @return output handler
-     */
-    public GsacOutputHandler getOutputHandler(String group, String output) {
-        OutputGroup outputGroup = outputs.get(group);
-        if (outputGroup == null) {
-            throw new IllegalArgumentException("Unknown output group:"
-                    + group);
-        }
-
-        GsacOutput gsacOutput = outputGroup.map.get(output);
-        if (gsacOutput == null) {
-            throw new IllegalArgumentException("Unknown output type:"
-                    + output);
-        }
-        return gsacOutput.getOutputHandler();
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param group _more_
-     * @param request _more_
-     *
-     * @return _more_
-     */
-    public GsacOutputHandler getOutputHandler(String group,
-            GsacRequest request) {
-        String arg = request.get(ARG_OUTPUT, (String) null);
-
-        for (GsacOutput output : getOutputs(group)) {
-            if (request.defined(output.getId())) {
-                arg = output.getId();
-                break;
-            }
-        }
-
-        if (arg == null) {
-            OutputGroup outputGroup = outputs.get(group);
-            if (outputGroup == null) {
-                throw new IllegalArgumentException("Unknown output group:"
-                        + group);
-            }
-            //See if we have an output id as a submit button name
-            for (GsacOutput output : outputGroup.outputs) {
-                if (request.defined(output.getId())) {
-                    return getOutputHandler(group, output.getId());
-                }
-            }
-            arg = outputGroup.outputs.get(0).getId();
-        }
-        return getOutputHandler(group, arg);
-    }
-
-
-
-    /**
-     * _more_
-     *
-     * @param vocabularyId _more_
-     * @param value _more_
-     *
-     * @return _more_
-     */
-    public List<String> externalToInternal(String vocabularyId,
-                                           String value) {
-        Vocabulary vocabulary = getVocabulary(vocabularyId);
-        if (vocabulary != null) {
-            return vocabulary.externalToInternal(value);
-        }
-        List<String> list = new ArrayList<String>();
-        list.add(value);
-        return list;
-    }
-
-    /**
-     * _more_
-     *
-     * @param vocabularyId _more_
-     * @param value _more_
-     *
-     * @return _more_
-     */
-    public IdLabel internalToExternal(String vocabularyId, String value) {
-        Vocabulary vocabulary = getVocabulary(vocabularyId);
-        if (vocabulary != null) {
-            String externalValue = vocabulary.internalToExternal(value);
-            if (externalValue != null) {
-                return vocabulary.getIdLabel(externalValue);
-            }
-        }
-        return new IdLabel(value);
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param key _more_
-     * @param incoming _more_
-     *
-     * @return _more_
-     */
-    public List<String> convertToInternal(String key, List<String> incoming) {
-        return convertToInternal(getVocabulary(key), key, incoming);
-    }
-
-
-
-
-
-    /**
-     * _more_
-     *
-     * @param vocabulary _more_
-     * @param key _more_
-     * @param incoming _more_
-     *
-     * @return _more_
-     */
-    public List<String> convertToInternal(Vocabulary vocabulary, String key,
-                                          List<String> incoming) {
-        if (vocabulary == null) {
-            return incoming;
-        }
-        List<String> result = new ArrayList<String>();
-        for (String incomingValue : incoming) {
-            for (String s : vocabulary.expandValue(incomingValue)) {
-                result.addAll(vocabulary.externalToInternal(s));
-            }
-        }
-        return result;
-    }
-
-
-
-
-
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public File getGsacDirectory() {
-        return gsacDirectory;
-    }
-
-    /**
-     * _more_
-     *
-     * @param id _more_
-     *
-     * @return _more_
-     */
-    public Vocabulary getVocabulary(String id) {
-        return getVocabulary(id, false);
-    }
-
-    /**
-     * _more_
-     *
-     * @param id _more_
-     * @param createIfNeeded _more_
-     *
-     * @return _more_
-     */
-    public Vocabulary getVocabulary(String id, boolean createIfNeeded) {
-        Vocabulary vocabulary = vocabularies.get(id);
-        if ((vocabulary == null) && createIfNeeded) {
-            vocabulary = getVocabularyFromType(id);
-        }
-        return vocabulary;
-    }
-
-    /**
-     * _more_
-     *
-     * @param vocabulary _more_
-     */
-    public void addVocabulary(Vocabulary vocabulary) {
-        if (vocabularies.get(vocabulary.getId()) == null) {
-            vocabularyList.add(vocabulary);
-        }
-        vocabularies.put(vocabulary.getId(), vocabulary);
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param object _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    public String encodeObject(Object object) throws Exception {
-        return XmlEncoder.encodeObject(object);
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param xml _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    public Object decodeObject(String xml) throws Exception {
-        return XmlEncoder.decodeXml(xml);
-    }
-
-
     /**
      * Initialize the servlet
      *
@@ -505,7 +258,7 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * Do initialization
      *
      * @throws Exception On badness
      */
@@ -648,44 +401,11 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
     /**
-     * _more_
+     * initialize the log directory. This will make a /logs sub-directory of the gsacDir. It will then write the
+     * log4j.properties from the resources java dir
      *
-     * @param path _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    public InputStream getResourceInputStream(String path) throws Exception {
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            inputStream = GsacRepository.class.getResourceAsStream(path);
-        }
-
-
-        if (inputStream == null) {
-            List classLoaders = Misc.getClassLoaders();
-            for (int i = 0; i < classLoaders.size(); i++) {
-                try {
-                    ClassLoader cl = (ClassLoader) classLoaders.get(i);
-                    inputStream = cl.getResourceAsStream(path);
-                    if (inputStream != null) {
-                        break;
-                    }
-                } catch (Exception exc) {}
-            }
-        }
-        return inputStream;
-    }
-
-
-
-    /**
-     * _more_
-     *
-     * @param gsacDir _more_
+     * @param gsacDir the gsac dir
      */
     public void initLogDir(File gsacDir) {
         logDirectory = new File(gsacDirectory.toString() + "/logs");
@@ -710,11 +430,277 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Add output type
      *
-     * @param fileName _more_
      *
-     * @return _more_
+     * @param group Which group, e.g., SITE, RESOURCE
+     * @param output  output type
+     */
+    public void addOutput(String group, GsacOutput output) {
+        if (getProperty(output.getProperty("enabled"), true)) {
+            OutputGroup outputGroup = outputs.get(group);
+            if (outputGroup == null) {
+                outputs.put(group, outputGroup = new OutputGroup(group));
+            }
+            outputGroup.map.put(output.getId(), output);
+            outputGroup.outputs.add(output);
+        }
+    }
+
+
+    /**
+     * Find the output handler
+     *
+     *
+     * @param group output group, e.g., SITE, RESOURCE
+     * @param output output type
+     * @param map map to use
+     *
+     * @return output handler
+     */
+    public GsacOutputHandler getOutputHandler(String group, String output) {
+        OutputGroup outputGroup = outputs.get(group);
+        if (outputGroup == null) {
+            throw new IllegalArgumentException("Unknown output group:"
+                    + group);
+        }
+
+        GsacOutput gsacOutput = outputGroup.map.get(output);
+        if (gsacOutput == null) {
+            throw new IllegalArgumentException("Unknown output type:"
+                    + output);
+        }
+        return gsacOutput.getOutputHandler();
+    }
+
+
+    /**
+     * Find the output handler specified by the ARG_OUTPUT in the request within the given group of
+     * otutput handlers
+     *
+     * @param group output group, e.g., SITE, RESOURCE
+     * @param request the request
+     *
+     * @return the output handler
+     */
+    public GsacOutputHandler getOutputHandler(String group,
+            GsacRequest request) {
+        String arg = request.get(ARG_OUTPUT, (String) null);
+
+        for (GsacOutput output : getOutputs(group)) {
+            if (request.defined(output.getId())) {
+                arg = output.getId();
+                break;
+            }
+        }
+
+        if (arg == null) {
+            OutputGroup outputGroup = outputs.get(group);
+            if (outputGroup == null) {
+                throw new IllegalArgumentException("Unknown output group:"
+                        + group);
+            }
+            //See if we have an output id as a submit button name
+            for (GsacOutput output : outputGroup.outputs) {
+                if (request.defined(output.getId())) {
+                    return getOutputHandler(group, output.getId());
+                }
+            }
+            arg = outputGroup.outputs.get(0).getId();
+        }
+        return getOutputHandler(group, arg);
+    }
+
+
+
+    /**
+     * Convert the given external vocabulary value to the one or more internal mappings
+     * for the given vocabulary
+     *
+     * @param vocabularyId the given vocabulary (e,g, ARG_GROUP)
+     * @param value The external value
+     *
+     * @return internal local mapping of the external value
+     */
+    public List<String> externalToInternal(String vocabularyId,
+                                           String value) {
+        Vocabulary vocabulary = getVocabulary(vocabularyId);
+        if (vocabulary != null) {
+            return vocabulary.externalToInternal(value);
+        }
+        List<String> list = new ArrayList<String>();
+        list.add(value);
+        return list;
+    }
+
+    /**
+     * Map the internal vocab value to its external form
+     *
+     * @param vocabularyId which vocab to use
+     * @param value internal value
+     *
+     * @return mapped value. IdLabel holds an id and a label
+     */
+    public IdLabel internalToExternal(String vocabularyId, String value) {
+        Vocabulary vocabulary = getVocabulary(vocabularyId);
+        if (vocabulary != null) {
+            String externalValue = vocabulary.internalToExternal(value);
+            if (externalValue != null) {
+                return vocabulary.getIdLabel(externalValue);
+            }
+        }
+        return new IdLabel(value);
+    }
+
+
+    /**
+     * Utility to convert a list of external vocab values
+     *
+     * @param key vocab id
+     * @param incoming external values
+     *
+     * @return converted values
+     */
+    public List<String> convertToInternal(String key, List<String> incoming) {
+        return convertToInternal(getVocabulary(key), key, incoming);
+    }
+
+
+
+    /**
+     * Utility to convert a list of external vocab values
+     *
+     * @param vocabulary the vocab
+     * @param key vocab id
+     * @param incoming external values
+     *
+     * @return converted values
+     */
+    public List<String> convertToInternal(Vocabulary vocabulary, String key,
+                                          List<String> incoming) {
+        if (vocabulary == null) {
+            return incoming;
+        }
+        List<String> result = new ArrayList<String>();
+        for (String incomingValue : incoming) {
+            for (String s : vocabulary.expandValue(incomingValue)) {
+                result.addAll(vocabulary.externalToInternal(s));
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * find the vocabulary for the given id
+     *
+     * @param id vocab id
+     *
+     * @return vocabulary
+     */
+    public Vocabulary getVocabulary(String id) {
+        return getVocabulary(id, false);
+    }
+
+    /**
+     * find the vocabulary for the given id
+     *
+     * @param id vocab id
+     * @param createIfNeeded If true then create the vocabulary if it does not exist
+     *
+     * @return vocabulary
+     */
+    public Vocabulary getVocabulary(String id, boolean createIfNeeded) {
+        Vocabulary vocabulary = vocabularies.get(id);
+        if ((vocabulary == null) && createIfNeeded) {
+            vocabulary = getVocabularyFromType(id);
+        }
+        return vocabulary;
+    }
+
+    /**
+     * Add the vocabulary to the list of vocabs
+     *
+     * @param vocabulary  the vocab
+     */
+    public void addVocabulary(Vocabulary vocabulary) {
+        if (vocabularies.get(vocabulary.getId()) == null) {
+            vocabularyList.add(vocabulary);
+        }
+        vocabularies.put(vocabulary.getId(), vocabulary);
+    }
+
+
+    /**
+     * Convert the object into an xml representation
+     *
+     * @param object Object to convert
+     *
+     * @return xml of the object
+     *
+     * @throws Exception On badness
+     */
+    public String encodeObject(Object object) throws Exception {
+        return XmlEncoder.encodeObject(object);
+    }
+
+
+    /**
+     * decode the object from an xml representation
+     *
+     * @param xml xml
+     *
+     * @return the object
+     *
+     * @throws Exception On badness
+     */
+    public Object decodeObject(String xml) throws Exception {
+        return XmlEncoder.decodeXml(xml);
+    }
+
+
+
+    /**
+     * Utility to get an input stream for a java resource
+     *
+     * @param path resource path
+     *
+     * @return input stream or null if we couldn't open it
+     *
+     * @throws Exception On badness
+     */
+    public InputStream getResourceInputStream(String path) throws Exception {
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            inputStream = GsacRepository.class.getResourceAsStream(path);
+        }
+
+        if (inputStream == null) {
+            List classLoaders = Misc.getClassLoaders();
+            for (int i = 0; i < classLoaders.size(); i++) {
+                try {
+                    ClassLoader cl = (ClassLoader) classLoaders.get(i);
+                    inputStream = cl.getResourceAsStream(path);
+                    if (inputStream != null) {
+                        break;
+                    }
+                } catch (Exception exc) {}
+            }
+        }
+        return inputStream;
+    }
+
+
+
+
+
+    /**
+     * This reads the given resource file. It looks in the local repository resources package
+     * and then the gsl/resources package. It will return null if the resource cannot be found
+     *
+     * @param fileName resource file name
+     *
+     * @return file contents or null
      */
     public String readResource(String fileName) {
         String[] paths = { getLocalResourcePath(fileName),
@@ -733,13 +719,15 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * A hook to check the request. This allows the derived repository class to 
+     * to tell the html output to not try to process the request. Not sure why we do this
+     * but there must be a reason
      *
-     * @param request _more_
-     * @param response _more_
-     * @param sb _more_
+     * @param request the request
+     * @param response The response to write to
+     * @param sb Buffer to append to
      *
-     * @return _more_
+     * @return Is request OK
      *
      * @throws Exception On badness
      */
@@ -751,9 +739,10 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Get list of remote servers we deal with. Default is none but the FederatedRepository
+     * gives some back
      *
-     * @return _more_
+     * @return remote repositories
      */
     public List<GsacRepositoryInfo> getServers() {
         List<GsacRepositoryInfo> list = servers.get();
@@ -824,10 +813,10 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Initialize the remote repository. Merge its capabilities with all the others
      *
-     * @param info _more_
-     * @param collectionToUsedCapabilities _more_
+     * @param info repository info
+     * @param collectionToUsedCapabilities holds the capabilities
      *
      * @throws Exception On badness
      */
@@ -861,11 +850,11 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Get the remote repositories specified in the request
      *
-     * @param request _more_
+     * @param request the request
      *
-     * @return _more_
+     * @return selected remote repositories
      */
     public List<GsacRepositoryInfo> getServers(GsacRequest request) {
         List<GsacRepositoryInfo> allServers = getServers();
@@ -888,11 +877,11 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Find the remote repository that is at the given url
      *
-     * @param url _more_
+     * @param url url
      *
-     * @return _more_
+     * @return remote repository or null if none found
      */
     public GsacRepositoryInfo getRepositoryInfo(String url) {
         for (GsacRepositoryInfo info : getServers()) {
@@ -904,11 +893,13 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * This fetches the remote repository information from the server given by the repositoryUrl
+     * Right now this uses the Unidata java object/xml encoder/decoder. We need to move to a simple
+     * xml representation
      *
-     * @param repositoryUrl _more_
+     * @param repositoryUrl Points to remote server.
      *
-     * @return _more_
+     * @return repository info object.
      *
      * @throws Exception On badness
      */
@@ -923,9 +914,9 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * A hook for derived classes to create and define remote repositories
      *
-     * @param servers _more_
+     * @param servers list to add to
      */
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {}
 
@@ -934,9 +925,9 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Get the base path of the url, e.g., /gsacws. This looks for the PROP_BASEURL property
      *
-     * @return _more_
+     * @return url base path
      */
     public String getUrlBase() {
         if (urlBase == null) {
@@ -946,31 +937,37 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * get name to use
      *
-     * @return _more_
+     * @return repository name
      */
     public String getRepositoryName() {
         return getProperty(PROP_REPOSITORY_NAME, "GSAC Repository");
     }
 
+
+    /**
+     * get icon to use
+     *
+     * @return repository icon path
+     */
     public String getRepositoryIcon() {
         return getProperty(PROP_REPOSITORY_ICON, (String) null);
     }
 
     /**
-     * _more_
+     * get repository description
      *
-     * @return _more_
+     * @return repository description
      */
     public String getRepositoryDescription() {
         return getProperty(PROP_REPOSITORY_DESCRIPTION, "");
     }
 
     /**
-     * _more_
+     * Does this repository handle resources.
      *
-     * @return _more_
+     * @return can do resources
      */
     public boolean canDoResources() {
         return true;
@@ -995,9 +992,10 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Get the java package path. We use this to look up things in the resources subdir.
+     * This  will be the path  to the derived class, e.g., /org/unavco/projects/gsac/repository
      *
-     * @return _more_
+     * @return java package path
      */
     public String getPackagePath() {
         String packageName = getClass().getPackage().getName();
@@ -1007,22 +1005,22 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Get the full java resource path to the local gsl/resources dir
      *
-     * @param fileTail _more_
+     * @param fileTail file name under resources
      *
-     * @return _more_
+     * @return full path
      */
     public String getCoreResourcePath(String fileTail) {
         return "/org/gsac/gsl/resources" + fileTail;
     }
 
     /**
-     * _more_
+     * get the path to the derived repository's htdocs dir
      *
-     * @param fileTail _more_
+     * @param fileTail file name under htdocs
      *
-     * @return _more_
+     * @return Full path to htdocs file
      */
     public String getLocalHtdocsPath(String fileTail) {
 	if(fileTail.startsWith("/"))
@@ -1031,9 +1029,9 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * Add content for stats page
      *
-     * @param sb _more_
+     * @param sb buffer
      */
     public void addStats(StringBuffer sb) {
         if (databaseManager != null) {
@@ -1149,7 +1147,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Is this repository capable of certain things
      *
      * @param arg _more_
      *
@@ -1200,7 +1198,7 @@ public class GsacRepository implements GsacConstants {
      * Main entry point
      *
      *
-     * @param request _more_
+     * @param request the request
      *
      * @throws IOException On badness
      * @throws ServletException On badness
@@ -1225,7 +1223,7 @@ public class GsacRepository implements GsacConstants {
         try {
             boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
             if (serviceRequest) {
-                numConnections++;
+                numServiceRequests++;
                 //                getRepository().logInfo("start url:" + uri);
             }
             String what = "other";
@@ -1377,8 +1375,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response The response to write to
      *
      * @throws Exception On badness
      */
@@ -1429,8 +1427,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response The response to write to
      *
      * @throws Exception On badness
      */
@@ -1456,7 +1454,7 @@ public class GsacRepository implements GsacConstants {
         sb.append(HtmlUtil.formEntry("Used Memory:",
                                      fmt.format(usedMemory) + " (MB)"));
 
-        sb.append(HtmlUtil.formEntry("# Requests:", "" + numConnections));
+        sb.append(HtmlUtil.formEntry("# Requests:", "" + numServiceRequests));
         sb.append(HtmlUtil.formEntry("Start Time:", "" + startDate));
 
 
@@ -1531,7 +1529,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request the request
      * @param siteId _more_
      *
      * @return _more_
@@ -1962,7 +1960,7 @@ public class GsacRepository implements GsacConstants {
      * this method to add the full metadata to the site
      *
      *
-     * @param request _more_
+     * @param request the request
      * @param gsacSite  The site
      *
      * @throws Exception On badness
@@ -1982,7 +1980,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request the request
      * @param gsacResource _more_
      *
      * @throws Exception On badness
@@ -2195,7 +2193,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request the request
      * @param resourceId _more_
      *
      * @return _more_
@@ -2414,7 +2412,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request the request
      * @param what _more_
      */
     public void logAccess(GsacRequest request, String what) {
@@ -2588,8 +2586,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response The response to write to
      *
      * @throws Exception On badness
      */
@@ -2608,8 +2606,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response The response to write to
      *
      * @throws Exception On badness
      */
@@ -2645,8 +2643,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response The response to write to
      *
      * @throws Exception On badness
      */
@@ -2683,8 +2681,8 @@ public class GsacRepository implements GsacConstants {
      *
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response The response to write to
      *
      * @throws Exception On badness
      */
@@ -2849,7 +2847,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request the request
      * @param pw _more_
      * @param info _more_
      * @param showList _more_
@@ -3034,7 +3032,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request the request
      *
      * @return _more_
      */
@@ -3050,14 +3048,24 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Make the given path into a full url
      *
-     * @param path _more_
+     * @param path path
      *
-     * @return _more_
+     * @return full url
      */
     public String getAbsoluteUrl(String path) {
         return servlet.getAbsoluteUrl(path);
+    }
+
+
+    /**
+     * get the local directory we can write things to
+     *
+     * @return local gsac dir
+     */
+    public File getGsacDirectory() {
+        return gsacDirectory;
     }
 
 
@@ -3097,11 +3105,8 @@ public class GsacRepository implements GsacConstants {
         return HtmlUtil.url(getUrlBase() + path, args);
     }
 
-
-
     /**
      * _more_
-     *
      *
      * @param group _more_
      * @return _more_
@@ -3119,70 +3124,99 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * utility for making an html dialog
      *
-     * @param h _more_
+     * @param message message
      *
-     * @return _more_
+     * @return html
      */
-    public String makeInformationDialog(String h) {
-        return makeDialog(h, "/information.png", true);
+    public String makeInformationDialog(String message) {
+        return makeDialog(message, "/information.png", true);
     }
 
     /**
-     * _more_
+     * utility for making an html dialog
      *
-     * @param h _more_
+     * @param message messaeg
      *
-     * @return _more_
+     * @return html
      */
-    public String makeWarningDialog(String h) {
-        return makeDialog(h, "/warning.png", true);
+    public String makeWarningDialog(String message) {
+        return makeDialog(message, "/warning.png", true);
     }
 
     /**
-     * _more_
+     * utility for making an html dialog
      *
-     * @param h _more_
+     * @param message message
      *
-     * @return _more_
+     * @return html
      */
-    public String makeErrorDialog(String h) {
-        return makeDialog(h, "/error.png", true);
+    public String makeErrorDialog(String message) {
+        return makeDialog(message, "/error.png", true);
     }
 
+
+
     /**
-     * _more_
+     * Holds a collection of output handlers, e.g., all of the ones for sites or resources
      *
-     * @param h _more_
-     * @param icon _more_
-     * @param showClose _more_
-     *
-     * @return _more_
      */
-    public String makeDialog(String h, String icon, boolean showClose) {
+    private static class OutputGroup {
+
+        /** group id      */
+        private String id;
+
+        /** my outputs      */
+        private List<GsacOutput> outputs = new ArrayList<GsacOutput>();
+
+        /** map of output id to output handler       */
+        private Hashtable<String, GsacOutput> map = new Hashtable<String,
+                                                        GsacOutput>();
+
+        /**
+         * ctor
+         *
+         * @param id group id
+         */
+        public OutputGroup(String id) {
+            this.id = id;
+        }
+    }
+
+
+    /**
+     * utility for making an html dialog
+     *
+     * @param message message
+     * @param icon icon to use
+     * @param showClose add a close button
+     *
+     * @return html
+     */
+    public String makeDialog(String message, String icon, boolean showClose) {
         String html =
             HtmlUtil.jsLink(HtmlUtil.onMouseClick("hide('messageblock')"),
                             HtmlUtil.img(iconUrl("/close.gif")));
         if ( !showClose) {
             html = "&nbsp;";
         }
-        h = "<div class=\"innernote\"><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td valign=\"top\">"
+        message = "<div class=\"innernote\"><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td valign=\"top\">"
             + HtmlUtil.img(iconUrl(icon)) + HtmlUtil.space(2)
-            + "</td><td valign=\"bottom\"><span class=\"notetext\">" + h
+            + "</td><td valign=\"bottom\"><span class=\"notetext\">" + message
             + "</span></td></tr></table></div>";
         return "\n<table border=\"0\" id=\"messageblock\"><tr><td><div class=\"note\"><table><tr valign=top><td>"
-               + h + "</td><td>" + html + "</td></tr></table>"
+               + message + "</td><td>" + html + "</td></tr></table>"
                + "</div></td></tr></table>\n";
     }
 
 
     /**
-     * _more_
+     * utility for mapping a phrase in the external translation of it
      *
-     * @param msg _more_
+     * @param msg message
      *
-     * @return _more_
+     * @return translated message
      */
     public String msg(String msg) {
         String newMsg = translatePhrase(msg);

@@ -235,17 +235,17 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      */
     private GsacRepository createRepositoryViaReflection() throws Exception {
         String className =
-            (String) properties.get(GsacConstants.PROP_REPOSITORY_CLASS);
+            (String) properties.get(GsacRepository.PROP_REPOSITORY_CLASS);
         if (className == null) {
             className =
-                System.getProperty(GsacConstants.PROP_REPOSITORY_CLASS,
+                System.getProperty(GsacRepository.PROP_REPOSITORY_CLASS,
                                    (String) null);
         }
         if (className == null) {
             className = DFLT_REPOSITORY_CLASS;
             System.err.println(
                 "No repository class name defined. Using the Example repository.\nTo use your own repository set the system property:\n"
-                + " java -D" + GsacConstants.PROP_REPOSITORY_CLASS
+                + " java -D" + GsacRepository.PROP_REPOSITORY_CLASS
                 + "=your.gsac.repository.class");
         }
         System.err.println("GsacServlet:initServlet: making repository:"
