@@ -66,11 +66,20 @@ import javax.servlet.http.*;
 
 
 /**
- * This is the base class for the GSL repository
+ * This is the base class for the GSL repository. The main entry point is
+ * the method:<pre> handleRequest(GsacRequest request);</pre>
+ * This serves to dispatch the request to the appropriate handler
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 public class GsacRepository implements GsacConstants {
+
+    public static final String GSAC_PATH_ROOT = "/org/gsac/gsl";
+    public static final String GSAC_PATH_HTDOCS = GSAC_PATH_ROOT +"/htdocs";
+    public static final String GSAC_PATH_HELP = GSAC_PATH_ROOT +"/help";
+    public static final String GSAC_PATH_RESOURCES = GSAC_PATH_ROOT +"/resources";
+
+
 
     /** property  */
     public static final String PROP_REPOSITORY_CLASS =
@@ -267,7 +276,7 @@ public class GsacRepository implements GsacConstants {
         LogUtil.setTestMode(true);
         InputStream inputStream;
         //load property files first
-        String[] propertyFiles = { "/org/gsac/gsl/resources/gsac.properties",
+        String[] propertyFiles = { GSAC_PATH_RESOURCES+"/gsac.properties",
                                    getLocalResourcePath("/gsac.properties"),
                                    getLocalResourcePath(
                                        "/gsacserver.properties") };
@@ -278,8 +287,8 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        mobileHeader = IOUtil.readContents("/org/gsac/gsl/resources/mobileheader.html",mobileHeader);
-        mobileFooter = IOUtil.readContents("/org/gsac/gsl/resources/mobilefooter.html",mobileFooter);
+        mobileHeader = IOUtil.readContents(GSAC_PATH_RESOURCES+"/mobileheader.html",mobileHeader);
+        mobileFooter = IOUtil.readContents(GSAC_PATH_RESOURCES+"/mobilefooter.html",mobileFooter);
         mobileHeader = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
         mobileFooter = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
 
@@ -299,7 +308,7 @@ public class GsacRepository implements GsacConstants {
                                             getUrlBase() + URL_BASE);
         }
 
-        String[] files = { "/org/gsac/gsl/resources/phrases.properties",
+        String[] files = { GSAC_PATH_RESOURCES+"/phrases.properties",
                            getLocalResourcePath("/phrases.properties") };
         for (String file : files) {
             inputStream = getResourceInputStream(file);
@@ -442,8 +451,7 @@ public class GsacRepository implements GsacConstants {
             if (outputGroup == null) {
                 outputs.put(group, outputGroup = new OutputGroup(group));
             }
-            outputGroup.map.put(output.getId(), output);
-            outputGroup.outputs.add(output);
+            outputGroup.addOutput(output);
         }
     }
 
@@ -465,7 +473,7 @@ public class GsacRepository implements GsacConstants {
                     + group);
         }
 
-        GsacOutput gsacOutput = outputGroup.map.get(output);
+        GsacOutput gsacOutput = outputGroup.getOutput(output);
         if (gsacOutput == null) {
             throw new IllegalArgumentException("Unknown output type:"
                     + output);
@@ -501,12 +509,12 @@ public class GsacRepository implements GsacConstants {
                         + group);
             }
             //See if we have an output id as a submit button name
-            for (GsacOutput output : outputGroup.outputs) {
+            for (GsacOutput output : outputGroup.getOutputs()) {
                 if (request.defined(output.getId())) {
                     return getOutputHandler(group, output.getId());
                 }
             }
-            arg = outputGroup.outputs.get(0).getId();
+            arg = outputGroup.getOutputs().get(0).getId();
         }
         return getOutputHandler(group, arg);
     }
@@ -1012,7 +1020,7 @@ public class GsacRepository implements GsacConstants {
      * @return full path
      */
     public String getCoreResourcePath(String fileTail) {
-        return "/org/gsac/gsl/resources" + fileTail;
+        return GSAC_PATH_RESOURCES + fileTail;
     }
 
     /**
@@ -1190,13 +1198,8 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
-
-
-
     /**
-     * Main entry point
-     *
+     * Main entry point for incoming requests
      *
      * @param request the request
      *
@@ -1216,29 +1219,34 @@ public class GsacRepository implements GsacConstants {
 
         //TODO: What to do with a head request
         if (request.getMethod().toUpperCase().equals("HEAD")) {
-            System.err.println("****** head:" + uri);
+            System.err.println("GSAC: got a  head request:" + uri);
             return;
         }
 
         try {
+            //We either have service requests or /htdcos requests
             boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
             if (serviceRequest) {
                 numServiceRequests++;
                 //                getRepository().logInfo("start url:" + uri);
             }
             String what = "other";
+
             if (uri.indexOf(URL_SITE_BASE) >= 0) {
+                //site request
                 what = URL_SITE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
                 outputHandler.handleSiteRequest(request);
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
+                //resource request
                 what = URL_RESOURCE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
 
                 outputHandler.handleResourceRequest(request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
+                //browse request
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_BROWSE, request);
                 outputHandler.handleBrowseRequest(request);
@@ -1249,18 +1257,18 @@ public class GsacRepository implements GsacConstants {
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleHtdocsRequest(request);
             } else if (uri.endsWith(URL_BASE)|| uri.equals(getUrlBase())) {
+                //This is for /gsacws/gsacpi top level requests. It just lists the index page.
                 handleIndexRequest(request, new GsacResponse(request));
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
+                //Repository information
                 handleViewRequest(request, new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
                 //                logError("Unknown request:" + uri, null);
             }
-            //Only log the access if its actuall a service request (as opposed to htdocs requests)
+            //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
                 logAccess(request, what);
-                //                System.err.println (getDatabaseManager().getPoolStats());
-                //                System.out.println("http://${server}" + request.toString());
             }
         } catch (UnknownRequestException exc) {
             logError("Unknown request:" + uri + "?" + request.getUrlArgs(),
@@ -1270,6 +1278,7 @@ public class GsacRepository implements GsacConstants {
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection
         } catch (Exception exc) {
+            //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
             logError("Error processing request:" + uri + "?"
                      + request.getUrlArgs(), thr);
@@ -1283,7 +1292,13 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * the GsacRepository holds all of its web content in the java jar files and
+     * accesses them as java resources. This looks in gsl/htdocs as well
+     * as the repository instances <repository>/htdocs dir for content.
+     * It is a .js, .css or .jnlp file then they are treated as templates
+     * and the macros ${fullurlroot} and ${urlroot} are replaced with their
+     * appropriate value
+     * 
      *
      * @param request the request
      *
@@ -1296,7 +1311,7 @@ public class GsacRepository implements GsacConstants {
 
         InputStream inputStream = null;
         String[] paths = new String[] { getLocalHtdocsPath(path),
-                                        "/org/gsac/gsl/htdocs" + path };
+                                        GSAC_PATH_HTDOCS + path };
 
         for (String fullPath : paths) {
             try {
@@ -1332,14 +1347,6 @@ public class GsacRepository implements GsacConstants {
 
 
 
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    HtmlOutputHandler getHtmlOutputHandler() {
-        return htmlOutputHandler;
-    }
 
 
     /**
@@ -1358,7 +1365,7 @@ public class GsacRepository implements GsacConstants {
         StringBuffer sb = new StringBuffer();
         htmlOutputHandler.initHtml(request, response, sb);
 
-        String[] files = {getLocalHtdocsPath("/index.html"),"/org/gsac/gsl/htdocs/index.html" };
+        String[] files = {getLocalHtdocsPath("/index.html"),GSAC_PATH_HTDOCS+"/index.html" };
         for (String file : files) {
             InputStream inputStream = getResourceInputStream(file);
             if (inputStream != null) {
@@ -1383,7 +1390,7 @@ public class GsacRepository implements GsacConstants {
     public void handleHelpRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         if(helpIndex == null) {
-            InputStream inputStream = servlet.getResourceInputStream("/org/gsac/gsl/help/index.txt");
+            InputStream inputStream = servlet.getResourceInputStream(GSAC_PATH_HELP+"/index.txt");
             helpIndex = StringUtil.split(IOUtil.readContents(inputStream), "\n",
                                          true, true);
             inputStream.close();
@@ -1394,8 +1401,7 @@ public class GsacRepository implements GsacConstants {
             path = "/index.html";
         }
 
-        InputStream inputStream = getResourceInputStream("/org/gsac/gsl/help"
-                                      + path);
+        InputStream inputStream = getResourceInputStream(GSAC_PATH_HELP  + path);
         if (inputStream == null) {
             //TODO:         inputStream = getResourceInputStream(path);
         }
@@ -1513,6 +1519,17 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
+     * helper method.
+     *
+     * @return the html output handler
+     */
+    HtmlOutputHandler getHtmlOutputHandler() {
+        return htmlOutputHandler;
+    }
+
+
+
+    /**
      * This method will first look in the local siteCache for the site.
      * If not found it calls doGetSite which should be overwritten by derived classes
      *
@@ -1555,125 +1572,15 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * This reads and processes  a properties file and returns a list of IdLabel objecs
      *
-     * @return _more_
-     */
-    public boolean shouldPrintVocabularies() {
-        return false;
-        //        return true;
-    }
-
-
-    /**
-     * _more_
+     * @param path resource path
      *
-     * @param gri _more_
-     */
-    public void printVocabularies(GsacRepositoryInfo gri) {
-        if ( !shouldPrintVocabularies()) {
-            return;
-        }
-        System.err.println("printing  vocabularies");
-        //        File f = new File("vocabulary");
-        File     f = null;
-        String[] s = new String[] { "" };
-
-        for (CapabilityCollection collection : gri.getCollections()) {
-            for (Capability capability : collection.getCapabilities()) {
-                if (capability.isEnumeration()) {
-                    printVocabulary(f, capability.getId(),
-                                    capability.getEnums());
-                }
-            }
-        }
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param dir _more_
-     * @param what _more_
-     * @param values _more_
-     */
-    public void printVocabulary(File dir, String what, List values) {
-        System.err.println("    printing vocab:" + what);
-        try {
-            String           tail  = what + ".local.properties";
-            File             f     = (dir == null)
-                                     ? new File(tail)
-                                     : new File(dir + "/" + tail);
-            FileOutputStream fos   = new FileOutputStream(f);
-            PrintWriter      pw    = new PrintWriter(fos);
-
-            String           tail2 = what + ".map";
-            File             f2    = (dir == null)
-                                     ? new File(tail2)
-                                     : new File(dir + "/" + tail2);
-            FileOutputStream fos2  = new FileOutputStream(f2);
-            PrintWriter      pw2   = new PrintWriter(fos2);
-
-
-            pw.append("#\n");
-            pw.append("#Generated listing from " + getRepositoryName()
-                      + "\n");
-            pw.append("#This maps the internal value used by "
-                      + getRepositoryName() + " to the core value\n");
-            pw.append("#\n");
-
-
-            pw2.append("#\n");
-            pw2.append("#External values for  " + what + "\n");
-            pw2.append("#This maps the gsac value to a description\n");
-            pw2.append("#\n");
-
-            for (int i = 0; i < values.size(); i++) {
-                IdLabel idLabel = (IdLabel) values.get(i);
-                String  id      = idLabel.getName();
-                id = id.trim().toLowerCase();
-                id = id.replaceAll(" ", "_");
-                id = id.replaceAll("\\/", "_");
-                id = id.replaceAll("-", "_");
-                id = id.replaceAll("\\.", "_");
-                id = id.replaceAll("\\(", "_");
-                id = id.replaceAll("\\)", "_");
-                id = id.replaceAll("__", "_");
-                id = id.replaceAll("__", "_");
-                id = id.replaceAll("__", "_");
-
-                pw2.append("\n#");
-                pw2.append(idLabel.getName());
-                pw2.append("\n");
-                pw2.append(id);
-                pw2.append("=");
-                pw2.append(idLabel.getId());
-                pw2.append("\n");
-
-                pw.append(idLabel.getId());
-                pw.append("=");
-                pw.append(idLabel.getName());
-                pw.append("\n");
-            }
-            pw.close();
-            fos.close();
-            pw2.close();
-            fos2.close();
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
-        }
-    }
-
-    /**
-     * _more_
-     *
-     * @param path _more_
-     *
-     * @return _more_
+     * @return IdLabel objects
      *
      * @throws Exception On badness
      */
-    public List<IdLabel> readProperties(String path) throws Exception {
+    public  List<IdLabel> readProperties(String path) throws Exception {
         InputStream inputStream = servlet.getResourceInputStream(path);
         if (inputStream == null) {
             return null;
@@ -1753,10 +1660,6 @@ public class GsacRepository implements GsacConstants {
             throw new RuntimeException(exc);
         }
     }
-
-
-
-
 
 
     /**
@@ -1899,9 +1802,11 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * This creates if needed and returns a GsacRepositoryInfo object that
+     * holds the information about this repository, e.g., name, description, url, icon
+     * and (most importantly) the query capabilities
      *
-     * @return _more_
+     * @return info about me
      */
     public GsacRepositoryInfo getRepositoryInfo() {
         if (myInfo == null) {
@@ -1978,10 +1883,10 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * This gets called to retrieve the full metadata for the resource
      *
      * @param request the request
-     * @param gsacResource _more_
+     * @param gsacResource The resource
      *
      * @throws Exception On badness
      */
@@ -2004,7 +1909,8 @@ public class GsacRepository implements GsacConstants {
      * to it.
      *
      *
-     * @param level _more_
+     * @param level For now describes the level of detail wanted for the given metadata.
+     * We need to revamp that and maybe use a string name for the metadata group
      * @param gsacSite  The site
      *
      * @throws Exception On badness
@@ -2018,11 +1924,14 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Gets called to add the full metadata to the resource.
+     * If there is a resourcemanager then this is just a pass through
+     * to it.
      *
      *
-     * @param level _more_
-     * @param gsacResource _more_
+     * @param level For now describes the level of detail wanted for the given metadata.
+     * We need to revamp that and maybe use a string name for the metadata group
+     * @param gsacResource  The resource
      *
      * @throws Exception On badness
      */
@@ -2054,11 +1963,11 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * retrieve the site from the cache
      *
-     * @param key _more_
+     * @param key site key
      *
-     * @return _more_
+     * @return site or null
      */
     public GsacSite getCachedSite(String key) {
         return siteCache.get(key);
@@ -2079,114 +1988,6 @@ public class GsacRepository implements GsacConstants {
      */
     public boolean shouldCacheSites() {
         return true;
-    }
-
-
-
-    /**
-     * get the property
-     *
-     * @param name property name
-     *
-     * @return property value or null of not found
-     */
-    public String getProperty(String name) {
-        //Always look at the system properties
-        String value = System.getProperty(name);
-        if (value != null) {
-            return value;
-        }
-        //Next look at the system env
-        value = System.getenv(name);
-        if (value != null) {
-            return value;
-        }
-        return (String) properties.get(name);
-    }
-
-
-    /**
-     * get property value or dflt if not found
-     *
-     * @param name property name
-     * @param dflt default value
-     *
-     * @return get property value or dflt if not found
-     */
-    public boolean getProperty(String name, boolean dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return new Boolean(prop).booleanValue();
-        }
-        return dflt;
-    }
-
-
-    /**
-     * get property value or dflt if not found
-     *
-     * @param name property name
-     * @param dflt default value
-     *
-     * @return property
-     */
-    public String getProperty(String name, String dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return prop;
-        }
-        return dflt;
-    }
-
-
-
-    /**
-     * get property value or dflt if not found
-     *
-     * @param name property name
-     * @param dflt default value
-     *
-     * @return property
-     */
-    public int getProperty(String name, int dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return new Integer(prop).intValue();
-        }
-        return dflt;
-    }
-
-
-    /**
-     * get property value or dflt if not found
-     *
-     * @param name property name
-     * @param dflt default value
-     *
-     * @return property
-     */
-    public long getProperty(String name, long dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return new Long(prop).longValue();
-        }
-        return dflt;
-    }
-
-    /**
-     * get property value or dflt if not found
-     *
-     * @param name property name
-     * @param dflt default value
-     *
-     * @return property
-     */
-    public double getProperty(String name, double dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return new Double(prop).doubleValue();
-        }
-        return dflt;
     }
 
 
@@ -2276,7 +2077,7 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlHeader(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
-                mobileHeader = IOUtil.readContents("/org/gsac/gsl/resources/mobileheader.html",mobileHeader);
+                mobileHeader = IOUtil.readContents(GSAC_PATH_RESOURCES+"/mobileheader.html",mobileHeader);
                 mobileHeader = mobileHeader.replace("${urlroot}",   getUrlBase() + URL_BASE);
                 InputStream inputStream = getResourceInputStream(
                                               getLocalResourcePath(
@@ -2303,7 +2104,7 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlFooter(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
-                mobileFooter = IOUtil.readContents("/org/gsac/gsl/resources/mobilefooter.html",mobileFooter);
+                mobileFooter = IOUtil.readContents(GSAC_PATH_RESOURCES+"/mobilefooter.html",mobileFooter);
                 mobileFooter = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
                 InputStream inputStream = getResourceInputStream(
                                               getLocalResourcePath(
@@ -3117,7 +2918,115 @@ public class GsacRepository implements GsacConstants {
             throw new IllegalArgumentException("Unknown output group:"
                     + group);
         }
-        return outputGroup.outputs;
+        return outputGroup.getOutputs();
+    }
+
+
+
+    /**
+     * get the property
+     *
+     * @param name property name
+     *
+     * @return property value or null of not found
+     */
+    public String getProperty(String name) {
+        //Always look at the system properties
+        String value = System.getProperty(name);
+        if (value != null) {
+            return value;
+        }
+        //Next look at the system env
+        value = System.getenv(name);
+        if (value != null) {
+            return value;
+        }
+        return (String) properties.get(name);
+    }
+
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return get property value or dflt if not found
+     */
+    public boolean getProperty(String name, boolean dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return new Boolean(prop).booleanValue();
+        }
+        return dflt;
+    }
+
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return property
+     */
+    public String getProperty(String name, String dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return prop;
+        }
+        return dflt;
+    }
+
+
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return property
+     */
+    public int getProperty(String name, int dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return new Integer(prop).intValue();
+        }
+        return dflt;
+    }
+
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return property
+     */
+    public long getProperty(String name, long dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return new Long(prop).longValue();
+        }
+        return dflt;
+    }
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return property
+     */
+    public double getProperty(String name, double dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return new Double(prop).doubleValue();
+        }
+        return dflt;
     }
 
 
@@ -3157,32 +3066,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
-    /**
-     * Holds a collection of output handlers, e.g., all of the ones for sites or resources
-     *
-     */
-    private static class OutputGroup {
-
-        /** group id      */
-        private String id;
-
-        /** my outputs      */
-        private List<GsacOutput> outputs = new ArrayList<GsacOutput>();
-
-        /** map of output id to output handler       */
-        private Hashtable<String, GsacOutput> map = new Hashtable<String,
-                                                        GsacOutput>();
-
-        /**
-         * ctor
-         *
-         * @param id group id
-         */
-        public OutputGroup(String id) {
-            this.id = id;
-        }
-    }
 
 
     /**
@@ -3225,6 +3108,120 @@ public class GsacRepository implements GsacConstants {
         }
         return msg;
     }
+
+
+    /**
+     * for debugging
+     *
+     * @return print out the vocabs
+     */
+    public boolean shouldPrintVocabularies() {
+        return false;
+        //        return true;
+    }
+
+
+    /**
+     * for development
+     *
+     * @param gri the repository
+     */
+    public void printVocabularies(GsacRepositoryInfo gri) {
+        if ( !shouldPrintVocabularies()) {
+            return;
+        }
+        System.err.println("printing  vocabularies");
+        //        File f = new File("vocabulary");
+        File     f = null;
+        String[] s = new String[] { "" };
+
+        for (CapabilityCollection collection : gri.getCollections()) {
+            for (Capability capability : collection.getCapabilities()) {
+                if (capability.isEnumeration()) {
+                    printVocabulary(f, capability.getId(),
+                                    capability.getEnums());
+                }
+            }
+        }
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param dir _more_
+     * @param what _more_
+     * @param values _more_
+     */
+    public void printVocabulary(File dir, String what, List values) {
+        System.err.println("    printing vocab:" + what);
+        try {
+            String           tail  = what + ".local.properties";
+            File             f     = (dir == null)
+                                     ? new File(tail)
+                                     : new File(dir + "/" + tail);
+            FileOutputStream fos   = new FileOutputStream(f);
+            PrintWriter      pw    = new PrintWriter(fos);
+
+            String           tail2 = what + ".map";
+            File             f2    = (dir == null)
+                                     ? new File(tail2)
+                                     : new File(dir + "/" + tail2);
+            FileOutputStream fos2  = new FileOutputStream(f2);
+            PrintWriter      pw2   = new PrintWriter(fos2);
+
+
+            pw.append("#\n");
+            pw.append("#Generated listing from " + getRepositoryName()
+                      + "\n");
+            pw.append("#This maps the internal value used by "
+                      + getRepositoryName() + " to the core value\n");
+            pw.append("#\n");
+
+
+            pw2.append("#\n");
+            pw2.append("#External values for  " + what + "\n");
+            pw2.append("#This maps the gsac value to a description\n");
+            pw2.append("#\n");
+
+            for (int i = 0; i < values.size(); i++) {
+                IdLabel idLabel = (IdLabel) values.get(i);
+                String  id      = idLabel.getName();
+                id = id.trim().toLowerCase();
+                id = id.replaceAll(" ", "_");
+                id = id.replaceAll("\\/", "_");
+                id = id.replaceAll("-", "_");
+                id = id.replaceAll("\\.", "_");
+                id = id.replaceAll("\\(", "_");
+                id = id.replaceAll("\\)", "_");
+                id = id.replaceAll("__", "_");
+                id = id.replaceAll("__", "_");
+                id = id.replaceAll("__", "_");
+
+                pw2.append("\n#");
+                pw2.append(idLabel.getName());
+                pw2.append("\n");
+                pw2.append(id);
+                pw2.append("=");
+                pw2.append(idLabel.getId());
+                pw2.append("\n");
+
+                pw.append(idLabel.getId());
+                pw.append("=");
+                pw.append(idLabel.getName());
+                pw.append("\n");
+            }
+            pw.close();
+            fos.close();
+            pw2.close();
+            fos2.close();
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
+
+
 
 
     public static final void main(String[]args) throws Exception {
