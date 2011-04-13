@@ -112,7 +112,7 @@ public class GsacRepository implements GsacConstants {
     private static final String PROP_RESOURCETYPES = "prop.resourcetypes";
 
     /** property for host name. This is the external host name that is used for things like kml, etc,
-     where we need a full hostname/url
+        where we need a full hostname/url
     */
     private static final String PROP_HOSTNAME = "gsac.server.hostname";
 
@@ -191,7 +191,7 @@ public class GsacRepository implements GsacConstants {
         new TTLObject<List<GsacRepositoryInfo>>(TTLCache.MS_IN_AN_HOUR * 6);
 
     /** The base path of the url, e.g. /gsacws
-     This is repository specific, so, for example, the federated repository uses /gsacfederated
+        This is repository specific, so, for example, the federated repository uses /gsacfederated
     */
     private String urlBase;
 
@@ -224,7 +224,7 @@ public class GsacRepository implements GsacConstants {
 
     /** map of ouput group id to output group   */
     private Hashtable<String, OutputGroup> outputs = new Hashtable<String,
-                                                         OutputGroup>();
+        OutputGroup>();
 
 
 
@@ -279,7 +279,7 @@ public class GsacRepository implements GsacConstants {
         String[] propertyFiles = { GSAC_PATH_RESOURCES+"/gsac.properties",
                                    getLocalResourcePath("/gsac.properties"),
                                    getLocalResourcePath(
-                                       "/gsacserver.properties") };
+                                                        "/gsacserver.properties") };
         for (String file : propertyFiles) {
             inputStream = getResourceInputStream(file);
             if (inputStream != null) {
@@ -347,23 +347,23 @@ public class GsacRepository implements GsacConstants {
         } else {
             String userHome = System.getProperty("user.home");
             System.err.println(
-                "GSAC: attempt to set gsacDirectory from user.home system property: "
-                + userHome);
+                               "GSAC: attempt to set gsacDirectory from user.home system property: "
+                               + userHome);
             if (userHome != null) {
                 File localDir = new File(userHome + "/.gsac");
                 if (localDir.exists()) {
                     gsacDirectory = localDir;
                     System.err.println(
-                        "GSAC: gsacDirectory from userHome/.gsac: "
-                        + gsacDirectory);
+                                       "GSAC: gsacDirectory from userHome/.gsac: "
+                                       + gsacDirectory);
                 } else {
                     System.err.println(
-                        "GSAC: userHome/.gsac directory does not exist: "
-                        + userHome + "/.gsac; no gsacDirectory set");
+                                       "GSAC: userHome/.gsac directory does not exist: "
+                                       + userHome + "/.gsac; no gsacDirectory set");
                 }
             } else {
                 System.err.println(
-                    "GSAC: user.home system property is null, no gsacDirectory set");
+                                   "GSAC: user.home system property is null, no gsacDirectory set");
             }
         }
 
@@ -373,7 +373,7 @@ public class GsacRepository implements GsacConstants {
 
             initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
-                                           + "/gsac.properties");
+                                                + "/gsac.properties");
             System.err.println("GSAC: looking for: " + localPropertiesFile);
             if (localPropertiesFile.exists()) {
                 System.err.println("GSAC: loading " + localPropertiesFile);
@@ -470,13 +470,13 @@ public class GsacRepository implements GsacConstants {
         OutputGroup outputGroup = outputs.get(group);
         if (outputGroup == null) {
             throw new IllegalArgumentException("Unknown output group:"
-                    + group);
+                                               + group);
         }
 
         GsacOutput gsacOutput = outputGroup.getOutput(output);
         if (gsacOutput == null) {
             throw new IllegalArgumentException("Unknown output type:"
-                    + output);
+                                               + output);
         }
         return gsacOutput.getOutputHandler();
     }
@@ -492,7 +492,7 @@ public class GsacRepository implements GsacConstants {
      * @return the output handler
      */
     public GsacOutputHandler getOutputHandler(String group,
-            GsacRequest request) {
+                                              GsacRequest request) {
         String arg = request.get(ARG_OUTPUT, (String) null);
 
         for (GsacOutput output : getOutputs(group)) {
@@ -506,7 +506,7 @@ public class GsacRepository implements GsacConstants {
             OutputGroup outputGroup = outputs.get(group);
             if (outputGroup == null) {
                 throw new IllegalArgumentException("Unknown output group:"
-                        + group);
+                                                   + group);
             }
             //See if we have an output id as a submit button name
             for (GsacOutput output : outputGroup.getOutputs()) {
@@ -741,7 +741,7 @@ public class GsacRepository implements GsacConstants {
      */
     public boolean checkRequest(GsacRequest request, GsacResponse response,
                                 Appendable sb)
-            throws Exception {
+        throws Exception {
         return true;
     }
 
@@ -789,13 +789,13 @@ public class GsacRepository implements GsacConstants {
             servers.put(list);
 
             for (Enumeration collectionKeys =
-                    collectionToUsedCapabilities.keys();
-                    collectionKeys.hasMoreElements(); ) {
+                     collectionToUsedCapabilities.keys();
+                 collectionKeys.hasMoreElements(); ) {
                 Hashtable<String, Capability> caps =
                     collectionToUsedCapabilities.get(
-                        collectionKeys.nextElement());
+                                                     collectionKeys.nextElement());
                 for (Enumeration keys =
-                        caps.keys(); keys.hasMoreElements(); ) {
+                         caps.keys(); keys.hasMoreElements(); ) {
                     Capability capability =
                         (Capability) caps.get(keys.nextElement());
                     String group = null;
@@ -808,7 +808,7 @@ public class GsacRepository implements GsacConstants {
                     if (group != null) {
                         if (capability.hasGroup()) {
                             capability.setGroup(group  
-                                    + capability.getGroup());
+                                                + capability.getGroup());
                         } else {
                             capability.setGroup(group);
                         }
@@ -829,13 +829,13 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     private void initRemoteRepository(
-            GsacRepositoryInfo info,
-            Hashtable<String,
-                      Hashtable<String,
-                                Capability>> collectionToUsedCapabilities)
-            throws Exception {
+                                      GsacRepositoryInfo info,
+                                      Hashtable<String,
+                                      Hashtable<String,
+                                      Capability>> collectionToUsedCapabilities)
+        throws Exception {
         GsacRepositoryInfo gri = (GsacRepositoryInfo) getRemoteObject(info,
-                                     URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
+                                                                      URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
 
 
         info.initWith(gri);
@@ -912,10 +912,10 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public GsacRepositoryInfo retrieveRepositoryInfo(String repositoryUrl)
-            throws Exception {
+        throws Exception {
         GsacRepositoryInfo gri =
             (GsacRepositoryInfo) getRemoteObject(repositoryUrl,
-                URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
+                                                 URL_REPOSITORY_VIEW, "", OUTPUT_GSACXML);
 
         return gri;
     }
@@ -1207,7 +1207,7 @@ public class GsacRepository implements GsacConstants {
      * @throws ServletException On badness
      */
     public void handleRequest(GsacRequest request)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
         String uri = request.getRequestURI();
         int index = uri.indexOf("?");
         if(index>=0) {
@@ -1284,8 +1284,8 @@ public class GsacRepository implements GsacConstants {
                      + request.getUrlArgs(), thr);
             try {
                 request.sendError(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "An error occurred:" + thr);
+                                  HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                  "An error occurred:" + thr);
             } catch (Exception ignoreThisOne) {}
         }
     }
@@ -1328,25 +1328,19 @@ public class GsacRepository implements GsacConstants {
             return;
         }
         if (uri.endsWith(".js") || uri.endsWith(".css")
-                || uri.endsWith(".jnlp")) {
+            || uri.endsWith(".jnlp")) {
             String content = IOUtil.readContents(inputStream);
             inputStream.close();
             content = content.replace("${urlroot}", getUrlBase() + URL_BASE);
             content = content.replace("${fullurlroot}",
                                       getAbsoluteUrl(getUrlBase()
-                                          + URL_BASE));
+                                                     + URL_BASE));
             inputStream = new ByteArrayInputStream(content.getBytes());
         }
         OutputStream outputStream = request.getOutputStream();
         IOUtil.writeTo(inputStream, outputStream);
         IOUtil.close(outputStream);
     }
-
-
-
-
-
-
 
 
     /**
@@ -1357,10 +1351,10 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void handleResourceRequest(GsacRequest gsacRequest)
-            throws Exception {}
+        throws Exception {}
 
     public void handleIndexRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
+        throws Exception {
         response.startResponse(GsacResponse.MIME_HTML);
         StringBuffer sb = new StringBuffer();
         htmlOutputHandler.initHtml(request, response, sb);
@@ -1388,7 +1382,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void handleHelpRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
+        throws Exception {
         if(helpIndex == null) {
             InputStream inputStream = servlet.getResourceInputStream(GSAC_PATH_HELP+"/index.txt");
             helpIndex = StringUtil.split(IOUtil.readContents(inputStream), "\n",
@@ -1423,7 +1417,7 @@ public class GsacRepository implements GsacConstants {
                                         getUrlBase() + URL_BASE);
             contents = contents.replace("${fullurlroot}",
                                         getAbsoluteUrl(getUrlBase()
-                                            + URL_BASE));
+                                                       + URL_BASE));
         }
         sb.append(contents);
         htmlOutputHandler.finishHtml(request, response, sb);
@@ -1431,7 +1425,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * This shows server stats and a stack trace. Will need to turn this off once we go into productio
      *
      * @param request the request
      * @param response The response to write to
@@ -1439,7 +1433,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void handleStatsRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
+        throws Exception {
         response.startResponse(GsacResponse.MIME_TEXT);
         request.put(ARG_DECORATE, "false");
         StringBuffer sb = new StringBuffer();
@@ -1467,7 +1461,7 @@ public class GsacRepository implements GsacConstants {
         long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
         sb.append(HtmlUtil.formEntry("Up Time:",
                                      fmt.format((double) (uptime / 1000
-                                         / 60)) + " " + msg("minutes")));
+                                                          / 60)) + " " + msg("minutes")));
 
         addStats(sb);
         sb.append(HtmlUtil.formTableClose());
@@ -1475,9 +1469,6 @@ public class GsacRepository implements GsacConstants {
         sb.append(LogUtil.getStackDump(true));
         htmlOutputHandler.finishHtml(request, response, sb);
     }
-
-
-
 
 
 
@@ -1491,13 +1482,13 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleResourceRequest(GsacRequest request,
                                       GsacResponse response)
-            throws Exception {
+        throws Exception {
         if (getResourceManager() != null) {
             getResourceManager().handleResourceRequest(request, response);
             return;
         }
         notImplemented(
-            "Derived class needs to implement handleResourceRequest");
+                       "Derived class needs to implement handleResourceRequest");
     }
 
 
@@ -1510,7 +1501,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception on badnesss
      */
     public void handleSiteRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
+        throws Exception {
         if (getSiteManager() != null) {
             getSiteManager().handleSiteRequest(request, response);
             return;
@@ -1554,7 +1545,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public GsacSite getSite(GsacRequest request, String siteId)
-            throws Exception {
+        throws Exception {
         GsacSite site = getSiteFromCache(siteId);
         if (site != null) {
             return site;
@@ -1587,8 +1578,8 @@ public class GsacRepository implements GsacConstants {
         }
         List<IdLabel> results = new ArrayList<IdLabel>();
         for (String line :
-                StringUtil.split(IOUtil.readContents(inputStream), "\n",
-                                 true, true)) {
+                 StringUtil.split(IOUtil.readContents(inputStream), "\n",
+                                  true, true)) {
             if ((line.length() == 0) || line.startsWith("#")) {
                 continue;
             }
@@ -1612,7 +1603,7 @@ public class GsacRepository implements GsacConstants {
      */
     public String getInternalVocabulary(String type) {
         return readVocabulary(getLocalResourcePath("/vocabulary/" + type
-                + ".properties"));
+                                                   + ".properties"));
     }
 
 
@@ -1625,7 +1616,7 @@ public class GsacRepository implements GsacConstants {
      */
     public String getInternalVocabularyMap(String type) {
         return readVocabulary(getLocalResourcePath("/vocabulary/" + type
-                + ".map"));
+                                                   + ".map"));
     }
 
 
@@ -1638,7 +1629,7 @@ public class GsacRepository implements GsacConstants {
      */
     public String getExternalVocabulary(String type) {
         return readVocabulary(getCoreResourcePath("/vocabulary/" + type
-                + ".properties"));
+                                                  + ".properties"));
     }
 
     /**
@@ -1674,7 +1665,7 @@ public class GsacRepository implements GsacConstants {
         Hashtable<String, List<String>> externalToInternal =
             new Hashtable<String, List<String>>();
         Hashtable<String, String> internalToExternal = new Hashtable<String,
-                                                           String>();
+            String>();
         List<IdLabel>   vocabulary  = new ArrayList<IdLabel>();
         HashSet<String> coreMap     = new HashSet<String>();
         HashSet<String> internalMap = new HashSet<String>();
@@ -1684,7 +1675,7 @@ public class GsacRepository implements GsacConstants {
 
         for (int i = 0; i < vocabularyContents.length; i++) {
             for (List<String> toks :
-                    tokenizeVocabulary(vocabularyContents[i])) {
+                     tokenizeVocabulary(vocabularyContents[i])) {
                 String value = toks.get(0);
                 String label = ((toks.size() == 2)
                                 ? toks.get(1)
@@ -1702,7 +1693,7 @@ public class GsacRepository implements GsacConstants {
         List<IdLabel> values     = new ArrayList<IdLabel>();
         boolean       hasMapping = false;
         for (List<String> toks :
-                tokenizeVocabulary(getInternalVocabularyMap(type))) {
+                 tokenizeVocabulary(getInternalVocabularyMap(type))) {
             hasMapping = true;
             String coreValue           = toks.get(0);
             String internalValueString = ((toks.size() == 2)
@@ -1710,7 +1701,7 @@ public class GsacRepository implements GsacConstants {
                                           : "");
             //If there is a core value defined for a internal repository that is not in the core list then add it
             if ( !coreMap.contains(coreValue)
-                    && !internalMap.contains(coreValue)) {
+                 && !internalMap.contains(coreValue)) {
                 vocabulary.add(new IdLabel(coreValue, coreValue));
             }
             internalMap.add(coreValue);
@@ -1720,7 +1711,7 @@ public class GsacRepository implements GsacConstants {
                 externalToInternal.put(coreValue, internalValues);
             }
             List<String> internalToks = StringUtil.split(internalValueString,
-                                            ",", true, true);
+                                                         ",", true, true);
             for (String internalTok : internalToks) {
                 internalToExternal.put(internalTok, coreValue);
             }
@@ -1741,7 +1732,7 @@ public class GsacRepository implements GsacConstants {
         for (IdLabel value : vocabulary) {
             boolean isWildcard = Vocabulary.isWildcard(value.getId());
             if (internalMap.contains(value.getId()) || isWildcard
-                    || !hasMapping) {
+                || !hasMapping) {
                 valuesWithBoth.add(value);
                 if ( !isWildcard) {
                     valuesWithoutWildcards.add(value);
@@ -1758,7 +1749,7 @@ public class GsacRepository implements GsacConstants {
             } else {
                 //Check if there is anything in the list that matches a wildcard
                 String s = value.getId().substring(0,
-                               value.getId().length() - 1);
+                                                   value.getId().length() - 1);
                 for (IdLabel nonWildcardValue : valuesWithoutWildcards) {
                     if (nonWildcardValue.getId().startsWith(s)) {
                         values.add(value);
@@ -1812,23 +1803,23 @@ public class GsacRepository implements GsacConstants {
         if (myInfo == null) {
             GsacRepositoryInfo gri =
                 new GsacRepositoryInfo(
-                    getServlet().getAbsoluteUrl(getUrlBase()),
-                    getRepositoryName(),
-		    getRepositoryIcon());
+                                       getServlet().getAbsoluteUrl(getUrlBase()),
+                                       getRepositoryName(),
+                                       getRepositoryIcon());
             gri.setDescription(getRepositoryDescription());
             gri.addCollection(
-                new CapabilityCollection(
-                    CAPABILITIES_SITE, "Site Query",
-                    getServlet().getAbsoluteUrl(
-                        getUrlBase() + URL_SITE_SEARCH), doGetCapabilities(
-                        CAPABILITIES_SITE)));
+                              new CapabilityCollection(
+                                                       CAPABILITIES_SITE, "Site Query",
+                                                       getServlet().getAbsoluteUrl(
+                                                                                   getUrlBase() + URL_SITE_SEARCH), doGetCapabilities(
+                                                                                                                                      CAPABILITIES_SITE)));
             gri.addCollection(
-                new CapabilityCollection(
-                    CAPABILITIES_RESOURCE, "Resource Query",
-                    getServlet().getAbsoluteUrl(
-                        getUrlBase()
-                        + URL_RESOURCE_SEARCH), doGetCapabilities(
-                            CAPABILITIES_RESOURCE)));
+                              new CapabilityCollection(
+                                                       CAPABILITIES_RESOURCE, "Resource Query",
+                                                       getServlet().getAbsoluteUrl(
+                                                                                   getUrlBase()
+                                                                                   + URL_RESOURCE_SEARCH), doGetCapabilities(
+                                                                                                                             CAPABILITIES_RESOURCE)));
             myInfo = gri;
             for (CapabilityCollection collection : gri.getCollections()) {
                 for (Capability capability : collection.getCapabilities()) {
@@ -1871,7 +1862,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void getSiteMetadata(GsacRequest request, GsacSite gsacSite)
-            throws Exception {
+        throws Exception {
         int level = request.get(ARG_METADATA_LEVEL, 1);
         if (gsacSite.getMetadataLevel() >= level) {
             return;
@@ -1892,7 +1883,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void getResourceMetadata(GsacRequest request,
                                     GsacResource gsacResource)
-            throws Exception {
+        throws Exception {
         int level = request.get(ARG_METADATA_LEVEL, 1);
         if (gsacResource.getMetadataLevel() >= level) {
             return;
@@ -1916,7 +1907,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void doGetFullSiteMetadata(int level, GsacSite gsacSite)
-            throws Exception {
+        throws Exception {
         if (getSiteManager() != null) {
             getSiteManager().doGetSiteMetadata(level, gsacSite);
         }
@@ -1937,7 +1928,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void doGetFullResourceMetadata(int level,
                                           GsacResource gsacResource)
-            throws Exception {
+        throws Exception {
         if (getResourceManager() != null) {
             getResourceManager().doGetResourceMetadata(level, gsacResource);
         }
@@ -2002,7 +1993,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public GsacResource getResource(GsacRequest request, String resourceId)
-            throws Exception {
+        throws Exception {
         if (getResourceManager() != null) {
             return getResourceManager().getResource(resourceId);
         }
@@ -2080,12 +2071,12 @@ public class GsacRepository implements GsacConstants {
                 mobileHeader = IOUtil.readContents(GSAC_PATH_RESOURCES+"/mobileheader.html",mobileHeader);
                 mobileHeader = mobileHeader.replace("${urlroot}",   getUrlBase() + URL_BASE);
                 InputStream inputStream = getResourceInputStream(
-                                              getLocalResourcePath(
-                                                  "/header.html"));
+                                                                 getLocalResourcePath(
+                                                                                      "/header.html"));
                 if (inputStream != null) {
                     htmlHeader = IOUtil.readContents(inputStream);
                     htmlHeader = htmlHeader.replace("${urlroot}",
-                            getUrlBase() + URL_BASE);
+                                                    getUrlBase() + URL_BASE);
                     inputStream.close();
                 }
             } catch (Exception exc) {}
@@ -2107,12 +2098,12 @@ public class GsacRepository implements GsacConstants {
                 mobileFooter = IOUtil.readContents(GSAC_PATH_RESOURCES+"/mobilefooter.html",mobileFooter);
                 mobileFooter = mobileFooter.replace("${urlroot}",   getUrlBase() + URL_BASE);
                 InputStream inputStream = getResourceInputStream(
-                                              getLocalResourcePath(
-                                                  "/footer.html"));
+                                                                 getLocalResourcePath(
+                                                                                      "/footer.html"));
                 if (inputStream != null) {
                     htmlFooter = IOUtil.readContents(inputStream);
                     htmlFooter = htmlFooter.replace("${urlroot}",
-                            getUrlBase() + URL_BASE);
+                                                    getUrlBase() + URL_BASE);
                     inputStream.close();
                 }
             } catch (Exception exc) {}
@@ -2261,7 +2252,7 @@ public class GsacRepository implements GsacConstants {
      */
     public String getRemoteId(GsacRepositoryInfo info, String id) {
         return XmlUtil.encodeBase64(info.getUrl().getBytes()).trim() + ":"
-               + id;
+            + id;
     }
 
     /**
@@ -2299,8 +2290,8 @@ public class GsacRepository implements GsacConstants {
         List<String> pair = StringUtil.splitUpTo(object.getId(), ":", 2);
         String       id   = pair.get(1);
         return object.getRepositoryInfo().getUrl() + object.getViewUrl()
-               + "?" + HtmlUtil.args(new String[] { object.getIdArg(),
-                id });
+            + "?" + HtmlUtil.args(new String[] { object.getIdArg(),
+                                                 id });
     }
 
     /**
@@ -2331,7 +2322,7 @@ public class GsacRepository implements GsacConstants {
      */
     public Object getRemoteObject(GsacRepositoryInfo info, String urlPath,
                                   String urlArgs, String output)
-            throws Exception {
+        throws Exception {
         try {
             Object results = getRemoteObject(info.getUrl(), urlPath, urlArgs, output);
 	    //If successful then reset the error count
@@ -2363,7 +2354,7 @@ public class GsacRepository implements GsacConstants {
      */
     public Object getRemoteObject(String repositoryUrl, String urlPath,
                                   String urlArgs, String output)
-            throws Exception {
+        throws Exception {
         boolean     zipit          = false;
         GsacServlet servlet        = getServlet();
         String      thisRepository = "client";
@@ -2371,10 +2362,10 @@ public class GsacRepository implements GsacConstants {
             thisRepository = servlet.getAbsoluteUrl(getUrlBase());
         }
         String url = repositoryUrl + urlPath + "?" + urlArgs + "&"
-                     + HtmlUtil.args(new String[] {
-            ARG_REMOTEREPOSITORY, thisRepository, ARG_GZIP, zipit + "",
-            ARG_OUTPUT, output
-        });
+            + HtmlUtil.args(new String[] {
+                    ARG_REMOTEREPOSITORY, thisRepository, ARG_GZIP, zipit + "",
+                    ARG_OUTPUT, output
+                });
         URLConnection connection  = new URL(url).openConnection();
 	connection.setConnectTimeout(1000*URL_TIMEOUT_SECONDS);
         InputStream   inputStream = connection.getInputStream();
@@ -2394,7 +2385,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleCapabilitiesRequest(GsacRequest request,
                                           GsacResponse response)
-            throws Exception {
+        throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter pw  = response.getPrintWriter();
         String      xml = encodeObject(getRepositoryInfo());
@@ -2414,7 +2405,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleCapabilityRequest(GsacRequest request,
                                         GsacResponse response)
-            throws Exception {
+        throws Exception {
 
         String capabilityId = request.get(ARG_CAPABILITY, "");
         response.startResponse(GsacResponse.MIME_CSV);
@@ -2423,12 +2414,12 @@ public class GsacRepository implements GsacConstants {
         Capability         capability = gri.getCapability(capabilityId);
         if (capability == null) {
             throw new IllegalArgumentException("Could not find capability:"
-                    + capabilityId);
+                                               + capabilityId);
         }
 
         if ( !capability.isEnumeration()) {
             throw new IllegalArgumentException(
-                "Capability is not an eumeration");
+                                               "Capability is not an eumeration");
         }
 
         for (IdLabel idLabel : capability.getEnums()) {
@@ -2451,18 +2442,18 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleViewRequestXml(GsacRequest request,
                                      GsacResponse response)
-            throws Exception {
+        throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter        pw  = response.getPrintWriter();
         GsacRepositoryInfo gri = getRepositoryInfo();
 
         pw.append(
-            XmlUtil.openTag(
-                TAG_REPOSITORY,
-                XmlUtil.attrs(
-                    ATTR_URL,
-                    getServlet().getAbsoluteUrl(getUrlBase() + URL_BASE),
-                    ATTR_NAME, gri.getName())));
+                  XmlUtil.openTag(
+                                  TAG_REPOSITORY,
+                                  XmlUtil.attrs(
+                                                ATTR_URL,
+                                                getServlet().getAbsoluteUrl(getUrlBase() + URL_BASE),
+                                                ATTR_NAME, gri.getName())));
 
 
         pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
@@ -2488,7 +2479,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void handleViewRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
+        throws Exception {
 
         if (request.get(ARG_OUTPUT, "").equals(OUTPUT_XML)) {
             handleViewRequestXml(request, response);
@@ -2541,7 +2532,7 @@ public class GsacRepository implements GsacConstants {
         tmp.append(HtmlUtil.formTableClose());
 
         contents.append(HtmlUtil.makeShowHideBlock("", tmp.toString(),
-                false));
+                                                   false));
 
 
         tmp = new StringBuffer();
@@ -2549,34 +2540,34 @@ public class GsacRepository implements GsacConstants {
         contents.append(getHeader(msg("Output types")));
         tmp.append(HtmlUtil.formTable());
         tmp.append(
-            HtmlUtil.row(
-                HtmlUtil.colspan(HtmlUtil.b(msg("Site Outputs")), 2)));
+                   HtmlUtil.row(
+                                HtmlUtil.colspan(HtmlUtil.b(msg("Site Outputs")), 2)));
         for (GsacOutput output : getOutputs(OUTPUT_GROUP_SITE)) {
             if (output.getForUser()) {
                 tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
-                        ARG_OUTPUT + "=" + output.getId())));
+                                                      ARG_OUTPUT + "=" + output.getId())));
             }
         }
 
         tmp.append(
-            HtmlUtil.row(
-                HtmlUtil.colspan(HtmlUtil.b(msg("Resource Outputs")), 2)));
+                   HtmlUtil.row(
+                                HtmlUtil.colspan(HtmlUtil.b(msg("Resource Outputs")), 2)));
         for (GsacOutput output : getOutputs(OUTPUT_GROUP_RESOURCE)) {
             if (output.getForUser()) {
                 tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
-                        ARG_OUTPUT + "=" + output.getId())));
+                                                      ARG_OUTPUT + "=" + output.getId())));
             }
         }
         tmp.append(HtmlUtil.formTableClose());
         contents.append(HtmlUtil.makeShowHideBlock("", tmp.toString(),
-                false));
+                                                   false));
         sb.append(contents.toString());
 
         /*
-        sb.append(
-            HtmlUtil.makeShowHideBlock(
-                msg("Web Service API Documentation"),
-                HtmlUtil.insetDiv(contents.toString(), 0, 20, 0, 0), false));
+          sb.append(
+          HtmlUtil.makeShowHideBlock(
+          msg("Web Service API Documentation"),
+          HtmlUtil.insetDiv(contents.toString(), 0, 20, 0, 0), false));
         */
 
 
@@ -2588,7 +2579,7 @@ public class GsacRepository implements GsacConstants {
                 StringBuffer vvsb = new StringBuffer();
                 vvsb.append("<table>");
                 vvsb.append(
-                    "<tr><td><b>External Name</b></td><td><b>ID</b></td><td></td><td><b>Internal</b></td></tr>");
+                            "<tr><td><b>External Name</b></td><td><b>ID</b></td><td></td><td><b>Internal</b></td></tr>");
                 for (IdLabel value : vocabulary.getValues()) {
                     List<String> internals =
                         vocabulary.externalToInternal(value.getId());
@@ -2606,14 +2597,14 @@ public class GsacRepository implements GsacConstants {
                 }
                 vvsb.append("</table>");
                 vsb.append(HtmlUtil.makeShowHideBlock(vocabulary.getId(),
-                        HtmlUtil.insetDiv(vvsb.toString(), 0, 20, 0, 0),
-                        false));
+                                                      HtmlUtil.insetDiv(vvsb.toString(), 0, 20, 0, 0),
+                                                      false));
 
 
             }
             pw.append(getHeader(msg("Vocabularies")));
             pw.append(HtmlUtil.makeShowHideBlock("",
-                    HtmlUtil.insetDiv(vsb.toString(), 0, 20, 0, 0), false));
+                                                 HtmlUtil.insetDiv(vsb.toString(), 0, 20, 0, 0), false));
         }
 
 
@@ -2630,8 +2621,8 @@ public class GsacRepository implements GsacConstants {
                                   info.getName());
 
                 sb.append(HtmlUtil.makeShowHideBlock(label,
-                        HtmlUtil.insetDiv(repSB.toString(), 0, 20, 0, 0),
-                        false));
+                                                     HtmlUtil.insetDiv(repSB.toString(), 0, 20, 0, 0),
+                                                     false));
 
                 sb.append("<p>");
             }
@@ -2657,7 +2648,7 @@ public class GsacRepository implements GsacConstants {
      */
     private void showRepositoryInfo(GsacRequest request, Appendable pw,
                                     GsacRepositoryInfo info, boolean showList)
-            throws Exception {
+        throws Exception {
         int          cnt    = 0;
 
         String[]     urls   = { info.getUrl() };
@@ -2682,14 +2673,14 @@ public class GsacRepository implements GsacConstants {
                     pw.append(HtmlUtil.p());
                     pw.append(getHeader(msg(collection.getName())));
                     sb.append(
-                        "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td></td><td><b>Values</b></td></tr>");
+                              "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td></td><td><b>Values</b></td></tr>");
                 }
                 showCapabilityInfo(sb, capability, collection.getUrl());
             }
             if (cnt > 0) {
                 sb.append("</table>");
                 pw.append(HtmlUtil.makeShowHideBlock("", sb.toString(),
-                        false));
+                                                     false));
             }
         }
 
@@ -2720,7 +2711,7 @@ public class GsacRepository implements GsacConstants {
      */
     private void showCapabilityInfo(Appendable sb, Capability capability,
                                     String url)
-            throws Exception {
+        throws Exception {
         String       id      = capability.getId();
         String       desc    = capability.getDescription();
         StringBuffer message = new StringBuffer();
@@ -2732,12 +2723,12 @@ public class GsacRepository implements GsacConstants {
         if (capability.isEnumeration()) {
             StringBuffer sb2 = new StringBuffer();
             String capabilityUrl = HtmlUtil.url(getUrl(URL_REPOSITORY_VIEW)
-                                       + "/capability.csv", new String[] {
-                                           ARG_CAPABILITY,
-                                           capability.getId() });
+                                                + "/capability.csv", new String[] {
+                                                    ARG_CAPABILITY,
+                                                    capability.getId() });
             sb2.append(HtmlUtil.href(capabilityUrl,
                                      HtmlUtil.img(iconUrl("/csv.png"),
-                                         msg("CSV"))));
+                                                  msg("CSV"))));
             sb2.append(HtmlUtil.space(1));
             if (capability.getAllowMultiples()) {
                 sb2.append("Zero or more of:");
@@ -2745,22 +2736,22 @@ public class GsacRepository implements GsacConstants {
                 sb2.append("Zero or one of:");
             }
             sb2.append(
-                "<table border=1 cellspacing=0 cellpadding=2 class=enumtable>");
+                       "<table border=1 cellspacing=0 cellpadding=2 class=enumtable>");
             for (IdLabel idLabel : capability.getEnums()) {
                 String value = idLabel.getId();
                 String label = idLabel.getLabel();
                 if (value.equals(label)) {
                     sb2.append(HtmlUtil.row(HtmlUtil.cols(HtmlUtil.href(url
-                            + "?" + id + "=" + value, value))));
+                                                                        + "?" + id + "=" + value, value))));
                 } else {
                     sb2.append(HtmlUtil.row(HtmlUtil.cols(HtmlUtil.href(url
-                            + "?" + id + "=" + value, value), label)));
+                                                                        + "?" + id + "=" + value, value), label)));
                 }
             }
             sb2.append("</table>");
             message.append(
-                HtmlUtil.makeShowHideBlock(
-                    msg("Enumeration values"), sb2.toString(), false));
+                           HtmlUtil.makeShowHideBlock(
+                                                      msg("Enumeration values"), sb2.toString(), false));
         } else if (type.equals(Capability.TYPE_NUMBERRANGE)) {
             message.append("Numeric range. One or both of URL arguments.");
             StringBuffer ids = new StringBuffer();
@@ -2781,13 +2772,13 @@ public class GsacRepository implements GsacConstants {
             ids.append(id + ARG_SOUTH_SUFFIX + "<br>");
             ids.append(id + ARG_EAST_SUFFIX + "<br>");
             message.append(
-                "Use any of the spatial bounds arguments. Longitude in degrees east. e.g.<br>");
+                           "Use any of the spatial bounds arguments. Longitude in degrees east. e.g.<br>");
             for (String[] tuple : new String[][] {
-                { id + ARG_NORTH_SUFFIX + "=40.0", " latitude&le;40.0" },
-                { id + ARG_SOUTH_SUFFIX + "=30.0", " latitude&ge;40.0" },
-                { id + ARG_EAST_SUFFIX + "=-100.0", " longitude&le;-100.0" },
-                { id + ARG_WEST_SUFFIX + "=-110.0", " longitude&ge;-110.0" }
-            }) {
+                    { id + ARG_NORTH_SUFFIX + "=40.0", " latitude&le;40.0" },
+                    { id + ARG_SOUTH_SUFFIX + "=30.0", " latitude&ge;40.0" },
+                    { id + ARG_EAST_SUFFIX + "=-100.0", " longitude&le;-100.0" },
+                    { id + ARG_WEST_SUFFIX + "=-110.0", " longitude&ge;-110.0" }
+                }) {
                 message.append(HtmlUtil.href(url + "?" + tuple[0], tuple[0]));
                 message.append(tuple[1]);
                 message.append(HtmlUtil.br());
@@ -2795,16 +2786,16 @@ public class GsacRepository implements GsacConstants {
             id = ids.toString();
         } else if (type.equals(Capability.TYPE_STRING)) {
             message.append(
-                ("String search. Use any number of arguments. <br> " + desc
-                 != null)
-                ? ""
-                : HtmlOutputHandler.stringSearchHelp);
+                           ("String search. Use any number of arguments. <br> " + desc
+                            != null)
+                           ? ""
+                           : HtmlOutputHandler.stringSearchHelp);
         } else if (type.equals(Capability.TYPE_BOOLEAN)) {
             message.append("true<br>false<br>");
         } else {}
         type = HtmlUtil.href(getUrl(URL_HELP) + "/api.html#" + type, type);
         sb.append(HtmlUtil.rowTop(HtmlUtil.cols(capability.getLabel(), id,
-                type, capability.getSuffixLabel(), message.toString())));
+                                                type, capability.getSuffixLabel(), message.toString())));
 
     }
 
@@ -2839,7 +2830,7 @@ public class GsacRepository implements GsacConstants {
      */
     public String getRemoteUrlArgs(GsacRequest request) {
         Hashtable<String, String> newArg     = new Hashtable<String,
-                                                   String>();
+            String>();
         HashSet<String>           exceptArgs = new HashSet<String>();
         exceptArgs.add(ARG_REPOSITORY);
         exceptArgs.add(ARG_GZIP);
@@ -2916,7 +2907,7 @@ public class GsacRepository implements GsacConstants {
         OutputGroup outputGroup = outputs.get(group);
         if (outputGroup == null) {
             throw new IllegalArgumentException("Unknown output group:"
-                    + group);
+                                               + group);
         }
         return outputGroup.getOutputs();
     }
@@ -3089,8 +3080,8 @@ public class GsacRepository implements GsacConstants {
             + "</td><td valign=\"bottom\"><span class=\"notetext\">" + message
             + "</span></td></tr></table></div>";
         return "\n<table border=\"0\" id=\"messageblock\"><tr><td><div class=\"note\"><table><tr valign=top><td>"
-               + message + "</td><td>" + html + "</td></tr></table>"
-               + "</div></td></tr></table>\n";
+            + message + "</td><td>" + html + "</td></tr></table>"
+            + "</div></td></tr></table>\n";
     }
 
 
@@ -3158,15 +3149,15 @@ public class GsacRepository implements GsacConstants {
         try {
             String           tail  = what + ".local.properties";
             File             f     = (dir == null)
-                                     ? new File(tail)
-                                     : new File(dir + "/" + tail);
+                ? new File(tail)
+                : new File(dir + "/" + tail);
             FileOutputStream fos   = new FileOutputStream(f);
             PrintWriter      pw    = new PrintWriter(fos);
 
             String           tail2 = what + ".map";
             File             f2    = (dir == null)
-                                     ? new File(tail2)
-                                     : new File(dir + "/" + tail2);
+                ? new File(tail2)
+                : new File(dir + "/" + tail2);
             FileOutputStream fos2  = new FileOutputStream(f2);
             PrintWriter      pw2   = new PrintWriter(fos2);
 
