@@ -21,13 +21,14 @@
 package org.gsac.ramadda;
 
 
-
-import org.w3c.dom.*;
-
-
 import org.ramadda.repository.*;
 import org.ramadda.repository.auth.User;
 import org.ramadda.repository.harvester.*;
+
+
+
+import org.w3c.dom.*;
+
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
@@ -36,9 +37,6 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
-
-
-
 
 import java.io.File;
 
@@ -120,9 +118,12 @@ public class GsacHarvester extends WebHarvester {
      * @param urlEntry _more_
      * @param entries _more_
      *
+     *
+     * @return _more_
      * @throws Exception _more_
      */
-    protected boolean processEntry(HarvesterEntry urlEntry, List<Entry> entries)
+    protected boolean processEntry(HarvesterEntry urlEntry,
+                                   List<Entry> entries)
             throws Exception {
         String baseGroupId = urlEntry.getBaseGroupId();
         Entry  baseGroup   = ((baseGroupId.length() == 0)
@@ -249,7 +250,7 @@ public class GsacHarvester extends WebHarvester {
 
 
             long    date     = dttm.getTime();
-            Entry   entry = typeHandler.findSiteEntry(siteId, wholesaler);
+            Entry   entry    = typeHandler.findSiteEntry(siteId, wholesaler);
             boolean newEntry = (entry == null);
             if (entry == null) {
                 entry = typeHandler.createEntry(getRepository().getGUID());

@@ -70,19 +70,6 @@ ${Personnel}
 
 
 
-<!--
-
-            int nmea        = Integer.parseInt(cols.get(col++));
-            int solution      = Integer.parseInt(cols.get(col++));
-            String generator     = cols.get(col++);
-            String compression     = cols.get(col++);
-            String authentication      = cols.get(col++);
-            String fee      = cols.get(col++);
-            int bitRate      = Integer.parseInt(cols.get(col++));
--->
-
-
-
   </handler>
 
 

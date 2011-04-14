@@ -1,0 +1,60 @@
+
+##########################################################################################
+Overview
+##########################################################################################
+
+This is the GSAC/RAMADDA plugin. It defines and implements:
+    New API entry  points to support the gsac apis (e.g., /site/search, etc)
+    New ramadda entry types for gsac sites, gsac resources and real time streams
+    RAMADDA Harvester implementations for the old GSAC MC files and for NTRIP real time streams
+    GSAC specific metadata
+
+
+##########################################################################################
+Building
+##########################################################################################
+
+The default ant build creates a gsacplugin.jar in the dist directory.
+Running:
+    ant install
+Will build the plugin and install it in your local ~/.ramadda/plugins directory
+
+
+
+##########################################################################################
+What's here?
+##########################################################################################
+
+
+
+GsacApiHandler.java: This implements the new top-level entry points into the RAMADDA API
+
+gsacapi.xml: This defines to ramadda the GsacApiHandler class (which it creates via reflection) and
+the mapping between the url path (e.g., /gsacapi/site/form) and the method that handles the requests
+
+GsacMetadataHandler.java: This is just an empty shell (sad, isn't it?) in case we need to add metadata functionality
+for the gsac metadata defined in the gsacmetadata.xml file
+
+gsacmetadata.xml: This defines new gsac specific metadata elements. For now it just has metadata to attach to the 
+harvested real time streams
+
+GsacResourceTypeHandler.java: A (semi) empty shell. This is for the gsac resource types
+
+GsacSiteTypeHandler.java: This implements the gsac site entry types
+
+types.xml: defines
+
+GsacHarvester.java: This is still under development but it is used to harvest the old gsac dhf and mc files
+
+NtripHarvester.java: This harvests NTRIP source tables and creates sites and real-time stream resource entries
+
+
+RamaddaGsacRepository.java: This is the implementation of the GsacRepository. It handles the site and resource requests
+and bridges between the RAMADDA data model and the GSAC data model.
+
+
+htdocs: GSAC specific html content (e.g., icons)
+
+resources: This holds (and will hold more) any ramadda specific gsac vocabularies, etc.
+
+

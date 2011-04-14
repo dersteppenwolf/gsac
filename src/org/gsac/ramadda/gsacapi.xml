@@ -1,10 +1,17 @@
 
 
 <api handler="org.gsac.ramadda.GsacApiHandler">
+<!--
+The property tag allows us to specify that these entry points do not require the user
+to be a RAMADDA admin
+-->
       <property name="admin" value="false"/>
 
 <!-- Put these here so ramadda shows links (because of the toplevel=true) -->
       <api request="/gsacapi/site/form"           method="processGsacSiteRequest" toplevel="true" name="GSAC"/>
-      <api request="/gsacapi/resource/form"           method="processGsacResourceRequest" toplevel="false" name="Search Resources"/>
+      <api request="/gsacapi/resource/form"       method="processGsacResourceRequest" toplevel="false" name="Search Resources"/>
+
+<!-- Any other gsac request comes here -->
+
       <api request="/gsacapi/*"                    method="processGsacRequest" />
 </api>

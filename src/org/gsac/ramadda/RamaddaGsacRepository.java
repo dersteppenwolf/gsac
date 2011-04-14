@@ -22,10 +22,8 @@ package org.gsac.ramadda;
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.LinkMetadata;
-
-import org.w3c.dom.*;
+import org.gsac.gsl.model.*;
 
 
 import org.ramadda.repository.*;
@@ -33,6 +31,9 @@ import org.ramadda.repository.auth.User;
 import org.ramadda.repository.database.*;
 import org.ramadda.repository.harvester.*;
 import org.ramadda.repository.type.*;
+
+import org.w3c.dom.*;
+
 import ucar.unidata.sql.Clause;
 
 
@@ -89,6 +90,11 @@ public class RamaddaGsacRepository extends GsacRepository {
         return getRepository().getUrlBase();
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getPackagePath() {
         return "/org/gsac/ramadda";
     }
@@ -173,35 +179,35 @@ public class RamaddaGsacRepository extends GsacRepository {
      *
      * @throws Exception _more_
      */
-    public void handleSiteRequest(GsacRequest request,
-                                     GsacResponse response)
+    public void handleSiteRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         GsacSiteTypeHandler siteTypeHandler = getSiteTypeHandler();
-        List<Clause>           clauses            = new ArrayList<Clause>();
-        Clause                 clause             = null;
-        List<String>           tables             = new ArrayList();
+        List<Clause>        clauses         = new ArrayList<Clause>();
+        Clause              clause          = null;
+        List<String>        tables          = new ArrayList();
 
-        boolean                doJoin             = false;
+        boolean             doJoin          = false;
         tables.add(GsacSiteTypeHandler.TABLE_GSACSITE);
 
         StringBuffer msgBuff = new StringBuffer();
         if (request.defined(GsacArgs.ARG_SITE_CODE)) {
-            getSiteManager().addStringSearch(request, GsacArgs.ARG_SITE_CODE, GsacArgs.ARG_SITE_CODE_SEARCHTYPE,
-                            msgBuff, "Site Code",
-                            GsacSiteTypeHandler.GSAC_COL_SITEID,clauses);
+            getSiteManager().addStringSearch(
+                request, GsacArgs.ARG_SITE_CODE,
+                GsacArgs.ARG_SITE_CODE_SEARCHTYPE, msgBuff, "Site Code",
+                GsacSiteTypeHandler.GSAC_COL_SITEID, clauses);
         }
 
         if (request.defined(GsacArgs.ARG_SITE_NAME)) {
             doJoin = true;
-            getSiteManager().addStringSearch(request, GsacArgs.ARG_SITE_NAME, GsacArgs.ARG_SITE_CODE_SEARCHTYPE,
-                                             msgBuff, "Site Name",
-                                             Tables.ENTRIES.COL_DESCRIPTION,clauses);
+            getSiteManager().addStringSearch(
+                request, GsacArgs.ARG_SITE_NAME,
+                GsacArgs.ARG_SITE_CODE_SEARCHTYPE, msgBuff, "Site Name",
+                Tables.ENTRIES.COL_DESCRIPTION, clauses);
         }
 
         List<Clause> areaClauses = new ArrayList<Clause>();
-        if(getSiteManager().addBBOXSearchCriteria(request,
-                                                  areaClauses, Tables.ENTRIES.COL_SOUTH,
-                                                  Tables.ENTRIES.COL_WEST, msgBuff)) {
+        if (getSiteManager().addBBOXSearchCriteria(request, areaClauses,
+                Tables.ENTRIES.COL_SOUTH, Tables.ENTRIES.COL_WEST, msgBuff)) {
             clauses.addAll(areaClauses);
             doJoin = true;
         }
@@ -212,14 +218,21 @@ public class RamaddaGsacRepository extends GsacRepository {
             clauses.add(Clause.join(Tables.ENTRIES.COL_ID,
                                     GsacSiteTypeHandler.GSAC_COL_ID));
         }
-        System.err.println (clauses);
+        System.err.println(clauses);
         getSiteManager().setSearchCriteriaMessage(response, msgBuff);
         processSiteRequest(response, clauses, tables);
     }
 
 
+    /**
+     * _more_
+     *
+     * @param type _more_
+     *
+     * @return _more_
+     */
     public List<Capability> doGetCapabilities(String type) {
-            List<Capability> capabilities = new ArrayList<Capability>();
+        List<Capability> capabilities = new ArrayList<Capability>();
         if (type.equals(CAPABILITIES_SITE)) {
             getSiteManager().addDefaultSiteCapabilities(capabilities);
         } else if (type.equals(CAPABILITIES_RESOURCE)) {
@@ -239,8 +252,7 @@ public class RamaddaGsacRepository extends GsacRepository {
      * @throws Exception _more_
      */
     private void processSiteRequest(GsacResponse response,
-                                       List<Clause> clauses,
-                                       List<String> tables)
+                                    List<Clause> clauses, List<String> tables)
             throws Exception {
         if (tables == null) {
             tables = new ArrayList<String>();
@@ -253,12 +265,12 @@ public class RamaddaGsacRepository extends GsacRepository {
         String[] ids = SqlUtil.readString(
                            getRepository().getDatabaseManager().getIterator(
                                getRepository().getDatabaseManager().select(
-                                   GsacSiteTypeHandler.GSAC_COL_ID,
-                                   tables, clause, null, -1)));
+                                   GsacSiteTypeHandler.GSAC_COL_ID, tables,
+                                   clause, null, -1)));
         for (String id : ids) {
             Entry entry = getRepository().getEntryManager().getEntry(null,
                               id);
-            if(entry==null) {
+            if (entry == null) {
                 System.err.println("bad entry:" + id);
                 continue;
             }
@@ -270,18 +282,42 @@ public class RamaddaGsacRepository extends GsacRepository {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param siteId _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public GsacSite doGetSite(String siteId) throws Exception {
-        Entry entry = getRepository().getEntryManager().getEntry(getRepository().getTmpRequest(),siteId);
-        if(entry==null) return null;
+        Entry entry = getRepository().getEntryManager().getEntry(
+                          getRepository().getTmpRequest(), siteId);
+        if (entry == null) {
+            return null;
+        }
         return makeSite(entry);
     }
 
+    /**
+     * _more_
+     *
+     * @param entry _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public GsacSite makeSite(Entry entry) throws Exception {
         Object[] values = entry.getValues();
         GsacSite site = new GsacSite(entry.getId(),
-                                     (String) entry.getValue(0,""), entry.getName(), entry.getNorth(),
+                                     (String) entry.getValue(0, ""),
+                                     entry.getName(), entry.getNorth(),
                                      entry.getWest(), entry.getAltitudeTop());
-        String entryUrl = getRepository().absoluteUrl(getRepository().getTmpRequest().entryUrl(getRepository().URL_ENTRY_SHOW, entry));
+        String entryUrl = getRepository().absoluteUrl(
+                              getRepository().getTmpRequest().entryUrl(
+                                  getRepository().URL_ENTRY_SHOW, entry));
         site.addMetadata(new LinkMetadata(entryUrl, "RAMADDA Entry"));
 
 
@@ -293,15 +329,17 @@ public class RamaddaGsacRepository extends GsacRepository {
      *
      * @param gsacRequest _more_
      * @param sb _more_
+     * @param buffer _more_
      *
      * @return _more_
      */
     public Appendable decorateHtml(GsacRequest gsacRequest,
-                                     Appendable buffer) {
+                                   Appendable buffer) {
         try {
-            StringBuffer sb =  (StringBuffer) buffer;
-            Result  result  = new Result("GSAC", sb);
-            Request request = (Request) gsacRequest.getProperty("request");
+            StringBuffer sb     = (StringBuffer) buffer;
+            Result       result = new Result("GSAC", sb);
+            Request request     =
+                (Request) gsacRequest.getProperty("request");
             if (request == null) {
                 request = getRepository().getTmpRequest();
             }

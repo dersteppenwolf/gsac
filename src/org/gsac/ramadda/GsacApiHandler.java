@@ -24,13 +24,14 @@ package org.gsac.ramadda;
 import org.gsac.gsl.*;
 
 
-
-import org.w3c.dom.*;
-
-
 import org.ramadda.repository.*;
 import org.ramadda.repository.auth.User;
 import org.ramadda.repository.harvester.*;
+
+
+
+import org.w3c.dom.*;
+
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
@@ -76,7 +77,8 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
      *
      * @throws Exception _more_
      */
-    public GsacApiHandler(org.ramadda.repository.Repository repository, org.w3c.dom.Element node)
+    public GsacApiHandler(org.ramadda.repository.Repository repository,
+                          org.w3c.dom.Element node)
             throws Exception {
         super(repository);
         gsacRepository = new RamaddaGsacRepository(this);
@@ -96,9 +98,9 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
      * @throws Exception _more_
      */
     public Result processGsacRequest(Request request) throws Exception {
-        GsacRequest gsacRequest =
-            new GsacRequest(gsacRepository, request.getHttpServletRequest(),
-                            request.getHttpServletResponse());
+        GsacRequest gsacRequest = new GsacRequest(gsacRepository,
+                                      request.getHttpServletRequest(),
+                                      request.getHttpServletResponse());
         gsacRequest.putProperty("request", request);
         gsacRepository.handleRequest(gsacRequest);
         Result result = new Result();
@@ -115,8 +117,7 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
      *
      * @throws Exception _more_
      */
-    public Result processGsacSiteRequest(Request request)
-            throws Exception {
+    public Result processGsacSiteRequest(Request request) throws Exception {
         return processGsacRequest(request);
     }
 

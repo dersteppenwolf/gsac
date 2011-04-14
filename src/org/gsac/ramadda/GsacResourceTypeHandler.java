@@ -21,12 +21,12 @@
 package org.gsac.ramadda;
 
 
-import org.w3c.dom.*;
-
-
 import org.ramadda.repository.*;
 import org.ramadda.repository.output.*;
 import org.ramadda.repository.type.*;
+
+
+import org.w3c.dom.*;
 
 
 import ucar.unidata.util.DateUtil;
@@ -59,6 +59,7 @@ import java.util.List;
  */
 public class GsacResourceTypeHandler extends GenericTypeHandler {
 
+    /** _more_          */
     public static final String TYPE_STREAM = "gsacstream";
 
 
@@ -120,7 +121,7 @@ public class GsacResourceTypeHandler extends GenericTypeHandler {
             return;
         }
 
-        String id        = column.getFullName();
+        String id     = column.getFullName();
         String siteId = column.toString(values, column.getOffset());
         if (siteId == null) {
             siteId = "";
@@ -131,21 +132,40 @@ public class GsacResourceTypeHandler extends GenericTypeHandler {
                                                  HtmlUtil.SIZE_10)));
     }
 
+    /** _more_          */
     public static final String COL_SITEID = "siteid";
 
-    public void  formatColumnHtmlValue(Request request, Entry entry, Column column, StringBuffer tmpSb,  Object[]values) throws Exception {
-        if(column.getName().equals(COL_SITEID)) {
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param entry _more_
+     * @param column _more_
+     * @param tmpSb _more_
+     * @param values _more_
+     *
+     * @throws Exception _more_
+     */
+    public void formatColumnHtmlValue(Request request, Entry entry,
+                                      Column column, StringBuffer tmpSb,
+                                      Object[] values)
+            throws Exception {
+        if (column.getName().equals(COL_SITEID)) {
             String siteId = (String) values[column.getOffset()];
-            if(siteId==null || siteId.length()==0) {
+            if ((siteId == null) || (siteId.length() == 0)) {
                 tmpSb.append(msg("Undefined"));
                 return;
             }
             Entry siteEntry = getEntryManager().getEntry(request, siteId);
-            if(siteEntry == null) {
+            if (siteEntry == null) {
                 tmpSb.append(msg("Undefined"));
                 return;
             }
-            tmpSb.append(HtmlUtil.href(request.entryUrl(getRepository().URL_ENTRY_SHOW, siteEntry),  siteEntry.getName()));
+            tmpSb.append(
+                HtmlUtil.href(
+                    request.entryUrl(
+                        getRepository().URL_ENTRY_SHOW,
+                        siteEntry), siteEntry.getName()));
         }
     }
 

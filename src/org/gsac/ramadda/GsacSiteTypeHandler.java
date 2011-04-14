@@ -21,12 +21,12 @@
 package org.gsac.ramadda;
 
 
-import org.w3c.dom.*;
-
-
 import org.ramadda.repository.*;
 import org.ramadda.repository.output.*;
 import org.ramadda.repository.type.*;
+
+
+import org.w3c.dom.*;
 
 
 import ucar.unidata.sql.Clause;
@@ -63,20 +63,23 @@ import java.util.List;
  */
 public class GsacSiteTypeHandler extends GenericTypeHandler {
 
-    /** _more_          */
+    /** _more_ */
     public static final String TABLE_GSACSITE = "gsacsite";
 
-    /** _more_          */
+    /** _more_ */
     public static final String GSAC_COL_ID = TABLE_GSACSITE + "."
                                              + GenericTypeHandler.COL_ID;
 
+    /** _more_          */
     public static final String GSAC_COL_SITEID = TABLE_GSACSITE + ".siteid";
 
+    /** _more_          */
     public static final String GSAC_COL_STATUS = TABLE_GSACSITE + ".status";
 
+    /** _more_          */
     public static final String GSAC_COL_SOURCE = TABLE_GSACSITE + ".source";
 
-    /** _more_          */
+    /** _more_ */
     public static final String GSAC_COL_WHOLESALER = TABLE_GSACSITE
                                                      + ".wholesaler";
 
@@ -124,12 +127,12 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
         //        initializeNewEntry(entry);
     }
 
-    /**                                                                                                                          
-     * _more_                                                                                                                    
-     *                                                                                                                           
-     * @param id _more_                                                                                                          
-     *                                                                                                                           
-     * @return _more_                                                                                                            
+    /**
+     * _more_
+     *
+     * @param id _more_
+     *
+     * @return _more_
      */
     public Entry createEntry(String id) {
         return new Entry(id, this, true);
@@ -154,8 +157,8 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
         String[] ids = SqlUtil.readString(
                            getDatabaseManager().getIterator(
                                getDatabaseManager().select(
-                                   GenericTypeHandler.COL_ID,
-                                   TABLE_GSACSITE, clause)));
+                                   GenericTypeHandler.COL_ID, TABLE_GSACSITE,
+                                   clause)));
         if (ids.length == 0) {
             return null;
         }

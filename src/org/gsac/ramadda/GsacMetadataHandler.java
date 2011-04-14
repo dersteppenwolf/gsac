@@ -21,12 +21,13 @@
 package org.gsac.ramadda;
 
 
-import org.w3c.dom.*;
-
-
 
 import org.ramadda.repository.*;
 import org.ramadda.repository.metadata.*;
+
+
+import org.w3c.dom.*;
+
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.HtmlUtil;
 
@@ -58,7 +59,10 @@ import java.util.List;
  */
 public class GsacMetadataHandler extends MetadataHandler {
 
+    /** _more_          */
     public static final String TYPE_STREAM_FORMAT = "gsac.stream.format";
+
+    /** _more_          */
     public static final String TYPE_STREAM_SOURCE = "gsac.stream.source";
 
 
