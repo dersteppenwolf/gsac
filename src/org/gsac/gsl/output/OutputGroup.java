@@ -40,15 +40,15 @@ import java.util.List;
  */
 public class OutputGroup {
 
-    /** group id      */
+    /** group id */
     private String id;
 
-    /** my outputs      */
+    /** my outputs */
     private List<GsacOutput> outputs = new ArrayList<GsacOutput>();
 
-    /** map of output id to output handler       */
+    /** map of output id to output handler */
     private Hashtable<String, GsacOutput> map = new Hashtable<String,
-        GsacOutput>();
+                                                    GsacOutput>();
 
     /**
      * ctor
@@ -59,18 +59,34 @@ public class OutputGroup {
         this.id = id;
     }
 
+    /**
+     * _more_
+     *
+     * @param output _more_
+     */
     public void addOutput(GsacOutput output) {
         map.put(output.getId(), output);
         outputs.add(output);
     }
-    
+
+    /**
+     * _more_
+     *
+     * @param id _more_
+     *
+     * @return _more_
+     */
     public GsacOutput getOutput(String id) {
         return map.get(id);
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<GsacOutput> getOutputs() {
         return outputs;
     }
 
 }
-

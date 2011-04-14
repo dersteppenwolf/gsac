@@ -52,16 +52,19 @@ import javax.servlet.http.*;
 
 
 /**
- *
+ * This implements a stand-alone gsac server. It uses the jetty servlet container.
+ * Derived classes (e.g., org.unavco.projects.gsac.repository.UnavcoServer) can override
+ * the doMakeServlet factory method to create a servlet with their own implementation of
+ * the GsacRepository
  *
  */
 public class GsacServer {
 
     /**
-     * _more_
+     * ctor
      *
-     * @param args _more_
-     * @throws Throwable _more_
+     * @param args command line args
+     * @throws Throwable On badness
      */
     public GsacServer(String[] args) throws Throwable {
         Properties properties = new Properties();
@@ -71,6 +74,7 @@ public class GsacServer {
                 port = new Integer(args[i + 1]).intValue();
                 i++;
             } else if (args[i].startsWith("-D")) {
+                //Look foe -Dproperty=value arguments
                 String[] toks = args[i].substring(2).split("=");
                 if (toks.length != 2) {
                     throw new IllegalArgumentException("Bad argument:"
@@ -100,14 +104,14 @@ public class GsacServer {
 
 
     /**
-     * _more_
+     * factory method to make the servlet
      *
-     * @param port _more_
-     * @param properties _more_
+     * @param port port
+     * @param properties properties
      *
-     * @return _more_
+     * @return the servlet
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public GsacServlet doMakeServlet(int port, Properties properties)
             throws Exception {
@@ -115,11 +119,11 @@ public class GsacServer {
     }
 
     /**
-     * _more_
+     * main
      *
-     * @param args _more_
+     * @param args cmd line args
      *
-     * @throws Throwable _more_
+     * @throws Throwable On badness
      */
     public static void main(String[] args) throws Throwable {
         try {

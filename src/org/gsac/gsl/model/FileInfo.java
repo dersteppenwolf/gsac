@@ -123,7 +123,7 @@ public class FileInfo {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public InputStream getInputStream() throws Exception {
         if (type != TYPE_FILE) {

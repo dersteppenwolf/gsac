@@ -19,22 +19,26 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.util.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
+import org.gsac.gsl.util.*;
+
+import org.w3c.dom.*;
+
+import ucar.unidata.xml.AtomUtil;
 
 import ucar.unidata.xml.XmlUtil;
-import ucar.unidata.xml.AtomUtil;
-import org.w3c.dom.*;
+
 import java.io.*;
 
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+
+import java.text.SimpleDateFormat;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -60,8 +64,9 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
      */
     public AtomSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_ATOM,
-                "Site GSAC ATOM", "/sites.atom", true));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_ATOM,
+                                      "Site GSAC ATOM", "/sites.atom", true));
     }
 
 
@@ -78,9 +83,10 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
     public void handleSiteResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_ATOM);
-        PrintWriter pw  = response.getPrintWriter();
+        PrintWriter pw = response.getPrintWriter();
         pw.append(AtomUtil.openFeed());
-        pw.append(AtomUtil.makeTitle(getRepository().getRepositoryName()+" ATOM Site Feed"));
+        pw.append(AtomUtil.makeTitle(getRepository().getRepositoryName()
+                                     + " ATOM Site Feed"));
         pw.append(AtomUtil.makeLink(AtomUtil.LINK_SELF, request.toString()));
         /*
     public static String makeEntry(String title,
@@ -90,8 +96,8 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                    String content,
                                    String[][]links) {
         */
-        for (GsacSite site: response.getSites()) {
-            String url =getRepository().getAbsoluteUrl(makeSiteUrl(site));
+        for (GsacSite site : response.getSites()) {
+            String url = getRepository().getAbsoluteUrl(makeSiteUrl(site));
             EarthLocation el = site.getEarthLocation();
             /*
             if(el!=null) {
@@ -102,11 +108,8 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                       }*/
             //TODO: add georss
             pw.append(AtomUtil.makeEntry(site.getSiteCode(), url,
-                                         site.getToDate(),
-                                         site.getLabel(),
-                                         null,
-                                         new String[][]{
-                                         }));
+                                         site.getToDate(), site.getLabel(),
+                                         null, new String[][] {}));
         }
         pw.append(AtomUtil.closeFeed());
         response.endResponse();

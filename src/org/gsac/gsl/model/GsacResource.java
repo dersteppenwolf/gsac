@@ -92,14 +92,11 @@ public class GsacResource extends GsacObject {
      * ctor
      *
      * @param repositoryId _more_
-     * @param url _more_
      * @param fileInfo _more_
      * @param site _more_
      * @param startTime _more_
      * @param endTime _more_
      * @param type _more_
-     * @param fileSize _more_
-     * @param md5 _more_
      */
     public GsacResource(String repositoryId, FileInfo fileInfo,
                         GsacSite site, Date startTime, Date endTime,

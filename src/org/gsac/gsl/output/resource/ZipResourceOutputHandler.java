@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import ucar.unidata.util.IOUtil;
 
@@ -69,9 +69,10 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
      */
     public ZipResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-                OUTPUT_RESOURCE_ZIP, "Zip Files", "/resources.zip",
-                                                                       true,null/*"Zip Files"*/));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_ZIP,
+                                      "Zip Files", "/resources.zip", true,
+                                      null /*"Zip Files"*/));
 
     }
 
@@ -91,7 +92,8 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
 
         //Check the size
         long totalSize = 0;
-        long maxSize = getRepository().getProperty(PROP_MAXSIZE, SIZE_THRESHOLD);
+        long maxSize = getRepository().getProperty(PROP_MAXSIZE,
+                           SIZE_THRESHOLD);
         for (GsacResource resource : response.getResources()) {
             if (resource.getFileInfo().getType() != FileInfo.TYPE_FILE) {
                 continue;

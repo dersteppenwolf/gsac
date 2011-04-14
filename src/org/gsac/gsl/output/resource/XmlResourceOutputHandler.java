@@ -19,13 +19,13 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import java.io.*;
 
@@ -55,8 +55,10 @@ public class XmlResourceOutputHandler extends GsacOutputHandler {
      */
     public XmlResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this, OUTPUT_RESOURCE_XML,
-                "Resource GSAC XML", "/resources.xml", true));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_XML,
+                                      "Resource GSAC XML", "/resources.xml",
+                                      true));
     }
 
 
@@ -70,11 +72,13 @@ public class XmlResourceOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleResourceResult(GsacRequest request, GsacResponse response)
+    public void handleResourceResult(GsacRequest request,
+                                     GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
-        PrintWriter pw  = response.getPrintWriter();
-        String      xml = getRepository().encodeObject(response.getResources());
+        PrintWriter pw = response.getPrintWriter();
+        String xml     =
+            getRepository().encodeObject(response.getResources());
         pw.print(xml);
         response.endResponse();
     }

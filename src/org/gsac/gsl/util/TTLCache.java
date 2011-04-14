@@ -33,9 +33,6 @@ import java.util.Hashtable;
  *
  * @author     Jeff McWhirter (jeffmc@unavco.org)
  *
- * @param The type of the cache key
- * @param The type of the cache value
- *
  * @param <KEY>
  * @param <VALUE>
  */
@@ -44,6 +41,7 @@ public class TTLCache<KEY, VALUE> {
     /** helper for ttl */
     public static long MS_IN_A_MINUTE = 1000 * 60;
 
+    /** _more_ */
     public static long MS_IN_AN_HOUR = 1000 * 60 * 60;
 
     /** helper for ttl */
@@ -107,6 +105,11 @@ public class TTLCache<KEY, VALUE> {
         this.updateTimeOnGet = updateTimeOnGet;
     }
 
+    /**
+     * _more_
+     *
+     * @param t _more_
+     */
     public void setTimeThreshold(long t) {
         this.timeThreshold = t;
     }

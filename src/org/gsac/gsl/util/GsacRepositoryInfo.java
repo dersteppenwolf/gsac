@@ -24,10 +24,11 @@ package org.gsac.gsl.util;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
-import java.util.HashSet;
 import java.io.PrintWriter;
 
 import java.util.ArrayList;
+
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -47,18 +48,23 @@ public class GsacRepositoryInfo {
     /** _more_ */
     private String name;
 
-    /** _more_          */
+    /** _more_ */
     private String description = "";
 
     /** _more_ */
     private String icon;
 
-    private List<CapabilityCollection> collections = new ArrayList<CapabilityCollection>();
+    /** _more_ */
+    private List<CapabilityCollection> collections =
+        new ArrayList<CapabilityCollection>();
 
+    /** _more_ */
     private int errorCnt = 0;
 
-    private int openRequestsCnt=0;
+    /** _more_ */
+    private int openRequestsCnt = 0;
 
+    /** _more_ */
     private Object REQUEST_MUTEX = new Object();
 
     /**
@@ -98,47 +104,79 @@ public class GsacRepositoryInfo {
         this.icon = icon;
     }
 
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     */
     public void printDescription(PrintWriter pw) {
-        pw.println("name: " +name);
-        pw.println("url: " +url);
+        pw.println("name: " + name);
+        pw.println("url: " + url);
         pw.println(description);
         for (CapabilityCollection collection : collections) {
-	    collection.printDescription(pw);
+            collection.printDescription(pw);
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param collection _more_
+     */
     public void addCollection(CapabilityCollection collection) {
         collections.add(collection);
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public int getErrorCount() {
         return errorCnt;
     }
 
+    /**
+     * _more_
+     */
     public void resetErrorCount() {
-        errorCnt= 0;
+        errorCnt = 0;
     }
 
+    /**
+     * _more_
+     */
     public void incrementErrorCount() {
         errorCnt++;
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public int getOpenRequestsCount() {
         return openRequestsCnt;
     }
 
+    /**
+     * _more_
+     */
     public void incrementOpenRequestsCount() {
-	synchronized(REQUEST_MUTEX) {
-	    openRequestsCnt++;
-	}
+        synchronized (REQUEST_MUTEX) {
+            openRequestsCnt++;
+        }
     }
 
+    /**
+     * _more_
+     */
     public void decrementOpenRequestsCount() {
-	synchronized(REQUEST_MUTEX) {
-	    openRequestsCnt--;
-	}
+        synchronized (REQUEST_MUTEX) {
+            openRequestsCnt--;
+        }
     }
 
     /**
@@ -156,7 +194,7 @@ public class GsacRepositoryInfo {
         if ((that.icon != null) && (that.icon.length() > 0)) {
             this.icon = that.icon;
         }
-        this.collections  = that.collections;
+        this.collections = that.collections;
 
     }
 
@@ -187,38 +225,57 @@ public class GsacRepositoryInfo {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param myList _more_
+     * @param values _more_
+     *
+     * @return _more_
+     */
     public boolean hasEntries(List myList, List values) {
-        if(myList==null || myList.size()==0) return false;
-        for(String value: (List<String>)values) {
-            if(IdLabel.contains((List<IdLabel>)myList, value)) return true;
+        if ((myList == null) || (myList.size() == 0)) {
+            return false;
+        }
+        for (String value : (List<String>) values) {
+            if (IdLabel.contains((List<IdLabel>) myList, value)) {
+                return true;
+            }
         }
         return false;
     }
 
 
     /**
-       Set the Collections property.
-
-       @param value The new value for Collections
-    **/
-    public void setCollections (List<CapabilityCollection> value) {
-	collections = value;
+     *  Set the Collections property.
+     *
+     *  @param value The new value for Collections
+     */
+    public void setCollections(List<CapabilityCollection> value) {
+        collections = value;
     }
 
     /**
-       Get the Collections property.
-
-       @return The Collections
-    **/
-    public List<CapabilityCollection> getCollections () {
-	return collections;
+     *  Get the Collections property.
+     *
+     *  @return The Collections
+     */
+    public List<CapabilityCollection> getCollections() {
+        return collections;
     }
 
-    
+
+    /**
+     * _more_
+     *
+     * @param capabilityId _more_
+     *
+     * @return _more_
+     */
     public Capability getCapability(String capabilityId) {
         for (CapabilityCollection collection : collections) {
             for (Capability capability : collection.getCapabilities()) {
-                if(capability.getId().equals(capabilityId)) {
+                if (capability.getId().equals(capabilityId)) {
                     return capability;
                 }
             }
@@ -227,9 +284,18 @@ public class GsacRepositoryInfo {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     *
+     * @return _more_
+     */
     public CapabilityCollection getCollection(String id) {
         for (CapabilityCollection collection : collections) {
-            if(collection.getId().equals(id)) return collection;
+            if (collection.getId().equals(id)) {
+                return collection;
+            }
         }
         return null;
     }
@@ -239,13 +305,18 @@ public class GsacRepositoryInfo {
     /**
      * _more_
      *
+     *
+     * @param collectionId _more_
      * @param capability _more_
      *
      * @return _more_
      */
-    public boolean isCapabilityUsed(String collectionId, Capability capability) {
-        CapabilityCollection collection =getCollection(collectionId);
-        if(collection==null) return false;
+    public boolean isCapabilityUsed(String collectionId,
+                                    Capability capability) {
+        CapabilityCollection collection = getCollection(collectionId);
+        if (collection == null) {
+            return false;
+        }
         return collection.isCapabilityUsed(capability);
     }
 

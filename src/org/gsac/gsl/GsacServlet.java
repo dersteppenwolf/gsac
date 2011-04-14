@@ -49,7 +49,9 @@ import javax.servlet.http.*;
 
 
 /**
- * Main entry point into the gsacws services
+ * Main entry point into the gsacws services. It serves as a bridge to the GsacRepository
+ * This can get instantiated directly with a GsacRepository. Or it will try to instantiate one
+ * with the class defined by the property: gsac.repository.class
  *
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
@@ -63,18 +65,17 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     /** The repository that does the work */
     private GsacRepository gsacRepository;
 
-
-    /** _more_ */
+    /** properties */
     private Properties properties = new Properties();
 
-    /** _more_ */
+    /** the default host name in case the repository does not have one */
     private String localHostname;
 
-    /** _more_ */
+    /** port we're running on */
     private int port = -1;
 
 
-    /** _more_ */
+    /** has this servlet been initialized */
     private boolean haveInitialized = false;
 
 
@@ -88,10 +89,10 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /**
-     * _more_
+     * ctor
      *
-     * @param port _more_
-     * @param properties _more_
+     * @param port port
+     * @param properties properties
      *
      * @throws Exception On badness
      */
@@ -105,8 +106,8 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      * Make the servlet with the given repository
      *
      * @param gsacRepository the repository to use
-     * @param port _more_
-     * @param properties _more_
+     * @param port port
+     * @param properties properties
      *
      * @throws Exception On badness
      */
@@ -123,10 +124,10 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /**
-     * _more_
+     * ctor
      *
-     * @param gsacRepository _more_
-     * @param port _more_
+     * @param gsacRepository The repository
+     * @param port The port to run on
      *
      * @throws Exception On badness
      */
@@ -141,9 +142,9 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /**
-     * _more_
+     * Initialize the servlet
      *
-     * @throws javax.servlet.ServletException _more_
+     * @throws javax.servlet.ServletException On badness
      */
     public void init() throws javax.servlet.ServletException {
         System.err.println("GsacServlet.init");
@@ -158,9 +159,9 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /**
-     * _more_
+     * get the port. If it is defined in this class then use it. Else use the GsacRepository.getPort()
      *
-     * @return _more_
+     * @return the port to run on
      */
     public int getPort() {
         if (port >= 0) {
@@ -227,11 +228,12 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /**
-     * _more_
+     * As the name implies this creates the GsacRepository via reflection
+     * The class is from the gsac.repository.class property.
      *
-     * @return _more_
+     * @return The repository
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     private GsacRepository createRepositoryViaReflection() throws Exception {
         String className =
@@ -255,103 +257,6 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         gsacRepository.initServlet(this);
         return gsacRepository;
     }
-
-    /**
-     * _more_
-     *
-     * @param name _more_
-     *
-     * @return _more_
-     */
-    public String getProperty(String name) {
-        String value = gsacRepository.getProperty(name);
-        if (value == null) {
-            //            System.out.println("#" +name +"=");
-        }
-        return value;
-    }
-
-
-
-    /**
-     * get property value or dflt if not found
-     *
-     * @param name property name
-     * @param dflt default value
-     *
-     * @return get property value or dflt if not found
-     */
-    public boolean getProperty(String name, boolean dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return new Boolean(prop).booleanValue();
-        }
-        return dflt;
-    }
-
-    /**
-     * _more_
-     *
-     * @param name _more_
-     * @param dflt _more_
-     *
-     * @return _more_
-     */
-    public long getProperty(String name, long dflt) {
-        String prop = getProperty(name);
-        if (prop != null) {
-            return new Long(prop).longValue();
-        }
-        return dflt;
-    }
-
-
-
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getLocalHostname() {
-        if (localHostname == null) {
-            try {
-                java.net.InetAddress localMachine =
-                    java.net.InetAddress.getLocalHost();
-                localHostname = localMachine.getHostName();
-            } catch (Exception exc) {
-                throw new RuntimeException(exc);
-            }
-        }
-        return localHostname;
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param path _more_
-     *
-     * @return _more_
-     */
-    public String getAbsoluteUrl(String path) {
-        String hostname = getRepository().getHostname();
-        //        hostname = "localhost";
-        if (hostname == null) {
-            hostname = getLocalHostname();
-        }
-        int port = getPort();
-        if (port == 80) {
-            return "http://" + hostname + path;
-        } else {
-            return "http://" + hostname + ":" + port + "" + path;
-        }
-    }
-
-
-
-
-
 
 
 
@@ -419,15 +324,59 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     }
 
 
+    /**
+     * get host name from InetAddress
+     *
+     * @return host name
+     */
+    public String getLocalHostname() {
+        if (localHostname == null) {
+            try {
+                java.net.InetAddress localMachine =
+                    java.net.InetAddress.getLocalHost();
+                localHostname = localMachine.getHostName();
+            } catch (Exception exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+        return localHostname;
+    }
+
 
     /**
-     * _more_
+     * Utility to create a fully qualified URL (including hostname)
      *
-     * @param path _more_
+     * @param path url path
      *
-     * @return _more_
+     * @return fully qualified URL
+     */
+    public String getAbsoluteUrl(String path) {
+        String hostname = getRepository().getHostname();
+        //        hostname = "localhost";
+        if (hostname == null) {
+            hostname = getLocalHostname();
+        }
+        int port = getPort();
+        if (port == 80) {
+            return "http://" + hostname + path;
+        } else {
+            return "http://" + hostname + ":" + port + "" + path;
+        }
+    }
+
+
+
+
+
+
+    /**
+     * Utility to get the input stream from the given path
      *
-     * @throws Exception _more_
+     * @param path resource path
+     *
+     * @return inputstream
+     *
+     * @throws Exception On badness
      */
     public InputStream getResourceInputStream(String path) throws Exception {
         InputStream inputStream = getClass().getResourceAsStream(path);
@@ -449,6 +398,58 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
 
+    /**
+     * get the property value
+     *
+     * @param name key
+     *
+     * @return value
+     */
+    public String getProperty(String name) {
+        String value = gsacRepository.getProperty(name);
+        if (value == null) {
+            //            System.out.println("#" +name +"=");
+        }
+        return value;
+    }
+
+
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return get property value or dflt if not found
+     */
+    public boolean getProperty(String name, boolean dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return new Boolean(prop).booleanValue();
+        }
+        return dflt;
+    }
+
+    /**
+     * get property value or dflt if not found
+     *
+     * @param name property name
+     * @param dflt default value
+     *
+     * @return get property value or dflt if not found
+     */
+    public long getProperty(String name, long dflt) {
+        String prop = getProperty(name);
+        if (prop != null) {
+            return new Long(prop).longValue();
+        }
+        return dflt;
+    }
+
+
+
+
 
 
 
@@ -462,7 +463,6 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     public static void main(String[] args) throws Exception {
         GsacServlet servlet = new GsacServlet();
     }
-
 
 
 

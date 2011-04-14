@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 
 import java.io.*;
@@ -54,10 +54,10 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
      */
     public WgetResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-                OUTPUT_RESOURCE_WGET, "Wget Script",
-                                                         "/resources.sh", true,
-                                                         "Wget Script"));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_WGET,
+                                      "Wget Script", "/resources.sh", true,
+                                      "Wget Script"));
 
     }
 
@@ -65,7 +65,7 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
     /**
      * _more_
      *
-     * @param response _more_
+     * @param response The response
      * @param resource _more_
      */
     public void processResource(GsacResponse response,

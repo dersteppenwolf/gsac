@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 
@@ -54,15 +54,17 @@ public class CsvResourceOutputHandler extends StreamingOutputHandler {
      */
     public CsvResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-                OUTPUT_RESOURCE_CSV, "Resource CSV", "/resources.csv", true));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_CSV,
+                                      "Resource CSV", "/resources.csv",
+                                      true));
     }
 
 
     /**
      * _more_
      *
-     * @param response _more_
+     * @param response The response
      * @param resource _more_
      */
     public void processResource(GsacResponse response,

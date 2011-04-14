@@ -19,22 +19,26 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.util.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
+import org.gsac.gsl.util.*;
+
+import org.w3c.dom.*;
+
+import ucar.unidata.util.IOUtil;
 
 import ucar.unidata.xml.XmlUtil;
-import ucar.unidata.util.IOUtil;
-import org.w3c.dom.*;
+
 import java.io.*;
 
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+
+import java.text.SimpleDateFormat;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -53,8 +57,10 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
     public static final String OUTPUT_RESOURCE_RSS = "resource.gsacrss";
 
 
+    /** _more_ */
     public static final String ATTR_RSS_VERSION = "version";
 
+    /** _more_ */
     public static final String TAG_RSS_RSS = "rss";
 
     /** _more_ */
@@ -63,6 +69,7 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
     /** _more_ */
     public static final String TAG_RSS_GEOLON = "georss:lon";
 
+    /** _more_ */
     public static final String TAG_RSS_GEOBOX = "georss:box";
 
 
@@ -88,7 +95,7 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
     public static final String TAG_RSS_DESCRIPTION = "description";
 
 
-    /** _more_          */
+    /** _more_ */
     SimpleDateFormat rssSdf =
         new SimpleDateFormat("EEE dd, MMM yyyy HH:mm:ss Z");
 
@@ -100,8 +107,10 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
      */
     public RssResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this, OUTPUT_RESOURCE_RSS,
-                "Resource GSAC RSS", "/resources.rss", true));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_RSS,
+                                      "Resource GSAC RSS", "/resources.rss",
+                                      true));
     }
 
 
@@ -115,26 +124,32 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleResourceResult(GsacRequest request, GsacResponse response)
+    public void handleResourceResult(GsacRequest request,
+                                     GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_RSS);
-        PrintWriter pw  = response.getPrintWriter();
+        PrintWriter pw = response.getPrintWriter();
         pw.append(XmlUtil.XML_HEADER + "\n");
         pw.append(XmlUtil.openTag(TAG_RSS_RSS,
                                   XmlUtil.attrs(ATTR_RSS_VERSION, "2.0")));
         pw.append(XmlUtil.openTag(TAG_RSS_CHANNEL));
-        pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", getRepository().getRepositoryName() +" resource results"));
-        for (GsacResource resource: response.getResources()) {
+        pw.append(XmlUtil.tag(TAG_RSS_TITLE, "",
+                              getRepository().getRepositoryName()
+                              + " resource results"));
+        for (GsacResource resource : response.getResources()) {
             pw.append(XmlUtil.openTag(TAG_RSS_ITEM));
-            if(resource.getPublishTime()!=null) {
+            if (resource.getPublishTime() != null) {
                 pw.append(
-                          XmlUtil.tag(
-                                      TAG_RSS_PUBDATE, "",
-                                      rssSdf.format(resource.getPublishTime())));
+                    XmlUtil.tag(
+                        TAG_RSS_PUBDATE, "",
+                        rssSdf.format(resource.getPublishTime())));
             }
-            String title = resource.getType() +" - " +IOUtil.getFileTail(resource.getFileInfo().getUrl());
+            String title =
+                resource.getType() + " - "
+                + IOUtil.getFileTail(resource.getFileInfo().getUrl());
             pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
-            String url =getRepository().getAbsoluteUrl(makeResourceUrl(resource));
+            String url =
+                getRepository().getAbsoluteUrl(makeResourceUrl(resource));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
             pw.append(XmlUtil.tag(TAG_RSS_GUID, "", url));
 
@@ -146,10 +161,10 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
                                                                        entry, request, true, false).toString());
             pw.append(XmlUtil.closeTag(TAG_RSS_DESCRIPTION));
             */
-            GsacSite site =  resource.getSite();
-            if(site!=null) {
+            GsacSite site = resource.getSite();
+            if (site != null) {
                 EarthLocation el = site.getEarthLocation();
-                if(el!=null) {
+                if (el != null) {
                     pw.append(XmlUtil.tag(TAG_RSS_GEOLAT, "",
                                           "" + el.getLatitude()));
                     pw.append(XmlUtil.tag(TAG_RSS_GEOLON, "",

@@ -75,7 +75,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public String findValue(String arg) throws Exception {
         String v = findValue(arg, GsacArgs.class);
@@ -96,7 +96,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
      * @param type _more_
      * @param desc _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void process(String argName, String type, String desc)
             throws Exception {
@@ -131,7 +131,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
     /**
      * _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void process() throws Exception {
         System.out.println(
@@ -171,7 +171,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
      *
      * @param args _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public static void main(String[] args) throws Exception {
         GsacDocs docs = new GsacDocs();

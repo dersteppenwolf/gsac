@@ -19,13 +19,13 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import org.w3c.dom.*;
 
@@ -66,8 +66,10 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
      */
     public KmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_KML,
-                "Google Earth KML", "/sites.kml", true));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_KML,
+                                      "Google Earth KML", "/sites.kml",
+                                      true));
     }
 
 
@@ -142,7 +144,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                 styleElement = KmlUtil.iconstyle(doc, styleId, url, 0.5);
                 iconMap.put(url, styleElement);
             } else {
-                styleId = XmlUtil.getAttribute(styleElement, "id","");
+                styleId = XmlUtil.getAttribute(styleElement, "id", "");
             }
 
             Element placemark = KmlUtil.placemark(groupElement,

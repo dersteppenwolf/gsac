@@ -55,6 +55,7 @@ public class GsacOutput {
     /** _more_ */
     private String fileSuffix;
 
+    /** _more_ */
     private String toolbarLabel;
 
 
@@ -111,33 +112,44 @@ public class GsacOutput {
         this(outputHandler, id, label, fileSuffix, forUser, null);
     }
 
+    /**
+     * _more_
+     *
+     * @param outputHandler _more_
+     * @param id _more_
+     * @param label _more_
+     * @param fileSuffix _more_
+     * @param forUser _more_
+     * @param toolbarLabel _more_
+     */
     public GsacOutput(GsacOutputHandler outputHandler, String id,
-                      String label, String fileSuffix, boolean forUser, String toolbarLabel) {
+                      String label, String fileSuffix, boolean forUser,
+                      String toolbarLabel) {
         this.outputHandler = outputHandler;
         this.id            = id;
         this.label         = label;
         this.fileSuffix    = fileSuffix;
         this.forUser       = forUser;
-        this.toolbarLabel = toolbarLabel;
+        this.toolbarLabel  = toolbarLabel;
     }
 
 
     /**
-       Set the ToolBarLabel property.
-
-       @param value The new value for ToolBarLabel
-    **/
-    public void setToolbarLabel (String value) {
-	toolbarLabel = value;
+     *  Set the ToolBarLabel property.
+     *
+     *  @param value The new value for ToolBarLabel
+     */
+    public void setToolbarLabel(String value) {
+        toolbarLabel = value;
     }
 
     /**
-       Get the ToolbarLabel property.
-
-       @return The ToolbarLabel
-    **/
-    public String getToolbarLabel () {
-	return toolbarLabel;
+     *  Get the ToolbarLabel property.
+     *
+     *  @return The ToolbarLabel
+     */
+    public String getToolbarLabel() {
+        return toolbarLabel;
     }
 
 

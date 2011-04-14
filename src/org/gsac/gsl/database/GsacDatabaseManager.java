@@ -90,6 +90,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
     private BasicDataSource dataSource;
 
 
+    /** _more_ */
     Properties connectionProps = new Properties();
 
 
@@ -135,24 +136,33 @@ public abstract class GsacDatabaseManager implements GsacConstants,
             throw new RuntimeException("Could not load the jdbc driver:"
                                        + getDriverClassName());
         }
-        System.err.println ("DB: Creating data source");
-	makeNewDataSource();
+        System.err.println("DB: Creating data source");
+        makeNewDataSource();
         //try to connect
         closeConnection(getConnection());
         SqlUtil.setConnectionManager(this);
     }
 
-    private  void makeNewDataSource() throws Exception {
-	if(dataSource!=null) {
-	}
+    /**
+     * _more_
+     *
+     * @throws Exception _more_
+     */
+    private void makeNewDataSource() throws Exception {
+        if (dataSource != null) {}
         dataSource = doMakeDataSource();
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getPoolStats() {
-        return "#active:" + dataSource.getNumActive()
-            + " #idle:" + dataSource.getNumIdle()
-            + " max active: " + dataSource.getMaxActive()
-            + " max idle:" + dataSource.getMaxIdle();
+        return "#active:" + dataSource.getNumActive() + " #idle:"
+               + dataSource.getNumIdle() + " max active: "
+               + dataSource.getMaxActive() + " max idle:"
+               + dataSource.getMaxIdle();
 
     }
 
@@ -161,6 +171,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      * This needs to be overwritten by the derived class to create the data source
      *
      * @return the data source to use
+     *
+     * @throws Exception _more_
      */
     public BasicDataSource doMakeDataSource() throws Exception {
         //Read the username, password and jdbcurl from the properties file
@@ -256,11 +268,11 @@ public abstract class GsacDatabaseManager implements GsacConstants,
                 return value.trim();
             }
         }
-        String fromProperties =  (String) properties.get(name);
-        if(fromProperties!=null) {
+        String fromProperties = (String) properties.get(name);
+        if (fromProperties != null) {
             return fromProperties.trim();
         }
-        return  null;
+        return null;
     }
 
     /**
@@ -318,8 +330,9 @@ public abstract class GsacDatabaseManager implements GsacConstants,
         try {
             connectionCnt--;
             connection.close();
-            if(connectionCnt>3)
-                System.err.println ("close:" + connectionCnt);
+            if (connectionCnt > 3) {
+                System.err.println("close:" + connectionCnt);
+            }
         } catch (Exception ignoreThis) {}
     }
 
@@ -380,8 +393,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      *
      * @return the clause
      */
-    public static Clause getStringSearchClause(String searchType, String column,
-                                        String value) {
+    public static Clause getStringSearchClause(String searchType,
+            String column, String value) {
         boolean not = value.startsWith("!");
         if (not) {
             value = value.substring(1, value.length());
@@ -453,7 +466,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public SqlUtil.Iterator getIterator(Statement statement)
             throws Exception {
@@ -514,7 +527,6 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      *
      * @param what What to select
      * @param table The table to select from
-     * @param The where clause. May be null
      * @param clause The where clause. May be null
      * @param extra select suffix. May be null,
      * @param max Max count. -1 means all. This may not actuall work on the particular jdbc connection
@@ -562,7 +574,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public Statement select(String what, List tables, Clause clause,
                             String sqlBetweenFromAndWhere, String suffixSql,
@@ -571,10 +583,10 @@ public abstract class GsacDatabaseManager implements GsacConstants,
         Connection connection = getConnection();
         try {
             Statement statement = SqlUtil.select(connection, what, tables,
-                                                 clause, sqlBetweenFromAndWhere,
-                                                 suffixSql, max, TIMEOUT);
+                                      clause, sqlBetweenFromAndWhere,
+                                      suffixSql, max, TIMEOUT);
             return statement;
-        } catch(Exception exc) {
+        } catch (Exception exc) {
             closeConnection(connection);
             throw exc;
         }
@@ -602,7 +614,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      * @param packageName _more_
      * @param what _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void writeTables(String packageName, String[] what)
             throws Exception {
@@ -775,7 +787,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
          *
          * @param statement _more_
          *
-         * @throws SQLException _more_
+         * @throws SQLException On badness
          */
         protected void close(Statement statement) throws SQLException {
             databaseManager.closeAndReleaseConnection(statement);

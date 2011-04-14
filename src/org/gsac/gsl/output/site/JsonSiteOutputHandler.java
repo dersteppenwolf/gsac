@@ -19,7 +19,6 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
@@ -29,10 +28,13 @@ import com.google.gson.*;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import java.io.*;
 
 import java.text.DateFormat;
+
+import java.util.List;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -58,8 +60,9 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
      */
     public JsonSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_JSON,
-                "Site JSON", "/sites.json", true));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_JSON,
+                                      "Site JSON", "/sites.json", true));
     }
 
 
@@ -81,8 +84,12 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         gsonBuilder.setPrettyPrinting();
         gsonBuilder.setDateFormat(DateFormat.LONG);
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
-        Gson gson = gsonBuilder.create();
-        pw.print(gson.toJson(response.getSites()));
+        Gson           gson  = gsonBuilder.create();
+        List<GsacSite> sites = response.getSites();
+        String         json  = gson.toJson(sites);
+        System.out.println(json);
+        System.out.println("size:" + json.length() + " #:" + sites.size());
+        pw.print(json);
         response.endResponse();
     }
 

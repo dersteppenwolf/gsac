@@ -45,7 +45,7 @@ public class GsacStreamingResponse extends GsacResponse {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      */
     public GsacStreamingResponse(GsacRequest request) {
         super(request);

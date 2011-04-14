@@ -164,8 +164,13 @@ public interface GsacConstants extends GsacArgs {
     public static final String CAPABILITIES_RESOURCE = "resource";
 
 
+    /** _more_ */
     public static final String OUTPUT_GROUP_SITE = "output.site";
+
+    /** _more_ */
     public static final String OUTPUT_GROUP_RESOURCE = "output.resource";
+
+    /** _more_ */
     public static final String OUTPUT_GROUP_BROWSE = "output.browse";
 
 }

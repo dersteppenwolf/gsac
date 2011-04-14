@@ -68,19 +68,31 @@ public interface GsacArgs {
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
 
     /** _more_ */
-    public static final String ARG_SITE_DATE = ARG_SITE_PREFIX
-                                                          + "date";
+    public static final String ARG_SITE_DATE = ARG_SITE_PREFIX + "date";
 
+    /** _more_ */
     public static final String ARG_SITE_DATE_FROM = ARG_SITE_DATE + ".from";
+
+    /** _more_ */
     public static final String ARG_SITE_DATE_TO = ARG_SITE_DATE + ".to";
 
 
 
-    public static final String ARG_SITE_LOCATION = ARG_SITE_PREFIX + "location";
+    /** _more_ */
+    public static final String ARG_SITE_LOCATION = ARG_SITE_PREFIX
+                                                   + "location";
 
-    public static final String ARG_SITE_LATITUDE = ARG_SITE_PREFIX + "latitude";
-    public static final String ARG_SITE_LONGITUDE = ARG_SITE_PREFIX + "longitude";
-    public static final String ARG_SITE_ELEVATION = ARG_SITE_PREFIX + "elevation";
+    /** _more_ */
+    public static final String ARG_SITE_LATITUDE = ARG_SITE_PREFIX
+                                                   + "latitude";
+
+    /** _more_ */
+    public static final String ARG_SITE_LONGITUDE = ARG_SITE_PREFIX
+                                                    + "longitude";
+
+    /** _more_ */
+    public static final String ARG_SITE_ELEVATION = ARG_SITE_PREFIX
+                                                    + "elevation";
 
 
     /** _more_ */
@@ -291,8 +303,10 @@ public interface GsacArgs {
     /** output type. e.g., site.html, resource.csv, etc" */
     public static final String ARG_OUTPUT = "output";
 
+    /** _more_ */
     public static final String ARG_DELIMITER = "delimiter";
 
+    /** _more_ */
     public static final String ARG_PARAMS = "params";
 
     /** query offset. specifies number of row to skip */

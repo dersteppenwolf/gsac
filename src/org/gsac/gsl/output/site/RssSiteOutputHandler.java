@@ -19,21 +19,24 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.util.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
+import org.gsac.gsl.util.*;
+
+import org.w3c.dom.*;
 
 import ucar.unidata.xml.XmlUtil;
-import org.w3c.dom.*;
+
 import java.io.*;
 
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+
+import java.text.SimpleDateFormat;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -52,8 +55,10 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
     public static final String OUTPUT_SITE_RSS = "site.gsacrss";
 
 
+    /** _more_ */
     public static final String ATTR_RSS_VERSION = "version";
 
+    /** _more_ */
     public static final String TAG_RSS_RSS = "rss";
 
     /** _more_ */
@@ -62,6 +67,7 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
     /** _more_ */
     public static final String TAG_RSS_GEOLON = "georss:lon";
 
+    /** _more_ */
     public static final String TAG_RSS_GEOBOX = "georss:box";
 
 
@@ -87,7 +93,7 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
     public static final String TAG_RSS_DESCRIPTION = "description";
 
 
-    /** _more_          */
+    /** _more_ */
     SimpleDateFormat rssSdf =
         new SimpleDateFormat("EEE dd, MMM yyyy HH:mm:ss Z");
 
@@ -99,8 +105,9 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
      */
     public RssSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_RSS,
-                "Site GSAC RSS", "/sites.rss", true));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_RSS,
+                                      "Site GSAC RSS", "/sites.rss", true));
     }
 
 
@@ -117,27 +124,27 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
     public void handleSiteResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_RSS);
-        PrintWriter pw  = response.getPrintWriter();
+        PrintWriter pw = response.getPrintWriter();
         pw.append(XmlUtil.XML_HEADER + "\n");
         pw.append(XmlUtil.openTag(TAG_RSS_RSS,
                                   XmlUtil.attrs(ATTR_RSS_VERSION, "2.0")));
         pw.append(XmlUtil.openTag(TAG_RSS_CHANNEL));
-        pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", getRepository().getRepositoryName() +" resource results"));
-        for (GsacSite site: response.getSites()) {
+        pw.append(XmlUtil.tag(TAG_RSS_TITLE, "",
+                              getRepository().getRepositoryName()
+                              + " resource results"));
+        for (GsacSite site : response.getSites()) {
             pw.append(XmlUtil.openTag(TAG_RSS_ITEM));
-            if(site.getToDate()!=null) {
-                pw.append(
-                          XmlUtil.tag(
-                                      TAG_RSS_PUBDATE, "",
+            if (site.getToDate() != null) {
+                pw.append(XmlUtil.tag(TAG_RSS_PUBDATE, "",
                                       rssSdf.format(site.getToDate())));
             }
             String title = site.getLabel();
             pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
-            String url =getRepository().getAbsoluteUrl(makeSiteUrl(site));
+            String url = getRepository().getAbsoluteUrl(makeSiteUrl(site));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
             pw.append(XmlUtil.tag(TAG_RSS_GUID, "", url));
             EarthLocation el = site.getEarthLocation();
-            if(el!=null) {
+            if (el != null) {
                 pw.append(XmlUtil.tag(TAG_RSS_GEOLAT, "",
                                       "" + el.getLatitude()));
                 pw.append(XmlUtil.tag(TAG_RSS_GEOLON, "",

@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 
 import java.io.*;
@@ -54,8 +54,10 @@ public class UrlResourceOutputHandler extends StreamingOutputHandler {
      */
     public UrlResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-                OUTPUT_RESOURCE_URL, "Resource Url", "/resources.txt", true));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_URL,
+                                      "Resource Url", "/resources.txt",
+                                      true));
 
     }
 
@@ -63,7 +65,7 @@ public class UrlResourceOutputHandler extends StreamingOutputHandler {
     /**
      * _more_
      *
-     * @param response _more_
+     * @param response The response
      * @param resource _more_
      */
     public void processResource(GsacResponse response,

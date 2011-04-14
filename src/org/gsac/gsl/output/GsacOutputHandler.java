@@ -58,7 +58,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /** _more_ */
     protected SimpleDateFormat dateSdf = makeDateFormat("yyyy-MM-dd");
 
-    /** _more_          */
+    /** _more_ */
     protected SimpleDateFormat dateTimeSdf =
         makeDateFormat("yyyy-MM-dd HH:mm");
 
@@ -111,15 +111,17 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
+     *
+     * @param gsacRepository _more_
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
         this.gsacRepository = gsacRepository;
-        doSite           = getRepository().isCapable(HEADER_SITE);
-        doResource       = getRepository().isCapable(HEADER_RESOURCE);
-        doSiteCode       = getRepository().isCapable(ARG_SITE_CODE);
-        doSiteStatus     = getRepository().isCapable(ARG_SITE_STATUS);
-        doSiteGroup      = getRepository().isCapable(ARG_SITE_GROUP);
-        doSiteType       = getRepository().isCapable(ARG_SITE_TYPE);
+        doSite              = getRepository().isCapable(HEADER_SITE);
+        doResource          = getRepository().isCapable(HEADER_RESOURCE);
+        doSiteCode          = getRepository().isCapable(ARG_SITE_CODE);
+        doSiteStatus        = getRepository().isCapable(ARG_SITE_STATUS);
+        doSiteGroup         = getRepository().isCapable(ARG_SITE_GROUP);
+        doSiteType          = getRepository().isCapable(ARG_SITE_TYPE);
         //        doSiteDateRange = getRepository().isCapable(ARG_SITE_TYPE);
 
         doResourcePublishDate =
@@ -208,7 +210,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      *
      * @return _more_
      */
@@ -296,8 +298,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      *  Cut and pasted from GsacRepositoryManager
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      * @param htmlBuff _more_
      */
     public void checkMessage(GsacRequest request, GsacResponse response,
@@ -330,11 +332,11 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      * @param sb _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void finishResponse(GsacRequest request, GsacResponse response,
                                StringBuffer sb)
@@ -378,9 +380,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleSiteRequest(GsacRequest gsacRequest) throws Exception {
         handleSiteRequest(gsacRequest, doMakeResponse(gsacRequest));
@@ -390,10 +392,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      * @param gsacResponse _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleSiteRequest(GsacRequest gsacRequest,
                                   GsacResponse gsacResponse)
@@ -403,16 +405,18 @@ public abstract class GsacOutputHandler implements GsacConstants {
         long t2 = System.currentTimeMillis();
         handleSiteResult(gsacRequest, gsacResponse);
         long t3 = System.currentTimeMillis();
-        System.err.println("GSAC.handleSiteRequest time to read:" + (t2-t1) +" time to encode:" + (t3-t2) +" #sites:" + gsacResponse.getSites().size());
+        System.err.println("GSAC.handleSiteRequest time to read:" + (t2 - t1)
+                           + " time to encode:" + (t3 - t2) + " #sites:"
+                           + gsacResponse.getSites().size());
     }
 
 
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleResourceRequest(GsacRequest gsacRequest)
             throws Exception {
@@ -422,10 +426,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      * @param gsacResponse _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleResourceRequest(GsacRequest gsacRequest,
                                       GsacResponse gsacResponse)
@@ -438,9 +442,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleBrowseRequest(GsacRequest gsacRequest)
             throws Exception {
@@ -450,10 +454,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      * @param gsacResponse _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleBrowseRequest(GsacRequest gsacRequest,
                                     GsacResponse gsacResponse)
@@ -464,13 +468,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
-     * @param response _more_
+     * @param gsacRequest The request
+     * @param response The response
      *
-     * @throws IOException _more_
-     * @throws ServletException _more_
-     *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleResourceResult(GsacRequest gsacRequest,
                                      GsacResponse response)
@@ -483,10 +484,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
-     * @param response _more_
+     * @param gsacRequest The request
+     * @param response The response
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleSiteResult(GsacRequest gsacRequest,
                                  GsacResponse response)
@@ -603,16 +604,30 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param site _more_
+     *
+     * @return _more_
+     */
     public String formatLatLon(GsacSite site) {
         return formatLatLon(site.getLatitude()) + ","
-            + formatLatLon(site.getLongitude()) + ","
-            + site.getElevation();
+               + formatLatLon(site.getLongitude()) + ","
+               + site.getElevation();
     }
 
 
+    /**
+     * _more_
+     *
+     * @param site _more_
+     *
+     * @return _more_
+     */
     public String formatDate(GsacSite site) {
-        return  formatDate(site.getFromDate()) + " - "
-            + formatDate(site.getToDate());
+        return formatDate(site.getFromDate()) + " - "
+               + formatDate(site.getToDate());
     }
 
 

@@ -207,19 +207,18 @@ public abstract class ResourceManager extends GsacRepositoryManager {
                                                ARG_RESOURCE_TYPE, true)),
                               initCapability(new Capability(ARG_RESOURCE_DATADATE,
                                   "Data Date",
-                                  Capability
-                                      .TYPE_DATERANGE), "File Query",
-                                          "Date the data this resource holds was collected"),
+                                  Capability.TYPE_DATERANGE), "File Query",
+                                      "Date the data this resource holds was collected"),
                               initCapability(new Capability(ARG_RESOURCE_PUBLISHDATE,
                                   "Publish Date",
-                                  Capability
-                                      .TYPE_DATERANGE), "File Query",
-                                          "Date when this resource was first published to the repository"),
-                              initCapability(cap = new Capability(ARG_RESOURCE_FILESIZE,
-                                  "File Size",
-                                  Capability
-                                      .TYPE_NUMBERRANGE), "File Query",
-                                          "File size") };
+                                  Capability.TYPE_DATERANGE), "File Query",
+                                      "Date when this resource was first published to the repository"),
+                              initCapability(cap =
+                                  new Capability(ARG_RESOURCE_FILESIZE,
+                                      "File Size",
+                                      Capability
+                                          .TYPE_NUMBERRANGE), "File Query",
+                                              "File size") };
         cap.setSuffixLabel("&nbsp;(bytes)");
         for (Capability capability : dflt) {
             capabilities.add(capability);
@@ -235,7 +234,7 @@ public abstract class ResourceManager extends GsacRepositoryManager {
      * @param columnName publish date column name
      * @param msgBuff search criteria message buffer
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void addPublishDateClauses(GsacRequest request,
                                       List<Clause> clauses,

@@ -122,7 +122,7 @@ public class GsacTest implements Runnable {
      *
      * @param args _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public static void main(String[] args) throws Exception {
         String[] urls  = URLS;

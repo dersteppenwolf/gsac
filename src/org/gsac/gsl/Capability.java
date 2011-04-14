@@ -40,6 +40,7 @@ import java.util.List;
 public class Capability {
 
 
+    /** _more_ */
     public static final String DFLT_GROUP = "Advanced Query";
 
     /** _more_ */
@@ -106,6 +107,7 @@ public class Capability {
     /** _more_ */
     public static final String TYPE_SPATIAL_BOUNDS = "spatial_bounds";
 
+    /** _more_ */
     public static final String TYPE_LABEL = "label";
 
 
@@ -152,6 +154,7 @@ public class Capability {
     /** _more_ */
     private CapabilityCollection collection;
 
+    /** _more_ */
     private String dflt;
 
     /**
@@ -172,6 +175,15 @@ public class Capability {
         this(id, label, enums, allowMultiples, null);
     }
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param label _more_
+     * @param enums _more_
+     * @param allowMultiples _more_
+     * @param group _more_
+     */
     public Capability(String id, String label, String[] enums,
                       boolean allowMultiples, String group) {
         this(id, label, TYPE_ENUMERATION, IdLabel.toList(enums),
@@ -207,6 +219,15 @@ public class Capability {
         this(id, label, vocabulary, allowMultiples, null);
     }
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param label _more_
+     * @param vocabulary _more_
+     * @param allowMultiples _more_
+     * @param group _more_
+     */
     public Capability(String id, String label, Vocabulary vocabulary,
                       boolean allowMultiples, String group) {
         this(id, label, TYPE_ENUMERATION, vocabulary.getValues(),
@@ -227,6 +248,14 @@ public class Capability {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param label _more_
+     * @param type _more_
+     * @param group _more_
+     */
     public Capability(String id, String label, String type, String group) {
         this(id, label, type, null, false, group);
     }
@@ -246,14 +275,25 @@ public class Capability {
         this(id, label, type, enums, allowMultiples, null);
     }
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param label _more_
+     * @param type _more_
+     * @param enums _more_
+     * @param allowMultiples _more_
+     * @param group _more_
+     */
     public Capability(String id, String label, String type,
-                      List<IdLabel> enums, boolean allowMultiples, String group) {
+                      List<IdLabel> enums, boolean allowMultiples,
+                      String group) {
         this.id             = id;
         this.label          = label;
         this.type           = type;
         this.enums          = enums;
         this.allowMultiples = allowMultiples;
-        this.group = group;
+        this.group          = group;
     }
 
 
@@ -334,7 +374,7 @@ public class Capability {
      *
      * @param sb _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void toXml(Appendable sb) throws Exception {
         StringBuffer attrs = new StringBuffer(XmlUtil.attrs(ATTR_ID, id,
@@ -736,21 +776,21 @@ public class Capability {
     }
 
     /**
-       Set the Default property.
-
-       @param value The new value for Default
-    **/
-    public void setDefault (String value) {
+     *  Set the Default property.
+     *
+     *  @param value The new value for Default
+     */
+    public void setDefault(String value) {
         dflt = value;
     }
 
     /**
-       Get the Default property.
-
-       @return The Default
-    **/
-    public String getDefault () {
-	return dflt;
+     *  Get the Default property.
+     *
+     *  @return The Default
+     */
+    public String getDefault() {
+        return dflt;
     }
 
 

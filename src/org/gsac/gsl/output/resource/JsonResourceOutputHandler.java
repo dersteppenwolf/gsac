@@ -19,7 +19,6 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
@@ -27,6 +26,7 @@ import com.google.gson.*;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 import java.io.*;
@@ -60,9 +60,10 @@ public class JsonResourceOutputHandler extends GsacOutputHandler {
      */
     public JsonResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-                OUTPUT_RESOURCE_JSON, "Resource JSON", "/resources.json",
-                true));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_JSON,
+                                      "Resource JSON", "/resources.json",
+                                      true));
     }
 
 

@@ -88,10 +88,12 @@ public class GsacRequest implements GsacConstants {
     /** _more_ */
     private boolean useVocabulary = true;
 
+    /** _more_ */
     private boolean isMobile = false;
 
 
-    private Hashtable httpHeader= new Hashtable();
+    /** _more_ */
+    private Hashtable httpHeader = new Hashtable();
 
 
 
@@ -171,7 +173,7 @@ public class GsacRequest implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws IOException _more_
+     * @throws IOException On badness
      */
     public OutputStream getOutputStream() throws IOException {
         return httpServletResponse.getOutputStream();
@@ -215,7 +217,7 @@ public class GsacRequest implements GsacConstants {
      * @param code _more_
      * @param message _more_
      *
-     * @throws IOException _more_
+     * @throws IOException On badness
      */
     public void sendError(int code, String message) throws IOException {
         httpServletResponse.sendError(code, message);
@@ -246,7 +248,7 @@ public class GsacRequest implements GsacConstants {
         }
 
         for (Enumeration headerNames = httpServletRequest.getHeaderNames();
-             headerNames.hasMoreElements(); ) {
+                headerNames.hasMoreElements(); ) {
             String name  = (String) headerNames.nextElement();
             String value = httpServletRequest.getHeader(name);
             httpHeader.put(name, value);
@@ -254,14 +256,21 @@ public class GsacRequest implements GsacConstants {
 
 
         String ua = getUserAgent("").toLowerCase();
-        isMobile =  ua.indexOf("iphone")>=0;
+        isMobile = ua.indexOf("iphone") >= 0;
 
     }
 
 
+    /**
+     * _more_
+     *
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
     public String getUserAgent(String dflt) {
-        String value =  getHeaderArg("User-Agent");
-        if(value == null) {
+        String value = getHeaderArg("User-Agent");
+        if (value == null) {
             System.err.println("no user agent");
             return dflt;
         }
@@ -269,6 +278,13 @@ public class GsacRequest implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param name _more_
+     *
+     * @return _more_
+     */
     public String getHeaderArg(String name) {
         if (httpHeader == null) {
             return null;
@@ -280,6 +296,11 @@ public class GsacRequest implements GsacConstants {
         return arg;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean isMobile() {
         //        if(true) return true;
         return isMobile;
@@ -695,9 +716,10 @@ public class GsacRequest implements GsacConstants {
             return dflt;
         }
 
-        double v= Misc.decodeLatLon(result);
-        if(Double.isNaN(v)) {
-            throw new IllegalArgumentException("Bad argument value:" + result +" for arg:" + key);
+        double v = Misc.decodeLatLon(result);
+        if (Double.isNaN(v)) {
+            throw new IllegalArgumentException("Bad argument value:" + result
+                    + " for arg:" + key);
         }
         return v;
     }
@@ -758,12 +780,12 @@ public class GsacRequest implements GsacConstants {
         int multiplier = 1;
         if (result.endsWith("k")) {
             multiplier = 1000;
-            result     = result.substring(0, result.length() - 1).trim(); 
+            result     = result.substring(0, result.length() - 1).trim();
         } else if (result.endsWith("mb")) {
-            multiplier = 1000*1000;
+            multiplier = 1000 * 1000;
             result     = result.substring(0, result.length() - 2).trim();
         } else if (result.endsWith("gb")) {
-            multiplier = 1000*1000*1000;
+            multiplier = 1000 * 1000 * 1000;
             result     = result.substring(0, result.length() - 2).trim();
         }
         return new Integer(result).intValue() * multiplier;
@@ -883,7 +905,7 @@ public class GsacRequest implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public Date getDate(String from, Date dflt) throws Exception {
         if ( !defined(from)) {
@@ -904,7 +926,7 @@ public class GsacRequest implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws java.text.ParseException _more_
+     * @throws java.text.ParseException On badness
      */
     public Date[] getDateRange(String from, String to, String relativeArg,
                                Date dflt)
@@ -945,7 +967,7 @@ public class GsacRequest implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws java.text.ParseException _more_
+     * @throws java.text.ParseException On badness
      */
     public Date parseDate(String dttm) throws java.text.ParseException {
         //Check for yyyy-DDD. DateUtil.parse does not support day of year

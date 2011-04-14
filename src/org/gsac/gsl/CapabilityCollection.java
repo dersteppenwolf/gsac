@@ -113,7 +113,7 @@ public class CapabilityCollection {
      *
      * @param sb _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void toXml(Appendable sb) throws Exception {
         sb.append(XmlUtil.openTag(TAG_CAPABILITIES,
@@ -135,7 +135,7 @@ public class CapabilityCollection {
      * @return _more_
      */
     public boolean isCapabilityUsed(Capability capability) {
-        if(used == null) {
+        if (used == null) {
             used = getUsedSet(capabilities);
         }
         return used.contains(capability.getId());
@@ -214,7 +214,7 @@ public class CapabilityCollection {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public String getRelativeUrl() throws Exception {
         URL tmp = new URL(url);

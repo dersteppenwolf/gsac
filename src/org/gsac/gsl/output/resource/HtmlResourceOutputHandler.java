@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.util.HtmlUtil;
@@ -62,8 +62,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      */
     public HtmlResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-                OUTPUT_RESOURCE_HTML, "Resource HTML"));
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  new GsacOutput(this, OUTPUT_RESOURCE_HTML,
+                                      "Resource HTML"));
         //        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
         //                OUTPUT_RESOURCE_DEFAULT, "Resource Default"));
     }
@@ -73,8 +74,8 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      * _more_
      *
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      *
      *
      * @throws Exception On badness
@@ -87,8 +88,10 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         try {
             handleResourceRequestInner(request, response, sb);
 
-        } catch(IllegalArgumentException iae) {
-            sb.append(getRepository().makeErrorDialog("An error has occurred:<br>" + iae.getMessage()));
+        } catch (IllegalArgumentException iae) {
+            sb.append(
+                getRepository().makeErrorDialog(
+                    "An error has occurred:<br>" + iae.getMessage()));
 
             handleSearchForm(request, response, sb);
             finishHtml(request, response, sb);
@@ -96,11 +99,23 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     * @param sb _more_
+     *
+     * @throws Exception _more_
+     */
     public void handleResourceRequestInner(GsacRequest request,
-                                           GsacResponse response, StringBuffer sb)
+                                           GsacResponse response,
+                                           StringBuffer sb)
             throws Exception {
 
-        if(!initHtml(request, response, sb)) return;
+        if ( !initHtml(request, response, sb)) {
+            return;
+        }
 
         String uri = request.getRequestURI();
 
@@ -134,8 +149,8 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      * @param resource _more_
      * @param sb _more_
      *
@@ -176,7 +191,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 sb.append(HtmlUtil.formEntry(msgLabel("Site"),
                                              "<a href=\"" + siteUrl + "\">"
                                              + site.getName() + " "
-                                             + site.getLabel() + " (" + site.getSiteCode()+")" + "</a>"));
+                                             + site.getLabel() + " ("
+                                             + site.getSiteCode() + ")"
+                                             + "</a>"));
             }
         }
 
@@ -203,8 +220,8 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      * @param pw _more_
      *
      * @throws IOException On badness
@@ -226,33 +243,38 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         if (getDoResource()) {
             buttons.append("<td>");
             buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
-            for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
-                if(output.getToolbarLabel()==null) { continue;}
+            for (GsacOutput output :
+                    getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
+                if (output.getToolbarLabel() == null) {
+                    continue;
+                }
                 String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                             HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, output.getId(),
-                                                                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
-                                                                         HtmlUtil.ATTR_VALUE,output.getToolbarLabel(),
-                                                                         //HtmlUtil.ATTR_CLASS, "download-button",
-                                                                         HtmlUtil.ATTR_TITLE,output.getLabel()
-                                                 }));
+                                             HtmlUtil.attrs(new String[] {
+                    HtmlUtil.ATTR_NAME, output.getId(), HtmlUtil.ATTR_TYPE,
+                    HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
+                    output.getToolbarLabel(),
+                    //HtmlUtil.ATTR_CLASS, "download-button",
+                    HtmlUtil.ATTR_TITLE, output.getLabel()
+                }));
                 buttons.append(HtmlUtil.space(2));
                 buttons.append(submit);
             }
 
 
             buttons.append("</td>");
-            
+
         }
         if (getDoSite()) {
             buttons.append("<td align=right>");
             String switchForm = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                             HtmlUtil.cssClass("gobutton") +
-                                             HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, ARG_SEARCH_SITES,
-                                                                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
-                                                                         HtmlUtil.ATTR_VALUE,msg("Site Search Form"),
-                                                                             HtmlUtil.ATTR_CLASS, "download-button",
-                                                                             HtmlUtil.ATTR_TITLE, msg("Go to the site search form"),
-                                                     }));
+                                             HtmlUtil.cssClass("gobutton")
+                                             + HtmlUtil.attrs(new String[] {
+                HtmlUtil.ATTR_NAME, ARG_SEARCH_SITES, HtmlUtil.ATTR_TYPE,
+                HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
+                msg("Site Search Form"), HtmlUtil.ATTR_CLASS,
+                "download-button", HtmlUtil.ATTR_TITLE,
+                msg("Go to the site search form"),
+            }));
 
             buttons.append(switchForm);
             buttons.append("</td>");
@@ -262,11 +284,11 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         pw.append(buttons.toString());
 
         pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
-                                             + URL_HTDOCS_BASE
-                                             + "/CalendarPopup.js"));
+                                    + URL_HTDOCS_BASE + "/CalendarPopup.js"));
 
-        CapabilityCollection resourceCollection = getRepository().getCapabilityCollection(CAPABILITIES_RESOURCE);
-        if(resourceCollection!=null) {
+        CapabilityCollection resourceCollection =
+            getRepository().getCapabilityCollection(CAPABILITIES_RESOURCE);
+        if (resourceCollection != null) {
             addCapabilitiesToForm(request, pw, resourceCollection, false);
         }
         getSiteSearchForm(request, pw);
@@ -291,8 +313,8 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      * @param sb _more_
      *
      *
@@ -306,13 +328,14 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             StringBuffer formBuffer  = new StringBuffer();
 
             List<String> tabContents = new ArrayList<String>();
-            List<String> tabTitles = new ArrayList<String>();
+            List<String> tabTitles   = new ArrayList<String>();
 
             StringBuffer searchLinks = new StringBuffer();
             GsacRequest  tmpRequest  = new GsacRequest(request);
-            StringBuffer toolbar = new StringBuffer();
-            
-            for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
+            StringBuffer toolbar     = new StringBuffer();
+
+            for (GsacOutput output :
+                    getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
                 if (output.getId().equals(OUTPUT_RESOURCE_HTML)) {
                     continue;
                 }
@@ -322,16 +345,18 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                                    + ((suffix != null)
                                       ? suffix
                                       : "") + "?" + tmpRequest.getUrlArgs();
-                if(output.getToolbarLabel()!=null) {
+                if (output.getToolbarLabel() != null) {
                     String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                                 HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, output.getId(),
-                                                                HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
-                                                                HtmlUtil.ATTR_VALUE,output.getToolbarLabel(),
-                                                                             HtmlUtil.ATTR_CLASS, "download-button",
-                                                                             HtmlUtil.ATTR_TITLE,output.getLabel()
-                                                     }));
-                    if(toolbar.length()>0)
+                                        HtmlUtil.attrs(new String[] {
+                        HtmlUtil.ATTR_NAME, output.getId(),
+                        HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT,
+                        HtmlUtil.ATTR_VALUE, output.getToolbarLabel(),
+                        HtmlUtil.ATTR_CLASS, "download-button",
+                        HtmlUtil.ATTR_TITLE, output.getLabel()
+                    }));
+                    if (toolbar.length() > 0) {
                         toolbar.append(HtmlUtil.space(2));
+                    }
                     toolbar.append(submit);
 
                 }
@@ -345,7 +370,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             /*            formBuffer.append(
                 HtmlUtil.insetLeft(
                     HtmlUtil.makeShowHideBlock(
-                                               msg("Search Links"),                     
+                                               msg("Search Links"),
                         HtmlUtil.insetLeft(searchLinks.toString(), 10),
                         false), 10));
             */
@@ -359,7 +384,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             //                    formBuffer.toString(), false));
 
             String message = response.getQueryInfo();
-            if (message!=null && message.length() > 0) {
+            if ((message != null) && (message.length() > 0)) {
                 tabTitles.add(msg("Search Criteria"));
                 tabContents.add(message);
             }
@@ -375,7 +400,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
 
             sb.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
-                                                 tabs.toString(), false));
+                    tabs.toString(), false));
 
 
             Hashtable<String, String> override = new Hashtable<String,
@@ -390,27 +415,35 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
                     site = getRepository().getSite(request,
-                                                   resource.getSiteID());
+                            resource.getSiteID());
                 }
                 if (cnt == 0) {
                     //                    pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),
                     request.remove(ARG_OUTPUT);
                     sb.append(HtmlUtil.formPost(request.getUrl(null),
-                                                HtmlUtil.attr("name", "searchform")));;
-                    
-                    sb.append("<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=toolbar>");
+                            HtmlUtil.attr("name", "searchform")));;
+
+                    sb.append(
+                        "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=toolbar>");
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
 
-                    boolean includeExtraCol = (site!=null &&  getRepository().getRemoteHref(site).length()>0);
+                    boolean includeExtraCol =
+                        ((site != null)
+                         && (getRepository().getRemoteHref(site).length()
+                             > 0));
                     sb.append(
                         "<table class=\"result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
                     String[] labels = new String[] {
-                        (includeExtraCol?"":null), msg("Type"), msg("File"), msg("Site"),
+                        (includeExtraCol
+                         ? ""
+                         : null), msg("Type"), msg("File"), msg("Site"),
                         msg("Date"), msg("File size")
                     };
                     String[] sortValues = new String[] {
-                        (includeExtraCol?"":null), SORT_RESOURCE_TYPE, "", "",
+                        (includeExtraCol
+                         ? ""
+                         : null), SORT_RESOURCE_TYPE, "", "",
                         SORT_RESOURCE_PUBLISHDATE, SORT_RESOURCE_SIZE
                     };
                     makeSortHeader(request, sb, ARG_RESOURCE_PREFIX, labels,
@@ -424,22 +457,25 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
-                String clickEvent = getEntryEventJS(resource.getId(),  URL_RESOURCE_VIEW, ARG_RESOURCE_ID)[1];
+                String clickEvent = getEntryEventJS(resource.getId(),
+                                        URL_RESOURCE_VIEW,
+                                        ARG_RESOURCE_ID)[1];
 
-                String cbx = HtmlUtil.checkbox(ARG_RESOURCE_ID, resource.getId(),
-                                               true);
-            
+                String cbx = HtmlUtil.checkbox(ARG_RESOURCE_ID,
+                                 resource.getId(), true);
+
                 //                sb.append(HtmlUtil.col(cbx));
 
-                String remoteHref=getRepository().getRemoteHref(resource);
-                if(remoteHref.length()>0) {
+                String remoteHref = getRepository().getRemoteHref(resource);
+                if (remoteHref.length() > 0) {
                     sb.append(HtmlUtil.col(remoteHref));
                 }
                 sb.append("</tr></table></td>\n");
                 if (resource.getType() != null) {
-                    sb.append(HtmlUtil.col(resource.getType().getName(),clickEvent));
+                    sb.append(HtmlUtil.col(resource.getType().getName(),
+                                           clickEvent));
                 } else {
-                    sb.append(HtmlUtil.col("N/A",clickEvent));
+                    sb.append(HtmlUtil.col("N/A", clickEvent));
                 }
 
                 String url = resource.getFileInfo().getUrl();
@@ -462,7 +498,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                                          + site.getSiteId());
                     sb.append(HtmlUtil.col("<a href=\"" + siteUrl + "\">"
                                            + site.getName() + " "
-                                           + site.getLabel() + " (" + site.getSiteCode()+")" + "</a>"));
+                                           + site.getLabel() + " ("
+                                           + site.getSiteCode() + ")"
+                                           + "</a>"));
                 }
 
                 if (resource.getStartTime() == null) {
@@ -471,16 +509,18 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                     Date startTime = resource.getStartTime();
                     Date endTime   = resource.getEndTime();
                     if ((endTime == null) || endTime.equals(startTime)) {
-                        sb.append(HtmlUtil.col(formatDate(startTime),clickEvent));
+                        sb.append(HtmlUtil.col(formatDate(startTime),
+                                clickEvent));
                     } else {
                         sb.append(HtmlUtil.col(formatDate(startTime) + " - "
-                                               + formatDate(endTime),clickEvent));
+                                + formatDate(endTime), clickEvent));
                     }
                 }
 
 
                 if (resource.getFileInfo().getFileSize() > 0) {
-                    sb.append("<td align=\"right\" class=\"filesize\" " + clickEvent +">");
+                    sb.append("<td align=\"right\" class=\"filesize\" "
+                              + clickEvent + ">");
                     size += resource.getFileInfo().getFileSize();
                     sb.append(
                         "" + formatFileSize(

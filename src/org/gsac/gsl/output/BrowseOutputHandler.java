@@ -77,7 +77,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
     /** xml listing */
     public static final String OUTPUT_BROWSE_XML = "browse.xml";
 
-    /** _more_          */
+    /** _more_ */
     private List<Capability> browseCapabilities;
 
 
@@ -90,12 +90,15 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         checkInit();
 
-        getRepository().addOutput(OUTPUT_GROUP_BROWSE, new GsacOutput(this, OUTPUT_BROWSE_HTML,
-                "HTML"));
-        getRepository().addOutput(OUTPUT_GROUP_BROWSE, new GsacOutput(this, OUTPUT_BROWSE_CSV,
-                "CSV"));
-        getRepository().addOutput(OUTPUT_GROUP_BROWSE, new GsacOutput(this, OUTPUT_BROWSE_XML,
-                "XML"));
+        getRepository().addOutput(OUTPUT_GROUP_BROWSE,
+                                  new GsacOutput(this, OUTPUT_BROWSE_HTML,
+                                      "HTML"));
+        getRepository().addOutput(OUTPUT_GROUP_BROWSE,
+                                  new GsacOutput(this, OUTPUT_BROWSE_CSV,
+                                      "CSV"));
+        getRepository().addOutput(OUTPUT_GROUP_BROWSE,
+                                  new GsacOutput(this, OUTPUT_BROWSE_XML,
+                                      "XML"));
     }
 
     /**
@@ -156,7 +159,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      *
      * @param request the request
      * @param response the response
-     * @param output output type
      * @param capability _more_
      *
      * @throws Exception on badness
@@ -172,7 +174,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         String[] letters = {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-            "0","1","2","3","4","5","6","7","8","9"
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
         };
         String       id    = capability.getId();
 
@@ -198,8 +200,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                     links)));
         Hashtable<String, String> outputMap = new Hashtable<String, String>();
 
-        if(letter.length()>0) {
-            GsacRequest               searchRequest = new GsacRequest(request);
+        if (letter.length() > 0) {
+            GsacRequest searchRequest = new GsacRequest(request);
             searchRequest.put(capability.getId(), letter + "*");
             //        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
             searchRequest.put(ARG_LIMIT, 10000 + "");
@@ -208,7 +210,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             List<GsacSite> sites = response.getSites();
             if (sites.size() == 0) {
                 html.append(
-                            getRepository().makeInformationDialog(msg("No results found")));
+                    getRepository().makeInformationDialog(
+                        msg("No results found")));
             } else {
                 makeSiteHtmlTable(request, html, sites);
             }
@@ -220,7 +223,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      * get the nav header
      *
      * @param request the request
-     * @param what what are we viewing
      * @param capability _more_
      *
      * @return nav header
@@ -233,15 +235,22 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             String label = cap.getLabel();
             if ((capability != null)
                     && capability.getId().equals(cap.getId())) {
-                links.add(HtmlUtil.span(label, HtmlUtil.cssClass("gsac-header2-selected")));
+                links.add(
+                    HtmlUtil.span(
+                        label, HtmlUtil.cssClass("gsac-header2-selected")));
             } else {
-                String url = getRepository().getUrl(URL_BROWSE_BASE)+ "?" + ARG_BROWSE_WHAT + "=" + id;
-                links.add(HtmlUtil.href(url, label, HtmlUtil.cssClass("gsac-header2-notselected")));
+                String url = getRepository().getUrl(URL_BROWSE_BASE) + "?"
+                             + ARG_BROWSE_WHAT + "=" + id;
+                links.add(
+                    HtmlUtil.href(
+                        url, label,
+                        HtmlUtil.cssClass("gsac-header2-notselected")));
             }
         }
 
 
-        String sep = HtmlUtil.span("|", HtmlUtil.cssClass("gsac2-header-separator"));
+        String sep =
+            HtmlUtil.span("|", HtmlUtil.cssClass("gsac2-header-separator"));
         String navHeader = HtmlUtil.tag(HtmlUtil.TAG_CENTER,
                                         HtmlUtil.cssClass("gsac-header2"),
                                         StringUtil.join(sep, links));
@@ -254,9 +263,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      *
      * @param request the request
      * @param response the response
-     * @param what what are  we listing
-     * @param things the named things we are listing
-     * @param arg the url arg that we do a search on
      * @param capability _more_
      *
      * @throws Exception on badness

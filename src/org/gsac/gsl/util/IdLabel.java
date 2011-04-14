@@ -24,9 +24,9 @@ package org.gsac.gsl.util;
 import ucar.unidata.util.TwoFacedObject;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
 
 
 /**
@@ -44,6 +44,11 @@ public class IdLabel implements Comparable, NamedThing {
      */
     public IdLabel() {}
 
+    /**
+     * _more_
+     *
+     * @param that _more_
+     */
     public IdLabel(IdLabel that) {
         this(that.id, that.label);
     }
@@ -70,6 +75,11 @@ public class IdLabel implements Comparable, NamedThing {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean labelSameAsId() {
         return label.equals(id);
     }
@@ -116,9 +126,19 @@ public class IdLabel implements Comparable, NamedThing {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param list _more_
+     * @param value _more_
+     *
+     * @return _more_
+     */
     public static boolean contains(List<IdLabel> list, String value) {
-        for(IdLabel idLabel: list) {
-            if(idLabel.getId().equals(value)) return true;
+        for (IdLabel idLabel : list) {
+            if (idLabel.getId().equals(value)) {
+                return true;
+            }
         }
         return false;
     }
@@ -143,9 +163,16 @@ public class IdLabel implements Comparable, NamedThing {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param values _more_
+     *
+     * @return _more_
+     */
     public static List<IdLabel> toList(List values) {
         List<IdLabel> list = new ArrayList<IdLabel>();
-        for (Object object:values) {
+        for (Object object : values) {
             list.add((IdLabel) object);
         }
         return list;
@@ -175,17 +202,31 @@ public class IdLabel implements Comparable, NamedThing {
 
 
 
+    /**
+     * _more_
+     *
+     * @param ids _more_
+     *
+     * @return _more_
+     */
     public static Hashtable<String, String> toMap(List<IdLabel> ids) {
-        Hashtable<String,String> map = new Hashtable<String,String>();
-        for(IdLabel id: ids) {
+        Hashtable<String, String> map = new Hashtable<String, String>();
+        for (IdLabel id : ids) {
             map.put(id.getId(), id.getName());
         }
         return map;
     }
 
+    /**
+     * _more_
+     *
+     * @param ids _more_
+     *
+     * @return _more_
+     */
     public static HashSet<String> toSet(List<IdLabel> ids) {
         HashSet<String> map = new HashSet<String>();
-        for(IdLabel id: ids) {
+        for (IdLabel id : ids) {
             map.add(id.getId());
         }
         return map;

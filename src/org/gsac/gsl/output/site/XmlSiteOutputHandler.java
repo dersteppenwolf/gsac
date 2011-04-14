@@ -19,7 +19,6 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
@@ -27,6 +26,7 @@ import org.gsac.gsl.output.*;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import java.io.*;
 
@@ -56,8 +56,9 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
      */
     public XmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_XML,
-                "Site GSAC XML", "/sites.xml", true));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_XML,
+                                      "Site GSAC XML", "/sites.xml", true));
     }
 
 

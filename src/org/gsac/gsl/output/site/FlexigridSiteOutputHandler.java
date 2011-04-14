@@ -19,13 +19,13 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import org.w3c.dom.*;
 
@@ -59,12 +59,22 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
     /** output id */
     public static final String OUTPUT_SITE_FLEXIGRID = "site.flexigrid";
 
+    /** _more_ */
     public static final String TAG_ROWS = "rows";
+
+    /** _more_ */
     public static final String TAG_PAGE = "page";
+
+    /** _more_ */
     public static final String TAG_TOTAL = "total";
+
+    /** _more_ */
     public static final String TAG_ROW = "row";
+
+    /** _more_ */
     public static final String TAG_CELL = "cell";
 
+    /** _more_ */
     public static final String ATTR_ID = "id";
 
 
@@ -77,15 +87,27 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
      */
     public FlexigridSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_FLEXIGRID,
-                "Google Earth FLEXIGRID", false));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_FLEXIGRID,
+                                      "Google Earth FLEXIGRID", false));
     }
 
 
 
+    /**
+     * _more_
+     *
+     * @param row _more_
+     * @param content _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public Element makeCell(Element row, String content) throws Exception {
         Element cell = XmlUtil.create(TAG_CELL, row);
-        cell.appendChild(XmlUtil.makeCDataNode(row.getOwnerDocument(), content,false));
+        cell.appendChild(XmlUtil.makeCDataNode(row.getOwnerDocument(),
+                content, false));
         return cell;
     }
 
@@ -104,22 +126,24 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer sb = new StringBuffer();
         response.startResponse("text/xml");
         getRepository().handleSiteRequest(request, response);
-        List<GsacSite>             sites    = response.getSites();
-        PrintWriter pw     = response.getPrintWriter();
-        Element     root   = XmlUtil.getRoot(XmlUtil.tag(TAG_ROWS,"",""));
-        Document doc = root.getOwnerDocument();
+        List<GsacSite> sites = response.getSites();
+        PrintWriter    pw    = response.getPrintWriter();
+        Element        root  = XmlUtil.getRoot(XmlUtil.tag(TAG_ROWS, "", ""));
+        Document       doc   = root.getOwnerDocument();
         XmlUtil.create(TAG_PAGE, root, "1");
-        XmlUtil.create(TAG_TOTAL, root, ""+ sites.size());
+        XmlUtil.create(TAG_TOTAL, root, "" + sites.size());
         for (GsacSite site : sites) {
-            Element row = XmlUtil.create(doc, TAG_ROW, root,new String[]{ATTR_ID, site.getSiteId()});
-            String       href = makeSiteHref(site);
+            Element row = XmlUtil.create(doc, TAG_ROW, root,
+                                         new String[] { ATTR_ID,
+                    site.getSiteId() });
+            String href = makeSiteHref(site);
             makeCell(row, href);
             makeCell(row, site.getName());
             makeCell(row, site.getType().getName());
             makeCell(row, formatLatLon(site));
             makeCell(row, formatDate(site));
             if (getDoSiteGroup()) {
-                List<SiteGroup> groups       = site.getSiteGroups();
+                List<SiteGroup> groups = site.getSiteGroups();
                 makeCell(row, getGroupHtml(groups, false));
             }
             /*

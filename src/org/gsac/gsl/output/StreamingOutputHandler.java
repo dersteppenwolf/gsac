@@ -32,13 +32,11 @@ import javax.servlet.http.*;
 
 
 /**
- * Class description
+ * abstract base class for output handlers who want to stream the results.
+ * to use this overwrite processSite or processResource
  *
- *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
  */
-public class StreamingOutputHandler extends GsacOutputHandler {
+public abstract class StreamingOutputHandler extends GsacOutputHandler {
 
     /**
      * _more_
@@ -52,7 +50,7 @@ public class StreamingOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      *
      * @return _more_
      */
@@ -70,7 +68,7 @@ public class StreamingOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
-     * @param response _more_
+     * @param response The response
      * @param resource _more_
      */
     public void processResource(GsacResponse response,
@@ -79,7 +77,7 @@ public class StreamingOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
-     * @param response _more_
+     * @param response The response
      * @param site _more_
      */
     public void processSite(GsacResponse response, GsacSite site) {}
@@ -87,11 +85,11 @@ public class StreamingOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
-     * @param gsacRequest _more_
+     * @param gsacRequest The request
      * @param gsacResponse _more_
      *
-     * @throws IOException _more_
-     * @throws ServletException _more_
+     * @throws IOException On badness
+     * @throws ServletException On badness
      */
     public void handleResourceResult(GsacRequest gsacRequest,
                                      GsacResponse gsacResponse)

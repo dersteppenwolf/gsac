@@ -21,10 +21,11 @@
 package org.gsac.gsl.model;
 
 
+import org.gsac.gsl.util.*;
+
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.gsac.gsl.util.*;
 
 
 /**
@@ -41,6 +42,11 @@ public class SiteType extends IdLabel {
      */
     public SiteType() {}
 
+    /**
+     * _more_
+     *
+     * @param idLabel _more_
+     */
     public SiteType(IdLabel idLabel) {
         super(idLabel.getId(), idLabel.getName());
     }
@@ -68,10 +74,19 @@ public class SiteType extends IdLabel {
 
 
 
+    /**
+     * _more_
+     *
+     * @param ids _more_
+     *
+     * @return _more_
+     */
     public static List<SiteType> convertList(List<IdLabel> ids) {
-        List<SiteType> results =new ArrayList<SiteType>();
-        if(ids==null) return results;
-        for(IdLabel id: ids) {
+        List<SiteType> results = new ArrayList<SiteType>();
+        if (ids == null) {
+            return results;
+        }
+        for (IdLabel id : ids) {
             results.add(new SiteType(id));
         }
         return results;

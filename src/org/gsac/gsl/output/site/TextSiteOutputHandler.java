@@ -19,18 +19,20 @@
  */
 
 package org.gsac.gsl.output.site;
+
+
+import org.gsac.gsl.*;
+import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 
 
 import ucar.unidata.util.StringUtil;
 
-import org.gsac.gsl.*;
-import org.gsac.gsl.model.*;
+import java.io.*;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -56,32 +58,35 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      */
     public TextSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_CSV,
-                "Site CSV", "/sites.csv", true));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_CSV,
+                                      "Site CSV", "/sites.csv", true));
     }
 
 
     /**
      * _more_
      *
-     * @param gsacRequest _more_
-     * @param gsacResponse _more_
+     * @param request The request
+     * @param response The response
      *
-     * @param request _more_
-     * @param response _more_
-     *
-     * @throws IOException _more_
-     * @throws ServletException _more_
+     * @throws IOException On badness
+     * @throws ServletException On badness
      */
     public void handleSiteResult(GsacRequest request, GsacResponse response)
             throws IOException, ServletException {
         response.startResponse(GsacResponse.MIME_CSV);
-        PrintWriter pw = response.getPrintWriter();
-        String delimiter = (request.defined(ARG_DELIMITER)?request.get(ARG_DELIMITER," "):",");
-        String paramString = request.get(ARG_PARAMS,(String)null);
+        PrintWriter  pw          = response.getPrintWriter();
+        String       delimiter   = (request.defined(ARG_DELIMITER)
+                                    ? request.get(ARG_DELIMITER, " ")
+                                    : ",");
+        String       paramString = request.get(ARG_PARAMS, (String) null);
 
-        List<String> params  = (paramString==null?new ArrayList<String>():StringUtil.split(paramString,",",true,true));
-        if(params.size()==0) {
+        List<String> params      = ((paramString == null)
+                                    ? new ArrayList<String>()
+                                    : StringUtil.split(paramString, ",",
+                                        true, true));
+        if (params.size() == 0) {
             params.add(ARG_SITE_ID);
             params.add(ARG_SITE_CODE);
             params.add(ARG_SITE_NAME);
@@ -91,9 +96,12 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         }
         try {
             int colCnt = 0;
-            for(String param: params) {
-                if(colCnt>0)  pw.print(",");
-                else   pw.print("#");
+            for (String param : params) {
+                if (colCnt > 0) {
+                    pw.print(",");
+                } else {
+                    pw.print("#");
+                }
                 colCnt++;
                 pw.print(param);
             }
@@ -104,32 +112,34 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
             for (GsacSite site : response.getSites()) {
                 siteCnt++;
                 colCnt = 0;
-                for(String param: params) {
-                    if(colCnt>0)
+                for (String param : params) {
+                    if (colCnt > 0) {
                         pw.print(delimiter);
+                    }
                     colCnt++;
-                    if(param.equals(ARG_SITE_CODE)) {
-                        pw.print(cleanString(site.getSiteCode(),delimiter));
-                    } else  if(param.equals(ARG_SITE_NAME)) {
-                        pw.print(cleanString(site.getName(),delimiter));
-                    } else  if(param.equals(ARG_SITE_ID)) {
-                        pw.print(cleanString(site.getId(),delimiter));
-                    } else if(param.equals(ARG_SITE_LATITUDE)) {
+                    if (param.equals(ARG_SITE_CODE)) {
+                        pw.print(cleanString(site.getSiteCode(), delimiter));
+                    } else if (param.equals(ARG_SITE_NAME)) {
+                        pw.print(cleanString(site.getName(), delimiter));
+                    } else if (param.equals(ARG_SITE_ID)) {
+                        pw.print(cleanString(site.getId(), delimiter));
+                    } else if (param.equals(ARG_SITE_LATITUDE)) {
                         pw.print(site.getLatitude());
-                    } else if(param.equals(ARG_SITE_LONGITUDE)) {
+                    } else if (param.equals(ARG_SITE_LONGITUDE)) {
                         pw.print(site.getLongitude());
-                    } else if(param.equals(ARG_SITE_ELEVATION)) {
+                    } else if (param.equals(ARG_SITE_ELEVATION)) {
                         pw.print(site.getElevation());
-                    } else if(param.equals(ARG_SITE_LOCATION)) {
+                    } else if (param.equals(ARG_SITE_LOCATION)) {
                         pw.print(site.getLatitude());
                         pw.print(delimiter);
                         pw.print(site.getLongitude());
                         pw.print(delimiter);
                         pw.print(site.getElevation());
-                    } else if(param.equals(ARG_SITE_TYPE)) {
+                    } else if (param.equals(ARG_SITE_TYPE)) {
                         pw.print(site.getType().getId());
                     } else {
-                        throw new IllegalArgumentException("Unknown parameter:" + param);
+                        throw new IllegalArgumentException(
+                            "Unknown parameter:" + param);
                     }
                 }
                 pw.print("\n");
@@ -140,8 +150,16 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param s _more_
+     * @param delimiter _more_
+     *
+     * @return _more_
+     */
     private String cleanString(String s, String delimiter) {
-        s = s.replaceAll(delimiter,"\\" + delimiter);
+        s = s.replaceAll(delimiter, "\\" + delimiter);
         return s;
     }
 

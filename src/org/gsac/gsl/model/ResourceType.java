@@ -19,10 +19,12 @@
  */
 
 package org.gsac.gsl.model;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import org.gsac.gsl.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -39,6 +41,11 @@ public class ResourceType extends IdLabel {
      */
     public ResourceType() {}
 
+    /**
+     * _more_
+     *
+     * @param idLabel _more_
+     */
     public ResourceType(IdLabel idLabel) {
         super(idLabel.getId(), idLabel.getName());
     }
@@ -64,10 +71,19 @@ public class ResourceType extends IdLabel {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param ids _more_
+     *
+     * @return _more_
+     */
     public static List<ResourceType> convertList(List<IdLabel> ids) {
-        List<ResourceType> results =new ArrayList<ResourceType>();
-        if(ids==null) return results;
-        for(IdLabel id: ids) {
+        List<ResourceType> results = new ArrayList<ResourceType>();
+        if (ids == null) {
+            return results;
+        }
+        for (IdLabel id : ids) {
             results.add(new ResourceType(id));
         }
         return results;

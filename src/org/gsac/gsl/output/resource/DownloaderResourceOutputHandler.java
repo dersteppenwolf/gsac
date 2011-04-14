@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.resource;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 
@@ -57,11 +57,13 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
     public DownloaderResourceOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         GsacOutput output;
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,output = new GsacOutput(this,
-                OUTPUT_RESOURCE_DOWNLOAD, "Download Files via Webstart",
-                                                                  "/resources.jnlp", true,
-                                                                  "Download Files"));
-        
+        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+                                  output = new GsacOutput(this,
+                                      OUTPUT_RESOURCE_DOWNLOAD,
+                                      "Download Files via Webstart",
+                                      "/resources.jnlp", true,
+                                      "Download Files"));
+
     }
 
 
@@ -82,7 +84,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
 
 
         //        System.err.println("path:" + path);
-        if (!path.endsWith(".jnlp")) {
+        if ( !path.endsWith(".jnlp")) {
             String redirectUrl = path + "/resources.jnlp" + "?"
                                  + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
@@ -96,7 +98,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
         response.startResponse(GsacResponse.MIME_JNLP);
         InputStream inputStream = getRepository().getResourceInputStream(
                                       "/org/gsac/gsl/resources/gsac.jnlp");
-        String      contents   = IOUtil.readContents(inputStream);
+        String contents = IOUtil.readContents(inputStream);
         System.err.println("read:" + contents);
         GsacRequest newRequest = new GsacRequest(request);
         newRequest.put(ARG_OUTPUT,
@@ -105,7 +107,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
                                  + newRequest.getUrlArgs());
         String fullUrlRoot =
             getRepository().getAbsoluteUrl(getRepository().getUrlBase()
-                                        + URL_BASE);
+                                           + URL_BASE);
         //Do this a couple of times
         contents = contents.replace("${fullurlroot}", fullUrlRoot);
         contents = contents.replace("${fullurlroot}", fullUrlRoot);

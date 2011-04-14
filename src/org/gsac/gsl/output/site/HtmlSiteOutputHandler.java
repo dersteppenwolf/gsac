@@ -19,12 +19,12 @@
  */
 
 package org.gsac.gsl.output.site;
-import org.gsac.gsl.output.*;
 
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.util.HtmlUtil;
@@ -54,6 +54,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     /** output id */
     public static final String OUTPUT_SITE_HTML = "site.html";
 
+    /** _more_ */
     private String flexigridTemplate;
 
 
@@ -64,8 +65,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      */
     public HtmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this, OUTPUT_SITE_HTML,
-                "Site HTML"));
+        getRepository().addOutput(OUTPUT_GROUP_SITE,
+                                  new GsacOutput(this, OUTPUT_SITE_HTML,
+                                      "Site HTML"));
         //        getRepository().addOutput(OUTPUT_GROUP_SITE, new GsacOutput(this,
         //                OUTPUT_SITE_DEFAULT, "Site Default"));
     }
@@ -86,18 +88,32 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer sb = new StringBuffer();
         try {
-            handleSiteRequestInner(request,  response,sb);
-        } catch(IllegalArgumentException iae) {
-            sb.append(getRepository().makeErrorDialog("An error has occurred:<br>" + iae.getMessage()));
+            handleSiteRequestInner(request, response, sb);
+        } catch (IllegalArgumentException iae) {
+            sb.append(
+                getRepository().makeErrorDialog(
+                    "An error has occurred:<br>" + iae.getMessage()));
 
             handleSearchForm(request, response, sb);
             finishHtml(request, response, sb);
         }
     }
 
-    public void handleSiteRequestInner(GsacRequest request, GsacResponse response, StringBuffer sb)
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     * @param sb _more_
+     *
+     * @throws Exception _more_
+     */
+    public void handleSiteRequestInner(GsacRequest request,
+                                       GsacResponse response, StringBuffer sb)
             throws Exception {
-        if(!initHtml(request, response, sb)) return;
+        if ( !initHtml(request, response, sb)) {
+            return;
+        }
 
         //        String uri = request.getRequestURI();
         String uri = request.getGsacUrlPath();
@@ -121,7 +137,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                 flexigridTemplate  = getRepository().readResource("/flexigrid.site.html");
             }
 
-            
+
             sb.append(
                       HtmlUtil.importJS(
                                         makeHtdocsUrl("/flexigrid/flexigrid.js")));
@@ -129,7 +145,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                                       String>();
             outputMap.put(ARG_OUTPUT, FlexigridSiteOutputHandler.OUTPUT_SITE_FLEXIGRID);
             String searchUrl = makeUrl(URL_SITE_SEARCH) +  "?" + request.getUrlArgs(outputMap);
-            
+
             sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
             */
             long t1 = System.currentTimeMillis();
@@ -138,7 +154,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             checkMessage(request, response, sb);
             handleSiteList(request, response, sb);
             long t3 = System.currentTimeMillis();
-            System.err.println("html site request:" + (t2-t1) +" " + (t3-t2));
+            System.err.println("html site request:" + (t2 - t1) + " "
+                               + (t3 - t2));
         } else if (request.defined(ARG_SITEID)) {
             GsacSite site = getRepository().getSite(request,
                                 request.get(ARG_SITEID, (String) null));
@@ -178,13 +195,14 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         if (getDoResource()) {
             buttons.append("<td align=right>");
             String switchForm = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                             HtmlUtil.cssClass("gobutton") +
-                                             HtmlUtil.attrs(new String[]{HtmlUtil.ATTR_NAME, ARG_SEARCH_RESOURCES,
-                                                                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT, 
-                                                                         HtmlUtil.ATTR_VALUE,msg("File Search Form"),
-                                                                             HtmlUtil.ATTR_CLASS, "download-button",
-                                                                             HtmlUtil.ATTR_TITLE, msg("Go to the file search form"),
-                                                     }));
+                                             HtmlUtil.cssClass("gobutton")
+                                             + HtmlUtil.attrs(new String[] {
+                HtmlUtil.ATTR_NAME, ARG_SEARCH_RESOURCES, HtmlUtil.ATTR_TYPE,
+                HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
+                msg("File Search Form"), HtmlUtil.ATTR_CLASS,
+                "download-button", HtmlUtil.ATTR_TITLE,
+                msg("Go to the file search form"),
+            }));
 
             buttons.append(switchForm);
             buttons.append("</td>");
@@ -201,7 +219,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer resultsSB = new StringBuffer();
         resultsSB.append(HtmlUtil.formTable());
-        getOutputSelect(OUTPUT_GROUP_SITE,request, resultsSB);
+        getOutputSelect(OUTPUT_GROUP_SITE, request, resultsSB);
         getLimitSelect(request, resultsSB);
         getSiteSortSelect(request, resultsSB);
         resultsSB.append(HtmlUtil.formTableClose());
@@ -254,9 +272,10 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer searchLinks = new StringBuffer();
 
         List<String> tabContents = new ArrayList<String>();
-        List<String> tabTitles = new ArrayList<String>();
+        List<String> tabTitles   = new ArrayList<String>();
 
-        for (GsacOutput output : getRepository().getOutputs(OUTPUT_GROUP_SITE)) {
+        for (GsacOutput output :
+                getRepository().getOutputs(OUTPUT_GROUP_SITE)) {
             if (output.getId().equals(OUTPUT_SITE_HTML)) {
                 continue;
             }
@@ -288,7 +307,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
         String message = response.getQueryInfo();
-        if (message!=null && message.length() > 0) {
+        if ((message != null) && (message.length() > 0)) {
             tabTitles.add(msg("Search Criteria"));
             tabContents.add(message);
         }
@@ -307,7 +326,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer tabs = new StringBuffer();
         makeTabs(tabs, tabTitles, tabContents);
         pw.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
-                                             tabs.toString(), sites.size()==0));
+                                             tabs.toString(),
+                                             sites.size() == 0));
 
         if (sites.size() == 0) {
             return;

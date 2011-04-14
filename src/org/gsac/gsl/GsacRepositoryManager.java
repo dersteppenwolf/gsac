@@ -160,8 +160,8 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request The request
+     * @param response The response
      * @param htmlBuff _more_
      */
     public void checkMessage(GsacRequest request, GsacResponse response,
@@ -241,7 +241,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      * @param clauses _more_
      * @param latCol _more_
      * @param lonCol _more_
@@ -255,9 +255,9 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                          StringBuffer msgBuff) {
 
         StringBuffer tmpMsgBuff = new StringBuffer();
-        double  value;
-        boolean addedAny = false;
-        int cnt = 0;
+        double       value;
+        boolean      addedAny = false;
+        int          cnt      = 0;
         if (request.defined(ARG_NORTH)) {
             cnt++;
             clauses.add(Clause.le(latCol,
@@ -323,8 +323,9 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         for (String value : list) {
             if (labelGroup != null) {
                 value = getLabel(labelGroup, value);
-                IdLabel idLabel = getRepository().internalToExternal(labelGroup, value);
-                if(idLabel!=null) {
+                IdLabel idLabel =
+                    getRepository().internalToExternal(labelGroup, value);
+                if (idLabel != null) {
                     value = idLabel.getLabel();
                 }
 
@@ -387,7 +388,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      * @param arg _more_
      * @param searchTypeArg _more_
      * @param doUpperLowerCase _more_
@@ -448,7 +449,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      * @param arg _more_
      * @param column _more_
      * @param label _more_
@@ -474,7 +475,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      * @param metadataThing _more_
      * @param cols _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void addPropertyMetadata(ResultSet results,
                                     GsacObject metadataThing, String[] cols)
@@ -658,7 +659,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public Capability makeEnumeratedCapabilty(SearchInfo info)
             throws Exception {
@@ -792,7 +793,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                      String latitudeColumn,
                                      String longitudeColumn,
                                      StringBuffer msgBuff) {
-        int cnt = 0;
+        int          cnt        = 0;
         StringBuffer tmpMsgBuff = new StringBuffer();
         if (request.defined(ARG_NORTH)) {
             cnt++;
@@ -810,27 +811,35 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         }
         if (request.defined(ARG_EAST)) {
             cnt++;
-            clauses.add(Clause.le(longitudeColumn,
-                                  normalizeLongitude(request.getLatLon(ARG_EAST, 0.0))));
-            appendSearchCriteria(tmpMsgBuff, "east&lt;=",
-                                 "" + normalizeLongitude(request.getLatLon(ARG_EAST, 0.0)));
+            clauses.add(
+                Clause.le(
+                    longitudeColumn,
+                    normalizeLongitude(request.getLatLon(ARG_EAST, 0.0))));
+            appendSearchCriteria(
+                tmpMsgBuff, "east&lt;=",
+                "" + normalizeLongitude(request.getLatLon(ARG_EAST, 0.0)));
         }
         if (request.defined(ARG_WEST)) {
             cnt++;
-            clauses.add(Clause.ge(longitudeColumn,
-                                  normalizeLongitude(request.getLatLon(ARG_WEST, 0.0))));
-            appendSearchCriteria(tmpMsgBuff, "west&gt;=",
-                                 "" + normalizeLongitude(request.getLatLon(ARG_WEST, 0.0)));
+            clauses.add(
+                Clause.ge(
+                    longitudeColumn,
+                    normalizeLongitude(request.getLatLon(ARG_WEST, 0.0))));
+            appendSearchCriteria(
+                tmpMsgBuff, "west&gt;=",
+                "" + normalizeLongitude(request.getLatLon(ARG_WEST, 0.0)));
         }
-        if(cnt==4) {
-            msgBuff.append("<tr valign=center><td><b>Bounds=</b></td>" +
-                           "<td><table border=0><tr><td colspan=2 align=center>" +
-                           request.get(ARG_NORTH, 0.0) +"</td></tr><tr><td>" +
-                           normalizeLongitude(request.get(ARG_WEST, 0.0))+"</td><td>" +
-                           normalizeLongitude(request.get(ARG_EAST, 0.0)) +"</td></tr>" +
-                           "<tr><td colspan=2 align=center>" +
-                           request.get(ARG_SOUTH, 0.0) +"</td></tr></table>" +
-                           "</td></tr>\n");
+        if (cnt == 4) {
+            msgBuff.append(
+                "<tr valign=center><td><b>Bounds=</b></td>"
+                + "<td><table border=0><tr><td colspan=2 align=center>"
+                + request.get(ARG_NORTH, 0.0) + "</td></tr><tr><td>"
+                + normalizeLongitude(request.get(ARG_WEST, 0.0))
+                + "</td><td>"
+                + normalizeLongitude(request.get(ARG_EAST, 0.0))
+                + "</td></tr>" + "<tr><td colspan=2 align=center>"
+                + request.get(ARG_SOUTH, 0.0) + "</td></tr></table>"
+                + "</td></tr>\n");
         } else {
             msgBuff.append(tmpMsgBuff);
         }
@@ -840,10 +849,10 @@ public abstract class GsacRepositoryManager implements GsacConstants {
 
 
 
-    /**                                                                         
-     * Normalize the longitude to lie between +/-180                            
-     * @param lon east latitude in degrees                                      
-     * @return normalized lon                                                   
+    /**
+     * Normalize the longitude to lie between +/-180
+     * @param lon east latitude in degrees
+     * @return normalized lon
      */
     static public double normalizeLongitude(double lon) {
         if ((lon < -180.) || (lon > 180.)) {

@@ -114,7 +114,7 @@ public class GsacResponse {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      */
     public GsacResponse(GsacRequest request) {
         this.request = request;
@@ -139,9 +139,15 @@ public class GsacResponse {
         response.setStatus(200);
     }
 
+    /**
+     * _more_
+     *
+     * @param filename _more_
+     */
     public void setReturnFilename(String filename) {
         HttpServletResponse response = request.getHttpServletResponse();
-        response.setHeader("Content-disposition","attachment; filename=" + filename);
+        response.setHeader("Content-disposition",
+                           "attachment; filename=" + filename);
     }
 
 
@@ -208,7 +214,7 @@ public class GsacResponse {
      *
      * @param url _more_
      *
-     * @throws IOException _more_
+     * @throws IOException On badness
      */
     public void sendRedirect(String url) throws IOException {
         HttpServletResponse response = request.getHttpServletResponse();
@@ -219,7 +225,7 @@ public class GsacResponse {
     /**
      * _more_
      *
-     * @throws IOException _more_
+     * @throws IOException On badness
      */
     public void endResponse() throws IOException {
         if (printWriter != null) {
@@ -257,7 +263,7 @@ public class GsacResponse {
      *
      * @return _more_
      *
-     * @throws IOException _more_
+     * @throws IOException On badness
      */
     public PrintWriter getPrintWriter() throws IOException {
         if (printWriter == null) {

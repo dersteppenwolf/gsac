@@ -39,29 +39,28 @@ import java.util.List;
  */
 public class Vocabulary {
 
-    /** _more_          */
+    /** _more_ */
     private String id;
 
-    /** _more_          */
+    /** _more_ */
     private List<IdLabel> values = new ArrayList<IdLabel>();
 
-    /** _more_          */
+    /** _more_ */
     private Hashtable<String, IdLabel> idMap = new Hashtable<String,
                                                    IdLabel>();
 
-    /** _more_          */
+    /** _more_ */
     private Hashtable<String, List<String>> externalToInternal =
         new Hashtable<String, List<String>>();
 
-    /** _more_          */
+    /** _more_ */
     private Hashtable<String, String> internalToExternal =
         new Hashtable<String, String>();
 
     /**
-       bean ctor
+     *  bean ctor
      */
-    public Vocabulary() {
-    }
+    public Vocabulary() {}
 
 
     /**
@@ -75,8 +74,8 @@ public class Vocabulary {
     public Vocabulary(String id, List<IdLabel> values,
                       Hashtable<String, List<String>> externalToInternal,
                       Hashtable<String, String> internalToExternal) {
-        this.id               = id;
-        this.values           = values;
+        this.id                 = id;
+        this.values             = values;
         this.externalToInternal = externalToInternal;
         this.internalToExternal = internalToExternal;
         for (IdLabel value : values) {
@@ -85,8 +84,13 @@ public class Vocabulary {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean hasValues() {
-        return values.size()>0;
+        return values.size() > 0;
     }
 
     /**
@@ -98,6 +102,13 @@ public class Vocabulary {
         return values;
     }
 
+    /**
+     * _more_
+     *
+     * @param s _more_
+     *
+     * @return _more_
+     */
     public static boolean isWildcard(String s) {
         return s.endsWith("*");
     }

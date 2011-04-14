@@ -67,7 +67,9 @@ public abstract class SiteManager extends GsacRepositoryManager {
     /** _more_ */
     public static final String CAPABILITY_GROUP_SITE_QUERY = "Site Query";
 
-    public static final String CAPABILITY_GROUP_ADVANCED = "Advanced Site Query";
+    /** _more_ */
+    public static final String CAPABILITY_GROUP_ADVANCED =
+        "Advanced Site Query";
 
     /**
      * ctor
@@ -201,7 +203,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
     /**
      * _more_
      *
-     * @param request _more_
+     * @param request The request
      *
      * @return _more_
      */
@@ -277,7 +279,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
      *
      * @param gsacSite _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void doGetFullSiteMetadata(GsacSite gsacSite) throws Exception {}
 
@@ -295,8 +297,13 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<SiteGroup> doGetSiteGroups() {
-        return  new ArrayList<SiteGroup>();
+        return new ArrayList<SiteGroup>();
     }
 
     /**
@@ -352,12 +359,15 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
         Capability[] dflt = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
-                "Site Code", Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
-                    "Short name of the site",
-                    "Short name of the site. " + help),
+                "Site Code",
+                Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                                         "Short name of the site",
+                                         "Short name of the site. " + help),
             initCapability(siteName = new Capability(ARG_SITE_NAME,
-                "Site Name", Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
-                    "Name of the site", "Name of site." + help),
+                "Site Name",
+                Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                                         "Name of the site",
+                                         "Name of site." + help),
             initCapability(new Capability(ARG_SITE_TYPE, "Site Type",
                                           new ArrayList<IdLabel>(),
                                           true), CAPABILITY_GROUP_SITE_QUERY,
@@ -368,15 +378,13 @@ public abstract class SiteManager extends GsacRepositoryManager {
                     ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
                     true), CAPABILITY_GROUP_SITE_QUERY, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
-
             initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
                                           IdLabel.toList(doGetSiteGroups()),
-                                          true), CAPABILITY_GROUP_SITE_QUERY, null),
-            initCapability(
-                new Capability(
-                    ARG_BBOX, "Bounds",
-                    Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
-                        "Spatial bounds within which the site lies")
+                                          true), CAPABILITY_GROUP_SITE_QUERY,
+                                              null),
+            initCapability(new Capability(ARG_BBOX, "Bounds",
+                Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
+                    "Spatial bounds within which the site lies")
         };
         siteCode.setBrowse(true);
         siteName.setBrowse(true);

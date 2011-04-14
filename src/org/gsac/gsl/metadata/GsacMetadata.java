@@ -21,11 +21,14 @@
 package org.gsac.gsl.metadata;
 
 
-import org.gsac.gsl.util.*;
 import org.gsac.gsl.GsacRequest;
 import org.gsac.gsl.output.HtmlOutputHandler;
 
+
+import org.gsac.gsl.util.*;
+
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +58,7 @@ public class GsacMetadata {
     /** the label */
     private String label;
 
+    /** _more_          */
     private boolean forDisplay = true;
 
     /**
@@ -65,8 +69,6 @@ public class GsacMetadata {
 
     /**
      * _more_
-     *
-     * @param type _more_
      *
      * @param label _more_
      */
@@ -85,40 +87,48 @@ public class GsacMetadata {
         this.label = label;
     }
 
-    public void addHtml(GsacRequest request, 
-			HtmlOutputHandler outputHandler,
-			Appendable pw) 
-	throws IOException {
-	//NOOP
-	//Assume this is in a  2 column table. First column is
-	//the label. Second is the html content.
-	//Use outputHandler.formEntry (or formEntryTop)
-	//because this adds to the table or if the request is
-	//from an iphone then it handles the layout differently
-	//
-	//	pw.append(outputHandler.formEntry(request,
-	//					  outputHandler.msgLabel("Label"),
-	//					  "html goes here"));
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param outputHandler _more_
+     * @param pw _more_
+     *
+     * @throws IOException _more_
+     */
+    public void addHtml(GsacRequest request, HtmlOutputHandler outputHandler,
+                        Appendable pw)
+            throws IOException {
+        //NOOP
+        //Assume this is in a  2 column table. First column is
+        //the label. Second is the html content.
+        //Use outputHandler.formEntry (or formEntryTop)
+        //because this adds to the table or if the request is
+        //from an iphone then it handles the layout differently
+        //
+        //      pw.append(outputHandler.formEntry(request,
+        //                                        outputHandler.msgLabel("Label"),
+        //                                        "html goes here"));
     }
-			    
+
 
 
     /**
-       Set the ForDisplay property.
-
-       @param value The new value for ForDisplay
-    **/
-    public void setForDisplay (boolean value) {
-	forDisplay = value;
+     *  Set the ForDisplay property.
+     *
+     *  @param value The new value for ForDisplay
+     */
+    public void setForDisplay(boolean value) {
+        forDisplay = value;
     }
 
     /**
-       Get the ForDisplay property.
-
-       @return The ForDisplay
-    **/
-    public boolean getForDisplay () {
-	return forDisplay;
+     *  Get the ForDisplay property.
+     *
+     *  @return The ForDisplay
+     */
+    public boolean getForDisplay() {
+        return forDisplay;
     }
 
 

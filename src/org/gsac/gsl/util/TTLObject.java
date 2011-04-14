@@ -33,7 +33,6 @@ import java.util.Hashtable;
  * @author     Jeff McWhirter (jeffmc@unavco.org)
  *
  *
- * @param <KEY>
  * @param <VALUE>
  */
 public class TTLObject<VALUE> {
@@ -82,6 +81,11 @@ public class TTLObject<VALUE> {
         cache.put("", value);
     }
 
+    /**
+     * _more_
+     *
+     * @param t _more_
+     */
     public void setTimeThreshold(long t) {
         cache.setTimeThreshold(t);
     }

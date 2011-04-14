@@ -164,7 +164,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      *
      * @return _more_
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public GsacSite getSiteInner(GsacRequest request, String siteId)
             throws Exception {
@@ -193,9 +193,9 @@ public class DummyRepository extends GsacRepositoryImpl {
      * _more_
      *
      * @param request the request
-     * @param response _more_
+     * @param response The response
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleResourceRequest(GsacRequest request,
                                       GsacResponse response)
@@ -209,9 +209,9 @@ public class DummyRepository extends GsacRepositoryImpl {
      * _more_
      *
      * @param request the request
-     * @param response _more_
+     * @param response The response
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public void handleSiteRequest(GsacRequest request, GsacResponse response)
             throws Exception {
