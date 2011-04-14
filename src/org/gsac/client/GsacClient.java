@@ -26,9 +26,10 @@ import org.gsac.gsl.GsacConstants;
 import org.gsac.gsl.GsacRepository;
 import org.gsac.gsl.util.GsacRepositoryInfo;
 
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.HtmlUtil;
+import ucar.unidata.util.IOUtil;
+
+import ucar.unidata.util.StringUtil;
 
 
 import java.io.*;
@@ -52,422 +53,258 @@ import java.util.Properties;
 
 public class GsacClient implements GsacConstants {
 
-    /** _more_          */
+    /** cmd line arg */
     public static final String ARG_SERVER = "server";
 
+    /** cmd line arg */
+    public static final String ARG_PROPERTIES = "properties";
+
+    /** cmd line arg */
+    public static final String ARG_URL = "url";
+
+    /** cmd line arg */
     public static final String ARG_DOWNLOAD = "download";
 
+    /** cmd line arg */
     public static final String ARG_KEEP_PATHS = "keep_paths";
 
 
+    /** cmd line arg */
     public static final String ARG_HELP = "help";
 
-    /** _more_          */
+    /** cmd line arg */
     public static final String ARG_QUERY = "query";
 
-    /** _more_          */
+    /** cmd line arg */
     public static final String ARG_BBOX = "bbox";
 
-    /** _more_          */
+    /** cmd line arg */
     public static final String ARG_OUTPUT = "output";
 
-    public static final String[]myArgs  = {
-        ARG_OUTPUT,
-        ARG_SERVER,
-        ARG_QUERY,
-        ARG_DOWNLOAD,
-        ARG_KEEP_PATHS
-    };
-
-    /** _more_          */
+    /** cmd line arg */
     public static final String ARG_FILE = "file";
 
-    /** _more_          */
+    /** cmd line arg */
+    public static final String ARG_INFO = "info";
+
+
+    /** These are the command line arguments that are just for the client and do not get passed along on the request */
+    public static final String[] clientArgs = { ARG_OUTPUT, ARG_SERVER,
+            ARG_QUERY, ARG_DOWNLOAD, ARG_KEEP_PATHS };
+
+
+
+    /** for querying sites */
     public static final String QUERY_SITE = "site";
 
-    /** _more_          */
+    /** for querying resources */
     public static final String QUERY_RESOURCE = "resource";
 
-    /** _more_          */
+    /** for command line arguments that specify a local file. See usage method       */
+    public static final String FILE_PREFIX = "file:";
+
+    /** output types */
     public static final String OUTPUT_CSV = "csv";
 
-    /** _more_          */
+    /** output types */
     public static final String OUTPUT_XML = "xml";
 
-    /** _more_          */
+    /** output types */
     public static final String OUTPUT_URL = "url";
 
-    /** _more_          */
+    /** output types */
     public static final String OUTPUT_JSON = "json";
 
-    /** _more_          */
-    public static final String ARG_INFO = "-info";
-
-    /** _more_          */
-    public static final String ARG_URL = "-url";
-
-    /** _more_          */
+    /** client properties */
     private Properties properties = new Properties();
 
-    /** _more_          */
+    /** These are the repository url arguments we get from the command line */
     private List<String[]> queryArgs = new ArrayList<String[]>();
 
-    /** _more_          */
+    /** the repository */
     private GsacRepository repository;
 
     /**
-     * _more_
+     * ctor
      *
-     * @param args _more_
+     * @param args cmd line args
      *
      * @throws Exception On badness
      */
     public GsacClient(String[] args) throws Exception {
-        final PrintStream oldErr = System.err;                                              
-	/*
-        System.setErr(new PrintStream(System.out){                                          
-                public void     println(String x) {                                         
-                    oldErr.println("ERR:" + x);                                             
-		    ucar.unidata.util.Misc.printStack("got it");                                          
-                }                                                                           
-		}); */
+        /*
+        final PrintStream oldErr = System.err;
+          //This lets us see what code is writing to stderr
+        System.setErr(new PrintStream(System.out){
+                public void     println(String x) {
+                    oldErr.println("ERR:" + x);
+                    ucar.unidata.util.Misc.printStack("got it");
+                }
+                }); */
 
+        //Make a dummy repository
         repository = new GsacRepository();
+
+        //If the cmd line args are ok then process the query
         if (processArgs(args)) {
             processQuery();
         }
     }
 
-    /**
-     * _more_
-     *
-     * @param url _more_
-     *
-     * @throws Exception On badness
-     */
-    private void processUrl(String url) throws Exception {
-        processUrl(url, getProperty(ARG_FILE, null));
-    }
-
-    public void doDownload(File destDir, String urls) throws Exception {
-        System.err.println("Downloading urls to:" + destDir);
-        final long [] totalSize={0};
-        final int [] cnt={0};
-        //TODO: split up the list and do the download in threads
-        List<String> lines = StringUtil.split(urls,"\n", true, true);
-        doDownload(destDir, lines, cnt, totalSize);
-    }
-
-
-    public void doDownload(File destDir, List<String> lines, int[]cnt, long[]totalSize) throws Exception {
-        boolean keepPaths = getProperty(ARG_KEEP_PATHS,"true").equals("true");
-        for(String line: lines) {
-            if(line.startsWith("#")) continue;
-            //            System.err.println (line);
-            String        tail       = IOUtil.getFileTail(line);
-            URL           url        = new URL(line);
-            File          newDest    = destDir;
-            if(keepPaths) {
-                String urlPath = url.getPath();
-                if (urlPath.indexOf("..") >= 0) {
-                    //Make sure there isn't anything funny here
-                    urlPath = "";
-                }
-                List<String> toks = StringUtil.split(urlPath,
-                                                     "/", true, true);
-                toks.remove(toks.size() - 1);
-                String newPath = StringUtil.join("/", toks);
-                newDest = new File(IOUtil.joinDir(newDest,
-                                                  newPath));
-                //System.err.println ("newDest:" + newDest);
-                IOUtil.makeDirRecursive(newDest);
-            }
-
-            File newFile = new File(IOUtil.joinDir(newDest,
-                                                   tail));
-            if (newFile.exists()) {
-                System.err.println("Skipping file:" + tail);
-                continue;
-            }
-            //            if(true)continue;
-
-            URLConnection connection = url.openConnection();
-            InputStream   is = connection.getInputStream();
-            int numBytes = IOUtil.writeTo(
-                                          is,
-                                          new BufferedOutputStream(
-                                                                   new FileOutputStream(
-                                                                                        newFile), 8000));
-            synchronized (totalSize) {
-                totalSize[0] += numBytes;
-                cnt[0]++;
-                System.err.println("Downloaded " + cnt[0]
-                                   + " files  Total size: "
-                                   + totalSize[0]);
-            }
-        }
-    }
-
 
     /**
-     * _more_
+     * Process the command line args
      *
-     * @param url _more_
-     * @param file _more_
+     * @param args command line args
      *
-     * @throws Exception On badness
-     */
-    private void processUrl(String url, String file) throws Exception {
-        String contents = fetchUrl(url);
-
-        String download = getProperty(ARG_DOWNLOAD,null);
-        if(download!=null) {
-            File downloadFile = new File(download);
-            doDownload(downloadFile, contents);
-            return;
-        }
-
-        if (file == null) {
-            System.out.print(contents);
-            return;
-        }
-        FileOutputStream out = new FileOutputStream(file);
-        out.write(contents.getBytes());
-        out.flush();
-        out.close();
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param url _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    private String fetchUrl(String url) throws Exception {
-        URL           theUrl     = new URL(url);
-        URLConnection connection = theUrl.openConnection();
-        InputStream   is         = connection.getInputStream();
-        String        contents   = readContents(is);
-        is.close();
-        return contents;
-    }
-
-
-
-    /**
-     * _more_
-     *
-     * @param is _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    private String readContents(InputStream is) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        String        line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is,
-                                    "UTF-8"));
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        return sb.toString();
-    }
-
-    /**
-     * _more_
-     *
-     * @throws Exception On badness
-     */
-    private void processQuery() throws Exception {
-        String download = getProperty(ARG_DOWNLOAD,null);
-        if(download!=null) {
-            File downloadFile = new File(download);
-            if(!downloadFile.exists()) {
-                usage("Download destination file does not exist:" + downloadFile);
-            }
-            properties.put(ARG_QUERY, QUERY_RESOURCE);
-            properties.put(ARG_OUTPUT, OUTPUT_URL);
-        }
-        String query = getProperty(ARG_QUERY, QUERY_SITE);
-	System.err.println(query);
-        if (query.equals(QUERY_SITE)) {
-            processSiteQuery();
-        } else if (query.equals(QUERY_RESOURCE)) {
-            processResourceQuery();
-        } else {
-            usage("Unknown query:" + query);
-        }
-    }
-
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    private String getServer() {
-        return getProperty(ARG_SERVER, (String) null);
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param gsacPath _more_
-     *
-     * @return _more_
-     */
-    private String getUrl(String gsacPath) {
-        return getUrl(gsacPath, new ArrayList<String[]>());
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param gsacPath _more_
-     * @param args _more_
-     *
-     * @return _more_
-     */
-    private String getUrl(String gsacPath, List<String[]> args) {
-        StringBuffer url = new StringBuffer(getServer());
-        url.append(gsacPath);
-        //TODO: encode the args
-        if (args.size() > 0) {
-	    int cnt = 0;
-            for (String[] pair : args) {
-		if(cnt++==0)
-		    url.append("?");
-		else
-		    url.append("&");
-                url.append(HtmlUtil.arg(pair[0],pair[1],true));
-            }
-        }
-        return url.toString();
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     * @param arg _more_
-     */
-    private void addArg(List<String[]> args, String arg) {
-        String value = getProperty(arg, (String) null);
-        if (value != null) {
-            args.add(new String[] { arg, value });
-        }
-    }
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     */
-    private void getSiteArgs(List<String[]> args) {}
-
-
-    /**
-     * _more_
-     *
-     * @throws Exception On badness
-     */
-    private void processSiteQuery() throws Exception {
-        List<String[]> args = new ArrayList<String[]>();
-        args.addAll(queryArgs);
-        String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
-        if (output.equals(OUTPUT_CSV)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.csv" });
-        } else if (output.equals(OUTPUT_XML)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.xml" });
-        } else if (output.equals(OUTPUT_JSON)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.json" });
-        } else {
-            usage("Unknown site output:" + output);
-        }
-        getSiteArgs(args);
-        String url = getUrl(GsacConstants.URL_SITE_SEARCH, args);
-        System.err.println("Processing site query:");
-        System.err.println(url);
-        processUrl(url);
-    }
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     */
-    private void getResourceArgs(List<String[]> args) {}
-
-    /**
-     * _more_
-     *
-     * @throws Exception On badness
-     */
-    private void processResourceQuery() throws Exception {
-        List<String[]> args = new ArrayList<String[]>();
-        args.addAll(queryArgs);
-        String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
-        if (output.equals(OUTPUT_CSV)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.csv" });
-        } else if (output.equals(OUTPUT_XML)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.xml" });
-        } else if (output.equals(OUTPUT_URL)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.url" });
-        } else if (output.equals(OUTPUT_JSON)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.json" });
-        } else {
-            usage("Unknown resource output:" + output);
-        }
-        getSiteArgs(args);
-        getResourceArgs(args);
-        String url = getUrl(GsacConstants.URL_RESOURCE_SEARCH, args);
-        System.err.println("Processing resource query:");
-        System.err.println(url);
-        processUrl(url);
-    }
-
-
-
-
-    /**
-     * _more_
-     *
-     * @param key _more_
-     * @param dflt _more_
-     *
-     * @return _more_
-     */
-    private String getProperty(String key, String dflt) {
-        String value = (String) properties.get(key);
-        if (value == null) {
-            return dflt;
-        }
-        return value;
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     *
-     * @return _more_
+     * @return If return is true then continue and process the query. If false then don't (e.g., the info request)
      *
      * @throws Exception On badness
      */
     private boolean processArgs(String[] args) throws Exception {
 
+        loadDefaultProperties();
+
+        //run through the cmd line args
+        for (int i = 0; i < args.length; i++) {
+            String argName = args[i];
+
+
+            //Strip off the "-"
+            if (argName.startsWith("-")) {
+                argName = argName.substring(1, argName.length());
+            }
+
+            if (argName.equals(ARG_INFO)) {
+                if (getServer() == null) {
+                    usage("-server needs to be specified");
+                }
+                handleInfoRequest();
+                return false;
+            }
+
+
+            if (argName.equals(ARG_HELP)) {
+                usage("");
+            }
+
+
+            //Shortcuts so the user can do  -site or -resource instead of -query site or -query resource
+            if (argName.equals(QUERY_SITE)) {
+                properties.put(ARG_QUERY, QUERY_SITE);
+                continue;
+            }
+
+            if (argName.equals(QUERY_RESOURCE)) {
+                properties.put(ARG_QUERY, QUERY_RESOURCE);
+                continue;
+            }
+
+            //Spatial bounds are of the form:
+            //-bbox west south east north
+            if (argName.equals(ARG_BBOX)) {
+                if (i + 4 >= args.length) {
+                    usage("Bad arguments for " + ARG_BBOX);
+                }
+                queryArgs.add(new String[] { GsacArgs.ARG_WEST,
+                                             args[i + 1] });
+                queryArgs.add(new String[] { GsacArgs.ARG_SOUTH,
+                                             args[i + 2] });
+                queryArgs.add(new String[] { GsacArgs.ARG_EAST,
+                                             args[i + 3] });
+                queryArgs.add(new String[] { GsacArgs.ARG_NORTH,
+                                             args[i + 4] });
+                i += 4;
+                continue;
+            }
+
+
+            //Now any other arg is of the form:  -arg arg_value
+            //so check for the correct number of args
+            if (i + 1 >= args.length) {
+                usage("Bad arguments:" + args[i]);
+            }
+
+            //This is just a helper routine so the user can fetch a single url (in case they don't have wget for example)
+            if (argName.equals(ARG_URL)) {
+                String url = args[++i];
+                String filename;
+                if (args.length > i) {
+                    filename = args[++i];
+                } else {
+                    filename = IOUtil.getFileTail(url);
+                }
+                System.err.println("Writing url to:" + filename);
+                processUrl(url, filename);
+                return false;
+            }
+
+
+            if (argName.equals(ARG_PROPERTIES)) {
+                properties.load(new FileInputStream(args[++i]));
+                continue;
+            }
+
+
+            String  value   = args[++i];
+            boolean foundIt = false;
+            //If it is one of the client specific arguments then add it to the properties and continue
+            for (String arg : clientArgs) {
+                if (argName.equals(arg)) {
+                    properties.put(argName, value);
+                    foundIt = true;
+                    break;
+                }
+            }
+            if (foundIt) {
+                continue;
+            }
+
+            //If the argument value is file: then read the file. Each line in the file
+            //results in another url argumnet of the form: argName <line value>
+            //See the usage for how this can be used
+            if (value.startsWith(FILE_PREFIX)) {
+                String contents = IOUtil.readContents(
+                                      value.substring(FILE_PREFIX.length()),
+                                      getClass());
+                //Split and trim and exclude empty lines
+                for (String line :
+                        StringUtil.split(contents, "\n", true, true)) {
+                    //Check for a comment
+                    if (line.startsWith("#")) {
+                        continue;
+                    }
+                    queryArgs.add(new String[] { argName, line });
+                }
+            } else {
+                //Just a regular -arg <arg value>
+                queryArgs.add(new String[] { argName, value });
+            }
+        }
+
+        //Make sure they specified a server
+        if (getServer() == null) {
+            usage("-server needs to be specified");
+        }
+        return true;
+
+    }
+
+
+    /**
+     * Load in the default property files
+     *
+     * @throws Exception On badness
+     */
+    private void loadDefaultProperties() throws Exception {
+        //List of property files to load
         List<String> propertyFiles = new ArrayList<String>();
+
+        //Load in the default properties
         propertyFiles.add("/org/gsac/client/gsac.properties");
 
+        //Look around to where we are running from and load in any property files there
+        //This lets the user have some default arguments that are loaded every time
         File path =
             new File(getClass().getProtectionDomain().getCodeSource()
                 .getLocation().getPath());
@@ -487,6 +324,7 @@ public class GsacClient implements GsacConstants {
 
         //TODO: Should we look for a gsac.properties file in the working dir?
 
+        //Now process the  properties
         for (String propertyFile : propertyFiles) {
             InputStream is = getClass().getResourceAsStream(propertyFile);
             if (is == null) {
@@ -500,112 +338,325 @@ public class GsacClient implements GsacConstants {
                 is.close();
             }
         }
-
-
-        for (int i = 0; i < args.length; i++) {
-            String name = args[i];
-            if (name.equals(ARG_INFO)) {
-                if (getServer() == null) {
-                    usage("-server needs to be specified");
-                }
-                handleInfoRequest();
-                return false;
-            }
-
-
-            if (name.startsWith("-")) {
-                name = name.substring(1, name.length());
-            }
-
-	    if(name.equals(ARG_HELP)) {
-		usage("");
-	    }
-
-
-            if (name.equals(QUERY_SITE)) {
-                properties.put(ARG_QUERY, QUERY_SITE);
-                continue;
-            }
-
-            if (name.equals(QUERY_RESOURCE)) {
-                properties.put(ARG_QUERY, QUERY_RESOURCE);
-                continue;
-            }
-
-            if (name.equals(ARG_BBOX)) {
-                if (i + 4 >= args.length) {
-                    usage("Bad arguments for " + ARG_BBOX);
-                }
-                queryArgs.add(new String[] { GsacArgs.ARG_WEST,
-                                             args[i + 1] });
-                queryArgs.add(new String[] { GsacArgs.ARG_SOUTH,
-                                             args[i + 2] });
-                queryArgs.add(new String[] { GsacArgs.ARG_EAST,
-                                             args[i + 3] });
-                queryArgs.add(new String[] { GsacArgs.ARG_NORTH,
-                                             args[i + 4] });
-                i += 4;
-                continue;
-            }
-
-
-            if (i + 1 >= args.length) {
-                usage("Bad arguments:" + args[i]);
-            }
-
-            if (name.equals("properties")) {
-                properties.load(new FileInputStream(args[++i]));
-            }
-
-
-            if (name.equals("url")) {
-                String url = args[++i];
-                String filename;
-                if (args.length > i) {
-                    filename = args[++i];
-                } else {
-                    filename = IOUtil.getFileTail(url);
-                }
-                System.err.println("Writing url to:" + filename);
-                processUrl(url, filename);
-                return false;
-            }
-
-
-            String value = args[++i];
-            boolean foundIt = false;
-            for (String arg : myArgs) {
-                if (name.equals(arg)) {
-                    properties.put(name, value);
-                    foundIt = true;
-                    break;
-                }
-            }
-            if (foundIt) {
-                continue;
-            }
-
-            if(value.startsWith("file:")) {
-                String contents = IOUtil.readContents(value.substring("file:".length()), getClass());
-                for(String line: StringUtil.split(contents,"\n",true,true)) {
-                    if(line.startsWith("#")) continue;
-                    queryArgs.add(new String[] { name, line});
-                }
-            } else {
-                queryArgs.add(new String[] { name, value});
-            }
-        }
-
-        if (getServer() == null) {
-            usage("-server needs to be specified");
-        }
-        return true;
-
-
     }
 
+
     /**
-     * _more_
+     * process the query
+     *
+     * @throws Exception On badness
+     */
+    private void processQuery() throws Exception {
+        //Check if the user specifed a -download argument
+        String download = getProperty(ARG_DOWNLOAD, null);
+        if (download != null) {
+            File downloadFile = new File(download);
+            //Make sure it exists
+            if ( !downloadFile.exists()) {
+                usage("Download destination file does not exist:"
+                      + downloadFile);
+            }
+            //Since we are in download mode we set the query to be a resource query
+            //and the output to be the URL listing
+            properties.put(ARG_QUERY, QUERY_RESOURCE);
+            properties.put(ARG_OUTPUT, OUTPUT_URL);
+        }
+        //Find out what we are querying and do the query
+        String queryType = getProperty(ARG_QUERY, QUERY_SITE);
+        System.err.println(queryType);
+        if (queryType.equals(QUERY_SITE)) {
+            processSiteQuery();
+        } else if (queryType.equals(QUERY_RESOURCE)) {
+            processResourceQuery();
+        } else {
+            usage("Unknown query:" + queryType);
+        }
+    }
+
+
+    /**
+     * process the query for sites. This adds the right kind of  site output, makes the URL and
+     * fetches it
+     *
+     * @throws Exception On badness
+     */
+    private void processSiteQuery() throws Exception {
+        List<String[]> args = new ArrayList<String[]>();
+        args.addAll(queryArgs);
+        String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
+        if (output.equals(OUTPUT_CSV)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.csv" });
+        } else if (output.equals(OUTPUT_XML)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.xml" });
+        } else if (output.equals(OUTPUT_JSON)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.json" });
+        } else {
+            usage("Unknown site output:" + output);
+        }
+        String url = createUrl(GsacConstants.URL_SITE_SEARCH, args);
+        System.err.println("Processing site query:");
+        System.err.println(url);
+        processUrl(url);
+    }
+
+
+    /**
+     * process the query for resources. This adds the right kind of  resource output, makes the URL and
+     * fetches it
+     *
+     * @throws Exception On badness
+     */
+    private void processResourceQuery() throws Exception {
+        List<String[]> args = new ArrayList<String[]>();
+        args.addAll(queryArgs);
+        //Add the output type. These types (e.g., "resource.csv") are thos defined by the
+        //gsac output handlers in org/gsac/gsl/output/resource
+        String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
+        if (output.equals(OUTPUT_CSV)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.csv" });
+        } else if (output.equals(OUTPUT_XML)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.xml" });
+        } else if (output.equals(OUTPUT_URL)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.url" });
+        } else if (output.equals(OUTPUT_JSON)) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.json" });
+        } else {
+            usage("Unknown resource output:" + output);
+        }
+        //Make the url
+        String url = createUrl(GsacConstants.URL_RESOURCE_SEARCH, args);
+        System.err.println("Processing resource query:");
+        System.err.println(url);
+        //process the url
+        processUrl(url);
+    }
+
+
+
+    /**
+     * fetch the contents from the url. This writes the output to stdout
+     *
+     * @param url url to fetch
+     *
+     * @throws Exception On badness
+     */
+    private void processUrl(String url) throws Exception {
+        processUrl(url, getProperty(ARG_FILE, null));
+    }
+
+
+
+    /**
+     * fetch the contents from the url. This writes the output to given file (if non null)
+     * or to the stdout
+     *
+     * @param url url to fetch
+     * @param file file to write to
+     *
+     * @throws Exception On badness
+     */
+    private void processUrl(String url, String file) throws Exception {
+
+        //Get the contents
+        String contents = fetchUrl(url);
+
+        //Are we doing a download?
+        String download = getProperty(ARG_DOWNLOAD, null);
+        if (download != null) {
+            File downloadFile = new File(download);
+            doDownload(downloadFile, contents);
+            return;
+        }
+
+        //If no file then print to stdout
+        if (file == null) {
+            System.out.print(contents);
+            return;
+        }
+
+        //Write the contents to the file
+        FileOutputStream out = new FileOutputStream(file);
+        out.write(contents.getBytes());
+        out.flush();
+        out.close();
+    }
+
+
+
+    /**
+     * If the user specified -download then the urls string is the (typically ftp) urls
+     * we retrieved from the gsac server. Tokenize the url list and download them
+     *
+     * @param destDir Destination directory
+     * @param urls urls
+     *
+     * @throws Exception On badness
+     */
+    public void doDownload(File destDir, String urls) throws Exception {
+        System.err.println("Downloading urls to:" + destDir);
+        final long[] totalSize = { 0 };
+        final int[]  cnt       = { 0 };
+
+        //TODO: split up the list and do the download in threads
+        List<String> lines = StringUtil.split(urls, "\n", true, true);
+        doDownload(destDir, lines, cnt, totalSize);
+    }
+
+
+    /**
+     * Download the given urls into the given destination directory.
+     * check for the ARG_KEEP_PATHS arg to see if we create subdirectories
+     * based on the url path structure
+     *
+     * @param destDir destination directory
+     * @param urls List of urls
+     * @param cnt keeps track of the number of files
+     * @param totalSize keeps track of the total size of the downloaded files
+     *
+     * @throws Exception On badness
+     */
+    public void doDownload(File destDir, List<String> urls, int[] cnt,
+                           long[] totalSize)
+            throws Exception {
+        boolean keepPaths = getProperty(ARG_KEEP_PATHS,
+                                        "true").equals("true");
+        for (String line : urls) {
+            //Skip comment line
+            if (line.startsWith("#")) {
+                continue;
+            }
+            //            System.err.println (line);
+            String tail    = IOUtil.getFileTail(line);
+            URL    url     = new URL(line);
+            File   newDest = destDir;
+            //Make the local directory if needed
+            if (keepPaths) {
+                String urlPath = url.getPath();
+                if (urlPath.indexOf("..") >= 0) {
+                    //Make sure there isn't anything funny here
+                    urlPath = "";
+                }
+                List<String> toks = StringUtil.split(urlPath, "/", true,
+                                        true);
+                toks.remove(toks.size() - 1);
+                String newPath = StringUtil.join("/", toks);
+                newDest = new File(IOUtil.joinDir(newDest, newPath));
+                //System.err.println ("newDest:" + newDest);
+                IOUtil.makeDirRecursive(newDest);
+            }
+
+            File newFile = new File(IOUtil.joinDir(newDest, tail));
+
+            //Skip it if we already have it.
+            //Maybe make this a user option?
+            if (newFile.exists()) {
+                System.err.println("Skipping file:" + tail);
+                continue;
+            }
+
+            //Fetch the URL
+            URLConnection connection = url.openConnection();
+            InputStream   is         = connection.getInputStream();
+            int numBytes = IOUtil.writeTo(
+                               is,
+                               new BufferedOutputStream(
+                                   new FileOutputStream(newFile), 8000));
+            //Update the size
+            synchronized (totalSize) {
+                totalSize[0] += numBytes;
+                cnt[0]++;
+                System.err.println("Downloaded " + cnt[0]
+                                   + " files  Total size: " + totalSize[0]);
+            }
+        }
+    }
+
+
+
+    /**
+     * Read the contents from the url
+     *
+     * @param url the url
+     *
+     * @return the contents
+     *
+     * @throws Exception On badness
+     */
+    private String fetchUrl(String url) throws Exception {
+        URL           theUrl     = new URL(url);
+        URLConnection connection = theUrl.openConnection();
+        InputStream   is         = connection.getInputStream();
+        String        contents   = readContents(is);
+        is.close();
+        return contents;
+    }
+
+
+
+    /**
+     * read the contents from the input stream
+     *
+     * @param is input stream to read from
+     *
+     * @return contents
+     *
+     * @throws Exception On badness
+     */
+    private String readContents(InputStream is) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        String        line;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is,
+                                    "UTF-8"));
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        return sb.toString();
+    }
+
+
+
+    /**
+     * get the server
+     *
+     * @return the server
+     */
+    private String getServer() {
+        return getProperty(ARG_SERVER, (String) null);
+    }
+
+
+    /**
+     * Create the url with the given arguments and base path
+     *
+     * @param gsacPath base path (e.g.,  GsacConstants.URL_SITE_SEARCH)
+     * @param args url arguments
+     *
+     * @return the url
+     */
+    private String createUrl(String gsacPath, List<String[]> args) {
+        StringBuffer url = new StringBuffer(getServer());
+        url.append(gsacPath);
+        //TODO: encode the args
+        if (args.size() > 0) {
+            int cnt = 0;
+            for (String[] pair : args) {
+                if (cnt++ == 0) {
+                    url.append("?");
+                } else {
+                    url.append("&");
+                }
+                url.append(HtmlUtil.arg(pair[0], pair[1], true));
+            }
+        }
+        return url.toString();
+    }
+
+
+
+
+
+    /**
+     * fetch the info from the server and print it out
      *
      * @throws Exception On badness
      */
@@ -621,9 +672,28 @@ public class GsacClient implements GsacConstants {
 
 
     /**
-     * _more_
+     * utility method to retrieve a property
      *
-     * @param message _more_
+     * @param key property key
+     * @param dflt default value
+     *
+     * @return property value if found. If not then the default value
+     */
+    private String getProperty(String key, String dflt) {
+        String value = (String) properties.get(key);
+        if (value == null) {
+            return dflt;
+        }
+        return value;
+    }
+
+
+
+
+    /**
+     * print  out the usage message and exit
+     *
+     * @param message message to print
      */
     private void usage(String message) {
         System.err.println(message);
@@ -635,25 +705,31 @@ public class GsacClient implements GsacConstants {
         System.err.println(
             "\t-" + ARG_SERVER
             + "  http://examplegsacrepository.edu/someprefixpath");
-        System.err.println(
-            "\te.g.: http://facdev.unavco.org/gsacws");
+        System.err.println("\te.g.: http://facdev.unavco.org/gsacws");
         System.err.println(
             "\t-info  fetch and print to stdout the repository information includings available arguments");
-        System.err.println("\t-" + ARG_DOWNLOAD +" <destination directory> Do a resource search and download the files to the given directory");
+        System.err.println(
+            "\t-" + ARG_DOWNLOAD
+            + " <destination directory> Do a resource search and download the files to the given directory");
 
-        System.err.println("\t-" + ARG_KEEP_PATHS+" <true|false> When doing the download do we maintain the directory structure of the ftp urls. Default is true");
+        System.err.println(
+            "\t-" + ARG_KEEP_PATHS
+            + " <true|false> When doing the download do we maintain the directory structure of the ftp urls. Default is true");
 
 
 
-        System.err.println("\t-" + ARG_QUERY + " site|resource or: -" + QUERY_RESOURCE +"|-" + QUERY_SITE);
+        System.err.println("\t-" + ARG_QUERY + " site|resource or: -"
+                           + QUERY_RESOURCE + "|-" + QUERY_SITE);
         System.err.println("\t-" + ARG_OUTPUT + " csv|xml|url");
         System.err.println("\t-" + ARG_FILE + " outputfile");
         System.err.println("\tany number of query arguments, e.g.:");
         System.err.println("\t-site.code \"P12*\"");
         System.err.println("\t-" + ARG_BBOX + " west south east north");
-        System.err.println("\tnote: for any of the arguments you can specify a file that contains the argument values, e.g.:");
-        System.err.println("\t\t-site.code file:sites.txt");
-        System.err.println("\tWhere sites.txt contains site codes, one per line");
+        System.err.println(
+            "\tnote: for any of the arguments you can specify a file that contains the argument values, e.g.:");
+        System.err.println("\t\t-site.code " + FILE_PREFIX + "sites.txt");
+        System.err.println(
+            "\tWhere sites.txt contains site codes, one per line");
         System.exit(1);
     }
 
