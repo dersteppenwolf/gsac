@@ -23,11 +23,9 @@ package org.gsac.ramadda;
 
 import org.gsac.gsl.*;
 
-
 import org.ramadda.repository.*;
 import org.ramadda.repository.auth.User;
 import org.ramadda.repository.harvester.*;
-
 
 
 import org.w3c.dom.*;
@@ -55,10 +53,9 @@ import java.util.Properties;
 
 
 /**
+ * This implements the new GSAC API entry points into RAMADDA and bridges between the
+ * RAMADDA data model and the GSAC data model
  *
- *
- * @author IDV Development Team
- * @version $Revision: 1.3 $
  */
 public class GsacApiHandler extends RepositoryManager implements RequestHandler {
 
