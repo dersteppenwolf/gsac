@@ -24,21 +24,22 @@ used by the javadoc target
     <target name="javadoc" depends="init">
         <javadoc
             Author="true"
-            Doctitle="UNAVCO"
+            Doctitle="GSAC/GSL"
             Use="true"
             Version="true" 
-            Windowtitle="UNAVCO"
+            Windowtitle="GSAC/GSL"
             classpath="${classpath}"
             destdir="${dist_javadoc}"
             maxmemory="512m"
             sourcepath="${srcdir}">
             <link href="http://java.sun.com/javase/6/docs/api/"/>
             <package name="org.gsac.*"/>
-            <package name="gov.nasa.cddis.*"/>
             <excludepackage name="org.gsac.ramadda"/>
+            <excludepackage name="org.nasa.cddis"/>
             <excludepackage name="org.gsac.template"/>
         </javadoc>
     </target>
+
 
 
    <target name="clean" depends="init" >

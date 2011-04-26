@@ -50,10 +50,8 @@ import java.util.List;
 
 /**
  * Handles all of the site related repository requests. If you are using the GsacRepositoryImpl/SiteManager
- * functionality then there are a minimum of 2 methods you need to overwrite:<pre>
- * getSite
- * handleSiteRequest
- * </pre>
+ * functionality then there are a minimum of 2 methods you need to overwrite:<br>
+ * {@link #getSite} and {@link #handleSiteRequest}
  * This class has a default implementation of handleSiteRequest. To use this you need to
  * implement a number of other methods for creating the search clause, etc. See the
  * docs for handleSiteRequest
@@ -64,10 +62,10 @@ import java.util.List;
  */
 public abstract class SiteManager extends GsacRepositoryManager {
 
-    /** _more_ */
+    /** name for the basic site query capabilities */
     public static final String CAPABILITY_GROUP_SITE_QUERY = "Site Query";
 
-    /** _more_ */
+    /** name for the advanced group of site query capabilities */
     public static final String CAPABILITY_GROUP_ADVANCED =
         "Advanced Site Query";
 
@@ -83,7 +81,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
     /**
-     * Get the site from the database
+     * Get the site from the database. This needs to be overwritten by any derived class.
      *
      * @param siteId site id.
      *
@@ -98,11 +96,10 @@ public abstract class SiteManager extends GsacRepositoryManager {
      * whatever they feel like doing. If not overwritten then this method
      * does a basic select query and processes the results making use of the
      * derived class methods:<pre>
-     * getSiteClauses - returns a list of the select clauses. This list is then anded together to form the query
-     * getSiteSelectColumns - The comma separated list of fully qualified (i.e., tablename prepended)
-     *    column names to select
-     * getSiteOrder - optional method to return the order by sql directive
-     * makeSite  - This creates the GsacSite from the given resultset
+     * {@link #getSiteClauses} - returns a list of the select clauses. This list is then anded together to form the query
+     * {@link #getSiteSelectColumns} - The comma separated list of fully qualified (i.e., tablename prepended) column names to select
+     * {@link #getSiteOrder} - optional method to return the order by sql directive
+     * {@link #makeSite}  - This creates the GsacSite from the given resultset
      * </pre>
      *
      * @param request the resquest
@@ -201,11 +198,11 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
     /**
-     * _more_
+     * this returns the order by clause and anything else that needs to be tacked onto the end of the site query
      *
      * @param request The request
      *
-     * @return _more_
+     * @return the sql suffix
      */
     public String getSiteSelectSuffix(GsacRequest request) {
         return getSiteOrder(request);
@@ -264,7 +261,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
      * get all of the metadata for the given site
      *
      *
-     * @param level _more_
+     * @param level Specifies the depth of metadata that is being requeste - note: this is stupid and will change
      * @param gsacSite site
      *
      * @throws Exception On badness
@@ -275,9 +272,9 @@ public abstract class SiteManager extends GsacRepositoryManager {
     }
 
     /**
-     * _more_
+     * add the full site metadata to the site
      *
-     * @param gsacSite _more_
+     * @param gsacSite the site
      *
      * @throws Exception On badness
      */
@@ -298,9 +295,9 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
     /**
-     * _more_
+     * return the list of SiteGroups
      *
-     * @return _more_
+     * @return list of site groups
      */
     public List<SiteGroup> doGetSiteGroups() {
         return new ArrayList<SiteGroup>();
@@ -343,14 +340,10 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
 
-
-
-
-
     /**
-     * _more_
+     * utility method for adding the default site query capabilities
      *
-     * @param capabilities _more_
+     * @param capabilities list of capabailities to add to
      */
     public void addDefaultSiteCapabilities(List<Capability> capabilities) {
         String       help = HtmlOutputHandler.stringSearchHelp;

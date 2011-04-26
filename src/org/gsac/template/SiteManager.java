@@ -26,7 +26,9 @@ import java.util.List;
 
 
 /**
- * Example site manager.
+ * Handles all of the site related repository requests
+ * The main entry point is the  getSiteClauses method.
+ * 
  *
  * @author         Jeff McWhirter
  */
