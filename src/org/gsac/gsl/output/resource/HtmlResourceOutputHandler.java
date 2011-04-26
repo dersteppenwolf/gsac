@@ -253,7 +253,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                     HtmlUtil.ATTR_NAME, output.getId(), HtmlUtil.ATTR_TYPE,
                     HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
                     output.getToolbarLabel(),
-                    //HtmlUtil.ATTR_CLASS, "download-button",
+                    //HtmlUtil.ATTR_CLASS, "gsac-download-button",
                     HtmlUtil.ATTR_TITLE, output.getLabel()
                 }));
                 buttons.append(HtmlUtil.space(2));
@@ -267,12 +267,12 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         if (getDoSite()) {
             buttons.append("<td align=right>");
             String switchForm = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                             HtmlUtil.cssClass("gobutton")
+                                             HtmlUtil.cssClass("gsac-gobutton")
                                              + HtmlUtil.attrs(new String[] {
                 HtmlUtil.ATTR_NAME, ARG_SEARCH_SITES, HtmlUtil.ATTR_TYPE,
                 HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
                 msg("Site Search Form"), HtmlUtil.ATTR_CLASS,
-                "download-button", HtmlUtil.ATTR_TITLE,
+                "gsac-download-button", HtmlUtil.ATTR_TITLE,
                 msg("Go to the site search form"),
             }));
 
@@ -351,7 +351,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                         HtmlUtil.ATTR_NAME, output.getId(),
                         HtmlUtil.ATTR_TYPE, HtmlUtil.TYPE_SUBMIT,
                         HtmlUtil.ATTR_VALUE, output.getToolbarLabel(),
-                        HtmlUtil.ATTR_CLASS, "download-button",
+                        HtmlUtil.ATTR_CLASS, "gsac-download-button",
                         HtmlUtil.ATTR_TITLE, output.getLabel()
                     }));
                     if (toolbar.length() > 0) {
@@ -424,7 +424,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                             HtmlUtil.attr("name", "searchform")));;
 
                     sb.append(
-                        "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=toolbar>");
+                        "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
 
@@ -433,7 +433,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                          && (getRepository().getRemoteHref(site).length()
                              > 0));
                     sb.append(
-                        "<table class=\"result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+                        "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
                     String[] labels = new String[] {
                         (includeExtraCol
                          ? ""
@@ -519,7 +519,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
 
 
                 if (resource.getFileInfo().getFileSize() > 0) {
-                    sb.append("<td align=\"right\" class=\"filesize\" "
+                    sb.append("<td align=\"right\" class=\"gsac-filesize\" "
                               + clickEvent + ">");
                     size += resource.getFileInfo().getFileSize();
                     sb.append(
@@ -542,7 +542,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 sb.append("<td align=right>" + cnt + HtmlUtil.space(1)
                           + msg("files") + "</td>");
                 sb.append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
-                sb.append("<td align=\"right\" class=\"filesize\">");
+                sb.append("<td align=\"right\" class=\"gsac-filesize\">");
                 if (size > 0) {
                     sb.append("" + formatFileSize(size));
                 }

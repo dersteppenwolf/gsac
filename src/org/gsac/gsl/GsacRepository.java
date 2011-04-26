@@ -2088,7 +2088,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /** LOOK: */
-    boolean readHtmlEveryTime = false;
+    boolean readHtmlEveryTime = true;
 
     /**
      * Override this to return the html header to use for html pages
@@ -2739,7 +2739,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public String getHeader(String header) {
-        return HtmlUtil.div(header, HtmlUtil.cssClass("formheader"));
+        return HtmlUtil.div(header, HtmlUtil.cssClass("gsac-formheader"));
     }
 
     /**
@@ -2778,7 +2778,7 @@ public class GsacRepository implements GsacConstants {
                 sb2.append("Zero or one of:");
             }
             sb2.append(
-                "<table border=1 cellspacing=0 cellpadding=2 class=enumtable>");
+                "<table border=1 cellspacing=0 cellpadding=2 class=gsac-enumtable>");
             for (IdLabel idLabel : capability.getEnums()) {
                 String value = idLabel.getId();
                 String label = idLabel.getLabel();
@@ -3118,11 +3118,11 @@ public class GsacRepository implements GsacConstants {
             html = "&nbsp;";
         }
         message =
-            "<div class=\"innernote\"><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td valign=\"top\">"
+            "<div class=\"gsac-innernote\"><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td valign=\"top\">"
             + HtmlUtil.img(iconUrl(icon)) + HtmlUtil.space(2)
-            + "</td><td valign=\"bottom\"><span class=\"notetext\">"
+            + "</td><td valign=\"bottom\"><span class=\"gsac-notetext\">"
             + message + "</span></td></tr></table></div>";
-        return "\n<table border=\"0\" id=\"messageblock\"><tr><td><div class=\"note\"><table><tr valign=top><td>"
+        return "\n<table border=\"0\" id=\"messageblock\"><tr><td><div class=\"gsac-note\"><table><tr valign=top><td>"
                + message + "</td><td>" + html + "</td></tr></table>"
                + "</div></td></tr></table>\n";
     }

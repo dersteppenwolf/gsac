@@ -70,6 +70,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
 
+
     /** _more_ */
     private static String[] SITE_TABLE_LABELS;
 
@@ -540,7 +541,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             HtmlUtil.tag(
                 HtmlUtil.TAG_TD,
                 HtmlUtil.attr(HtmlUtil.ATTR_COLSPAN, "2")
-                + HtmlUtil.cssClass("formheader"), header));
+                + HtmlUtil.cssClass("gsac-formheader"), header));
     }
 
 
@@ -833,7 +834,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append(HtmlUtil.div("",
                                HtmlUtil.id("tooltipdiv")
                                + HtmlUtil.cssClass("tooltip-outer")));
-        sb.append("<div class=\"gsaccontent\">");
+        sb.append("<div class=\"gsac-content\">");
         appendHeader(request, response, sb);
 
         if ( !getRepository().checkRequest(request, response, sb)) {
@@ -1908,7 +1909,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             ARG_SEARCH));
                     sb.append(HtmlUtil.space(2));
                     sb.append(
-                        "<table class=\"result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+                        "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
                     //                    sb.append(HtmlUtil.submit(msg("ViewSearch Files"), ARG_SEARCH_RESOURCES));
                     makeSortHeader(request, sb, ARG_SITE_PREFIX,
                                    SITE_TABLE_LABELS, SITE_TABLE_SORTVALUES);
@@ -2005,7 +2006,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             sb.append(
                 "<td  " + HtmlUtil.id(divId)
-                + "><table border=0 class=\"innerresult-table\" cellpadding=0 cellspacing=0><tr>");
+                + "><table border=0 class=\"gsac-innerresult-table\" cellpadding=0 cellspacing=0><tr>");
             sb.append(HtmlUtil.col(dartImg));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -2073,7 +2074,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                String prefix, String[] labels,
                                String[] sortValues)
             throws IOException {
-        String extra = " class=\"result-header\" ";
+        String extra = " class=\"gsac-result-header\" ";
         sb.append("<tr>");
         sb.append(HtmlUtil.col("&nbsp;", extra));
         String  valueArg     = prefix + ARG_SORT_VALUE_SUFFIX;

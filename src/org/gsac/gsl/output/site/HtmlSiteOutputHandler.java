@@ -195,12 +195,12 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         if (getDoResource()) {
             buttons.append("<td align=right>");
             String switchForm = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                             HtmlUtil.cssClass("gobutton")
+                                             HtmlUtil.cssClass("gsac-gobutton")
                                              + HtmlUtil.attrs(new String[] {
                 HtmlUtil.ATTR_NAME, ARG_SEARCH_RESOURCES, HtmlUtil.ATTR_TYPE,
                 HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
                 msg("File Search Form"), HtmlUtil.ATTR_CLASS,
-                "download-button", HtmlUtil.ATTR_TITLE,
+                "gsac-download-button", HtmlUtil.ATTR_TITLE,
                 msg("Go to the file search form"),
             }));
 

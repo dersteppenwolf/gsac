@@ -182,21 +182,21 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         for (String l : letters) {
             if (letter.equals(l)) {
                 links.add(HtmlUtil.span(HtmlUtil.b(l),
-                                        HtmlUtil.cssClass("firstletternav")));
+                                        HtmlUtil.cssClass("gsac-firstletternav")));
             } else {
                 String url = getRepository().getUrl(URL_BROWSE_BASE) + "?"
                              + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
                              + "=" + l;
                 links.add(HtmlUtil.href(url, l,
-                                        HtmlUtil.cssClass("firstletternav")));
+                                        HtmlUtil.cssClass("gsac-firstletternav")));
             }
         }
 
         html.append(
             HtmlUtil.tag(
-                HtmlUtil.TAG_CENTER, HtmlUtil.cssClass("navheader"),
+                HtmlUtil.TAG_CENTER, HtmlUtil.cssClass("gsac-navheader"),
                 StringUtil.join(
-                    "<span class=\"separator\">&nbsp;|&nbsp;</span>",
+                    "<span class=\"gsac-separator\">&nbsp;|&nbsp;</span>",
                     links)));
         Hashtable<String, String> outputMap = new Hashtable<String, String>();
 
@@ -295,7 +295,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             if ((firstLetter == null)
                     || !thingFirstLetter.equals(firstLetter)) {
                 firstLetter = thingFirstLetter;
-                header.add("<a class=\"firstletternav\" href=\"#"
+                header.add("<a class=\"gsac-firstletternav\" href=\"#"
                            + firstLetter + "\">" + firstLetter + "</a>");
                 if (things.size() > 10) {
                     sb.append("<a name=\"" + firstLetter + "\">\n");
@@ -316,9 +316,9 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         if ((things.size() > 10) && (header.size() > 4)) {
             String headerHtml =
                 StringUtil.join(
-                    "<span class=\"separator\">&nbsp;|&nbsp;</span>", header);
+                    "<span class=\"gsac-separator\">&nbsp;|&nbsp;</span>", header);
             html.append(HtmlUtil.tag(HtmlUtil.TAG_CENTER,
-                                     HtmlUtil.cssClass("navheader"),
+                                     HtmlUtil.cssClass("gsac-navheader"),
                                      headerHtml));
         }
 

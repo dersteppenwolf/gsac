@@ -1,12 +1,29 @@
 
 body {
      border-left : 1px black solid;
-    //border-right : 1px black solid;
      margin:0;
 }
 
+td {
+   font-size: 12pt;
+}
 
-.gsaccontent {
+
+table {
+      margin: 0px;
+}
+
+
+.input, .password, .fileinput,.textarea,.select {
+  border : 1px #888888 solid;
+}
+
+input {
+  padding: 0.0em;
+}
+
+
+.gsac-content {
    font-size: 12pt;
    font-family: Arial, Helvetica, sans-serif;       
    color: black;
@@ -81,17 +98,12 @@ body {
 .gsac-header2-separator {
 }
 
-.helpimg {
+.gsac-helpimg {
          margin-top:20px;
          margin-bottom:20px;
 }
 
-td {
-   font-size: 12pt;
-}
-
-
-.separator {
+.gsac-separator {
    font-size: 9pt;
 }
 
@@ -125,14 +137,14 @@ td {
 }
 
 
-.enumtable {
+.gsac-enumtable {
    border-color: #666;
    border-width: 0 0 1px 1px;
    border-style: solid;
 }
 
 
-.enumtable td {
+.gsac-enumtable td {
     padding:7px;
     padding-bottom:2px;
     border-color: #666;
@@ -143,14 +155,14 @@ td {
 
 
 
-.result-table {
+.gsac-result-table {
    border-color: #666;
    border-width: 0 0 1px 1px;
    border-style: solid;
 }
 
 
-.result-table td {
+.gsac-result-table td {
     padding:4px;
     padding-bottom:1px;
     border-color: #666;
@@ -160,20 +172,20 @@ td {
 }
 
 
-.toolbar {
+.gsac-toolbar {
      margin:1px;
 }
 
-.download-container {
+.gsac-download-container {
      padding:0px;
      margin-bottom:4px;
 }
 
-.download-button:hover {
+.gsac-download-button:hover {
      border : 1px #000 solid;
 }
 
-.download-button {
+.gsac-download-button {
      border : 1px #aaa solid;
      margin:0px;
      padding-top:3px;
@@ -187,13 +199,13 @@ td {
 }
 
 
-.gobutton:hover {
+.gsac-gobutton:hover {
      border: 1px #999 solid;
      background-color:#efefef;
 }
 
 
-.gobutton {
+.gsac-gobutton {
      padding:0px;
      padding-right:4px;
      padding-left:4px;
@@ -203,72 +215,51 @@ td {
 }
 
 
-table {
-      margin: 0px;
-}
 
-.innerresult-table  {
+.gsac-innerresult-table  {
     border-width: 0 0 0 0;
     padding:0;
     margin: 0;
 }
 
-.innerresult-table td {
+.gsac-innerresult-table td {
     padding:0px;
     margin: 0;
     border-width: 0px 0px 0 0;
 }
 
-.result-header {
+.gsac-result-header {
    background-color:#e8e8e8;
    font-weight: bold;
 
 }
 
-.result-header, .result-header a {
+.gsac-result-header, .gsac-result-header a {
      color:#222;
 }
 
 
 
-.firstletternav {
+.gsac-firstletternav {
    font-size: 10pt;
    text-decoration:none;
 }
 
-.navheader {
+.gsac-navheader {
   margin: 10px;
   #font-weight: bold;
 }
 
 
 
-.filesize {
+.gsac-filesize {
     font-family: monospace;       
 }
 
-.gsacheader {
-   align:center;
-}
 
-
-.input, .password, .fileinput,.textarea,.select {
-  border : 1px #888888 solid;
-}
-
-input {
-  padding: 0.0em;
-}
-
-
-.formheader {
+.gsac-formheader {
    border-bottom : 1px #bcbcbc solid;
-   xborder-left : 1px #bcbcbc solid;
-   xborder-right : 1px #bcbcbc solid;
-   xborder-top : 1px #aaa solid;
-   background: #ececec;
    background: #eee;
-
    font-weight: bold;
    margin:0px;
    margin-top:8px;
@@ -292,143 +283,12 @@ input {
   font-weight: bold;
 }
 
-.required {
-   background: #ffaaaa;
-}
-
-
-.requireddisabled {
-        border : 0px #888888 solid;
-        background: #ffaaaa;
-}
-
-.requiredlabel {
-   color: #ff0000;
-}
-
 .input:focus, .textarea:focus {
-	background: #fffeec;
+     background: #fffeec;
 }
 
 
-.disabledinput {
-        border : 0px #888888 solid;
-	background: #dfdfdf;
-}
-
-
-.plain {
-    font-weight: normal;
-}
-
-.hidden {
-   visibility: hidden; 
-   display:none;
-}
-
-.hiddeninput {
-  border :none;
-}
-
-
-.tab_titles {
-   margin:0px;
-   padding:0px;
-}
-
-.tab_contents {
-   border-left : 1px #000000 solid;
-   border-right : 1px #000000 solid;
-   border-bottom : 1px #000000 solid;
-   border-top : 1px #000000 solid;
-   margin:0px;
-   padding:0px;
-
-
-
-}
-
-.tab_contents_noborder {
-   border-top : 1px #000000 solid;
-}
-
-.tab_content_fixedheight_off {
-   min-height: 100px;
-   max-height: 200px; 
-   overflow-y: auto;
-   padding:5;
-}
-
-
-
-.tab_content_fixedheight_on {
-   background-color:#ffffff;
-   min-height: 100px;
-   max-height: 200px; 
-   overflow-y: auto;
-   padding:5;
-}
-
-
-.tab_content_off {
-   padding:5;
-}
-
-.tab_content_on {
-   background-color:#ffffff;
-   padding:5;
-}
-
-
-.tab_title_on {
-   background-color:#ffffff;
-   border: 1px #000 solid;
-   border-bottom:2px #ffffff  solid;
-   font-weight: bold;
-   margin-bottom:0px;
-   margin-left:3px;
-   margin-right:3px;
-   padding-bottom:0;
-   padding-top:2;
-   padding-left:6;
-   padding-right:6;
-}
-
-
-.tab_title_off {
-   background-color:#dddddd;
-   border-left: 1px #000000 solid;
-   border-right: 1px #000000 solid;
-   border-top: 1px #000000 solid;
-   border-bottom:1px #000000  solid;
-
-   font-weight: bold;
-   margin-left:3px;
-   margin-right:3px;
-   margin-bottom:1px;
-
-   padding-bottom:0;
-   padding-top:2;
-   padding-left:6;
-   padding-right:6;
-
-}
-
-
-
-.tab_title_on a {
-	color:#000000;
-	text-decoration: none;
-}
-
-
-.tab_title_off a {
-	color:#000000;
-	text-decoration: none;
-}
-
-
-.innernote {
+.gsac-innernote {
    padding-top:10px;
 }
 
@@ -447,16 +307,13 @@ input {
 }
 
 
-
-
-.note {
+.gsac-note {
   z-index: 1;
   margin:10px;
   padding-bottom:5px;
   padding-left:5px;
   border : 1px black solid;
   background-color : #ffffcc;
-//Shadow effect
   /* offset left, top, thickness, color with alpha */
   -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
@@ -469,13 +326,11 @@ input {
 
 
 
-
-.notetext {
+.gsac-notetext {
 }
 
 
-
-
+/** Calendar popup styles **/
 
 .cpYearNavigation, .cpMonthNavigation {
     background-color:#006699;
