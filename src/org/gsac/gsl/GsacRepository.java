@@ -2088,7 +2088,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /** LOOK: */
-    boolean readHtmlEveryTime = true;
+    boolean readHtmlEveryTime = false;
 
     /**
      * Override this to return the html header to use for html pages

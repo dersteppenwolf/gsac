@@ -54,7 +54,7 @@ import java.util.List;
  * {@link #getSite} and {@link #handleSiteRequest}
  * This class has a default implementation of handleSiteRequest. To use this you need to
  * implement a number of other methods for creating the search clause, etc. See the
- * docs for handleSiteRequest
+ * docs for {@link #handleSiteRequest}
  *
  *  There are a number of doGet... methods that can be overwritten if desired (e.g., doGetSiteGroups)
  *
@@ -281,8 +281,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
     public void doGetFullSiteMetadata(GsacSite gsacSite) throws Exception {}
 
     /**
-     * Get the extra site search capabilities. This
-     * calls makeCapabilities to actually make them
+     * Get the extra site search capabilities.  Derived classes should override this
      *
      * @return site search capabilities
      */
@@ -293,9 +292,67 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
 
 
+    /**
+     * Helper method to create default site query capabilities.
+     This adds capabilities for:<ul>
+     <li> site code
+     <li> site name
+     <li> site type
+     <li> site status
+     <li> site groups if there are any
+     <li> site spatial bounds
+     </ul>
+     *
+     * @param capabilities list of capabailities to add to
+     */
+    public void addDefaultSiteCapabilities(List<Capability> capabilities) {
+        String       help = HtmlOutputHandler.stringSearchHelp;
+        Capability   siteCode;
+        Capability   siteName;
+        List<SiteGroup> siteGroups = doGetSiteGroups();
+        Capability[] dflt = {
+            siteCode = initCapability(new Capability(ARG_SITE_CODE,
+                "Site Code",
+                Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                                         "Short name of the site",
+                                         "Short name of the site. " + help),
+            initCapability(siteName = new Capability(ARG_SITE_NAME,
+                "Site Name",
+                Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                                         "Name of the site",
+                                         "Name of site." + help),
+            initCapability(new Capability(ARG_SITE_TYPE, "Site Type",
+                                          new ArrayList<IdLabel>(),
+                                          true), CAPABILITY_GROUP_SITE_QUERY,
+                                              "Type of the site", null,
+                                              makeVocabulary(ARG_SITE_TYPE)),
+            initCapability(
+                new Capability(
+                    ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
+                    true), CAPABILITY_GROUP_SITE_QUERY, "", "",
+                           makeVocabulary(ARG_SITE_STATUS)),
+            (siteGroups.size()==0?null:
+                initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
+                                              IdLabel.toList(siteGroups),
+                                              true), CAPABILITY_GROUP_SITE_QUERY,
+                               null)),
+                    
+            initCapability(new Capability(ARG_BBOX, "Bounds",
+                Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
+                    "Spatial bounds within which the site lies")
+        };
+        siteCode.setBrowse(true);
+        siteName.setBrowse(true);
+        for (Capability capability : dflt) {
+            if(capability!=null) {
+                capabilities.add(capability);
+            }
+        }
+    }
+
 
     /**
-     * return the list of SiteGroups
+     * return the list of SiteGroups. This is only used by the {@link #addDefaultSiteCapabilities}
      *
      * @return list of site groups
      */
@@ -338,53 +395,6 @@ public abstract class SiteManager extends GsacRepositoryManager {
         return statuses;
     }
 
-
-
-    /**
-     * utility method for adding the default site query capabilities
-     *
-     * @param capabilities list of capabailities to add to
-     */
-    public void addDefaultSiteCapabilities(List<Capability> capabilities) {
-        String       help = HtmlOutputHandler.stringSearchHelp;
-        Capability   siteCode;
-        Capability   siteName;
-
-        Capability[] dflt = {
-            siteCode = initCapability(new Capability(ARG_SITE_CODE,
-                "Site Code",
-                Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
-                                         "Short name of the site",
-                                         "Short name of the site. " + help),
-            initCapability(siteName = new Capability(ARG_SITE_NAME,
-                "Site Name",
-                Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
-                                         "Name of the site",
-                                         "Name of site." + help),
-            initCapability(new Capability(ARG_SITE_TYPE, "Site Type",
-                                          new ArrayList<IdLabel>(),
-                                          true), CAPABILITY_GROUP_SITE_QUERY,
-                                              "Type of the site", null,
-                                              makeVocabulary(ARG_SITE_TYPE)),
-            initCapability(
-                new Capability(
-                    ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
-                    true), CAPABILITY_GROUP_SITE_QUERY, "", "",
-                           makeVocabulary(ARG_SITE_STATUS)),
-            initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
-                                          IdLabel.toList(doGetSiteGroups()),
-                                          true), CAPABILITY_GROUP_SITE_QUERY,
-                                              null),
-            initCapability(new Capability(ARG_BBOX, "Bounds",
-                Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
-                    "Spatial bounds within which the site lies")
-        };
-        siteCode.setBrowse(true);
-        siteName.setBrowse(true);
-        for (Capability capability : dflt) {
-            capabilities.add(capability);
-        }
-    }
 
 
     /**
