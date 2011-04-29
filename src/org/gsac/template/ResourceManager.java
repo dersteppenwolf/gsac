@@ -21,8 +21,9 @@ import java.util.List;
 
 
 /**
- * Handles all of the resource related repository requests
- *
+ * Handles all of the resource related repository requests. The main
+ * entry point is {@link #handleResourceRequest}
+ * Look for the CHANGEME comments
  *
  * @author  Jeff McWhirter
  */
@@ -51,8 +52,8 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
     public void handleResourceRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
-        //NOTE: This isn't as well organized as the @MACRO.PREFIX@SiteManager since the Unavco resource queries
-        //are a little goofy
+        //Some example code to handle the default url arguments
+        //NOTE: This isn't as well organized as the @MACRO.PREFIX@SiteManager 
 
         long         t1      = System.currentTimeMillis();
         List<Clause> clauses = new ArrayList<Clause>();
@@ -102,8 +103,6 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
             addSearchCriteria(msgBuff, "Resource Type", args,
                               ARG_RESOURCE_TYPE);
         }
-
-
 
 
         Date[] publishDateRange =
@@ -170,7 +169,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
 
     
     public void doGetResourceMetadata(int level, GsacResource gsacResource)
-            throws Exception {
+        throws Exception {
     }
 
 

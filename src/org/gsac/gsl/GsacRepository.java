@@ -67,45 +67,45 @@ import javax.servlet.http.*;
 
 /**
  * This is the base class for the GSL repository. The main entry point is
- * the method:<pre> handleRequest(GsacRequest request);</pre>
+ * the method:{@link #handleRequest(GsacRequest)}
  * This serves to dispatch the request to the appropriate handler
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 public class GsacRepository implements GsacConstants {
 
-    /** _more_ */
+    /** gsac java package path prefix */
     public static final String GSAC_PATH_ROOT = "/org/gsac/gsl";
 
-    /** _more_ */
+    /** gsac java package path to the htdocs dir*/
     public static final String GSAC_PATH_HTDOCS = GSAC_PATH_ROOT + "/htdocs";
 
-    /** _more_ */
+    /** gsac java package path to the help dir*/
     public static final String GSAC_PATH_HELP = GSAC_PATH_ROOT + "/help";
 
-    /** _more_ */
+    /** gsac java package path to the resources dir */
     public static final String GSAC_PATH_RESOURCES = GSAC_PATH_ROOT
                                                      + "/resources";
 
 
 
-    /** property */
+    /** property for the repository class to instantiate */
     public static final String PROP_REPOSITORY_CLASS =
         "gsac.repository.class";
 
-    /** property */
+    /** property for the base url, e.g., /gsacws */
     public static final String PROP_BASEURL = "gsac.baseurl";
 
-    /** property */
+    /** property for the local file directory to write logs to, etc */
     public static final String PROP_GSACDIRECTORY = "gsac.directory";
 
-    /** property */
+    /** property name for the repository name */
     public static final String PROP_REPOSITORY_NAME = "gsac.repository.name";
 
-    /** _more_ */
+    /** property name for the repository icon */
     public static final String PROP_REPOSITORY_ICON = "gsac.repository.icon";
 
-    /** property */
+    /** property name for the repository description */
     public static final String PROP_REPOSITORY_DESCRIPTION =
         "gsac.repository.description";
 

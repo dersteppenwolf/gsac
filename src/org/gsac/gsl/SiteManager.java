@@ -27,12 +27,8 @@ import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 
-
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
-import ucar.unidata.util.HtmlUtil;
-import ucar.unidata.util.Misc;
-
 
 
 import java.sql.Connection;
@@ -41,10 +37,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -56,7 +48,6 @@ import java.util.List;
  * implement a number of other methods for creating the search clause, etc. See the
  * docs for {@link #handleSiteRequest}
  *
- *  There are a number of doGet... methods that can be overwritten if desired (e.g., doGetSiteGroups)
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
@@ -148,10 +139,15 @@ public abstract class SiteManager extends GsacRepositoryManager {
                                 Statement statement, int offset, int limit)
             throws Exception {
         long             t1   = System.currentTimeMillis();
+        //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
-            response.addSite(makeSite(iter.getResults()));
-            if ( !iter.countOK()) {
+            GsacSite site = makeSite(iter.getResults());
+            if(site==null) {
+                continue;
+            }
+            response.addSite(site);
+            if (!iter.countOK()) {
                 response.setExceededLimit();
                 break;
             }
@@ -163,7 +159,6 @@ public abstract class SiteManager extends GsacRepositoryManager {
                            + (t2 - t1) + "ms");
         return iter.getCount();
     }
-
 
 
 
@@ -184,6 +179,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
         setSearchCriteriaMessage(response, msgBuff);
         return Clause.and(clauses);
     }
+
 
     /**
      * Get the comma delimited list of columns to select on a site query
@@ -359,83 +355,6 @@ public abstract class SiteManager extends GsacRepositoryManager {
     public List<SiteGroup> doGetSiteGroups() {
         return new ArrayList<SiteGroup>();
     }
-
-    /**
-     * Utility method to make a list of site statuses from the given
-     * list of id values
-     *
-     * @param values site status values
-     *
-     * @return list of site statuses
-     */
-    public List<SiteStatus> makeSiteStatuses(String[] values) {
-        return makeSiteStatuses(toTuples(values));
-    }
-
-    /**
-     * Utility method to make a list of site statuses from the given
-     * array of id/value pairs. Note: if values[N].length ==2
-     * then values[N][0] is the id, values[N][1] is the label.
-     * if values[N].length ==1 then we just use the id as the label
-     *
-     *
-     * @param tuples id/value pairs
-     *
-     * @return list of site statuses
-     */
-    public List<SiteStatus> makeSiteStatuses(String[][] tuples) {
-        List<SiteStatus> statuses = new ArrayList<SiteStatus>();
-        for (String[] tuple : tuples) {
-            if (tuple.length == 1) {
-                statuses.add(new SiteStatus(tuple[0], tuple[0]));
-            } else {
-                statuses.add(new SiteStatus(tuple[0], tuple[1]));
-            }
-        }
-        return statuses;
-    }
-
-
-
-    /**
-     * Utility method to make a list of site types from the given
-     * list of id values
-     *
-     * @param values site type values
-     *
-     * @return list of site types
-     */
-    public List<SiteType> makeSiteTypes(String[] values) {
-        return makeSiteTypes(toTuples(values));
-    }
-
-
-    /**
-     * Utility method to make a list of site types from the given
-     * array of id/value pairs. Note: if values[N].length ==2
-     * then values[N][0] is the id, values[N][1] is the label.
-     * if values[N].length ==1 then we just use the id as the label
-     *
-     *
-     * @param tuples id/value pairs
-     *
-     * @return list of site types
-     */
-    public List<SiteType> makeSiteTypes(String[][] tuples) {
-        List<SiteType> result = new ArrayList<SiteType>();
-        for (String[] tuple : tuples) {
-            SiteType type;
-            if (tuple.length == 1) {
-                type = new SiteType(tuple[0], tuple[0]);
-            } else {
-                type = new SiteType(tuple[0], tuple[1]);
-            }
-            result.add(type);
-        }
-        return result;
-    }
-
-
 
 
 }

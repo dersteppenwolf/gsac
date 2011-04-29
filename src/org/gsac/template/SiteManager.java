@@ -1,4 +1,5 @@
 /*
+ *
  */
 
 package @MACRO.PACKAGE@;
@@ -27,7 +28,8 @@ import java.util.List;
 
 /**
  * Handles all of the site related repository requests
- * The main entry point is the  getSiteClauses method.
+ * The main entry point is the  {@link #handleSiteRequest} method.
+ * Look for the CHANGEME comments
  * 
  *
  * @author         Jeff McWhirter
@@ -60,6 +62,10 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     }
 
 
+    /** CHANGEME This is the main entry point for handling queries
+        If you don't implement this method then the base SiteManager
+        class will 
+     **/
     public void handleSiteRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         super.handleSiteRequest(request, response);
@@ -274,19 +280,21 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     public List<Capability> doGetSiteQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
         //CHANGEME
-        //Add in an example fruit enumerated query capability
         /*
-        String[]values = {"banana","apple","orange"};
-        Arrays.sort(values);
-        capabilities.add(new Capability("fruit", "Fruit Label",
-                                        values, true));
+          you can use the default site capabilities:
+          addDefaultSiteCapabilities(capabilities);
+          or add you own, e.g.:
+          Add in an example fruit enumerated query capability
+          String[]values = {"banana","apple","orange"};
+          Arrays.sort(values);
+          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
         */
         return capabilities;
     }
 
 
     /**
-     * Get the site group list
+     * Get the site group list. This is used by the addDefaultSiteCapabilities 
      *
      * @return site group list
      */
@@ -301,52 +309,6 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
         */
         return groups;
     }
-
-
-    /**
-     * Get the list of site types
-     *
-     * @return list of site types
-     */
-    public List<SiteType> doGetSiteTypes() {
-        List<SiteType> types = new ArrayList<SiteType>();
-        //CHANGEME 
-        /*
-        types.add(new SiteType("sitetype1", "Type 1"));
-        types.add(new SiteType("sitetype2", "Type 2"));
-        types.add(new SiteType("sitetype3", "Type 3"));
-        Collections.sort((List) types);
-        */
-        //Here is how the UnavcoRepository does it:
-        /*
-            Statement statement =
-                getDatabaseManager().select(
-                    " distinct " + Tables.MV_DAI_PRO.COL_SITE_TYPE,
-                    Tables.MV_DAI_PRO.NAME, (Clause) null);
-            String[] values =
-                SqlUtil.readString(getDatabaseManager().getIterator(statement), 1);
-            Arrays.sort(values);
-            for (String type : values) {
-                types.add(new SiteType(type, type));
-            }
-        */
-        return types;
-    }
-
-
-    /**
-     * Get the list of site statuses.
-     *
-     * @return list of site statuses
-     */
-    public List<SiteStatus> doGetSiteStatuses() {
-        //CHANGEME  -site statuses
-        List<SiteStatus> statuses = new ArrayList<SiteStatus>();
-        statuses.add(new SiteStatus("active", "Active"));
-        statuses.add(new SiteStatus("inactive", "Inactive"));
-        return statuses;
-    }
-
 
 
     /**

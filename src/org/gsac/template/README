@@ -9,25 +9,40 @@ So hopefully you've managed to generated the repository source package.
 There are a number of things you need to do.
 
 
-### Database ###
+########################################################################
+Database
+########################################################################
 Change dbresources/gsacdb_test.properties and dbresources/gsacdb_production.properties
 to point to your database.
 The default is Oracle. 
 If you aren't using oracle change the getDriverClassName() method in @MACRO.PREFIX@DatabaseManager
 
 
+########################################################################
+Configuration 
+########################################################################
+The file resources/gsacws.properties has a number of properties you can set
 
-### Code changes ###
+
+########################################################################
+Code changes 
+########################################################################
 The @MACRO.PREFIX@SiteManager and @MACRO.PREFIX@ResourceManager classes will need to be changed
 to implement the queries. See those classes for more details
 See the CHANGEME in the comments to see what needs to be changed. 
 
 
-### HTML ###
-Change the resources/header.html & footer.html to the html you want to use for the header and footer
+########################################################################
+HTML 
+########################################################################
+Change the resources/header.html & resources/footer.html to the html you want to use for the header and footer
 
 
-### Building ###
+
+########################################################################
+Building 
+########################################################################
+
 To build run a test release run:
 ant (or ant test_build)
 
@@ -51,7 +66,9 @@ To run the server:
 ant runserver
 
 
-##### Database Tables.java #########
+########################################################################
+Database Tables.java 
+########################################################################
 There is a nice utility to generate a Java class (Tables.java) that holds all of your
 database table names and columns.  This allows you to not have String table and column
 names permeate your code. This follows my motto of "make meaningful things meaningful"

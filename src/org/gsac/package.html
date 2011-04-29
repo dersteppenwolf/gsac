@@ -1,43 +1,52 @@
-
-################################################################################
-What's here?
-################################################################################
-
-gsl:
-This is the core GSAC Service Layer implementation
-
-client:
-Java based client for accessing a GSAC repository
+<html>
+<title>GSAC Service Layer</title>
 
 
-ramadda:
-The RAMADDA GSAC plugin
-
-federated:
-This is the implemention of the federated repository
+<body>
 
 
-################################################################################
-Generating your initial repository package
-################################################################################
+<h2>What's here?</h2>
+
+
+gsl: This is the core GSAC Service Layer implementation
+<p>
+
+client: Java based client for accessing a GSAC repository
+<p>
+
+ramadda: The RAMADDA GSAC plugin
+<p>
+
+federated: This is the implemention of the federated repository
+<p>
+
+
+<h2>Generating your initial repository package</h2>
+
 The template directory holds a template of an initial GSAC repository package 
 implementation. What you need to do is define a set of macro values
 that are used to take the code in the template package and make an initial
 Java package 
-
+<p>
 Copy the example template/macros.properties file to your own file, e.g.:
+<pre>
    cp template/macros.properties    yourmacros.properties
+</pre>
 
 Edit the yourmacros.properties and define the target package name, directory, etc.
-
+<p>
 Then run (from this directory, i.e., /src/org/gsac):
+<pre>
 ant -propertyfile yourmacros.properties makerepository
+</pre>
 
 This will copy all of the source and resource files templates, replacing the macros with
 the values you defined in yourmacros.properties and place them in the specified target directory. 
-
+<p>
 Now, the hard part... 
-You need to actually implement your repository. See the README file in the generated package.
+You need to actually implement your repository. See the README and the package.html file in the generated package.
 
 
+</body>
+</html>
 
