@@ -1,3 +1,16 @@
+##
+##This takes as an argument the IGS rcvr_ant.tab file and extracts out the
+##antenna, dome and receiver listing. The table is checked into svn but its at:
+##http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab
+##
+##This generates a site.antenna.properties, site.dome.properties and site.receiver.properties file
+##For now the properties file just hold the  listing of the values  and do not
+##include the descriptions.
+##This also generates igsantenna.html, igsdome.html and igsreceiver.html files.
+##These should get copied over into ../help
+##
+
+
 proc printHtml {htmlfp var prop desc} {
     puts $htmlfp "<tr valign=top><td width=30%><a name=\"$prop\">$prop</a></td><td>$desc</td></tr>"
 }
@@ -17,18 +30,11 @@ set pattern "$div\(.*?)$div\(.*?)$div\(.*)\$"
 while {[regexp $pattern $c match header content rest]} {
     if {[regexp {^-+\+\s*$} $header]} {
 	set c "$div2$content$div2$rest"
-#	exit
 	continue
     }
 
-#    puts "HEADER:\n$header"
-#    puts "CONTENT:\n$content"
     lappend blobs [list $header $content]
     set c "$div2$rest"
-#    puts "*******\n$c"
-    if {[incr cnt]>2} {
-#	exit
-    }
 }
 
 set whats [list dome antenna receiver]
@@ -70,14 +76,15 @@ foreach tuple $blobs {
 	set right [lindex $toks 2]
 	set left [string trim $left]
 	set right [string trim $right]
-#	puts "left=$left"
-#	puts "right=$right"
 	if {$left == ""} {
 	    append desc $right
 	    append desc " "
 	} else {
 	    if {$prop !=""} {
-		puts $fp "$prop = $desc"
+                ##puts $fp "$prop = $desc"
+                ##Just use the ID as the description for now
+                #		puts $fp "$prop=$prop"
+		puts $fp "$prop"
                 printHtml $htmlfp $what $prop $desc 
 	    }
 	    set prop $left
@@ -86,7 +93,9 @@ foreach tuple $blobs {
 	    set desc $right
 	}
     }
-    puts $fp "$prop = $desc"
+#    puts $fp "$prop=$desc"
+#    puts $fp "$prop=$prop"
+    puts $fp "$prop"
     printHtml $htmlfp $what $prop $desc 
 
 ##    puts "$prop = $desc"
