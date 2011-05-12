@@ -1,3 +1,8 @@
+proc printHtml {htmlfp var prop desc} {
+    puts $htmlfp "<tr valign=top><td width=30%><a name=\"$prop\">$prop</a></td><td>$desc</td></tr>"
+}
+
+
 
 set fp [open [lindex $argv 0] r]
 set c [read $fp]
@@ -30,6 +35,12 @@ set whats [list dome antenna receiver]
 array set fps {}
 foreach var  $whats {
     set fps($var) [open site.$var.properties w]
+    set fps($var,html) [open igs$var.html w]
+    set htmlfp $fps($var,html);
+    set url "http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab"
+    puts $htmlfp "<h2>IGS [string toupper $var]</h2>"
+    puts $htmlfp "Generated from the <a href=\"$url\">IGS  rcvr_ant.tab</a> table.<p>"
+    puts $htmlfp "<table width=100%>"
 }
 
 foreach tuple $blobs {
@@ -47,6 +58,7 @@ foreach tuple $blobs {
 	puts "Huh? $header"
     }
     set fp $fps($what)
+    set htmlfp $fps($what,html)
     set desc ""
     set prop ""
     foreach line [split $content "\n"] {
@@ -66,6 +78,7 @@ foreach tuple $blobs {
 	} else {
 	    if {$prop !=""} {
 		puts $fp "$prop = $desc"
+                printHtml $htmlfp $what $prop $desc 
 	    }
 	    set prop $left
 	    regsub -all -nocase {xxxxxxxxxxxxxxx} $prop {} prop
@@ -74,12 +87,21 @@ foreach tuple $blobs {
 	}
     }
     puts $fp "$prop = $desc"
+    printHtml $htmlfp $what $prop $desc 
+
 ##    puts "$prop = $desc"
 }
 
 
 foreach var  $whats {
+    set htmlfp $fps($var,html)
+    puts $htmlfp "</table>"
+}
+
+
+foreach var  $whats {
     close $fps($var)
+    close $fps($var,html)
 }
 
 
