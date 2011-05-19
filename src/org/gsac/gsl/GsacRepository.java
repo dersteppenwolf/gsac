@@ -243,7 +243,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * noop constructor
      */
-    public GsacRepository() {}
+    public GsacRepository() {
+    }
 
 
     /**
@@ -254,6 +255,7 @@ public class GsacRepository implements GsacConstants {
     public GsacRepository(GsacServlet servlet) {
         this.servlet = servlet;
     }
+
 
 
     /**
@@ -549,6 +551,7 @@ public class GsacRepository implements GsacConstants {
      */
     public List<String> externalToInternal(String vocabularyId,
                                            String value) {
+
         Vocabulary vocabulary = getVocabulary(vocabularyId);
         if (vocabulary != null) {
             return vocabulary.externalToInternal(value);
@@ -1687,11 +1690,22 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * This method creates  a Vocabulary object for the given vocabulary type.
+     * It reads the external vocabulary file: org/gsac/gsl/resources/vocabulary/&lt;type&gt;.properties
+     * It reads 2 files from the local repository path:
+     &lt;gsac repository implementation path&gt;/resources/vocabulary
+     &lt;type&gt;.properties
+     &lt;type&gt;.map
+     </pre>
+     * The GSL type.properties file has a mapping from a vocabulary value to a descriptive label
+     * The local type.properties file allows a derived repository to add to the this value=label list
+     * The local type.map defines a mapping from the external values (e.g., the ones defined in the .properties file)
+     * to the internal values used by the derived repository.
+     * 
      *
-     * @param type _more_
+     * @param type vocabulary type (e.g., site.antenna)
      *
-     * @return _more_
+     * @return the new vocabulary object
      */
     public Vocabulary getVocabularyFromType(String type) {
 
@@ -1706,28 +1720,30 @@ public class GsacRepository implements GsacConstants {
         String[] vocabularyContents = { getExternalVocabulary(type),
                                         getInternalVocabulary(type) };
 
+        boolean debug = type.indexOf("dome")>=0;
         for (int i = 0; i < vocabularyContents.length; i++) {
             for (List<String> toks :
                     tokenizeVocabulary(vocabularyContents[i])) {
+                if(debug) System.err.println ("toks (1): " +  toks);
                 String value = toks.get(0);
                 String label = ((toks.size() == 2)
                                 ? toks.get(1)
-                                : "");
+                                : value);
                 vocabulary.add(new IdLabel(value, label));
                 if (i == 0) {
                     coreMap.add(value);
                 } else {
                     internalMap.add(value);
-                    //                    System.err.println("adding internal vocab: " + value);
+                    if(debug)   System.err.println("adding internal vocab: " + value);
                 }
             }
         }
 
         List<IdLabel> values     = new ArrayList<IdLabel>();
-        boolean       hasMapping = false;
+        boolean       localRepositoryHasDefinedAMapping = false;
         for (List<String> toks :
                 tokenizeVocabulary(getInternalVocabularyMap(type))) {
-            hasMapping = true;
+            localRepositoryHasDefinedAMapping = true;
             String coreValue           = toks.get(0);
             String internalValueString = ((toks.size() == 2)
                                           ? toks.get(1)
@@ -1753,7 +1769,11 @@ public class GsacRepository implements GsacConstants {
 
         //Set this to true now while we figure out how to handle the
         //case where there is nothing defined interally
-        hasMapping = true;
+        //        localRepositoryHasDefinedAMapping = true;
+
+        if(!localRepositoryHasDefinedAMapping) {
+        }
+        
 
 
         //Now prune out from the vocab list anything that isn't used by the internal repository
@@ -1765,19 +1785,19 @@ public class GsacRepository implements GsacConstants {
         for (IdLabel value : vocabulary) {
             boolean isWildcard = Vocabulary.isWildcard(value.getId());
             if (internalMap.contains(value.getId()) || isWildcard
-                    || !hasMapping) {
+                    || !localRepositoryHasDefinedAMapping) {
                 valuesWithBoth.add(value);
                 if ( !isWildcard) {
                     valuesWithoutWildcards.add(value);
                 }
             } else {
-                //                System.err.println("Skipping: " + value);
+                if(debug)   System.err.println("Skipping: " + value);
             }
         }
 
         for (IdLabel value : valuesWithBoth) {
             boolean isWildcard = Vocabulary.isWildcard(value.getId());
-            if ( !isWildcard || !hasMapping) {
+            if ( !isWildcard || !localRepositoryHasDefinedAMapping) {
                 values.add(value);
             } else {
                 //Check if there is anything in the list that matches a wildcard
@@ -1802,8 +1822,11 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
-     *
+     * split the string on newline and look for either:
+     * <pre>key=value</pre>
+     * Or just:
+     * <pre>key</pre>
+     * Lines beginning with "#" are treated as comments
      *
      * @param contents _more_
      *
@@ -3255,6 +3278,14 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    public String join(String[] values, String delimiter) {
+        StringBuffer sb =new StringBuffer();
+        for(String s: values) {
+            sb.append(s);
+            sb.append(delimiter);
+        }
+        return sb.toString();
+    }
 
 
 

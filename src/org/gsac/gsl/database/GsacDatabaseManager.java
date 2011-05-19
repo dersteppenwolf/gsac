@@ -143,6 +143,17 @@ public abstract class GsacDatabaseManager implements GsacConstants,
         SqlUtil.setConnectionManager(this);
     }
 
+    public String[] readDistinctValues(String tableName, String columnName) throws Exception  {
+        String[] values = SqlUtil.readString(
+                                             getIterator(select(distinct(columnName), tableName)), 1);
+        return values;
+    }
+
+    public String distinct(String what) {
+        return " distinct " + what;
+    }
+
+
     /**
      * _more_
      *
