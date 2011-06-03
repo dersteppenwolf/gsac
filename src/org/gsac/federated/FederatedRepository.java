@@ -30,10 +30,12 @@ import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.util.HtmlUtil;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import java.util.List;
 
@@ -62,6 +64,9 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
 
     /** Max number of threads to use for remote queries */
     private static final int MAX_THREADS = 5;
+
+    private static final String ARG_REMOVEDUPLICATES  = "removeduplicates";
+
 
     /** Singleton thread pool */
     private ExecutorService executor;
@@ -285,6 +290,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                                        final GsacResponse response,
                                        final boolean forSite)
             throws Exception {
+        boolean removeDuplicates = request.get(ARG_REMOVEDUPLICATES, false);
         //Find the servers to use
         List<GsacRepositoryInfo> servers = forSite
                                            ? getSiteServers(request)
@@ -297,6 +303,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         //Go through each server and only use those that don't have too many open requests
         List<RepositoryCallable> callables =
             new ArrayList<RepositoryCallable>();
+        HashSet<String> seen = new HashSet<String>();
         for (GsacRepositoryInfo info : servers) {
             if (info.getOpenRequestsCount() > MAX_OPEN_REQUESTS) {
                 msgBuff.append("<li> " + info.getName()
@@ -305,7 +312,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             }
 
             //Make the callable
-            RepositoryCallable callable = new RepositoryCallable(info) {
+            RepositoryCallable callable = new RepositoryCallable(info, seen, removeDuplicates) {
                 public Boolean call() {
                     try {
                         repository.incrementOpenRequestsCount();
@@ -426,6 +433,13 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         }
 
         for (GsacResource resource : resources) {
+            if(callable.getRemoveDuplicates()) {
+                String tail = IOUtil.getFileTail(resource.getFileInfo().getUrl());
+                if(callable.checkAndAddSeen(tail)) {
+                    System.err.println("duplicate:" + resource.getFileInfo().getUrl());
+                    continue;
+                }
+            }
             String id = getRemoteId(callable.repository, resource.getId());
             resource.setId(id);
             resource.setRepositoryInfo(callable.repository);
@@ -518,6 +532,11 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     private abstract static class RepositoryCallable implements Callable<Boolean> {
 
+        private HashSet<String> seen;
+
+        private boolean removeDuplicates = false;
+
+
         /** Is this request still running   */
         boolean requestRunning = true;
 
@@ -535,9 +554,20 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
          *
          * @param repository The remote repostiory
          */
-        public RepositoryCallable(GsacRepositoryInfo repository) {
+        public RepositoryCallable(GsacRepositoryInfo repository, HashSet<String> seen, boolean removeDuplicates) {
             this.repository = repository;
+            this.seen = seen;
+            this.removeDuplicates = removeDuplicates;
         }
+
+        public boolean checkAndAddSeen(String s) {
+            synchronized(seen) {
+                if(seen.contains(s)) return true;
+                seen.add(s);
+                return false;
+            }
+        }
+
 
         /**
          * Are we still running
@@ -546,6 +576,10 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
          */
         public boolean isRunning() {
             return requestRunning;
+        }
+
+        public boolean getRemoveDuplicates() {
+            return removeDuplicates;
         }
 
     }

@@ -1720,7 +1720,8 @@ public class GsacRepository implements GsacConstants {
         String[] vocabularyContents = { getExternalVocabulary(type),
                                         getInternalVocabulary(type) };
 
-        boolean debug = type.indexOf("dome")>=0;
+        //        boolean debug = type.indexOf("dome")>=0;
+        boolean debug = false;
         for (int i = 0; i < vocabularyContents.length; i++) {
             for (List<String> toks :
                     tokenizeVocabulary(vocabularyContents[i])) {

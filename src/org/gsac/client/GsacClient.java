@@ -164,11 +164,10 @@ public class GsacClient implements GsacConstants {
     private boolean processArgs(String[] args) throws Exception {
 
         loadDefaultProperties();
-
         //run through the cmd line args
         for (int i = 0; i < args.length; i++) {
             String argName = args[i];
-
+            //            System.err.println("arg[" + i +"] = " + args[i]);
 
             //Strip off the "-"
             if (argName.startsWith("-")) {
@@ -222,7 +221,7 @@ public class GsacClient implements GsacConstants {
             //Now any other arg is of the form:  -arg arg_value
             //so check for the correct number of args
             if (i + 1 >= args.length) {
-                usage("Bad arguments:" + args[i]);
+                usage("Bad argument:" + args[i]);
             }
 
             //This is just a helper routine so the user can fetch a single url (in case they don't have wget for example)

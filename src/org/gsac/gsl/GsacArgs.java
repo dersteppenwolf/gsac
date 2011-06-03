@@ -60,11 +60,10 @@ public interface GsacArgs {
     public static final String ARG_SITE_ID = ARG_SITE_PREFIX + "id";
 
 
-
-    /** The unique repository id */
+    /** old name */
     public static final String ARG_SITEID = ARG_SITE_ID;
 
-    /** _more_ */
+    /** short name or 4 letter code for sites */
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
 
     /** _more_ */
@@ -76,6 +75,16 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_SITE_DATE_TO = ARG_SITE_DATE + ".to";
 
+
+
+    /** _more_ */
+    public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
+
+    /** _more_ */
+    public static final String ARG_SITE_CREATEDATE_FROM = ARG_SITE_CREATEDATE + ".from";
+
+    /** _more_ */
+    public static final String ARG_SITE_CREATEDATE_TO = ARG_SITE_CREATEDATE + ".to";
 
 
     /** _more_ */
