@@ -61,6 +61,7 @@ ${Personnel}
       <element name="Format" />
       <element name="Details" />
     </type>     
+
     <type   name="Source"       searchable="false"       id="gsac.stream.source" >
       <element name="Carrier" />
       <element name="Nav System" />

@@ -45,74 +45,73 @@ import javax.servlet.http.*;
 
 
 /**
- * Class description
+ * Abstract base class for the output handlers. 
  *
  *
  */
 public abstract class GsacOutputHandler implements GsacConstants {
 
-    /** _more_ */
+    /** timezone */
     public static final TimeZone TIMEZONE_DEFAULT =
         TimeZone.getTimeZone("UTC");
 
-    /** _more_ */
+    /** date format */
     protected SimpleDateFormat dateSdf = makeDateFormat("yyyy-MM-dd");
 
-    /** _more_ */
+    /** date format */
     protected SimpleDateFormat dateTimeSdf =
         makeDateFormat("yyyy-MM-dd HH:mm");
 
-    /** _more_ */
+    /** date format */
     protected SimpleDateFormat timeSdf = makeDateFormat("HH:mm:ss z");
 
-
-
-    /** _more_ */
-    private GsacRepository gsacRepository;
-
-    /** _more_ */
+    /** formats */
     private DecimalFormat sizeFormat = new DecimalFormat("####0.00");
 
-    /** _more_ */
+    /** formats */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.###");
 
-    /** _more_ */
+    /** formats */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.0");
 
 
-    /** _more_ */
+    /** the repository */
+    private GsacRepository gsacRepository;
+
+
+    /** flags for repository capabilities */
     private static boolean doSite = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doResource = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doSiteCode = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doSiteStatus = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doSiteGroup = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doSiteType = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doSiteDateRange = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doResourcePublishDate = true;
 
-    /** _more_ */
+    /** flags for repository capabilities */
     private static boolean doResourceFileSize = true;
 
 
     /**
-     * _more_
+     * ctor
      *
      *
-     * @param gsacRepository _more_
+     * @param gsacRepository the repository
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
         this.gsacRepository = gsacRepository;
@@ -131,203 +130,16 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
 
-
     /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoSite() {
-        return doSite;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoResource() {
-        return doResource;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoResourcePublishDate() {
-        return doResourcePublishDate;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoResourceFileSize() {
-        return doResourceFileSize;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoSiteCode() {
-        return doSiteCode;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoSiteStatus() {
-        return doSiteStatus;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoSiteGroup() {
-        return doSiteGroup;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public boolean getDoSiteType() {
-        return doSiteType;
-    }
-
-
-
-
-    /**
-     * _more_
+     * Factory method to make the response object. 
      *
      * @param gsacRequest The request
      *
-     * @return _more_
+     * @return the response
      */
     public GsacResponse doMakeResponse(GsacRequest gsacRequest) {
         return new GsacResponse(gsacRequest);
     }
-
-
-    /**
-     * _more_
-     *
-     * @param formatString _more_
-     *
-     * @return _more_
-     */
-    public static SimpleDateFormat makeDateFormat(String formatString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat();
-        dateFormat.setTimeZone(TIMEZONE_DEFAULT);
-        dateFormat.applyPattern(formatString);
-        return dateFormat;
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param latlon _more_
-     *
-     * @return _more_
-     */
-    public String formatLatLon(double latlon) {
-        return latLonFormat.format(latlon);
-    }
-
-    /**
-     * _more_
-     *
-     * @param elevation _more_
-     *
-     * @return _more_
-     */
-    public String formatElevation(double elevation) {
-        return elevationFormat.format(elevation);
-    }
-
-    /**
-     * _more_
-     *
-     * @param date _more_
-     *
-     * @return _more_
-     */
-    public String formatDate(Date date) {
-        synchronized (dateSdf) {
-            return dateSdf.format(date);
-        }
-    }
-
-    /**
-     * _more_
-     *
-     * @param date _more_
-     *
-     * @return _more_
-     */
-    public String formatTime(Date date) {
-        synchronized (timeSdf) {
-            return timeSdf.format(date);
-        }
-    }
-
-    /**
-     * _more_
-     *
-     * @param date _more_
-     *
-     * @return _more_
-     */
-    public String formatDateTime(Date date) {
-        synchronized (dateTimeSdf) {
-            return dateTimeSdf.format(date);
-        }
-    }
-
-    /**
-     *  Cut and pasted from GsacRepositoryManager
-     *
-     * @param request The request
-     * @param response The response
-     * @param htmlBuff _more_
-     */
-    public void checkMessage(GsacRequest request, GsacResponse response,
-                             Appendable htmlBuff) {
-        String message = response.getMessage();
-        if (message.length() > 0) {
-            try {
-                htmlBuff.append(message);
-            } catch (Exception exc) {
-                throw new RuntimeException(exc);
-            }
-        }
-    }
-
-
-
-    /**
-     * _more_
-     *
-     * @param icon _more_
-     *
-     * @return _more_
-     */
-    public String iconUrl(String icon) {
-        return getRepository().iconUrl(icon);
-    }
-
-
 
     /**
      * _more_
@@ -346,36 +158,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
         response.endResponse();
     }
 
-    /**
-     * _more_
-     *
-     * @param msg _more_
-     *
-     * @return _more_
-     */
-    public String msg(String msg) {
-        return getRepository().msg(msg);
-    }
-
-    /**
-     * _more_
-     *
-     * @param msg _more_
-     *
-     * @return _more_
-     */
-    public String msgLabel(String msg) {
-        return msg(msg) + ":";
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public GsacRepository getRepository() {
-        return gsacRepository;
-    }
 
     /**
      * _more_
@@ -495,6 +277,149 @@ public abstract class GsacOutputHandler implements GsacConstants {
         throw new IllegalArgumentException(
             getClass().getName() + ".handleSiteResult not implemented");
     }
+
+
+    /**
+     * _more_
+     *
+     * @param formatString _more_
+     *
+     * @return _more_
+     */
+    public static SimpleDateFormat makeDateFormat(String formatString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        dateFormat.setTimeZone(TIMEZONE_DEFAULT);
+        dateFormat.applyPattern(formatString);
+        return dateFormat;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param latlon _more_
+     *
+     * @return _more_
+     */
+    public String formatLatLon(double latlon) {
+        return latLonFormat.format(latlon);
+    }
+
+    /**
+     * _more_
+     *
+     * @param elevation _more_
+     *
+     * @return _more_
+     */
+    public String formatElevation(double elevation) {
+        return elevationFormat.format(elevation);
+    }
+
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    public String formatDate(Date date) {
+        synchronized (dateSdf) {
+            return dateSdf.format(date);
+        }
+    }
+
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    public String formatTime(Date date) {
+        synchronized (timeSdf) {
+            return timeSdf.format(date);
+        }
+    }
+
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    public String formatDateTime(Date date) {
+        synchronized (dateTimeSdf) {
+            return dateTimeSdf.format(date);
+        }
+    }
+
+    /**
+     *  Cut and pasted from GsacRepositoryManager
+     *
+     * @param request The request
+     * @param response The response
+     * @param htmlBuff _more_
+     */
+    public void checkMessage(GsacRequest request, GsacResponse response,
+                             Appendable htmlBuff) {
+        String message = response.getMessage();
+        if (message.length() > 0) {
+            try {
+                htmlBuff.append(message);
+            } catch (Exception exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param icon _more_
+     *
+     * @return _more_
+     */
+    public String iconUrl(String icon) {
+        return getRepository().iconUrl(icon);
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param msg _more_
+     *
+     * @return _more_
+     */
+    public String msg(String msg) {
+        return getRepository().msg(msg);
+    }
+
+    /**
+     * _more_
+     *
+     * @param msg _more_
+     *
+     * @return _more_
+     */
+    public String msgLabel(String msg) {
+        return msg(msg) + ":";
+    }
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public GsacRepository getRepository() {
+        return gsacRepository;
+    }
+
 
     /**
      * _more_
@@ -629,6 +554,82 @@ public abstract class GsacOutputHandler implements GsacConstants {
         return formatDate(site.getFromDate()) + " - "
                + formatDate(site.getToDate());
     }
+
+
+
+    /**
+     * get flag
+     *
+     * @return _more_
+     */
+    public boolean getDoSite() {
+        return doSite;
+    }
+
+    /**
+     * get flag
+     *
+     * @return _more_
+     */
+    public boolean getDoResource() {
+        return doResource;
+    }
+
+    /**
+     * get flag
+     *
+     * @return _more_
+     */
+    public boolean getDoResourcePublishDate() {
+        return doResourcePublishDate;
+    }
+
+    /**
+     * _more_
+     *
+     * @return get flag
+     */
+    public boolean getDoResourceFileSize() {
+        return doResourceFileSize;
+    }
+
+    /**
+     * get flag
+     *
+     * @return _more_
+     */
+    public boolean getDoSiteCode() {
+        return doSiteCode;
+    }
+
+    /**
+     * get flag
+     *
+     * @return _more_
+     */
+    public boolean getDoSiteStatus() {
+        return doSiteStatus;
+    }
+
+    /**
+     * get flag
+     *
+     * @return _more_
+     */
+    public boolean getDoSiteGroup() {
+        return doSiteGroup;
+    }
+
+    /**
+     * get flag     
+     *
+     * @return _more_
+     */
+    public boolean getDoSiteType() {
+        return doSiteType;
+    }
+
+
 
 
 
