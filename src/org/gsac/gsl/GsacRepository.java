@@ -388,9 +388,8 @@ public class GsacRepository implements GsacConstants {
         }
 
 
-        System.err.println("GSAC: using gsacDirectory: " + gsacDirectory);
+        System.err.println("GSAC: using gsac directory: " + gsacDirectory);
         if (gsacDirectory != null) {
-
             initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
                                            + "/gsac.properties");
@@ -402,7 +401,7 @@ public class GsacRepository implements GsacConstants {
         }
 
 
-        //TODO: put this in a properties file
+        //TODO: put the specification of the output handlers into a properties or xml file
         htmlOutputHandler = new HtmlSiteOutputHandler(this);
         new KmlSiteOutputHandler(this);
         new TextSiteOutputHandler(this);
@@ -410,8 +409,7 @@ public class GsacRepository implements GsacConstants {
         new AtomSiteOutputHandler(this);
         new JsonSiteOutputHandler(this);
         new XmlSiteOutputHandler(this);
-        new FlexigridSiteOutputHandler(this);
-
+        //        new FlexigridSiteOutputHandler(this);
 
         new HtmlResourceOutputHandler(this);
         new CsvResourceOutputHandler(this);
@@ -423,10 +421,7 @@ public class GsacRepository implements GsacConstants {
         new BrowseOutputHandler(this);
         new RssResourceOutputHandler(this);
         new XmlResourceOutputHandler(this);
-
-
         getRepositoryInfo();
-
     }
 
 
