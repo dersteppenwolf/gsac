@@ -76,13 +76,13 @@ public class CsvResourceOutputHandler extends StreamingOutputHandler {
             PrintWriter pw = response.getPrintWriter();
             if (firstTime) {
                 pw.print(
-                    "#repositoryid, siteid, name, latitude, longitude, elevation\n");
+                    "#repositoryid, resourcetype, siteid, url\n");
             }
             pw.print(resource.getRepositoryId());
             pw.print(",");
-            pw.print(resource.getType());
+            pw.print(resource.getType().getId());
             pw.print(",");
-            pw.print(resource.getSite());
+            pw.print(resource.getSite().getId());
             pw.print(",");
             pw.print(resource.getFileInfo().getUrl());
             pw.print("\n");

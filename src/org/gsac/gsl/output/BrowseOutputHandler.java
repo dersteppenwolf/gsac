@@ -273,6 +273,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             throws Exception {
 
         List         things      = capability.getEnums();
+        java.util.Collections.sort(things);
         StringBuffer sb          = new StringBuffer();
         String       firstLetter = null;
         List<String> header      = new ArrayList<String>();
@@ -281,7 +282,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         String       id          = capability.getId();
 
         sb.append(HtmlUtil.form(url, HtmlUtil.attr("name", "searchform")));;
-
         sb.append(HtmlUtil.submit(msg("Search"), ARG_SEARCH));
         sb.append("<div style=\"margin:10px;margin-left:15px;\">");
         StringBuffer letterBuffer = new StringBuffer();

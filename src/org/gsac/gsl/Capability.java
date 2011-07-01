@@ -641,6 +641,8 @@ public class Capability {
     }
 
 
+
+
     /**
      *  Get the Enums property.
      *

@@ -1715,22 +1715,24 @@ public class GsacRepository implements GsacConstants {
         String[] vocabularyContents = { getExternalVocabulary(type),
                                         getInternalVocabulary(type) };
 
-        //        boolean debug = type.indexOf("dome")>=0;
+        //        boolean debug = type.indexOf("resource.type")>=0;
         boolean debug = false;
         for (int i = 0; i < vocabularyContents.length; i++) {
+            if(debug)   System.err.println("processing " + (i==0?"external":"internal"));
             for (List<String> toks :
                     tokenizeVocabulary(vocabularyContents[i])) {
-                if(debug) System.err.println ("toks (1): " +  toks);
+                if(debug) System.err.println ("\ttoks (1): " +  toks);
                 String value = toks.get(0);
                 String label = ((toks.size() == 2)
                                 ? toks.get(1)
                                 : value);
+                if(debug)   System.err.println("\tadding to vocabulary: " + value +" " + label);
                 vocabulary.add(new IdLabel(value, label));
                 if (i == 0) {
                     coreMap.add(value);
                 } else {
                     internalMap.add(value);
-                    if(debug)   System.err.println("adding internal vocab: " + value);
+                    if(debug)   System.err.println("\tadding internal vocab: " + value);
                 }
             }
         }
@@ -1755,6 +1757,7 @@ public class GsacRepository implements GsacConstants {
                 internalValues = new ArrayList<String>();
                 externalToInternal.put(coreValue, internalValues);
             }
+
             List<String> internalToks = StringUtil.split(internalValueString,
                                             ",", true, true);
             for (String internalTok : internalToks) {
