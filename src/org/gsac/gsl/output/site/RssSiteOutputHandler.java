@@ -125,6 +125,7 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         response.startResponse(GsacResponse.MIME_RSS);
         PrintWriter pw = response.getPrintWriter();
+
         pw.append(XmlUtil.XML_HEADER + "\n");
         pw.append(XmlUtil.openTag(TAG_RSS_RSS,
                                   XmlUtil.attrs(ATTR_RSS_VERSION, "2.0")));

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<igsSiteLog xmlns:realtime="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011" xmlns:mi="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/monumentInfo/2004" xmlns:equip="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004" xmlns:li="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/localInterferences/2004" xmlns:contact="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004" xsi:schemaLocation="http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd">
+
+<!-- Site Information Form for P123                                -->
+<!-- Version 0.0.3                                                 -->
+<!-- Scripts Orbit and Permanent Array Center(SOPAC)               -->
+<!-- For more information regarding XML-based IGS Site Logs go to: -->
+<!-- http://sopac.ucsd.edu/projects/xml                            -->
+
+<formInformation>
+  <mi:preparedBy>Scripps Orbit and Permanent Array</mi:preparedBy>
+  <mi:datePrepared>2011-07-01</mi:datePrepared>
+  <mi:reportType>DYNAMIC</mi:reportType>
+ </formInformation>
+ <siteIdentification>
+  <mi:siteName>TresPiedraNM2006</mi:siteName>
+  <mi:fourCharacterID>P123</mi:fourCharacterID>
+  <mi:monumentInscription/>
+  <mi:iersDOMESNumber/>
+  <mi:cdpNumber/>
+  <mi:monumentDescription>DEEP-DRILLED BRACED</mi:monumentDescription>
+  <mi:heightOfTheMonument> (m)</mi:heightOfTheMonument>
+  <mi:monumentFoundation/>
+  <mi:foundationDepth> (m)</mi:foundationDepth>
+  <mi:markerDescription>NONE</mi:markerDescription>
+  <mi:dateInstalled>2006-02-27T00:00:00Z</mi:dateInstalled>
+  <mi:geologicCharacteristic/>
+  <mi:bedrockType/>
+  <mi:bedrockCondition/>
+  <mi:fractureSpacing/>
+  <mi:faultZonesNearby/>
+  <mi:distance-Activity/>
+  <mi:notes/>
+ </siteIdentification>
+
+<siteLocation>
+  <mi:city>Tres Piedras</mi:city>
+  <mi:state>New Mexico</mi:state>
+  <mi:country>United States</mi:country>
+  <mi:tectonicPlate>North America</mi:tectonicPlate>
+  <mi:approximatePositionITRF>
+   <mi:xCoordinateInMeters>-1405300.44</mi:xCoordinateInMeters>
+   <mi:yCoordinateInMeters>-4929803.00</mi:yCoordinateInMeters>
+   <mi:zCoordinateInMeters>3786420.59</mi:zCoordinateInMeters>
+   <mi:latitude-North>+363813.92</mi:latitude-North>
+   <mi:longitude-East>-1055460.00</mi:longitude-East>
+   <mi:elevation-m_ellips>2411.2</mi:elevation-m_ellips>
+  </mi:approximatePositionITRF>
+  <mi:notes/>
+ </siteLocation>
+
+<gnssReceiver>
+  <equip:receiverType>TRIMBLE NETRS</equip:receiverType>
+  <equip:satelliteSystem>GPS</equip:satelliteSystem>
+  <equip:serialNumber>4545260798</equip:serialNumber>
+  <equip:firmwareVersion>1.1-2 19 Apr 2005</equip:firmwareVersion>
+  <equip:elevationCutoffSetting>0 deg</equip:elevationCutoffSetting>
+  <equip:dateInstalled>2006-02-28T00:00:00.000Z</equip:dateInstalled>
+  <equip:dateRemoved>2010-07-08T20:53:00.000Z</equip:dateRemoved>
+  <equip:temperatureStabilization/>
+  <equip:notes/>
+ </gnssReceiver>
+
+<gnssReceiver>
+  <equip:receiverType>TRIMBLE NETRS</equip:receiverType>
+  <equip:satelliteSystem>GPS</equip:satelliteSystem>
+  <equip:serialNumber>4545260798</equip:serialNumber>
+  <equip:firmwareVersion>1.3-0</equip:firmwareVersion>
+  <equip:elevationCutoffSetting>0 deg</equip:elevationCutoffSetting>
+  <equip:dateInstalled>2010-07-08T20:53:00.000Z</equip:dateInstalled>
+  <equip:dateRemoved/>
+  <equip:temperatureStabilization/>
+  <equip:notes/>
+ </gnssReceiver>
+
+<gnssAntenna>
+  <equip:antennaType>TRM29659.00</equip:antennaType>
+  <equip:serialNumber>0220369457</equip:serialNumber>
+  <equip:antennaReferencePoint>BPA</equip:antennaReferencePoint>
+  <equip:marker-arpUpEcc.>0.0083</equip:marker-arpUpEcc.>
+  <equip:marker-arpNorthEcc./>
+  <equip:marker-arpEastEcc./>
+  <equip:alignmentFromTrueNorth>deg</equip:alignmentFromTrueNorth>
+  <equip:antennaRadomeType>SCIT</equip:antennaRadomeType>
+  <equip:radomeSerialNumber/>
+  <equip:antennaCableType/>
+  <equip:antennaCableLength/>
+  <equip:dateInstalled>2006-02-28T00:00:00.000Z</equip:dateInstalled>
+  <equip:dateRemoved/>
+  <equip:notes/>
+ </gnssAntenna>
+
+<frequencyStandard/>
+
+<colocationInformation/>
+
+<humiditySensor/>
+
+<pressureSensor/>
+
+<waterVaporSensor/>
+
+<otherInstrumentation/>
+
+<radioInterferences/>
+
+<multipathSources/>
+
+<signalObstructions/>
+
+<localEpisodicEvents/>
+
+<contactAgency/>
+
+<responsibleAgency/>
+
+<realtimeDataStreams/>
+
+<moreInformation/>
+
+</igsSiteLog>

@@ -33,6 +33,16 @@ public class XmlSiteLog {
        
 
 
+    public static final String ATTR_XMLNS_XMLNS = "xmlns";
+    public static final String ATTR_XMLNS_REALTIME = "xmlns:realtime";
+    public static final String ATTR_XMLNS_XSI = "xmlns:xsi";
+    public static final String ATTR_XMLNS_MI = "xmlns:mi";
+    public static final String ATTR_XMLNS_LI = "xmlns:li";
+    public static final String ATTR_XMLNS_CONTACT = "xmlns:contact";
+    public static final String ATTR_XSI_SCHEMALOCATION = "xsi:schemaLocation";
+    public static final String VALUE_XSI_SCHEMALOCATION = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd";
+
+
     public static final String XMLNS_XMLNS = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
     public static final String XMLNS_XMLNS_CONTACT = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004";
     public static final String XMLNS_XMLNS_EQUIP = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004";
