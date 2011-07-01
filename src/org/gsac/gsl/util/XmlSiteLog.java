@@ -29,8 +29,7 @@ package org.gsac.gsl.util;
  * @author         Enter your name here...
  */
 
-public class SopacSiteLog {
-
+public class XmlSiteLog {
        
 
 
