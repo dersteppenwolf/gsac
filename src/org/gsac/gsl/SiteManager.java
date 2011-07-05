@@ -138,16 +138,16 @@ public abstract class SiteManager extends GsacRepositoryManager {
     public int processStatement(GsacRequest request, GsacResponse response,
                                 Statement statement, int offset, int limit)
             throws Exception {
-        long             t1   = System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
         //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
             GsacSite site = makeSite(iter.getResults());
-            if(site==null) {
+            if (site == null) {
                 continue;
             }
             response.addSite(site);
-            if (!iter.countOK()) {
+            if ( !iter.countOK()) {
                 response.setExceededLimit();
                 break;
             }
@@ -290,23 +290,23 @@ public abstract class SiteManager extends GsacRepositoryManager {
 
     /**
      * Helper method to create default site query capabilities.
-     This adds capabilities for:<ul>
-     <li> site code
-     <li> site name
-     <li> site type
-     <li> site status
-     <li> site groups if there are any
-     <li> site spatial bounds
-     </ul>
+     * This adds capabilities for:<ul>
+     * <li> site code
+     * <li> site name
+     * <li> site type
+     * <li> site status
+     * <li> site groups if there are any
+     * <li> site spatial bounds
+     * </ul>
      *
      * @param capabilities list of capabailities to add to
      */
     public void addDefaultSiteCapabilities(List<Capability> capabilities) {
-        String       help = HtmlOutputHandler.stringSearchHelp;
-        Capability   siteCode;
-        Capability   siteName;
+        String          help = HtmlOutputHandler.stringSearchHelp;
+        Capability      siteCode;
+        Capability      siteName;
         List<SiteGroup> siteGroups = doGetSiteGroups();
-        Capability[] dflt = {
+        Capability[]    dflt       = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
                 "Site Code",
                 Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
@@ -327,12 +327,13 @@ public abstract class SiteManager extends GsacRepositoryManager {
                     ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
                     true), CAPABILITY_GROUP_SITE_QUERY, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
-            (siteGroups.size()==0?null:
-                initCapability(new Capability(ARG_SITE_GROUP, "Site Group",
-                                              IdLabel.toList(siteGroups),
-                                              true), CAPABILITY_GROUP_SITE_QUERY,
-                               null)),
-                    
+            ((siteGroups.size() == 0)
+             ? null
+             : initCapability(
+                 new Capability(
+                     ARG_SITE_GROUP, "Site Group",
+                     IdLabel.toList(siteGroups),
+                     true), CAPABILITY_GROUP_SITE_QUERY, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",
                 Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
                     "Spatial bounds within which the site lies")
@@ -340,7 +341,7 @@ public abstract class SiteManager extends GsacRepositoryManager {
         siteCode.setBrowse(true);
         siteName.setBrowse(true);
         for (Capability capability : dflt) {
-            if(capability!=null) {
+            if (capability != null) {
                 capabilities.add(capability);
             }
         }

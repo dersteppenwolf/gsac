@@ -71,6 +71,22 @@ public abstract class GsacObject {
     /**
      * _more_
      *
+     * @param finder _more_
+     *
+     * @return _more_
+     */
+    public List<GsacMetadata> findMetadata(
+            GsacMetadata.MetadataFinder finder) {
+        List<GsacMetadata> result = new ArrayList<GsacMetadata>();
+        for (GsacMetadata child : metadata) {
+            child.findMetadata(result, finder);
+        }
+        return result;
+    }
+
+    /**
+     * _more_
+     *
      * @return _more_
      */
     public abstract String getViewUrl();

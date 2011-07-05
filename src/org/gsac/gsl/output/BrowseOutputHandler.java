@@ -181,14 +181,17 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         List<String> links = new ArrayList<String>();
         for (String l : letters) {
             if (letter.equals(l)) {
-                links.add(HtmlUtil.span(HtmlUtil.b(l),
-                                        HtmlUtil.cssClass("gsac-firstletternav")));
+                links.add(
+                    HtmlUtil.span(
+                        HtmlUtil.b(l),
+                        HtmlUtil.cssClass("gsac-firstletternav")));
             } else {
                 String url = getRepository().getUrl(URL_BROWSE_BASE) + "?"
                              + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
                              + "=" + l;
-                links.add(HtmlUtil.href(url, l,
-                                        HtmlUtil.cssClass("gsac-firstletternav")));
+                links.add(
+                    HtmlUtil.href(
+                        url, l, HtmlUtil.cssClass("gsac-firstletternav")));
             }
         }
 
@@ -272,7 +275,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                          Capability capability)
             throws Exception {
 
-        List         things      = capability.getEnums();
+        List things = capability.getEnums();
         java.util.Collections.sort(things);
         StringBuffer sb          = new StringBuffer();
         String       firstLetter = null;
@@ -316,7 +319,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         if ((things.size() > 10) && (header.size() > 4)) {
             String headerHtml =
                 StringUtil.join(
-                    "<span class=\"gsac-separator\">&nbsp;|&nbsp;</span>", header);
+                    "<span class=\"gsac-separator\">&nbsp;|&nbsp;</span>",
+                    header);
             html.append(HtmlUtil.tag(HtmlUtil.TAG_CENTER,
                                      HtmlUtil.cssClass("gsac-navheader"),
                                      headerHtml));

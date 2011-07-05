@@ -70,10 +70,6 @@ public class GnssEquipment extends GsacMetadata {
     /** _more_ */
     private double[] xyzOffset = { 0, 0, 0 };
 
-
-
-
-
     /**
      * _more_
      */

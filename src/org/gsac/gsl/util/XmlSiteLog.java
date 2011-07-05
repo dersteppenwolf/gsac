@@ -30,96 +30,308 @@ package org.gsac.gsl.util;
  */
 
 public class XmlSiteLog {
-       
 
 
+
+    /** _more_ */
     public static final String ATTR_XMLNS_XMLNS = "xmlns";
+
+    /** _more_ */
     public static final String ATTR_XMLNS_REALTIME = "xmlns:realtime";
+
+    /** _more_          */
+    public static final String ATTR_XMLNS_EQUIP = "xmlns:equip";
+
+    /** _more_ */
     public static final String ATTR_XMLNS_XSI = "xmlns:xsi";
+
+    /** _more_ */
     public static final String ATTR_XMLNS_MI = "xmlns:mi";
+
+    /** _more_ */
     public static final String ATTR_XMLNS_LI = "xmlns:li";
+
+    /** _more_ */
     public static final String ATTR_XMLNS_CONTACT = "xmlns:contact";
+
+    /** _more_ */
     public static final String ATTR_XSI_SCHEMALOCATION = "xsi:schemaLocation";
-    public static final String VALUE_XSI_SCHEMALOCATION = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd";
+
+    /** _more_ */
+    public static final String VALUE_XSI_SCHEMALOCATION =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd";
 
 
-    public static final String XMLNS_XMLNS = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
-    public static final String XMLNS_XMLNS_CONTACT = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004";
-    public static final String XMLNS_XMLNS_EQUIP = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004";
-    public static final String XMLNS_XMLNS_LI = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/localInterferences/2004";
-    public static final String XMLNS_XMLNS_MI = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/monumentInfo/2004";
-    public static final String XMLNS_XMLNS_REALTIME = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011";
-    public static final String XMLNS_XMLNS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+    /** _more_ */
+    public static final String XMLNS_XMLNS =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
 
+    /** _more_ */
+    public static final String XMLNS_XMLNS_CONTACT =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004";
+
+    /** _more_ */
+    public static final String XMLNS_XMLNS_EQUIP =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004";
+
+    /** _more_ */
+    public static final String XMLNS_XMLNS_LI =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/localInterferences/2004";
+
+    /** _more_ */
+    public static final String XMLNS_XMLNS_MI =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/monumentInfo/2004";
+
+    /** _more_ */
+    public static final String XMLNS_XMLNS_REALTIME =
+        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011";
+
+    /** _more_ */
+    public static final String XMLNS_XMLNS_XSI =
+        "http://www.w3.org/2001/XMLSchema-instance";
+
+    /** _more_ */
     public static final String TAG_IGSSITELOG = "igsSiteLog";
+
+    /** _more_ */
     public static final String TAG_FORMINFORMATION = "formInformation";
+
+    /** _more_ */
     public static final String TAG_MI_PREPAREDBY = "mi:preparedBy";
+
+    /** _more_ */
     public static final String TAG_MI_DATEPREPARED = "mi:datePrepared";
+
+    /** _more_ */
     public static final String TAG_MI_REPORTTYPE = "mi:reportType";
+
+    /** _more_ */
     public static final String TAG_SITEIDENTIFICATION = "siteIdentification";
+
+    /** _more_ */
     public static final String TAG_MI_SITENAME = "mi:siteName";
+
+    /** _more_ */
     public static final String TAG_MI_FOURCHARACTERID = "mi:fourCharacterID";
-    public static final String TAG_MI_MONUMENTINSCRIPTION = "mi:monumentInscription";
+
+    /** _more_ */
+    public static final String TAG_MI_MONUMENTINSCRIPTION =
+        "mi:monumentInscription";
+
+    /** _more_ */
     public static final String TAG_MI_IERSDOMESNUMBER = "mi:iersDOMESNumber";
+
+    /** _more_ */
     public static final String TAG_MI_CDPNUMBER = "mi:cdpNumber";
-    public static final String TAG_MI_MONUMENTDESCRIPTION = "mi:monumentDescription";
-    public static final String TAG_MI_HEIGHTOFTHEMONUMENT = "mi:heightOfTheMonument";
-    public static final String TAG_MI_MONUMENTFOUNDATION = "mi:monumentFoundation";
+
+    /** _more_ */
+    public static final String TAG_MI_MONUMENTDESCRIPTION =
+        "mi:monumentDescription";
+
+    /** _more_ */
+    public static final String TAG_MI_HEIGHTOFTHEMONUMENT =
+        "mi:heightOfTheMonument";
+
+    /** _more_ */
+    public static final String TAG_MI_MONUMENTFOUNDATION =
+        "mi:monumentFoundation";
+
+    /** _more_ */
     public static final String TAG_MI_FOUNDATIONDEPTH = "mi:foundationDepth";
-    public static final String TAG_MI_MARKERDESCRIPTION = "mi:markerDescription";
+
+    /** _more_ */
+    public static final String TAG_MI_MARKERDESCRIPTION =
+        "mi:markerDescription";
+
+    /** _more_ */
     public static final String TAG_MI_DATEINSTALLED = "mi:dateInstalled";
-    public static final String TAG_MI_GEOLOGICCHARACTERISTIC = "mi:geologicCharacteristic";
+
+    /** _more_ */
+    public static final String TAG_MI_GEOLOGICCHARACTERISTIC =
+        "mi:geologicCharacteristic";
+
+    /** _more_ */
     public static final String TAG_MI_BEDROCKTYPE = "mi:bedrockType";
-    public static final String TAG_MI_BEDROCKCONDITION = "mi:bedrockCondition";
+
+    /** _more_ */
+    public static final String TAG_MI_BEDROCKCONDITION =
+        "mi:bedrockCondition";
+
+    /** _more_ */
     public static final String TAG_MI_FRACTURESPACING = "mi:fractureSpacing";
-    public static final String TAG_MI_FAULTZONESNEARBY = "mi:faultZonesNearby";
-    public static final String TAG_MI_DISTANCE_ACTIVITY = "mi:distance-Activity";
+
+    /** _more_ */
+    public static final String TAG_MI_FAULTZONESNEARBY =
+        "mi:faultZonesNearby";
+
+    /** _more_ */
+    public static final String TAG_MI_DISTANCE_ACTIVITY =
+        "mi:distance-Activity";
+
+    /** _more_ */
     public static final String TAG_MI_NOTES = "mi:notes";
+
+    /** _more_ */
     public static final String TAG_SITELOCATION = "siteLocation";
+
+    /** _more_ */
     public static final String TAG_MI_CITY = "mi:city";
+
+    /** _more_ */
     public static final String TAG_MI_STATE = "mi:state";
+
+    /** _more_ */
     public static final String TAG_MI_COUNTRY = "mi:country";
+
+    /** _more_ */
     public static final String TAG_MI_TECTONICPLATE = "mi:tectonicPlate";
-    public static final String TAG_MI_APPROXIMATEPOSITIONITRF = "mi:approximatePositionITRF";
-    public static final String TAG_MI_XCOORDINATEINMETERS = "mi:xCoordinateInMeters";
-    public static final String TAG_MI_YCOORDINATEINMETERS = "mi:yCoordinateInMeters";
-    public static final String TAG_MI_ZCOORDINATEINMETERS = "mi:zCoordinateInMeters";
+
+    /** _more_ */
+    public static final String TAG_MI_APPROXIMATEPOSITIONITRF =
+        "mi:approximatePositionITRF";
+
+    /** _more_ */
+    public static final String TAG_MI_XCOORDINATEINMETERS =
+        "mi:xCoordinateInMeters";
+
+    /** _more_ */
+    public static final String TAG_MI_YCOORDINATEINMETERS =
+        "mi:yCoordinateInMeters";
+
+    /** _more_ */
+    public static final String TAG_MI_ZCOORDINATEINMETERS =
+        "mi:zCoordinateInMeters";
+
+    /** _more_ */
     public static final String TAG_MI_LATITUDE_NORTH = "mi:latitude-North";
+
+    /** _more_ */
     public static final String TAG_MI_LONGITUDE_EAST = "mi:longitude-East";
-    public static final String TAG_MI_ELEVATION_M_ELLIPS = "mi:elevation-m_ellips";
+
+    /** _more_ */
+    public static final String TAG_MI_ELEVATION_M_ELLIPS =
+        "mi:elevation-m_ellips";
+
+    /** _more_ */
     public static final String TAG_GNSSRECEIVER = "gnssReceiver";
+
+    /** _more_ */
     public static final String TAG_EQUIP_RECEIVERTYPE = "equip:receiverType";
-    public static final String TAG_EQUIP_SATELLITESYSTEM = "equip:satelliteSystem";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_SATELLITESYSTEM =
+        "equip:satelliteSystem";
+
+    /** _more_ */
     public static final String TAG_EQUIP_SERIALNUMBER = "equip:serialNumber";
-    public static final String TAG_EQUIP_FIRMWAREVERSION = "equip:firmwareVersion";
-    public static final String TAG_EQUIP_ELEVATIONCUTOFFSETTING = "equip:elevationCutoffSetting";
-    public static final String TAG_EQUIP_DATEINSTALLED = "equip:dateInstalled";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_FIRMWAREVERSION =
+        "equip:firmwareVersion";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_ELEVATIONCUTOFFSETTING =
+        "equip:elevationCutoffSetting";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_DATEINSTALLED =
+        "equip:dateInstalled";
+
+    /** _more_ */
     public static final String TAG_EQUIP_DATEREMOVED = "equip:dateRemoved";
-    public static final String TAG_EQUIP_TEMPERATURESTABILIZATION = "equip:temperatureStabilization";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_TEMPERATURESTABILIZATION =
+        "equip:temperatureStabilization";
+
+    /** _more_ */
     public static final String TAG_EQUIP_NOTES = "equip:notes";
+
+    /** _more_ */
     public static final String TAG_GNSSANTENNA = "gnssAntenna";
+
+    /** _more_ */
     public static final String TAG_EQUIP_ANTENNATYPE = "equip:antennaType";
-    public static final String TAG_EQUIP_ANTENNAREFERENCEPOINT = "equip:antennaReferencePoint";
-    public static final String TAG_EQUIP_MARKER_ARPUPECC= "equip:marker-arpUpEcc.";
-    public static final String TAG_EQUIP_MARKER_ARPNORTHECC = "equip:marker-arpNorthEcc.";
-    public static final String TAG_EQUIP_MARKER_ARPEASTECC = "equip:marker-arpEastEcc.";
-    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH = "equip:alignmentFromTrueNorth";
-    public static final String TAG_EQUIP_ANTENNARADOMETYPE = "equip:antennaRadomeType";
-    public static final String TAG_EQUIP_RADOMESERIALNUMBER = "equip:radomeSerialNumber";
-    public static final String TAG_EQUIP_ANTENNACABLETYPE = "equip:antennaCableType";
-    public static final String TAG_EQUIP_ANTENNACABLELENGTH = "equip:antennaCableLength";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_ANTENNAREFERENCEPOINT =
+        "equip:antennaReferencePoint";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_MARKER_ARPUPECC =
+        "equip:marker-arpUpEcc.";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_MARKER_ARPNORTHECC =
+        "equip:marker-arpNorthEcc.";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_MARKER_ARPEASTECC =
+        "equip:marker-arpEastEcc.";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH =
+        "equip:alignmentFromTrueNorth";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_ANTENNARADOMETYPE =
+        "equip:antennaRadomeType";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_RADOMESERIALNUMBER =
+        "equip:radomeSerialNumber";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_ANTENNACABLETYPE =
+        "equip:antennaCableType";
+
+    /** _more_ */
+    public static final String TAG_EQUIP_ANTENNACABLELENGTH =
+        "equip:antennaCableLength";
+
+    /** _more_ */
     public static final String TAG_FREQUENCYSTANDARD = "frequencyStandard";
-    public static final String TAG_COLOCATIONINFORMATION = "colocationInformation";
+
+    /** _more_ */
+    public static final String TAG_COLOCATIONINFORMATION =
+        "colocationInformation";
+
+    /** _more_ */
     public static final String TAG_HUMIDITYSENSOR = "humiditySensor";
+
+    /** _more_ */
     public static final String TAG_PRESSURESENSOR = "pressureSensor";
+
+    /** _more_ */
     public static final String TAG_WATERVAPORSENSOR = "waterVaporSensor";
-    public static final String TAG_OTHERINSTRUMENTATION = "otherInstrumentation";
+
+    /** _more_ */
+    public static final String TAG_OTHERINSTRUMENTATION =
+        "otherInstrumentation";
+
+    /** _more_ */
     public static final String TAG_RADIOINTERFERENCES = "radioInterferences";
+
+    /** _more_ */
     public static final String TAG_MULTIPATHSOURCES = "multipathSources";
+
+    /** _more_ */
     public static final String TAG_SIGNALOBSTRUCTIONS = "signalObstructions";
-    public static final String TAG_LOCALEPISODICEVENTS = "localEpisodicEvents";
+
+    /** _more_ */
+    public static final String TAG_LOCALEPISODICEVENTS =
+        "localEpisodicEvents";
+
+    /** _more_ */
     public static final String TAG_CONTACTAGENCY = "contactAgency";
+
+    /** _more_ */
     public static final String TAG_RESPONSIBLEAGENCY = "responsibleAgency";
-    public static final String TAG_REALTIMEDATASTREAMS = "realtimeDataStreams";
+
+    /** _more_ */
+    public static final String TAG_REALTIMEDATASTREAMS =
+        "realtimeDataStreams";
+
+    /** _more_ */
     public static final String TAG_MOREINFORMATION = "moreInformation";
 }

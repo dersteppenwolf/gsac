@@ -58,7 +58,7 @@ public class GsacMetadata {
     /** the label */
     private String label;
 
-    /** _more_          */
+    /** _more_ */
     private boolean forDisplay = true;
 
     /**
@@ -86,6 +86,19 @@ public class GsacMetadata {
         this.type  = type;
         this.label = label;
     }
+
+    /**
+     * _more_
+     *
+     * @param result _more_
+     * @param finder _more_
+     */
+    public void findMetadata(List<GsacMetadata> result,
+                             MetadataFinder finder) {
+        finder.checkMetadata(this, result);
+    }
+
+
 
     /**
      * _more_
@@ -226,6 +239,57 @@ public class GsacMetadata {
     }
 
 
+    /**
+     * Interface description
+     *
+     *
+     * @author         Enter your name here...
+     */
+    public interface MetadataFinder {
+
+        /**
+         * _more_
+         *
+         * @param metadata _more_
+         * @param result _more_
+         */
+        public void checkMetadata(GsacMetadata metadata,
+                                  List<GsacMetadata> result);
+    }
 
 
+    /**
+     * Class description
+     *
+     *
+     * @version        $version$, Tue, Jul 5, '11
+     * @author         Enter your name here...
+     */
+    public static class ClassMetadataFinder implements MetadataFinder {
+
+        /** _more_ */
+        private Class theClass;
+
+        /**
+         * _more_
+         *
+         * @param c _more_
+         */
+        public ClassMetadataFinder(Class c) {
+            this.theClass = c;
+        }
+
+        /**
+         * _more_
+         *
+         * @param metadata _more_
+         * @param result _more_
+         */
+        public void checkMetadata(GsacMetadata metadata,
+                                  List<GsacMetadata> result) {
+            if (metadata.getClass().equals(theClass)) {
+                result.add(metadata);
+            }
+        }
+    }
 }

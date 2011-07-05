@@ -45,7 +45,7 @@ import javax.servlet.http.*;
 
 
 /**
- * Abstract base class for the output handlers. 
+ * Abstract base class for the output handlers.
  *
  *
  */
@@ -131,7 +131,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
 
     /**
-     * Factory method to make the response object. 
+     * Factory method to make the response object.
      *
      * @param gsacRequest The request
      *
@@ -621,7 +621,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
     /**
-     * get flag     
+     * get flag
      *
      * @return _more_
      */

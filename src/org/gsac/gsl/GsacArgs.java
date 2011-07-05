@@ -78,13 +78,16 @@ public interface GsacArgs {
 
 
     /** _more_ */
-    public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
+    public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX
+                                                     + "createdate";
 
     /** _more_ */
-    public static final String ARG_SITE_CREATEDATE_FROM = ARG_SITE_CREATEDATE + ".from";
+    public static final String ARG_SITE_CREATEDATE_FROM = ARG_SITE_CREATEDATE
+                                                          + ".from";
 
     /** _more_ */
-    public static final String ARG_SITE_CREATEDATE_TO = ARG_SITE_CREATEDATE + ".to";
+    public static final String ARG_SITE_CREATEDATE_TO = ARG_SITE_CREATEDATE
+                                                        + ".to";
 
 
     /** _more_ */

@@ -78,6 +78,21 @@ public class MetadataGroup extends GsacMetadata {
         this.displayType = displayType;
     }
 
+
+    /**
+     * _more_
+     *
+     * @param result _more_
+     * @param finder _more_
+     */
+    public void findMetadata(List<GsacMetadata> result,
+                             MetadataFinder finder) {
+        super.findMetadata(result, finder);
+        for (GsacMetadata child : metadataList) {
+            child.findMetadata(result, finder);
+        }
+    }
+
     /**
      * _more_
      *

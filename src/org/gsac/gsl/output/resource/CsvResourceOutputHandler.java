@@ -75,8 +75,7 @@ public class CsvResourceOutputHandler extends StreamingOutputHandler {
             response.startResponse(GsacResponse.MIME_CSV);
             PrintWriter pw = response.getPrintWriter();
             if (firstTime) {
-                pw.print(
-                    "#repositoryid, resourcetype, siteid, url\n");
+                pw.print("#repositoryid, resourcetype, siteid, url\n");
             }
             pw.print(resource.getRepositoryId());
             pw.print(",");
