@@ -121,11 +121,11 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         StringBuffer sb = new StringBuffer();
         response.startResponse("text/xml");
-        getRepository().handleSiteRequest(request, response);
+        getRepository().handleRequest(GsacSite.TYPE_SITE,request, response);
         List<GsacSite> sites = response.getSites();
         PrintWriter    pw    = response.getPrintWriter();
         Element        root  = XmlUtil.getRoot(XmlUtil.tag(TAG_ROWS, "", ""));

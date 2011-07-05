@@ -72,7 +72,7 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleSiteResult(GsacRequest request, GsacResponse response)
+    public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter pw  = response.getPrintWriter();

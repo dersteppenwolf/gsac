@@ -76,7 +76,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleResourceRequest(GsacRequest request,
+    public void handleRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
         String path = request.getRequestURI();

@@ -93,13 +93,13 @@ public class FederatedSiteManager extends SiteManager {
      *
      * @throws Exception _more_
      */
-    public void handleSiteRequest(final GsacRequest request,
-                                  final GsacResponse response)
+    public void handleRequest(final GsacRequest request,
+                              final GsacResponse response)
             throws Exception {
         if (request.defined(ARG_SITE_ID)) {
             List<String> ids = request.get(ARG_SITE_ID, new ArrayList());
             for (String id : ids) {
-                response.addSite(getRepository().getSite(request, id));
+                response.addObject(getRepository().getSite(request, id));
             }
             return;
         }

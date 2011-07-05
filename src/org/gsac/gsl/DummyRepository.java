@@ -201,7 +201,7 @@ public class DummyRepository extends GsacRepositoryImpl {
                                       GsacResponse response)
             throws Exception {
         for (GsacResource resource : resources) {
-            response.addResource(resource);
+            response.addObject(resource);
         }
     }
 
@@ -220,7 +220,7 @@ public class DummyRepository extends GsacRepositoryImpl {
             if ((group != null) && !site.hasGroup(group)) {
                 continue;
             }
-            response.addSite(site);
+            response.addObject(site);
         }
     }
 

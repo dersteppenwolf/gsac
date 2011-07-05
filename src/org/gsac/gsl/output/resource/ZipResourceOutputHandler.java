@@ -86,7 +86,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleResourceResult(GsacRequest request,
+    public void handleResult(GsacRequest request,
                                      GsacResponse response)
             throws Exception {
 

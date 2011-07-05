@@ -85,10 +85,8 @@ public class GsacResponse {
     private boolean haveInitialized = false;
 
     /** _more_ */
-    private List<GsacSite> sites = new ArrayList<GsacSite>();
+    private List<GsacObject> objects = new ArrayList<GsacObject>();
 
-    /** _more_ */
-    private List<GsacResource> resources = new ArrayList<GsacResource>();
 
     /** _more_ */
     private PrintWriter printWriter;
@@ -300,9 +298,9 @@ public class GsacResponse {
      *
      * @param sites _more_
      */
-    public void addSites(List<GsacSite> sites) {
-        for (GsacSite site : sites) {
-            addSite(site);
+    public void addObjects(List<GsacObject> objects) {
+        for (GsacObject object : objects) {
+            addObject(object);
         }
     }
 
@@ -312,8 +310,8 @@ public class GsacResponse {
      *
      * @param site _more_
      */
-    public final synchronized void addSite(GsacSite site) {
-        handleNewSite(site);
+    public final synchronized void addObject(GsacObject object) {
+        handleNewObject(object);
     }
 
 
@@ -322,48 +320,36 @@ public class GsacResponse {
      *
      * @param site _more_
      */
-    public void handleNewSite(GsacSite site) {
-        sites.add(site);
+    public void handleNewObject(GsacObject object) {
+        objects.add(object);
     }
 
-
-    /**
-     * _more_
-     *
-     * @param resource _more_
-     */
-    public final synchronized void addResource(GsacResource resource) {
-        handleNewResource(resource);
-    }
-
-    /**
-     * _more_
-     *
-     * @param resource _more_
-     */
-    public void handleNewResource(GsacResource resource) {
-        resources.add(resource);
-
-    }
 
     /**
      * _more_
      *
      * @return _more_
      */
+    public List<GsacObject> getObjects() {
+        return objects;
+    }
+
     public List<GsacSite> getSites() {
+        List<GsacSite> sites = new ArrayList<GsacSite>();
+        for(GsacObject object: objects) {
+            sites.add((GsacSite) object);
+        }
         return sites;
     }
 
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
+
     public List<GsacResource> getResources() {
+        List<GsacResource> resources = new ArrayList<GsacResource>();
+        for(GsacObject object: objects) {
+            resources.add((GsacResource) object);
+        }
         return resources;
     }
-
 
 
     /**

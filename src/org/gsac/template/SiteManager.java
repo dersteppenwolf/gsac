@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Handles all of the site related repository requests
- * The main entry point is the  {@link #handleSiteRequest} method.
+ * The main entry point is the  {@link #handleRequest} method.
  * Look for the CHANGEME comments
  * 
  *
@@ -66,9 +66,9 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
         If you don't implement this method then the base SiteManager
         class will 
      **/
-    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
-        super.handleSiteRequest(request, response);
+        super.handleRequest(request, response);
     }
 
 

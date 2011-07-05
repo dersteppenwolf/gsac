@@ -67,9 +67,10 @@ public class CsvResourceOutputHandler extends StreamingOutputHandler {
      * @param response The response
      * @param resource _more_
      */
-    public void processResource(GsacResponse response,
-                                GsacResource resource) {
+    public void processObject(GsacResponse response,
+                              GsacObject object) {
         try {
+            GsacResource resource = (GsacResource) object;
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             response.startResponse(GsacResponse.MIME_CSV);

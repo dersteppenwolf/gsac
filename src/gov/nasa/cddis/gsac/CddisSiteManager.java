@@ -125,7 +125,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @throws Exception on badness
      */
-    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
 
         /*
@@ -157,7 +157,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 appendSearchCriteria(msgBuff, "Site Id=", siteId);
                 GsacSite site = getSite(siteId);
                 if(site!=null) {
-                    response.addSite(site);
+                    response.addObject(site);
                 }
             }
             setSearchCriteriaMessage(response, msgBuff);
@@ -257,7 +257,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 break;
             }
             myCnt++;
-            response.addSite(site);
+            response.addObject(site);
         }
         return myCnt;
     }

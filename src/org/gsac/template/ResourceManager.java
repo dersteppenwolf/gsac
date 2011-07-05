@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Handles all of the resource related repository requests. The main
- * entry point is {@link #handleResourceRequest}
+ * entry point is {@link #handleRequest}
  * Look for the CHANGEME comments
  *
  * @author  Jeff McWhirter
@@ -49,7 +49,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
      *
      * @throws Exception on badness
      */
-    public void handleResourceRequest(GsacRequest request,
+    public void handleRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
         //Some example code to handle the default url arguments
@@ -149,7 +149,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
         SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement, request.getOffset(), request.getLimit());
         int cnt = 0;
         while (iter.getNext() != null) {
-            response.addResource(makeResource(iter.getResults()));
+            response.addObject(makeResource(iter.getResults()));
             cnt++;
             if ( !iter.countOK()) {
                 response.setExceededLimit();

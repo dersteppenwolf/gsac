@@ -98,7 +98,7 @@ public abstract class SiteManager extends GsacObjectManager {
      *
      * @throws Exception on badness
      */
-    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         String columns = getSiteSelectColumns();
         if (columns == null) {
@@ -146,7 +146,7 @@ public abstract class SiteManager extends GsacObjectManager {
             if (site == null) {
                 continue;
             }
-            response.addSite(site);
+            response.addObject(site);
             if ( !iter.countOK()) {
                 response.setExceededLimit();
                 break;

@@ -76,7 +76,7 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleSiteResult(GsacRequest request, GsacResponse response)
+    public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_JSON);
         PrintWriter pw          = response.getPrintWriter();

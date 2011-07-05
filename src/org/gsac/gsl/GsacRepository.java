@@ -389,8 +389,8 @@ public class GsacRepository implements GsacConstants {
         }
 
 
-        System.err.println("GSAC: using gsac directory: " + gsacDirectory);
         if (gsacDirectory != null) {
+            System.err.println("GSAC: using gsac directory: " + gsacDirectory);
             initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
                                            + "/gsac.properties");
@@ -402,9 +402,8 @@ public class GsacRepository implements GsacConstants {
         }
 
 
-        objectManagerMap.put(GsacSite.TYPE_SITE, getSiteManager());
-        objectManagerMap.put(GsacResource.TYPE_RESOURCE, getResourceManager());
-
+        objectManagerMap.put(GsacSite.TYPE_SITE.getType(), getSiteManager());
+        objectManagerMap.put(GsacResource.TYPE_RESOURCE.getType(), getResourceManager());
 
         //TODO: put the specification of the output handlers into a properties or xml file
         htmlOutputHandler = new HtmlSiteOutputHandler(this);
@@ -1153,7 +1152,7 @@ public class GsacRepository implements GsacConstants {
      */
     public ResourceManager doMakeResourceManager() {
         return new ResourceManager(this) {
-            public void handleResourceRequest(GsacRequest request,
+            public void handleRequest(GsacRequest request,
                     GsacResponse response)
                     throws Exception {}
             public GsacResource getResource(String resourceId)
@@ -1262,14 +1261,13 @@ public class GsacRepository implements GsacConstants {
                 what = URL_SITE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
-                outputHandler.handleSiteRequest(request);
+                outputHandler.handleRequest(request);
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
                 //resource request
                 what = URL_RESOURCE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
-
-                outputHandler.handleResourceRequest(request);
+                outputHandler.handleRequest(request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
                 GsacOutputHandler outputHandler =
@@ -1366,17 +1364,6 @@ public class GsacRepository implements GsacConstants {
         IOUtil.writeTo(inputStream, outputStream);
         IOUtil.close(outputStream);
     }
-
-
-    /**
-     * handle a resource request
-     *
-     * @param gsacRequest the request
-     *
-     * @throws Exception On badness
-     */
-    public void handleResourceRequest(GsacRequest gsacRequest)
-            throws Exception {}
 
     /**
      * _more_
@@ -1508,27 +1495,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
-    /**
-     * gets called for resource requests
-     *
-     * @param request The request
-     * @param response response
-     *
-     * @throws Exception on badnesss
-     */
-    public void handleResourceRequest(GsacRequest request,
-                                      GsacResponse response)
-            throws Exception {
-        if (getResourceManager() != null) {
-            getResourceManager().handleResourceRequest(request, response);
-            return;
-        }
-        notImplemented(
-            "Derived class needs to implement handleResourceRequest");
-    }
-
-
     /**
      * Handle the site search request
      *
@@ -1537,14 +1503,17 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception on badnesss
      */
-    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(ObjectType objectType, GsacRequest request, GsacResponse response)
             throws Exception {
-        if (getSiteManager() != null) {
-            getSiteManager().handleSiteRequest(request, response);
+        GsacObjectManager gom = objectManagerMap.get(objectType.getType());
+        if (gom!= null) {
+            System.err.println ("gom:" + gom);
+            gom.handleRequest(request, response);
             return;
         }
-        notImplemented("Derived class needs to implement handleSiteRequest");
+        notImplemented("No handler for " + objectType);
     }
+
 
     /**
      * helper method.

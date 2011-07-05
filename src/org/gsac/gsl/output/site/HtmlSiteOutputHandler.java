@@ -83,12 +83,12 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleSiteRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
 
         StringBuffer sb = new StringBuffer();
         try {
-            handleSiteRequestInner(request, response, sb);
+            handleRequestInner(request, response, sb);
         } catch (IllegalArgumentException iae) {
             sb.append(
                 getRepository().makeErrorDialog(
@@ -108,7 +108,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception _more_
      */
-    public void handleSiteRequestInner(GsacRequest request,
+    public void handleRequestInner(GsacRequest request,
                                        GsacResponse response, StringBuffer sb)
             throws Exception {
         if ( !initHtml(request, response, sb)) {
@@ -149,7 +149,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
             */
             long t1 = System.currentTimeMillis();
-            getRepository().handleSiteRequest(request, response);
+            getRepository().handleRequest(GsacSite.TYPE_SITE, request, response);
             long t2 = System.currentTimeMillis();
             checkMessage(request, response, sb);
             handleSiteList(request, response, sb);

@@ -18,58 +18,47 @@
  * 
  */
 
-package org.gsac.gsl;
+package org.gsac.gsl.model;
 
 
-import org.gsac.gsl.*;
-import org.gsac.gsl.model.*;
+import org.gsac.gsl.metadata.*;
+
+
 import org.gsac.gsl.util.*;
 
-
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
-import ucar.unidata.util.HtmlUtil;
-import ucar.unidata.util.Misc;
-
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 
 /**
- * Base class for site and resource managers
+ * Class description
  *
  *
- * @author  Jeff McWhirter
+ * @version        Enter version here..., Wed, May 19, '10
+ * @author         Enter your name here...
  */
-public abstract class GsacObjectManager extends GsacRepositoryManager {
+public class ObjectType {
 
-    /**
-     * ctor
-     *
-     * @param repository the repository
-     */
-    public GsacObjectManager(GsacRepository repository) {
-        super(repository);
+    /** _more_ */
+    private String id;
+
+
+    public ObjectType(String id) {
+        this.id = id;
+    }
+    
+
+    public String getType() {
+        return id;
     }
 
+    public int hashCode() {
+        return id.hashCode();
+    }
 
-    /**
-     * handle the request
-     *
-     * @param request The request
-     * @param response The response
-     *
-     * @throws Exception on badness
-     */
-    public abstract void handleRequest(GsacRequest request,
-            GsacResponse response)
-     throws Exception;
+    public boolean equals(Object o) {
+        return id.equals(o);
+    }
 
 }

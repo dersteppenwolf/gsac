@@ -398,7 +398,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             String id = getRemoteId(callable.repository, site.getId());
             site.setId(id);
             site.setRepositoryInfo(callable.repository);
-            response.addSite(site);
+            response.addObject(site);
         }
         return sites.size();
     }
@@ -443,7 +443,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             String id = getRemoteId(callable.repository, resource.getId());
             resource.setId(id);
             resource.setRepositoryInfo(callable.repository);
-            response.addResource(resource);
+            response.addObject(resource);
         }
         return resources.size();
     }

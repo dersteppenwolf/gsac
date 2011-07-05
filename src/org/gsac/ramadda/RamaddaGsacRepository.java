@@ -277,7 +277,7 @@ public class RamaddaGsacRepository extends GsacRepository {
             Object[] values = entry.getValues();
 
 
-            response.addSite(makeSite(entry));
+            response.addObject(makeSite(entry));
         }
     }
 

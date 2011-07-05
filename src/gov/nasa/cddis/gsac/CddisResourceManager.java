@@ -249,8 +249,8 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception on badness
      */
-    public void handleResourceRequest(GsacRequest request,
-                                      GsacResponse response)
+    public void handleRequest(GsacRequest request,
+                              GsacResponse response)
             throws Exception {
 
 
@@ -378,7 +378,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
                         makeResources(type, results, resourceTypes,
                                       dateRange, extraStuff)) {
                     if (totalCnt >= offset) {
-                        response.addResource(resource);
+                        response.addObject(resource);
                         cnt++;
                     }
                     totalCnt++;

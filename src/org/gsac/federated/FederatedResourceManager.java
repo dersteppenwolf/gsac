@@ -75,13 +75,13 @@ public class FederatedResourceManager extends ResourceManager {
      *
      * @throws Exception on badness
      */
-    public void handleResourceRequest(GsacRequest request,
+    public void handleRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
         if (request.defined(ARG_RESOURCE_ID)) {
             List<String> ids = request.get(ARG_RESOURCE_ID, new ArrayList());
             for (String id : ids) {
-                response.addResource(getRepository().getResource(request,
+                response.addObject(getRepository().getResource(request,
                         id));
             }
             return;

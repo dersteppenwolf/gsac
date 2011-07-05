@@ -73,7 +73,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      * @throws IOException On badness
      * @throws ServletException On badness
      */
-    public void handleSiteResult(GsacRequest request, GsacResponse response)
+    public void handleResult(GsacRequest request, GsacResponse response)
             throws IOException, ServletException {
         response.startResponse(GsacResponse.MIME_CSV);
         PrintWriter  pw          = response.getPrintWriter();

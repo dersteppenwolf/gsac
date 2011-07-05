@@ -80,13 +80,13 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception On badness
      */
-    public void handleResourceRequest(GsacRequest request,
+    public void handleRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
 
         StringBuffer sb = new StringBuffer();
         try {
-            handleResourceRequestInner(request, response, sb);
+            handleRequestInner(request, response, sb);
 
         } catch (IllegalArgumentException iae) {
             sb.append(
@@ -108,7 +108,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception _more_
      */
-    public void handleResourceRequestInner(GsacRequest request,
+    public void handleRequestInner(GsacRequest request,
                                            GsacResponse response,
                                            StringBuffer sb)
             throws Exception {
@@ -132,7 +132,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         if (request.isGsacUrl(URL_RESOURCE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_RESOURCE_SEARCH)) {
-            getRepository().handleResourceRequest(request, response);
+            getRepository().handleRequest(GsacResource.TYPE_RESOURCE, request, response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_RESOURCEID)) {

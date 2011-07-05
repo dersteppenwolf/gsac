@@ -68,7 +68,7 @@ public abstract class ResourceManager extends GsacObjectManager {
      *
      * @throws Exception on badness
      */
-    public abstract void handleResourceRequest(GsacRequest request,
+    public abstract void handleRequest(GsacRequest request,
             GsacResponse response)
      throws Exception;
 
@@ -122,7 +122,7 @@ public abstract class ResourceManager extends GsacObjectManager {
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
             //      makeResource(iter.getResults());
-            response.addResource(makeResource(iter.getResults()));
+            response.addObject(makeResource(iter.getResults()));
             if ( !iter.countOK()) {
                 response.setExceededLimit();
                 break;

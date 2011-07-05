@@ -209,7 +209,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             //        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
             searchRequest.put(ARG_LIMIT, 10000 + "");
 
-            getRepository().handleSiteRequest(searchRequest, response);
+            getRepository().handleRequest(GsacSite.TYPE_SITE, searchRequest, response);
             List<GsacSite> sites = response.getSites();
             if (sites.size() == 0) {
                 html.append(

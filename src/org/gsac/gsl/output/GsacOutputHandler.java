@@ -166,8 +166,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleSiteRequest(GsacRequest gsacRequest) throws Exception {
-        handleSiteRequest(gsacRequest, doMakeResponse(gsacRequest));
+    public void handleRequest(GsacRequest gsacRequest) throws Exception {
+        handleRequest(gsacRequest, doMakeResponse(gsacRequest));
     }
 
 
@@ -179,46 +179,20 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleSiteRequest(GsacRequest gsacRequest,
-                                  GsacResponse gsacResponse)
-            throws Exception {
+    public  void handleRequest(GsacRequest gsacRequest,
+                                    GsacResponse gsacResponse)
+        throws Exception {
         long t1 = System.currentTimeMillis();
-        getRepository().handleSiteRequest(gsacRequest, gsacResponse);
+        getRepository().handleRequest(GsacSite.TYPE_SITE, gsacRequest, gsacResponse);
         long t2 = System.currentTimeMillis();
-        handleSiteResult(gsacRequest, gsacResponse);
+        handleResult(gsacRequest, gsacResponse);
         long t3 = System.currentTimeMillis();
-        System.err.println("GSAC.handleSiteRequest time to read:" + (t2 - t1)
+        System.err.println("GSAC.handleRequest time to read:" + (t2 - t1)
                            + " time to encode:" + (t3 - t2) + " #sites:"
-                           + gsacResponse.getSites().size());
+                           + gsacResponse.getObjects().size());
     }
 
 
-    /**
-     * _more_
-     *
-     * @param gsacRequest The request
-     *
-     * @throws Exception On badness
-     */
-    public void handleResourceRequest(GsacRequest gsacRequest)
-            throws Exception {
-        handleResourceRequest(gsacRequest, doMakeResponse(gsacRequest));
-    }
-
-    /**
-     * _more_
-     *
-     * @param gsacRequest The request
-     * @param gsacResponse _more_
-     *
-     * @throws Exception On badness
-     */
-    public void handleResourceRequest(GsacRequest gsacRequest,
-                                      GsacResponse gsacResponse)
-            throws Exception {
-        getRepository().handleResourceRequest(gsacRequest, gsacResponse);
-        handleResourceResult(gsacRequest, gsacResponse);
-    }
 
 
     /**
@@ -247,21 +221,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
         throw new IllegalArgumentException("not implemented");
     }
 
-    /**
-     * _more_
-     *
-     * @param gsacRequest The request
-     * @param response The response
-     *
-     * @throws Exception On badness
-     */
-    public void handleResourceResult(GsacRequest gsacRequest,
-                                     GsacResponse response)
-            throws Exception {
-        throw new IllegalArgumentException(
-            getClass().getName() + ".handleResourceResult not implemented");
-    }
-
 
     /**
      * _more_
@@ -271,11 +230,11 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleSiteResult(GsacRequest gsacRequest,
+    public void handleResult(GsacRequest gsacRequest,
                                  GsacResponse response)
             throws Exception {
         throw new IllegalArgumentException(
-            getClass().getName() + ".handleSiteResult not implemented");
+            getClass().getName() + ".handleResult not implemented");
     }
 
 

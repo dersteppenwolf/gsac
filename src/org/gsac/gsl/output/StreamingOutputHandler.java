@@ -56,11 +56,8 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      */
     public GsacResponse doMakeResponse(GsacRequest request) {
         return new GsacResponse(request) {
-            public void handleNewResource(GsacResource resource) {
-                processResource(this, resource);
-            }
-            public void handleNewSite(GsacSite site) {
-                processSite(this, site);
+            public void handleNewObject(GsacObject object) {
+                processObject(this, object);
             }
         };
     }
@@ -71,16 +68,9 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      * @param response The response
      * @param resource _more_
      */
-    public void processResource(GsacResponse response,
-                                GsacResource resource) {}
+    public abstract void processObject(GsacResponse response,
+                                       GsacObject resource);
 
-    /**
-     * _more_
-     *
-     * @param response The response
-     * @param site _more_
-     */
-    public void processSite(GsacResponse response, GsacSite site) {}
 
     /**
      * _more_
@@ -91,9 +81,9 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      * @throws IOException On badness
      * @throws ServletException On badness
      */
-    public void handleResourceResult(GsacRequest gsacRequest,
-                                     GsacResponse gsacResponse)
-            throws IOException, ServletException {
+    public void handleResult(GsacRequest gsacRequest,
+                             GsacResponse gsacResponse)
+        throws IOException, ServletException {
         gsacResponse.endResponse();
     }
 

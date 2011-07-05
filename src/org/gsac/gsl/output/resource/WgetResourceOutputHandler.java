@@ -42,10 +42,8 @@ import javax.servlet.http.*;
  */
 public class WgetResourceOutputHandler extends StreamingOutputHandler {
 
-
     /** _more_ */
     public static final String OUTPUT_RESOURCE_WGET = "resource.wget";
-
 
     /**
      * _more_
@@ -68,9 +66,10 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
      * @param response The response
      * @param resource _more_
      */
-    public void processResource(GsacResponse response,
-                                GsacResource resource) {
+    public void processObject(GsacResponse response,
+                              GsacObject object) {
         try {
+            GsacResource resource = (GsacResource) object;
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             if (firstTime) {
