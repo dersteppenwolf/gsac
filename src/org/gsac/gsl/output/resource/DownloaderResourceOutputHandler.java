@@ -76,8 +76,9 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request,
-                                      GsacResponse response)
+    public void handleRequest(ObjectType type,
+			      GsacRequest request,
+			      GsacResponse response)
             throws Exception {
         String path = request.getRequestURI();
         //If the path does not end with .jnlp then send a redirect

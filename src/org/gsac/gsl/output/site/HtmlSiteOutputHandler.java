@@ -83,7 +83,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request, GsacResponse response)
+    public void handleRequest(ObjectType type, GsacRequest request, GsacResponse response)
             throws Exception {
 
         StringBuffer sb = new StringBuffer();
@@ -109,7 +109,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      * @throws Exception _more_
      */
     public void handleRequestInner(GsacRequest request,
-                                       GsacResponse response, StringBuffer sb)
+				   GsacResponse response, StringBuffer sb)
             throws Exception {
         if ( !initHtml(request, response, sb)) {
             return;
@@ -149,7 +149,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
             */
             long t1 = System.currentTimeMillis();
-            getRepository().handleRequest(GsacSite.TYPE_SITE, request, response);
+            getRepository().processRequest(GsacSite.TYPE_SITE, request, response);
             long t2 = System.currentTimeMillis();
             checkMessage(request, response, sb);
             handleSiteList(request, response, sb);

@@ -80,8 +80,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception On badness
      */
-    public void handleRequest(GsacRequest request,
-                                      GsacResponse response)
+    public void handleRequest(ObjectType type,
+			      GsacRequest request,
+			      GsacResponse response)
             throws Exception {
 
         StringBuffer sb = new StringBuffer();
@@ -132,7 +133,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         if (request.isGsacUrl(URL_RESOURCE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_RESOURCE_SEARCH)) {
-            getRepository().handleRequest(GsacResource.TYPE_RESOURCE, request, response);
+            getRepository().processRequest(GsacResource.TYPE_RESOURCE, request, response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_RESOURCEID)) {

@@ -1261,13 +1261,15 @@ public class GsacRepository implements GsacConstants {
                 what = URL_SITE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
-                outputHandler.handleRequest(request);
+		request.setObjectType(GsacSite.TYPE_SITE);
+                outputHandler.handleRequest(GsacSite.TYPE_SITE, request);
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
                 //resource request
                 what = URL_RESOURCE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
-                outputHandler.handleRequest(request);
+		request.setObjectType(GsacResource.TYPE_RESOURCE);
+                outputHandler.handleRequest(GsacResource.TYPE_RESOURCE,request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
                 GsacOutputHandler outputHandler =
@@ -1503,11 +1505,10 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception on badnesss
      */
-    public void handleRequest(ObjectType objectType, GsacRequest request, GsacResponse response)
+    public void processRequest(ObjectType objectType, GsacRequest request, GsacResponse response)
             throws Exception {
         GsacObjectManager gom = objectManagerMap.get(objectType.getType());
         if (gom!= null) {
-            System.err.println ("gom:" + gom);
             gom.handleRequest(request, response);
             return;
         }
