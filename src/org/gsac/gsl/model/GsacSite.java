@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class GsacSite extends GsacObject implements Comparable {
 
-
+    public static final String TYPE_SITE = "site";
 
     /** This is the site identifier that users are used to. e.g., P123 */
     private String siteCode;
@@ -126,6 +126,12 @@ public class GsacSite extends GsacObject implements Comparable {
         this.name          = name;
         this.earthLocation = location;
     }
+
+
+    public String getObjectType() {
+        return TYPE_SITE;
+    }
+
 
     /**
      * _more_

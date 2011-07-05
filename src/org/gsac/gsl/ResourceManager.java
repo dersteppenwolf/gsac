@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author  Jeff McWhirter
  */
-public abstract class ResourceManager extends GsacRepositoryManager {
+public abstract class ResourceManager extends GsacObjectManager {
 
     /**
      * ctor
@@ -151,6 +151,7 @@ public abstract class ResourceManager extends GsacRepositoryManager {
             throws Exception {
         //default is to do nothing
     }
+
 
     /**
      * Get the extra resource search capabilities. This

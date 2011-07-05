@@ -162,6 +162,8 @@ public class GsacRepository implements GsacConstants {
     /** the database manager */
     private GsacDatabaseManager databaseManager;
 
+    private Hashtable<String, GsacObjectManager> objectManagerMap = new Hashtable<String, GsacObjectManager>();
+
     /** the site manager */
     private SiteManager siteManager;
 
@@ -398,6 +400,10 @@ public class GsacRepository implements GsacConstants {
                 properties.load(new FileInputStream(localPropertiesFile));
             }
         }
+
+
+        objectManagerMap.put(GsacSite.TYPE_SITE, getSiteManager());
+        objectManagerMap.put(GsacResource.TYPE_RESOURCE, getResourceManager());
 
 
         //TODO: put the specification of the output handlers into a properties or xml file
@@ -1929,7 +1935,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void getSiteMetadata(GsacRequest request, GsacSite gsacSite)
-            throws Exception {
+        throws Exception {
         int level = request.get(ARG_METADATA_LEVEL, 1);
         if (gsacSite.getMetadataLevel() >= level) {
             return;

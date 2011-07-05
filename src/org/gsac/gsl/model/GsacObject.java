@@ -68,6 +68,8 @@ public abstract class GsacObject {
     }
 
 
+    public abstract String getObjectType();
+
     /**
      * _more_
      *

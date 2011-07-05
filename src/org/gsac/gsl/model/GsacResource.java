@@ -39,6 +39,7 @@ import java.util.Date;
  */
 public class GsacResource extends GsacObject {
 
+    public static final String TYPE_RESOURCE = "resource";
 
     /** _more_ */
     private FileInfo fileInfo;
@@ -129,6 +130,11 @@ public class GsacResource extends GsacObject {
         this.endTime     = endTime;
         this.type        = type;
     }
+
+    public String getObjectType() {
+        return TYPE_RESOURCE;
+    }
+
 
     /**
      * _more_

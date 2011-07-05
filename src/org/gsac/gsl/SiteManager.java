@@ -51,7 +51,7 @@ import java.util.List;
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
-public abstract class SiteManager extends GsacRepositoryManager {
+public abstract class SiteManager extends GsacObjectManager {
 
     /** name for the basic site query capabilities */
     public static final String CAPABILITY_GROUP_SITE_QUERY = "Site Query";
@@ -285,7 +285,6 @@ public abstract class SiteManager extends GsacRepositoryManager {
         //default is to do nothing
         return new ArrayList<Capability>();
     }
-
 
 
     /**
