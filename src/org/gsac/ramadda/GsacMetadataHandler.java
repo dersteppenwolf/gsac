@@ -59,10 +59,10 @@ import java.util.List;
  */
 public class GsacMetadataHandler extends MetadataHandler {
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_STREAM_FORMAT = "gsac.stream.format";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_STREAM_SOURCE = "gsac.stream.source";
 
 

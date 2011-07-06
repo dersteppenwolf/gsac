@@ -59,7 +59,7 @@ import java.util.List;
  */
 public class GsacResourceTypeHandler extends GenericTypeHandler {
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_STREAM = "gsacstream";
 
 
@@ -132,7 +132,7 @@ public class GsacResourceTypeHandler extends GenericTypeHandler {
                                                  HtmlUtil.SIZE_10)));
     }
 
-    /** _more_          */
+    /** _more_ */
     public static final String COL_SITEID = "siteid";
 
     /**

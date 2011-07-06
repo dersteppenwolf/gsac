@@ -70,13 +70,13 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
     public static final String GSAC_COL_ID = TABLE_GSACSITE + "."
                                              + GenericTypeHandler.COL_ID;
 
-    /** _more_          */
+    /** _more_ */
     public static final String GSAC_COL_SITEID = TABLE_GSACSITE + ".siteid";
 
-    /** _more_          */
+    /** _more_ */
     public static final String GSAC_COL_STATUS = TABLE_GSACSITE + ".status";
 
-    /** _more_          */
+    /** _more_ */
     public static final String GSAC_COL_SOURCE = TABLE_GSACSITE + ".source";
 
     /** _more_ */

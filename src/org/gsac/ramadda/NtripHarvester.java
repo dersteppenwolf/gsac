@@ -63,16 +63,16 @@ import java.util.List;
  */
 public class NtripHarvester extends WebHarvester {
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_STR = "STR";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_CAS = "CAS";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_NET = "NET";
 
-    /** _more_          */
+    /** _more_ */
     private String urls;
 
     /**
