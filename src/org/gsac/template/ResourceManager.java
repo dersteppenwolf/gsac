@@ -241,7 +241,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
      *
      * @throws Exception _more_
      */
-    public GsacResource getResource(String resourceId) throws Exception {
+    public GsacObject getObject(String resourceId) throws Exception {
         //TODO:
         return null;
     }
@@ -269,7 +269,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
      * @return sitemanager
      */
     public @MACRO.PREFIX@SiteManager getSiteManager() {
-        return (@MACRO.PREFIX@SiteManager) getRepository().getSiteManager();
+        return (@MACRO.PREFIX@SiteManager) getRepository().getObjectManager(GsacSite.TYPE_SITE);
     }
 
 

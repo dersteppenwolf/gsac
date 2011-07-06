@@ -165,10 +165,10 @@ public interface GsacConstants extends GsacArgs {
 
 
     /** _more_ */
-    public static final String OUTPUT_GROUP_SITE = "output.site";
+    public static final String OUTPUT_GROUP_SITE = "site";
 
     /** _more_ */
-    public static final String OUTPUT_GROUP_RESOURCE = "output.resource";
+    public static final String OUTPUT_GROUP_RESOURCE = "resource";
 
     /** _more_ */
     public static final String OUTPUT_GROUP_BROWSE = "output.browse";

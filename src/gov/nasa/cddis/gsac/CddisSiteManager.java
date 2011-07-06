@@ -581,7 +581,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
 
         try {
             List<Capability> capabilities = new ArrayList<Capability>();
-            addDefaultSiteCapabilities(capabilities);
+            addDefaultCapabilities(capabilities);
 
             String[][]       regions      = {
                 { "AF", "Africa" }, { "ANT", "Antarctica" },

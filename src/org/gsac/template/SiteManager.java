@@ -282,7 +282,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
         //CHANGEME
         /*
           you can use the default site capabilities:
-          addDefaultSiteCapabilities(capabilities);
+          addDefaultCapabilities(capabilities);
           or add you own, e.g.:
           Add in an example fruit enumerated query capability
           String[]values = {"banana","apple","orange"};

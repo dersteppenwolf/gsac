@@ -66,7 +66,7 @@ public abstract class SiteManager extends GsacObjectManager {
      * @param repository the repository
      */
     public SiteManager(GsacRepository repository) {
-        super(repository);
+        super(repository, GsacSite.TYPE_SITE);
     }
 
 
@@ -253,7 +253,7 @@ public abstract class SiteManager extends GsacObjectManager {
      *
      * @param capabilities list of capabailities to add to
      */
-    public void addDefaultSiteCapabilities(List<Capability> capabilities) {
+    public void addDefaultCapabilities(List<Capability> capabilities) {
         String          help = HtmlOutputHandler.stringSearchHelp;
         Capability      siteCode;
         Capability      siteName;
@@ -307,10 +307,6 @@ public abstract class SiteManager extends GsacObjectManager {
      */
     public List<SiteGroup> doGetSiteGroups() {
         return new ArrayList<SiteGroup>();
-    }
-
-    public boolean canHandleQueryCapabilities(String type) {
-        return type.equals(CAPABILITIES_SITE);
     }
 
 

@@ -927,7 +927,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
         try {
             List<Capability> capabilities = new ArrayList<Capability>();
 
-            addDefaultResourceCapabilities(capabilities);
+            addDefaultCapabilities(capabilities);
 
             capabilities.add(new Capability(ARG_DORIS_SATELLITE,
                                             "DORIS Satellite",

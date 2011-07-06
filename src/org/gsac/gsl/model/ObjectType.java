@@ -58,7 +58,9 @@ public class ObjectType {
     }
 
     public boolean equals(Object o) {
-        return id.equals(o);
+        if(!(o instanceof ObjectType))return  false;
+        ObjectType that = (ObjectType) o;
+        return id.equals(that.id);
     }
 
 }

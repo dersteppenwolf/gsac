@@ -1183,19 +1183,18 @@ public class GsacRepository implements GsacConstants {
             }
             String what = "other";
 
+            //TODO: check the GsacObjectManagers here instead of explicitly looking at each type
             if (uri.indexOf(URL_SITE_BASE) >= 0) {
                 //site request
                 what = URL_SITE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
-		request.setObjectType(GsacSite.TYPE_SITE);
                 outputHandler.handleRequest(GsacSite.TYPE_SITE, request);
             } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
                 //resource request
                 what = URL_RESOURCE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
-		request.setObjectType(GsacResource.TYPE_RESOURCE);
                 outputHandler.handleRequest(GsacResource.TYPE_RESOURCE,request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
@@ -1792,6 +1791,9 @@ public class GsacRepository implements GsacConstants {
         GsacObjectManager gom = objectManagerMap.get(type);
         if(gom == null) {
             gom = doMakeObjectManager(type);
+            if(gom==null) {
+                throw new IllegalArgumentException("Unknown object type:" + type.getType());
+            }
             addObjectManager(type, gom);
         }
         return gom;
@@ -2125,16 +2127,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-    /**
-     * _more_
-     *
-     * @param site _more_
-     *
-     * @return _more_
-     */
-    public String getRemoteSiteUrl(GsacSite site) {
-        return "";
-    }
 
     /**
      * _more_

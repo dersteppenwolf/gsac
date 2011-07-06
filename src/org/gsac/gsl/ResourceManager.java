@@ -56,7 +56,7 @@ public abstract class ResourceManager extends GsacObjectManager {
      * @param repository the repository
      */
     public ResourceManager(GsacRepository repository) {
-        super(repository);
+        super(repository, GsacResource.TYPE_RESOURCE);
     }
 
 
@@ -182,8 +182,7 @@ public abstract class ResourceManager extends GsacObjectManager {
      *
      * @param capabilities _more_
      */
-    public void addDefaultResourceCapabilities(
-            List<Capability> capabilities) {
+    public void addDefaultCapabilities(List<Capability> capabilities) {
         Capability cap;
         Capability[] dflt = { initCapability(
                                 new Capability(
@@ -243,11 +242,6 @@ public abstract class ResourceManager extends GsacObjectManager {
             appendSearchCriteria(msgBuff, "Publish date&lt;=",
                                  "" + format(dateRange[1]));
         }
-    }
-
-
-    public boolean canHandleQueryCapabilities(String type) {
-        return type.equals(CAPABILITIES_RESOURCE);
     }
 
 }

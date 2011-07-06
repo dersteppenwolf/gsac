@@ -54,14 +54,11 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
     private TTLCache<Object, GsacObject> objectCache =
         new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
 
+    private ObjectType type;
 
-    /**
-     * ctor
-     *
-     * @param repository the repository
-     */
-    public GsacObjectManager(GsacRepository repository) {
+    public GsacObjectManager(GsacRepository repository, ObjectType type) {
         super(repository);
+        this.type = type;
     }
 
 
@@ -91,6 +88,8 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
             throws Exception {
         doGetFullMetadata(gsacObject);
     }
+
+
 
     /**
      * add the full metadata to the object
@@ -162,6 +161,9 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
 
 
 
+    public void addDefaultCapabilities(List<Capability> capabilities) {
+    }
+
     /**
      * Get the extra site search capabilities.  Derived classes should override this
      *
@@ -173,9 +175,30 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
     }
 
     public boolean canHandleQueryCapabilities(String type) {
+        if(this.type!=null) {
+            return this.type.getType().equals(type);
+        }
         return false;
     }
 
+
+    /**
+       Set the Type property.
+
+       @param value The new value for Type
+    **/
+    public void setType (ObjectType value) {
+	type = value;
+    }
+
+    /**
+       Get the Type property.
+
+       @return The Type
+    **/
+    public ObjectType getType () {
+	return type;
+    }
 
 
 }

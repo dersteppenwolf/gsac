@@ -96,7 +96,6 @@ public class GsacRequest implements GsacConstants {
     /** _more_ */
     private Hashtable httpHeader = new Hashtable();
 
-    private ObjectType objectType;
 
     /**
      * ctor
@@ -993,25 +992,6 @@ public class GsacRequest implements GsacConstants {
     public boolean siteIdDefined() {
         return defined(ARG_SITEID);
     }
-
-    /**
-       Set the ObjectType property.
-
-       @param value The new value for ObjectType
-    **/
-    public void setObjectType (ObjectType value) {
-	objectType = value;
-    }
-
-    /**
-       Get the ObjectType property.
-
-       @return The ObjectType
-    **/
-    public ObjectType getObjectType () {
-	return objectType;
-    }
-
 
 
 }

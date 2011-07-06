@@ -220,9 +220,9 @@ public class RamaddaGsacRepository extends GsacRepository {
     public List<Capability> doGetCapabilities(String type) {
         List<Capability> capabilities = new ArrayList<Capability>();
         if (type.equals(CAPABILITIES_SITE)) {
-            ((SiteManager)getObjectManager(GsacSite.TYPE_SITE)).addDefaultSiteCapabilities(capabilities);
+            getObjectManager(GsacSite.TYPE_SITE).addDefaultCapabilities(capabilities);
         } else if (type.equals(CAPABILITIES_RESOURCE)) {
-            ((ResourceManager)getObjectManager(GsacResource.TYPE_RESOURCE)).addDefaultResourceCapabilities(capabilities);
+            getObjectManager(GsacResource.TYPE_RESOURCE).addDefaultCapabilities(capabilities);
         }
         return capabilities;
     }
