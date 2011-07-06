@@ -70,18 +70,6 @@ public abstract class SiteManager extends GsacObjectManager {
     }
 
 
-
-    /**
-     * Get the site from the database. This needs to be overwritten by any derived class.
-     *
-     * @param siteId site id.
-     *
-     * @return the site or null if not found
-     *
-     * @throws Exception on badness
-     */
-    public abstract GsacSite getSite(String siteId) throws Exception;
-
     /**
      * Handle the site request. A derived class can overwrite this method to do
      * whatever they feel like doing. If not overwritten then this method
@@ -252,41 +240,6 @@ public abstract class SiteManager extends GsacObjectManager {
     }
 
 
-
-    /**
-     * get all of the metadata for the given site
-     *
-     *
-     * @param level Specifies the depth of metadata that is being requeste - note: this is stupid and will change
-     * @param gsacSite site
-     *
-     * @throws Exception On badness
-     */
-    public void doGetSiteMetadata(int level, GsacSite gsacSite)
-            throws Exception {
-        doGetFullSiteMetadata(gsacSite);
-    }
-
-    /**
-     * add the full site metadata to the site
-     *
-     * @param gsacSite the site
-     *
-     * @throws Exception On badness
-     */
-    public void doGetFullSiteMetadata(GsacSite gsacSite) throws Exception {}
-
-    /**
-     * Get the extra site search capabilities.  Derived classes should override this
-     *
-     * @return site search capabilities
-     */
-    public List<Capability> doGetSiteQueryCapabilities() {
-        //default is to do nothing
-        return new ArrayList<Capability>();
-    }
-
-
     /**
      * Helper method to create default site query capabilities.
      * This adds capabilities for:<ul>
@@ -354,6 +307,10 @@ public abstract class SiteManager extends GsacObjectManager {
      */
     public List<SiteGroup> doGetSiteGroups() {
         return new ArrayList<SiteGroup>();
+    }
+
+    public boolean canHandleQueryCapabilities(String type) {
+        return type.equals(CAPABILITIES_SITE);
     }
 
 

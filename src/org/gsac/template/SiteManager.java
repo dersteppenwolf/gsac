@@ -172,18 +172,18 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
     /**
      * CHANGEME
-     * Get the site from the database
+     * Get the object from the database
      *
-     * @param siteId site id. This isn't the site code but actually the monument id
+     * @param objectId object id. This isn't the object code but actually the monument id
      *
-     * @return the site or null if not found
+     * @return the object or null if not found
      *
      * @throws Exception on badness
      */
-    public GsacSite getSite(String siteId) throws Exception {
+    public GsacObject getObject(String objectId) throws Exception {
         /* e.g.:
         Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
-                                  new Integer(siteId).intValue());
+                                  new Integer(objectId).intValue());
         Statement statement = getDatabaseManager().select(
                                                           getSiteSelectColumns(), 
                                                           clause.getTableNames(), clause);
@@ -264,11 +264,11 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     /**
      * get all of the metadata for the given site
      *
-     * @param gsacSite site
+     * @param gsacObject object
      *
      * @throws Exception On badness
      */
-    public void doGetSiteMetadata(int level, GsacSite gsacSite) throws Exception {
+    public void doGetMetadata(int level, GsacObject gsacObject) throws Exception {
         //The unavcorepository adds in GnssEquipment metadata and other things
     }
 
@@ -277,7 +277,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @return site search capabilities
      */
-    public List<Capability> doGetSiteQueryCapabilities() {
+    public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
         //CHANGEME
         /*

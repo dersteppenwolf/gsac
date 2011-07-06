@@ -155,7 +155,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         if(request.defined(ARG_SITE_ID)) {
             for (String siteId : (List<String>) (List<String>) request.getList(ARG_SITE_ID)) {
                 appendSearchCriteria(msgBuff, "Site Id=", siteId);
-                GsacSite site = getSite(siteId);
+                GsacSite site = (GsacSite) getObject(siteId);
                 if(site!=null) {
                     response.addObject(site);
                 }
@@ -462,7 +462,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @throws Exception on badness
      */
-    public GsacSite getSite(String siteId) throws Exception {
+    public GsacObject getObject(String siteId) throws Exception {
         List<String> tuple = CddisType.getTypeAndFields(siteId);
         CddisType    type  = CddisType.getType(tuple.get(0));
         String       name  = tuple.get(1);
@@ -562,7 +562,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public void doGetSiteMetadata(int level, GsacSite gsacSite)
+    public void doGetMetadata(int level, GsacObject gsacSite)
             throws Exception {
         //The unavcorepository adds in GnssEquipment metadata and other things
     }
@@ -573,7 +573,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @return site search capabilities
      */
-    public List<Capability> doGetSiteQueryCapabilities() {
+    public List<Capability> doGetQueryCapabilities() {
         Capability capability;
 
         String[]   values;

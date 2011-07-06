@@ -81,7 +81,8 @@ public class FederatedResourceManager extends ResourceManager {
         if (request.defined(ARG_RESOURCE_ID)) {
             List<String> ids = request.get(ARG_RESOURCE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getResource(request,
+                response.addObject(getRepository().getObject(request,
+                                                             GsacResource.TYPE_RESOURCE,
                         id));
             }
             return;
@@ -100,7 +101,7 @@ public class FederatedResourceManager extends ResourceManager {
      *
      * @throws Exception _more_
      */
-    public void doGetResourceMetadata(int level, GsacResource gsacResource)
+    public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {}
 
 
@@ -113,7 +114,7 @@ public class FederatedResourceManager extends ResourceManager {
      * @return _more_
      * @throws Exception _more_
      */
-    public GsacResource getResource(String resourceId) throws Exception {
+    public GsacObject getObject(String resourceId) throws Exception {
         List<String> pair = StringUtil.splitUpTo(resourceId, ":", 2);
         String       id = pair.get(1);
         String baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
@@ -156,7 +157,7 @@ public class FederatedResourceManager extends ResourceManager {
      * @return sitemanager
      */
     public FederatedSiteManager getSiteManager() {
-        return (FederatedSiteManager) getRepository().getSiteManager();
+        return (FederatedSiteManager) getRepository().getObjectManager(GsacSite.TYPE_SITE);
     }
 
 
@@ -165,7 +166,7 @@ public class FederatedResourceManager extends ResourceManager {
      *
      * @return _more_
      */
-    public List<Capability> doGetResourceQueryCapabilities() {
+    public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
         HashSet          seen         = new HashSet();
         for (GsacRepositoryInfo info :

@@ -75,19 +75,6 @@ public abstract class ResourceManager extends GsacObjectManager {
 
 
     /**
-     * Create the GsacResource for the given id
-     *
-     * @param resourceId resource id
-     *
-     * @return GsacResource or null if none found
-     *
-     * @throws Exception on badness
-     */
-    public abstract GsacResource getResource(String resourceId)
-     throws Exception;
-
-
-    /**
      * Create a resource from the given results
      *
      * @param results result set
@@ -259,6 +246,8 @@ public abstract class ResourceManager extends GsacObjectManager {
     }
 
 
-
+    public boolean canHandleQueryCapabilities(String type) {
+        return type.equals(CAPABILITIES_RESOURCE);
+    }
 
 }

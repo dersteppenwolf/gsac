@@ -1298,7 +1298,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 if ( !request.defined(ARG_METADATA_LEVEL)) {
                     request.put(ARG_METADATA_LEVEL, "10");
                 }
-                getRepository().getSiteMetadata(request, site);
+                getRepository().getMetadata(request, site);
             }
         } catch (Exception exc) {
             throw new RuntimeException(exc);

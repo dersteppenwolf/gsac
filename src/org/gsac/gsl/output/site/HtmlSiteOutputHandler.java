@@ -157,7 +157,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             System.err.println("html site request:" + (t2 - t1) + " "
                                + (t3 - t2));
         } else if (request.defined(ARG_SITEID)) {
-            GsacSite site = getRepository().getSite(request,
+            GsacSite site = (GsacSite)getRepository().getObject(request,
+                                                      GsacSite.TYPE_SITE,
                                 request.get(ARG_SITEID, (String) null));
             handleSingleSite(request, response, sb, site);
         } else {

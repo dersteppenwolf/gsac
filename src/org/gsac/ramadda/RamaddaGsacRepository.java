@@ -155,20 +155,6 @@ public class RamaddaGsacRepository extends GsacRepository {
         return response.getSites().get(0);
     }
 
-    /**
-     * _more_
-     *
-     * @param request _more_
-     * @param resourceId _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception _more_
-     */
-    public GsacResource getResource(GsacRequest request, String resourceId)
-            throws Exception {
-        return null;
-    }
 
 
     /**
@@ -191,7 +177,7 @@ public class RamaddaGsacRepository extends GsacRepository {
 
         StringBuffer msgBuff = new StringBuffer();
         if (request.defined(GsacArgs.ARG_SITE_CODE)) {
-            getSiteManager().addStringSearch(
+            getObjectManager(GsacSite.TYPE_SITE).addStringSearch(
                 request, GsacArgs.ARG_SITE_CODE,
                 GsacArgs.ARG_SITE_CODE_SEARCHTYPE, msgBuff, "Site Code",
                 GsacSiteTypeHandler.GSAC_COL_SITEID, clauses);
@@ -199,14 +185,14 @@ public class RamaddaGsacRepository extends GsacRepository {
 
         if (request.defined(GsacArgs.ARG_SITE_NAME)) {
             doJoin = true;
-            getSiteManager().addStringSearch(
+            getObjectManager(GsacSite.TYPE_SITE).addStringSearch(
                 request, GsacArgs.ARG_SITE_NAME,
                 GsacArgs.ARG_SITE_CODE_SEARCHTYPE, msgBuff, "Site Name",
                 Tables.ENTRIES.COL_DESCRIPTION, clauses);
         }
 
         List<Clause> areaClauses = new ArrayList<Clause>();
-        if (getSiteManager().addBBOXSearchCriteria(request, areaClauses,
+        if (getObjectManager(GsacSite.TYPE_SITE).addBBOXSearchCriteria(request, areaClauses,
                 Tables.ENTRIES.COL_SOUTH, Tables.ENTRIES.COL_WEST, msgBuff)) {
             clauses.addAll(areaClauses);
             doJoin = true;
@@ -219,7 +205,7 @@ public class RamaddaGsacRepository extends GsacRepository {
                                     GsacSiteTypeHandler.GSAC_COL_ID));
         }
         System.err.println(clauses);
-        getSiteManager().setSearchCriteriaMessage(response, msgBuff);
+        getObjectManager(GsacSite.TYPE_SITE).setSearchCriteriaMessage(response, msgBuff);
         processSiteRequest(response, clauses, tables);
     }
 
@@ -234,9 +220,9 @@ public class RamaddaGsacRepository extends GsacRepository {
     public List<Capability> doGetCapabilities(String type) {
         List<Capability> capabilities = new ArrayList<Capability>();
         if (type.equals(CAPABILITIES_SITE)) {
-            getSiteManager().addDefaultSiteCapabilities(capabilities);
+            ((SiteManager)getObjectManager(GsacSite.TYPE_SITE)).addDefaultSiteCapabilities(capabilities);
         } else if (type.equals(CAPABILITIES_RESOURCE)) {
-            getResourceManager().addDefaultResourceCapabilities(capabilities);
+            ((ResourceManager)getObjectManager(GsacResource.TYPE_RESOURCE)).addDefaultResourceCapabilities(capabilities);
         }
         return capabilities;
     }
@@ -291,13 +277,16 @@ public class RamaddaGsacRepository extends GsacRepository {
      *
      * @throws Exception _more_
      */
-    public GsacSite doGetSite(String siteId) throws Exception {
-        Entry entry = getRepository().getEntryManager().getEntry(
-                          getRepository().getTmpRequest(), siteId);
-        if (entry == null) {
-            return null;
+    public GsacObject doGetObject(ObjectType type, String siteId) throws Exception {
+        if(type.equals(GsacSite.TYPE_SITE)) {
+            Entry entry = getRepository().getEntryManager().getEntry(
+                                                                     getRepository().getTmpRequest(), siteId);
+            if (entry == null) {
+                return null;
+            }
+            return makeSite(entry);
         }
-        return makeSite(entry);
+        return null;
     }
 
     /**

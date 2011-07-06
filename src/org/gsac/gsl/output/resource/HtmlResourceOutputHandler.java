@@ -137,8 +137,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_RESOURCEID)) {
-            GsacResource resource = getRepository().getResource(request,
-                                        request.get(ARG_RESOURCEID, ""));
+            GsacResource resource = (GsacResource)getRepository().getObject(request,
+                                                                            GsacResource.TYPE_RESOURCE,
+                                                                            request.get(ARG_RESOURCEID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -416,8 +417,9 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             for (GsacResource resource : response.getResources()) {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
-                    site = getRepository().getSite(request,
-                            resource.getSiteID());
+                    site = (GsacSite) getRepository().getObject(request,
+                                                              GsacSite.TYPE_SITE,
+                                                              resource.getSiteID());
                 }
                 if (cnt == 0) {
                     //                    pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),

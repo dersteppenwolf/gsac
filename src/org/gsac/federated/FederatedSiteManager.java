@@ -99,7 +99,7 @@ public class FederatedSiteManager extends SiteManager {
         if (request.defined(ARG_SITE_ID)) {
             List<String> ids = request.get(ARG_SITE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getSite(request, id));
+                response.addObject(getRepository().getObject(request, GsacSite.TYPE_SITE,id));
             }
             return;
         }
@@ -118,7 +118,7 @@ public class FederatedSiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacSite getSite(String siteId) throws Exception {
+    public GsacObject getObject(String siteId) throws Exception {
         List<String> pair    = StringUtil.splitUpTo(siteId, ":", 2);
         String       id      = pair.get(1);
         String       baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
@@ -149,12 +149,12 @@ public class FederatedSiteManager extends SiteManager {
      *
      *
      * @param level _more_
-     * @param gsacSite site
      *
      * @throws Exception On badness
      */
-    public void doGetSiteMetadata(int level, GsacSite gsacSite)
+    public void doGetMetadata(int level, GsacObject  gsacObject)
             throws Exception {
+        //TODO: what to do here
         //The unavcorepository adds in GnssEquipment metadata and other things
     }
 
@@ -164,7 +164,7 @@ public class FederatedSiteManager extends SiteManager {
      *
      * @return site search capabilities
      */
-    public List<Capability> doGetSiteQueryCapabilities() {
+    public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
         HashSet          seen         = new HashSet();
         for (GsacRepositoryInfo info :

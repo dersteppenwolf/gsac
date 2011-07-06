@@ -113,7 +113,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         List<GsacSite> sites = response.getSites();
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
-            getRepository().getSiteManager().doGetFullSiteMetadata(site);
+            getRepository().doGetFullMetadata(-1, site);
             //Add the various content areas
             addFormInformation(pw);
             addSiteIdentification(pw, site);

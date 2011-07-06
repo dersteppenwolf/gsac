@@ -164,16 +164,13 @@ public class GsacRepository implements GsacConstants {
 
     private Hashtable<String, GsacObjectManager> objectManagerMap = new Hashtable<String, GsacObjectManager>();
 
+    private List<GsacObjectManager> objectManagers = new ArrayList<GsacObjectManager>();
+
     /** the site manager */
     private SiteManager siteManager;
 
     /** the resource manager */
     private ResourceManager resourceManager;
-
-
-    /** site cache */
-    private TTLCache<Object, GsacSite> siteCache =
-        new TTLCache<Object, GsacSite>(TTLCache.MS_IN_A_DAY);
 
     /** caches site group and types, etc. */
     private TTLCache<String, Object> cache =
@@ -213,8 +210,6 @@ public class GsacRepository implements GsacConstants {
     private GsacRepositoryInfo myInfo;
 
 
-
-
     /** Keeps track of the number of service requests for the stats page */
     private int numServiceRequests = 0;
 
@@ -233,13 +228,9 @@ public class GsacRepository implements GsacConstants {
     /** All the vocabularies */
     private List<Vocabulary> vocabularyList = new ArrayList<Vocabulary>();
 
-
-
-
     /** map of ouput group id to output group */
     private Hashtable<String, OutputGroup> outputs = new Hashtable<String,
                                                          OutputGroup>();
-
 
 
     /**
@@ -401,9 +392,9 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
+        getObjectManager(GsacSite.TYPE_SITE);
+        getObjectManager(GsacResource.TYPE_RESOURCE);
 
-        objectManagerMap.put(GsacSite.TYPE_SITE.getType(), getSiteManager());
-        objectManagerMap.put(GsacResource.TYPE_RESOURCE.getType(), getResourceManager());
 
         //TODO: put the specification of the output handlers into a properties or xml file
         htmlOutputHandler = new HtmlSiteOutputHandler(this);
@@ -1101,70 +1092,6 @@ public class GsacRepository implements GsacConstants {
         return null;
     }
 
-
-    /**
-     * Get the site manager. If not created yet this method calls the factory
-     * method doMakeSiteManager
-     *
-     * @return The site manager
-     */
-    public SiteManager getSiteManager() {
-        if (siteManager == null) {
-            siteManager = doMakeSiteManager();
-        }
-        return siteManager;
-    }
-
-
-    /**
-     * Factory method to create the site manager. Derived classes should
-     * overwrite this method if they want to make use of the site manager facility
-     *
-     * @return the site manager
-     */
-    public SiteManager doMakeSiteManager() {
-        return new SiteManager(this) {
-            public GsacSite getSite(String siteId) throws Exception {
-                return null;
-            }
-        };
-    }
-
-
-    /**
-     * Get the resource manager. If not created yet this method calls the factory
-     * method doMakeResourceManager
-     *
-     * @return The resource manager
-     */
-    public ResourceManager getResourceManager() {
-        if (resourceManager == null) {
-            resourceManager = doMakeResourceManager();
-        }
-        return resourceManager;
-    }
-
-    /**
-     * Factory method to create the resource manager. Derived classes should
-     * overwrite this method if they want to make use of the resource manager facility
-     *
-     * @return the resource manager
-     */
-    public ResourceManager doMakeResourceManager() {
-        return new ResourceManager(this) {
-            public void handleRequest(GsacRequest request,
-                    GsacResponse response)
-                    throws Exception {}
-            public GsacResource getResource(String resourceId)
-                    throws Exception {
-                return null;
-            }
-        };
-    }
-
-
-
-
     /**
      * translate the given phrase. use the msgProperties
      *
@@ -1507,7 +1434,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void processRequest(ObjectType objectType, GsacRequest request, GsacResponse response)
             throws Exception {
-        GsacObjectManager gom = objectManagerMap.get(objectType.getType());
+        GsacObjectManager gom = getObjectManager(objectType);
         if (gom!= null) {
             gom.handleRequest(request, response);
             return;
@@ -1525,49 +1452,6 @@ public class GsacRepository implements GsacConstants {
         return htmlOutputHandler;
     }
 
-
-
-    /**
-     * This method will first look in the local siteCache for the site.
-     * If not found it calls doGetSite which should be overwritten by derived classes
-     *
-     * @param siteId site id
-     *
-     * @return The site or null if not found
-     *
-     */
-    public GsacSite getSiteFromCache(String siteId) {
-        return siteCache.get(siteId);
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param request the request
-     * @param siteId _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    public GsacSite getSite(GsacRequest request, String siteId)
-            throws Exception {
-        GsacSite site = getSiteFromCache(siteId);
-        if (site != null) {
-            return site;
-        }
-        site = doGetSite(siteId);
-        //Cache the dummy site
-        if ((site == null) && shouldCacheSites()) {
-            cacheSite(new GsacSite(siteId, "", "", 0, 0, 0));
-        }
-
-        if ((site != null) && shouldCacheSites()) {
-            cacheSite(site);
-        }
-        return site;
-    }
 
     /**
      * This reads and processes  a properties file and returns a list of IdLabel objecs
@@ -1875,6 +1759,75 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    public void addObjectManager(ObjectType type, GsacObjectManager gom) {
+        objectManagerMap.put(type.getType(), gom);
+        objectManagers.add(gom);
+    }
+
+
+    public GsacObjectManager doMakeObjectManager(ObjectType type) {
+        if(type.equals(GsacSite.TYPE_SITE)) {
+            return new SiteManager(this) {
+                public GsacObject getObject(String objectId) throws Exception {
+                    return null;
+                }
+            };
+        }
+        if(type.equals(GsacResource.TYPE_RESOURCE)) {
+            return new ResourceManager(this) {
+                public void handleRequest(GsacRequest request,
+                                          GsacResponse response)
+                    throws Exception {}
+                public GsacObject getObject(String resourceId)
+                    throws Exception {
+                    return null;
+                }
+            };
+        }
+        return null;
+    }
+
+
+    public GsacObjectManager getObjectManager(ObjectType type) {
+        GsacObjectManager gom = objectManagerMap.get(type);
+        if(gom == null) {
+            gom = doMakeObjectManager(type);
+            addObjectManager(type, gom);
+        }
+        return gom;
+    }
+
+    /**
+     * _more_
+     *
+     * @param request the request
+     * @param objectId _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception On badness
+     */
+    public GsacObject getObject(GsacRequest request, ObjectType type, String objectId)
+            throws Exception {
+        GsacObjectManager gom = getObjectManager(type);
+        GsacObject object =  gom.getObjectFromCache(objectId);
+        if (object != null) {
+            return object;
+        }
+        object = doGetObject(type, objectId);
+        //Cache the dummy object
+        //        if (object == null) {
+        //            gom.cacheObject(new GsacSite(siteId, "", "", 0, 0, 0));
+        //        }
+
+        if (object != null) {
+            gom.cacheObject(object);
+        }
+        return object;
+    }
+
+
+
     /**
      * This should be overwritten by derived classes to create the site
      *
@@ -1884,165 +1837,64 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception on badnesss
      */
-    public GsacSite doGetSite(String siteId) throws Exception {
-        if (getSiteManager() != null) {
-            return getSiteManager().getSite(siteId);
-        }
-        notImplemented("Derived class needs to implement doGetSite");
-        return null;
+    public GsacObject doGetObject(ObjectType type, String siteId) throws Exception {
+        GsacObjectManager gom = getObjectManager(type);
+        return gom.getObject(siteId);
     }
 
     /**
      * This gets called by OutputHandlers when they need all of the metadata for a site
      * If the given site object has all of its metadata already then this method just returns.
-     * Else the method doGetFillSiteMetadata is called. A repository implementation can overwrite
+     * Else the method doGetFillMetadata is called. A repository implementation can overwrite
      * this method to add the full metadata to the site
      *
      *
      * @param request the request
-     * @param gsacSite  The site
      *
      * @throws Exception On badness
      */
-    public void getSiteMetadata(GsacRequest request, GsacSite gsacSite)
+    public void getMetadata(GsacRequest request, GsacObject gsacObject)
         throws Exception {
         int level = request.get(ARG_METADATA_LEVEL, 1);
-        if (gsacSite.getMetadataLevel() >= level) {
+        if (gsacObject.getMetadataLevel() >= level) {
             return;
         }
-        doGetFullSiteMetadata(level, gsacSite);
-        gsacSite.setMetadataLevel(level);
+        doGetFullMetadata(level, gsacObject);
+        gsacObject.setMetadataLevel(level);
     }
 
 
 
-    /**
-     * This gets called to retrieve the full metadata for the resource
-     *
-     * @param request the request
-     * @param gsacResource The resource
-     *
-     * @throws Exception On badness
-     */
-    public void getResourceMetadata(GsacRequest request,
-                                    GsacResource gsacResource)
-            throws Exception {
-        int level = request.get(ARG_METADATA_LEVEL, 1);
-        if (gsacResource.getMetadataLevel() >= level) {
-            return;
-        }
-        doGetFullResourceMetadata(level, gsacResource);
-        gsacResource.setMetadataLevel(level);
-    }
-
 
 
     /**
-     * Gets called to add the full metadata to the site.
-     * If there is a sitemanager then this is just a pass through
+     * Gets called to add the full metadata to the object.
+     * If there is a objectmanager then this is just a pass through
      * to it.
      *
      *
      * @param level For now describes the level of detail wanted for the given metadata.
      * We need to revamp that and maybe use a string name for the metadata group
-     * @param gsacSite  The site
      *
      * @throws Exception On badness
      */
-    public void doGetFullSiteMetadata(int level, GsacSite gsacSite)
+    public void doGetFullMetadata(int level, GsacObject gsacObject)
             throws Exception {
-        if (getSiteManager() != null) {
-            getSiteManager().doGetSiteMetadata(level, gsacSite);
+        GsacObjectManager gom = getObjectManager(gsacObject.getObjectType());
+        if (gom!= null) {
+            gom.doGetMetadata(level, gsacObject);
         }
-    }
-
-
-    /**
-     * Gets called to add the full metadata to the resource.
-     * If there is a resourcemanager then this is just a pass through
-     * to it.
-     *
-     *
-     * @param level For now describes the level of detail wanted for the given metadata.
-     * We need to revamp that and maybe use a string name for the metadata group
-     * @param gsacResource  The resource
-     *
-     * @throws Exception On badness
-     */
-    public void doGetFullResourceMetadata(int level,
-                                          GsacResource gsacResource)
-            throws Exception {
-        if (getResourceManager() != null) {
-            getResourceManager().doGetResourceMetadata(level, gsacResource);
-        }
-    }
-
-    /**
-     * Put the given site into the siteCache
-     *
-     * @param site the site to cache
-     */
-    public void cacheSite(GsacSite site) {
-        cacheSite(site.getSiteId(), site);
-    }
-
-    /**
-     * Put the given site into the siteCache with the given cache key
-     *
-     * @param key Key to cache with
-     * @param site the site to cache
-     */
-    public void cacheSite(String key, GsacSite site) {
-        siteCache.put(key, site);
-    }
-
-    /**
-     * retrieve the site from the cache
-     *
-     * @param key site key
-     *
-     * @return site or null
-     */
-    public GsacSite getCachedSite(String key) {
-        return siteCache.get(key);
     }
 
     /**
      * Clear the site cache
      */
     public void clearCache() {
-        siteCache = new TTLCache<Object, GsacSite>(TTLCache.MS_IN_A_DAY);
         cache     = new TTLCache<String, Object>(TTLCache.MS_IN_AN_HOUR * 6);
-    }
-
-    /**
-     * Are sites cachable
-     *
-     * @return default true
-     */
-    public boolean shouldCacheSites() {
-        return true;
+        //TODO: clear the cache in the goms
     }
 
 
-    /**
-     * _more_
-     *
-     * @param request the request
-     * @param resourceId _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception On badness
-     */
-    public GsacResource getResource(GsacRequest request, String resourceId)
-            throws Exception {
-        if (getResourceManager() != null) {
-            return getResourceManager().getResource(resourceId);
-        }
-        notImplemented("Derived class needs to implement doGetResource");
-        return null;
-    }
 
 
     /**
@@ -2053,22 +1905,13 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public List<Capability> doGetCapabilities(String type) {
-        if (type.equals(CAPABILITIES_SITE)) {
-            if (getSiteManager() != null) {
-                return getSiteManager().doGetSiteQueryCapabilities();
+        for(GsacObjectManager gom: objectManagers) {
+            if(gom.canHandleQueryCapabilities(type)) {
+                return gom.doGetQueryCapabilities();
             }
-        } else if (type.equals(CAPABILITIES_RESOURCE)) {
-            if (getResourceManager() != null) {
-                return getResourceManager().doGetResourceQueryCapabilities();
-            }
-            return new ArrayList<Capability>();
-        }
+        } 
         return new ArrayList<Capability>();
     }
-
-
-
-
 
     /**
      * _more_

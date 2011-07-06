@@ -70,25 +70,17 @@ public class CddisRepository extends GsacRepositoryImpl implements GsacConstants
         return dbm;
     }
 
-
-    /**
-     * Factory method to create the SiteManager
-     *
-     * @return site manager
-     */
-    public SiteManager doMakeSiteManager() {
-        return new CddisSiteManager(this);
+    public GsacObjectManager doMakeObjectManager(ObjectType type) {
+        if(type.equals(GsacSite.TYPE_SITE)) {
+            return new CddisSiteManager(this);
+        }
+        if(type.equals(GsacResource.TYPE_RESOURCE)) {
+            return new CddisResourceManager(this);
+        }
+        return null;
     }
 
 
-    /**
-     * Factory method to create the ResourceManager
-     *
-     * @return resource manager
-     */
-    public ResourceManager doMakeResourceManager() {
-        return new CddisResourceManager(this);
-    }
 
 
     /*

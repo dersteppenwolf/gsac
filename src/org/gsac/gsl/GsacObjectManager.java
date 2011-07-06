@@ -50,6 +50,11 @@ import java.util.List;
  */
 public abstract class GsacObjectManager extends GsacRepositoryManager {
 
+    /** site cache */
+    private TTLCache<Object, GsacObject> objectCache =
+        new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
+
+
     /**
      * ctor
      *
@@ -71,5 +76,106 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
     public abstract void handleRequest(GsacRequest request,
             GsacResponse response)
      throws Exception;
+
+
+    /**
+     * get all of the metadata for the given site
+     *
+     *
+     * @param level Specifies the depth of metadata that is being requeste - note: this is stupid and will change
+     * @param gsacSite site
+     *
+     * @throws Exception On badness
+     */
+    public void doGetMetadata(int level, GsacObject gsacObject)
+            throws Exception {
+        doGetFullMetadata(gsacObject);
+    }
+
+    /**
+     * add the full metadata to the object
+     *
+     *
+     * @throws Exception On badness
+     */
+    public void doGetFullMetadata(GsacObject gsacObject) throws Exception {}
+
+    public abstract GsacObject getObject(String objectId) throws Exception;
+
+    /**
+     * This method will first look in the local objectCache for the object.
+     * If not found it calls doGetObject which should be overwritten by derived classes
+     *
+     * @param objectId object id
+     *
+     * @return The object or null if not found
+     *
+     */
+    public GsacObject getObjectFromCache(String objectId) {
+        return objectCache.get(objectId);
+    }
+
+
+    public void clearCache() {
+        objectCache = new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
+    }
+
+    /**
+     * Are sites cachable
+     *
+     * @return default true
+     */
+    public boolean shouldCacheObjects() {
+        return true;
+    }
+
+
+    /**
+     * Put the given object into the objectCache
+     *
+     */
+    public void cacheObject(GsacObject object) {
+        cacheObject(object.getId(), object);
+    }
+
+    /**
+     * Put the given object into the objectCache with the given cache key
+     *
+     * @param key Key to cache with
+     */
+    public void cacheObject(String key, GsacObject object) {
+        String type = object.getObjectType().getType();
+        objectCache.put(type+"_"+ key, object);
+    }
+
+    /**
+     * retrieve the site from the cache
+     *
+     * @param key site key
+     *
+     * @return site or null
+     */
+    public GsacObject getCachedObject(String key) {
+        return objectCache.get(key);
+    }
+
+
+
+
+    /**
+     * Get the extra site search capabilities.  Derived classes should override this
+     *
+     * @return site search capabilities
+     */
+    public List<Capability> doGetQueryCapabilities() {
+        //default is to do nothing
+        return new ArrayList<Capability>();
+    }
+
+    public boolean canHandleQueryCapabilities(String type) {
+        return false;
+    }
+
+
 
 }
