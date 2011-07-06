@@ -77,13 +77,16 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     /**
      * handle the request
      *
+     *
+     * @param type _more_
      * @param request the request
      * @param response the response to write to
      *
      *
      * @throws Exception on badness
      */
-    public void handleRequest(ObjectType type, GsacRequest request, GsacResponse response)
+    public void handleRequest(ObjectType type, GsacRequest request,
+                              GsacResponse response)
             throws Exception {
 
         StringBuffer sb = new StringBuffer();
@@ -109,7 +112,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      * @throws Exception _more_
      */
     public void handleRequestInner(GsacRequest request,
-				   GsacResponse response, StringBuffer sb)
+                                   GsacResponse response, StringBuffer sb)
             throws Exception {
         if ( !initHtml(request, response, sb)) {
             return;
@@ -149,7 +152,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
             */
             long t1 = System.currentTimeMillis();
-            getRepository().processRequest(GsacSite.TYPE_SITE, request, response);
+            getRepository().processRequest(GsacSite.TYPE_SITE, request,
+                                           response);
             long t2 = System.currentTimeMillis();
             checkMessage(request, response, sb);
             handleSiteList(request, response, sb);
@@ -157,8 +161,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             System.err.println("html site request:" + (t2 - t1) + " "
                                + (t3 - t2));
         } else if (request.defined(ARG_SITEID)) {
-            GsacSite site = (GsacSite)getRepository().getObject(request,
-                                                      GsacSite.TYPE_SITE,
+            GsacSite site = (GsacSite) getRepository().getObject(request,
+                                GsacSite.TYPE_SITE,
                                 request.get(ARG_SITEID, (String) null));
             handleSingleSite(request, response, sb, site);
         } else {

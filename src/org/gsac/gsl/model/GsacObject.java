@@ -68,6 +68,11 @@ public abstract class GsacObject {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public abstract ObjectType getObjectType();
 
     /**

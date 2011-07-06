@@ -67,13 +67,13 @@ public class UrlResourceOutputHandler extends StreamingOutputHandler {
      *
      * @param response The response
      * @param resource _more_
+     * @param object _more_
      */
-    public void processObject(GsacResponse response,
-                                GsacObject object) {
+    public void processObject(GsacResponse response, GsacObject object) {
         try {
-            GsacResource resource = (GsacResource) object;
-            PrintWriter pw        = response.getPrintWriter();
-            boolean     firstTime = !response.getHaveInitialized();
+            GsacResource resource  = (GsacResource) object;
+            PrintWriter  pw        = response.getPrintWriter();
+            boolean      firstTime = !response.getHaveInitialized();
             if (firstTime) {
                 response.startResponse(GsacResponse.MIME_TEXT);
             }

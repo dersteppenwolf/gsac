@@ -54,8 +54,15 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
     private TTLCache<Object, GsacObject> objectCache =
         new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
 
+    /** _more_          */
     private ObjectType type;
 
+    /**
+     * _more_
+     *
+     * @param repository _more_
+     * @param type _more_
+     */
     public GsacObjectManager(GsacRepository repository, ObjectType type) {
         super(repository);
         this.type = type;
@@ -71,7 +78,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * @throws Exception on badness
      */
     public abstract void handleRequest(GsacRequest request,
-            GsacResponse response)
+                                       GsacResponse response)
      throws Exception;
 
 
@@ -81,6 +88,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      *
      * @param level Specifies the depth of metadata that is being requeste - note: this is stupid and will change
      * @param gsacSite site
+     * @param gsacObject _more_
      *
      * @throws Exception On badness
      */
@@ -95,10 +103,21 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * add the full metadata to the object
      *
      *
+     *
+     * @param gsacObject _more_
      * @throws Exception On badness
      */
     public void doGetFullMetadata(GsacObject gsacObject) throws Exception {}
 
+    /**
+     * _more_
+     *
+     * @param objectId _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public abstract GsacObject getObject(String objectId) throws Exception;
 
     /**
@@ -115,6 +134,9 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
     }
 
 
+    /**
+     * _more_
+     */
     public void clearCache() {
         objectCache = new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
     }
@@ -132,6 +154,8 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
     /**
      * Put the given object into the objectCache
      *
+     *
+     * @param object _more_
      */
     public void cacheObject(GsacObject object) {
         cacheObject(object.getId(), object);
@@ -141,10 +165,11 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * Put the given object into the objectCache with the given cache key
      *
      * @param key Key to cache with
+     * @param object _more_
      */
     public void cacheObject(String key, GsacObject object) {
         String type = object.getObjectType().getType();
-        objectCache.put(type+"_"+ key, object);
+        objectCache.put(type + "_" + key, object);
     }
 
     /**
@@ -161,8 +186,12 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
 
 
 
-    public void addDefaultCapabilities(List<Capability> capabilities) {
-    }
+    /**
+     * _more_
+     *
+     * @param capabilities _more_
+     */
+    public void addDefaultCapabilities(List<Capability> capabilities) {}
 
     /**
      * Get the extra site search capabilities.  Derived classes should override this
@@ -174,8 +203,15 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
         return new ArrayList<Capability>();
     }
 
+    /**
+     * _more_
+     *
+     * @param type _more_
+     *
+     * @return _more_
+     */
     public boolean canHandleQueryCapabilities(String type) {
-        if(this.type!=null) {
+        if (this.type != null) {
             return this.type.getType().equals(type);
         }
         return false;
@@ -183,21 +219,21 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
 
 
     /**
-       Set the Type property.
-
-       @param value The new value for Type
-    **/
-    public void setType (ObjectType value) {
-	type = value;
+     *  Set the Type property.
+     *
+     *  @param value The new value for Type
+     */
+    public void setType(ObjectType value) {
+        type = value;
     }
 
     /**
-       Get the Type property.
-
-       @return The Type
-    **/
-    public ObjectType getType () {
-	return type;
+     *  Get the Type property.
+     *
+     *  @return The Type
+     */
+    public ObjectType getType() {
+        return type;
     }
 
 

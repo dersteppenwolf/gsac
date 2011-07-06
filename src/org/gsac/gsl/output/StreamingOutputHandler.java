@@ -83,7 +83,7 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest gsacRequest,
                              GsacResponse gsacResponse)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         gsacResponse.endResponse();
     }
 

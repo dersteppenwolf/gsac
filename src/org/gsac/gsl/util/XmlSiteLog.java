@@ -39,7 +39,7 @@ public class XmlSiteLog {
     /** _more_ */
     public static final String ATTR_XMLNS_REALTIME = "xmlns:realtime";
 
-    /** _more_          */
+    /** _more_ */
     public static final String ATTR_XMLNS_EQUIP = "xmlns:equip";
 
     /** _more_ */

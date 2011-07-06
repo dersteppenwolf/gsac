@@ -44,21 +44,45 @@ public class ObjectType {
     private String id;
 
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     */
     public ObjectType(String id) {
         this.id = id;
     }
-    
 
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getType() {
         return id;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public int hashCode() {
         return id.hashCode();
     }
 
+    /**
+     * _more_
+     *
+     * @param o _more_
+     *
+     * @return _more_
+     */
     public boolean equals(Object o) {
-        if(!(o instanceof ObjectType))return  false;
+        if ( !(o instanceof ObjectType)) {
+            return false;
+        }
         ObjectType that = (ObjectType) o;
         return id.equals(that.id);
     }

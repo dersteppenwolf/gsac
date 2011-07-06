@@ -41,6 +41,7 @@ import java.util.List;
  */
 public class GsacSite extends GsacObject implements Comparable {
 
+    /** _more_          */
     public static final ObjectType TYPE_SITE = new ObjectType("site");
 
     /** This is the site identifier that users are used to. e.g., P123 */
@@ -128,6 +129,11 @@ public class GsacSite extends GsacObject implements Comparable {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public ObjectType getObjectType() {
         return TYPE_SITE;
     }

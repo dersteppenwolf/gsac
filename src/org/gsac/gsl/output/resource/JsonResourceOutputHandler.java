@@ -76,8 +76,7 @@ public class JsonResourceOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleResult(GsacRequest request,
-                                     GsacResponse response)
+    public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_JSON);
         GsonBuilder gsonBuilder = new GsonBuilder();

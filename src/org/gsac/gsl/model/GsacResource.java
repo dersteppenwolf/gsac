@@ -39,6 +39,7 @@ import java.util.Date;
  */
 public class GsacResource extends GsacObject {
 
+    /** _more_          */
     public static final ObjectType TYPE_RESOURCE = new ObjectType("resource");
 
     /** _more_ */
@@ -131,6 +132,11 @@ public class GsacResource extends GsacObject {
         this.type        = type;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public ObjectType getObjectType() {
         return TYPE_RESOURCE;
     }

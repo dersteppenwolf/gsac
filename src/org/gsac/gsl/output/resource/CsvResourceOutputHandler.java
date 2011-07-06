@@ -66,9 +66,9 @@ public class CsvResourceOutputHandler extends StreamingOutputHandler {
      *
      * @param response The response
      * @param resource _more_
+     * @param object _more_
      */
-    public void processObject(GsacResponse response,
-                              GsacObject object) {
+    public void processObject(GsacResponse response, GsacObject object) {
         try {
             GsacResource resource = (GsacResource) object;
             //Its OK to do this every time because the response keeps track if it has started already

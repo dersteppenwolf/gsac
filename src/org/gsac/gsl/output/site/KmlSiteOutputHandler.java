@@ -86,13 +86,16 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
+     *
+     * @param type _more_
      * @param request the request
      * @param response the response to write to
      *
      *
      * @throws Exception on badness
      */
-    public void handleRequest(ObjectType type,GsacRequest request, GsacResponse response)
+    public void handleRequest(ObjectType type, GsacRequest request,
+                              GsacResponse response)
             throws Exception {
         String path = request.getRequestURI();
         //If the path does not end with .kml then send a redirect
@@ -107,7 +110,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer sb = new StringBuffer();
         response.startResponse(GsacResponse.MIME_KML);
-        getRepository().processRequest(GsacSite.TYPE_SITE,request, response);
+        getRepository().processRequest(GsacSite.TYPE_SITE, request, response);
         PrintWriter pw     = response.getPrintWriter();
         Element     root   = KmlUtil.kml("Site Search");
         Element     doc    = KmlUtil.document(root, "Sites", true);

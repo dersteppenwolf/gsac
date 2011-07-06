@@ -21,9 +21,11 @@
 package org.gsac.gsl;
 
 
+import org.gsac.gsl.model.*;
+
+
 import org.gsac.gsl.output.GsacOutputHandler;
 import org.gsac.gsl.util.Vocabulary;
-import org.gsac.gsl.model.*;
 
 
 import ucar.unidata.util.DateUtil;

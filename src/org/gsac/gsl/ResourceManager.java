@@ -69,7 +69,7 @@ public abstract class ResourceManager extends GsacObjectManager {
      * @throws Exception on badness
      */
     public abstract void handleRequest(GsacRequest request,
-            GsacResponse response)
+                                       GsacResponse response)
      throws Exception;
 
 

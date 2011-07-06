@@ -162,11 +162,14 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
+     *
+     * @param type _more_
      * @param gsacRequest The request
      *
      * @throws Exception On badness
      */
-    public final void handleRequest(ObjectType type, GsacRequest gsacRequest) throws Exception {
+    public final void handleRequest(ObjectType type, GsacRequest gsacRequest)
+            throws Exception {
         handleRequest(type, gsacRequest, doMakeResponse(gsacRequest));
     }
 
@@ -174,15 +177,16 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
+     *
+     * @param type _more_
      * @param gsacRequest The request
      * @param gsacResponse _more_
      *
      * @throws Exception On badness
      */
-    public  void handleRequest(ObjectType type,
-			       GsacRequest gsacRequest,
-			       GsacResponse gsacResponse)
-        throws Exception {
+    public void handleRequest(ObjectType type, GsacRequest gsacRequest,
+                              GsacResponse gsacResponse)
+            throws Exception {
         long t1 = System.currentTimeMillis();
         getRepository().processRequest(type, gsacRequest, gsacResponse);
         long t2 = System.currentTimeMillis();
@@ -231,11 +235,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleResult(GsacRequest gsacRequest,
-			     GsacResponse response)
+    public void handleResult(GsacRequest gsacRequest, GsacResponse response)
             throws Exception {
-        throw new IllegalArgumentException(
-            getClass().getName() + ".handleResult not implemented");
+        throw new IllegalArgumentException(getClass().getName()
+                                           + ".handleResult not implemented");
     }
 
 

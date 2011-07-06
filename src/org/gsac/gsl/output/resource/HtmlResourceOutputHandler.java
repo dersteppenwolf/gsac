@@ -74,15 +74,16 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      * _more_
      *
      *
+     *
+     * @param type _more_
      * @param request The request
      * @param response The response
      *
      *
      * @throws Exception On badness
      */
-    public void handleRequest(ObjectType type,
-			      GsacRequest request,
-			      GsacResponse response)
+    public void handleRequest(ObjectType type, GsacRequest request,
+                              GsacResponse response)
             throws Exception {
 
         StringBuffer sb = new StringBuffer();
@@ -110,8 +111,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      * @throws Exception _more_
      */
     public void handleRequestInner(GsacRequest request,
-                                           GsacResponse response,
-                                           StringBuffer sb)
+                                   GsacResponse response, StringBuffer sb)
             throws Exception {
 
         if ( !initHtml(request, response, sb)) {
@@ -133,13 +133,15 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         if (request.isGsacUrl(URL_RESOURCE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_RESOURCE_SEARCH)) {
-            getRepository().processRequest(GsacResource.TYPE_RESOURCE, request, response);
+            getRepository().processRequest(GsacResource.TYPE_RESOURCE,
+                                           request, response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_RESOURCEID)) {
-            GsacResource resource = (GsacResource)getRepository().getObject(request,
-                                                                            GsacResource.TYPE_RESOURCE,
-                                                                            request.get(ARG_RESOURCEID, ""));
+            GsacResource resource =
+                (GsacResource) getRepository().getObject(request,
+                    GsacResource.TYPE_RESOURCE,
+                    request.get(ARG_RESOURCEID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -418,8 +420,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
                     site = (GsacSite) getRepository().getObject(request,
-                                                              GsacSite.TYPE_SITE,
-                                                              resource.getSiteID());
+                            GsacSite.TYPE_SITE, resource.getSiteID());
                 }
                 if (cnt == 0) {
                     //                    pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),
