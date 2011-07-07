@@ -62,7 +62,7 @@ public class GsacFile extends GsacResource {
     private Date endTime;
 
     /** _more_ */
-    private ResourceType type;
+    private FileType type;
 
 
 
@@ -83,7 +83,7 @@ public class GsacFile extends GsacResource {
      * @param type _more_
      */
     public GsacFile(String repositoryId, FileInfo fileInfo,
-                        GsacSite site, Date publishTime, ResourceType type) {
+                        GsacSite site, Date publishTime, FileType type) {
         this(repositoryId, fileInfo, site, publishTime, publishTime,
              publishTime, type);
     }
@@ -102,7 +102,7 @@ public class GsacFile extends GsacResource {
      */
     public GsacFile(String repositoryId, FileInfo fileInfo,
                         GsacSite site, Date startTime, Date endTime,
-                        ResourceType type) {
+                        FileType type) {
         this(repositoryId, fileInfo, site, startTime, startTime, endTime,
              type);
     }
@@ -122,7 +122,7 @@ public class GsacFile extends GsacResource {
      */
     public GsacFile(String repositoryId, FileInfo fileInfo,
                         GsacSite site, Date publishTime, Date startTime,
-                        Date endTime, ResourceType type) {
+                        Date endTime, FileType type) {
         super(repositoryId);
         this.fileInfo    = fileInfo;
         this.site        = site;
@@ -137,7 +137,7 @@ public class GsacFile extends GsacResource {
      *
      * @return _more_
      */
-    public ObjectType getResourceType() {
+    public ObjectType getObjectType() {
         return TYPE_FILE;
     }
 
@@ -290,7 +290,7 @@ public class GsacFile extends GsacResource {
      *
      *  @param value The new value for Type
      */
-    public void setType(ResourceType value) {
+    public void setType(FileType value) {
         type = value;
     }
 
@@ -299,7 +299,7 @@ public class GsacFile extends GsacResource {
      *
      *  @return The Type
      */
-    public ResourceType getType() {
+    public FileType getType() {
         return type;
     }
 

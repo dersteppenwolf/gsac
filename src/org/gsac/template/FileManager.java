@@ -149,7 +149,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
         SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement, request.getOffset(), request.getLimit());
         int cnt = 0;
         while (iter.getNext() != null) {
-            response.addObject(makeResource(iter.getResults()));
+            response.addObject(makeFile(iter.getResults()));
             cnt++;
             if ( !iter.countOK()) {
                 response.setExceededLimit();
@@ -195,7 +195,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
      *
      * @throws Exception On badness
      */
-    public GsacFile makeResource(ResultSet results) throws Exception {
+    public GsacFile makeFile(ResultSet results) throws Exception {
         return null;
         /* e.g.:
         int    col            = 1;
@@ -224,7 +224,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
         GsacFile resource = new GsacFile(exportID,
                                     new FileInfo(path, fileSize, md5),
                                     site, publishTime, fromTime, toTime,
-                                    toResourceType(type));
+                                    toFileType(type));
 
         return resource;
         */
@@ -253,10 +253,10 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
      *
      * @return resource types
      */
-    public List<ResourceType> doGetResourceTypes() {
-        List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
-        resourceTypes.add(new ResourceType("rinex","RINEX Files"));
-        resourceTypes.add(new ResourceType("qc","QC Files"));
+    public List<FileType> doGetFileTypes() {
+        List<FileType> resourceTypes = new ArrayList<FileType>();
+        resourceTypes.add(new FileType("rinex","RINEX Files"));
+        resourceTypes.add(new FileType("qc","QC Files"));
         return resourceTypes;
     }
 

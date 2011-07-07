@@ -34,19 +34,19 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class ResourceType extends IdLabel {
+public class FileType extends IdLabel {
 
     /**
      * _more_
      */
-    public ResourceType() {}
+    public FileType() {}
 
     /**
      * _more_
      *
      * @param idLabel _more_
      */
-    public ResourceType(IdLabel idLabel) {
+    public FileType(IdLabel idLabel) {
         super(idLabel.getId(), idLabel.getName());
     }
 
@@ -55,7 +55,7 @@ public class ResourceType extends IdLabel {
      *
      * @param id _more_
      */
-    public ResourceType(String id) {
+    public FileType(String id) {
         super(id);
     }
 
@@ -66,7 +66,7 @@ public class ResourceType extends IdLabel {
      * @param id _more_
      * @param name _more_
      */
-    public ResourceType(String id, String name) {
+    public FileType(String id, String name) {
         super(id, name);
     }
 
@@ -78,13 +78,13 @@ public class ResourceType extends IdLabel {
      *
      * @return _more_
      */
-    public static List<ResourceType> convertList(List<IdLabel> ids) {
-        List<ResourceType> results = new ArrayList<ResourceType>();
+    public static List<FileType> convertList(List<IdLabel> ids) {
+        List<FileType> results = new ArrayList<FileType>();
         if (ids == null) {
             return results;
         }
         for (IdLabel id : ids) {
-            results.add(new ResourceType(id));
+            results.add(new FileType(id));
         }
         return results;
     }

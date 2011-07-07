@@ -119,7 +119,7 @@ public class DummyRepository extends GsacRepositoryImpl {
                             "ftp://data-out.unavco.org/pub/rinex/obs/file"
                             + rcnt, (long) (Math.random() * 10000000),
                                     ""), site, new Date(), new Date(),
-                                         new ResourceType(type)));
+                                         new FileType(type)));
             }
 
         }

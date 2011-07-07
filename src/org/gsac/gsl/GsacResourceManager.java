@@ -168,7 +168,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param object _more_
      */
     public void cacheObject(String key, GsacResource object) {
-        String type = object.getResourceType().getType();
+        String type = object.getObjectType().getType();
         objectCache.put(type + "_" + key, object);
     }
 

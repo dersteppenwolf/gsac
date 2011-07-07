@@ -71,11 +71,11 @@ public class CddisFileManager extends FileManager implements CddisArgs {
     private static String[] GNSS_FILE_INFO = { "d", "o", "s" };
 
     /** _more_ */
-    private static ResourceType[] GNSS_FILE_TYPES = { new ResourceType(
+    private static FileType[] GNSS_FILE_TYPES = { new FileType(
                                                         TYPE_GNSS_HATANAKA,
                                                         "GNSS - Hatanaka"),
-            new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation"),
-            new ResourceType(TYPE_GNSS_SUMMARY, "GNSS - Summary") };
+            new FileType(TYPE_GNSS_OBSERVATION, "GNSS - Observation"),
+            new FileType(TYPE_GNSS_SUMMARY, "GNSS - Summary") };
 
 
     /** _more_ */
@@ -125,9 +125,9 @@ public class CddisFileManager extends FileManager implements CddisArgs {
     private static String[] DORIS_FILE_INFO = { "d", "o", "s" };
 
     /** _more_ */
-    private static ResourceType[] DORIS_FILE_TYPES = {
-        //        new ResourceType(TYPE_DORIS_RINEX,"DORIS - Rinex"),
-        new ResourceType(TYPE_DORIS_DORIS, "DORIS")
+    private static FileType[] DORIS_FILE_TYPES = {
+        //        new FileType(TYPE_DORIS_RINEX,"DORIS - Rinex"),
+        new FileType(TYPE_DORIS_DORIS, "DORIS")
     };
 
     /** _more_ */
@@ -173,7 +173,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
 
 
     /** _more_ */
-    private static ResourceType[] SLR_FILE_TYPES = { new ResourceType(
+    private static FileType[] SLR_FILE_TYPES = { new FileType(
                                                        TYPE_SLR_SLR,
                                                        "SLR"), };
 
@@ -201,12 +201,12 @@ public class CddisFileManager extends FileManager implements CddisArgs {
 
 
     /** _more_ */
-    private static ResourceType[] VLBI_FILE_TYPES = {
-        //        new ResourceType(TYPE_VLBI_RINEX,"VLBI - Rinex"),
+    private static FileType[] VLBI_FILE_TYPES = {
+        //        new FileType(TYPE_VLBI_RINEX,"VLBI - Rinex"),
     };
 
     /** _more_ */
-    private static ResourceType[][] ALL_FILE_TYPES = {
+    private static FileType[][] ALL_FILE_TYPES = {
         GNSS_FILE_TYPES, DORIS_FILE_TYPES, SLR_FILE_TYPES, VLBI_FILE_TYPES
     };
 
@@ -509,7 +509,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
                                         3);
         String YY = YYYY.substring(2);
         for (int i = 0; i < GNSS_FILE_TYPES.length; i++) {
-            ResourceType resourceType = GNSS_FILE_TYPES[i];
+            FileType resourceType = GNSS_FILE_TYPES[i];
             if ((resourceTypes != null)
                     && !resourceTypes.contains(resourceType.getId())) {
                 continue;
@@ -588,7 +588,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
         String YY = YYYY.substring(2);
 
         for (int i = 0; i < DORIS_FILE_TYPES.length; i++) {
-            ResourceType resourceType = DORIS_FILE_TYPES[i];
+            FileType resourceType = DORIS_FILE_TYPES[i];
             if ((resourceTypes != null)
                     && !resourceTypes.contains(resourceType.getId())) {
                 continue;
@@ -660,7 +660,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
                                      satellite.toUpperCase());
 
         Calendar     calendar     = Calendar.getInstance(TIMEZONE_UTC);
-        ResourceType resourceType = SLR_FILE_TYPES[0];
+        FileType resourceType = SLR_FILE_TYPES[0];
         if ((resourceTypes != null)
                 && !resourceTypes.contains(resourceType.getId())) {
             return resources;
@@ -854,10 +854,10 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      *
      * @return resource types
      */
-    public List<ResourceType> doGetResourceTypes() {
-        List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
-        for (ResourceType[] types : ALL_FILE_TYPES) {
-            for (ResourceType resourceType : types) {
+    public List<FileType> doGetFileTypes() {
+        List<FileType> resourceTypes = new ArrayList<FileType>();
+        for (FileType[] types : ALL_FILE_TYPES) {
+            for (FileType resourceType : types) {
                 resourceTypes.add(resourceType);
             }
         }

@@ -1915,7 +1915,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void doGetFullMetadata(int level, GsacResource gsacObject)
             throws Exception {
-        GsacResourceManager gom = getResourceManager(gsacObject.getResourceType());
+        GsacResourceManager gom = getResourceManager(gsacObject.getObjectType());
         if (gom != null) {
             gom.doGetMetadata(level, gsacObject);
         }
