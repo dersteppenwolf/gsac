@@ -38,7 +38,7 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class ObjectType {
+public class ResourceClass {
 
     /** _more_ */
     private String id;
@@ -49,7 +49,7 @@ public class ObjectType {
      *
      * @param id _more_
      */
-    public ObjectType(String id) {
+    public ResourceClass(String id) {
         this.id = id;
     }
 
@@ -80,10 +80,10 @@ public class ObjectType {
      * @return _more_
      */
     public boolean equals(Object o) {
-        if ( !(o instanceof ObjectType)) {
+        if ( !(o instanceof ResourceClass)) {
             return false;
         }
-        ObjectType that = (ObjectType) o;
+        ResourceClass that = (ResourceClass) o;
         return id.equals(that.id);
     }
 

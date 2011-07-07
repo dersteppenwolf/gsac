@@ -42,7 +42,7 @@ import java.util.List;
 public class GsacSite extends GsacResource implements Comparable {
 
     /** _more_          */
-    public static final ObjectType TYPE_SITE = new ObjectType("site");
+    public static final ResourceClass TYPE_SITE = new ResourceClass("site");
 
     /** This is the site identifier that users are used to. e.g., P123 */
     private String siteCode;
@@ -134,7 +134,7 @@ public class GsacSite extends GsacResource implements Comparable {
      *
      * @return _more_
      */
-    public ObjectType getObjectType() {
+    public ResourceClass getResourceClass() {
         return TYPE_SITE;
     }
 

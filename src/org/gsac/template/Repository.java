@@ -59,7 +59,7 @@ public class @MACRO.PREFIX@Repository extends GsacRepositoryImpl implements Gsac
      *
      * @return site manager
      */
-    public GsacResourceManager doMakeObjectManager(ObjectType type) {
+    public GsacResourceManager doMakeObjectManager(ResourceClass type) {
         if(type.equals(GsacSite.TYPE_SITE)) {
             return new @MACRO.PREFIX@SiteManager(this);
         }

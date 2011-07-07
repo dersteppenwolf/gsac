@@ -55,7 +55,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
 
     /** _more_          */
-    private ObjectType type;
+    private ResourceClass type;
 
     /**
      * _more_
@@ -63,7 +63,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param repository _more_
      * @param type _more_
      */
-    public GsacResourceManager(GsacRepository repository, ObjectType type) {
+    public GsacResourceManager(GsacRepository repository, ResourceClass type) {
         super(repository);
         this.type = type;
     }
@@ -168,7 +168,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param object _more_
      */
     public void cacheObject(String key, GsacResource object) {
-        String type = object.getObjectType().getType();
+        String type = object.getResourceClass().getType();
         objectCache.put(type + "_" + key, object);
     }
 
@@ -223,7 +223,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      *  @param value The new value for Type
      */
-    public void setType(ObjectType value) {
+    public void setType(ResourceClass value) {
         type = value;
     }
 
@@ -232,7 +232,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      *  @return The Type
      */
-    public ObjectType getType() {
+    public ResourceClass getType() {
         return type;
     }
 

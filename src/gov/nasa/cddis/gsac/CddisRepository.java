@@ -70,7 +70,7 @@ public class CddisRepository extends GsacRepositoryImpl implements GsacConstants
         return dbm;
     }
 
-    public GsacResourceManager doMakeObjectManager(ObjectType type) {
+    public GsacResourceManager doMakeObjectManager(ResourceClass type) {
         if(type.equals(GsacSite.TYPE_SITE)) {
             return new CddisSiteManager(this);
         }

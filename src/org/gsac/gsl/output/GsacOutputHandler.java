@@ -168,7 +168,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public final void handleRequest(ObjectType type, GsacRequest gsacRequest)
+    public final void handleRequest(ResourceClass type, GsacRequest gsacRequest)
             throws Exception {
         handleRequest(type, gsacRequest, doMakeResponse(gsacRequest));
     }
@@ -184,7 +184,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleRequest(ObjectType type, GsacRequest gsacRequest,
+    public void handleRequest(ResourceClass type, GsacRequest gsacRequest,
                               GsacResponse gsacResponse)
             throws Exception {
         long t1 = System.currentTimeMillis();

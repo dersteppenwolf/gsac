@@ -94,7 +94,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(ObjectType type, GsacRequest request,
+    public void handleRequest(ResourceClass type, GsacRequest request,
                               GsacResponse response)
             throws Exception {
         String path = request.getRequestURI();

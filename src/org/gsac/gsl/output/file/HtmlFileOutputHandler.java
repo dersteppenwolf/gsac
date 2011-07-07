@@ -82,7 +82,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception On badness
      */
-    public void handleRequest(ObjectType type, GsacRequest request,
+    public void handleRequest(ResourceClass type, GsacRequest request,
                               GsacResponse response)
             throws Exception {
 

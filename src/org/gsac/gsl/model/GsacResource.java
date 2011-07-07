@@ -73,7 +73,7 @@ public abstract class GsacResource {
      *
      * @return _more_
      */
-    public abstract ObjectType getObjectType();
+    public abstract ResourceClass getResourceClass();
 
     /**
      * _more_
