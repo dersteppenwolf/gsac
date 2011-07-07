@@ -57,7 +57,7 @@ import java.util.List;
  *
  * @version $Revision: 1.3 $
  */
-public class GsacResourceTypeHandler extends GenericTypeHandler {
+public class GsacFileTypeHandler extends GenericTypeHandler {
 
     /** _more_ */
     public static final String TYPE_STREAM = "gsacstream";
@@ -71,7 +71,7 @@ public class GsacResourceTypeHandler extends GenericTypeHandler {
      * @param node _more_
      * @throws Exception _more_
      */
-    public GsacResourceTypeHandler(Repository repository, Element node)
+    public GsacFileTypeHandler(Repository repository, Element node)
             throws Exception {
         super(repository, node);
     }

@@ -160,7 +160,7 @@ public class GsacHarvester extends WebHarvester {
         GsacSiteTypeHandler siteTypeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(
                 GsacSiteTypeHandler.TYPE_SITE, false, false);
-        //        GsacResourceTypeHandler resourceTypeHandler = 
+        //        GsacFileTypeHandler resourceTypeHandler = 
         String contents = IOUtil.readContents(urlEntry.getUrl(), getClass(),
                               null);
         if (contents == null) {

@@ -228,7 +228,7 @@ public class RamaddaGsacRepository extends GsacRepository {
                 capabilities);
         } else if (type.equals(CAPABILITIES_RESOURCE)) {
             getObjectManager(
-                GsacResource.TYPE_RESOURCE).addDefaultCapabilities(
+                GsacFile.TYPE_RESOURCE).addDefaultCapabilities(
                 capabilities);
         }
         return capabilities;

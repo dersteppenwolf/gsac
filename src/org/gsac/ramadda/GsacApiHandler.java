@@ -127,7 +127,7 @@ public class GsacApiHandler extends RepositoryManager implements RequestHandler 
      *
      * @throws Exception _more_
      */
-    public Result processGsacResourceRequest(Request request)
+    public Result processGsacFileRequest(Request request)
             throws Exception {
         return processGsacRequest(request);
     }
