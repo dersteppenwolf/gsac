@@ -74,7 +74,7 @@ public class CddisRepository extends GsacRepositoryImpl implements GsacConstants
         if(type.equals(GsacSite.TYPE_SITE)) {
             return new CddisSiteManager(this);
         }
-        if(type.equals(GsacFile.TYPE_RESOURCE)) {
+        if(type.equals(GsacFile.TYPE_FILE)) {
             return new CddisFileManager(this);
         }
         return null;

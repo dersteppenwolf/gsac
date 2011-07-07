@@ -88,7 +88,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
                                  "" + request.get(ARG_FILESIZE_MAX, 0));
         }
 
-        if (request.defined(ARG_RESOURCE_TYPE)) {
+        if (request.defined(ARG_FILE_TYPE)) {
             List<String> args = null;
             //add in the resource type clause
             //e.g.:
@@ -98,16 +98,16 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
                     Clause.makeIntClauses(
                         "file type column",
                         args = (List<String>) request.getList(
-                            ARG_RESOURCE_TYPE))));
+                            ARG_FILE_TYPE))));
             */
             addSearchCriteria(msgBuff, "Resource Type", args,
-                              ARG_RESOURCE_TYPE);
+                              ARG_FILE_TYPE);
         }
 
 
         Date[] publishDateRange =
-            request.getDateRange(ARG_RESOURCE_PUBLISHDATE_FROM,
-                                 ARG_RESOURCE_PUBLISHDATE_TO, null, null);
+            request.getDateRange(ARG_FILE_PUBLISHDATE_FROM,
+                                 ARG_FILE_PUBLISHDATE_TO, null, null);
 
         if (publishDateRange[0] != null) {
             //e.g.:            clauses.add(Clause.ge("date column", publishDateRange[0]));
@@ -122,8 +122,8 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
         }
 
 
-        Date[] dataDateRange = request.getDateRange(ARG_RESOURCE_DATADATE_FROM,
-                                                    ARG_RESOURCE_DATADATE_TO, null,
+        Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
+                                                    ARG_FILE_DATADATE_TO, null,
                                                     null);
 
         if (dataDateRange[0] != null) {

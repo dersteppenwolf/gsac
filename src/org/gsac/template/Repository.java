@@ -63,7 +63,7 @@ public class @MACRO.PREFIX@Repository extends GsacRepositoryImpl implements Gsac
         if(type.equals(GsacSite.TYPE_SITE)) {
             return new @MACRO.PREFIX@SiteManager(this);
         }
-        if(type.equals(GsacFile.TYPE_RESOURCE)) {
+        if(type.equals(GsacFile.TYPE_FILE)) {
             return new @MACRO.PREFIX@FileManager(this);
         }
         return null;

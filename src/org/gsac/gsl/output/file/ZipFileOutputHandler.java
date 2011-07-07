@@ -53,10 +53,10 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
 
 
     /** _more_ */
-    public static final String OUTPUT_RESOURCE_ZIP = "resource.zip";
+    public static final String OUTPUT_FILE_ZIP = "resource.zip";
 
     /** _more_ */
-    public static final String PROP_MAXSIZE = OUTPUT_RESOURCE_ZIP
+    public static final String PROP_MAXSIZE = OUTPUT_FILE_ZIP
                                               + ".maxsize";
 
     /** 100 MB limit */
@@ -69,8 +69,8 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
      */
     public ZipFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
-                                  new GsacOutput(this, OUTPUT_RESOURCE_ZIP,
+        getRepository().addOutput(OUTPUT_GROUP_FILE,
+                                  new GsacOutput(this, OUTPUT_FILE_ZIP,
                                       "Zip Files", "/resources.zip", true,
                                       null /*"Zip Files"*/));
 

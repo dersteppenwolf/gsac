@@ -175,98 +175,98 @@ public interface GsacArgs {
 
 
     /** _more_ */
-    public static final String ARG_RESOURCE_PREFIX = "resource.";
+    public static final String ARG_FILE_PREFIX = "resource.";
 
     /** _more_ */
-    public static final String ARG_RESOURCE_SORT_VALUE =
-        ARG_RESOURCE_PREFIX + ARG_SORT_VALUE_SUFFIX;
+    public static final String ARG_FILE_SORT_VALUE =
+        ARG_FILE_PREFIX + ARG_SORT_VALUE_SUFFIX;
 
     /** _more_ */
-    public static final String ARG_RESOURCE_SORT_ORDER =
-        ARG_RESOURCE_PREFIX + ARG_SORT_ORDER_SUFFIX;
+    public static final String ARG_FILE_SORT_ORDER =
+        ARG_FILE_PREFIX + ARG_SORT_ORDER_SUFFIX;
 
 
     /** _more_ */
-    public static final String SORT_RESOURCE_TYPE = ARG_RESOURCE_PREFIX
+    public static final String SORT_FILE_TYPE = ARG_FILE_PREFIX
                                                     + "type";
 
     /** _more_ */
-    public static final String SORT_RESOURCE_SIZE = ARG_RESOURCE_PREFIX
+    public static final String SORT_FILE_SIZE = ARG_FILE_PREFIX
                                                     + "size";
 
     /** _more_ */
-    public static final String SORT_RESOURCE_PUBLISHDATE =
-        ARG_RESOURCE_PREFIX + "publishdate";
+    public static final String SORT_FILE_PUBLISHDATE =
+        ARG_FILE_PREFIX + "publishdate";
 
     /** _more_ */
-    public static final String SORT_RESOURCE_DATADATE = ARG_RESOURCE_PREFIX
+    public static final String SORT_FILE_DATADATE = ARG_FILE_PREFIX
                                                         + "datadate";
 
 
 
     /** _more_ */
-    public static final String ARG_RESOURCE_SIZE = ARG_RESOURCE_PREFIX
+    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX
                                                    + "filesize";
 
     /** _more_ */
-    public static final String ARG_RESOURCE_SIZEMAX = ARG_RESOURCE_SIZE
+    public static final String ARG_FILE_SIZEMAX = ARG_FILE_SIZE
                                                       + ".max";
 
 
     /** resource file size min */
-    public static final String ARG_RESOURCE_SIZEMIN = ARG_RESOURCE_SIZE
+    public static final String ARG_FILE_SIZEMIN = ARG_FILE_SIZE
                                                       + ".min";
 
     /** _more_ */
-    public static final String ARG_RESOURCE_FILESIZE = ARG_RESOURCE_PREFIX
+    public static final String ARG_FILE_FILESIZE = ARG_FILE_PREFIX
                                                        + "filesize";
 
     /** resource file size max */
-    public static final String ARG_FILESIZE_MAX = ARG_RESOURCE_FILESIZE
+    public static final String ARG_FILESIZE_MAX = ARG_FILE_FILESIZE
                                                   + ".max";
 
     /** resource file size min */
-    public static final String ARG_FILESIZE_MIN = ARG_RESOURCE_FILESIZE
+    public static final String ARG_FILESIZE_MIN = ARG_FILE_FILESIZE
                                                   + ".min";
 
 
     /** _more_ */
-    public static final String ARG_RESOURCE_PUBLISHDATE = ARG_RESOURCE_PREFIX
+    public static final String ARG_FILE_PUBLISHDATE = ARG_FILE_PREFIX
                                                           + "publishdate";
 
 
     /** publish date for resources */
-    public static final String ARG_RESOURCE_PUBLISHDATE_FROM =
-        ARG_RESOURCE_PUBLISHDATE + ".from";
+    public static final String ARG_FILE_PUBLISHDATE_FROM =
+        ARG_FILE_PUBLISHDATE + ".from";
 
 
     /** publish date for resources */
-    public static final String ARG_RESOURCE_PUBLISHDATE_TO =
-        ARG_RESOURCE_PUBLISHDATE + ".to";
+    public static final String ARG_FILE_PUBLISHDATE_TO =
+        ARG_FILE_PUBLISHDATE + ".to";
 
     /** publish date for resources */
-    public static final String ARG_RESOURCE_DATADATE = ARG_RESOURCE_PREFIX
+    public static final String ARG_FILE_DATADATE = ARG_FILE_PREFIX
                                                        + "datadate";
 
 
     /** publish date for resources */
-    public static final String ARG_RESOURCE_DATADATE_FROM =
-        ARG_RESOURCE_DATADATE + ".from";
+    public static final String ARG_FILE_DATADATE_FROM =
+        ARG_FILE_DATADATE + ".from";
 
     /** data date for resources */
-    public static final String ARG_RESOURCE_DATADATE_TO =
-        ARG_RESOURCE_DATADATE + ".to";
+    public static final String ARG_FILE_DATADATE_TO =
+        ARG_FILE_DATADATE + ".to";
 
 
     /** _more_ */
-    public static final String ARG_RESOURCE_ID = ARG_RESOURCE_PREFIX + "id";
+    public static final String ARG_FILE_ID = ARG_FILE_PREFIX + "id";
 
 
     /** _more_ */
-    public static final String ARG_RESOURCEID = ARG_RESOURCE_ID;
+    public static final String ARG_FILEID = ARG_FILE_ID;
 
     /** _more_ */
-    public static final String ARG_RESOURCE_TYPE = ARG_RESOURCE_PREFIX
+    public static final String ARG_FILE_TYPE = ARG_FILE_PREFIX
                                                    + "type";
 
 
@@ -345,7 +345,7 @@ public interface GsacArgs {
     public static final String ARG_SEARCH = "search";
 
     /** _more_ */
-    public static final String ARG_SEARCH_RESOURCES = "searchresources";
+    public static final String ARG_SEARCH_FILES = "searchresources";
 
     /** _more_ */
     public static final String ARG_SEARCH_SITES = "searchsites";

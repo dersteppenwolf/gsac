@@ -264,15 +264,15 @@ public class CddisFileManager extends FileManager implements CddisArgs {
         long            t1            = System.currentTimeMillis();
         HashSet<String> resourceTypes = null;
 
-        if (request.defined(ARG_RESOURCE_TYPE)) {
+        if (request.defined(ARG_FILE_TYPE)) {
             resourceTypes = new HashSet<String>();
             for (String t :
-                    request.getDelimiterSeparatedList(ARG_RESOURCE_TYPE)) {
+                    request.getDelimiterSeparatedList(ARG_FILE_TYPE)) {
                 resourceTypes.add(t);
             }
         }
-        Date[] dateRange = request.getDateRange(ARG_RESOURCE_DATADATE_FROM,
-                               ARG_RESOURCE_DATADATE_TO, null, null);
+        Date[] dateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
+                               ARG_FILE_DATADATE_TO, null, null);
         //        System.err.println ("date:" + dateRange[0] +" " + dateRange[1]);
         boolean[]       addedAnySpecificTypeClauses = { false };
 

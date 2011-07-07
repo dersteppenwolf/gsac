@@ -120,11 +120,11 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         //        String uri = request.getRequestURI();
         String uri = request.getGsacUrlPath();
-        if (request.defined(ARG_SEARCH_RESOURCES)) {
+        if (request.defined(ARG_SEARCH_FILES)) {
             request.remove(ARG_OUTPUT);
             request.remove(ARG_SEARCH_SITES);
             String args        = request.getUrlArgs();
-            String redirectUrl = makeUrl(URL_RESOURCE_FORM) + "?" + args;
+            String redirectUrl = makeUrl(URL_FILE_FORM) + "?" + args;
             response.sendRedirect(redirectUrl);
             response.endResponse();
             return;
@@ -203,7 +203,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                 HtmlUtil.tag(HtmlUtil.TAG_INPUT,
                              HtmlUtil.cssClass("gsac-gobutton")
                              + HtmlUtil.attrs(new String[] {
-                HtmlUtil.ATTR_NAME, ARG_SEARCH_RESOURCES, HtmlUtil.ATTR_TYPE,
+                HtmlUtil.ATTR_NAME, ARG_SEARCH_FILES, HtmlUtil.ATTR_TYPE,
                 HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
                 msg("File Search Form"), HtmlUtil.ATTR_CLASS,
                 "gsac-download-button", HtmlUtil.ATTR_TITLE,

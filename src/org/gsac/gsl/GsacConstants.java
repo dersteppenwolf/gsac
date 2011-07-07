@@ -56,19 +56,19 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String URL_SITE_VIEW = URL_SITE_BASE + "/view";
 
-    /** Url path for resource queries */
-    public static final String URL_RESOURCE_BASE = URL_BASE + "/resource";
+    /** Url path for file queries */
+    public static final String URL_FILE_BASE = URL_BASE + "/file";
 
     /** _more_ */
-    public static final String URL_RESOURCE_SEARCH = URL_RESOURCE_BASE
+    public static final String URL_FILE_SEARCH = URL_FILE_BASE
                                                      + "/search";
 
     /** _more_ */
-    public static final String URL_RESOURCE_FORM = URL_RESOURCE_BASE
+    public static final String URL_FILE_FORM = URL_FILE_BASE
                                                    + "/form";
 
     /** _more_ */
-    public static final String URL_RESOURCE_VIEW = URL_RESOURCE_BASE
+    public static final String URL_FILE_VIEW = URL_FILE_BASE
                                                    + "/view";
 
 
@@ -132,7 +132,7 @@ public interface GsacConstants extends GsacArgs {
     public static final String HEADER_BROWSE = "header.browse";
 
     /** _more_ */
-    public static final String HEADER_RESOURCE = "header.resource";
+    public static final String HEADER_FILE = "header.file";
 
     /** _more_ */
     public static final String HEADER_HELP = "header.help";
@@ -147,28 +147,28 @@ public interface GsacConstants extends GsacArgs {
     public static final String RESULT_SITE = "result.site";
 
     /** _more_ */
-    public static final String RESULT_RESOURCE = "result.resource";
+    public static final String RESULT_FILE = "result.file";
 
     /** _more_ */
     public static final String RESULT_BROWSE = "result.browse";
 
     /** _more_ */
     public static final String[] URL_BASES = { URL_SITE_BASE,
-            URL_RESOURCE_BASE, URL_BROWSE_BASE };
+            URL_FILE_BASE, URL_BROWSE_BASE };
 
 
     /** _more_ */
     public static final String CAPABILITIES_SITE = "site";
 
     /** _more_ */
-    public static final String CAPABILITIES_RESOURCE = "resource";
+    public static final String CAPABILITIES_FILE = "file";
 
 
     /** _more_ */
     public static final String OUTPUT_GROUP_SITE = "site";
 
     /** _more_ */
-    public static final String OUTPUT_GROUP_RESOURCE = "resource";
+    public static final String OUTPUT_GROUP_FILE = "file";
 
     /** _more_ */
     public static final String OUTPUT_GROUP_BROWSE = "output.browse";

@@ -46,7 +46,7 @@ import java.io.*;
 public class DownloaderFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_RESOURCE_DOWNLOAD = "resource.download";
+    public static final String OUTPUT_FILE_DOWNLOAD = "resource.download";
 
 
     /**
@@ -57,9 +57,9 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
     public DownloaderFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         GsacOutput output;
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
+        getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   output = new GsacOutput(this,
-                                      OUTPUT_RESOURCE_DOWNLOAD,
+                                      OUTPUT_FILE_DOWNLOAD,
                                       "Download Files via Webstart",
                                       "/resources.jnlp", true,
                                       "Download Files"));
@@ -94,7 +94,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
             return;
         }
 
-        String codebase = makeUrl(URL_RESOURCE_SEARCH);
+        String codebase = makeUrl(URL_FILE_SEARCH);
         String href     = "resources.jnlp?" + request.getUrlArgs();
         //        System.err.println("getting jnlp file");
         response.startResponse(GsacResponse.MIME_JNLP);
@@ -104,8 +104,8 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         System.err.println("read:" + contents);
         GsacRequest newRequest = new GsacRequest(request);
         newRequest.put(ARG_OUTPUT,
-                       UrlFileOutputHandler.OUTPUT_RESOURCE_URL);
-        String dataUrl = makeUrl(URL_RESOURCE_SEARCH + "?"
+                       UrlFileOutputHandler.OUTPUT_FILE_URL);
+        String dataUrl = makeUrl(URL_FILE_SEARCH + "?"
                                  + newRequest.getUrlArgs());
         String fullUrlRoot =
             getRepository().getAbsoluteUrl(getRepository().getUrlBase()

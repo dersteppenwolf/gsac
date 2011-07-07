@@ -44,7 +44,7 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
 
 
     /** _more_ */
-    public static final String OUTPUT_RESOURCE_URL = "resource.url";
+    public static final String OUTPUT_FILE_URL = "resource.url";
 
 
     /**
@@ -54,8 +54,8 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
      */
     public UrlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
-                                  new GsacOutput(this, OUTPUT_RESOURCE_URL,
+        getRepository().addOutput(OUTPUT_GROUP_FILE,
+                                  new GsacOutput(this, OUTPUT_FILE_URL,
                                       "Resource Url", "/resources.txt",
                                       true));
 

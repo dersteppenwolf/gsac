@@ -56,7 +56,7 @@ public abstract class FileManager extends GsacResourceManager {
      * @param repository the repository
      */
     public FileManager(GsacRepository repository) {
-        super(repository, GsacFile.TYPE_RESOURCE);
+        super(repository, GsacFile.TYPE_FILE);
     }
 
 
@@ -186,22 +186,22 @@ public abstract class FileManager extends GsacResourceManager {
         Capability cap;
         Capability[] dflt = { initCapability(
                                 new Capability(
-                                    ARG_RESOURCE_TYPE, "Resource Type",
+                                    ARG_FILE_TYPE, "Resource Type",
                                     new ArrayList<IdLabel>(),
                                     true), "File Query",
                                            "Type of file or resource", null,
                                            getRepository().getVocabulary(
-                                               ARG_RESOURCE_TYPE, true)),
-                              initCapability(new Capability(ARG_RESOURCE_DATADATE,
+                                               ARG_FILE_TYPE, true)),
+                              initCapability(new Capability(ARG_FILE_DATADATE,
                                   "Data Date",
                                   Capability.TYPE_DATERANGE), "File Query",
                                       "Date the data this resource holds was collected"),
-                              initCapability(new Capability(ARG_RESOURCE_PUBLISHDATE,
+                              initCapability(new Capability(ARG_FILE_PUBLISHDATE,
                                   "Publish Date",
                                   Capability.TYPE_DATERANGE), "File Query",
                                       "Date when this resource was first published to the repository"),
                               initCapability(cap =
-                                  new Capability(ARG_RESOURCE_FILESIZE,
+                                  new Capability(ARG_FILE_FILESIZE,
                                       "File Size",
                                       Capability
                                           .TYPE_NUMBERRANGE), "File Query",
@@ -228,8 +228,8 @@ public abstract class FileManager extends GsacResourceManager {
                                       String columnName, StringBuffer msgBuff)
             throws Exception {
         Date[] dateRange =
-            request.getDateRange(ARG_RESOURCE_PUBLISHDATE_FROM,
-                                 ARG_RESOURCE_PUBLISHDATE_TO, null, null);
+            request.getDateRange(ARG_FILE_PUBLISHDATE_FROM,
+                                 ARG_FILE_PUBLISHDATE_TO, null, null);
 
         if (dateRange[0] != null) {
             clauses.add(Clause.ge(columnName, dateRange[0]));

@@ -52,7 +52,7 @@ import javax.servlet.http.*;
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_RESOURCE_HTML = "resource.html";
+    public static final String OUTPUT_FILE_HTML = "resource.html";
 
 
     /**
@@ -62,11 +62,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
      */
     public HtmlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
-                                  new GsacOutput(this, OUTPUT_RESOURCE_HTML,
+        getRepository().addOutput(OUTPUT_GROUP_FILE,
+                                  new GsacOutput(this, OUTPUT_FILE_HTML,
                                       "Resource HTML"));
-        //        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,new GsacOutput(this,
-        //                OUTPUT_RESOURCE_DEFAULT, "Resource Default"));
+        //        getRepository().addOutput(OUTPUT_GROUP_FILE,new GsacOutput(this,
+        //                OUTPUT_FILE_DEFAULT, "Resource Default"));
     }
 
 
@@ -122,7 +122,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         if (request.defined(ARG_SEARCH_SITES)) {
             request.remove(ARG_OUTPUT);
-            request.remove(ARG_SEARCH_RESOURCES);
+            request.remove(ARG_SEARCH_FILES);
             String args        = request.getUrlArgs();
             String redirectUrl = makeUrl(URL_SITE_FORM) + "?" + args;
             response.sendRedirect(redirectUrl);
@@ -130,18 +130,18 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             return;
         }
 
-        if (request.isGsacUrl(URL_RESOURCE_FORM)) {
+        if (request.isGsacUrl(URL_FILE_FORM)) {
             handleSearchForm(request, response, sb);
-        } else if (request.isGsacUrl(URL_RESOURCE_SEARCH)) {
-            getRepository().processRequest(GsacFile.TYPE_RESOURCE,
+        } else if (request.isGsacUrl(URL_FILE_SEARCH)) {
+            getRepository().processRequest(GsacFile.TYPE_FILE,
                                            request, response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
-        } else if (request.defined(ARG_RESOURCEID)) {
+        } else if (request.defined(ARG_FILEID)) {
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
-                    GsacFile.TYPE_RESOURCE,
-                    request.get(ARG_RESOURCEID, ""));
+                    GsacFile.TYPE_FILE,
+                    request.get(ARG_FILEID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -235,7 +235,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                  Appendable pw)
             throws IOException, ServletException {
 
-        pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),
+        pw.append(HtmlUtil.formPost(makeUrl(URL_FILE_SEARCH),
                                     HtmlUtil.attr("name", "searchform")));;
 
         String blankImg = iconUrl("/blank.gif");
@@ -248,7 +248,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             buttons.append("<td>");
             buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
             for (GsacOutput output :
-                    getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
+                    getRepository().getOutputs(OUTPUT_GROUP_FILE)) {
                 if (output.getToolbarLabel() == null) {
                     continue;
                 }
@@ -292,7 +292,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                     + URL_HTDOCS_BASE + "/CalendarPopup.js"));
 
         CapabilityCollection resourceCollection =
-            getRepository().getCapabilityCollection(CAPABILITIES_RESOURCE);
+            getRepository().getCapabilityCollection(CAPABILITIES_FILE);
         if (resourceCollection != null) {
             addCapabilitiesToForm(request, pw, resourceCollection, false);
         }
@@ -300,7 +300,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         StringBuffer resultsSB = new StringBuffer();
         resultsSB.append(HtmlUtil.formTable());
-        getOutputSelect(OUTPUT_GROUP_RESOURCE, request, resultsSB);
+        getOutputSelect(OUTPUT_GROUP_FILE, request, resultsSB);
         getLimitSelect(request, resultsSB);
         getResourceSortSelect(request, resultsSB);
         resultsSB.append(HtmlUtil.formTableClose());
@@ -340,13 +340,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             StringBuffer toolbar     = new StringBuffer();
 
             for (GsacOutput output :
-                    getRepository().getOutputs(OUTPUT_GROUP_RESOURCE)) {
-                if (output.getId().equals(OUTPUT_RESOURCE_HTML)) {
+                    getRepository().getOutputs(OUTPUT_GROUP_FILE)) {
+                if (output.getId().equals(OUTPUT_FILE_HTML)) {
                     continue;
                 }
                 tmpRequest.put(ARG_OUTPUT, output.getId());
                 String suffix = output.getFileSuffix();
-                String searchUrl = makeUrl(URL_RESOURCE_SEARCH)
+                String searchUrl = makeUrl(URL_FILE_SEARCH)
                                    + ((suffix != null)
                                       ? suffix
                                       : "") + "?" + tmpRequest.getUrlArgs();
@@ -410,7 +410,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
             Hashtable<String, String> override = new Hashtable<String,
                                                      String>();
-            override.put(ARG_OUTPUT, OUTPUT_RESOURCE_HTML);
+            override.put(ARG_OUTPUT, OUTPUT_FILE_HTML);
             makeNextPrevHeader(request, response, sb);
             long size = 0;
             int  cnt  = 0;
@@ -423,7 +423,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                             GsacSite.TYPE_SITE, resource.getSiteID());
                 }
                 if (cnt == 0) {
-                    //                    pw.append(HtmlUtil.formPost(makeUrl(URL_RESOURCE_SEARCH),
+                    //                    pw.append(HtmlUtil.formPost(makeUrl(URL_FILE_SEARCH),
                     request.remove(ARG_OUTPUT);
                     sb.append(HtmlUtil.formPost(request.getUrl(null),
                             HtmlUtil.attr("name", "searchform")));;
@@ -448,25 +448,25 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     String[] sortValues = new String[] {
                         (includeExtraCol
                          ? ""
-                         : null), SORT_RESOURCE_TYPE, "", "",
-                        SORT_RESOURCE_PUBLISHDATE, SORT_RESOURCE_SIZE
+                         : null), SORT_FILE_TYPE, "", "",
+                        SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
                     };
-                    makeSortHeader(request, sb, ARG_RESOURCE_PREFIX, labels,
+                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
                                    sortValues);
 
 
                 }
                 cnt++;
                 openEntryRow(sb, resource.getRepositoryId(),
-                             URL_RESOURCE_VIEW, ARG_RESOURCE_ID);
+                             URL_FILE_VIEW, ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
                 String clickEvent = getEntryEventJS(resource.getId(),
-                                        URL_RESOURCE_VIEW,
-                                        ARG_RESOURCE_ID)[1];
+                                        URL_FILE_VIEW,
+                                        ARG_FILE_ID)[1];
 
-                String cbx = HtmlUtil.checkbox(ARG_RESOURCE_ID,
+                String cbx = HtmlUtil.checkbox(ARG_FILE_ID,
                                  resource.getId(), true);
 
                 //                sb.append(HtmlUtil.col(cbx));

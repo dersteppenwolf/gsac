@@ -97,8 +97,8 @@ public class GsacClient implements GsacConstants {
     /** for querying sites */
     public static final String QUERY_SITE = "site";
 
-    /** for querying resources */
-    public static final String QUERY_RESOURCE = "resource";
+    /** for querying files */
+    public static final String QUERY_FILE = "file";
 
     /** for command line arguments that specify a local file. See usage method       */
     public static final String FILE_PREFIX = "file:";
@@ -188,14 +188,14 @@ public class GsacClient implements GsacConstants {
             }
 
 
-            //Shortcuts so the user can do  -site or -resource instead of -query site or -query resource
+            //Shortcuts so the user can do  -site or -file instead of -query site or -query file
             if (argName.equals(QUERY_SITE)) {
                 properties.put(ARG_QUERY, QUERY_SITE);
                 continue;
             }
 
-            if (argName.equals(QUERY_RESOURCE)) {
-                properties.put(ARG_QUERY, QUERY_RESOURCE);
+            if (argName.equals(QUERY_FILE)) {
+                properties.put(ARG_QUERY, QUERY_FILE);
                 continue;
             }
 
@@ -355,9 +355,9 @@ public class GsacClient implements GsacConstants {
                 usage("Download destination file does not exist:"
                       + downloadFile);
             }
-            //Since we are in download mode we set the query to be a resource query
+            //Since we are in download mode we set the query to be a file query
             //and the output to be the URL listing
-            properties.put(ARG_QUERY, QUERY_RESOURCE);
+            properties.put(ARG_QUERY, QUERY_FILE);
             properties.put(ARG_OUTPUT, OUTPUT_URL);
         }
         //Find out what we are querying and do the query
@@ -365,8 +365,8 @@ public class GsacClient implements GsacConstants {
         System.err.println(queryType);
         if (queryType.equals(QUERY_SITE)) {
             processSiteQuery();
-        } else if (queryType.equals(QUERY_RESOURCE)) {
-            processResourceQuery();
+        } else if (queryType.equals(QUERY_FILE)) {
+            processFileQuery();
         } else {
             usage("Unknown query:" + queryType);
         }
@@ -400,31 +400,31 @@ public class GsacClient implements GsacConstants {
 
 
     /**
-     * process the query for resources. This adds the right kind of  resource output, makes the URL and
+     * process the query for files. This adds the right kind of  file output, makes the URL and
      * fetches it
      *
      * @throws Exception On badness
      */
-    private void processResourceQuery() throws Exception {
+    private void processFileQuery() throws Exception {
         List<String[]> args = new ArrayList<String[]>();
         args.addAll(queryArgs);
-        //Add the output type. These types (e.g., "resource.csv") are thos defined by the
-        //gsac output handlers in org/gsac/gsl/output/resource
+        //Add the output type. These types (e.g., "file.csv") are thos defined by the
+        //gsac output handlers in org/gsac/gsl/output/file
         String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
         if (output.equals(OUTPUT_CSV)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.csv" });
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.csv" });
         } else if (output.equals(OUTPUT_XML)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.xml" });
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.xml" });
         } else if (output.equals(OUTPUT_URL)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.url" });
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.url" });
         } else if (output.equals(OUTPUT_JSON)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "resource.json" });
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.json" });
         } else {
-            usage("Unknown resource output:" + output);
+            usage("Unknown file output:" + output);
         }
         //Make the url
-        String url = createUrl(GsacConstants.URL_RESOURCE_SEARCH, args);
-        System.err.println("Processing resource query:");
+        String url = createUrl(GsacConstants.URL_FILE_SEARCH, args);
+        System.err.println("Processing file query:");
         System.err.println(url);
         //process the url
         processUrl(url);
@@ -664,7 +664,7 @@ public class GsacClient implements GsacConstants {
             repository.retrieveRepositoryInfo(getServer());
         PrintWriter pw = new PrintWriter(System.out);
         pw.println(
-            "Any of the site or resource capabilities can be a command line argument (optionally  prepend a \"-\")");
+            "Any of the site or file capabilities can be a command line argument (optionally  prepend a \"-\")");
         info.printDescription(pw);
         pw.flush();
     }
@@ -709,7 +709,7 @@ public class GsacClient implements GsacConstants {
             "\t-info  fetch and print to stdout the repository information includings available arguments");
         System.err.println(
             "\t-" + ARG_DOWNLOAD
-            + " <destination directory> Do a resource search and download the files to the given directory");
+            + " <destination directory> Do a file search and download the files to the given directory");
 
         System.err.println(
             "\t-" + ARG_KEEP_PATHS
@@ -717,8 +717,8 @@ public class GsacClient implements GsacConstants {
 
 
 
-        System.err.println("\t-" + ARG_QUERY + " site|resource or: -"
-                           + QUERY_RESOURCE + "|-" + QUERY_SITE);
+        System.err.println("\t-" + ARG_QUERY + " site|file or: -"
+                           + QUERY_FILE + "|-" + QUERY_SITE);
         System.err.println("\t-" + ARG_OUTPUT + " csv|xml|url");
         System.err.println("\t-" + ARG_FILE + " outputfile");
         System.err.println("\tany number of query arguments, e.g.:");

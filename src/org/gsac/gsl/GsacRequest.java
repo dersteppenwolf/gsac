@@ -851,7 +851,7 @@ public class GsacRequest implements GsacConstants {
      * @return _more_
      */
     public boolean getResourceAscending() {
-        return get(ARG_RESOURCE_SORT_ORDER,
+        return get(ARG_FILE_SORT_ORDER,
                    SORT_ORDER_ASCENDING).equals(SORT_ORDER_ASCENDING);
     }
 

@@ -50,7 +50,7 @@ import javax.servlet.http.*;
 public class JsonFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_RESOURCE_JSON = "resource.json";
+    public static final String OUTPUT_FILE_JSON = "resource.json";
 
 
     /**
@@ -60,8 +60,8 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
      */
     public JsonFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
-                                  new GsacOutput(this, OUTPUT_RESOURCE_JSON,
+        getRepository().addOutput(OUTPUT_GROUP_FILE,
+                                  new GsacOutput(this, OUTPUT_FILE_JSON,
                                       "Resource JSON", "/resources.json",
                                       true));
     }

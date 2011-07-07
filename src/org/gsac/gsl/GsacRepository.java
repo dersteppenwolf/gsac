@@ -84,7 +84,7 @@ public class GsacRepository implements GsacConstants {
     public static final String GSAC_PATH_HELP = GSAC_PATH_ROOT + "/help";
 
     /** gsac java package path to the resources dir */
-    public static final String GSAC_PATH_RESOURCES = GSAC_PATH_ROOT
+    public static final String GSAC_PATH_FILES = GSAC_PATH_ROOT
                                                      + "/resources";
 
 
@@ -115,11 +115,11 @@ public class GsacRepository implements GsacConstants {
         "prop.sitecapabilities";
 
     /** cache id */
-    private static final String PROP_RESOURCECAPABILITIES =
+    private static final String PROP_FILECAPABILITIES =
         "prop.resourcecapabilities";
 
     /** cache id */
-    private static final String PROP_RESOURCETYPES = "prop.resourcetypes";
+    private static final String PROP_FILETYPES = "prop.resourcetypes";
 
     /**
      * property for host name. This is the external host name that is used for things like kml, etc,
@@ -286,7 +286,7 @@ public class GsacRepository implements GsacConstants {
         LogUtil.setTestMode(true);
         InputStream inputStream;
         //load property files first
-        String[] propertyFiles = { GSAC_PATH_RESOURCES + "/gsac.properties",
+        String[] propertyFiles = { GSAC_PATH_FILES + "/gsac.properties",
                                    getLocalResourcePath("/gsac.properties"),
                                    getLocalResourcePath(
                                        "/gsacserver.properties") };
@@ -298,10 +298,10 @@ public class GsacRepository implements GsacConstants {
         }
 
         mobileHeader =
-            IOUtil.readContents(GSAC_PATH_RESOURCES + "/mobileheader.html",
+            IOUtil.readContents(GSAC_PATH_FILES + "/mobileheader.html",
                                 mobileHeader);
         mobileFooter =
-            IOUtil.readContents(GSAC_PATH_RESOURCES + "/mobilefooter.html",
+            IOUtil.readContents(GSAC_PATH_FILES + "/mobilefooter.html",
                                 mobileFooter);
         mobileHeader = mobileFooter.replace("${urlroot}",
                                             getUrlBase() + URL_BASE);
@@ -324,7 +324,7 @@ public class GsacRepository implements GsacConstants {
                                             getUrlBase() + URL_BASE);
         }
 
-        String[] files = { GSAC_PATH_RESOURCES + "/phrases.properties",
+        String[] files = { GSAC_PATH_FILES + "/phrases.properties",
                            getLocalResourcePath("/phrases.properties") };
         for (String file : files) {
             inputStream = getResourceInputStream(file);
@@ -398,7 +398,7 @@ public class GsacRepository implements GsacConstants {
         }
 
         getResourceManager(GsacSite.TYPE_SITE);
-        getResourceManager(GsacFile.TYPE_RESOURCE);
+        getResourceManager(GsacFile.TYPE_FILE);
 
 
         //TODO: put the specification of the output handlers into a properties or xml file
@@ -458,7 +458,7 @@ public class GsacRepository implements GsacConstants {
      * Add output type
      *
      *
-     * @param group Which group, e.g., SITE, RESOURCE
+     * @param group Which group, e.g., SITE, FILE
      * @param output  output type
      */
     public void addOutput(String group, GsacOutput output) {
@@ -476,7 +476,7 @@ public class GsacRepository implements GsacConstants {
      * Find the output handler
      *
      *
-     * @param group output group, e.g., SITE, RESOURCE
+     * @param group output group, e.g., SITE, FILE
      * @param output output type
      *
      * @return output handler
@@ -501,7 +501,7 @@ public class GsacRepository implements GsacConstants {
      * Find the output handler specified by the ARG_OUTPUT in the request within the given group of
      * otutput handlers
      *
-     * @param group output group, e.g., SITE, RESOURCE
+     * @param group output group, e.g., SITE, FILE
      * @param request the request
      *
      * @return the output handler
@@ -1037,7 +1037,7 @@ public class GsacRepository implements GsacConstants {
      * @return full path
      */
     public String getCoreResourcePath(String fileTail) {
-        return GSAC_PATH_RESOURCES + fileTail;
+        return GSAC_PATH_FILES + fileTail;
     }
 
     /**
@@ -1195,12 +1195,12 @@ public class GsacRepository implements GsacConstants {
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
                 outputHandler.handleRequest(GsacSite.TYPE_SITE, request);
-            } else if (uri.indexOf(URL_RESOURCE_BASE) >= 0) {
+            } else if (uri.indexOf(URL_FILE_BASE) >= 0) {
                 //resource request
-                what = URL_RESOURCE_BASE;
+                what = URL_FILE_BASE;
                 GsacOutputHandler outputHandler =
-                    getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
-                outputHandler.handleRequest(GsacFile.TYPE_RESOURCE,
+                    getOutputHandler(OUTPUT_GROUP_FILE, request);
+                outputHandler.handleRequest(GsacFile.TYPE_FILE,
                                             request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
@@ -1750,11 +1750,11 @@ public class GsacRepository implements GsacConstants {
                         CAPABILITIES_SITE)));
             gri.addCollection(
                 new CapabilityCollection(
-                    CAPABILITIES_RESOURCE, "Resource Query",
+                    CAPABILITIES_FILE, "Resource Query",
                     getServlet().getAbsoluteUrl(
                         getUrlBase()
-                        + URL_RESOURCE_SEARCH), doGetCapabilities(
-                            CAPABILITIES_RESOURCE)));
+                        + URL_FILE_SEARCH), doGetCapabilities(
+                            CAPABILITIES_FILE)));
             myInfo = gri;
             for (CapabilityCollection collection : gri.getCollections()) {
                 for (Capability capability : collection.getCapabilities()) {
@@ -1795,7 +1795,7 @@ public class GsacRepository implements GsacConstants {
                 }
             };
         }
-        if (type.equals(GsacFile.TYPE_RESOURCE)) {
+        if (type.equals(GsacFile.TYPE_FILE)) {
             return new FileManager(this) {
                 public void handleRequest(GsacRequest request,
                                           GsacResponse response)
@@ -1994,7 +1994,7 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlHeader(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
-                mobileHeader = IOUtil.readContents(GSAC_PATH_RESOURCES
+                mobileHeader = IOUtil.readContents(GSAC_PATH_FILES
                         + "/mobileheader.html", mobileHeader);
                 mobileHeader = mobileHeader.replace("${urlroot}",
                         getUrlBase() + URL_BASE);
@@ -2025,7 +2025,7 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlFooter(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
-                mobileFooter = IOUtil.readContents(GSAC_PATH_RESOURCES
+                mobileFooter = IOUtil.readContents(GSAC_PATH_FILES
                         + "/mobilefooter.html", mobileFooter);
                 mobileFooter = mobileFooter.replace("${urlroot}",
                         getUrlBase() + URL_BASE);
@@ -2478,7 +2478,7 @@ public class GsacRepository implements GsacConstants {
         tmp.append(
             HtmlUtil.row(
                 HtmlUtil.colspan(HtmlUtil.b(msg("Resource Outputs")), 2)));
-        for (GsacOutput output : getOutputs(OUTPUT_GROUP_RESOURCE)) {
+        for (GsacOutput output : getOutputs(OUTPUT_GROUP_FILE)) {
             if (output.getForUser()) {
                 tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
                         ARG_OUTPUT + "=" + output.getId())));

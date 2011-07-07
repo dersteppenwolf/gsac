@@ -92,11 +92,11 @@ public interface CddisArgs {
 
     /** _more_ */
     public static final String ARG_DORIS_SATELLITE =
-        GsacArgs.ARG_RESOURCE_PREFIX + "doris.satellite";
+        GsacArgs.ARG_FILE_PREFIX + "doris.satellite";
 
     /** _more_ */
     public static final String ARG_SLR_SATELLITE =
-        GsacArgs.ARG_RESOURCE_PREFIX + "slr.satellite";
+        GsacArgs.ARG_FILE_PREFIX + "slr.satellite";
 
 
 

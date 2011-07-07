@@ -78,11 +78,11 @@ public class FederatedFileManager extends FileManager {
     public void handleRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
-        if (request.defined(ARG_RESOURCE_ID)) {
-            List<String> ids = request.get(ARG_RESOURCE_ID, new ArrayList());
+        if (request.defined(ARG_FILE_ID)) {
+            List<String> ids = request.get(ARG_FILE_ID, new ArrayList());
             for (String id : ids) {
                 response.addObject(getRepository().getResource(request,
-                                                             GsacFile.TYPE_RESOURCE,
+                                                             GsacFile.TYPE_FILE,
                         id));
             }
             return;
@@ -120,10 +120,10 @@ public class FederatedFileManager extends FileManager {
         String baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
         List<GsacFile> resources =
             (List<GsacFile>) getRepository().getRemoteObject(
-                new GsacRepositoryInfo(baseUrl), URL_RESOURCE_VIEW,
-                HtmlUtil.args(new String[] { ARG_RESOURCE_ID,
+                new GsacRepositoryInfo(baseUrl), URL_FILE_VIEW,
+                HtmlUtil.args(new String[] { ARG_FILE_ID,
                                              id }), XmlFileOutputHandler
-                                                 .OUTPUT_RESOURCE_XML);
+                                                 .OUTPUT_FILE_XML);
         if (resources.size() == 0) {
             return null;
         }

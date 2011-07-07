@@ -40,7 +40,7 @@ import java.util.Date;
 public class GsacFile extends GsacResource {
 
     /** _more_          */
-    public static final ObjectType TYPE_RESOURCE = new ObjectType("resource");
+    public static final ObjectType TYPE_FILE = new ObjectType("resource");
 
     /** _more_ */
     private FileInfo fileInfo;
@@ -138,7 +138,7 @@ public class GsacFile extends GsacResource {
      * @return _more_
      */
     public ObjectType getResourceType() {
-        return TYPE_RESOURCE;
+        return TYPE_FILE;
     }
 
 
@@ -148,7 +148,7 @@ public class GsacFile extends GsacResource {
      * @return _more_
      */
     public String getViewUrl() {
-        return GsacConstants.URL_RESOURCE_VIEW;
+        return GsacConstants.URL_FILE_VIEW;
     }
 
     /**
@@ -157,7 +157,7 @@ public class GsacFile extends GsacResource {
      * @return _more_
      */
     public String getIdArg() {
-        return GsacArgs.ARG_RESOURCE_ID;
+        return GsacArgs.ARG_FILE_ID;
     }
 
 

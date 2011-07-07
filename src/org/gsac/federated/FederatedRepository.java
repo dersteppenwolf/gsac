@@ -248,7 +248,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      * @return List of servers to search
      */
     public List<GsacRepositoryInfo> getResourceServers(GsacRequest request) {
-        return getApplicableServers(request, CAPABILITIES_RESOURCE);
+        return getApplicableServers(request, CAPABILITIES_FILE);
     }
 
 
@@ -420,8 +420,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
 
         List<GsacFile> resources =
             (List<GsacFile>) getRemoteObject(callable.repository,
-                URL_RESOURCE_SEARCH, urlArgs,
-                XmlFileOutputHandler.OUTPUT_RESOURCE_XML);
+                URL_FILE_SEARCH, urlArgs,
+                XmlFileOutputHandler.OUTPUT_FILE_XML);
         if (resources == null) {
             System.err.println("Bad request: "
                                + callable.repository.getUrl());
