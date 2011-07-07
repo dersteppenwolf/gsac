@@ -18,7 +18,7 @@
  * 
  */
 
-package org.gsac.gsl.output.resource;
+package org.gsac.gsl.output.file;
 
 
 

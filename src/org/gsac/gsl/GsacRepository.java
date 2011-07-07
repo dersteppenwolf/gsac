@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.gsac.gsl.database.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
-import org.gsac.gsl.output.resource.*;
+import org.gsac.gsl.output.file.*;
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
