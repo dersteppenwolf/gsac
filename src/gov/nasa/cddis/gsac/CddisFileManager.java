@@ -55,7 +55,7 @@ import java.util.TimeZone;
  *
  * @author  Jeff McWhirter
  */
-public class CddisResourceManager extends ResourceManager implements CddisArgs {
+public class CddisFileManager extends FileManager implements CddisArgs {
 
     /** _more_ */
     public static final String TYPE_GNSS_HATANAKA = "gnss.hatanaka";
@@ -225,7 +225,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @param repository the repository
      */
-    public CddisResourceManager(CddisRepository repository) {
+    public CddisFileManager(CddisRepository repository) {
         super(repository);
 
         for (String[] pair : DORIS_SATELLITE_FILES) {
@@ -374,7 +374,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
 
 
             while ((results = iter.getNext()) != null && !exceededLimit) {
-                for (GsacResource resource :
+                for (GsacFile resource :
                         makeResources(type, results, resourceTypes,
                                       dateRange, extraStuff)) {
                     if (totalCnt >= offset) {
@@ -414,7 +414,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public List<GsacResource> makeResources(CddisType type,
+    public List<GsacFile> makeResources(CddisType type,
                                             ResultSet results,
                                             HashSet<String> resourceTypes,
                                             Date[] dateRange,
@@ -458,7 +458,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
         }
         timeString = timeString.trim();
         while(timeString.indexOf(" ")>=0) {
-            System.err.println ("CddisResourceManager: fixing time string:" + timeString);
+            System.err.println ("CddisFileManager: fixing time string:" + timeString);
             timeString = timeString.replace(" ","0");
         }
         timeString = StringUtil.splitUpTo(timeString, ".", 2).get(0);
@@ -479,11 +479,11 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public List<GsacResource> makeGnssResources(CddisType type,
+    public List<GsacFile> makeGnssResources(CddisType type,
             ResultSet results, HashSet<String> resourceTypes,
             boolean addMetadata)
             throws Exception {
-        List<GsacResource> resources = new ArrayList<GsacResource>();
+        List<GsacFile> resources = new ArrayList<GsacFile>();
         String monumentID =
             results.getString(
                 unDot(Tables.GPS_TRACKING2009.COL_MONUMENT_NAME));
@@ -525,7 +525,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
                    + "/" + DDD + "/" + YY + fileTypeLetter + "/"
                    + monumentID.toLowerCase() + DDD + "0." + YY
                    + fileTypeLetter + ".Z";
-            GsacResource resource = new GsacResource(resourceID,
+            GsacFile resource = new GsacFile(resourceID,
                                         new FileInfo(path), site, startDate,
                                         startDate, endDate, resourceType);
 
@@ -549,11 +549,11 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public List<GsacResource> makeDorisResources(CddisType type,
+    public List<GsacFile> makeDorisResources(CddisType type,
             ResultSet results, HashSet<String> resourceTypes,
             boolean addMetadata)
             throws Exception {
-        List<GsacResource> resources = new ArrayList<GsacResource>();
+        List<GsacFile> resources = new ArrayList<GsacFile>();
         String             station   = "N/A";
         //            results.getString(
         //                unDot(Tables.DORIS_2009.COL_STATION));
@@ -598,7 +598,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
             //Make the path
             String path = "ftp://cddis.gsfc.nasa.gov/pub/doris/data/" + sat
                           + "/" + fileName + ".Z";
-            GsacResource resource = new GsacResource(resourceID,
+            GsacFile resource = new GsacFile(resourceID,
                                         new FileInfo(path), site, startDate,
                                         startDate, endDate, resourceType);
 
@@ -626,7 +626,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public List<GsacResource> makeSlrResources(CddisType type,
+    public List<GsacFile> makeSlrResources(CddisType type,
             ResultSet results, HashSet<String> resourceTypes,
             boolean addMetadata, Date[] dateRange, Object[] extraStuff)
             throws Exception {
@@ -634,7 +634,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
         if (extraStuff[0] == null) {
             extraStuff[0] = null;
         }
-        List<GsacResource> resources = new ArrayList<GsacResource>();
+        List<GsacFile> resources = new ArrayList<GsacFile>();
         String             station   = "N/A";
         Date               startDate = results.getDate(1);
         if (startDate == null) {
@@ -721,7 +721,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
             Date dataEndDate = yyyyMMDDSdf.parse(endDateString);
 
             //            System.err.println ("date:" + startDateString +" -- " + endDateString +" " + dataEndDate);
-            GsacResource resource = new GsacResource(resourceID,
+            GsacFile resource = new GsacFile(resourceID,
                                         new FileInfo(path), site,
                                         publishDate, dataStartDate,
                                         dataEndDate, resourceType);
@@ -752,11 +752,11 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public List<GsacResource> makeVlbiResources(CddisType type,
+    public List<GsacFile> makeVlbiResources(CddisType type,
             ResultSet results, HashSet<String> resourceTypes,
             boolean addMetadata)
             throws Exception {
-        List<GsacResource> resources = new ArrayList<GsacResource>();
+        List<GsacFile> resources = new ArrayList<GsacFile>();
         return resources;
     }
 
@@ -769,7 +769,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public void doGetResourceMetadata(int level, GsacResource gsacResource)
+    public void doGetResourceMetadata(int level, GsacFile gsacResource)
             throws Exception {}
 
 
@@ -792,7 +792,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public GsacResource makeResource(ResultSet results) throws Exception {
+    public GsacFile makeResource(ResultSet results) throws Exception {
         return null;
     }
 
@@ -830,7 +830,7 @@ public class CddisResourceManager extends ResourceManager implements CddisArgs {
             try {
                 ResultSet results = statement.getResultSet();
                 if (results.next()) {
-                    List<GsacResource> resources = makeGnssResources(type,
+                    List<GsacFile> resources = makeGnssResources(type,
                                                        results,
                                                        resourceTypes, true);
                     if (resources.size() > 0) {
