@@ -87,7 +87,7 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
         Gson        gson = gsonBuilder.create();
         PrintWriter pw   = response.getPrintWriter();
-        gson.toJson(response.getResources(), pw);
+        gson.toJson(response.getFiles(), pw);
         response.endResponse();
     }
 

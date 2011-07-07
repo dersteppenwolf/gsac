@@ -359,12 +359,12 @@ public class GsacResponse {
      *
      * @return _more_
      */
-    public List<GsacFile> getResources() {
-        List<GsacFile> resources = new ArrayList<GsacFile>();
+    public List<GsacFile> getFiles() {
+        List<GsacFile> files = new ArrayList<GsacFile>();
         for (GsacResource object : objects) {
-            resources.add((GsacFile) object);
+            files.add((GsacFile) object);
         }
-        return resources;
+        return files;
     }
 
 

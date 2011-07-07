@@ -416,7 +416,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             int  cnt  = 0;
 
 
-            for (GsacFile resource : response.getResources()) {
+            for (GsacFile resource : response.getFiles()) {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
                     site = (GsacSite) getRepository().getObject(request,

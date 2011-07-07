@@ -77,7 +77,7 @@ public class XmlFileOutputHandler extends GsacOutputHandler {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter pw = response.getPrintWriter();
         String xml     =
-            getRepository().encodeObject(response.getResources());
+            getRepository().encodeObject(response.getFiles());
         pw.print(xml);
         response.endResponse();
     }
