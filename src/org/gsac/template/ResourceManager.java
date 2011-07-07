@@ -27,14 +27,14 @@ import java.util.List;
  *
  * @author  Jeff McWhirter
  */
-public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
+public class @MACRO.PREFIX@FileManager extends FileManager {
 
     /**
      * ctor
      *
      * @param repository the repository
      */
-    public @MACRO.PREFIX@ResourceManager(@MACRO.PREFIX@Repository repository) {
+    public @MACRO.PREFIX@FileManager(@MACRO.PREFIX@Repository repository) {
         super(repository);
     }
 
@@ -168,7 +168,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
     }
 
     
-    public void doGetResourceMetadata(int level, GsacResource gsacResource)
+    public void doGetResourceMetadata(int level, GsacFile gsacResource)
         throws Exception {
     }
 
@@ -195,7 +195,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
      *
      * @throws Exception On badness
      */
-    public GsacResource makeResource(ResultSet results) throws Exception {
+    public GsacFile makeResource(ResultSet results) throws Exception {
         return null;
         /* e.g.:
         int    col            = 1;
@@ -221,7 +221,7 @@ public class @MACRO.PREFIX@ResourceManager extends ResourceManager {
 
         //Convert the file path to the ftp url
         path = DBUtil.getExportFtpUrl(path);
-        GsacResource resource = new GsacResource(exportID,
+        GsacFile resource = new GsacFile(exportID,
                                     new FileInfo(path, fileSize, md5),
                                     site, publishTime, fromTime, toTime,
                                     toResourceType(type));
