@@ -418,8 +418,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                                        String urlArgs, GsacResponse response)
             throws Exception {
 
-        List<GsacResource> resources =
-            (List<GsacResource>) getRemoteObject(callable.repository,
+        List<GsacFile> resources =
+            (List<GsacFile>) getRemoteObject(callable.repository,
                 URL_RESOURCE_SEARCH, urlArgs,
                 XmlResourceOutputHandler.OUTPUT_RESOURCE_XML);
         if (resources == null) {
@@ -432,7 +432,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             return 0;
         }
 
-        for (GsacResource resource : resources) {
+        for (GsacFile resource : resources) {
             if(callable.getRemoveDuplicates()) {
                 String tail = IOUtil.getFileTail(resource.getFileInfo().getUrl());
                 if(callable.checkAndAddSeen(tail)) {
@@ -515,12 +515,12 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
 
 
     /**
-     * Factory method to create the ResourceManager
+     * Factory method to create the FileManager
      *
      * @return resource manager
      */
-    public ResourceManager doMakeResourceManager() {
-        return new FederatedResourceManager(this);
+    public FileManager doMakeFileManager() {
+        return new FederatedFileManager(this);
     }
 
 

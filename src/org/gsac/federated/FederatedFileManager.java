@@ -53,14 +53,14 @@ import java.util.concurrent.*;
  *
  * @author  Jeff McWhirter
  */
-public class FederatedResourceManager extends ResourceManager {
+public class FederatedFileManager extends FileManager {
 
     /**
      * ctor
      *
      * @param repository the repository
      */
-    public FederatedResourceManager(FederatedRepository repository) {
+    public FederatedFileManager(FederatedRepository repository) {
         super(repository);
     }
 
@@ -82,7 +82,7 @@ public class FederatedResourceManager extends ResourceManager {
             List<String> ids = request.get(ARG_RESOURCE_ID, new ArrayList());
             for (String id : ids) {
                 response.addObject(getRepository().getObject(request,
-                                                             GsacResource.TYPE_RESOURCE,
+                                                             GsacFile.TYPE_RESOURCE,
                         id));
             }
             return;
@@ -101,7 +101,7 @@ public class FederatedResourceManager extends ResourceManager {
      *
      * @throws Exception _more_
      */
-    public void doGetMetadata(int level, GsacResource gsacResource)
+    public void doGetMetadata(int level, GsacFile gsacResource)
             throws Exception {}
 
 
@@ -118,8 +118,8 @@ public class FederatedResourceManager extends ResourceManager {
         List<String> pair = StringUtil.splitUpTo(resourceId, ":", 2);
         String       id = pair.get(1);
         String baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
-        List<GsacResource> resources =
-            (List<GsacResource>) getRepository().getRemoteObject(
+        List<GsacFile> resources =
+            (List<GsacFile>) getRepository().getRemoteObject(
                 new GsacRepositoryInfo(baseUrl), URL_RESOURCE_VIEW,
                 HtmlUtil.args(new String[] { ARG_RESOURCE_ID,
                                              id }), XmlResourceOutputHandler
@@ -127,7 +127,7 @@ public class FederatedResourceManager extends ResourceManager {
         if (resources.size() == 0) {
             return null;
         }
-        GsacResource       resource = resources.get(0);
+        GsacFile       resource = resources.get(0);
         GsacRepositoryInfo info = getRepository().getRepositoryInfo(baseUrl);
         if (info == null) {
             throw new IllegalArgumentException("Could not find repository:"
