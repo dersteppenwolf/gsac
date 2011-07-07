@@ -178,61 +178,54 @@ public interface GsacArgs {
     public static final String ARG_FILE_PREFIX = "file.";
 
     /** _more_ */
-    public static final String ARG_FILE_SORT_VALUE =
-        ARG_FILE_PREFIX + ARG_SORT_VALUE_SUFFIX;
+    public static final String ARG_FILE_SORT_VALUE = ARG_FILE_PREFIX
+                                                     + ARG_SORT_VALUE_SUFFIX;
 
     /** _more_ */
-    public static final String ARG_FILE_SORT_ORDER =
-        ARG_FILE_PREFIX + ARG_SORT_ORDER_SUFFIX;
+    public static final String ARG_FILE_SORT_ORDER = ARG_FILE_PREFIX
+                                                     + ARG_SORT_ORDER_SUFFIX;
 
 
     /** _more_ */
-    public static final String SORT_FILE_TYPE = ARG_FILE_PREFIX
-                                                    + "type";
+    public static final String SORT_FILE_TYPE = ARG_FILE_PREFIX + "type";
 
     /** _more_ */
-    public static final String SORT_FILE_SIZE = ARG_FILE_PREFIX
-                                                    + "size";
+    public static final String SORT_FILE_SIZE = ARG_FILE_PREFIX + "size";
 
     /** _more_ */
-    public static final String SORT_FILE_PUBLISHDATE =
-        ARG_FILE_PREFIX + "publishdate";
+    public static final String SORT_FILE_PUBLISHDATE = ARG_FILE_PREFIX
+                                                       + "publishdate";
 
     /** _more_ */
     public static final String SORT_FILE_DATADATE = ARG_FILE_PREFIX
-                                                        + "datadate";
+                                                    + "datadate";
 
 
 
     /** _more_ */
-    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX
-                                                   + "filesize";
+    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + "filesize";
 
     /** _more_ */
-    public static final String ARG_FILE_SIZEMAX = ARG_FILE_SIZE
-                                                      + ".max";
+    public static final String ARG_FILE_SIZEMAX = ARG_FILE_SIZE + ".max";
 
 
-    /**  file size min */
-    public static final String ARG_FILE_SIZEMIN = ARG_FILE_SIZE
-                                                      + ".min";
+    /** file size min */
+    public static final String ARG_FILE_SIZEMIN = ARG_FILE_SIZE + ".min";
 
     /** _more_ */
     public static final String ARG_FILE_FILESIZE = ARG_FILE_PREFIX
-                                                       + "filesize";
+                                                   + "filesize";
 
     /** file size max */
-    public static final String ARG_FILESIZE_MAX = ARG_FILE_FILESIZE
-                                                  + ".max";
+    public static final String ARG_FILESIZE_MAX = ARG_FILE_FILESIZE + ".max";
 
     /** file size min */
-    public static final String ARG_FILESIZE_MIN = ARG_FILE_FILESIZE
-                                                  + ".min";
+    public static final String ARG_FILESIZE_MIN = ARG_FILE_FILESIZE + ".min";
 
 
     /** _more_ */
     public static final String ARG_FILE_PUBLISHDATE = ARG_FILE_PREFIX
-                                                          + "publishdate";
+                                                      + "publishdate";
 
 
     /** publish date for files */
@@ -241,21 +234,21 @@ public interface GsacArgs {
 
 
     /** publish date for files */
-    public static final String ARG_FILE_PUBLISHDATE_TO =
-        ARG_FILE_PUBLISHDATE + ".to";
+    public static final String ARG_FILE_PUBLISHDATE_TO = ARG_FILE_PUBLISHDATE
+                                                         + ".to";
 
     /** publish date for files */
     public static final String ARG_FILE_DATADATE = ARG_FILE_PREFIX
-                                                       + "datadate";
+                                                   + "datadate";
 
 
     /** publish date for files */
-    public static final String ARG_FILE_DATADATE_FROM =
-        ARG_FILE_DATADATE + ".from";
+    public static final String ARG_FILE_DATADATE_FROM = ARG_FILE_DATADATE
+                                                        + ".from";
 
     /** data date for files */
-    public static final String ARG_FILE_DATADATE_TO =
-        ARG_FILE_DATADATE + ".to";
+    public static final String ARG_FILE_DATADATE_TO = ARG_FILE_DATADATE
+                                                      + ".to";
 
 
     /** _more_ */
@@ -266,8 +259,7 @@ public interface GsacArgs {
     public static final String ARG_FILEID = ARG_FILE_ID;
 
     /** _more_ */
-    public static final String ARG_FILE_TYPE = ARG_FILE_PREFIX
-                                                   + "type";
+    public static final String ARG_FILE_TYPE = ARG_FILE_PREFIX + "type";
 
 
 

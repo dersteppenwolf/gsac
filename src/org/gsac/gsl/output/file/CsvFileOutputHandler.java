@@ -56,8 +56,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_CSV,
-                                      "Resource CSV", "/files.csv",
-                                      true));
+                                      "Resource CSV", "/files.csv", true));
     }
 
 

@@ -162,11 +162,11 @@ public class GsacRepository implements GsacConstants {
     /** the database manager */
     private GsacDatabaseManager databaseManager;
 
-    /** _more_          */
+    /** _more_ */
     private Hashtable<String, GsacResourceManager> objectManagerMap =
         new Hashtable<String, GsacResourceManager>();
 
-    /** _more_          */
+    /** _more_ */
     private List<GsacResourceManager> objectManagers =
         new ArrayList<GsacResourceManager>();
 
@@ -1195,8 +1195,7 @@ public class GsacRepository implements GsacConstants {
                 what = URL_FILE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_FILE, request);
-                outputHandler.handleRequest(GsacFile.TYPE_FILE,
-                                            request);
+                outputHandler.handleRequest(GsacFile.TYPE_FILE, request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
                 GsacOutputHandler outputHandler =
@@ -1434,8 +1433,8 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception on badnesss
      */
-    public void processRequest(ResourceClass resourceClass, GsacRequest request,
-                               GsacResponse response)
+    public void processRequest(ResourceClass resourceClass,
+                               GsacRequest request, GsacResponse response)
             throws Exception {
         GsacResourceManager gom = getResourceManager(resourceClass);
         if (gom != null) {
@@ -1747,9 +1746,8 @@ public class GsacRepository implements GsacConstants {
                 new CapabilityCollection(
                     CAPABILITIES_FILE, "File Query",
                     getServlet().getAbsoluteUrl(
-                        getUrlBase()
-                        + URL_FILE_SEARCH), doGetCapabilities(
-                            CAPABILITIES_FILE)));
+                        getUrlBase() + URL_FILE_SEARCH), doGetCapabilities(
+                        CAPABILITIES_FILE)));
             myInfo = gri;
             for (CapabilityCollection collection : gri.getCollections()) {
                 for (Capability capability : collection.getCapabilities()) {
@@ -1768,7 +1766,8 @@ public class GsacRepository implements GsacConstants {
      * @param type _more_
      * @param gom _more_
      */
-    public void addObjectManager(ResourceClass type, GsacResourceManager gom) {
+    public void addObjectManager(ResourceClass type,
+                                 GsacResourceManager gom) {
         objectManagerMap.put(type.getType(), gom);
         objectManagers.add(gom);
     }
@@ -1837,7 +1836,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public GsacResource getResource(GsacRequest request, ResourceClass type,
-                                String objectId)
+                                    String objectId)
             throws Exception {
         GsacResourceManager gom    = getResourceManager(type);
         GsacResource        object = gom.getResourceFromCache(objectId);
@@ -1915,7 +1914,8 @@ public class GsacRepository implements GsacConstants {
      */
     public void doGetFullMetadata(int level, GsacResource gsacObject)
             throws Exception {
-        GsacResourceManager gom = getResourceManager(gsacObject.getResourceClass());
+        GsacResourceManager gom =
+            getResourceManager(gsacObject.getResourceClass());
         if (gom != null) {
             gom.doGetMetadata(level, gsacObject);
         }

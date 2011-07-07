@@ -57,8 +57,7 @@ public class XmlFileOutputHandler extends GsacOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_XML,
-                                      "File GSAC XML", "/files.xml",
-                                      true));
+                                      "File GSAC XML", "/files.xml", true));
     }
 
 
@@ -75,9 +74,8 @@ public class XmlFileOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
-        PrintWriter pw = response.getPrintWriter();
-        String xml     =
-            getRepository().encodeObject(response.getFiles());
+        PrintWriter pw  = response.getPrintWriter();
+        String      xml = getRepository().encodeObject(response.getFiles());
         pw.print(xml);
         response.endResponse();
     }

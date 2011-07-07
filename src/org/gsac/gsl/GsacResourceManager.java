@@ -54,7 +54,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     private TTLCache<Object, GsacResource> objectCache =
         new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
 
-    /** _more_          */
+    /** _more_ */
     private ResourceClass type;
 
     /**
@@ -63,7 +63,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param repository _more_
      * @param type _more_
      */
-    public GsacResourceManager(GsacRepository repository, ResourceClass type) {
+    public GsacResourceManager(GsacRepository repository,
+                               ResourceClass type) {
         super(repository);
         this.type = type;
     }
@@ -118,7 +119,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      * @throws Exception _more_
      */
-    public abstract GsacResource getResource(String objectId) throws Exception;
+    public abstract GsacResource getResource(String objectId)
+     throws Exception;
 
     /**
      * This method will first look in the local objectCache for the object.
@@ -138,7 +140,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * _more_
      */
     public void clearCache() {
-        objectCache = new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
+        objectCache = new TTLCache<Object,
+                                   GsacResource>(TTLCache.MS_IN_A_DAY);
     }
 
     /**

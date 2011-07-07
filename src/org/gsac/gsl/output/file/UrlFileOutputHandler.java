@@ -56,8 +56,7 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_URL,
-                                      "File Url", "/files.txt",
-                                      true));
+                                      "File Url", "/files.txt", true));
 
     }
 
@@ -71,9 +70,9 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
      */
     public void processObject(GsacResponse response, GsacResource object) {
         try {
-            GsacFile resource  = (GsacFile) object;
-            PrintWriter  pw        = response.getPrintWriter();
-            boolean      firstTime = !response.getHaveInitialized();
+            GsacFile    resource  = (GsacFile) object;
+            PrintWriter pw        = response.getPrintWriter();
+            boolean     firstTime = !response.getHaveInitialized();
             if (firstTime) {
                 response.startResponse(GsacResponse.MIME_TEXT);
             }

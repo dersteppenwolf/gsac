@@ -39,7 +39,7 @@ import java.util.Date;
  */
 public class GsacFile extends GsacResource {
 
-    /** _more_          */
+    /** _more_ */
     public static final ResourceClass TYPE_FILE = new ResourceClass("file");
 
     /** _more_ */
@@ -82,8 +82,8 @@ public class GsacFile extends GsacResource {
      * @param publishTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo,
-                        GsacSite site, Date publishTime, FileType type) {
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
+                    Date publishTime, FileType type) {
         this(repositoryId, fileInfo, site, publishTime, publishTime,
              publishTime, type);
     }
@@ -100,9 +100,8 @@ public class GsacFile extends GsacResource {
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo,
-                        GsacSite site, Date startTime, Date endTime,
-                        FileType type) {
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
+                    Date startTime, Date endTime, FileType type) {
         this(repositoryId, fileInfo, site, startTime, startTime, endTime,
              type);
     }
@@ -120,9 +119,9 @@ public class GsacFile extends GsacResource {
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo,
-                        GsacSite site, Date publishTime, Date startTime,
-                        Date endTime, FileType type) {
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
+                    Date publishTime, Date startTime, Date endTime,
+                    FileType type) {
         super(repositoryId);
         this.fileInfo    = fileInfo;
         this.site        = site;

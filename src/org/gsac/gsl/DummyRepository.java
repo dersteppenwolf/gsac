@@ -50,8 +50,8 @@ public class DummyRepository extends GsacRepositoryImpl {
     private List<GsacSite> sites = new ArrayList<GsacSite>();
 
     /** _more_ */
-    private Hashtable<String, GsacFile> resourceMap =
-        new Hashtable<String, GsacFile>();
+    private Hashtable<String, GsacFile> resourceMap = new Hashtable<String,
+                                                          GsacFile>();
 
     /** _more_ */
     private List<GsacFile> resources = new ArrayList<GsacFile>();

@@ -62,8 +62,7 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_JSON,
-                                      "File JSON", "/files.json",
-                                      true));
+                                      "File JSON", "/files.json", true));
     }
 
 

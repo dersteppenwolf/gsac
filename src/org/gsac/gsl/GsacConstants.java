@@ -60,16 +60,13 @@ public interface GsacConstants extends GsacArgs {
     public static final String URL_FILE_BASE = URL_BASE + "/file";
 
     /** _more_ */
-    public static final String URL_FILE_SEARCH = URL_FILE_BASE
-                                                     + "/search";
+    public static final String URL_FILE_SEARCH = URL_FILE_BASE + "/search";
 
     /** _more_ */
-    public static final String URL_FILE_FORM = URL_FILE_BASE
-                                                   + "/form";
+    public static final String URL_FILE_FORM = URL_FILE_BASE + "/form";
 
     /** _more_ */
-    public static final String URL_FILE_VIEW = URL_FILE_BASE
-                                                   + "/view";
+    public static final String URL_FILE_VIEW = URL_FILE_BASE + "/view";
 
 
     /** _more_ */
@@ -153,8 +150,8 @@ public interface GsacConstants extends GsacArgs {
     public static final String RESULT_BROWSE = "result.browse";
 
     /** _more_ */
-    public static final String[] URL_BASES = { URL_SITE_BASE,
-            URL_FILE_BASE, URL_BROWSE_BASE };
+    public static final String[] URL_BASES = { URL_SITE_BASE, URL_FILE_BASE,
+            URL_BROWSE_BASE };
 
 
     /** _more_ */

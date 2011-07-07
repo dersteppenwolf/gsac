@@ -61,8 +61,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
                                   output = new GsacOutput(this,
                                       OUTPUT_FILE_DOWNLOAD,
                                       "Download Files via Webstart",
-                                      "/files.jnlp", true,
-                                      "Download Files"));
+                                      "/files.jnlp", true, "Download Files"));
 
     }
 
@@ -103,8 +102,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         String contents = IOUtil.readContents(inputStream);
         System.err.println("read:" + contents);
         GsacRequest newRequest = new GsacRequest(request);
-        newRequest.put(ARG_OUTPUT,
-                       UrlFileOutputHandler.OUTPUT_FILE_URL);
+        newRequest.put(ARG_OUTPUT, UrlFileOutputHandler.OUTPUT_FILE_URL);
         String dataUrl = makeUrl(URL_FILE_SEARCH + "?"
                                  + newRequest.getUrlArgs());
         String fullUrlRoot =

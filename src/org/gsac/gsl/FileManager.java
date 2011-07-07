@@ -131,6 +131,7 @@ public abstract class FileManager extends GsacResourceManager {
      *
      * @param level _more_
      * @param gsacFile the file
+     * @param gsacResource _more_
      *
      * @throws Exception On badness
      */
@@ -178,8 +179,8 @@ public abstract class FileManager extends GsacResourceManager {
                                 new Capability(
                                     ARG_FILE_TYPE, "File Type",
                                     new ArrayList<IdLabel>(),
-                                    true), "File Query",
-                                           "Type of file", null,
+                                    true), "File Query", "Type of file",
+                                           null,
                                            getRepository().getVocabulary(
                                                ARG_FILE_TYPE, true)),
                               initCapability(new Capability(ARG_FILE_DATADATE,
@@ -217,9 +218,8 @@ public abstract class FileManager extends GsacResourceManager {
                                       List<Clause> clauses,
                                       String columnName, StringBuffer msgBuff)
             throws Exception {
-        Date[] dateRange =
-            request.getDateRange(ARG_FILE_PUBLISHDATE_FROM,
-                                 ARG_FILE_PUBLISHDATE_TO, null, null);
+        Date[] dateRange = request.getDateRange(ARG_FILE_PUBLISHDATE_FROM,
+                               ARG_FILE_PUBLISHDATE_TO, null, null);
 
         if (dateRange[0] != null) {
             clauses.add(Clause.ge(columnName, dateRange[0]));

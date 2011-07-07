@@ -109,8 +109,7 @@ public class RssFileOutputHandler extends GsacOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_RSS,
-                                      "File GSAC RSS", "/files.rss",
-                                      true));
+                                      "File GSAC RSS", "/files.rss", true));
     }
 
 

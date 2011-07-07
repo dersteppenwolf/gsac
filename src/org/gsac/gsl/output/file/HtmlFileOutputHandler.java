@@ -133,15 +133,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         if (request.isGsacUrl(URL_FILE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_FILE_SEARCH)) {
-            getRepository().processRequest(GsacFile.TYPE_FILE,
-                                           request, response);
+            getRepository().processRequest(GsacFile.TYPE_FILE, request,
+                                           response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_FILEID)) {
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
-                    GsacFile.TYPE_FILE,
-                    request.get(ARG_FILEID, ""));
+                    GsacFile.TYPE_FILE, request.get(ARG_FILEID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -457,17 +456,16 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 }
                 cnt++;
-                openEntryRow(sb, resource.getRepositoryId(),
-                             URL_FILE_VIEW, ARG_FILE_ID);
+                openEntryRow(sb, resource.getRepositoryId(), URL_FILE_VIEW,
+                             ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
                 String clickEvent = getEntryEventJS(resource.getId(),
-                                        URL_FILE_VIEW,
-                                        ARG_FILE_ID)[1];
+                                        URL_FILE_VIEW, ARG_FILE_ID)[1];
 
-                String cbx = HtmlUtil.checkbox(ARG_FILE_ID,
-                                 resource.getId(), true);
+                String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(),
+                                 true);
 
                 //                sb.append(HtmlUtil.col(cbx));
 

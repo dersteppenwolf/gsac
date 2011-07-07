@@ -232,10 +232,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public void getResourceSortSelect(GsacRequest request, Appendable pw)
             throws IOException {
-        boolean sortCapable =
-            getRepository().isCapable(ARG_FILE_SORT_VALUE);
-        boolean orderCapable =
-            getRepository().isCapable(ARG_FILE_SORT_ORDER);
+        boolean sortCapable  = getRepository().isCapable(ARG_FILE_SORT_VALUE);
+        boolean orderCapable = getRepository().isCapable(ARG_FILE_SORT_ORDER);
         if ( !sortCapable) {
             return;
         }
@@ -246,10 +244,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             { SORT_FILE_PUBLISHDATE, msg("Publish Date") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
-        String valueWidget =
-            HtmlUtil.select(ARG_FILE_SORT_VALUE, tfos,
-                            request.get(ARG_FILE_SORT_VALUE,
-                                        ARG_UNDEFINED_VALUE), "");
+        String valueWidget = HtmlUtil.select(ARG_FILE_SORT_VALUE, tfos,
+                                             request.get(ARG_FILE_SORT_VALUE,
+                                                 ARG_UNDEFINED_VALUE), "");
 
         String orderWidget = "";
         if (orderCapable) {
@@ -257,12 +254,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 ARG_FILE_SORT_ORDER, SORT_ORDER_ASCENDING,
                 SORT_ORDER_ASCENDING.equals(
                     request.get(
-                        ARG_FILE_SORT_ORDER,
-                        SORT_ORDER_ASCENDING))) + " " + msg("Ascending")
-                            + HtmlUtil.space(2)
+                        ARG_FILE_SORT_ORDER, SORT_ORDER_ASCENDING))) + " "
+                            + msg("Ascending") + HtmlUtil.space(2)
                             + HtmlUtil.radio(
-                                ARG_FILE_SORT_ORDER,
-                                SORT_ORDER_DESCENDING,
+                                ARG_FILE_SORT_ORDER, SORT_ORDER_DESCENDING,
                                 SORT_ORDER_DESCENDING.equals(
                                     request.get(
                                         ARG_FILE_SORT_ORDER,
@@ -613,9 +608,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             String[] labels = { "Search Sites", "Search Files", "Browse",
                                 "Information", "Help" };
-            String[] urls = { URL_SITE_FORM, URL_FILE_FORM,
-                              URL_BROWSE_BASE, URL_REPOSITORY_VIEW,
-                              URL_HELP + "/index.html" };
+            String[] urls = { URL_SITE_FORM, URL_FILE_FORM, URL_BROWSE_BASE,
+                              URL_REPOSITORY_VIEW, URL_HELP + "/index.html" };
             String[] keys = { HEADER_SITE, HEADER_FILE, HEADER_BROWSE,
                               HEADER_INFO, HEADER_HELP };
             for (int i = 0; i < labels.length; i++) {
@@ -1411,9 +1405,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 if (gsacObject instanceof GsacSite) {
                     GsacSite site = (GsacSite) gsacObject;
 
-                    dateString = HtmlUtil.href(
-                        HtmlUtil.url(
-                            makeUrl(URL_FILE_FORM), new String[] {
+                    dateString =
+                        HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
+                            new String[] {
                         ARG_SITE_ID, site.getSiteId(), ARG_SITE_CODE,
                         site.getSiteCode(), ARG_FILE_DATADATE_FROM,
                         formatDateTime(equipment.getFromDate()),

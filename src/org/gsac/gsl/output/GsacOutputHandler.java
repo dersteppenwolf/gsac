@@ -168,7 +168,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public final void handleRequest(ResourceClass type, GsacRequest gsacRequest)
+    public final void handleRequest(ResourceClass type,
+                                    GsacRequest gsacRequest)
             throws Exception {
         handleRequest(type, gsacRequest, doMakeResponse(gsacRequest));
     }
@@ -471,8 +472,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String makeResourceUrl(GsacFile resource) {
-        return makeResourceUrl(HtmlUtil.arg(ARG_FILE_ID,
-                                            resource.getId()));
+        return makeResourceUrl(HtmlUtil.arg(ARG_FILE_ID, resource.getId()));
     }
 
 

@@ -56,8 +56,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
     public static final String OUTPUT_FILE_ZIP = "file.zip";
 
     /** _more_ */
-    public static final String PROP_MAXSIZE = OUTPUT_FILE_ZIP
-                                              + ".maxsize";
+    public static final String PROP_MAXSIZE = OUTPUT_FILE_ZIP + ".maxsize";
 
     /** 100 MB limit */
     public static final long SIZE_THRESHOLD = 1000000 * 100;
