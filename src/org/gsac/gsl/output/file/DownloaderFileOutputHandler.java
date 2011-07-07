@@ -46,7 +46,7 @@ import java.io.*;
 public class DownloaderFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_FILE_DOWNLOAD = "resource.download";
+    public static final String OUTPUT_FILE_DOWNLOAD = "file.download";
 
 
     /**
@@ -61,7 +61,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
                                   output = new GsacOutput(this,
                                       OUTPUT_FILE_DOWNLOAD,
                                       "Download Files via Webstart",
-                                      "/resources.jnlp", true,
+                                      "/files.jnlp", true,
                                       "Download Files"));
 
     }
@@ -87,7 +87,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
 
         //        System.err.println("path:" + path);
         if ( !path.endsWith(".jnlp")) {
-            String redirectUrl = path + "/resources.jnlp" + "?"
+            String redirectUrl = path + "/files.jnlp" + "?"
                                  + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
             response.endResponse();
@@ -95,7 +95,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         }
 
         String codebase = makeUrl(URL_FILE_SEARCH);
-        String href     = "resources.jnlp?" + request.getUrlArgs();
+        String href     = "file..jnlp?" + request.getUrlArgs();
         //        System.err.println("getting jnlp file");
         response.startResponse(GsacResponse.MIME_JNLP);
         InputStream inputStream = getRepository().getResourceInputStream(

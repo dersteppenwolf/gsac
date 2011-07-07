@@ -53,7 +53,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
 
 
     /** _more_ */
-    public static final String OUTPUT_FILE_ZIP = "resource.zip";
+    public static final String OUTPUT_FILE_ZIP = "file.zip";
 
     /** _more_ */
     public static final String PROP_MAXSIZE = OUTPUT_FILE_ZIP
@@ -71,7 +71,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_ZIP,
-                                      "Zip Files", "/resources.zip", true,
+                                      "Zip Files", "/files.zip", true,
                                       null /*"Zip Files"*/));
 
     }
@@ -137,7 +137,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
                 tmp = "v" + cnt + "_" + tail;
                 cnt++;
             }
-            zos.putNextEntry(new ZipEntry("resources/" + tmp));
+            zos.putNextEntry(new ZipEntry("files/" + tmp));
             //            System.err.println("write to:" + tail);
             IOUtil.writeTo(fileStream, zos);
             //            System.err.println("done write to:" + tail);

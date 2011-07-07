@@ -56,7 +56,7 @@ import java.util.List;
 
 
 /**
- * Base class for the site and resource managers. It provides some
+ * Base class for the site and file managers. It provides some
  * basic facilities like formatting dates, creating the search criteria message, etc.
  *
  *
@@ -68,7 +68,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     private GsacRepository repository;
 
     /**
-     * For enumerated values that have a value and a label (e.g., resource type)
+     * For enumerated values that have a value and a label (e.g., file type)
      * This holds the mapping of the value to the label. It is used when creating the
      * search criteria message
      */

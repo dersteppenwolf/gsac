@@ -43,7 +43,7 @@ import java.util.List;
 
 
 /**
- * Handles all of the resource related repository requests
+ * Handles all of the file related repository requests
  *
  *
  * @author  Jeff McWhirter
@@ -75,30 +75,30 @@ public abstract class FileManager extends GsacResourceManager {
 
 
     /**
-     * Create a resource from the given results
+     * Create a file from the given results
      *
      * @param results result set
      *
-     * @return The resource
+     * @return The file
      *
      * @throws Exception On badness
      */
-    public GsacFile makeResource(ResultSet results) throws Exception {
+    public GsacFile makeFile(ResultSet results) throws Exception {
         return null;
     }
 
 
 
     /**
-     * Read the resources for the given statement
+     * Read the files for the given statement
      *
      * @param request request
      * @param response response
-     * @param statement resource query statement
+     * @param statement file query statement
      * @param offset select offset
      * @param limit select limit
      *
-     * @return how many resources were added
+     * @return how many files were added
      *
      * @throws Exception On badness
      */
@@ -108,8 +108,8 @@ public abstract class FileManager extends GsacResourceManager {
         long             t1   = System.currentTimeMillis();
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
-            //      makeResource(iter.getResults());
-            response.addObject(makeResource(iter.getResults()));
+            //      makeFile(iter.getResults());
+            response.addObject(makeFile(iter.getResults()));
             if ( !iter.countOK()) {
                 response.setExceededLimit();
                 break;
@@ -126,29 +126,19 @@ public abstract class FileManager extends GsacResourceManager {
 
 
     /**
-     * Add full metadata to the resource
+     * Add full metadata to the file
      *
      *
      * @param level _more_
-     * @param gsacResource the resource
+     * @param gsacFile the file
      *
      * @throws Exception On badness
      */
-    public void doGetResourceMetadata(int level, GsacFile gsacResource)
+    public void doGetResourceMetadata(int level, GsacResource gsacResource)
             throws Exception {
         //default is to do nothing
     }
 
-
-    /**
-     * Get the extra resource search capabilities. This
-     * calls makeCapabilities to actually make them
-     *
-     * @return resource search capabilities
-     */
-    public List<Capability> doGetResourceQueryCapabilities() {
-        return new ArrayList<Capability>();
-    }
 
     /**
      * helper method to add the file size clauses
@@ -186,20 +176,20 @@ public abstract class FileManager extends GsacResourceManager {
         Capability cap;
         Capability[] dflt = { initCapability(
                                 new Capability(
-                                    ARG_FILE_TYPE, "Resource Type",
+                                    ARG_FILE_TYPE, "File Type",
                                     new ArrayList<IdLabel>(),
                                     true), "File Query",
-                                           "Type of file or resource", null,
+                                           "Type of file", null,
                                            getRepository().getVocabulary(
                                                ARG_FILE_TYPE, true)),
                               initCapability(new Capability(ARG_FILE_DATADATE,
                                   "Data Date",
                                   Capability.TYPE_DATERANGE), "File Query",
-                                      "Date the data this resource holds was collected"),
+                                      "Date the data this file holds was collected"),
                               initCapability(new Capability(ARG_FILE_PUBLISHDATE,
                                   "Publish Date",
                                   Capability.TYPE_DATERANGE), "File Query",
-                                      "Date when this resource was first published to the repository"),
+                                      "Date when this file was first published to the repository"),
                               initCapability(cap =
                                   new Capability(ARG_FILE_FILESIZE,
                                       "File Size",

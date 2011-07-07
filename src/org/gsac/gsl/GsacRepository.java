@@ -85,7 +85,7 @@ public class GsacRepository implements GsacConstants {
 
     /** gsac java package path to the resources dir */
     public static final String GSAC_PATH_FILES = GSAC_PATH_ROOT
-                                                     + "/resources";
+                                                     + "/files";
 
 
 
@@ -116,10 +116,10 @@ public class GsacRepository implements GsacConstants {
 
     /** cache id */
     private static final String PROP_FILECAPABILITIES =
-        "prop.resourcecapabilities";
+        "prop.filecapabilities";
 
     /** cache id */
-    private static final String PROP_FILETYPES = "prop.resourcetypes";
+    private static final String PROP_FILETYPES = "prop.filetypes";
 
     /**
      * property for host name. This is the external host name that is used for things like kml, etc,
@@ -170,11 +170,6 @@ public class GsacRepository implements GsacConstants {
     private List<GsacResourceManager> objectManagers =
         new ArrayList<GsacResourceManager>();
 
-    /** the site manager */
-    private SiteManager siteManager;
-
-    /** the resource manager */
-    private FileManager resourceManager;
 
     /** caches site group and types, etc. */
     private TTLCache<String, Object> cache =
@@ -1196,7 +1191,7 @@ public class GsacRepository implements GsacConstants {
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
                 outputHandler.handleRequest(GsacSite.TYPE_SITE, request);
             } else if (uri.indexOf(URL_FILE_BASE) >= 0) {
-                //resource request
+                //file request
                 what = URL_FILE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_FILE, request);
@@ -1583,7 +1578,7 @@ public class GsacRepository implements GsacConstants {
         String[] vocabularyContents = { getExternalVocabulary(type),
                                         getInternalVocabulary(type) };
 
-        //        boolean debug = type.indexOf("resource.type")>=0;
+        //        boolean debug = type.indexOf("file.type")>=0;
         boolean debug = false;
         for (int i = 0; i < vocabularyContents.length; i++) {
             if (debug) {
@@ -1750,7 +1745,7 @@ public class GsacRepository implements GsacConstants {
                         CAPABILITIES_SITE)));
             gri.addCollection(
                 new CapabilityCollection(
-                    CAPABILITIES_FILE, "Resource Query",
+                    CAPABILITIES_FILE, "File Query",
                     getServlet().getAbsoluteUrl(
                         getUrlBase()
                         + URL_FILE_SEARCH), doGetCapabilities(
@@ -2477,7 +2472,7 @@ public class GsacRepository implements GsacConstants {
 
         tmp.append(
             HtmlUtil.row(
-                HtmlUtil.colspan(HtmlUtil.b(msg("Resource Outputs")), 2)));
+                HtmlUtil.colspan(HtmlUtil.b(msg("File Outputs")), 2)));
         for (GsacOutput output : getOutputs(OUTPUT_GROUP_FILE)) {
             if (output.getForUser()) {
                 tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
@@ -3173,7 +3168,7 @@ public class GsacRepository implements GsacConstants {
             //            "http://localhost:8080/gsacws/gsacapi/site/view?site.id=15896_5340_0",
             //            "http://localhost:8080/gsacws/gsacapi/site/search?site.status=decomissioned",
             //            "http://localhost:8080/gsacws/gsacapi/site/search?site.monument=deep+foundation+mast",
-            //            "http://localhost:8080/gsacws/gsacapi/resource/search/resources.csv?output=resource.csv&resource.sortorder=ascending&site.code=p123&limit=1000&resource.datadate.to=2011-03-04&resource.datadate.from=2011-03-01&site.interval=interval.normal",
+            //            "http://localhost:8080/gsacws/gsacapi/file/search/resources.csv?output=resource.csv&resource.sortorder=ascending&site.code=p123&limit=1000&resource.datadate.to=2011-03-04&resource.datadate.from=2011-03-01&site.interval=interval.normal",
         };
         for (int i = 0; i < 1000; i++) {
             for (String url : urls) {

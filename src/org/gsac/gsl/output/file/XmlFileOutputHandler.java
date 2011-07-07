@@ -45,7 +45,7 @@ import javax.servlet.http.*;
 public class XmlFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_FILE_XML = "resource.gsacxml";
+    public static final String OUTPUT_FILE_XML = "file.gsacxml";
 
 
     /**
@@ -57,7 +57,7 @@ public class XmlFileOutputHandler extends GsacOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_XML,
-                                      "Resource GSAC XML", "/resources.xml",
+                                      "File GSAC XML", "/files.xml",
                                       true));
     }
 

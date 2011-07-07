@@ -43,7 +43,7 @@ import javax.servlet.http.*;
 public class WgetFileOutputHandler extends StreamingOutputHandler {
 
     /** _more_ */
-    public static final String OUTPUT_FILE_WGET = "resource.wget";
+    public static final String OUTPUT_FILE_WGET = "file.wget";
 
     /**
      * _more_
@@ -54,7 +54,7 @@ public class WgetFileOutputHandler extends StreamingOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_WGET,
-                                      "Wget Script", "/resources.sh", true,
+                                      "Wget Script", "/files.sh", true,
                                       "Wget Script"));
 
     }

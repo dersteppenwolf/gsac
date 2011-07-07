@@ -52,7 +52,7 @@ import javax.servlet.http.*;
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_FILE_HTML = "resource.html";
+    public static final String OUTPUT_FILE_HTML = "file.html";
 
 
     /**
@@ -64,9 +64,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_HTML,
-                                      "Resource HTML"));
+                                      "File HTML"));
         //        getRepository().addOutput(OUTPUT_GROUP_FILE,new GsacOutput(this,
-        //                OUTPUT_FILE_DEFAULT, "Resource Default"));
+        //                OUTPUT_FILE_DEFAULT, "File Default"));
     }
 
 

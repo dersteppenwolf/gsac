@@ -40,7 +40,7 @@ import java.util.Date;
 public class GsacFile extends GsacResource {
 
     /** _more_          */
-    public static final ObjectType TYPE_FILE = new ObjectType("resource");
+    public static final ObjectType TYPE_FILE = new ObjectType("file");
 
     /** _more_ */
     private FileInfo fileInfo;
