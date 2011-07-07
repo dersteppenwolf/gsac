@@ -84,8 +84,8 @@ public class GsacRepository implements GsacConstants {
     public static final String GSAC_PATH_HELP = GSAC_PATH_ROOT + "/help";
 
     /** gsac java package path to the resources dir */
-    public static final String GSAC_PATH_FILES = GSAC_PATH_ROOT
-                                                     + "/files";
+    public static final String GSAC_PATH_RESOURCES = GSAC_PATH_ROOT
+                                                     + "/resources";
 
 
 
@@ -281,7 +281,7 @@ public class GsacRepository implements GsacConstants {
         LogUtil.setTestMode(true);
         InputStream inputStream;
         //load property files first
-        String[] propertyFiles = { GSAC_PATH_FILES + "/gsac.properties",
+        String[] propertyFiles = { GSAC_PATH_RESOURCES + "/gsac.properties",
                                    getLocalResourcePath("/gsac.properties"),
                                    getLocalResourcePath(
                                        "/gsacserver.properties") };
@@ -293,10 +293,10 @@ public class GsacRepository implements GsacConstants {
         }
 
         mobileHeader =
-            IOUtil.readContents(GSAC_PATH_FILES + "/mobileheader.html",
+            IOUtil.readContents(GSAC_PATH_RESOURCES + "/mobileheader.html",
                                 mobileHeader);
         mobileFooter =
-            IOUtil.readContents(GSAC_PATH_FILES + "/mobilefooter.html",
+            IOUtil.readContents(GSAC_PATH_RESOURCES + "/mobilefooter.html",
                                 mobileFooter);
         mobileHeader = mobileFooter.replace("${urlroot}",
                                             getUrlBase() + URL_BASE);
@@ -319,7 +319,7 @@ public class GsacRepository implements GsacConstants {
                                             getUrlBase() + URL_BASE);
         }
 
-        String[] files = { GSAC_PATH_FILES + "/phrases.properties",
+        String[] files = { GSAC_PATH_RESOURCES + "/phrases.properties",
                            getLocalResourcePath("/phrases.properties") };
         for (String file : files) {
             inputStream = getResourceInputStream(file);
@@ -1032,7 +1032,7 @@ public class GsacRepository implements GsacConstants {
      * @return full path
      */
     public String getCoreResourcePath(String fileTail) {
-        return GSAC_PATH_FILES + fileTail;
+        return GSAC_PATH_RESOURCES + fileTail;
     }
 
     /**
@@ -1989,7 +1989,7 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlHeader(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
-                mobileHeader = IOUtil.readContents(GSAC_PATH_FILES
+                mobileHeader = IOUtil.readContents(GSAC_PATH_RESOURCES
                         + "/mobileheader.html", mobileHeader);
                 mobileHeader = mobileHeader.replace("${urlroot}",
                         getUrlBase() + URL_BASE);
@@ -2020,7 +2020,7 @@ public class GsacRepository implements GsacConstants {
     public String getHtmlFooter(GsacRequest request) {
         if (readHtmlEveryTime) {
             try {
-                mobileFooter = IOUtil.readContents(GSAC_PATH_FILES
+                mobileFooter = IOUtil.readContents(GSAC_PATH_RESOURCES
                         + "/mobilefooter.html", mobileFooter);
                 mobileFooter = mobileFooter.replace("${urlroot}",
                         getUrlBase() + URL_BASE);
