@@ -67,7 +67,7 @@ public class WgetFileOutputHandler extends StreamingOutputHandler {
      * @param resource _more_
      * @param object _more_
      */
-    public void processObject(GsacResponse response, GsacObject object) {
+    public void processObject(GsacResponse response, GsacResource object) {
         try {
             GsacFile resource = (GsacFile) object;
             //Its OK to do this every time because the response keeps track if it has started already

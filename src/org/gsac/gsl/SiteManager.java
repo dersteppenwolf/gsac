@@ -51,7 +51,7 @@ import java.util.List;
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
-public abstract class SiteManager extends GsacObjectManager {
+public abstract class SiteManager extends GsacResourceManager {
 
     /** name for the basic site query capabilities */
     public static final String CAPABILITY_GROUP_SITE_QUERY = "Site Query";

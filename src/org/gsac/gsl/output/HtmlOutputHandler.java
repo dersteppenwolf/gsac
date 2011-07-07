@@ -1381,7 +1381,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
 
     public void processMetadata(GsacRequest request, Appendable pw,
-                                GsacObject gsacObject,
+                                GsacResource gsacObject,
                                 List<GsacMetadata> metadataList,
                                 boolean fullMetadata, Hashtable state)
             throws IOException {
@@ -1466,7 +1466,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @throws IOException On badness
      */
     private void processMetadata(GsacRequest request, Appendable pw,
-                                 GsacObject gsacObject,
+                                 GsacResource gsacObject,
                                  GsacMetadata metadata, boolean fullMetadata,
                                  Hashtable state)
             throws IOException {

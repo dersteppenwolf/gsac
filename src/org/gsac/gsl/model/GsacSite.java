@@ -39,7 +39,7 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class GsacSite extends GsacObject implements Comparable {
+public class GsacSite extends GsacResource implements Comparable {
 
     /** _more_          */
     public static final ObjectType TYPE_SITE = new ObjectType("site");

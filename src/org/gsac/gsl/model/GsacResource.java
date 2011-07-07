@@ -38,7 +38,7 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public abstract class GsacObject {
+public abstract class GsacResource {
 
     /** _more_ */
     private String id;
@@ -56,14 +56,14 @@ public abstract class GsacObject {
     /**
      * ctor
      */
-    public GsacObject() {}
+    public GsacResource() {}
 
     /**
      * _more_
      *
      * @param id _more_
      */
-    public GsacObject(String id) {
+    public GsacResource(String id) {
         this.id = id;
     }
 

@@ -163,12 +163,12 @@ public class GsacRepository implements GsacConstants {
     private GsacDatabaseManager databaseManager;
 
     /** _more_          */
-    private Hashtable<String, GsacObjectManager> objectManagerMap =
-        new Hashtable<String, GsacObjectManager>();
+    private Hashtable<String, GsacResourceManager> objectManagerMap =
+        new Hashtable<String, GsacResourceManager>();
 
     /** _more_          */
-    private List<GsacObjectManager> objectManagers =
-        new ArrayList<GsacObjectManager>();
+    private List<GsacResourceManager> objectManagers =
+        new ArrayList<GsacResourceManager>();
 
     /** the site manager */
     private SiteManager siteManager;
@@ -1188,7 +1188,7 @@ public class GsacRepository implements GsacConstants {
             }
             String what = "other";
 
-            //TODO: check the GsacObjectManagers here instead of explicitly looking at each type
+            //TODO: check the GsacResourceManagers here instead of explicitly looking at each type
             if (uri.indexOf(URL_SITE_BASE) >= 0) {
                 //site request
                 what = URL_SITE_BASE;
@@ -1442,7 +1442,7 @@ public class GsacRepository implements GsacConstants {
     public void processRequest(ObjectType objectType, GsacRequest request,
                                GsacResponse response)
             throws Exception {
-        GsacObjectManager gom = getObjectManager(objectType);
+        GsacResourceManager gom = getObjectManager(objectType);
         if (gom != null) {
             gom.handleRequest(request, response);
             return;
@@ -1773,7 +1773,7 @@ public class GsacRepository implements GsacConstants {
      * @param type _more_
      * @param gom _more_
      */
-    public void addObjectManager(ObjectType type, GsacObjectManager gom) {
+    public void addObjectManager(ObjectType type, GsacResourceManager gom) {
         objectManagerMap.put(type.getType(), gom);
         objectManagers.add(gom);
     }
@@ -1786,10 +1786,10 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacObjectManager doMakeObjectManager(ObjectType type) {
+    public GsacResourceManager doMakeObjectManager(ObjectType type) {
         if (type.equals(GsacSite.TYPE_SITE)) {
             return new SiteManager(this) {
-                public GsacObject getObject(String objectId)
+                public GsacResource getObject(String objectId)
                         throws Exception {
                     return null;
                 }
@@ -1800,7 +1800,7 @@ public class GsacRepository implements GsacConstants {
                 public void handleRequest(GsacRequest request,
                                           GsacResponse response)
                         throws Exception {}
-                public GsacObject getObject(String resourceId)
+                public GsacResource getObject(String resourceId)
                         throws Exception {
                     return null;
                 }
@@ -1817,8 +1817,8 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacObjectManager getObjectManager(ObjectType type) {
-        GsacObjectManager gom = objectManagerMap.get(type);
+    public GsacResourceManager getObjectManager(ObjectType type) {
+        GsacResourceManager gom = objectManagerMap.get(type);
         if (gom == null) {
             gom = doMakeObjectManager(type);
             if (gom == null) {
@@ -1841,11 +1841,11 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public GsacObject getObject(GsacRequest request, ObjectType type,
+    public GsacResource getObject(GsacRequest request, ObjectType type,
                                 String objectId)
             throws Exception {
-        GsacObjectManager gom    = getObjectManager(type);
-        GsacObject        object = gom.getObjectFromCache(objectId);
+        GsacResourceManager gom    = getObjectManager(type);
+        GsacResource        object = gom.getObjectFromCache(objectId);
         if (object != null) {
             return object;
         }
@@ -1874,9 +1874,9 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception on badnesss
      */
-    public GsacObject doGetObject(ObjectType type, String siteId)
+    public GsacResource doGetObject(ObjectType type, String siteId)
             throws Exception {
-        GsacObjectManager gom = getObjectManager(type);
+        GsacResourceManager gom = getObjectManager(type);
         return gom.getObject(siteId);
     }
 
@@ -1892,7 +1892,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void getMetadata(GsacRequest request, GsacObject gsacObject)
+    public void getMetadata(GsacRequest request, GsacResource gsacObject)
             throws Exception {
         int level = request.get(ARG_METADATA_LEVEL, 1);
         if (gsacObject.getMetadataLevel() >= level) {
@@ -1918,9 +1918,9 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void doGetFullMetadata(int level, GsacObject gsacObject)
+    public void doGetFullMetadata(int level, GsacResource gsacObject)
             throws Exception {
-        GsacObjectManager gom = getObjectManager(gsacObject.getObjectType());
+        GsacResourceManager gom = getObjectManager(gsacObject.getObjectType());
         if (gom != null) {
             gom.doGetMetadata(level, gsacObject);
         }
@@ -1945,7 +1945,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public List<Capability> doGetCapabilities(String type) {
-        for (GsacObjectManager gom : objectManagers) {
+        for (GsacResourceManager gom : objectManagers) {
             if (gom.canHandleQueryCapabilities(type)) {
                 return gom.doGetQueryCapabilities();
             }
@@ -2186,7 +2186,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public String getRemoteHref(GsacObject object) {
+    public String getRemoteHref(GsacResource object) {
         GsacRepositoryInfo info = object.getRepositoryInfo();
         if (info == null) {
             return "";
@@ -2207,7 +2207,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public String getRemoteUrl(GsacObject object) {
+    public String getRemoteUrl(GsacResource object) {
         if (object.getRepositoryInfo() == null) {
             return null;
         }

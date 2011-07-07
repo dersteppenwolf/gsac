@@ -48,11 +48,11 @@ import java.util.List;
  *
  * @author  Jeff McWhirter
  */
-public abstract class GsacObjectManager extends GsacRepositoryManager {
+public abstract class GsacResourceManager extends GsacRepositoryManager {
 
     /** site cache */
-    private TTLCache<Object, GsacObject> objectCache =
-        new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
+    private TTLCache<Object, GsacResource> objectCache =
+        new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
 
     /** _more_          */
     private ObjectType type;
@@ -63,7 +63,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * @param repository _more_
      * @param type _more_
      */
-    public GsacObjectManager(GsacRepository repository, ObjectType type) {
+    public GsacResourceManager(GsacRepository repository, ObjectType type) {
         super(repository);
         this.type = type;
     }
@@ -92,7 +92,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      *
      * @throws Exception On badness
      */
-    public void doGetMetadata(int level, GsacObject gsacObject)
+    public void doGetMetadata(int level, GsacResource gsacObject)
             throws Exception {
         doGetFullMetadata(gsacObject);
     }
@@ -107,7 +107,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * @param gsacObject _more_
      * @throws Exception On badness
      */
-    public void doGetFullMetadata(GsacObject gsacObject) throws Exception {}
+    public void doGetFullMetadata(GsacResource gsacObject) throws Exception {}
 
     /**
      * _more_
@@ -118,7 +118,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      *
      * @throws Exception _more_
      */
-    public abstract GsacObject getObject(String objectId) throws Exception;
+    public abstract GsacResource getObject(String objectId) throws Exception;
 
     /**
      * This method will first look in the local objectCache for the object.
@@ -129,7 +129,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * @return The object or null if not found
      *
      */
-    public GsacObject getObjectFromCache(String objectId) {
+    public GsacResource getObjectFromCache(String objectId) {
         return objectCache.get(objectId);
     }
 
@@ -138,7 +138,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * _more_
      */
     public void clearCache() {
-        objectCache = new TTLCache<Object, GsacObject>(TTLCache.MS_IN_A_DAY);
+        objectCache = new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
     }
 
     /**
@@ -157,7 +157,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      *
      * @param object _more_
      */
-    public void cacheObject(GsacObject object) {
+    public void cacheObject(GsacResource object) {
         cacheObject(object.getId(), object);
     }
 
@@ -167,7 +167,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      * @param key Key to cache with
      * @param object _more_
      */
-    public void cacheObject(String key, GsacObject object) {
+    public void cacheObject(String key, GsacResource object) {
         String type = object.getObjectType().getType();
         objectCache.put(type + "_" + key, object);
     }
@@ -179,7 +179,7 @@ public abstract class GsacObjectManager extends GsacRepositoryManager {
      *
      * @return site or null
      */
-    public GsacObject getCachedObject(String key) {
+    public GsacResource getCachedObject(String key) {
         return objectCache.get(key);
     }
 

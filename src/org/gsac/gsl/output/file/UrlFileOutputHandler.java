@@ -69,7 +69,7 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
      * @param resource _more_
      * @param object _more_
      */
-    public void processObject(GsacResponse response, GsacObject object) {
+    public void processObject(GsacResponse response, GsacResource object) {
         try {
             GsacFile resource  = (GsacFile) object;
             PrintWriter  pw        = response.getPrintWriter();

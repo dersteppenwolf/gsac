@@ -37,7 +37,7 @@ import java.util.Date;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class GsacFile extends GsacObject {
+public class GsacFile extends GsacResource {
 
     /** _more_          */
     public static final ObjectType TYPE_RESOURCE = new ObjectType("resource");

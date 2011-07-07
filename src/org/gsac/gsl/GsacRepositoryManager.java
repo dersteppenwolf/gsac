@@ -478,7 +478,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      * @throws Exception On badness
      */
     public void addPropertyMetadata(ResultSet results,
-                                    GsacObject metadataThing, String[] cols)
+                                    GsacResource metadataThing, String[] cols)
             throws Exception {
         for (String col : cols) {
             String noDotCol = SqlUtil.unDot(col);

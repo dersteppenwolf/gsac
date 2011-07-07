@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author  Jeff McWhirter
  */
-public abstract class FileManager extends GsacObjectManager {
+public abstract class FileManager extends GsacResourceManager {
 
     /**
      * ctor

@@ -56,7 +56,7 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      */
     public GsacResponse doMakeResponse(GsacRequest request) {
         return new GsacResponse(request) {
-            public void handleNewObject(GsacObject object) {
+            public void handleNewObject(GsacResource object) {
                 processObject(this, object);
             }
         };
@@ -69,7 +69,7 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      * @param resource _more_
      */
     public abstract void processObject(GsacResponse response,
-                                       GsacObject resource);
+                                       GsacResource resource);
 
 
     /**
