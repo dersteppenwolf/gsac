@@ -118,7 +118,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      * @throws Exception _more_
      */
-    public abstract GsacResource getObject(String objectId) throws Exception;
+    public abstract GsacResource getResource(String objectId) throws Exception;
 
     /**
      * This method will first look in the local objectCache for the object.
@@ -129,7 +129,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return The object or null if not found
      *
      */
-    public GsacResource getObjectFromCache(String objectId) {
+    public GsacResource getResourceFromCache(String objectId) {
         return objectCache.get(objectId);
     }
 
@@ -168,7 +168,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param object _more_
      */
     public void cacheObject(String key, GsacResource object) {
-        String type = object.getObjectType().getType();
+        String type = object.getResourceType().getType();
         objectCache.put(type + "_" + key, object);
     }
 

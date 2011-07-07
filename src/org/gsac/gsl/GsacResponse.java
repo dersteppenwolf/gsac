@@ -336,7 +336,7 @@ public class GsacResponse {
      *
      * @return _more_
      */
-    public List<GsacResource> getObjects() {
+    public List<GsacResource> getResources() {
         return objects;
     }
 

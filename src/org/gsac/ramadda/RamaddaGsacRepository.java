@@ -177,7 +177,7 @@ public class RamaddaGsacRepository extends GsacRepository {
 
         StringBuffer msgBuff = new StringBuffer();
         if (request.defined(GsacArgs.ARG_SITE_CODE)) {
-            getObjectManager(GsacSite.TYPE_SITE).addStringSearch(request,
+            getResourceManager(GsacSite.TYPE_SITE).addStringSearch(request,
                              GsacArgs.ARG_SITE_CODE,
                              GsacArgs.ARG_SITE_CODE_SEARCHTYPE, msgBuff,
                              "Site Code",
@@ -186,7 +186,7 @@ public class RamaddaGsacRepository extends GsacRepository {
 
         if (request.defined(GsacArgs.ARG_SITE_NAME)) {
             doJoin = true;
-            getObjectManager(GsacSite.TYPE_SITE).addStringSearch(request,
+            getResourceManager(GsacSite.TYPE_SITE).addStringSearch(request,
                              GsacArgs.ARG_SITE_NAME,
                              GsacArgs.ARG_SITE_CODE_SEARCHTYPE, msgBuff,
                              "Site Name", Tables.ENTRIES.COL_DESCRIPTION,
@@ -194,7 +194,7 @@ public class RamaddaGsacRepository extends GsacRepository {
         }
 
         List<Clause> areaClauses = new ArrayList<Clause>();
-        if (getObjectManager(GsacSite.TYPE_SITE).addBBOXSearchCriteria(
+        if (getResourceManager(GsacSite.TYPE_SITE).addBBOXSearchCriteria(
                 request, areaClauses, Tables.ENTRIES.COL_SOUTH,
                 Tables.ENTRIES.COL_WEST, msgBuff)) {
             clauses.addAll(areaClauses);
@@ -208,7 +208,7 @@ public class RamaddaGsacRepository extends GsacRepository {
                                     GsacSiteTypeHandler.GSAC_COL_ID));
         }
         System.err.println(clauses);
-        getObjectManager(GsacSite.TYPE_SITE).setSearchCriteriaMessage(
+        getResourceManager(GsacSite.TYPE_SITE).setSearchCriteriaMessage(
             response, msgBuff);
         processSiteRequest(response, clauses, tables);
     }
@@ -224,10 +224,10 @@ public class RamaddaGsacRepository extends GsacRepository {
     public List<Capability> doGetCapabilities(String type) {
         List<Capability> capabilities = new ArrayList<Capability>();
         if (type.equals(CAPABILITIES_SITE)) {
-            getObjectManager(GsacSite.TYPE_SITE).addDefaultCapabilities(
+            getResourceManager(GsacSite.TYPE_SITE).addDefaultCapabilities(
                 capabilities);
         } else if (type.equals(CAPABILITIES_RESOURCE)) {
-            getObjectManager(
+            getResourceManager(
                 GsacFile.TYPE_RESOURCE).addDefaultCapabilities(
                 capabilities);
         }

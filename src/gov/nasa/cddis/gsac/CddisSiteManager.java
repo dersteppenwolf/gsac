@@ -155,7 +155,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         if(request.defined(ARG_SITE_ID)) {
             for (String siteId : (List<String>) (List<String>) request.getList(ARG_SITE_ID)) {
                 appendSearchCriteria(msgBuff, "Site Id=", siteId);
-                GsacSite site = (GsacSite) getObject(siteId);
+                GsacSite site = (GsacSite) getResource(siteId);
                 if(site!=null) {
                     response.addObject(site);
                 }
@@ -462,7 +462,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @throws Exception on badness
      */
-    public GsacResource getObject(String siteId) throws Exception {
+    public GsacResource getResource(String siteId) throws Exception {
         List<String> tuple = CddisType.getTypeAndFields(siteId);
         CddisType    type  = CddisType.getType(tuple.get(0));
         String       name  = tuple.get(1);

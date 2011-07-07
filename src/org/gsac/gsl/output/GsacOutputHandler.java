@@ -194,7 +194,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         long t3 = System.currentTimeMillis();
         System.err.println("GSAC.handleRequest time to read:" + (t2 - t1)
                            + " time to encode:" + (t3 - t2) + " #sites:"
-                           + gsacResponse.getObjects().size());
+                           + gsacResponse.getResources().size());
     }
 
 

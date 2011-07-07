@@ -139,7 +139,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_RESOURCEID)) {
             GsacFile resource =
-                (GsacFile) getRepository().getObject(request,
+                (GsacFile) getRepository().getResource(request,
                     GsacFile.TYPE_RESOURCE,
                     request.get(ARG_RESOURCEID, ""));
             handleSingleResource(request, response, resource, sb);
@@ -419,7 +419,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             for (GsacFile resource : response.getFiles()) {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
-                    site = (GsacSite) getRepository().getObject(request,
+                    site = (GsacSite) getRepository().getResource(request,
                             GsacSite.TYPE_SITE, resource.getSiteID());
                 }
                 if (cnt == 0) {

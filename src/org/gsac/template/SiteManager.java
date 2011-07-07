@@ -180,7 +180,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacResource getObject(String objectId) throws Exception {
+    public GsacResource getResource(String objectId) throws Exception {
         /* e.g.:
         Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
                                   new Integer(objectId).intValue());

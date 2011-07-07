@@ -137,7 +137,7 @@ public class GsacFile extends GsacResource {
      *
      * @return _more_
      */
-    public ObjectType getObjectType() {
+    public ObjectType getResourceType() {
         return TYPE_RESOURCE;
     }
 

@@ -397,8 +397,8 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        getObjectManager(GsacSite.TYPE_SITE);
-        getObjectManager(GsacFile.TYPE_RESOURCE);
+        getResourceManager(GsacSite.TYPE_SITE);
+        getResourceManager(GsacFile.TYPE_RESOURCE);
 
 
         //TODO: put the specification of the output handlers into a properties or xml file
@@ -1442,7 +1442,7 @@ public class GsacRepository implements GsacConstants {
     public void processRequest(ObjectType objectType, GsacRequest request,
                                GsacResponse response)
             throws Exception {
-        GsacResourceManager gom = getObjectManager(objectType);
+        GsacResourceManager gom = getResourceManager(objectType);
         if (gom != null) {
             gom.handleRequest(request, response);
             return;
@@ -1789,7 +1789,7 @@ public class GsacRepository implements GsacConstants {
     public GsacResourceManager doMakeObjectManager(ObjectType type) {
         if (type.equals(GsacSite.TYPE_SITE)) {
             return new SiteManager(this) {
-                public GsacResource getObject(String objectId)
+                public GsacResource getResource(String objectId)
                         throws Exception {
                     return null;
                 }
@@ -1800,7 +1800,7 @@ public class GsacRepository implements GsacConstants {
                 public void handleRequest(GsacRequest request,
                                           GsacResponse response)
                         throws Exception {}
-                public GsacResource getObject(String resourceId)
+                public GsacResource getResource(String resourceId)
                         throws Exception {
                     return null;
                 }
@@ -1817,7 +1817,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacResourceManager getObjectManager(ObjectType type) {
+    public GsacResourceManager getResourceManager(ObjectType type) {
         GsacResourceManager gom = objectManagerMap.get(type);
         if (gom == null) {
             gom = doMakeObjectManager(type);
@@ -1841,11 +1841,11 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public GsacResource getObject(GsacRequest request, ObjectType type,
+    public GsacResource getResource(GsacRequest request, ObjectType type,
                                 String objectId)
             throws Exception {
-        GsacResourceManager gom    = getObjectManager(type);
-        GsacResource        object = gom.getObjectFromCache(objectId);
+        GsacResourceManager gom    = getResourceManager(type);
+        GsacResource        object = gom.getResourceFromCache(objectId);
         if (object != null) {
             return object;
         }
@@ -1876,8 +1876,8 @@ public class GsacRepository implements GsacConstants {
      */
     public GsacResource doGetObject(ObjectType type, String siteId)
             throws Exception {
-        GsacResourceManager gom = getObjectManager(type);
-        return gom.getObject(siteId);
+        GsacResourceManager gom = getResourceManager(type);
+        return gom.getResource(siteId);
     }
 
     /**
@@ -1920,7 +1920,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void doGetFullMetadata(int level, GsacResource gsacObject)
             throws Exception {
-        GsacResourceManager gom = getObjectManager(gsacObject.getObjectType());
+        GsacResourceManager gom = getResourceManager(gsacObject.getResourceType());
         if (gom != null) {
             gom.doGetMetadata(level, gsacObject);
         }

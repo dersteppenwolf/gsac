@@ -81,7 +81,7 @@ public class FederatedFileManager extends FileManager {
         if (request.defined(ARG_RESOURCE_ID)) {
             List<String> ids = request.get(ARG_RESOURCE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getObject(request,
+                response.addObject(getRepository().getResource(request,
                                                              GsacFile.TYPE_RESOURCE,
                         id));
             }
@@ -114,7 +114,7 @@ public class FederatedFileManager extends FileManager {
      * @return _more_
      * @throws Exception _more_
      */
-    public GsacResource getObject(String resourceId) throws Exception {
+    public GsacResource getResource(String resourceId) throws Exception {
         List<String> pair = StringUtil.splitUpTo(resourceId, ":", 2);
         String       id = pair.get(1);
         String baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
@@ -157,7 +157,7 @@ public class FederatedFileManager extends FileManager {
      * @return sitemanager
      */
     public FederatedSiteManager getSiteManager() {
-        return (FederatedSiteManager) getRepository().getObjectManager(GsacSite.TYPE_SITE);
+        return (FederatedSiteManager) getRepository().getResourceManager(GsacSite.TYPE_SITE);
     }
 
 

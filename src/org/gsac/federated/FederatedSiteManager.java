@@ -99,7 +99,7 @@ public class FederatedSiteManager extends SiteManager {
         if (request.defined(ARG_SITE_ID)) {
             List<String> ids = request.get(ARG_SITE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getObject(request, GsacSite.TYPE_SITE,id));
+                response.addObject(getRepository().getResource(request, GsacSite.TYPE_SITE,id));
             }
             return;
         }
@@ -118,7 +118,7 @@ public class FederatedSiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacResource getObject(String siteId) throws Exception {
+    public GsacResource getResource(String siteId) throws Exception {
         List<String> pair    = StringUtil.splitUpTo(siteId, ":", 2);
         String       id      = pair.get(1);
         String       baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));

@@ -134,7 +134,7 @@ public class GsacSite extends GsacResource implements Comparable {
      *
      * @return _more_
      */
-    public ObjectType getObjectType() {
+    public ObjectType getResourceType() {
         return TYPE_SITE;
     }
 

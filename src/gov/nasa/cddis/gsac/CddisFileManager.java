@@ -807,7 +807,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public GsacResource getObject(String resourceId) throws Exception {
+    public GsacResource getResource(String resourceId) throws Exception {
         List<String> toks = CddisType.getTypeAndFields(resourceId);
         System.err.println("get resource:" + toks);
         CddisType type = CddisType.getType(toks.get(0));
@@ -873,7 +873,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      * @return sitemanager
      */
     public CddisSiteManager getSiteManager() {
-        return (CddisSiteManager) getRepository().getObjectManager(GsacSite.TYPE_SITE);
+        return (CddisSiteManager) getRepository().getResourceManager(GsacSite.TYPE_SITE);
     }
 
 
