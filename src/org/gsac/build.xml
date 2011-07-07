@@ -38,7 +38,7 @@
         <param name="file" value="Test.java"/>
       </antcall>
       <antcall target="copyjava" inheritAll="false">
-        <param name="file" value="ResourceManager.java"/>
+        <param name="file" value="FileManager.java"/>
       </antcall>
       <antcall target="copyjava" inheritAll="false">
         <param name="file" value="Server.java"/>

@@ -27,7 +27,7 @@ The file resources/gsacws.properties has a number of properties you can set
 ########################################################################
 Code changes 
 ########################################################################
-The @MACRO.PREFIX@SiteManager and @MACRO.PREFIX@ResourceManager classes will need to be changed
+The @MACRO.PREFIX@SiteManager and @MACRO.PREFIX@FileManager classes will need to be changed
 to implement the queries. See those classes for more details
 See the CHANGEME in the comments to see what needs to be changed. 
 
