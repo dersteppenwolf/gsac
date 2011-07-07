@@ -241,7 +241,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
      *
      * @throws Exception _more_
      */
-    public GsacObject getObject(String resourceId) throws Exception {
+    public GsacResource getObject(String resourceId) throws Exception {
         //TODO:
         return null;
     }

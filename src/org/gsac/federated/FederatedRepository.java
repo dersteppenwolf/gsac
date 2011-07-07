@@ -25,7 +25,7 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.database.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
-import org.gsac.gsl.output.resource.*;
+import org.gsac.gsl.output.file.*;
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
@@ -421,7 +421,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         List<GsacFile> resources =
             (List<GsacFile>) getRemoteObject(callable.repository,
                 URL_RESOURCE_SEARCH, urlArgs,
-                XmlResourceOutputHandler.OUTPUT_RESOURCE_XML);
+                XmlFileOutputHandler.OUTPUT_RESOURCE_XML);
         if (resources == null) {
             System.err.println("Bad request: "
                                + callable.repository.getUrl());

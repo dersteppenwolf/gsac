@@ -462,7 +462,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @throws Exception on badness
      */
-    public GsacObject getObject(String siteId) throws Exception {
+    public GsacResource getObject(String siteId) throws Exception {
         List<String> tuple = CddisType.getTypeAndFields(siteId);
         CddisType    type  = CddisType.getType(tuple.get(0));
         String       name  = tuple.get(1);
@@ -562,7 +562,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public void doGetMetadata(int level, GsacObject gsacSite)
+    public void doGetMetadata(int level, GsacResource gsacSite)
             throws Exception {
         //The unavcorepository adds in GnssEquipment metadata and other things
     }

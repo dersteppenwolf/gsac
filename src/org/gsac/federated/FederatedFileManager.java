@@ -24,7 +24,7 @@ package org.gsac.federated;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
-import org.gsac.gsl.output.resource.*;
+import org.gsac.gsl.output.file.*;
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
@@ -114,7 +114,7 @@ public class FederatedFileManager extends FileManager {
      * @return _more_
      * @throws Exception _more_
      */
-    public GsacObject getObject(String resourceId) throws Exception {
+    public GsacResource getObject(String resourceId) throws Exception {
         List<String> pair = StringUtil.splitUpTo(resourceId, ":", 2);
         String       id = pair.get(1);
         String baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
@@ -122,7 +122,7 @@ public class FederatedFileManager extends FileManager {
             (List<GsacFile>) getRepository().getRemoteObject(
                 new GsacRepositoryInfo(baseUrl), URL_RESOURCE_VIEW,
                 HtmlUtil.args(new String[] { ARG_RESOURCE_ID,
-                                             id }), XmlResourceOutputHandler
+                                             id }), XmlFileOutputHandler
                                                  .OUTPUT_RESOURCE_XML);
         if (resources.size() == 0) {
             return null;

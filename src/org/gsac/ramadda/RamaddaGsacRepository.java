@@ -286,7 +286,7 @@ public class RamaddaGsacRepository extends GsacRepository {
      *
      * @throws Exception _more_
      */
-    public GsacObject doGetObject(ObjectType type, String siteId)
+    public GsacResource doGetObject(ObjectType type, String siteId)
             throws Exception {
         if (type.equals(GsacSite.TYPE_SITE)) {
             Entry entry = getRepository().getEntryManager().getEntry(

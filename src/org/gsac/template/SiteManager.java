@@ -180,7 +180,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacObject getObject(String objectId) throws Exception {
+    public GsacResource getObject(String objectId) throws Exception {
         /* e.g.:
         Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
                                   new Integer(objectId).intValue());
@@ -268,7 +268,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @throws Exception On badness
      */
-    public void doGetMetadata(int level, GsacObject gsacObject) throws Exception {
+    public void doGetMetadata(int level, GsacResource gsacObject) throws Exception {
         //The unavcorepository adds in GnssEquipment metadata and other things
     }
 

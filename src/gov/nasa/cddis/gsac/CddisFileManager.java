@@ -807,7 +807,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public GsacObject getObject(String resourceId) throws Exception {
+    public GsacResource getObject(String resourceId) throws Exception {
         List<String> toks = CddisType.getTypeAndFields(resourceId);
         System.err.println("get resource:" + toks);
         CddisType type = CddisType.getType(toks.get(0));
