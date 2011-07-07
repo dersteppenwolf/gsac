@@ -21,7 +21,7 @@
 package org.gsac.gsl;
 
 
-import org.gsac.gsl.output.file.HtmlResourceOutputHandler;
+import org.gsac.gsl.output.file.HtmlFileOutputHandler;
 
 import org.gsac.gsl.output.site.HtmlSiteOutputHandler;
 

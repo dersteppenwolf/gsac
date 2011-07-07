@@ -49,7 +49,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class ZipResourceOutputHandler extends HtmlOutputHandler {
+public class ZipFileOutputHandler extends HtmlOutputHandler {
 
 
     /** _more_ */
@@ -67,7 +67,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public ZipResourceOutputHandler(GsacRepository gsacServlet) {
+    public ZipFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
                                   new GsacOutput(this, OUTPUT_RESOURCE_ZIP,

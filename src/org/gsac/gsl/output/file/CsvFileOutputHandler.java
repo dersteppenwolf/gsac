@@ -41,7 +41,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class CsvResourceOutputHandler extends StreamingOutputHandler {
+public class CsvFileOutputHandler extends StreamingOutputHandler {
 
     /** output id */
     public static final String OUTPUT_RESOURCE_CSV = "resource.csv";
@@ -52,7 +52,7 @@ public class CsvResourceOutputHandler extends StreamingOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public CsvResourceOutputHandler(GsacRepository gsacServlet) {
+    public CsvFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
                                   new GsacOutput(this, OUTPUT_RESOURCE_CSV,

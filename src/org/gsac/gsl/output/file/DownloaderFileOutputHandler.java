@@ -43,7 +43,7 @@ import java.io.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class DownloaderResourceOutputHandler extends GsacOutputHandler {
+public class DownloaderFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
     public static final String OUTPUT_RESOURCE_DOWNLOAD = "resource.download";
@@ -54,7 +54,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet servlet
      */
-    public DownloaderResourceOutputHandler(GsacRepository gsacServlet) {
+    public DownloaderFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         GsacOutput output;
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
@@ -104,7 +104,7 @@ public class DownloaderResourceOutputHandler extends GsacOutputHandler {
         System.err.println("read:" + contents);
         GsacRequest newRequest = new GsacRequest(request);
         newRequest.put(ARG_OUTPUT,
-                       UrlResourceOutputHandler.OUTPUT_RESOURCE_URL);
+                       UrlFileOutputHandler.OUTPUT_RESOURCE_URL);
         String dataUrl = makeUrl(URL_RESOURCE_SEARCH + "?"
                                  + newRequest.getUrlArgs());
         String fullUrlRoot =

@@ -40,7 +40,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class UrlResourceOutputHandler extends StreamingOutputHandler {
+public class UrlFileOutputHandler extends StreamingOutputHandler {
 
 
     /** _more_ */
@@ -52,7 +52,7 @@ public class UrlResourceOutputHandler extends StreamingOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public UrlResourceOutputHandler(GsacRepository gsacServlet) {
+    public UrlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
                                   new GsacOutput(this, OUTPUT_RESOURCE_URL,

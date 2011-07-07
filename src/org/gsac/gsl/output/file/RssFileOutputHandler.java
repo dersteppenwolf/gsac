@@ -51,7 +51,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class RssResourceOutputHandler extends GsacOutputHandler {
+public class RssFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
     public static final String OUTPUT_RESOURCE_RSS = "resource.gsacrss";
@@ -105,7 +105,7 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public RssResourceOutputHandler(GsacRepository gsacServlet) {
+    public RssFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
                                   new GsacOutput(this, OUTPUT_RESOURCE_RSS,

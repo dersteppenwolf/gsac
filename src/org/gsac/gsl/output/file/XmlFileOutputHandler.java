@@ -42,7 +42,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class XmlResourceOutputHandler extends GsacOutputHandler {
+public class XmlFileOutputHandler extends GsacOutputHandler {
 
     /** output id */
     public static final String OUTPUT_RESOURCE_XML = "resource.gsacxml";
@@ -53,7 +53,7 @@ public class XmlResourceOutputHandler extends GsacOutputHandler {
      *
      * @param gsacServlet the servlet
      */
-    public XmlResourceOutputHandler(GsacRepository gsacServlet) {
+    public XmlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
                                   new GsacOutput(this, OUTPUT_RESOURCE_XML,

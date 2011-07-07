@@ -412,16 +412,16 @@ public class GsacRepository implements GsacConstants {
         new XmlSiteOutputHandler(this);
         //        new FlexigridSiteOutputHandler(this);
 
-        new HtmlResourceOutputHandler(this);
-        new CsvResourceOutputHandler(this);
-        new DownloaderResourceOutputHandler(this);
-        new WgetResourceOutputHandler(this);
-        new UrlResourceOutputHandler(this);
-        new JsonResourceOutputHandler(this);
-        new ZipResourceOutputHandler(this);
+        new HtmlFileOutputHandler(this);
+        new CsvFileOutputHandler(this);
+        new DownloaderFileOutputHandler(this);
+        new WgetFileOutputHandler(this);
+        new UrlFileOutputHandler(this);
+        new JsonFileOutputHandler(this);
+        new ZipFileOutputHandler(this);
         new BrowseOutputHandler(this);
-        new RssResourceOutputHandler(this);
-        new XmlResourceOutputHandler(this);
+        new RssFileOutputHandler(this);
+        new XmlFileOutputHandler(this);
         getRepositoryInfo();
     }
 

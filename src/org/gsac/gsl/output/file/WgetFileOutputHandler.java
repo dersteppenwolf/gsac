@@ -40,7 +40,7 @@ import javax.servlet.http.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class WgetResourceOutputHandler extends StreamingOutputHandler {
+public class WgetFileOutputHandler extends StreamingOutputHandler {
 
     /** _more_ */
     public static final String OUTPUT_RESOURCE_WGET = "resource.wget";
@@ -50,7 +50,7 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
      *
      * @param gsacServlet _more_
      */
-    public WgetResourceOutputHandler(GsacRepository gsacServlet) {
+    public WgetFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_RESOURCE,
                                   new GsacOutput(this, OUTPUT_RESOURCE_WGET,
