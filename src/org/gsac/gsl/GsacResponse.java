@@ -359,10 +359,10 @@ public class GsacResponse {
      *
      * @return _more_
      */
-    public List<GsacResource> getResources() {
-        List<GsacResource> resources = new ArrayList<GsacResource>();
+    public List<GsacFile> getResources() {
+        List<GsacFile> resources = new ArrayList<GsacFile>();
         for (GsacObject object : objects) {
-            resources.add((GsacResource) object);
+            resources.add((GsacFile) object);
         }
         return resources;
     }

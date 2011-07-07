@@ -48,15 +48,15 @@ import java.util.List;
  *
  * @author  Jeff McWhirter
  */
-public abstract class ResourceManager extends GsacObjectManager {
+public abstract class FileManager extends GsacObjectManager {
 
     /**
      * ctor
      *
      * @param repository the repository
      */
-    public ResourceManager(GsacRepository repository) {
-        super(repository, GsacResource.TYPE_RESOURCE);
+    public FileManager(GsacRepository repository) {
+        super(repository, GsacFile.TYPE_RESOURCE);
     }
 
 
@@ -83,7 +83,7 @@ public abstract class ResourceManager extends GsacObjectManager {
      *
      * @throws Exception On badness
      */
-    public GsacResource makeResource(ResultSet results) throws Exception {
+    public GsacFile makeResource(ResultSet results) throws Exception {
         return null;
     }
 
@@ -134,7 +134,7 @@ public abstract class ResourceManager extends GsacObjectManager {
      *
      * @throws Exception On badness
      */
-    public void doGetResourceMetadata(int level, GsacResource gsacResource)
+    public void doGetResourceMetadata(int level, GsacFile gsacResource)
             throws Exception {
         //default is to do nothing
     }

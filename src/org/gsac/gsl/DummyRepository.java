@@ -50,11 +50,11 @@ public class DummyRepository extends GsacRepositoryImpl {
     private List<GsacSite> sites = new ArrayList<GsacSite>();
 
     /** _more_ */
-    private Hashtable<String, GsacResource> resourceMap =
-        new Hashtable<String, GsacResource>();
+    private Hashtable<String, GsacFile> resourceMap =
+        new Hashtable<String, GsacFile>();
 
     /** _more_ */
-    private List<GsacResource> resources = new ArrayList<GsacResource>();
+    private List<GsacFile> resources = new ArrayList<GsacFile>();
 
     /** _more_ */
     private List<SiteGroup> siteGroups = new ArrayList<SiteGroup>();
@@ -113,7 +113,7 @@ public class DummyRepository extends GsacRepositoryImpl {
             for (String type : new String[] { "rinex", "binex", "stream" }) {
                 String resourceId = "resource_" + i + "_" + (rcnt++);
                 addResource(
-                    new GsacResource(
+                    new GsacFile(
                         resourceId,
                         new FileInfo(
                             "ftp://data-out.unavco.org/pub/rinex/obs/file"
@@ -142,7 +142,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      *
      * @param resource _more_
      */
-    private void addResource(GsacResource resource) {
+    private void addResource(GsacFile resource) {
         resources.add(resource);
         resourceMap.put(resource.getRepositoryId(), resource);
     }
@@ -182,7 +182,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      *
      * @throws Exception On badness
      */
-    public GsacResource getResource(GsacRequest request, String resourceId)
+    public GsacFile getResource(GsacRequest request, String resourceId)
             throws Exception {
         return resourceMap.get(resourceId);
     }
@@ -200,7 +200,7 @@ public class DummyRepository extends GsacRepositoryImpl {
     public void handleResourceRequest(GsacRequest request,
                                       GsacResponse response)
             throws Exception {
-        for (GsacResource resource : resources) {
+        for (GsacFile resource : resources) {
             response.addObject(resource);
         }
     }

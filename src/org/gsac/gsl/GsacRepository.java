@@ -174,7 +174,7 @@ public class GsacRepository implements GsacConstants {
     private SiteManager siteManager;
 
     /** the resource manager */
-    private ResourceManager resourceManager;
+    private FileManager resourceManager;
 
     /** caches site group and types, etc. */
     private TTLCache<String, Object> cache =
@@ -398,7 +398,7 @@ public class GsacRepository implements GsacConstants {
         }
 
         getObjectManager(GsacSite.TYPE_SITE);
-        getObjectManager(GsacResource.TYPE_RESOURCE);
+        getObjectManager(GsacFile.TYPE_RESOURCE);
 
 
         //TODO: put the specification of the output handlers into a properties or xml file
@@ -1200,7 +1200,7 @@ public class GsacRepository implements GsacConstants {
                 what = URL_RESOURCE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_RESOURCE, request);
-                outputHandler.handleRequest(GsacResource.TYPE_RESOURCE,
+                outputHandler.handleRequest(GsacFile.TYPE_RESOURCE,
                                             request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
@@ -1795,8 +1795,8 @@ public class GsacRepository implements GsacConstants {
                 }
             };
         }
-        if (type.equals(GsacResource.TYPE_RESOURCE)) {
-            return new ResourceManager(this) {
+        if (type.equals(GsacFile.TYPE_RESOURCE)) {
+            return new FileManager(this) {
                 public void handleRequest(GsacRequest request,
                                           GsacResponse response)
                         throws Exception {}

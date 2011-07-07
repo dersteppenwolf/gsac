@@ -133,14 +133,14 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
         if (request.isGsacUrl(URL_RESOURCE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_RESOURCE_SEARCH)) {
-            getRepository().processRequest(GsacResource.TYPE_RESOURCE,
+            getRepository().processRequest(GsacFile.TYPE_RESOURCE,
                                            request, response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_RESOURCEID)) {
-            GsacResource resource =
-                (GsacResource) getRepository().getObject(request,
-                    GsacResource.TYPE_RESOURCE,
+            GsacFile resource =
+                (GsacFile) getRepository().getObject(request,
+                    GsacFile.TYPE_RESOURCE,
                     request.get(ARG_RESOURCEID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
@@ -162,7 +162,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
      */
     public void handleSingleResource(GsacRequest request,
                                      GsacResponse response,
-                                     GsacResource resource, Appendable sb)
+                                     GsacFile resource, Appendable sb)
             throws Exception {
         if (resource == null) {
             sb.append("Could not find resource");
@@ -416,7 +416,7 @@ public class HtmlResourceOutputHandler extends HtmlOutputHandler {
             int  cnt  = 0;
 
 
-            for (GsacResource resource : response.getResources()) {
+            for (GsacFile resource : response.getResources()) {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
                     site = (GsacSite) getRepository().getObject(request,

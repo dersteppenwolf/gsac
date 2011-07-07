@@ -135,7 +135,7 @@ public class RssResourceOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.tag(TAG_RSS_TITLE, "",
                               getRepository().getRepositoryName()
                               + " resource results"));
-        for (GsacResource resource : response.getResources()) {
+        for (GsacFile resource : response.getResources()) {
             pw.append(XmlUtil.openTag(TAG_RSS_ITEM));
             if (resource.getPublishTime() != null) {
                 pw.append(

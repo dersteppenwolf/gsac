@@ -470,7 +470,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public String makeResourceUrl(GsacResource resource) {
+    public String makeResourceUrl(GsacFile resource) {
         return makeResourceUrl(HtmlUtil.arg(ARG_RESOURCE_ID,
                                             resource.getId()));
     }

@@ -69,7 +69,7 @@ public class WgetResourceOutputHandler extends StreamingOutputHandler {
      */
     public void processObject(GsacResponse response, GsacObject object) {
         try {
-            GsacResource resource = (GsacResource) object;
+            GsacFile resource = (GsacFile) object;
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             if (firstTime) {

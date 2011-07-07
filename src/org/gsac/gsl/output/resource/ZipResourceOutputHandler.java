@@ -93,7 +93,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
         long totalSize = 0;
         long maxSize = getRepository().getProperty(PROP_MAXSIZE,
                            SIZE_THRESHOLD);
-        for (GsacResource resource : response.getResources()) {
+        for (GsacFile resource : response.getResources()) {
             if (resource.getFileInfo().getType() != FileInfo.TYPE_FILE) {
                 continue;
             }
@@ -115,7 +115,7 @@ public class ZipResourceOutputHandler extends HtmlOutputHandler {
                                   new BufferedOutputStream(
                                       request.getOutputStream(), 10000));
         HashSet seen = new HashSet();
-        for (GsacResource resource : response.getResources()) {
+        for (GsacFile resource : response.getResources()) {
             if (resource.getFileInfo().getType() != FileInfo.TYPE_FILE) {
                 continue;
             }

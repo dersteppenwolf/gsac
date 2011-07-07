@@ -37,7 +37,7 @@ import java.util.Date;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class GsacResource extends GsacObject {
+public class GsacFile extends GsacObject {
 
     /** _more_          */
     public static final ObjectType TYPE_RESOURCE = new ObjectType("resource");
@@ -69,7 +69,7 @@ public class GsacResource extends GsacObject {
     /**
      * ctor
      */
-    public GsacResource() {}
+    public GsacFile() {}
 
 
 
@@ -82,7 +82,7 @@ public class GsacResource extends GsacObject {
      * @param publishTime _more_
      * @param type _more_
      */
-    public GsacResource(String repositoryId, FileInfo fileInfo,
+    public GsacFile(String repositoryId, FileInfo fileInfo,
                         GsacSite site, Date publishTime, ResourceType type) {
         this(repositoryId, fileInfo, site, publishTime, publishTime,
              publishTime, type);
@@ -100,7 +100,7 @@ public class GsacResource extends GsacObject {
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacResource(String repositoryId, FileInfo fileInfo,
+    public GsacFile(String repositoryId, FileInfo fileInfo,
                         GsacSite site, Date startTime, Date endTime,
                         ResourceType type) {
         this(repositoryId, fileInfo, site, startTime, startTime, endTime,
@@ -120,7 +120,7 @@ public class GsacResource extends GsacObject {
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacResource(String repositoryId, FileInfo fileInfo,
+    public GsacFile(String repositoryId, FileInfo fileInfo,
                         GsacSite site, Date publishTime, Date startTime,
                         Date endTime, ResourceType type) {
         super(repositoryId);
