@@ -360,7 +360,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         } else {
             msgBuff.append("<b>No repositories available to search<b>");
         }
-        getResourceManager(GsacSite.TYPE_SITE).setSearchCriteriaMessage(response, msgBuff);
+        getResourceManager(GsacSite.CLASS_SITE).setSearchCriteriaMessage(response, msgBuff);
     }
 
 

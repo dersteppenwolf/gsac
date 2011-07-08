@@ -99,7 +99,7 @@ public class FederatedSiteManager extends SiteManager {
         if (request.defined(ARG_SITE_ID)) {
             List<String> ids = request.get(ARG_SITE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getResource(request, GsacSite.TYPE_SITE,id));
+                response.addObject(getRepository().getResource(request, GsacSite.CLASS_SITE,id));
             }
             return;
         }

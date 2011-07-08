@@ -82,7 +82,7 @@ public class FederatedFileManager extends FileManager {
             List<String> ids = request.get(ARG_FILE_ID, new ArrayList());
             for (String id : ids) {
                 response.addObject(getRepository().getResource(request,
-                                                             GsacFile.TYPE_FILE,
+                                                             GsacFile.CLASS_FILE,
                         id));
             }
             return;
@@ -157,7 +157,7 @@ public class FederatedFileManager extends FileManager {
      * @return sitemanager
      */
     public FederatedSiteManager getSiteManager() {
-        return (FederatedSiteManager) getRepository().getResourceManager(GsacSite.TYPE_SITE);
+        return (FederatedSiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
     }
 
 

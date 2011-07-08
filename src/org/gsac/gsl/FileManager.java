@@ -56,7 +56,7 @@ public abstract class FileManager extends GsacResourceManager {
      * @param repository the repository
      */
     public FileManager(GsacRepository repository) {
-        super(repository, GsacFile.TYPE_FILE);
+        super(repository, GsacFile.CLASS_FILE);
     }
 
 

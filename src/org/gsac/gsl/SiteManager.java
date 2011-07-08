@@ -66,7 +66,7 @@ public abstract class SiteManager extends GsacResourceManager {
      * @param repository the repository
      */
     public SiteManager(GsacRepository repository) {
-        super(repository, GsacSite.TYPE_SITE);
+        super(repository, GsacSite.CLASS_SITE);
     }
 
 

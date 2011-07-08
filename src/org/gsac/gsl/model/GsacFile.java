@@ -40,7 +40,7 @@ import java.util.Date;
 public class GsacFile extends GsacResource {
 
     /** _more_ */
-    public static final ResourceClass TYPE_FILE = new ResourceClass("file");
+    public static final ResourceClass CLASS_FILE = new ResourceClass("file");
 
     /** _more_ */
     private FileInfo fileInfo;
@@ -132,7 +132,7 @@ public class GsacFile extends GsacResource {
      * @return _more_
      */
     public ResourceClass getResourceClass() {
-        return TYPE_FILE;
+        return CLASS_FILE;
     }
 
 

@@ -392,8 +392,8 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        getResourceManager(GsacSite.TYPE_SITE);
-        getResourceManager(GsacFile.TYPE_FILE);
+        getResourceManager(GsacSite.CLASS_SITE);
+        getResourceManager(GsacFile.CLASS_FILE);
 
 
         //TODO: put the specification of the output handlers into a properties or xml file
@@ -1189,13 +1189,13 @@ public class GsacRepository implements GsacConstants {
                 what = URL_SITE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_SITE, request);
-                outputHandler.handleRequest(GsacSite.TYPE_SITE, request);
+                outputHandler.handleRequest(GsacSite.CLASS_SITE, request);
             } else if (uri.indexOf(URL_FILE_BASE) >= 0) {
                 //file request
                 what = URL_FILE_BASE;
                 GsacOutputHandler outputHandler =
                     getOutputHandler(OUTPUT_GROUP_FILE, request);
-                outputHandler.handleRequest(GsacFile.TYPE_FILE, request);
+                outputHandler.handleRequest(GsacFile.CLASS_FILE, request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
                 GsacOutputHandler outputHandler =
@@ -1781,7 +1781,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public GsacResourceManager doMakeObjectManager(ResourceClass type) {
-        if (type.equals(GsacSite.TYPE_SITE)) {
+        if (type.equals(GsacSite.CLASS_SITE)) {
             return new SiteManager(this) {
                 public GsacResource getResource(String objectId)
                         throws Exception {
@@ -1789,7 +1789,7 @@ public class GsacRepository implements GsacConstants {
                 }
             };
         }
-        if (type.equals(GsacFile.TYPE_FILE)) {
+        if (type.equals(GsacFile.CLASS_FILE)) {
             return new FileManager(this) {
                 public void handleRequest(GsacRequest request,
                                           GsacResponse response)

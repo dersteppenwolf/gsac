@@ -152,7 +152,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
             */
             long t1 = System.currentTimeMillis();
-            getRepository().processRequest(GsacSite.TYPE_SITE, request,
+            getRepository().processRequest(GsacSite.CLASS_SITE, request,
                                            response);
             long t2 = System.currentTimeMillis();
             checkMessage(request, response, sb);
@@ -162,7 +162,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                + (t3 - t2));
         } else if (request.defined(ARG_SITEID)) {
             GsacSite site = (GsacSite) getRepository().getResource(request,
-                                GsacSite.TYPE_SITE,
+                                GsacSite.CLASS_SITE,
                                 request.get(ARG_SITEID, (String) null));
             handleSingleSite(request, response, sb, site);
         } else {

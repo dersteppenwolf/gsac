@@ -38,13 +38,13 @@ import java.util.Date;
 public class FileInfo {
 
     /** _more_ */
-    public static final int TYPE_FILE = 0;
+    public static final int CLASS_FILE = 0;
 
     /** _more_ */
     public static final int TYPE_NONFILE = 1;
 
     /** _more_ */
-    private int type = TYPE_FILE;
+    private int type = CLASS_FILE;
 
     /** _more_ */
     private File localFile;
@@ -81,7 +81,7 @@ public class FileInfo {
      * @param md5 _more_
      */
     public FileInfo(String url, long fileSize, String md5) {
-        this(url, fileSize, md5, TYPE_FILE);
+        this(url, fileSize, md5, CLASS_FILE);
     }
 
     /**
@@ -126,7 +126,7 @@ public class FileInfo {
      * @throws Exception On badness
      */
     public InputStream getInputStream() throws Exception {
-        if (type != TYPE_FILE) {
+        if (type != CLASS_FILE) {
             return null;
         }
         if (localFile != null) {

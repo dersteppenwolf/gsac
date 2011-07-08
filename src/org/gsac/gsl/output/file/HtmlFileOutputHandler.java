@@ -133,14 +133,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         if (request.isGsacUrl(URL_FILE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_FILE_SEARCH)) {
-            getRepository().processRequest(GsacFile.TYPE_FILE, request,
+            getRepository().processRequest(GsacFile.CLASS_FILE, request,
                                            response);
             checkMessage(request, response, sb);
             handleResourceList(request, response, sb);
         } else if (request.defined(ARG_FILEID)) {
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
-                    GsacFile.TYPE_FILE, request.get(ARG_FILEID, ""));
+                    GsacFile.CLASS_FILE, request.get(ARG_FILEID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -419,7 +419,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 GsacSite site = resource.getSite();
                 if ((site == null) && (resource.getSiteID() != null)) {
                     site = (GsacSite) getRepository().getResource(request,
-                            GsacSite.TYPE_SITE, resource.getSiteID());
+                            GsacSite.CLASS_SITE, resource.getSiteID());
                 }
                 if (cnt == 0) {
                     //                    pw.append(HtmlUtil.formPost(makeUrl(URL_FILE_SEARCH),

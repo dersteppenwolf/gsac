@@ -873,7 +873,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      * @return sitemanager
      */
     public CddisSiteManager getSiteManager() {
-        return (CddisSiteManager) getRepository().getResourceManager(GsacSite.TYPE_SITE);
+        return (CddisSiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
     }
 
 

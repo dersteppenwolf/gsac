@@ -85,7 +85,7 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
 
 
     /** _more_ */
-    public static final String TYPE_SITE = "gsacsite";
+    public static final String CLASS_SITE = "gsacsite";
 
     /** _more_ */
     public static final String COL_SITEID = "siteid";

@@ -269,7 +269,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
      * @return sitemanager
      */
     public @MACRO.PREFIX@SiteManager getSiteManager() {
-        return (@MACRO.PREFIX@SiteManager) getRepository().getResourceManager(GsacSite.TYPE_SITE);
+        return (@MACRO.PREFIX@SiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
     }
 
 

@@ -110,7 +110,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer sb = new StringBuffer();
         response.startResponse(GsacResponse.MIME_KML);
-        getRepository().processRequest(GsacSite.TYPE_SITE, request, response);
+        getRepository().processRequest(GsacSite.CLASS_SITE, request, response);
         PrintWriter pw     = response.getPrintWriter();
         Element     root   = KmlUtil.kml("Site Search");
         Element     doc    = KmlUtil.document(root, "Sites", true);

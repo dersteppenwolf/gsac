@@ -190,7 +190,7 @@ public class NtripHarvester extends WebHarvester {
                 GsacFileTypeHandler.TYPE_STREAM, false, false);
         GsacSiteTypeHandler siteTypeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(
-                GsacSiteTypeHandler.TYPE_SITE, false, false);
+                GsacSiteTypeHandler.CLASS_SITE, false, false);
 
 
         User        user        = getUser();
