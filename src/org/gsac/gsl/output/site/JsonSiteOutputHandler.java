@@ -87,8 +87,8 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         Gson           gson  = gsonBuilder.create();
         List<GsacSite> sites = response.getSites();
         String         json  = gson.toJson(sites);
-        System.out.println(json);
-        System.out.println("size:" + json.length() + " #:" + sites.size());
+        //        System.out.println(json);
+        //        System.out.println("size:" + json.length() + " #:" + sites.size());
         pw.print(json);
         response.endResponse();
     }

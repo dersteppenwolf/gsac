@@ -136,7 +136,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             getRepository().processRequest(GsacFile.CLASS_FILE, request,
                                            response);
             checkMessage(request, response, sb);
-            handleResourceList(request, response, sb);
+            handleFileList(request, response, sb);
         } else if (request.defined(ARG_FILEID)) {
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
@@ -324,8 +324,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception On badness
      */
-    public void handleResourceList(GsacRequest request,
-                                   GsacResponse response, Appendable sb)
+    public void handleFileList(GsacRequest request,
+                               GsacResponse response, Appendable sb)
             throws Exception {
 
         try {

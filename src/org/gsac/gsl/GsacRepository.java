@@ -1219,6 +1219,7 @@ public class GsacRepository implements GsacConstants {
             }
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
+                //                System.out.println(request.toString());
                 logAccess(request, what);
             }
         } catch (UnknownRequestException exc) {

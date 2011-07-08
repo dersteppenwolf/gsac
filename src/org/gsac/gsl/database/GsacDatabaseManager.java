@@ -361,7 +361,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
             connectionCnt--;
             connection.close();
             if (connectionCnt > 3) {
-                System.err.println("close:" + connectionCnt);
+                //                Misc.printStack("close:" + connectionCnt,10);
+                //                System.err.println("db connection close:" + connectionCnt);
             }
         } catch (Exception ignoreThis) {}
     }

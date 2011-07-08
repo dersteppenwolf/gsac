@@ -56,7 +56,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
         super(gsacServlet);
         getRepository().addOutput(OUTPUT_GROUP_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_CSV,
-                                      "Resource CSV", "/files.csv", true));
+                                      "File CSV", "/files.csv", true));
     }
 
 
@@ -64,12 +64,11 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
      * _more_
      *
      * @param response The response
-     * @param resource _more_
      * @param object _more_
      */
     public void processObject(GsacResponse response, GsacResource object) {
         try {
-            GsacFile resource = (GsacFile) object;
+            GsacFile file = (GsacFile) object;
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             response.startResponse(GsacResponse.MIME_CSV);
@@ -77,13 +76,13 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             if (firstTime) {
                 pw.print("#repositoryid, resourcetype, siteid, url\n");
             }
-            pw.print(resource.getRepositoryId());
+            pw.print(file.getRepositoryId());
             pw.print(",");
-            pw.print(resource.getType().getId());
+            pw.print(file.getType().getId());
             pw.print(",");
-            pw.print(resource.getSite().getId());
+            pw.print(file.getSite().getId());
             pw.print(",");
-            pw.print(resource.getFileInfo().getUrl());
+            pw.print(file.getFileInfo().getUrl());
             pw.print("\n");
         } catch (Exception exc) {
             throw new RuntimeException(exc);
