@@ -546,7 +546,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
 
         site = new GsacSite(makeSiteId(type, siteName, results), "",
                             siteName, latitude, longitude, elevation);
-        site.setType(new SiteType(type.getType(),
+        site.setType(new ResourceType(type.getType(),
                                   type.getType().toUpperCase()));
         return site;
     }

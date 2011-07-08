@@ -233,7 +233,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
         GsacSite site = new GsacSite("" + monId, fourCharId, name,
                                   latitude, longitude, elevation);
-        site.setType(new SiteType(type));
+        site.setType(new ResourceType(type));
         if ((groups != null) && (groups.trim().length() > 0)) {
             List<String> toks = new ArrayList<String>();
             for (String tok : groups.split(",")) {

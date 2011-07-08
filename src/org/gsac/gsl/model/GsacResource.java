@@ -40,6 +40,10 @@ import java.util.List;
  */
 public abstract class GsacResource {
 
+    /** site type */
+    private ResourceType type;
+
+
     /** _more_ */
     private String id;
 
@@ -65,6 +69,10 @@ public abstract class GsacResource {
      */
     public GsacResource(String id) {
         this.id = id;
+    }
+
+    public GsacResource(String id, ResourceType type) {
+        this.type  = type;
     }
 
 
@@ -193,6 +201,24 @@ public abstract class GsacResource {
         return repositoryInfo;
     }
 
+
+    /**
+     *  Set the Type property.
+     *
+     *  @param value The new value for Type
+     */
+    public void setType(ResourceType value) {
+        type = value;
+    }
+
+    /**
+     *  Get the Type property.
+     *
+     *  @return The Type
+     */
+    public ResourceType getType() {
+        return type;
+    }
 
 
 }

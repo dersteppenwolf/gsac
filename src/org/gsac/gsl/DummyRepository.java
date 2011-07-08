@@ -119,7 +119,7 @@ public class DummyRepository extends GsacRepositoryImpl {
                             "ftp://data-out.unavco.org/pub/rinex/obs/file"
                             + rcnt, (long) (Math.random() * 10000000),
                                     ""), site, new Date(), new Date(),
-                                         new FileType(type)));
+                                         new ResourceType(type)));
             }
 
         }
@@ -253,10 +253,10 @@ public class DummyRepository extends GsacRepositoryImpl {
      *
      * @return _more_
      */
-    public List<SiteType> doGetSiteTypes() {
-        List<SiteType> types = new ArrayList<SiteType>();
-        types.add(new SiteType("gnss", "GNSS Site"));
-        types.add(new SiteType("other", "Other Site"));
+    public List<ResourceType> doGetSiteTypes() {
+        List<ResourceType> types = new ArrayList<ResourceType>();
+        types.add(new ResourceType("gnss", "GNSS Site"));
+        types.add(new ResourceType("other", "Other Site"));
         return types;
     }
 

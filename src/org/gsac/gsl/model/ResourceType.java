@@ -35,19 +35,19 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class SiteType extends IdLabel {
+public class ResourceType extends IdLabel {
 
     /**
      * _more_
      */
-    public SiteType() {}
+    public ResourceType() {}
 
     /**
      * _more_
      *
      * @param idLabel _more_
      */
-    public SiteType(IdLabel idLabel) {
+    public ResourceType(IdLabel idLabel) {
         super(idLabel.getId(), idLabel.getName());
     }
 
@@ -57,7 +57,7 @@ public class SiteType extends IdLabel {
      *
      * @param id _more_
      */
-    public SiteType(String id) {
+    public ResourceType(String id) {
         super(id);
     }
 
@@ -67,7 +67,7 @@ public class SiteType extends IdLabel {
      * @param id _more_
      * @param name _more_
      */
-    public SiteType(String id, String name) {
+    public ResourceType(String id, String name) {
         super(id, name);
     }
 
@@ -81,13 +81,13 @@ public class SiteType extends IdLabel {
      *
      * @return _more_
      */
-    public static List<SiteType> convertList(List<IdLabel> ids) {
-        List<SiteType> results = new ArrayList<SiteType>();
+    public static List<ResourceType> convertList(List<IdLabel> ids) {
+        List<ResourceType> results = new ArrayList<ResourceType>();
         if (ids == null) {
             return results;
         }
         for (IdLabel id : ids) {
-            results.add(new SiteType(id));
+            results.add(new ResourceType(id));
         }
         return results;
     }

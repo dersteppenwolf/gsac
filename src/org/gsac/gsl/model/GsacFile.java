@@ -61,10 +61,6 @@ public class GsacFile extends GsacResource {
     /** _more_ */
     private Date endTime;
 
-    /** _more_ */
-    private FileType type;
-
-
 
     /**
      * ctor
@@ -83,7 +79,7 @@ public class GsacFile extends GsacResource {
      * @param type _more_
      */
     public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
-                    Date publishTime, FileType type) {
+                    Date publishTime, ResourceType type) {
         this(repositoryId, fileInfo, site, publishTime, publishTime,
              publishTime, type);
     }
@@ -101,7 +97,7 @@ public class GsacFile extends GsacResource {
      * @param type _more_
      */
     public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
-                    Date startTime, Date endTime, FileType type) {
+                    Date startTime, Date endTime, ResourceType type) {
         this(repositoryId, fileInfo, site, startTime, startTime, endTime,
              type);
     }
@@ -121,14 +117,13 @@ public class GsacFile extends GsacResource {
      */
     public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
                     Date publishTime, Date startTime, Date endTime,
-                    FileType type) {
-        super(repositoryId);
+                    ResourceType type) {
+        super(repositoryId, type);
         this.fileInfo    = fileInfo;
         this.site        = site;
         this.publishTime = publishTime;
         this.startTime   = startTime;
         this.endTime     = endTime;
-        this.type        = type;
     }
 
     /**
@@ -283,25 +278,5 @@ public class GsacFile extends GsacResource {
     public Date getEndTime() {
         return endTime;
     }
-
-    /**
-     *  Set the Type property.
-     *
-     *  @param value The new value for Type
-     */
-    public void setType(FileType value) {
-        type = value;
-    }
-
-    /**
-     *  Get the Type property.
-     *
-     *  @return The Type
-     */
-    public FileType getType() {
-        return type;
-    }
-
-
 
 }

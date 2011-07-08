@@ -50,8 +50,6 @@ public class GsacSite extends GsacResource implements Comparable {
     /** This can be used for a monument ID */
     private String secondarySiteCode;
 
-    /** site type */
-    private SiteType type;
 
     /** site status */
     private SiteStatus status;
@@ -120,9 +118,8 @@ public class GsacSite extends GsacResource implements Comparable {
      * @param location _more_
      */
     public GsacSite(String siteId, String siteCode, String name,
-                    SiteType type, EarthLocation location) {
-        super(siteId);
-        this.type          = type;
+                    ResourceType type, EarthLocation location) {
+        super(siteId, type);
         this.siteCode      = siteCode;
         this.name          = name;
         this.earthLocation = location;
@@ -392,24 +389,6 @@ public class GsacSite extends GsacResource implements Comparable {
      */
     public PoliticalLocation getPoliticalLocation() {
         return politicalLocation;
-    }
-
-    /**
-     *  Set the Type property.
-     *
-     *  @param value The new value for Type
-     */
-    public void setType(SiteType value) {
-        type = value;
-    }
-
-    /**
-     *  Get the Type property.
-     *
-     *  @return The Type
-     */
-    public SiteType getType() {
-        return type;
     }
 
     /**
