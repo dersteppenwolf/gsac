@@ -72,6 +72,7 @@ public abstract class GsacResource {
     }
 
     public GsacResource(String id, ResourceType type) {
+        this(id);
         this.type  = type;
     }
 

@@ -45,7 +45,6 @@ public class GsacFile extends GsacResource {
     /** _more_ */
     private FileInfo fileInfo;
 
-
     /** _more_ */
     private String siteID;
 
