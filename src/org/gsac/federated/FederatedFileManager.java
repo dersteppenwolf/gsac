@@ -81,7 +81,7 @@ public class FederatedFileManager extends FileManager {
         if (request.defined(ARG_FILE_ID)) {
             List<String> ids = request.get(ARG_FILE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getResource(request,
+                response.addResource(getRepository().getResource(request,
                                                              GsacFile.CLASS_FILE,
                         id));
             }

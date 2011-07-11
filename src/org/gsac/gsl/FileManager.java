@@ -109,7 +109,7 @@ public abstract class FileManager extends GsacResourceManager {
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
             //      makeFile(iter.getResults());
-            response.addObject(makeFile(iter.getResults()));
+            response.addResource(makeFile(iter.getResults()));
             if ( !iter.countOK()) {
                 response.setExceededLimit();
                 break;

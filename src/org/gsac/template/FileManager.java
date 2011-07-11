@@ -149,7 +149,7 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
         SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement, request.getOffset(), request.getLimit());
         int cnt = 0;
         while (iter.getNext() != null) {
-            response.addObject(makeFile(iter.getResults()));
+            response.addResource(makeFile(iter.getResults()));
             cnt++;
             if ( !iter.countOK()) {
                 response.setExceededLimit();

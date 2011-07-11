@@ -85,7 +85,7 @@ public class GsacResponse {
     private boolean haveInitialized = false;
 
     /** _more_ */
-    private List<GsacResource> objects = new ArrayList<GsacResource>();
+    private List<GsacResource> resources = new ArrayList<GsacResource>();
 
 
     /** _more_ */
@@ -298,11 +298,11 @@ public class GsacResponse {
      *
      * @param sites _more_
      *
-     * @param objects _more_
+     * @param resources _more_
      */
-    public void addObjects(List<GsacResource> objects) {
-        for (GsacResource object : objects) {
-            addObject(object);
+    public void addResources(List<GsacResource> resources) {
+        for (GsacResource resource : resources) {
+            addResource(resource);
         }
     }
 
@@ -312,10 +312,10 @@ public class GsacResponse {
      *
      * @param site _more_
      *
-     * @param object _more_
+     * @param resource _more_
      */
-    public final synchronized void addObject(GsacResource object) {
-        handleNewObject(object);
+    public final synchronized void addResource(GsacResource resource) {
+        handleNewResource(resource);
     }
 
 
@@ -324,10 +324,10 @@ public class GsacResponse {
      *
      * @param site _more_
      *
-     * @param object _more_
+     * @param resource _more_
      */
-    public void handleNewObject(GsacResource object) {
-        objects.add(object);
+    public void handleNewResource(GsacResource resource) {
+        resources.add(resource);
     }
 
 
@@ -337,7 +337,7 @@ public class GsacResponse {
      * @return _more_
      */
     public List<GsacResource> getResources() {
-        return objects;
+        return resources;
     }
 
     /**
@@ -347,8 +347,8 @@ public class GsacResponse {
      */
     public List<GsacSite> getSites() {
         List<GsacSite> sites = new ArrayList<GsacSite>();
-        for (GsacResource object : objects) {
-            sites.add((GsacSite) object);
+        for (GsacResource resource : resources) {
+            sites.add((GsacSite) resource);
         }
         return sites;
     }
@@ -361,8 +361,8 @@ public class GsacResponse {
      */
     public List<GsacFile> getFiles() {
         List<GsacFile> files = new ArrayList<GsacFile>();
-        for (GsacResource object : objects) {
-            files.add((GsacFile) object);
+        for (GsacResource resource : resources) {
+            files.add((GsacFile) resource);
         }
         return files;
     }

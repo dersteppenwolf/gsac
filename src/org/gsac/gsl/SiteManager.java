@@ -134,7 +134,7 @@ public abstract class SiteManager extends GsacResourceManager {
             if (site == null) {
                 continue;
             }
-            response.addObject(site);
+            response.addResource(site);
             if ( !iter.countOK()) {
                 response.setExceededLimit();
                 break;

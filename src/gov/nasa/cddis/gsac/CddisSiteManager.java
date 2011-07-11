@@ -157,7 +157,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 appendSearchCriteria(msgBuff, "Site Id=", siteId);
                 GsacSite site = (GsacSite) getResource(siteId);
                 if(site!=null) {
-                    response.addObject(site);
+                    response.addResource(site);
                 }
             }
             setSearchCriteriaMessage(response, msgBuff);
@@ -257,7 +257,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 break;
             }
             myCnt++;
-            response.addObject(site);
+            response.addResource(site);
         }
         return myCnt;
     }

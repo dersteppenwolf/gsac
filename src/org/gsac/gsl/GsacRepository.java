@@ -163,11 +163,11 @@ public class GsacRepository implements GsacConstants {
     private GsacDatabaseManager databaseManager;
 
     /** _more_ */
-    private Hashtable<String, GsacResourceManager> objectManagerMap =
+    private Hashtable<String, GsacResourceManager> resourceManagerMap =
         new Hashtable<String, GsacResourceManager>();
 
     /** _more_ */
-    private List<GsacResourceManager> objectManagers =
+    private List<GsacResourceManager> resourceManagers =
         new ArrayList<GsacResourceManager>();
 
 
@@ -1767,10 +1767,10 @@ public class GsacRepository implements GsacConstants {
      * @param type _more_
      * @param gom _more_
      */
-    public void addObjectManager(ResourceClass type,
+    public void addResourceManager(ResourceClass type,
                                  GsacResourceManager gom) {
-        objectManagerMap.put(type.getType(), gom);
-        objectManagers.add(gom);
+        resourceManagerMap.put(type.getType(), gom);
+        resourceManagers.add(gom);
     }
 
 
@@ -1781,10 +1781,10 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacResourceManager doMakeObjectManager(ResourceClass type) {
+    public GsacResourceManager doMakeResourceManager(ResourceClass type) {
         if (type.equals(GsacSite.CLASS_SITE)) {
             return new SiteManager(this) {
-                public GsacResource getResource(String objectId)
+                public GsacResource getResource(String resourceId)
                         throws Exception {
                     return null;
                 }
@@ -1812,15 +1812,15 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacResourceManager getResourceManager(ResourceClass type) {
-        GsacResourceManager gom = objectManagerMap.get(type);
+    public GsacResourceManager getResourceManager(ResourceClass resourceClass) {
+        GsacResourceManager gom = resourceManagerMap.get(resourceClass);
         if (gom == null) {
-            gom = doMakeObjectManager(type);
+            gom = doMakeResourceManager(resourceClass);
             if (gom == null) {
-                throw new IllegalArgumentException("Unknown object type:"
-                        + type.getType());
+                throw new IllegalArgumentException("Unknown resource class:"
+                        + resourceClass.getType());
             }
-            addObjectManager(type, gom);
+            addResourceManager(resourceClass, gom);
         }
         return gom;
     }
@@ -1830,30 +1830,30 @@ public class GsacRepository implements GsacConstants {
      *
      * @param request the request
      * @param type _more_
-     * @param objectId _more_
+     * @param resourceId _more_
      *
      * @return _more_
      *
      * @throws Exception On badness
      */
     public GsacResource getResource(GsacRequest request, ResourceClass type,
-                                    String objectId)
+                                    String resourceId)
             throws Exception {
         GsacResourceManager gom    = getResourceManager(type);
-        GsacResource        object = gom.getResourceFromCache(objectId);
-        if (object != null) {
-            return object;
+        GsacResource        resource = gom.getResourceFromCache(resourceId);
+        if (resource != null) {
+            return resource;
         }
-        object = doGetObject(type, objectId);
-        //Cache the dummy object
-        //        if (object == null) {
-        //            gom.cacheObject(new GsacSite(siteId, "", "", 0, 0, 0));
+        resource = doGetResource(type, resourceId);
+        //Cache the dummy resource
+        //        if (resource == null) {
+        //            gom.cacheResource(new GsacSite(siteId, "", "", 0, 0, 0));
         //        }
 
-        if (object != null) {
-            gom.cacheObject(object);
+        if (resource != null) {
+            gom.cacheResource(resource);
         }
-        return object;
+        return resource;
     }
 
 
@@ -1869,7 +1869,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception on badnesss
      */
-    public GsacResource doGetObject(ResourceClass type, String siteId)
+    public GsacResource doGetResource(ResourceClass type, String siteId)
             throws Exception {
         GsacResourceManager gom = getResourceManager(type);
         return gom.getResource(siteId);
@@ -1877,24 +1877,24 @@ public class GsacRepository implements GsacConstants {
 
     /**
      * This gets called by OutputHandlers when they need all of the metadata for a site
-     * If the given site object has all of its metadata already then this method just returns.
+     * If the given site resource has all of its metadata already then this method just returns.
      * Else the method doGetFillMetadata is called. A repository implementation can overwrite
      * this method to add the full metadata to the site
      *
      *
      * @param request the request
-     * @param gsacObject _more_
+     * @param gsacResource _more_
      *
      * @throws Exception On badness
      */
-    public void getMetadata(GsacRequest request, GsacResource gsacObject)
+    public void getMetadata(GsacRequest request, GsacResource gsacResource)
             throws Exception {
         int level = request.get(ARG_METADATA_LEVEL, 1);
-        if (gsacObject.getMetadataLevel() >= level) {
+        if (gsacResource.getMetadataLevel() >= level) {
             return;
         }
-        doGetFullMetadata(level, gsacObject);
-        gsacObject.setMetadataLevel(level);
+        doGetFullMetadata(level, gsacResource);
+        gsacResource.setMetadataLevel(level);
     }
 
 
@@ -1902,23 +1902,23 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * Gets called to add the full metadata to the object.
-     * If there is a objectmanager then this is just a pass through
+     * Gets called to add the full metadata to the resource.
+     * If there is a resourcemanager then this is just a pass through
      * to it.
      *
      *
      * @param level For now describes the level of detail wanted for the given metadata.
      * We need to revamp that and maybe use a string name for the metadata group
-     * @param gsacObject _more_
+     * @param gsacResource _more_
      *
      * @throws Exception On badness
      */
-    public void doGetFullMetadata(int level, GsacResource gsacObject)
+    public void doGetFullMetadata(int level, GsacResource gsacResource)
             throws Exception {
         GsacResourceManager gom =
-            getResourceManager(gsacObject.getResourceClass());
+            getResourceManager(gsacResource.getResourceClass());
         if (gom != null) {
-            gom.doGetMetadata(level, gsacObject);
+            gom.doGetMetadata(level, gsacResource);
         }
     }
 
@@ -1941,7 +1941,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public List<Capability> doGetCapabilities(String type) {
-        for (GsacResourceManager gom : objectManagers) {
+        for (GsacResourceManager gom : resourceManagers) {
             if (gom.canHandleQueryCapabilities(type)) {
                 return gom.doGetQueryCapabilities();
             }
@@ -2178,12 +2178,12 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param object _more_
+     * @param resource _more_
      *
      * @return _more_
      */
-    public String getRemoteHref(GsacResource object) {
-        GsacRepositoryInfo info = object.getRepositoryInfo();
+    public String getRemoteHref(GsacResource resource) {
+        GsacRepositoryInfo info = resource.getRepositoryInfo();
         if (info == null) {
             return "";
         }
@@ -2191,7 +2191,7 @@ public class GsacRepository implements GsacConstants {
         if (icon == null) {
             icon = iconUrl("/favicon.ico");
         }
-        return HtmlUtil.href(getRemoteUrl(object),
+        return HtmlUtil.href(getRemoteUrl(resource),
                              HtmlUtil.img(icon, "View at " + info.getName()));
     }
 
@@ -2199,18 +2199,18 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param object _more_
+     * @param resource _more_
      *
      * @return _more_
      */
-    public String getRemoteUrl(GsacResource object) {
-        if (object.getRepositoryInfo() == null) {
+    public String getRemoteUrl(GsacResource resource) {
+        if (resource.getRepositoryInfo() == null) {
             return null;
         }
-        List<String> pair = StringUtil.splitUpTo(object.getId(), ":", 2);
+        List<String> pair = StringUtil.splitUpTo(resource.getId(), ":", 2);
         String       id   = pair.get(1);
-        return object.getRepositoryInfo().getUrl() + object.getViewUrl()
-               + "?" + HtmlUtil.args(new String[] { object.getIdArg(),
+        return resource.getRepositoryInfo().getUrl() + resource.getViewUrl()
+               + "?" + HtmlUtil.args(new String[] { resource.getIdArg(),
                 id });
     }
 

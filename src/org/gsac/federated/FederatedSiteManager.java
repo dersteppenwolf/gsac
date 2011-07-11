@@ -99,7 +99,7 @@ public class FederatedSiteManager extends SiteManager {
         if (request.defined(ARG_SITE_ID)) {
             List<String> ids = request.get(ARG_SITE_ID, new ArrayList());
             for (String id : ids) {
-                response.addObject(getRepository().getResource(request, GsacSite.CLASS_SITE,id));
+                response.addResource(getRepository().getResource(request, GsacSite.CLASS_SITE,id));
             }
             return;
         }
@@ -152,7 +152,7 @@ public class FederatedSiteManager extends SiteManager {
      *
      * @throws Exception On badness
      */
-    public void doGetMetadata(int level, GsacResource  gsacObject)
+    public void doGetMetadata(int level, GsacResource  gsacResource)
             throws Exception {
         //TODO: what to do here
         //The unavcorepository adds in GnssEquipment metadata and other things

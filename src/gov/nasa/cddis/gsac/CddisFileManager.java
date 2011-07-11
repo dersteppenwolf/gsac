@@ -378,7 +378,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
                         makeResources(type, results, resourceTypes,
                                       dateRange, extraStuff)) {
                     if (totalCnt >= offset) {
-                        response.addObject(resource);
+                        response.addResource(resource);
                         cnt++;
                     }
                     totalCnt++;
@@ -769,7 +769,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      *
      * @throws Exception On badness
      */
-    public void doGetResourceMetadata(int level, GsacFile gsacResource)
+    public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {}
 
 
@@ -923,7 +923,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
      *
      * @return _more_
      */
-    public List<Capability> doGetResourceQueryCapabilities() {
+    public List<Capability> doGetQueryCapabilities() {
         try {
             List<Capability> capabilities = new ArrayList<Capability>();
 

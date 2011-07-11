@@ -172,18 +172,18 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
     /**
      * CHANGEME
-     * Get the object from the database
+     * Get the resource from the database
      *
-     * @param objectId object id. This isn't the object code but actually the monument id
+     * @param resourceId resource id. This isn't the resource code but actually the monument id
      *
-     * @return the object or null if not found
+     * @return the resource or null if not found
      *
      * @throws Exception on badness
      */
-    public GsacResource getResource(String objectId) throws Exception {
+    public GsacResource getResource(String resourceId) throws Exception {
         /* e.g.:
         Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
-                                  new Integer(objectId).intValue());
+                                  new Integer(resourceId).intValue());
         Statement statement = getDatabaseManager().select(
                                                           getSiteSelectColumns(), 
                                                           clause.getTableNames(), clause);
@@ -264,11 +264,11 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     /**
      * get all of the metadata for the given site
      *
-     * @param gsacObject object
+     * @param gsacResource resource
      *
      * @throws Exception On badness
      */
-    public void doGetMetadata(int level, GsacResource gsacObject) throws Exception {
+    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
         //The unavcorepository adds in GnssEquipment metadata and other things
     }
 
