@@ -43,31 +43,48 @@ import java.util.List;
 
 
 /**
- * Base class for site and resource managers
+ * Base class for site and file managers
  *
  *
  * @author  Jeff McWhirter
  */
 public abstract class GsacResourceManager extends GsacRepositoryManager {
 
-    /** site cache */
+    /** cache */
 
     private TTLCache<Object, GsacResource> resourceCache =
         new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
 
     /** _more_ */
-    private ResourceClass type;
+    private ResourceClass resourceClass;
 
     /**
      * _more_
      *
      * @param repository _more_
-     * @param type _more_
+     * @param resourceClass _more_
      */
     public GsacResourceManager(GsacRepository repository,
-                               ResourceClass type) {
+                               ResourceClass resourceClass) {
         super(repository);
-        this.type = type;
+        this.resourceClass = resourceClass;
+    }
+
+
+    public String makeSearchUrl() {
+        return makeResourceUrl(URL_SUFFIX_SEARCH);
+    }
+
+    public String makeViewUrl() {
+        return makeResourceUrl(URL_SUFFIX_VIEW);
+    }
+
+    public String makeFormUrl() {
+        return makeResourceUrl(URL_SUFFIX_FORM);
+    }
+
+    public String makeResourceUrl(String suffix) {
+        return  getRepository().getUrlBase() + "/" + getResourceClass().getName() +"/" +suffix;
     }
 
 
@@ -85,11 +102,10 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
 
     /**
-     * get all of the metadata for the given site
+     * get all of the metadata for the given resource
      *
      *
      * @param level Specifies the depth of metadata that is being requeste - note: this is stupid and will change
-     * @param gsacSite site
      * @param gsacResource _more_
      *
      * @throws Exception On badness
@@ -147,7 +163,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     }
 
     /**
-     * Are sites cachable
+     * Is  cachable
      *
      * @return default true
      */
@@ -173,16 +189,16 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param resource _more_
      */
     public void cacheResource(String key, GsacResource resource) {
-        String type = resource.getResourceClass().getType();
-        resourceCache.put(type + "_" + key, resource);
+        String resourceClass = resource.getResourceClass().getName();
+        resourceCache.put(resourceClass + "_" + key, resource);
     }
 
     /**
-     * retrieve the site from the cache
+     * retrieve the resource from the cache
      *
-     * @param key site key
+     * @param key key
      *
-     * @return site or null
+     * @return resource or null
      */
     public GsacResource getCachedResource(String key) {
         return resourceCache.get(key);
@@ -199,14 +215,15 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     public void addDefaultCapabilities(List<Capability> capabilities) {}
 
     /**
-     * Get the extra site search capabilities.  Derived classes should override this
+     * Get the extra search capabilities.  Derived classes should override this
      *
-     * @return site search capabilities
+     * @return search capabilities
      */
     public List<Capability> doGetQueryCapabilities() {
         //default is to do nothing
         return new ArrayList<Capability>();
     }
+
 
     /**
      * _more_
@@ -216,29 +233,21 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return _more_
      */
     public boolean canHandleQueryCapabilities(String type) {
-        if (this.type != null) {
-            return this.type.getType().equals(type);
+        if (this.resourceClass != null) {
+            return this.resourceClass.getName().equals(type);
         }
         return false;
     }
 
 
-    /**
-     *  Set the Type property.
-     *
-     *  @param value The new value for Type
-     */
-    public void setType(ResourceClass value) {
-        type = value;
-    }
 
     /**
-     *  Get the Type property.
+     *  Get the ResourceClass property.
      *
-     *  @return The Type
+     *  @return The ResourceClass
      */
-    public ResourceClass getType() {
-        return type;
+    public ResourceClass getResourceClass() {
+        return resourceClass;
     }
 
 

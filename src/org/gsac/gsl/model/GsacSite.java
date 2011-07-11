@@ -69,10 +69,6 @@ public class GsacSite extends GsacResource implements Comparable {
     /** _more_ */
     private Date toDate;
 
-    /** The groups this site is part of */
-    private List<SiteGroup> siteGroups = new ArrayList();
-
-
     /**
      * ctor
      */
@@ -170,56 +166,6 @@ public class GsacSite extends GsacResource implements Comparable {
         return this.siteCode.compareTo(that.siteCode);
     }
 
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public List<SiteGroup> getSiteGroups() {
-        return siteGroups;
-    }
-
-    /**
-     * _more_
-     *
-     * @param groups _more_
-     */
-    public void setSiteGroups(List<SiteGroup> groups) {
-        siteGroups = groups;
-    }
-
-
-    /**
-     * _more_
-     *
-     * @param id _more_
-     *
-     * @return _more_
-     */
-    public boolean hasGroup(String id) {
-        return hasGroup(new SiteGroup(id));
-    }
-
-    /**
-     * _more_
-     *
-     * @param group _more_
-     *
-     * @return _more_
-     */
-    public boolean hasGroup(SiteGroup group) {
-        return siteGroups.contains(group);
-    }
-
-    /**
-     * _more_
-     *
-     * @param group _more_
-     */
-    public void addSiteGroup(SiteGroup group) {
-        siteGroups.add(group);
-    }
 
 
 

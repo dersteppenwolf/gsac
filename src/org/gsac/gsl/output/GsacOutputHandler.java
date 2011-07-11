@@ -92,7 +92,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     private static boolean doSiteStatus = true;
 
     /** flags for repository capabilities */
-    private static boolean doSiteGroup = true;
+    private static boolean doResourceGroup = true;
 
     /** flags for repository capabilities */
     private static boolean doSiteType = true;
@@ -119,7 +119,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         doResource          = getRepository().isCapable(HEADER_FILE);
         doSiteCode          = getRepository().isCapable(ARG_SITE_CODE);
         doSiteStatus        = getRepository().isCapable(ARG_SITE_STATUS);
-        doSiteGroup         = getRepository().isCapable(ARG_SITE_GROUP);
+        doResourceGroup         = getRepository().isCapable(ARG_SITE_GROUP);
         doSiteType          = getRepository().isCapable(ARG_SITE_TYPE);
         //        doSiteDateRange = getRepository().isCapable(ARG_SITE_TYPE);
 
@@ -476,6 +476,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
 
+
     /**
      * _more_
      *
@@ -579,8 +580,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public boolean getDoSiteGroup() {
-        return doSiteGroup;
+    public boolean getDoResourceGroup() {
+        return doResourceGroup;
     }
 
     /**

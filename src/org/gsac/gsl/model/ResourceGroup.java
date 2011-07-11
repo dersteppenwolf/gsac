@@ -34,19 +34,19 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class SiteGroup extends IdLabel {
+public class ResourceGroup extends IdLabel {
 
     /**
      * _more_
      */
-    public SiteGroup() {}
+    public ResourceGroup() {}
 
     /**
      * _more_
      *
      * @param idLabel _more_
      */
-    public SiteGroup(IdLabel idLabel) {
+    public ResourceGroup(IdLabel idLabel) {
         super(idLabel);
     }
 
@@ -55,7 +55,7 @@ public class SiteGroup extends IdLabel {
      *
      * @param id _more_
      */
-    public SiteGroup(String id) {
+    public ResourceGroup(String id) {
         super(id);
     }
 
@@ -65,7 +65,7 @@ public class SiteGroup extends IdLabel {
      * @param id _more_
      * @param name _more_
      */
-    public SiteGroup(String id, String name) {
+    public ResourceGroup(String id, String name) {
         super(id, name);
     }
 
@@ -76,13 +76,13 @@ public class SiteGroup extends IdLabel {
      *
      * @return _more_
      */
-    public static List<SiteGroup> convertList(List<IdLabel> ids) {
-        List<SiteGroup> results = new ArrayList<SiteGroup>();
+    public static List<ResourceGroup> convertList(List<IdLabel> ids) {
+        List<ResourceGroup> results = new ArrayList<ResourceGroup>();
         if (ids == null) {
             return results;
         }
         for (IdLabel id : ids) {
-            results.add(new SiteGroup(id));
+            results.add(new ResourceGroup(id));
         }
         return results;
     }

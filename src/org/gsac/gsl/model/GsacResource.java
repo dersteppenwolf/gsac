@@ -57,6 +57,12 @@ public abstract class GsacResource {
     /** _more_ */
     private GsacRepositoryInfo repositoryInfo;
 
+    /** The groups this site is part of */
+    private List<ResourceGroup> resourceGroups = new ArrayList();
+
+
+
+
     /**
      * ctor
      */
@@ -226,6 +232,59 @@ public abstract class GsacResource {
     public ResourceType getType() {
         return type;
     }
+
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public List<ResourceGroup> getResourceGroups() {
+        return resourceGroups;
+    }
+
+    /**
+     * _more_
+     *
+     * @param groups _more_
+     */
+    public void setResourceGroups(List<ResourceGroup> groups) {
+        resourceGroups = groups;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param id _more_
+     *
+     * @return _more_
+     */
+    public boolean hasGroup(String id) {
+        return hasGroup(new ResourceGroup(id));
+    }
+
+    /**
+     * _more_
+     *
+     * @param group _more_
+     *
+     * @return _more_
+     */
+    public boolean hasGroup(ResourceGroup group) {
+        return resourceGroups.contains(group);
+    }
+
+    /**
+     * _more_
+     *
+     * @param group _more_
+     */
+    public void addResourceGroup(ResourceGroup group) {
+        resourceGroups.add(group);
+    }
+
+
 
 
 }

@@ -698,7 +698,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @return _more_
      */
-    public String getGroupSearchLink(SiteGroup group) {
+    public String getGroupSearchLink(ResourceGroup group) {
         return getSearchLink(group, makeUrl(URL_SITE_SEARCH), ARG_SITE_GROUP);
     }
 
@@ -1187,12 +1187,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @return _more_
      */
-    public String getGroupHtml(List<SiteGroup> groups, boolean hideIfMany) {
+    public String getGroupHtml(List<ResourceGroup> groups, boolean hideIfMany) {
         StringBuffer groupSB = new StringBuffer();
         if (groups.size() > 0) {
             String firstLink = null;
             for (int i = 0; i < groups.size(); i++) {
-                SiteGroup group = groups.get(i);
+                ResourceGroup group = groups.get(i);
                 if (i > 0) {
                     groupSB.append(",");
                     groupSB.append(HtmlUtil.br());
@@ -1215,13 +1215,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
-     * @param site _more_
+     * @param resource _more_
      *
      * @return _more_
      */
-    public String getIconUrl(GsacSite site) {
+    public String getIconUrl(GsacResource resource) {
         for (IconMetadata iconMetadata :
-                IconMetadata.getIconMetadata(site.getMetadata())) {
+                IconMetadata.getIconMetadata(resource.getMetadata())) {
             return iconMetadata.getUrl();
         }
         return getRepository().getAbsoluteUrl(iconUrl("/site.png"));
@@ -1342,8 +1342,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             pw.append(formEntry(request, msgLabel("Date Range"), dateString));
         }
 
-        if (getDoSiteGroup()) {
-            List<SiteGroup> groups = site.getSiteGroups();
+        if (getDoResourceGroup()) {
+            List<ResourceGroup> groups = site.getResourceGroups();
             if (groups.size() > 0) {
                 pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
                         ? "Group"
@@ -1883,7 +1883,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
             labels.add(msg("Date Range"));
             sortValues.add("");
-            if (getDoSiteGroup()) {
+            if (getDoResourceGroup()) {
                 labels.add(msg("Groups"));
                 sortValues.add("");
             }
@@ -1904,13 +1904,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     sb.append(HtmlUtil.space(2));
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
-                    //                    sb.append(HtmlUtil.submit(msg("ViewSearch Files"), ARG_SEARCH_FILES));
                     makeSortHeader(request, sb, ARG_SITE_PREFIX,
                                    SITE_TABLE_LABELS, SITE_TABLE_SORTVALUES);
                 } catch (Exception exc) {
                     throw new RuntimeException(exc);
                 }
             }
+
 
             String href = makeSiteHref(site);
             openEntryRow(sb, site.getSiteId(), URL_SITE_VIEW, ARG_SITE_ID);
@@ -1957,11 +1957,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
 
 
-            if (getDoSiteGroup()) {
-                sb.append(HtmlUtil.col(getGroupHtml(site.getSiteGroups(),
+            if (getDoResourceGroup()) {
+                sb.append(HtmlUtil.col(getGroupHtml(site.getResourceGroups(),
                         true) + "&nbsp;"));
             }
-
 
             sb.append("</tr>\n");
         }
@@ -2114,5 +2113,40 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
+
+    public void addFormSwitchButton(GsacRequest request, StringBuffer buttons, ResourceClass resourceClass) { 
+        if (getDoSite()) {
+            buttons.append("<td align=right>");
+            String switchForm =
+                HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                             HtmlUtil.cssClass("gsac-gobutton")
+                             + HtmlUtil.attrs(new String[] {
+                HtmlUtil.ATTR_NAME, ARG_SEARCH_SITES, HtmlUtil.ATTR_TYPE,
+                HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
+                msg("Site Search Form"), HtmlUtil.ATTR_CLASS,
+                "gsac-download-button", HtmlUtil.ATTR_TITLE,
+                msg("Go to the site search form"),
+            }));
+
+            buttons.append(switchForm);
+            buttons.append("</td>");
+        }
+
+    }
+
+
+
+    public boolean checkFormSwitch(GsacRequest request, GsacResponse response, ResourceClass resourceClass) throws Exception { 
+        if (request.defined(ARG_SEARCH_SITES)) {
+            request.remove(ARG_OUTPUT);
+            request.remove(ARG_SEARCH_FILES);
+            String args        = request.getUrlArgs();
+            String redirectUrl = makeUrl(URL_SITE_FORM) + "?" + args;
+            response.sendRedirect(redirectUrl);
+            response.endResponse();
+            return true;
+        }
+        return false;
+    }
 
 }

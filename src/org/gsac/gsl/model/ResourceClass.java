@@ -41,16 +41,16 @@ import java.util.List;
 public class ResourceClass {
 
     /** _more_ */
-    private String id;
+    private String name;
 
 
     /**
      * _more_
      *
-     * @param id _more_
+     * @param name _more_
      */
-    public ResourceClass(String id) {
-        this.id = id;
+    public ResourceClass(String name) {
+        this.name = name;
     }
 
 
@@ -59,8 +59,13 @@ public class ResourceClass {
      *
      * @return _more_
      */
-    public String getType() {
-        return id;
+    public String getName() {
+        return name;
+    }
+
+
+    public String toString() {
+        return name;
     }
 
     /**
@@ -69,7 +74,7 @@ public class ResourceClass {
      * @return _more_
      */
     public int hashCode() {
-        return id.hashCode();
+        return name.hashCode();
     }
 
     /**
@@ -84,7 +89,7 @@ public class ResourceClass {
             return false;
         }
         ResourceClass that = (ResourceClass) o;
-        return id.equals(that.id);
+        return name.equals(that.name);
     }
 
 }

@@ -146,15 +146,15 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
             makeCell(row, site.getType().getName());
             makeCell(row, formatLatLon(site));
             makeCell(row, formatDate(site));
-            if (getDoSiteGroup()) {
-                List<SiteGroup> groups = site.getSiteGroups();
+            if (getDoResourceGroup()) {
+                List<ResourceGroup> groups = site.getResourceGroups();
                 makeCell(row, getGroupHtml(groups, false));
             }
             /*
             Element         groupElement = folder;
-            List<SiteGroup> groups       = site.getSiteGroups();
+            List<ResourceGroup> groups       = site.getResourceGroups();
             if (groups.size() > 0) {
-                SiteGroup firstGroup = groups.get(0);
+                ResourceGroup firstGroup = groups.get(0);
                 groupElement = groupMap.get(firstGroup.getId());
                 if (groupElement == null) {
                     groupElement = KmlUtil.folder(folder,

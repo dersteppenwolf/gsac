@@ -120,13 +120,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         String uri = request.getRequestURI();
 
-        if (request.defined(ARG_SEARCH_SITES)) {
-            request.remove(ARG_OUTPUT);
-            request.remove(ARG_SEARCH_FILES);
-            String args        = request.getUrlArgs();
-            String redirectUrl = makeUrl(URL_SITE_FORM) + "?" + args;
-            response.sendRedirect(redirectUrl);
-            response.endResponse();
+        if(checkFormSwitch(request,response, GsacFile.CLASS_FILE)) {
             return;
         }
 
@@ -267,22 +261,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             buttons.append("</td>");
 
         }
-        if (getDoSite()) {
-            buttons.append("<td align=right>");
-            String switchForm =
-                HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                             HtmlUtil.cssClass("gsac-gobutton")
-                             + HtmlUtil.attrs(new String[] {
-                HtmlUtil.ATTR_NAME, ARG_SEARCH_SITES, HtmlUtil.ATTR_TYPE,
-                HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
-                msg("Site Search Form"), HtmlUtil.ATTR_CLASS,
-                "gsac-download-button", HtmlUtil.ATTR_TITLE,
-                msg("Go to the site search form"),
-            }));
-
-            buttons.append(switchForm);
-            buttons.append("</td>");
-        }
+        addFormSwitchButton(request,  buttons, GsacFile.CLASS_FILE);
 
         buttons.append("</tr></table>");
         pw.append(buttons.toString());

@@ -257,7 +257,7 @@ public abstract class SiteManager extends GsacResourceManager {
         String          help = HtmlOutputHandler.stringSearchHelp;
         Capability      siteCode;
         Capability      siteName;
-        List<SiteGroup> siteGroups = doGetSiteGroups();
+        List<ResourceGroup> siteGroups = doGetResourceGroups();
         Capability[]    dflt       = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
                 "Site Code",
@@ -301,12 +301,12 @@ public abstract class SiteManager extends GsacResourceManager {
 
 
     /**
-     * return the list of SiteGroups. This is only used by the {@link #addDefaultSiteCapabilities}
+     * return the list of ResourceGroups. This is only used by the {@link #addDefaultSiteCapabilities}
      *
      * @return list of site groups
      */
-    public List<SiteGroup> doGetSiteGroups() {
-        return new ArrayList<SiteGroup>();
+    public List<ResourceGroup> doGetResourceGroups() {
+        return new ArrayList<ResourceGroup>();
     }
 
 

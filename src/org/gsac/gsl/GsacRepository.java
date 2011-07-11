@@ -1764,12 +1764,12 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param type _more_
+     * @param resourceClass _more_
      * @param gom _more_
      */
-    public void addResourceManager(ResourceClass type,
+    public void addResourceManager(ResourceClass resourceClass,
                                    GsacResourceManager gom) {
-        resourceManagerMap.put(type.getType(), gom);
+        resourceManagerMap.put(resourceClass.getName(), gom);
         resourceManagers.add(gom);
     }
 
@@ -1777,12 +1777,12 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param type _more_
+     * @param resourceClass _more_
      *
      * @return _more_
      */
-    public GsacResourceManager doMakeResourceManager(ResourceClass type) {
-        if (type.equals(GsacSite.CLASS_SITE)) {
+    public GsacResourceManager doMakeResourceManager(ResourceClass resourceClass) {
+        if (resourceClass.equals(GsacSite.CLASS_SITE)) {
             return new SiteManager(this) {
                 public GsacResource getResource(String resourceId)
                         throws Exception {
@@ -1790,7 +1790,7 @@ public class GsacRepository implements GsacConstants {
                 }
             };
         }
-        if (type.equals(GsacFile.CLASS_FILE)) {
+        if (resourceClass.equals(GsacFile.CLASS_FILE)) {
             return new FileManager(this) {
                 public void handleRequest(GsacRequest request,
                                           GsacResponse response)
@@ -1808,8 +1808,6 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param type _more_
-     *
      * @param resourceClass _more_
      *
      * @return _more_
@@ -1821,7 +1819,7 @@ public class GsacRepository implements GsacConstants {
             gom = doMakeResourceManager(resourceClass);
             if (gom == null) {
                 throw new IllegalArgumentException("Unknown resource class:"
-                        + resourceClass.getType());
+                        + resourceClass.getName());
             }
             addResourceManager(resourceClass, gom);
         }

@@ -206,9 +206,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         if (letter.length() > 0) {
             GsacRequest searchRequest = new GsacRequest(request);
             searchRequest.put(capability.getId(), letter + "*");
-            //        searchRequest.put(ARG_SITE_CODE_SEARCHTYPE, SEARCHTYPE_BEGINSWITH);
             searchRequest.put(ARG_LIMIT, 10000 + "");
-
             getRepository().processRequest(GsacSite.CLASS_SITE,
                                            searchRequest, response);
             List<GsacSite> sites = response.getSites();

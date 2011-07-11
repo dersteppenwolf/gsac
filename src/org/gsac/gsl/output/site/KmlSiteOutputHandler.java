@@ -129,9 +129,9 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             html.append(href);
             getSiteHtml(request, html, site, false, false, true);
             Element         groupElement = folder;
-            List<SiteGroup> groups       = site.getSiteGroups();
+            List<ResourceGroup> groups       = site.getResourceGroups();
             if (groups.size() > 0) {
-                SiteGroup firstGroup = groups.get(0);
+                ResourceGroup firstGroup = groups.get(0);
                 groupElement = groupMap.get(firstGroup.getId());
                 if (groupElement == null) {
                     groupElement = KmlUtil.folder(folder,

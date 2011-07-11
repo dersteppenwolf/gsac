@@ -57,7 +57,7 @@ public class DummyRepository extends GsacRepositoryImpl {
     private List<GsacFile> resources = new ArrayList<GsacFile>();
 
     /** _more_ */
-    private List<SiteGroup> siteGroups = new ArrayList<SiteGroup>();
+    private List<ResourceGroup> siteGroups = new ArrayList<ResourceGroup>();
 
 
     /**
@@ -84,7 +84,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      *
      * @return _more_
      */
-    public List<SiteGroup> getSiteGroups() {
+    public List<ResourceGroup> getResourceGroups() {
         return siteGroups;
     }
 
@@ -95,7 +95,7 @@ public class DummyRepository extends GsacRepositoryImpl {
         int cnt = 0;
 
         for (int i = 0; i < 10; i++) {
-            siteGroups.add(new SiteGroup("group" + i, "Site Group " + i));
+            siteGroups.add(new ResourceGroup("group" + i, "Site Group " + i));
         }
 
         for (int i = 0; i < 10; i++) {
@@ -103,9 +103,9 @@ public class DummyRepository extends GsacRepositoryImpl {
             GsacSite site = new GsacSite(id, "stn" + i, "Test site " + i,
                                          20 + i * 5, -107, 1000);
 
-            site.addSiteGroup(siteGroups.get((int) (Math.random() * 1000)
+            site.addResourceGroup(siteGroups.get((int) (Math.random() * 1000)
                                              % (siteGroups.size() - 1)));
-            site.addSiteGroup(siteGroups.get((int) (Math.random() * 1000)
+            site.addResourceGroup(siteGroups.get((int) (Math.random() * 1000)
                                              % (siteGroups.size() - 1)));
             addSite(site);
 
