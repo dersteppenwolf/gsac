@@ -51,9 +51,6 @@ public class GsacSite extends GsacResource implements Comparable {
     private String secondarySiteCode;
 
 
-    /** site status */
-    private SiteStatus status;
-
     /** site name */
     private String name;
 
@@ -335,24 +332,6 @@ public class GsacSite extends GsacResource implements Comparable {
      */
     public PoliticalLocation getPoliticalLocation() {
         return politicalLocation;
-    }
-
-    /**
-     *  Set the Status property.
-     *
-     *  @param value The new value for Status
-     */
-    public void setStatus(SiteStatus value) {
-        status = value;
-    }
-
-    /**
-     *  Get the Status property.
-     *
-     *  @return The Status
-     */
-    public SiteStatus getStatus() {
-        return status;
     }
 
 

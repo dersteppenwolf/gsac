@@ -60,6 +60,9 @@ public abstract class GsacResource {
     /** The groups this site is part of */
     private List<ResourceGroup> resourceGroups = new ArrayList();
 
+    /** site status */
+    private ResourceStatus status;
+
 
 
 
@@ -284,6 +287,24 @@ public abstract class GsacResource {
         resourceGroups.add(group);
     }
 
+
+    /**
+     *  Set the Status property.
+     *
+     *  @param value The new value for Status
+     */
+    public void setStatus(ResourceStatus value) {
+        status = value;
+    }
+
+    /**
+     *  Get the Status property.
+     *
+     *  @return The Status
+     */
+    public ResourceStatus getStatus() {
+        return status;
+    }
 
 
 

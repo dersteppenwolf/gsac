@@ -31,19 +31,19 @@ import org.gsac.gsl.util.*;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class SiteStatus extends IdLabel {
+public class ResourceStatus extends IdLabel {
 
     /**
      * _more_
      */
-    public SiteStatus() {}
+    public ResourceStatus() {}
 
     /**
      * _more_
      *
      * @param idLabel _more_
      */
-    public SiteStatus(IdLabel idLabel) {
+    public ResourceStatus(IdLabel idLabel) {
         super(idLabel.getId(), idLabel.getName());
     }
 
@@ -52,7 +52,7 @@ public class SiteStatus extends IdLabel {
      *
      * @param id _more_
      */
-    public SiteStatus(String id) {
+    public ResourceStatus(String id) {
         super(id);
     }
 
@@ -62,7 +62,7 @@ public class SiteStatus extends IdLabel {
      * @param id _more_
      * @param name _more_
      */
-    public SiteStatus(String id, String name) {
+    public ResourceStatus(String id, String name) {
         super(id, name);
     }
 

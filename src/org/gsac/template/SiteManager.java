@@ -241,7 +241,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
             }
             Collections.sort(toks);
             for (String tok : (List<String>) toks) {
-                site.addSiteGroup(new SiteGroup(tok));
+                site.addResourceGroup(new ResourceGroup(tok));
             }
         }
 
@@ -298,13 +298,13 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @return site group list
      */
-    public List<SiteGroup> doGetSiteGroups() {
-        List<SiteGroup> groups = new ArrayList<SiteGroup>();
+    public List<ResourceGroup> doGetResourceGroups() {
+        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
         /**
            CHANGEME
-        groups.add(new SiteGroup("group1","Group 1"));
-        groups.add(new SiteGroup("group2", "Group 2"));
-        groups.add(new SiteGroup("group3","Group 3"));
+        groups.add(new ResourceGroup("group1","Group 1"));
+        groups.add(new ResourceGroup("group2", "Group 2"));
+        groups.add(new ResourceGroup("group3","Group 3"));
         Collections.sort((List) groups);
         */
         return groups;
