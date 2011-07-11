@@ -1768,7 +1768,7 @@ public class GsacRepository implements GsacConstants {
      * @param gom _more_
      */
     public void addResourceManager(ResourceClass type,
-                                 GsacResourceManager gom) {
+                                   GsacResourceManager gom) {
         resourceManagerMap.put(type.getType(), gom);
         resourceManagers.add(gom);
     }
@@ -1810,9 +1810,12 @@ public class GsacRepository implements GsacConstants {
      *
      * @param type _more_
      *
+     * @param resourceClass _more_
+     *
      * @return _more_
      */
-    public GsacResourceManager getResourceManager(ResourceClass resourceClass) {
+    public GsacResourceManager getResourceManager(
+            ResourceClass resourceClass) {
         GsacResourceManager gom = resourceManagerMap.get(resourceClass);
         if (gom == null) {
             gom = doMakeResourceManager(resourceClass);
@@ -1839,7 +1842,7 @@ public class GsacRepository implements GsacConstants {
     public GsacResource getResource(GsacRequest request, ResourceClass type,
                                     String resourceId)
             throws Exception {
-        GsacResourceManager gom    = getResourceManager(type);
+        GsacResourceManager gom      = getResourceManager(type);
         GsacResource        resource = gom.getResourceFromCache(resourceId);
         if (resource != null) {
             return resource;

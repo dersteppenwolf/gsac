@@ -71,9 +71,15 @@ public abstract class GsacResource {
         this.id = id;
     }
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param type _more_
+     */
     public GsacResource(String id, ResourceType type) {
         this(id);
-        this.type  = type;
+        this.type = type;
     }
 
 

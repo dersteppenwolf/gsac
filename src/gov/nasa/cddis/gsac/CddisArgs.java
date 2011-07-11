@@ -49,8 +49,8 @@ public interface CddisArgs {
                                               + "monument";
 
     /** _more_ */
-    public static final String ARG_DOMES_NUMBER =
-        GsacArgs.ARG_SITE_PREFIX + "domes_number";
+    public static final String ARG_DOMES_NUMBER = GsacArgs.ARG_SITE_PREFIX
+                                                  + "domes_number";
 
 
     /** _more_ */
@@ -91,12 +91,12 @@ public interface CddisArgs {
 
 
     /** _more_ */
-    public static final String ARG_DORIS_SATELLITE =
-        GsacArgs.ARG_FILE_PREFIX + "doris.satellite";
+    public static final String ARG_DORIS_SATELLITE = GsacArgs.ARG_FILE_PREFIX
+                                                     + "doris.satellite";
 
     /** _more_ */
-    public static final String ARG_SLR_SATELLITE =
-        GsacArgs.ARG_FILE_PREFIX + "slr.satellite";
+    public static final String ARG_SLR_SATELLITE = GsacArgs.ARG_FILE_PREFIX
+                                                   + "slr.satellite";
 
 
 

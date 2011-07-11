@@ -45,11 +45,11 @@ import java.util.concurrent.*;
 
 /**
  * This is the core implementation of the gsac federated repository. It provides the base GsacRepository class
- * a list of remote servers in the doMakeServerInfoList where it creates the servers from the resoruces/gsac.properties 
+ * a list of remote servers in the doMakeServerInfoList where it creates the servers from the resoruces/gsac.properties
  * file
  *
  * The queries are all handled by the handleFederatedRequest method
-
+ *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
 public class FederatedRepository extends GsacRepositoryImpl implements GsacConstants {
@@ -65,7 +65,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
     /** Max number of threads to use for remote queries */
     private static final int MAX_THREADS = 5;
 
-    private static final String ARG_REMOVEDUPLICATES  = "removeduplicates";
+    /** _more_          */
+    private static final String ARG_REMOVEDUPLICATES = "removeduplicates";
 
 
     /** Singleton thread pool */
@@ -312,7 +313,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             }
 
             //Make the callable
-            RepositoryCallable callable = new RepositoryCallable(info, seen, removeDuplicates) {
+            RepositoryCallable callable = new RepositoryCallable(info, seen,
+                                              removeDuplicates) {
                 public Boolean call() {
                     try {
                         repository.incrementOpenRequestsCount();
@@ -360,7 +362,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         } else {
             msgBuff.append("<b>No repositories available to search<b>");
         }
-        getResourceManager(GsacSite.CLASS_SITE).setSearchCriteriaMessage(response, msgBuff);
+        getResourceManager(GsacSite.CLASS_SITE).setSearchCriteriaMessage(
+            response, msgBuff);
     }
 
 
@@ -418,10 +421,10 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                                        String urlArgs, GsacResponse response)
             throws Exception {
 
-        List<GsacFile> resources =
-            (List<GsacFile>) getRemoteObject(callable.repository,
-                URL_FILE_SEARCH, urlArgs,
-                XmlFileOutputHandler.OUTPUT_FILE_XML);
+        List<GsacFile> resources = (List<GsacFile>) getRemoteObject(
+                                       callable.repository, URL_FILE_SEARCH,
+                                       urlArgs,
+                                       XmlFileOutputHandler.OUTPUT_FILE_XML);
         if (resources == null) {
             System.err.println("Bad request: "
                                + callable.repository.getUrl());
@@ -433,10 +436,12 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         }
 
         for (GsacFile resource : resources) {
-            if(callable.getRemoveDuplicates()) {
-                String tail = IOUtil.getFileTail(resource.getFileInfo().getUrl());
-                if(callable.checkAndAddSeen(tail)) {
-                    System.err.println("duplicate:" + resource.getFileInfo().getUrl());
+            if (callable.getRemoveDuplicates()) {
+                String tail =
+                    IOUtil.getFileTail(resource.getFileInfo().getUrl());
+                if (callable.checkAndAddSeen(tail)) {
+                    System.err.println("duplicate:"
+                                       + resource.getFileInfo().getUrl());
                     continue;
                 }
             }
@@ -453,14 +458,19 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
 
 
     /**
-     * Create if needed and return the singleton thread pooler 
+     * Create if needed and return the singleton thread pooler
      *
+     *
+     * @param callables _more_
+     *
+     * @return _more_
      */
-    private synchronized ExecutorService getExecutor(List<RepositoryCallable> callables) {
-        if(executor == null) {
+    private synchronized ExecutorService getExecutor(
+            List<RepositoryCallable> callables) {
+        if (executor == null) {
             executor = Executors.newFixedThreadPool(MAX_THREADS);
         }
-        return  executor;
+        return executor;
         //        return  Executors.newFixedThreadPool(callables.size());
     }
 
@@ -532,37 +542,52 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     private abstract static class RepositoryCallable implements Callable<Boolean> {
 
+        /** _more_          */
         private HashSet<String> seen;
 
+        /** _more_          */
         private boolean removeDuplicates = false;
 
 
-        /** Is this request still running   */
+        /** Is this request still running */
         boolean requestRunning = true;
 
-        /** 
-            Is the overall job (i.e, all of the requests to the repositories) still running. We use this flag
-            to determine if the request has timed out
-        */
+        /**
+         *   Is the overall job (i.e, all of the requests to the repositories) still running. We use this flag
+         *   to determine if the request has timed out
+         */
         boolean jobRunning = true;
 
-        /** the remote repository      */
+        /** the remote repository */
         GsacRepositoryInfo repository;
 
         /**
          * ctor
          *
          * @param repository The remote repostiory
+         * @param seen _more_
+         * @param removeDuplicates _more_
          */
-        public RepositoryCallable(GsacRepositoryInfo repository, HashSet<String> seen, boolean removeDuplicates) {
-            this.repository = repository;
-            this.seen = seen;
+        public RepositoryCallable(GsacRepositoryInfo repository,
+                                  HashSet<String> seen,
+                                  boolean removeDuplicates) {
+            this.repository       = repository;
+            this.seen             = seen;
             this.removeDuplicates = removeDuplicates;
         }
 
+        /**
+         * _more_
+         *
+         * @param s _more_
+         *
+         * @return _more_
+         */
         public boolean checkAndAddSeen(String s) {
-            synchronized(seen) {
-                if(seen.contains(s)) return true;
+            synchronized (seen) {
+                if (seen.contains(s)) {
+                    return true;
+                }
                 seen.add(s);
                 return false;
             }
@@ -578,6 +603,11 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
             return requestRunning;
         }
 
+        /**
+         * _more_
+         *
+         * @return _more_
+         */
         public boolean getRemoveDuplicates() {
             return removeDuplicates;
         }

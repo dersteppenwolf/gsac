@@ -73,39 +73,42 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
     public static final String COL_REGION = "region";
 
 
-    
 
-    /** 
-        info for creating the query capabilities that are string based 
-        The CddisSearchInfo class holds the site type, the URL argument, the column to search on,
-        the label, the search type and what group the capability should be added to
+
+    /**
+     *   info for creating the query capabilities that are string based
+     *   The CddisSearchInfo class holds the site type, the URL argument, the column to search on,
+     *   the label, the search type and what group the capability should be added to
      */
-    private CddisSearchInfo[] SEARCH_STRINGS = {
-        new CddisSearchInfo(CddisType.TYPE_NAME_SLR, ARG_SLR_STATION,
-                            Tables.SITE_INFO_SLR.COL_STATION, "SLR Station",
-                            Capability.TYPE_STRING, CAPABILITY_GROUP_ADVANCED),
-        new CddisSearchInfo(CddisType.TYPE_NAME_VLBI, ARG_VLBI_STATION,
-                            Tables.SITE_INFO_VLBI.COL_STATION,
-                            "VLBI Station", Capability.TYPE_STRING,
-                            CAPABILITY_GROUP_ADVANCED),
-    };
+    private CddisSearchInfo[] SEARCH_STRINGS = { new CddisSearchInfo(
+                                                   CddisType.TYPE_NAME_SLR,
+                                                   ARG_SLR_STATION,
+                                                   Tables.SITE_INFO_SLR.COL_STATION,
+                                                   "SLR Station",
+                                                   Capability.TYPE_STRING,
+                                                   CAPABILITY_GROUP_ADVANCED),
+            new CddisSearchInfo(CddisType.TYPE_NAME_VLBI, ARG_VLBI_STATION,
+                                Tables.SITE_INFO_VLBI.COL_STATION,
+                                "VLBI Station", Capability.TYPE_STRING,
+                                CAPABILITY_GROUP_ADVANCED), };
 
 
     /** info for creating the boolean query capabilities */
-    private CddisSearchInfo[] SEARCH_BOOLEANS = { 
-        new CddisSearchInfo(CddisType.TYPE_NAME_GNSS,
-                            ARG_HIGHRATE,
-                            Tables.SITE_INFO_GNSS.COL_HIGH_RATE,
-                            "GNSS High Rate",
-                            Capability.TYPE_BOOLEAN,
-                            CAPABILITY_GROUP_ADVANCED),
-        new CddisSearchInfo(CddisType.TYPE_NAME_GNSS, ARG_HOURLY,
-                            Tables.SITE_INFO_GNSS.COL_HOURLY, "GNSS Hourly",
-                            Capability.TYPE_BOOLEAN, CAPABILITY_GROUP_ADVANCED),
-        new CddisSearchInfo(CddisType.TYPE_NAME_GNSS, ARG_GLONASS,
-                            Tables.SITE_INFO_GNSS.COL_GLONASS, "GNSS GLONASS",
-                            Capability.TYPE_BOOLEAN,
-                            CAPABILITY_GROUP_ADVANCED) };
+    private CddisSearchInfo[] SEARCH_BOOLEANS = { new CddisSearchInfo(
+                                                    CddisType.TYPE_NAME_GNSS,
+                                                    ARG_HIGHRATE,
+                                                    Tables.SITE_INFO_GNSS.COL_HIGH_RATE,
+                                                    "GNSS High Rate",
+                                                    Capability.TYPE_BOOLEAN,
+                                                    CAPABILITY_GROUP_ADVANCED),
+            new CddisSearchInfo(CddisType.TYPE_NAME_GNSS, ARG_HOURLY,
+                                Tables.SITE_INFO_GNSS.COL_HOURLY,
+                                "GNSS Hourly", Capability.TYPE_BOOLEAN,
+                                CAPABILITY_GROUP_ADVANCED),
+            new CddisSearchInfo(CddisType.TYPE_NAME_GNSS, ARG_GLONASS,
+                                Tables.SITE_INFO_GNSS.COL_GLONASS,
+                                "GNSS GLONASS", Capability.TYPE_BOOLEAN,
+                                CAPABILITY_GROUP_ADVANCED) };
 
     /**
      * ctor
@@ -133,7 +136,8 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
           If the user specified a site group or a site status then we don't do anything
           since CDDIS does not have groups or statuses
         */
-        if(request.defined(ARG_SITE_GROUP) || request.defined(ARG_SITE_STATUS)) {
+        if (request.defined(ARG_SITE_GROUP)
+                || request.defined(ARG_SITE_STATUS)) {
             return;
         }
 
@@ -143,20 +147,22 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         //If we did not find any of the cddis types and there was a type argument
         //that means we are in a federated search where the used specified one or more types,
         //none of which are cddis types
-        if(siteTypes.size()==0 && request.defined(ARG_SITE_TYPE)) {
+        if ((siteTypes.size() == 0) && request.defined(ARG_SITE_TYPE)) {
             return;
         }
 
-        int          count      = 0;
-        StringBuffer msgBuff    = new StringBuffer();
+        int          count   = 0;
+        StringBuffer msgBuff = new StringBuffer();
 
 
         //If there are specific sites specified then just find them and return
-        if(request.defined(ARG_SITE_ID)) {
-            for (String siteId : (List<String>) (List<String>) request.getList(ARG_SITE_ID)) {
+        if (request.defined(ARG_SITE_ID)) {
+            for (String siteId :
+                    (List<String>) (List<String>) request.getList(
+                        ARG_SITE_ID)) {
                 appendSearchCriteria(msgBuff, "Site Id=", siteId);
                 GsacSite site = (GsacSite) getResource(siteId);
-                if(site!=null) {
+                if (site != null) {
                     response.addResource(site);
                 }
             }
@@ -177,7 +183,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         for (CddisType type : siteTypes) {
             boolean[] addedAnySpecificTypeClauses = { false };
             List<Clause> clauses = getSiteClauses(request, response, type,
-                                                  addedAnySpecificTypeClauses, msgBuff);
+                                       addedAnySpecificTypeClauses, msgBuff);
             //If we are searching for a specific type's field then we just narrow the search to that type
             if (addedAnySpecificTypeClauses[0]) {
                 if (haveDoneSpecial) {
@@ -229,10 +235,10 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                                   CddisType type, List<Clause> clauses,
                                   StringBuffer msgBuff, int count)
             throws Exception {
-        int          limit      = request.getLimit();
-        int          offset     = request.getOffset();
+        int    limit           = request.getLimit();
+        int    offset          = request.getOffset();
 
-        String       columnsToSelect       = type.getSiteColumns();
+        String columnsToSelect = type.getSiteColumns();
 
         //Make the main and clause
         Clause       clause     = Clause.and(clauses);
@@ -245,8 +251,8 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
 
         //Do the select
         Statement statement = getDatabaseManager().select(columnsToSelect,
-                                                          tableNames, clause,
-                                                          getSiteSelectSuffix(request), -1);
+                                  tableNames, clause,
+                                  getSiteSelectSuffix(request), -1);
         //Iterate on the results (note: the Iterator takes care of closing and release the DB resources)
         SqlUtil.Iterator iter  = SqlUtil.getIterator(statement, 0, -1);
         int              myCnt = 0;
@@ -274,7 +280,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
      * @throws Exception on badness
      */
     private GsacSite makeBaseSite(SqlUtil.Iterator iter, CddisType type)
-        throws Exception {
+            throws Exception {
         //Strip off the "table." prefix
         String siteCodeColumn = SqlUtil.unDot(type.getSiteCodeColumn());
 
@@ -290,30 +296,31 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
             //This runs through the given columns in the resultset and adds a PropertyMetadata element for each
             addPropertyMetadata(results, site,
                                 new String[] { Tables.SITE_INFO_SLR.COL_STATE,
-                                               Tables.SITE_INFO_SLR.COL_COUNTRY,
-                                               Tables.SITE_INFO_SLR.COL_REGION });
+                    Tables.SITE_INFO_SLR.COL_COUNTRY,
+                    Tables.SITE_INFO_SLR.COL_REGION });
             //Add the site type specific metadata
             if (type.isGnss()) {
                 addPropertyMetadata(
                     results, site,
                     new String[] { Tables.SITE_INFO_GNSS.COL_MONUMENT_NAME,
                                    Tables.SITE_INFO_GNSS.COL_DOMES_NUMBER,
-                                   //                    Tables.SITE_INFO_GNSS.COL_GPS,
-                                   Tables.SITE_INFO_GNSS.COL_GLONASS,
-                                   //                    Tables.SITE_INFO_GNSS.COL_IGS,
-                                   //                    Tables.SITE_INFO_GNSS.COL_GLOBAL,
-                                   Tables.SITE_INFO_GNSS.COL_HIGH_RATE,
-                                   Tables.SITE_INFO_GNSS.COL_HOURLY });
+                //                    Tables.SITE_INFO_GNSS.COL_GPS,
+                Tables.SITE_INFO_GNSS.COL_GLONASS,
+                //                    Tables.SITE_INFO_GNSS.COL_IGS,
+                //                    Tables.SITE_INFO_GNSS.COL_GLOBAL,
+                Tables.SITE_INFO_GNSS.COL_HIGH_RATE,
+                Tables.SITE_INFO_GNSS.COL_HOURLY });
             } else if (type.isDoris()) {
                 addPropertyMetadata(
-                                    results, site,
-                                    new String[] { Tables.SITE_INFO_DORIS.COL_DOMES_NUMBER });
+                    results, site,
+                    new String[] { Tables.SITE_INFO_DORIS.COL_DOMES_NUMBER });
             } else if (type.isSlr()) {
                 addPropertyMetadata(results, site,
                                     new String[] {
                                         Tables.SITE_INFO_SLR.COL_STATION,
-                                        Tables.SITE_INFO_SLR.COL_DOMES_NUMBER, 
-                                        Tables.SITE_INFO_SLR.COL_SITE_TYPE });
+                                        Tables.SITE_INFO_SLR
+                                            .COL_DOMES_NUMBER, Tables
+                                            .SITE_INFO_SLR.COL_SITE_TYPE });
             } else if (type.isVlbi()) {
                 addPropertyMetadata(results, site,
                                     new String[] {
@@ -396,7 +403,8 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
 
         //Add in the site type, status, etc
         String[][] enumArgs = {
-            { GsacExtArgs.ARG_REGION, tableName + "." + COL_REGION,    "Region" },
+            { GsacExtArgs.ARG_REGION, tableName + "." + COL_REGION,
+              "Region" },
             { GsacExtArgs.ARG_STATE, tableName + "." + COL_STATE, "State" }
         };
 
@@ -418,8 +426,9 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                         msgBuff, "Site Name",
                         tableName + "." + COL_SITE_NAME, clauses);
 
-        addStringSearch(request, ARG_DOMES_NUMBER, ARG_DOMES_NUMBER + SEARCHTYPE_SUFFIX,
-                        msgBuff, "DOMES Number", type.getDomesNumberColumn(), clauses);
+        addStringSearch(request, ARG_DOMES_NUMBER,
+                        ARG_DOMES_NUMBER + SEARCHTYPE_SUFFIX, msgBuff,
+                        "DOMES Number", type.getDomesNumberColumn(), clauses);
 
 
         //Add the specific type clauses
@@ -547,7 +556,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         site = new GsacSite(makeSiteId(type, siteName, results), "",
                             siteName, latitude, longitude, elevation);
         site.setType(new ResourceType(type.getType(),
-                                  type.getType().toUpperCase()));
+                                      type.getType().toUpperCase()));
         return site;
     }
 
@@ -583,7 +592,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
             List<Capability> capabilities = new ArrayList<Capability>();
             addDefaultCapabilities(capabilities);
 
-            String[][]       regions      = {
+            String[][] regions = {
                 { "AF", "Africa" }, { "ANT", "Antarctica" },
                 { "ASIA", "Asia" }, { "ATL", "Atlantic Ocean" },
                 { "AUS", "Australia" }, { "CA", "California" },
@@ -591,8 +600,9 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 { "PAC", "Pacific Ocean" }, { "SA", "South America" }
             };
             addLabels(GsacExtArgs.ARG_REGION, regions);
-            capabilities.add(capability = new Capability(GsacExtArgs.ARG_REGION, "Region",
-                                            IdLabel.toList(regions), true));
+            capabilities.add(capability =
+                new Capability(GsacExtArgs.ARG_REGION, "Region",
+                               IdLabel.toList(regions), true));
 
             capability.setGroup(CAPABILITY_GROUP_ADVANCED);
             Statement statement =
@@ -614,8 +624,9 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 tuples[i] = new String[] { id, value };
                 addLabel(GsacExtArgs.ARG_STATE, id, value);
             }
-            capabilities.add(capability = new Capability(GsacExtArgs.ARG_STATE, "State",
-                                            IdLabel.toList(tuples), true));
+            capabilities.add(capability =
+                new Capability(GsacExtArgs.ARG_STATE, "State",
+                               IdLabel.toList(tuples), true));
 
             capability.setGroup(CAPABILITY_GROUP_ADVANCED);
             String     urlArg;
@@ -627,7 +638,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
             addLabels(ARG_VLBI_SITE_TYPE, vlbiSiteTypes);
             capabilities.add(capability = new Capability(ARG_VLBI_SITE_TYPE,
                     "VLBI Site Type", IdLabel.toList(vlbiSiteTypes), true));
-            
+
             capability.setGroup(CAPABILITY_GROUP_ADVANCED);
 
 
@@ -639,9 +650,8 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                     "SLR Site Type", IdLabel.toList(slrSiteTypes), true));
             capability.setGroup(CAPABILITY_GROUP_ADVANCED);
 
-            capabilities.add(capability =
-                             new Capability(ARG_DOMES_NUMBER, "Domes Number",
-                                            Capability.TYPE_STRING));
+            capabilities.add(capability = new Capability(ARG_DOMES_NUMBER,
+                    "Domes Number", Capability.TYPE_STRING));
             capability.setGroup(CAPABILITY_GROUP_SITE_QUERY);
 
             for (CddisSearchInfo info : SEARCH_STRINGS) {

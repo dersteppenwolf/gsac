@@ -73,7 +73,7 @@ public class CddisType {
                       Tables.SITE_INFO_GNSS.COL_DOMES_NUMBER,
                       Tables.GPS_TRACKING2009.table,
                       new String[] { Tables.GPS_TRACKING2009.COL_START_DATE,
-                                     Tables.GPS_TRACKING2009.COL_END_DATE });
+            Tables.GPS_TRACKING2009.COL_END_DATE });
 
     /** _more_ */
     public static final CddisType TYPE_DORIS =
@@ -98,9 +98,8 @@ public class CddisType {
     /** _more_ */
     public static final CddisType TYPE_VLBI =
         new CddisType(TYPE_NAME_VLBI, Tables.SITE_INFO_VLBI.table,
-                      Tables.SITE_INFO_VLBI.COL_VLBI_NAME, 
-                      Tables.SITE_INFO_VLBI.COL_DOMES_NUMBER,
-                      null, null);
+                      Tables.SITE_INFO_VLBI.COL_VLBI_NAME,
+                      Tables.SITE_INFO_VLBI.COL_DOMES_NUMBER, null, null);
 
 
     /** This is the list of types that we deal with */
@@ -376,6 +375,7 @@ public class CddisType {
     }
 
 }
+
 
 
 

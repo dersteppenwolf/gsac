@@ -109,7 +109,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @param gsacResource _more_
      * @throws Exception On badness
      */
-    public void doGetFullMetadata(GsacResource gsacResource) throws Exception {}
+    public void doGetFullMetadata(GsacResource gsacResource)
+            throws Exception {}
 
     /**
      * _more_
@@ -142,7 +143,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      */
     public void clearCache() {
         resourceCache = new TTLCache<Object,
-                                   GsacResource>(TTLCache.MS_IN_A_DAY);
+                                     GsacResource>(TTLCache.MS_IN_A_DAY);
     }
 
     /**

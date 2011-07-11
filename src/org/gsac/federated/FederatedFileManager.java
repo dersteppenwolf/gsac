@@ -75,15 +75,13 @@ public class FederatedFileManager extends FileManager {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request,
-                                      GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         if (request.defined(ARG_FILE_ID)) {
             List<String> ids = request.get(ARG_FILE_ID, new ArrayList());
             for (String id : ids) {
                 response.addResource(getRepository().getResource(request,
-                                                             GsacFile.CLASS_FILE,
-                        id));
+                        GsacFile.CLASS_FILE, id));
             }
             return;
         }
@@ -116,8 +114,8 @@ public class FederatedFileManager extends FileManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
         List<String> pair = StringUtil.splitUpTo(resourceId, ":", 2);
-        String       id = pair.get(1);
-        String baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
+        String       id   = pair.get(1);
+        String       baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
         List<GsacFile> resources =
             (List<GsacFile>) getRepository().getRemoteObject(
                 new GsacRepositoryInfo(baseUrl), URL_FILE_VIEW,
@@ -127,7 +125,7 @@ public class FederatedFileManager extends FileManager {
         if (resources.size() == 0) {
             return null;
         }
-        GsacFile       resource = resources.get(0);
+        GsacFile           resource = resources.get(0);
         GsacRepositoryInfo info = getRepository().getRepositoryInfo(baseUrl);
         if (info == null) {
             throw new IllegalArgumentException("Could not find repository:"
@@ -157,7 +155,8 @@ public class FederatedFileManager extends FileManager {
      * @return sitemanager
      */
     public FederatedSiteManager getSiteManager() {
-        return (FederatedSiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
+        return (FederatedSiteManager) getRepository().getResourceManager(
+            GsacSite.CLASS_SITE);
     }
 
 

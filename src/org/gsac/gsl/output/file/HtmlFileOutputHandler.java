@@ -324,8 +324,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception On badness
      */
-    public void handleFileList(GsacRequest request,
-                               GsacResponse response, Appendable sb)
+    public void handleFileList(GsacRequest request, GsacResponse response,
+                               Appendable sb)
             throws Exception {
 
         try {
