@@ -251,4 +251,14 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     }
 
 
+    /**
+     * return the list of ResourceGroups. This is only used by the {@link #addDefaultSiteCapabilities}
+     *
+     * @return list of site groups
+     */
+    public List<ResourceGroup> doGetResourceGroups() {
+        return new ArrayList<ResourceGroup>();
+    }
+
+
 }
