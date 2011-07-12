@@ -57,7 +57,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
     public DownloaderFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
         GsacOutput output;
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   output = new GsacOutput(this,
                                       OUTPUT_FILE_DOWNLOAD,
                                       "Download Files via Webstart",

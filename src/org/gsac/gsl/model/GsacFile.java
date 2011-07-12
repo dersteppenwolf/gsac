@@ -49,9 +49,6 @@ public class GsacFile extends GsacResource {
     private String siteID;
 
     /** _more_ */
-    private GsacSite site;
-
-    /** _more_ */
     private Date publishTime;
 
     /** _more_ */
@@ -73,13 +70,12 @@ public class GsacFile extends GsacResource {
      *
      * @param repositoryId _more_
      * @param fileInfo _more_
-     * @param site _more_
      * @param publishTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource,
                     Date publishTime, ResourceType type) {
-        this(repositoryId, fileInfo, site, publishTime, publishTime,
+        this(repositoryId, fileInfo, relatedResource, publishTime, publishTime,
              publishTime, type);
     }
 
@@ -90,14 +86,13 @@ public class GsacFile extends GsacResource {
      *
      * @param repositoryId _more_
      * @param fileInfo _more_
-     * @param site _more_
      * @param startTime _more_
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource,
                     Date startTime, Date endTime, ResourceType type) {
-        this(repositoryId, fileInfo, site, startTime, startTime, endTime,
+        this(repositoryId, fileInfo, relatedResource, startTime, startTime, endTime,
              type);
     }
 
@@ -108,21 +103,26 @@ public class GsacFile extends GsacResource {
      *
      * @param repositoryId _more_
      * @param fileInfo _more_
-     * @param site _more_
      * @param publishTime _more_
      * @param startTime _more_
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo, GsacSite site,
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource,
                     Date publishTime, Date startTime, Date endTime,
                     ResourceType type) {
         super(repositoryId, type);
         this.fileInfo    = fileInfo;
-        this.site        = site;
+        if(relatedResource!=null) {
+            addRelatedResource(relatedResource);
+        }
         this.publishTime = publishTime;
         this.startTime   = startTime;
         this.endTime     = endTime;
+    }
+
+    public String toString() {
+        return this.fileInfo.toString();
     }
 
     /**
@@ -182,34 +182,12 @@ public class GsacFile extends GsacResource {
     }
 
 
-
-
     /**
      *  Set the Site property.
      *
      *  @param value The new value for Site
      */
-    public void setSite(GsacSite value) {
-        site = value;
-    }
-
-    /**
-     *  Get the Site property.
-     *
-     *  @return The Site
-     */
-    public GsacSite getSite() {
-        return site;
-    }
-
-
-
-    /**
-     *  Set the Site property.
-     *
-     *  @param value The new value for Site
-     */
-    public void setSiteID(String value) {
+    public void xsetSiteID(String value) {
         siteID = value;
     }
 
@@ -218,7 +196,7 @@ public class GsacFile extends GsacResource {
      *
      *  @return The Site
      */
-    public String getSiteID() {
+    public String xgetSiteID() {
         return siteID;
     }
 

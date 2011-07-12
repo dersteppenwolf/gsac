@@ -163,8 +163,8 @@ public class GsacRepository implements GsacConstants {
     private GsacDatabaseManager databaseManager;
 
     /** _more_ */
-    private Hashtable<String, GsacResourceManager> resourceManagerMap =
-        new Hashtable<String, GsacResourceManager>();
+    private Hashtable<ResourceClass, GsacResourceManager> resourceManagerMap =
+        new Hashtable<ResourceClass, GsacResourceManager>();
 
     /** _more_ */
     private List<GsacResourceManager> resourceManagers =
@@ -219,6 +219,7 @@ public class GsacRepository implements GsacConstants {
     /** reference to html output handler */
     private HtmlOutputHandler htmlOutputHandler;
 
+    private BrowseOutputHandler browseOutputHandler;
 
     /** Map of vocab id (usually the url argument id) to the vocabulary */
     private Hashtable<String, Vocabulary> vocabularies =
@@ -226,10 +227,6 @@ public class GsacRepository implements GsacConstants {
 
     /** All the vocabularies */
     private List<Vocabulary> vocabularyList = new ArrayList<Vocabulary>();
-
-    /** map of ouput group id to output group */
-    private Hashtable<String, OutputGroup> outputs = new Hashtable<String,
-                                                         OutputGroup>();
 
 
     /**
@@ -391,11 +388,18 @@ public class GsacRepository implements GsacConstants {
                 properties.load(new FileInputStream(localPropertiesFile));
             }
         }
+        initResourceManagers();
+        initOutputHandlers();
+        getRepositoryInfo();
+    }
 
+
+    public void initResourceManagers() {
         getResourceManager(GsacSite.CLASS_SITE);
         getResourceManager(GsacFile.CLASS_FILE);
+    }
 
-
+    public void initOutputHandlers() {
         //TODO: put the specification of the output handlers into a properties or xml file
         htmlOutputHandler = new HtmlSiteOutputHandler(this);
         new KmlSiteOutputHandler(this);
@@ -414,10 +418,10 @@ public class GsacRepository implements GsacConstants {
         new UrlFileOutputHandler(this);
         new JsonFileOutputHandler(this);
         new ZipFileOutputHandler(this);
-        new BrowseOutputHandler(this);
         new RssFileOutputHandler(this);
         new XmlFileOutputHandler(this);
-        getRepositoryInfo();
+
+        browseOutputHandler = new BrowseOutputHandler(this);
     }
 
 
@@ -456,13 +460,9 @@ public class GsacRepository implements GsacConstants {
      * @param group Which group, e.g., SITE, FILE
      * @param output  output type
      */
-    public void addOutput(String group, GsacOutput output) {
+    public void addOutput(ResourceClass resourceClass, GsacOutput output) {
         if (getProperty(output.getProperty("enabled"), true)) {
-            OutputGroup outputGroup = outputs.get(group);
-            if (outputGroup == null) {
-                outputs.put(group, outputGroup = new OutputGroup(group));
-            }
-            outputGroup.addOutput(output);
+            getResourceManager(resourceClass).addOutput(output);
         }
     }
 
@@ -476,19 +476,8 @@ public class GsacRepository implements GsacConstants {
      *
      * @return output handler
      */
-    public GsacOutputHandler getOutputHandler(String group, String output) {
-        OutputGroup outputGroup = outputs.get(group);
-        if (outputGroup == null) {
-            throw new IllegalArgumentException("Unknown output group:"
-                    + group);
-        }
-
-        GsacOutput gsacOutput = outputGroup.getOutput(output);
-        if (gsacOutput == null) {
-            throw new IllegalArgumentException("Unknown output type:"
-                    + output);
-        }
-        return gsacOutput.getOutputHandler();
+    public GsacOutputHandler getOutputHandler(ResourceClass resourceClass, String output) {
+        return getResourceManager(resourceClass).getOutput(output).getOutputHandler();
     }
 
 
@@ -501,32 +490,9 @@ public class GsacRepository implements GsacConstants {
      *
      * @return the output handler
      */
-    public GsacOutputHandler getOutputHandler(String group,
+    public GsacOutputHandler getOutputHandler(ResourceClass resourceClass,
             GsacRequest request) {
-        String arg = request.get(ARG_OUTPUT, (String) null);
-
-        for (GsacOutput output : getOutputs(group)) {
-            if (request.defined(output.getId())) {
-                arg = output.getId();
-                break;
-            }
-        }
-
-        if (arg == null) {
-            OutputGroup outputGroup = outputs.get(group);
-            if (outputGroup == null) {
-                throw new IllegalArgumentException("Unknown output group:"
-                        + group);
-            }
-            //See if we have an output id as a submit button name
-            for (GsacOutput output : outputGroup.getOutputs()) {
-                if (request.defined(output.getId())) {
-                    return getOutputHandler(group, output.getId());
-                }
-            }
-            arg = outputGroup.getOutputs().get(0).getId();
-        }
-        return getOutputHandler(group, arg);
+        return getResourceManager(resourceClass).getOutputHandler(request);
     }
 
 
@@ -1188,19 +1154,17 @@ public class GsacRepository implements GsacConstants {
                 //site request
                 what = URL_SITE_BASE;
                 GsacOutputHandler outputHandler =
-                    getOutputHandler(OUTPUT_GROUP_SITE, request);
+                    getOutputHandler(GsacSite.CLASS_SITE, request);
                 outputHandler.handleRequest(GsacSite.CLASS_SITE, request);
             } else if (uri.indexOf(URL_FILE_BASE) >= 0) {
                 //file request
                 what = URL_FILE_BASE;
                 GsacOutputHandler outputHandler =
-                    getOutputHandler(OUTPUT_GROUP_FILE, request);
+                    getOutputHandler(GsacFile.CLASS_FILE, request);
                 outputHandler.handleRequest(GsacFile.CLASS_FILE, request);
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
-                GsacOutputHandler outputHandler =
-                    getOutputHandler(OUTPUT_GROUP_BROWSE, request);
-                outputHandler.handleBrowseRequest(request);
+                browseOutputHandler.handleBrowseRequest(request);
             } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
                 handleStatsRequest(request, new GsacResponse(request));
             } else if (uri.indexOf(URL_HELP) >= 0) {
@@ -1769,7 +1733,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void addResourceManager(ResourceClass resourceClass,
                                    GsacResourceManager gom) {
-        resourceManagerMap.put(resourceClass.getName(), gom);
+        resourceManagerMap.put(resourceClass, gom);
         resourceManagers.add(gom);
     }
 
@@ -1825,6 +1789,11 @@ public class GsacRepository implements GsacConstants {
         }
         return gom;
     }
+
+    public List<GsacResourceManager> getResourceManagers() {
+        return resourceManagers;
+    }
+
 
     /**
      * _more_
@@ -1928,7 +1897,9 @@ public class GsacRepository implements GsacConstants {
      */
     public void clearCache() {
         cache = new TTLCache<String, Object>(TTLCache.MS_IN_AN_HOUR * 6);
-        //TODO: clear the cache in the goms
+        for (GsacResourceManager gom : resourceManagers) {
+            gom.clearCache();
+        }
     }
 
 
@@ -2462,25 +2433,18 @@ public class GsacRepository implements GsacConstants {
         contents.append(HtmlUtil.p());
         contents.append(getHeader(msg("Output types")));
         tmp.append(HtmlUtil.formTable());
-        tmp.append(
-            HtmlUtil.row(
-                HtmlUtil.colspan(HtmlUtil.b(msg("Site Outputs")), 2)));
-        for (GsacOutput output : getOutputs(OUTPUT_GROUP_SITE)) {
-            if (output.getForUser()) {
-                tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
-                        ARG_OUTPUT + "=" + output.getId())));
+        for(GsacResourceManager resourceManager: resourceManagers) {
+            tmp.append(
+                       HtmlUtil.row(
+                                    HtmlUtil.colspan(HtmlUtil.b(msg(resourceManager.getResourceLabel(false)+" Outputs")), 2)));
+            for (GsacOutput output : resourceManager.getOutputs()) {
+                if (output.getForUser()) {
+                    tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
+                                                          ARG_OUTPUT + "=" + output.getId())));
+                }
             }
         }
 
-        tmp.append(
-            HtmlUtil.row(
-                HtmlUtil.colspan(HtmlUtil.b(msg("File Outputs")), 2)));
-        for (GsacOutput output : getOutputs(OUTPUT_GROUP_FILE)) {
-            if (output.getForUser()) {
-                tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
-                        ARG_OUTPUT + "=" + output.getId())));
-            }
-        }
         tmp.append(HtmlUtil.formTableClose());
         contents.append(HtmlUtil.makeShowHideBlock("", tmp.toString(),
                 false));
@@ -2826,13 +2790,8 @@ public class GsacRepository implements GsacConstants {
      * @param group _more_
      * @return _more_
      */
-    public List<GsacOutput> getOutputs(String group) {
-        OutputGroup outputGroup = outputs.get(group);
-        if (outputGroup == null) {
-            throw new IllegalArgumentException("Unknown output group:"
-                    + group);
-        }
-        return outputGroup.getOutputs();
+    public List<GsacOutput> getOutputs(ResourceClass resourceClass) {
+        return getResourceManager(resourceClass).getOutputs();
     }
 
 

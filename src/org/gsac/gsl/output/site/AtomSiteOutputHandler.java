@@ -64,7 +64,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
      */
     public AtomSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE,
+        getRepository().addOutput(GsacSite.CLASS_SITE,
                                   new GsacOutput(this, OUTPUT_SITE_ATOM,
                                       "Site GSAC ATOM", "/sites.atom", true));
     }
@@ -97,7 +97,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                    String[][]links) {
         */
         for (GsacSite site : response.getSites()) {
-            String url = getRepository().getAbsoluteUrl(makeSiteUrl(site));
+            String url = getRepository().getAbsoluteUrl(makeResourceViewUrl(site));
             EarthLocation el = site.getEarthLocation();
             /*
             if(el!=null) {

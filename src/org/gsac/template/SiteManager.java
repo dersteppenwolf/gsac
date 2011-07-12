@@ -118,14 +118,14 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
 
         List   args         = null;
-        if (request.defined(ARG_SITEID)) {
+        if (request.defined(ARG_SITE_ID)) {
             //Here we use makeIntClauses for the site id
             /*            clauses.add(
                 Clause.or(
                     Clause.makeIntClauses(
                         Tables.MV_DAI_PRO.COL_MON_ID,
                         args = (List<String>) request.getList(
-                            ARG_SITEID))));
+                            ARG_SITE_ID))));
             */
             addSearchCriteria(msgBuff, "Site ID", args);
         }
@@ -161,7 +161,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
                         msgBuff, "Site Name",
                         Tables.SITE_INFORMATION.COL_SITE_NAME, clauses);
 
-        if (request.defined(ARG_SITE_GROUP)) {
+        if (request.defined(ARG_RESOURCE_GROUP)) {
             //...
         }
 

@@ -134,6 +134,10 @@ public class GsacOutput {
     }
 
 
+    public String toString() {
+        return id +" " + label;
+    }
+
     /**
      *  Set the ToolBarLabel property.
      *

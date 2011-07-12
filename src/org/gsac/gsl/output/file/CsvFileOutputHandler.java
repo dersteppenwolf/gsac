@@ -28,6 +28,8 @@ import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 
+import java.util.List;
+
 import java.io.*;
 
 import javax.servlet.*;
@@ -54,7 +56,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
      */
     public CsvFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_CSV,
                                       "File CSV", "/files.csv", true));
     }
@@ -80,7 +82,13 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             pw.print(",");
             pw.print(file.getType().getId());
             pw.print(",");
-            pw.print(file.getSite().getId());
+            List<GsacResource> relatedResources = file.getRelatedResources();
+            if(relatedResources.size()==1) {
+                pw.print(relatedResources.get(0).getId());
+            } else {
+                //TODO:
+            }
+
             pw.print(",");
             pw.print(file.getFileInfo().getUrl());
             pw.print("\n");

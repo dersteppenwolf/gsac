@@ -87,7 +87,7 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
      */
     public FlexigridSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE,
+        getRepository().addOutput(GsacSite.CLASS_SITE,
                                   new GsacOutput(this, OUTPUT_SITE_FLEXIGRID,
                                       "Google Earth FLEXIGRID", false));
     }
@@ -140,7 +140,7 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
             Element row = XmlUtil.create(doc, TAG_ROW, root,
                                          new String[] { ATTR_ID,
                     site.getSiteId() });
-            String href = makeSiteHref(site);
+            String href = makeResourceViewHref(site);
             makeCell(row, href);
             makeCell(row, site.getName());
             makeCell(row, site.getType().getName());
@@ -148,7 +148,9 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
             makeCell(row, formatDate(site));
             if (getDoResourceGroup()) {
                 List<ResourceGroup> groups = site.getResourceGroups();
-                makeCell(row, getGroupHtml(groups, false));
+                makeCell(row, getGroupHtml(groups, 
+                                           site.getResourceClass(), 
+                                           false));
             }
             /*
             Element         groupElement = folder;

@@ -66,7 +66,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
      */
     public KmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE,
+        getRepository().addOutput(GsacSite.CLASS_SITE,
                                   new GsacOutput(this, OUTPUT_SITE_KML,
                                       "Google Earth KML", "/sites.kml",
                                       true));
@@ -124,7 +124,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                                                   Element>();
         Hashtable<String, Element> iconMap = new Hashtable<String, Element>();
         for (GsacSite site : sites) {
-            String       href = makeSiteHref(site);
+            String       href = makeResourceViewHref(site);
             StringBuffer html = new StringBuffer();
             html.append(href);
             getSiteHtml(request, html, site, false, false, true);

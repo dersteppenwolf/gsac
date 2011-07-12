@@ -107,7 +107,7 @@ public class RssFileOutputHandler extends GsacOutputHandler {
      */
     public RssFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_RSS,
                                       "File GSAC RSS", "/files.rss", true));
     }
@@ -147,7 +147,7 @@ public class RssFileOutputHandler extends GsacOutputHandler {
                 + IOUtil.getFileTail(resource.getFileInfo().getUrl());
             pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
             String url =
-                getRepository().getAbsoluteUrl(makeResourceUrl(resource));
+                getRepository().getAbsoluteUrl(makeResourceViewUrl(resource));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
             pw.append(XmlUtil.tag(TAG_RSS_GUID, "", url));
 
@@ -159,17 +159,14 @@ public class RssFileOutputHandler extends GsacOutputHandler {
                                                                        entry, request, true, false).toString());
             pw.append(XmlUtil.closeTag(TAG_RSS_DESCRIPTION));
             */
-            GsacSite site = resource.getSite();
-            if (site != null) {
-                EarthLocation el = site.getEarthLocation();
-                if (el != null) {
-                    pw.append(XmlUtil.tag(TAG_RSS_GEOLAT, "",
-                                          "" + el.getLatitude()));
-                    pw.append(XmlUtil.tag(TAG_RSS_GEOLON, "",
-                                          "" + el.getLongitude()));
-                }
-                pw.append(XmlUtil.closeTag(TAG_RSS_ITEM));
+            EarthLocation el = resource.getEarthLocation();
+            if (el != null) {
+                pw.append(XmlUtil.tag(TAG_RSS_GEOLAT, "",
+                                      "" + el.getLatitude()));
+                pw.append(XmlUtil.tag(TAG_RSS_GEOLON, "",
+                                      "" + el.getLongitude()));
             }
+            pw.append(XmlUtil.closeTag(TAG_RSS_ITEM));
         }
 
         pw.append(XmlUtil.closeTag(TAG_RSS_CHANNEL));

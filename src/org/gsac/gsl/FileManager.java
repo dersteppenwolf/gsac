@@ -60,6 +60,12 @@ public abstract class FileManager extends GsacResourceManager {
     }
 
 
+    public String getResourceLabel(boolean plural) {
+        return (plural?"Files":"File");
+    }
+
+
+
     /**
      * handle the request
      *

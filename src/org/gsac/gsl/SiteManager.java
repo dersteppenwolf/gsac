@@ -70,6 +70,11 @@ public abstract class SiteManager extends GsacResourceManager {
     }
 
 
+    public String getResourceLabel(boolean plural) {
+        return (plural?"Sites":"Site");
+    }
+
+
     /**
      * Handle the site request. A derived class can overwrite this method to do
      * whatever they feel like doing. If not overwritten then this method
@@ -283,7 +288,7 @@ public abstract class SiteManager extends GsacResourceManager {
              ? null
              : initCapability(
                  new Capability(
-                     ARG_SITE_GROUP, "Site Group",
+                     ARG_RESOURCE_GROUP, "Site Group",
                      IdLabel.toList(siteGroups),
                      true), CAPABILITY_GROUP_SITE_QUERY, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",

@@ -60,7 +60,7 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
      */
     public JsonFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_JSON,
                                       "File JSON", "/files.json", true));
     }
@@ -79,8 +79,8 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
             throws Exception {
         response.startResponse(GsacResponse.MIME_JSON);
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(GsacSite.class,
-                                        new GsonSiteAdapter());
+        gsonBuilder.registerTypeAdapter(GsacResource.class,
+                                        new GsonResourceAdapter());
         gsonBuilder.setPrettyPrinting();
         gsonBuilder.setDateFormat(DateFormat.LONG);
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
@@ -95,20 +95,20 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
      *
      *
      */
-    public class GsonSiteAdapter implements JsonSerializer<GsacSite> {
+    public class GsonResourceAdapter implements JsonSerializer<GsacResource> {
 
         /**
          * serialize the object
          *
-         * @param src site to serialize
+         * @param src resource to serialize
          * @param typeOfSrc type
          * @param context  context
          *
          * @return the json thing
          */
-        public JsonElement serialize(GsacSite src, Type typeOfSrc,
+        public JsonElement serialize(GsacResource src, Type typeOfSrc,
                                      JsonSerializationContext context) {
-            return new JsonPrimitive(src.getSiteId());
+            return new JsonPrimitive(src.getId());
         }
     }
 

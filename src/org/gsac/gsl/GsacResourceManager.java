@@ -22,6 +22,7 @@ package org.gsac.gsl;
 
 
 import org.gsac.gsl.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
@@ -39,6 +40,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 
@@ -58,6 +60,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     /** _more_ */
     private ResourceClass resourceClass;
 
+    private List<GsacOutput> outputs  = new ArrayList<GsacOutput>();
+
+    private Hashtable<String,GsacOutput> outputMap   = new Hashtable<String,GsacOutput>();
+
+
     /**
      * _more_
      *
@@ -68,6 +75,55 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                ResourceClass resourceClass) {
         super(repository);
         this.resourceClass = resourceClass;
+    }
+
+    public List<GsacOutput> getOutputs() {
+        return outputs;
+    }
+
+    public void addOutput(GsacOutput output) {
+        outputs.add(output);
+        outputMap.put(output.getId(), output);
+    }
+
+    public GsacOutput getOutput(String id) {
+        return outputMap.get(id);
+    }
+
+
+    public GsacOutputHandler getOutputHandler(GsacRequest request) {
+        String arg = request.get(ARG_OUTPUT, (String) null);
+        for (GsacOutput output : outputs) {
+            if (request.defined(output.getId())) {
+                arg = output.getId();
+                break;
+            }
+        }
+        if (arg == null) {
+            //See if we have an output id as a submit button name
+            for (GsacOutput output : outputs) {
+                if (request.defined(output.getId())) {
+                    return output.getOutputHandler();
+                }
+            }
+            arg = outputs.get(0).getId();
+        }
+        return getOutput(arg).getOutputHandler();
+    }
+
+
+
+    public String toString() {
+        return super.toString() +" " + getResourceLabel(false);
+    }
+
+    public String getResourceLabel(boolean plural) {
+        return (plural?"Resources":"Resource");
+    }
+
+
+    public String getIdUrlArg() {
+        return getResourceClass().getName()+".id";
     }
 
 
@@ -84,7 +140,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     }
 
     public String makeResourceUrl(String suffix) {
-        return  getRepository().getUrlBase() + "/" + getResourceClass().getName() +"/" +suffix;
+        return  getRepository().getUrlBase() + URL_BASE +"/" + getResourceClass().getName() +suffix;
     }
 
 

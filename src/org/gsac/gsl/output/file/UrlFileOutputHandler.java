@@ -54,7 +54,7 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
      */
     public UrlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_URL,
                                       "File Url", "/files.txt", true));
 

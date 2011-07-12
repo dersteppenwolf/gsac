@@ -983,7 +983,7 @@ public class GsacRequest implements GsacConstants {
      * @return _more_
      */
     public String getSiteId() {
-        return get(ARG_SITEID, (String) null);
+        return get(ARG_SITE_ID, (String) null);
     }
 
     /**
@@ -992,7 +992,7 @@ public class GsacRequest implements GsacConstants {
      * @return _more_
      */
     public boolean siteIdDefined() {
-        return defined(ARG_SITEID);
+        return defined(ARG_SITE_ID);
     }
 
 

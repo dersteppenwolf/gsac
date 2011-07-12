@@ -74,16 +74,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /** formats */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.0");
 
-
     /** the repository */
     private GsacRepository gsacRepository;
-
-
-    /** flags for repository capabilities */
-    private static boolean doSite = true;
-
-    /** flags for repository capabilities */
-    private static boolean doResource = true;
 
     /** flags for repository capabilities */
     private static boolean doSiteCode = true;
@@ -92,13 +84,13 @@ public abstract class GsacOutputHandler implements GsacConstants {
     private static boolean doSiteStatus = true;
 
     /** flags for repository capabilities */
-    private static boolean doResourceGroup = true;
-
-    /** flags for repository capabilities */
     private static boolean doSiteType = true;
 
     /** flags for repository capabilities */
     private static boolean doSiteDateRange = true;
+
+    /** flags for repository capabilities */
+    private static boolean doResourceGroup = true;
 
     /** flags for repository capabilities */
     private static boolean doResourcePublishDate = true;
@@ -115,11 +107,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
         this.gsacRepository = gsacRepository;
-        doSite              = getRepository().isCapable(HEADER_SITE);
-        doResource          = getRepository().isCapable(HEADER_FILE);
         doSiteCode          = getRepository().isCapable(ARG_SITE_CODE);
         doSiteStatus        = getRepository().isCapable(ARG_SITE_STATUS);
-        doResourceGroup         = getRepository().isCapable(ARG_SITE_GROUP);
+        doResourceGroup         = getRepository().isCapable(ARG_RESOURCE_GROUP);
         doSiteType          = getRepository().isCapable(ARG_SITE_TYPE);
         //        doSiteDateRange = getRepository().isCapable(ARG_SITE_TYPE);
 
@@ -127,6 +117,16 @@ public abstract class GsacOutputHandler implements GsacConstants {
             getRepository().isCapable(ARG_FILE_PUBLISHDATE);
         doResourceFileSize = getRepository().isCapable(ARG_FILE_SIZE);
 
+    }
+
+
+    public GsacResourceManager getResourceManager(ResourceClass resourceClass) {
+        return getRepository().getResourceManager(resourceClass);
+    }
+
+
+    public GsacResourceManager getResourceManager(GsacResource resource) {
+        return getResourceManager(resource.getResourceClass());
     }
 
 
@@ -424,8 +424,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public String makeSiteUrl(String args) {
-        return makeUrl(URL_SITE_VIEW + "?" + args);
+    public String makeResourceViewUrl(ResourceClass resourceClass, String args ) {
+        return makeUrl(getResourceManager(resourceClass).makeViewUrl() + "?" + args);
     }
 
     /**
@@ -435,8 +435,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public String makeSiteUrl(GsacSite site) {
-        return makeSiteUrl(HtmlUtil.arg(ARG_SITEID, site.getSiteId()));
+    public String makeResourceViewUrl(GsacResource resource) {
+        return makeResourceViewUrl(resource.getResourceClass(),
+                                   HtmlUtil.arg(getResourceManager(resource.getResourceClass()).getIdUrlArg(), resource.getId()));
     }
 
 
@@ -448,31 +449,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public String makeSiteHref(GsacSite site) {
-        String siteUrl = makeSiteUrl(site);
-        return HtmlUtil.href(siteUrl, site.getLabel());
-    }
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     *
-     * @return _more_
-     */
-    public String makeResourceUrl(String args) {
-        return makeUrl(URL_FILE_VIEW + "?" + args);
-    }
-
-    /**
-     * _more_
-     *
-     * @param resource _more_
-     *
-     * @return _more_
-     */
-    public String makeResourceUrl(GsacFile resource) {
-        return makeResourceUrl(HtmlUtil.arg(ARG_FILE_ID, resource.getId()));
+    public String makeResourceViewHref(GsacResource  resource) {
+        String resourceUrl = makeResourceViewUrl(resource);
+        return HtmlUtil.href(resourceUrl, resource.getLabel());
     }
 
 
@@ -515,29 +494,20 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String formatDate(GsacSite site) {
-        return formatDate(site.getFromDate()) + " - "
-               + formatDate(site.getToDate());
+        Date fromDate = site.getFromDate();
+        Date toDate = site.getToDate();
+        if(fromDate!=null && toDate!=null)
+            return formatDate(fromDate) + " - "
+                + formatDate(toDate);
+        else if(fromDate!=null)
+            return formatDate(fromDate);
+        else if(toDate!=null) 
+            return formatDate(toDate);
+        else
+            return "NA";
     }
 
 
-
-    /**
-     * get flag
-     *
-     * @return _more_
-     */
-    public boolean getDoSite() {
-        return doSite;
-    }
-
-    /**
-     * get flag
-     *
-     * @return _more_
-     */
-    public boolean getDoResource() {
-        return doResource;
-    }
 
     /**
      * get flag

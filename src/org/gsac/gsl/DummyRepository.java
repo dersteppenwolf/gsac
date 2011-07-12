@@ -215,7 +215,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      */
     public void handleSiteRequest(GsacRequest request, GsacResponse response)
             throws Exception {
-        String group = request.get(ARG_SITE_GROUP, (String) null);
+        String group = request.get(ARG_RESOURCE_GROUP, (String) null);
         for (GsacSite site : sites) {
             if ((group != null) && !site.hasGroup(group)) {
                 continue;

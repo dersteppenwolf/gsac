@@ -62,7 +62,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
      */
     public HtmlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_HTML,
                                       "File HTML"));
         //        getRepository().addOutput(OUTPUT_GROUP_FILE,new GsacOutput(this,
@@ -131,10 +131,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                            response);
             checkMessage(request, response, sb);
             handleFileList(request, response, sb);
-        } else if (request.defined(ARG_FILEID)) {
+        } else if (request.defined(ARG_FILE_ID)) {
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
-                    GsacFile.CLASS_FILE, request.get(ARG_FILEID, ""));
+                    GsacFile.CLASS_FILE, request.get(ARG_FILE_ID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -176,21 +176,18 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         }
 
-        GsacSite site = resource.getSite();
-
-        if (site != null) {
-            if (site.getSiteId() == null) {
-                sb.append(HtmlUtil.formEntry(msgLabel("Site"),
-                                             site.getSiteCode()));
+        List<GsacResource> relatedResources = resource.getRelatedResources();
+        for(GsacResource relatedResource: relatedResources) {
+            String resourceLabel = getResourceManager(relatedResource).getResourceLabel(false);
+            if (relatedResource.getId() == null) {
+                sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                             relatedResource.getLabel()));
             } else {
-                String siteUrl = makeSiteUrl(ARG_SITEID + "="
-                                             + site.getSiteId());
-                sb.append(HtmlUtil.formEntry(msgLabel("Site"),
-                                             "<a href=\"" + siteUrl + "\">"
-                                             + site.getName() + " "
-                                             + site.getLabel() + " ("
-                                             + site.getSiteCode() + ")"
-                                             + "</a>"));
+                String resourceUrl = makeResourceViewUrl(relatedResource);
+                sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                             "<a href=\"" + resourceUrl + "\">" +
+                                             resource.getLongLabel() +
+                                             "</a>"));
             }
         }
 
@@ -237,30 +234,28 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
 
         StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
-        if (getDoResource()) {
-            buttons.append("<td>");
-            buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
-            for (GsacOutput output :
-                    getRepository().getOutputs(OUTPUT_GROUP_FILE)) {
-                if (output.getToolbarLabel() == null) {
-                    continue;
-                }
-                String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                             HtmlUtil.attrs(new String[] {
-                    HtmlUtil.ATTR_NAME, output.getId(), HtmlUtil.ATTR_TYPE,
-                    HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
-                    output.getToolbarLabel(),
-                    //HtmlUtil.ATTR_CLASS, "gsac-download-button",
-                    HtmlUtil.ATTR_TITLE, output.getLabel()
-                }));
-                buttons.append(HtmlUtil.space(2));
-                buttons.append(submit);
+        buttons.append("<td>");
+        buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
+        for (GsacOutput output :
+                 getRepository().getOutputs(GsacFile.CLASS_FILE)) {
+            if (output.getToolbarLabel() == null) {
+                continue;
             }
-
-
-            buttons.append("</td>");
-
+            String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                                         HtmlUtil.attrs(new String[] {
+                                                 HtmlUtil.ATTR_NAME, output.getId(), HtmlUtil.ATTR_TYPE,
+                                                 HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
+                                                 output.getToolbarLabel(),
+                                                 //HtmlUtil.ATTR_CLASS, "gsac-download-button",
+                                                 HtmlUtil.ATTR_TITLE, output.getLabel()
+                                             }));
+            buttons.append(HtmlUtil.space(2));
+            buttons.append(submit);
         }
+
+
+        buttons.append("</td>");
+
         addFormSwitchButton(request,  buttons, GsacFile.CLASS_FILE);
 
         buttons.append("</tr></table>");
@@ -278,7 +273,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         StringBuffer resultsSB = new StringBuffer();
         resultsSB.append(HtmlUtil.formTable());
-        getOutputSelect(OUTPUT_GROUP_FILE, request, resultsSB);
+        getOutputSelect(GsacFile.CLASS_FILE, request, resultsSB);
         getLimitSelect(request, resultsSB);
         getResourceSortSelect(request, resultsSB);
         resultsSB.append(HtmlUtil.formTableClose());
@@ -318,7 +313,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             StringBuffer toolbar     = new StringBuffer();
 
             for (GsacOutput output :
-                    getRepository().getOutputs(OUTPUT_GROUP_FILE)) {
+                    getRepository().getOutputs(GsacFile.CLASS_FILE)) {
                 if (output.getId().equals(OUTPUT_FILE_HTML)) {
                     continue;
                 }
@@ -395,11 +390,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
 
             for (GsacFile resource : response.getFiles()) {
-                GsacSite site = resource.getSite();
-                if ((site == null) && (resource.getSiteID() != null)) {
-                    site = (GsacSite) getRepository().getResource(request,
-                            GsacSite.CLASS_SITE, resource.getSiteID());
-                }
+                List<GsacResource> relatedResources = resource.getRelatedResources();
+                String relatedLabel = "";
+                if(relatedResources.size()>0) 
+                    relatedLabel  = getResourceManager(relatedResources.get(0)).getResourceLabel(false);
                 if (cnt == 0) {
                     //                    pw.append(HtmlUtil.formPost(makeUrl(URL_FILE_SEARCH),
                     request.remove(ARG_OUTPUT);
@@ -410,17 +404,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
-
-                    boolean includeExtraCol =
-                        ((site != null)
-                         && (getRepository().getRemoteHref(site).length()
-                             > 0));
+                    boolean includeExtraCol = getRepository().getRemoteHref(resource).length() > 0;
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+
                     String[] labels = new String[] {
                         (includeExtraCol
                          ? ""
-                         : null), msg("Type"), msg("File"), msg("Site"),
+                         : null), msg("Type"), msg("File"), msg(relatedLabel),
                         msg("Date"), msg("File size")
                     };
                     String[] sortValues = new String[] {
@@ -431,8 +422,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     };
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
                                    sortValues);
-
-
                 }
                 cnt++;
                 openEntryRow(sb, resource.getRepositoryId(), URL_FILE_VIEW,
@@ -470,20 +459,19 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(HtmlUtil.col("N/A"));
                 }
 
-
-                if (site == null) {
-                    sb.append(HtmlUtil.col("N/A"));
-                } else if (site.getSiteId() == null) {
-                    sb.append(HtmlUtil.col(site.getSiteCode()));
-                } else {
-                    String siteUrl = makeSiteUrl(ARG_SITEID + "="
-                                         + site.getSiteId());
-                    sb.append(HtmlUtil.col("<a href=\"" + siteUrl + "\">"
-                                           + site.getName() + " "
-                                           + site.getLabel() + " ("
-                                           + site.getSiteCode() + ")"
-                                           + "</a>"));
+                StringBuffer relatedContent =new StringBuffer();
+                for(int relatedIdx=0;relatedIdx<relatedResources.size();relatedIdx++) {
+                    GsacResource relatedResource = relatedResources.get(relatedIdx);
+                    String relatedUrl = makeResourceViewUrl(relatedResource);
+                    if(relatedIdx>0) {
+                        relatedContent.append("<br>");
+                    }
+                    relatedContent.append("<a href=\"" + relatedUrl + "\">"
+                                           + relatedResource.getLongLabel() +
+                                           "</a>");
                 }
+                if(relatedResources.size()==0) relatedContent.append("NA");
+                sb.append(HtmlUtil.col(relatedContent.toString()));
 
                 if (resource.getStartTime() == null) {
                     sb.append(HtmlUtil.col("N/A"));

@@ -63,6 +63,10 @@ public abstract class GsacResource {
     /** site status */
     private ResourceStatus status;
 
+    private List<GsacResource> relatedResources = new ArrayList<GsacResource>();
+
+    /** _more_ */
+    private EarthLocation earthLocation;
 
 
 
@@ -148,8 +152,14 @@ public abstract class GsacResource {
         return id;
     }
 
+    public String getLabel() {
+        return this.toString();
+    }
 
 
+    public String getLongLabel() {
+        return getLabel();
+    }
 
     /**
      * _more_
@@ -304,6 +314,133 @@ public abstract class GsacResource {
      */
     public ResourceStatus getStatus() {
         return status;
+    }
+
+
+    /**
+       Set the RelatedResources property.
+
+       @param value The new value for RelatedResources
+    **/
+    public void setRelatedResources (List<GsacResource> value) {
+	relatedResources = value;
+    }
+
+    /**
+       Get the RelatedResources property.
+
+       @return The RelatedResources
+    **/
+    public List<GsacResource> getRelatedResources () {
+	return relatedResources;
+    }
+
+    public void addRelatedResource(GsacResource resource) {
+        relatedResources.add(resource);
+    }
+
+    /**
+     *  Set the EarthLocation property.
+     *
+     *  @param value The new value for EarthLocation
+     */
+    public void setEarthLocation(EarthLocation value) {
+        earthLocation = value;
+    }
+
+    /**
+     *  Get the EarthLocation property.
+     *
+     *  @return The EarthLocation
+     */
+    public EarthLocation getEarthLocation() {
+        return getEarthLocation(false);
+    }
+
+    public boolean hasEarthLocation() {
+        return getEarthLocation()!=null;
+    }
+    
+
+    /**
+     * _more_
+     *
+     * @param makeNewIfNeeded _more_
+     *
+     * @return _more_
+     */
+    public EarthLocation getEarthLocation(boolean makeNewIfNeeded) {
+        EarthLocation location = earthLocation;
+        if(location==null) {
+            if(makeNewIfNeeded) {
+                location = new EarthLocation();
+            }
+        }
+        if(location==null) {
+            for(GsacResource relatedResource: relatedResources) {
+                location = relatedResource.getEarthLocation();
+                if(location!=null) break;
+            }
+        }
+        return location;
+    }
+
+
+
+
+    /**
+     *  Set the Latitude property.
+     *
+     *  @param value The new value for Latitude
+     */
+    public void setLatitude(double value) {
+        getEarthLocation(true).setLatitude(value);
+    }
+
+    /**
+     *  Get the Latitude property.
+     *
+     *  @return The Latitude
+     */
+    public double getLatitude() {
+        return getEarthLocation(true).getLatitude();
+    }
+
+    /**
+     *  Set the Longitude property.
+     *
+     *  @param value The new value for Longitude
+     */
+    public void setLongitude(double value) {
+        getEarthLocation(true).setLongitude(value);
+    }
+
+    /**
+     *  Get the Longitude property.
+     *
+     *  @return The Longitude
+     */
+    public double getLongitude() {
+        return getEarthLocation(true).getLongitude();
+
+    }
+
+    /**
+     *  Set the Elevation property.
+     *
+     *  @param value The new value for Elevation
+     */
+    public void setElevation(double value) {
+        getEarthLocation(true).setElevation(value);
+    }
+
+    /**
+     *  Get the Elevation property.
+     *
+     *  @return The Elevation
+     */
+    public double getElevation() {
+        return getEarthLocation(true).getElevation();
     }
 
 

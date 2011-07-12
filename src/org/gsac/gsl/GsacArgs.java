@@ -42,8 +42,13 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_SORT_ORDER_SUFFIX = "sortorder";
 
+    public static final String ARG_RESOURCE_PREFIX = "resource.";
+
+
     /** _more_ */
     public static final String ARG_SITE_PREFIX = "site.";
+
+    public static final String ARG_SITE_ID = ARG_SITE_PREFIX + "id";
 
     /** _more_ */
     public static final String ARG_SITE_SORT_VALUE = ARG_SITE_PREFIX
@@ -53,15 +58,6 @@ public interface GsacArgs {
     public static final String ARG_SITE_SORT_ORDER = ARG_SITE_PREFIX
                                                      + ARG_SORT_ORDER_SUFFIX;
 
-
-
-
-    /** The unique repository id */
-    public static final String ARG_SITE_ID = ARG_SITE_PREFIX + "id";
-
-
-    /** old name */
-    public static final String ARG_SITEID = ARG_SITE_ID;
 
     /** short name or 4 letter code for sites */
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
@@ -139,10 +135,8 @@ public interface GsacArgs {
     public static final String ARG_SITECODE_SEARCHTYPE =
         ARG_SITE_CODE_SEARCHTYPE;
 
-
-
     /** _more_ */
-    public static final String ARG_SITE_GROUP = ARG_SITE_PREFIX + "group";
+    public static final String ARG_RESOURCE_GROUP = ARG_RESOURCE_PREFIX + "group";
 
 
     /** _more_ */
@@ -154,7 +148,7 @@ public interface GsacArgs {
 
     /** _more_ */
     public static final String[] SITE_ARGS = { ARG_SITE_CODE, ARG_SITENAME,
-            ARG_SITE_TYPE, ARG_SITE_GROUP, ARG_SITE_STATUS };
+            ARG_SITE_TYPE, ARG_RESOURCE_GROUP, ARG_SITE_STATUS };
 
 
     /** _more_ */
@@ -176,6 +170,8 @@ public interface GsacArgs {
 
     /** _more_ */
     public static final String ARG_FILE_PREFIX = "file.";
+
+    public static final String ARG_FILE_ID = ARG_RESOURCE_PREFIX + "id";
 
     /** _more_ */
     public static final String ARG_FILE_SORT_VALUE = ARG_FILE_PREFIX
@@ -249,14 +245,6 @@ public interface GsacArgs {
     /** data date for files */
     public static final String ARG_FILE_DATADATE_TO = ARG_FILE_DATADATE
                                                       + ".to";
-
-
-    /** _more_ */
-    public static final String ARG_FILE_ID = ARG_FILE_PREFIX + "id";
-
-
-    /** _more_ */
-    public static final String ARG_FILEID = ARG_FILE_ID;
 
     /** _more_ */
     public static final String ARG_FILE_TYPE = ARG_FILE_PREFIX + "type";
@@ -335,12 +323,6 @@ public interface GsacArgs {
 
     /** _more_ */
     public static final String ARG_SEARCH = "search";
-
-    /** _more_ */
-    public static final String ARG_SEARCH_FILES = "searchfiles";
-
-    /** _more_ */
-    public static final String ARG_SEARCH_SITES = "searchsites";
 
     /** _more_ */
     public static final String ARG_WRAPXML = "wrapxml";

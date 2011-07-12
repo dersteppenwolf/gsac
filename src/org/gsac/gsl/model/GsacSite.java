@@ -54,8 +54,6 @@ public class GsacSite extends GsacResource implements Comparable {
     /** site name */
     private String name;
 
-    /** _more_ */
-    private EarthLocation earthLocation;
 
     /** _more_ */
     private PoliticalLocation politicalLocation;
@@ -115,7 +113,7 @@ public class GsacSite extends GsacResource implements Comparable {
         super(siteId, type);
         this.siteCode      = siteCode;
         this.name          = name;
-        this.earthLocation = location;
+        setEarthLocation(location);
     }
 
 
@@ -188,6 +186,12 @@ public class GsacSite extends GsacResource implements Comparable {
         return getSiteCode();
     }
 
+    public String getLongLabel() {
+        return getName() + " "
+            + getLabel() + " ("
+            + getSiteCode() + ")";
+    }
+
 
     /**
      *  Set the SiteCode property.
@@ -225,95 +229,6 @@ public class GsacSite extends GsacResource implements Comparable {
         return name;
     }
 
-    /**
-     *  Set the EarthLocation property.
-     *
-     *  @param value The new value for EarthLocation
-     */
-    public void setEarthLocation(EarthLocation value) {
-        earthLocation = value;
-    }
-
-    /**
-     *  Get the EarthLocation property.
-     *
-     *  @return The EarthLocation
-     */
-    public EarthLocation getEarthLocation() {
-        return getEarthLocation(false);
-    }
-
-    /**
-     * _more_
-     *
-     * @param makeNewIfNeeded _more_
-     *
-     * @return _more_
-     */
-    public EarthLocation getEarthLocation(boolean makeNewIfNeeded) {
-        if (makeNewIfNeeded && (earthLocation == null)) {
-            earthLocation = new EarthLocation();
-        }
-        return earthLocation;
-    }
-
-
-
-
-    /**
-     *  Set the Latitude property.
-     *
-     *  @param value The new value for Latitude
-     */
-    public void setLatitude(double value) {
-        getEarthLocation(true).setLatitude(value);
-    }
-
-    /**
-     *  Get the Latitude property.
-     *
-     *  @return The Latitude
-     */
-    public double getLatitude() {
-        return getEarthLocation(true).getLatitude();
-    }
-
-    /**
-     *  Set the Longitude property.
-     *
-     *  @param value The new value for Longitude
-     */
-    public void setLongitude(double value) {
-        getEarthLocation(true).setLongitude(value);
-    }
-
-    /**
-     *  Get the Longitude property.
-     *
-     *  @return The Longitude
-     */
-    public double getLongitude() {
-        return getEarthLocation(true).getLongitude();
-
-    }
-
-    /**
-     *  Set the Elevation property.
-     *
-     *  @param value The new value for Elevation
-     */
-    public void setElevation(double value) {
-        getEarthLocation(true).setElevation(value);
-    }
-
-    /**
-     *  Get the Elevation property.
-     *
-     *  @return The Elevation
-     */
-    public double getElevation() {
-        return getEarthLocation(true).getElevation();
-    }
 
 
     /**

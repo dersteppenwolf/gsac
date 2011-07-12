@@ -55,7 +55,7 @@ public class XmlFileOutputHandler extends GsacOutputHandler {
      */
     public XmlFileOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_FILE,
+        getRepository().addOutput(GsacFile.CLASS_FILE,
                                   new GsacOutput(this, OUTPUT_FILE_XML,
                                       "File GSAC XML", "/files.xml", true));
     }

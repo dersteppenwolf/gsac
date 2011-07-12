@@ -136,7 +136,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
           If the user specified a site group or a site status then we don't do anything
           since CDDIS does not have groups or statuses
         */
-        if (request.defined(ARG_SITE_GROUP)
+        if (request.defined(ARG_RESOURCE_GROUP)
                 || request.defined(ARG_SITE_STATUS)) {
             return;
         }

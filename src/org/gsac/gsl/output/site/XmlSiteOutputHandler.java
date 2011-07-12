@@ -56,7 +56,7 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
      */
     public XmlSiteOutputHandler(GsacRepository gsacServlet) {
         super(gsacServlet);
-        getRepository().addOutput(OUTPUT_GROUP_SITE,
+        getRepository().addOutput(GsacSite.CLASS_SITE,
                                   new GsacOutput(this, OUTPUT_SITE_XML,
                                       "Site GSAC XML", "/sites.xml", true));
     }

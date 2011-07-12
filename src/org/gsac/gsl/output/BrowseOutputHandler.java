@@ -90,6 +90,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         checkInit();
 
+        /** TODO
         getRepository().addOutput(OUTPUT_GROUP_BROWSE,
                                   new GsacOutput(this, OUTPUT_BROWSE_HTML,
                                       "HTML"));
@@ -99,6 +100,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         getRepository().addOutput(OUTPUT_GROUP_BROWSE,
                                   new GsacOutput(this, OUTPUT_BROWSE_XML,
                                       "XML"));
+        **/
     }
 
     /**
@@ -231,7 +233,6 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      */
     public String getHeader(GsacRequest request, Capability capability) {
         List<String> links = new ArrayList<String>();
-
         for (Capability cap : browseCapabilities) {
             String id    = cap.getId();
             String label = cap.getLabel();
