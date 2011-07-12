@@ -27,10 +27,10 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
+import java.io.*;
+
 
 import java.util.List;
-
-import java.io.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -83,7 +83,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             pw.print(file.getType().getId());
             pw.print(",");
             List<GsacResource> relatedResources = file.getRelatedResources();
-            if(relatedResources.size()==1) {
+            if (relatedResources.size() == 1) {
                 pw.print(relatedResources.get(0).getId());
             } else {
                 //TODO:

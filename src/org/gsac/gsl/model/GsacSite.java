@@ -111,8 +111,8 @@ public class GsacSite extends GsacResource implements Comparable {
     public GsacSite(String siteId, String siteCode, String name,
                     ResourceType type, EarthLocation location) {
         super(siteId, type);
-        this.siteCode      = siteCode;
-        this.name          = name;
+        this.siteCode = siteCode;
+        this.name     = name;
         setEarthLocation(location);
     }
 
@@ -186,10 +186,13 @@ public class GsacSite extends GsacResource implements Comparable {
         return getSiteCode();
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getLongLabel() {
-        return getName() + " "
-            + getLabel() + " ("
-            + getSiteCode() + ")";
+        return getName() + " " + getLabel() + " (" + getSiteCode() + ")";
     }
 
 

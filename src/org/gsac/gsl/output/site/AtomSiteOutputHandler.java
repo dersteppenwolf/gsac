@@ -97,7 +97,8 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                    String[][]links) {
         */
         for (GsacSite site : response.getSites()) {
-            String url = getRepository().getAbsoluteUrl(makeResourceViewUrl(site));
+            String url =
+                getRepository().getAbsoluteUrl(makeResourceViewUrl(site));
             EarthLocation el = site.getEarthLocation();
             /*
             if(el!=null) {

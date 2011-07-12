@@ -48,9 +48,13 @@ public interface GsacConstants extends GsacArgs {
     public static final String URL_SITE_BASE = URL_BASE + "/site";
 
     /** _more_ */
-    public static final String URL_SUFFIX_SEARCH =  "/search";
-    public static final String URL_SUFFIX_FORM =  "/form";
-    public static final String URL_SUFFIX_VIEW =  "/view";
+    public static final String URL_SUFFIX_SEARCH = "/search";
+
+    /** _more_          */
+    public static final String URL_SUFFIX_FORM = "/form";
+
+    /** _more_          */
+    public static final String URL_SUFFIX_VIEW = "/view";
 
 
     /** _more_ */

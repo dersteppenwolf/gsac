@@ -134,8 +134,13 @@ public class GsacOutput {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String toString() {
-        return id +" " + label;
+        return id + " " + label;
     }
 
     /**

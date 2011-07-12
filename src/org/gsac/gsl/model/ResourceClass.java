@@ -64,6 +64,11 @@ public class ResourceClass {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String toString() {
         return name;
     }

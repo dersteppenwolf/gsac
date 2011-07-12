@@ -120,7 +120,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         //        String uri = request.getRequestURI();
         String uri = request.getGsacUrlPath();
-        if(checkFormSwitch(request,response, GsacSite.CLASS_SITE)) {
+        if (checkFormSwitch(request, response, GsacSite.CLASS_SITE)) {
             return;
         }
 
@@ -190,7 +190,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         buttons.append("<td>");
         buttons.append(HtmlUtil.submit(msg("Find Sites"), ARG_SEARCH));
         buttons.append("</td>");
-        addFormSwitchButton(request,  buttons, GsacSite.CLASS_SITE);
+        addFormSwitchButton(request, buttons, GsacSite.CLASS_SITE);
         buttons.append("</tr></table>");
 
         pw.append(buttons.toString());
@@ -324,7 +324,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(),
                                              true));
 
-        String js = createMap(request, (List<GsacResource>)new ArrayList(sites), pw, 600, 400);
+        String js = createMap(request,
+                              (List<GsacResource>) new ArrayList(sites), pw,
+                              600, 400);
         pw.append(HtmlUtil.script(js.toString()));
 
     }

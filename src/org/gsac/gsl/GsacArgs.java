@@ -42,12 +42,13 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_SORT_ORDER_SUFFIX = "sortorder";
 
+    /** _more_          */
     public static final String ARG_RESOURCE_PREFIX = "resource.";
-
 
     /** _more_ */
     public static final String ARG_SITE_PREFIX = "site.";
 
+    /** _more_          */
     public static final String ARG_SITE_ID = ARG_SITE_PREFIX + "id";
 
     /** _more_ */
@@ -136,7 +137,8 @@ public interface GsacArgs {
         ARG_SITE_CODE_SEARCHTYPE;
 
     /** _more_ */
-    public static final String ARG_RESOURCE_GROUP = ARG_RESOURCE_PREFIX + "group";
+    public static final String ARG_RESOURCE_GROUP = ARG_RESOURCE_PREFIX
+                                                    + "group";
 
 
     /** _more_ */
@@ -171,6 +173,7 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_FILE_PREFIX = "file.";
 
+    /** _more_          */
     public static final String ARG_FILE_ID = ARG_RESOURCE_PREFIX + "id";
 
     /** _more_ */

@@ -148,9 +148,9 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
             makeCell(row, formatDate(site));
             if (getDoResourceGroup()) {
                 List<ResourceGroup> groups = site.getResourceGroups();
-                makeCell(row, getGroupHtml(groups, 
-                                           site.getResourceClass(), 
-                                           false));
+                makeCell(row,
+                         getGroupHtml(groups, site.getResourceClass(),
+                                      false));
             }
             /*
             Element         groupElement = folder;

@@ -117,6 +117,11 @@ public class FileInfo {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String toString() {
         return this.url;
     }

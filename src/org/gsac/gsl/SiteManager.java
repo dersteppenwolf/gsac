@@ -70,8 +70,17 @@ public abstract class SiteManager extends GsacResourceManager {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param plural _more_
+     *
+     * @return _more_
+     */
     public String getResourceLabel(boolean plural) {
-        return (plural?"Sites":"Site");
+        return (plural
+                ? "Sites"
+                : "Site");
     }
 
 
@@ -259,11 +268,11 @@ public abstract class SiteManager extends GsacResourceManager {
      * @param capabilities list of capabailities to add to
      */
     public void addDefaultCapabilities(List<Capability> capabilities) {
-        String          help = HtmlOutputHandler.stringSearchHelp;
-        Capability      siteCode;
-        Capability      siteName;
+        String              help = HtmlOutputHandler.stringSearchHelp;
+        Capability          siteCode;
+        Capability          siteName;
         List<ResourceGroup> siteGroups = doGetResourceGroups();
-        Capability[]    dflt       = {
+        Capability[]        dflt       = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
                 "Site Code",
                 Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,

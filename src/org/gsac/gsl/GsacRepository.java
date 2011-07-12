@@ -219,6 +219,7 @@ public class GsacRepository implements GsacConstants {
     /** reference to html output handler */
     private HtmlOutputHandler htmlOutputHandler;
 
+    /** _more_          */
     private BrowseOutputHandler browseOutputHandler;
 
     /** Map of vocab id (usually the url argument id) to the vocabulary */
@@ -394,11 +395,17 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     */
     public void initResourceManagers() {
         getResourceManager(GsacSite.CLASS_SITE);
         getResourceManager(GsacFile.CLASS_FILE);
     }
 
+    /**
+     * _more_
+     */
     public void initOutputHandlers() {
         //TODO: put the specification of the output handlers into a properties or xml file
         htmlOutputHandler = new HtmlSiteOutputHandler(this);
@@ -458,6 +465,8 @@ public class GsacRepository implements GsacConstants {
      *
      *
      * @param group Which group, e.g., SITE, FILE
+     *
+     * @param resourceClass _more_
      * @param output  output type
      */
     public void addOutput(ResourceClass resourceClass, GsacOutput output) {
@@ -472,12 +481,16 @@ public class GsacRepository implements GsacConstants {
      *
      *
      * @param group output group, e.g., SITE, FILE
+     *
+     * @param resourceClass _more_
      * @param output output type
      *
      * @return output handler
      */
-    public GsacOutputHandler getOutputHandler(ResourceClass resourceClass, String output) {
-        return getResourceManager(resourceClass).getOutput(output).getOutputHandler();
+    public GsacOutputHandler getOutputHandler(ResourceClass resourceClass,
+            String output) {
+        return getResourceManager(resourceClass).getOutput(
+            output).getOutputHandler();
     }
 
 
@@ -486,6 +499,8 @@ public class GsacRepository implements GsacConstants {
      * otutput handlers
      *
      * @param group output group, e.g., SITE, FILE
+     *
+     * @param resourceClass _more_
      * @param request the request
      *
      * @return the output handler
@@ -1745,7 +1760,8 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacResourceManager doMakeResourceManager(ResourceClass resourceClass) {
+    public GsacResourceManager doMakeResourceManager(
+            ResourceClass resourceClass) {
         if (resourceClass.equals(GsacSite.CLASS_SITE)) {
             return new SiteManager(this) {
                 public GsacResource getResource(String resourceId)
@@ -1790,6 +1806,11 @@ public class GsacRepository implements GsacConstants {
         return gom;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<GsacResourceManager> getResourceManagers() {
         return resourceManagers;
     }
@@ -2433,14 +2454,18 @@ public class GsacRepository implements GsacConstants {
         contents.append(HtmlUtil.p());
         contents.append(getHeader(msg("Output types")));
         tmp.append(HtmlUtil.formTable());
-        for(GsacResourceManager resourceManager: resourceManagers) {
+        for (GsacResourceManager resourceManager : resourceManagers) {
             tmp.append(
-                       HtmlUtil.row(
-                                    HtmlUtil.colspan(HtmlUtil.b(msg(resourceManager.getResourceLabel(false)+" Outputs")), 2)));
+                HtmlUtil.row(
+                    HtmlUtil.colspan(
+                        HtmlUtil.b(
+                            msg(
+                            resourceManager.getResourceLabel(false)
+                            + " Outputs")), 2)));
             for (GsacOutput output : resourceManager.getOutputs()) {
                 if (output.getForUser()) {
                     tmp.append(HtmlUtil.row(HtmlUtil.cols(output.getLabel(),
-                                                          ARG_OUTPUT + "=" + output.getId())));
+                            ARG_OUTPUT + "=" + output.getId())));
                 }
             }
         }
@@ -2788,6 +2813,8 @@ public class GsacRepository implements GsacConstants {
      * _more_
      *
      * @param group _more_
+     *
+     * @param resourceClass _more_
      * @return _more_
      */
     public List<GsacOutput> getOutputs(ResourceClass resourceClass) {

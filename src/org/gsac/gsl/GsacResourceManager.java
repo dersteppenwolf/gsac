@@ -22,8 +22,8 @@ package org.gsac.gsl;
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.output.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
 
@@ -60,9 +60,12 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     /** _more_ */
     private ResourceClass resourceClass;
 
-    private List<GsacOutput> outputs  = new ArrayList<GsacOutput>();
+    /** _more_          */
+    private List<GsacOutput> outputs = new ArrayList<GsacOutput>();
 
-    private Hashtable<String,GsacOutput> outputMap   = new Hashtable<String,GsacOutput>();
+    /** _more_          */
+    private Hashtable<String, GsacOutput> outputMap = new Hashtable<String,
+                                                          GsacOutput>();
 
 
     /**
@@ -77,20 +80,44 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         this.resourceClass = resourceClass;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<GsacOutput> getOutputs() {
         return outputs;
     }
 
+    /**
+     * _more_
+     *
+     * @param output _more_
+     */
     public void addOutput(GsacOutput output) {
         outputs.add(output);
         outputMap.put(output.getId(), output);
     }
 
+    /**
+     * _more_
+     *
+     * @param id _more_
+     *
+     * @return _more_
+     */
     public GsacOutput getOutput(String id) {
         return outputMap.get(id);
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     *
+     * @return _more_
+     */
     public GsacOutputHandler getOutputHandler(GsacRequest request) {
         String arg = request.get(ARG_OUTPUT, (String) null);
         for (GsacOutput output : outputs) {
@@ -113,34 +140,76 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String toString() {
-        return super.toString() +" " + getResourceLabel(false);
+        return super.toString() + " " + getResourceLabel(false);
     }
 
+    /**
+     * _more_
+     *
+     * @param plural _more_
+     *
+     * @return _more_
+     */
     public String getResourceLabel(boolean plural) {
-        return (plural?"Resources":"Resource");
+        return (plural
+                ? "Resources"
+                : "Resource");
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getIdUrlArg() {
-        return getResourceClass().getName()+".id";
+        return getResourceClass().getName() + ".id";
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String makeSearchUrl() {
         return makeResourceUrl(URL_SUFFIX_SEARCH);
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String makeViewUrl() {
         return makeResourceUrl(URL_SUFFIX_VIEW);
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String makeFormUrl() {
         return makeResourceUrl(URL_SUFFIX_FORM);
     }
 
+    /**
+     * _more_
+     *
+     * @param suffix _more_
+     *
+     * @return _more_
+     */
     public String makeResourceUrl(String suffix) {
-        return  getRepository().getUrlBase() + URL_BASE +"/" + getResourceClass().getName() +suffix;
+        return getRepository().getUrlBase() + URL_BASE + "/"
+               + getResourceClass().getName() + suffix;
     }
 
 

@@ -104,9 +104,9 @@ public class DummyRepository extends GsacRepositoryImpl {
                                          20 + i * 5, -107, 1000);
 
             site.addResourceGroup(siteGroups.get((int) (Math.random() * 1000)
-                                             % (siteGroups.size() - 1)));
+                    % (siteGroups.size() - 1)));
             site.addResourceGroup(siteGroups.get((int) (Math.random() * 1000)
-                                             % (siteGroups.size() - 1)));
+                    % (siteGroups.size() - 1)));
             addSite(site);
 
             int rcnt = 0;

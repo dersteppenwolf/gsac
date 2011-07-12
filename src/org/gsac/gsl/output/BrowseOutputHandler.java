@@ -90,17 +90,18 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         super(gsacServlet);
         checkInit();
 
-        /** TODO
-        getRepository().addOutput(OUTPUT_GROUP_BROWSE,
-                                  new GsacOutput(this, OUTPUT_BROWSE_HTML,
-                                      "HTML"));
-        getRepository().addOutput(OUTPUT_GROUP_BROWSE,
-                                  new GsacOutput(this, OUTPUT_BROWSE_CSV,
-                                      "CSV"));
-        getRepository().addOutput(OUTPUT_GROUP_BROWSE,
-                                  new GsacOutput(this, OUTPUT_BROWSE_XML,
-                                      "XML"));
-        **/
+        /**
+         * TODO
+         * getRepository().addOutput(OUTPUT_GROUP_BROWSE,
+         *                         new GsacOutput(this, OUTPUT_BROWSE_HTML,
+         *                             "HTML"));
+         * getRepository().addOutput(OUTPUT_GROUP_BROWSE,
+         *                         new GsacOutput(this, OUTPUT_BROWSE_CSV,
+         *                             "CSV"));
+         * getRepository().addOutput(OUTPUT_GROUP_BROWSE,
+         *                         new GsacOutput(this, OUTPUT_BROWSE_XML,
+         *                             "XML"));
+         */
     }
 
     /**

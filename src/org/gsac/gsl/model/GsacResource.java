@@ -63,7 +63,9 @@ public abstract class GsacResource {
     /** site status */
     private ResourceStatus status;
 
-    private List<GsacResource> relatedResources = new ArrayList<GsacResource>();
+    /** _more_          */
+    private List<GsacResource> relatedResources =
+        new ArrayList<GsacResource>();
 
     /** _more_ */
     private EarthLocation earthLocation;
@@ -152,11 +154,21 @@ public abstract class GsacResource {
         return id;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getLabel() {
         return this.toString();
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getLongLabel() {
         return getLabel();
     }
@@ -318,23 +330,28 @@ public abstract class GsacResource {
 
 
     /**
-       Set the RelatedResources property.
-
-       @param value The new value for RelatedResources
-    **/
-    public void setRelatedResources (List<GsacResource> value) {
-	relatedResources = value;
+     *  Set the RelatedResources property.
+     *
+     *  @param value The new value for RelatedResources
+     */
+    public void setRelatedResources(List<GsacResource> value) {
+        relatedResources = value;
     }
 
     /**
-       Get the RelatedResources property.
-
-       @return The RelatedResources
-    **/
-    public List<GsacResource> getRelatedResources () {
-	return relatedResources;
+     *  Get the RelatedResources property.
+     *
+     *  @return The RelatedResources
+     */
+    public List<GsacResource> getRelatedResources() {
+        return relatedResources;
     }
 
+    /**
+     * _more_
+     *
+     * @param resource _more_
+     */
     public void addRelatedResource(GsacResource resource) {
         relatedResources.add(resource);
     }
@@ -357,10 +374,15 @@ public abstract class GsacResource {
         return getEarthLocation(false);
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean hasEarthLocation() {
-        return getEarthLocation()!=null;
+        return getEarthLocation() != null;
     }
-    
+
 
     /**
      * _more_
@@ -371,15 +393,17 @@ public abstract class GsacResource {
      */
     public EarthLocation getEarthLocation(boolean makeNewIfNeeded) {
         EarthLocation location = earthLocation;
-        if(location==null) {
-            if(makeNewIfNeeded) {
+        if (location == null) {
+            if (makeNewIfNeeded) {
                 location = new EarthLocation();
             }
         }
-        if(location==null) {
-            for(GsacResource relatedResource: relatedResources) {
+        if (location == null) {
+            for (GsacResource relatedResource : relatedResources) {
                 location = relatedResource.getEarthLocation();
-                if(location!=null) break;
+                if (location != null) {
+                    break;
+                }
             }
         }
         return location;
