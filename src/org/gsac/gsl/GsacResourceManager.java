@@ -220,7 +220,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return _more_
      */
     public String makeResourceUrl(String suffix) {
-        return         urlPrefix + suffix;
+        System.err.println ("url prefix:" + urlPrefix + " suffix:" + suffix);
+        return   urlPrefix + suffix;
     }
 
 
@@ -348,7 +349,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         if(capabilityCollection == null) {
             capabilityCollection = 
                 new CapabilityCollection(
-                                         getResourceClass().getName(), 
+                                         getResourceClass(), 
                                          getResourceLabel(false) +  "  Query",
                                          getRepository().getServlet().getAbsoluteUrl(makeSearchUrl()), 
                                          doGetQueryCapabilities());
@@ -375,6 +376,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //default is to do nothing
         return new ArrayList<Capability>();
     }
+
+
+
 
 
     /**

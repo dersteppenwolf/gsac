@@ -291,9 +291,9 @@ public class GsacRepositoryInfo {
      *
      * @return _more_
      */
-    public CapabilityCollection getCollection(String id) {
+    public CapabilityCollection getCollection(ResourceClass resourceClass) {
         for (CapabilityCollection collection : collections) {
-            if (collection.getId().equals(id)) {
+            if (collection.getResourceClass().equals(resourceClass)) {
                 return collection;
             }
         }
@@ -311,9 +311,9 @@ public class GsacRepositoryInfo {
      *
      * @return _more_
      */
-    public boolean isCapabilityUsed(String collectionId,
+    public boolean isCapabilityUsed(ResourceClass resourceClass,
                                     Capability capability) {
-        CapabilityCollection collection = getCollection(collectionId);
+        CapabilityCollection collection = getCollection(resourceClass);
         if (collection == null) {
             return false;
         }

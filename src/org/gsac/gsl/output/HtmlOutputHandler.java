@@ -1932,6 +1932,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
             String href = makeResourceViewHref(site);
+
             openEntryRow(sb, site.getSiteId(), URL_SITE_VIEW, ARG_SITE_ID);
             String cbx = HtmlUtil.checkbox(ARG_SITE_ID, site.getSiteId(),
                                            false);

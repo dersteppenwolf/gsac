@@ -443,8 +443,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public String makeResourceViewUrl(ResourceClass resourceClass,
                                       String args) {
-        return makeUrl(getResourceManager(resourceClass).makeViewUrl() + "?"
-                       + args);
+        return getResourceManager(resourceClass).makeViewUrl() + "?"
+                       + args;
     }
 
     /**

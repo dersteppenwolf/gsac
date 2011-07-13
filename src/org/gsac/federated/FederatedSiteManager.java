@@ -167,22 +167,7 @@ public class FederatedSiteManager extends SiteManager {
      * @return site search capabilities
      */
     public List<Capability> doGetQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
-        HashSet          seen         = new HashSet();
-        for (GsacRepositoryInfo info :
-                getFederatedRepository().getServers()) {
-            CapabilityCollection collection = info.getCollection("site");
-            if (collection != null) {
-                for (Capability capability : collection.getCapabilities()) {
-                    if (seen.contains(capability.getId())) {
-                        continue;
-                    }
-                    seen.add(capability.getId());
-                    capabilities.add(capability);
-                }
-            }
-        }
-        return capabilities;
+        return getFederatedRepository().doGetQueryCapabilities(getResourceClass());
     }
 
 

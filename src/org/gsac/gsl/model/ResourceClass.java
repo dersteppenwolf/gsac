@@ -44,6 +44,9 @@ public class ResourceClass {
     private String name;
 
 
+    public ResourceClass() {}
+
+
     /**
      * _more_
      *
@@ -96,5 +99,27 @@ public class ResourceClass {
         ResourceClass that = (ResourceClass) o;
         return name.equals(that.name);
     }
+
+    /**
+       Set the Name property.
+
+       @param value The new value for Name
+    **/
+    public void setNameForEncoding (String value) {
+	name = value;
+    }
+
+    /**
+       Get the Name property.
+
+       @return The Name
+    **/
+    public String getNameForEncoding () {
+	return name;
+    }
+
+
+
+
 
 }

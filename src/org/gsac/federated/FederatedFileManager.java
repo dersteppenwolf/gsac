@@ -160,31 +160,9 @@ public class FederatedFileManager extends FileManager {
     }
 
 
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
     public List<Capability> doGetQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
-        HashSet          seen         = new HashSet();
-        for (GsacRepositoryInfo info :
-                getFederatedRepository().getServers()) {
-            CapabilityCollection collection = info.getCollection("resource");
-            if (collection != null) {
-                for (Capability capability : collection.getCapabilities()) {
-                    if (seen.contains(capability.getId())) {
-                        continue;
-                    }
-                    seen.add(capability.getId());
-                    capabilities.add(capability);
-                }
-            }
-        }
-        return capabilities;
+        return getFederatedRepository().doGetQueryCapabilities(getResourceClass());
     }
-
-
 
 
 }

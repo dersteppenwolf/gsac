@@ -103,23 +103,23 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {
 
-        boolean doTest = false;
+        boolean doTest = true;
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
         //Get the comma separated list of server ids
         String serverList = getProperty("gsac.federated.servers",
                                         (String) null);
 
         if (doTest) {
-            /*
             servers.add(
                         new GsacRepositoryInfo(
                                                "http://localhost:8081/gsacws", "UNAVCO@local host",
                                                "http://www.unavco.org/favicon.ico"));
-            */
+            /*
             servers.add(
                 new GsacRepositoryInfo(
                     "http://localhost:8082/gsacws", "CDDIS@local host",
                     "http://cddis.nasa.gov/favicon.ico"));
+            */
         } else if (serverList != null) {
             //Look at each repository id and find the url, name and icon properties.
             //Note: We end up asking each repository for its own information so things like the
@@ -189,7 +189,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                 boolean hasCapability = false;
                 for (CapabilityCollection collection :
                         info.getCollections()) {
-                    if (collection.getId().equals(resourceClass.getName())
+                    if (collection.getResourceClass().equals(resourceClass)
                             && collection.isCapabilityUsed(capability)) {
                         hasCapability = true;
                         break;
@@ -513,25 +513,17 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
     }
 
 
-
-    /**
-     * Factory method to create the SiteManager
-     *
-     * @return site manager
-     */
-    public SiteManager doMakeSiteManager() {
-        return new FederatedSiteManager(this);
+    public GsacResourceManager doMakeResourceManager(
+            ResourceClass resourceClass) {
+        if (resourceClass.equals(GsacSite.CLASS_SITE)) {
+            return new FederatedSiteManager(this);
+        }
+        if (resourceClass.equals(GsacFile.CLASS_FILE)) {
+            return new FederatedFileManager(this);
+        }
+        return null;
     }
 
-
-    /**
-     * Factory method to create the FileManager
-     *
-     * @return resource manager
-     */
-    public FileManager doMakeFileManager() {
-        return new FederatedFileManager(this);
-    }
 
 
 
@@ -615,6 +607,23 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
     }
 
 
+    public List<Capability> doGetQueryCapabilities(ResourceClass resourceClass) {
+        List<Capability> capabilities = new ArrayList<Capability>();
+        HashSet          seen         = new HashSet();
+        for (GsacRepositoryInfo info : getServers()) {
+            CapabilityCollection collection = info.getCollection(resourceClass);
+            if (collection != null) {
+                for (Capability capability : collection.getCapabilities()) {
+                    if (seen.contains(capability.getId())) {
+                        continue;
+                    }
+                    seen.add(capability.getId());
+                    capabilities.add(capability);
+                }
+            }
+        }
+        return capabilities;
+    }
 
 
 }

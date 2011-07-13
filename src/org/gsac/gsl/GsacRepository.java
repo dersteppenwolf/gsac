@@ -233,7 +233,9 @@ public class GsacRepository implements GsacConstants {
     /**
      * noop constructor
      */
-    public GsacRepository() {}
+    public GsacRepository() {
+        LogUtil.setTestMode(true);
+    }
 
 
     /**
@@ -243,6 +245,7 @@ public class GsacRepository implements GsacConstants {
      */
     public GsacRepository(GsacServlet servlet) {
         this.servlet = servlet;
+        LogUtil.setTestMode(true);
     }
 
 
@@ -275,8 +278,6 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void init() throws Exception {
-
-        LogUtil.setTestMode(true);
         InputStream inputStream;
         //load property files first
         String[] propertyFiles = { GSAC_PATH_RESOURCES + "/gsac.properties",
@@ -836,10 +837,10 @@ public class GsacRepository implements GsacConstants {
 
         for (CapabilityCollection collection : gri.getCollections()) {
             Hashtable<String, Capability> used =
-                collectionToUsedCapabilities.get(collection.getId());
+                collectionToUsedCapabilities.get(collection.getResourceClass().getName());
             if (used == null) {
                 used = new Hashtable<String, Capability>();
-                collectionToUsedCapabilities.put(collection.getId(), used);
+                collectionToUsedCapabilities.put(collection.getResourceClass().getName(), used);
             }
 
             List<Capability> mergedCapabilities =
