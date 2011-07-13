@@ -296,8 +296,6 @@ public class GsacResponse {
     /**
      * _more_
      *
-     * @param sites _more_
-     *
      * @param resources _more_
      */
     public void addResources(List<GsacResource> resources) {
@@ -341,7 +339,7 @@ public class GsacResponse {
     }
 
     /**
-     * _more_
+     * Utility method to access the sites 
      *
      * @return _more_
      */

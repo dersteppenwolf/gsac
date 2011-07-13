@@ -56,7 +56,7 @@ import java.util.List;
 
 
 /**
- * Base class for the site and file managers. It provides some
+ * Base class for the various resource managers. It provides some
  * basic facilities like formatting dates, creating the search criteria message, etc.
  *
  *
@@ -365,7 +365,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
 
 
     /**
-     * Add the uppercase/lower case string search. This is used for site code and site name
+     * Add the uppercase/lower case string search.
      *
      * @param request The request
      * @param arg url arg
@@ -492,7 +492,6 @@ public abstract class GsacRepositoryManager implements GsacConstants {
             }
         }
     }
-
 
 
     /**
