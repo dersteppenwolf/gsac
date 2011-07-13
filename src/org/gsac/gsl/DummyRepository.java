@@ -144,7 +144,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      */
     private void addResource(GsacFile resource) {
         resources.add(resource);
-        resourceMap.put(resource.getRepositoryId(), resource);
+        resourceMap.put(resource.getId(), resource);
     }
 
     /**

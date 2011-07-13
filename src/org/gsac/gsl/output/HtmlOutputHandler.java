@@ -347,7 +347,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         getRepository().addToSiteSearchForm(request, pw);
         getRepositorySelect(request, pw);
         CapabilityCollection collection =
-            getRepository().getCapabilityCollection(CAPABILITIES_SITE);
+            getRepository().getResourceManager(GsacSite.CLASS_SITE).getCapabilityCollection();
         if (collection != null) {
             addCapabilitiesToForm(request, pw, collection, true);
         }

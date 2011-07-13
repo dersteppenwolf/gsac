@@ -78,7 +78,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             if (firstTime) {
                 pw.print("#repositoryid, resourcetype, siteid, url\n");
             }
-            pw.print(file.getRepositoryId());
+            pw.print(file.getId());
             pw.print(",");
             pw.print(file.getType().getId());
             pw.print(",");

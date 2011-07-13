@@ -21,9 +21,8 @@
 package org.gsac.gsl.model;
 
 
+import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
-
-
 import org.gsac.gsl.util.*;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ import java.util.List;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public abstract class GsacResource {
+public abstract class GsacResource implements GsacArgs, GsacConstants {
 
     /** site type */
     private ResourceType type;
@@ -126,14 +125,18 @@ public abstract class GsacResource {
      *
      * @return _more_
      */
-    public abstract String getViewUrl();
+    public String getViewUrl() {
+        return URL_BASE + "/" + getResourceClass().getName() +URL_SUFFIX_VIEW;
+    }
 
     /**
      * _more_
      *
      * @return _more_
      */
-    public abstract String getIdArg();
+    public String getIdArg() {
+        return getResourceClass().getName() +"." + ARG_SUFFIX_ID;
+    }
 
 
     /**

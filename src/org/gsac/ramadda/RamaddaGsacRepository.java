@@ -214,25 +214,6 @@ public class RamaddaGsacRepository extends GsacRepository {
     }
 
 
-    /**
-     * _more_
-     *
-     * @param type _more_
-     *
-     * @return _more_
-     */
-    public List<Capability> doGetCapabilities(String type) {
-        List<Capability> capabilities = new ArrayList<Capability>();
-        if (type.equals(CAPABILITIES_SITE)) {
-            getResourceManager(GsacSite.CLASS_SITE).addDefaultCapabilities(
-                capabilities);
-        } else if (type.equals(CAPABILITIES_FILE)) {
-            getResourceManager(
-                GsacFile.CLASS_FILE).addDefaultCapabilities(
-                capabilities);
-        }
-        return capabilities;
-    }
 
 
     /**

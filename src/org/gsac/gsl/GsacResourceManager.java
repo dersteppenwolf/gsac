@@ -68,6 +68,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                                           GsacOutput>();
 
 
+    private CapabilityCollection capabilityCollection;
+
+
+    private String urlPrefix;
+
     /**
      * _more_
      *
@@ -78,6 +83,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                ResourceClass resourceClass) {
         super(repository);
         this.resourceClass = resourceClass;
+        urlPrefix = getRepository().getUrlBase() + URL_BASE + "/"
+            + getResourceClass().getName();
+
     }
 
     /**
@@ -182,6 +190,10 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         return makeResourceUrl(URL_SUFFIX_SEARCH);
     }
 
+    public boolean canHandleUri(String uri) {
+        return uri.startsWith(urlPrefix);
+    }
+
     /**
      * _more_
      *
@@ -208,8 +220,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return _more_
      */
     public String makeResourceUrl(String suffix) {
-        return getRepository().getUrlBase() + URL_BASE + "/"
-               + getResourceClass().getName() + suffix;
+        return         urlPrefix + suffix;
     }
 
 
@@ -329,6 +340,22 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         return resourceCache.get(key);
     }
 
+
+
+
+
+    public CapabilityCollection getCapabilityCollection() {
+        if(capabilityCollection == null) {
+            capabilityCollection = 
+                new CapabilityCollection(
+                                         getResourceClass().getName(), 
+                                         getResourceLabel(false) +  "  Query",
+                                         getRepository().getServlet().getAbsoluteUrl(makeSearchUrl()), 
+                                         doGetQueryCapabilities());
+
+        }
+        return capabilityCollection;
+    }
 
 
 

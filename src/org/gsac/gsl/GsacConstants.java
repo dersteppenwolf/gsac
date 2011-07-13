@@ -159,16 +159,6 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String RESULT_BROWSE = "result.browse";
 
-    /** _more_ */
-    public static final String[] URL_BASES = { URL_SITE_BASE, URL_FILE_BASE,
-            URL_BROWSE_BASE };
-
-
-    /** _more_ */
-    public static final String CAPABILITIES_SITE = "site";
-
-    /** _more_ */
-    public static final String CAPABILITIES_FILE = "file";
 
     /** _more_ */
     public static final String OUTPUT_GROUP_BROWSE = "output.browse";

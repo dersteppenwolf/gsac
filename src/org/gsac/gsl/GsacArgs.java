@@ -169,12 +169,15 @@ public interface GsacArgs {
     public static final String SORT_SITE_TYPE = ARG_SITE_TYPE;
 
 
+    /** _more_          */
+    public static final String ARG_SUFFIX_ID =  "id";
+
 
     /** _more_ */
     public static final String ARG_FILE_PREFIX = "file.";
 
     /** _more_          */
-    public static final String ARG_FILE_ID = ARG_RESOURCE_PREFIX + "id";
+    public static final String ARG_FILE_ID = ARG_FILE_PREFIX + ARG_SUFFIX_ID;
 
     /** _more_ */
     public static final String ARG_FILE_SORT_VALUE = ARG_FILE_PREFIX

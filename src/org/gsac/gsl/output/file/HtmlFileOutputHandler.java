@@ -267,7 +267,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                     + URL_HTDOCS_BASE + "/CalendarPopup.js"));
 
         CapabilityCollection resourceCollection =
-            getRepository().getCapabilityCollection(CAPABILITIES_FILE);
+            getRepository().getResourceManager(GsacFile.CLASS_FILE).getCapabilityCollection();
         if (resourceCollection != null) {
             addCapabilitiesToForm(request, pw, resourceCollection, false);
         }
@@ -430,7 +430,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                    sortValues);
                 }
                 cnt++;
-                openEntryRow(sb, resource.getRepositoryId(), URL_FILE_VIEW,
+                openEntryRow(sb, resource.getId(), URL_FILE_VIEW,
                              ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));

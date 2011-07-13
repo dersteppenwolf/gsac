@@ -96,7 +96,7 @@ public class GsacServer {
                                              new DefaultHandler() });
         System.out.println(
             "Running stand-alone GSAC server at: http://localhost:" + port
-            + GsacConstants.URL_SITE_FORM);
+            + GsacConstants.URL_BASE);
         server.setHandler(handlers);
         server.start();
         server.join();

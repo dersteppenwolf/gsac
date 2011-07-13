@@ -130,24 +130,6 @@ public class GsacSite extends GsacResource implements Comparable {
     /**
      * _more_
      *
-     * @return _more_
-     */
-    public String getViewUrl() {
-        return GsacConstants.URL_SITE_VIEW;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getIdArg() {
-        return GsacArgs.ARG_SITE_ID;
-    }
-
-    /**
-     * _more_
-     *
      * @param object _more_
      *
      * @return _more_

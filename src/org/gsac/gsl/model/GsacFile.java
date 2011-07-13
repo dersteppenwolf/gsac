@@ -146,34 +146,6 @@ public class GsacFile extends GsacResource {
 
 
     /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getViewUrl() {
-        return GsacConstants.URL_FILE_VIEW;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getIdArg() {
-        return GsacArgs.ARG_FILE_ID;
-    }
-
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getRepositoryId() {
-        return super.getId();
-    }
-
-    /**
      *  Set the Fileinfo property.
      *
      *  @param value The new value for Fileinfo

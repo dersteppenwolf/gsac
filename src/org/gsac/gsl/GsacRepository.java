@@ -1164,19 +1164,18 @@ public class GsacRepository implements GsacConstants {
             }
             String what = "other";
 
-            //TODO: check the GsacResourceManagers here instead of explicitly looking at each type
-            if (uri.indexOf(URL_SITE_BASE) >= 0) {
-                //site request
-                what = URL_SITE_BASE;
-                GsacOutputHandler outputHandler =
-                    getOutputHandler(GsacSite.CLASS_SITE, request);
-                outputHandler.handleRequest(GsacSite.CLASS_SITE, request);
-            } else if (uri.indexOf(URL_FILE_BASE) >= 0) {
-                //file request
-                what = URL_FILE_BASE;
-                GsacOutputHandler outputHandler =
-                    getOutputHandler(GsacFile.CLASS_FILE, request);
-                outputHandler.handleRequest(GsacFile.CLASS_FILE, request);
+            boolean isResourceRequest = false;
+            for (GsacResourceManager gom : resourceManagers) {
+                if(gom.canHandleUri(uri)) {
+                    what = gom.getResourceClass().getName();
+                    GsacOutputHandler outputHandler =
+                        getOutputHandler(gom.getResourceClass(), request);
+                    outputHandler.handleRequest(gom.getResourceClass(), request);
+                    isResourceRequest = true;
+                }
+            }
+            if(isResourceRequest) {
+                //already done
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
                 browseOutputHandler.handleBrowseRequest(request);
@@ -1716,18 +1715,9 @@ public class GsacRepository implements GsacConstants {
                     getServlet().getAbsoluteUrl(getUrlBase()),
                     getRepositoryName(), getRepositoryIcon());
             gri.setDescription(getRepositoryDescription());
-            gri.addCollection(
-                new CapabilityCollection(
-                    CAPABILITIES_SITE, "Site Query",
-                    getServlet().getAbsoluteUrl(
-                        getUrlBase() + URL_SITE_SEARCH), doGetCapabilities(
-                        CAPABILITIES_SITE)));
-            gri.addCollection(
-                new CapabilityCollection(
-                    CAPABILITIES_FILE, "File Query",
-                    getServlet().getAbsoluteUrl(
-                        getUrlBase() + URL_FILE_SEARCH), doGetCapabilities(
-                        CAPABILITIES_FILE)));
+            for (GsacResourceManager gom : resourceManagers) {
+                gri.addCollection(gom.getCapabilityCollection());
+            }
             myInfo = gri;
             for (CapabilityCollection collection : gri.getCollections()) {
                 for (Capability capability : collection.getCapabilities()) {
@@ -1923,35 +1913,6 @@ public class GsacRepository implements GsacConstants {
         }
     }
 
-
-
-
-    /**
-     * _more_
-     *
-     * @param type _more_
-     *
-     * @return _more_
-     */
-    public List<Capability> doGetCapabilities(String type) {
-        for (GsacResourceManager gom : resourceManagers) {
-            if (gom.canHandleQueryCapabilities(type)) {
-                return gom.doGetQueryCapabilities();
-            }
-        }
-        return new ArrayList<Capability>();
-    }
-
-    /**
-     * _more_
-     *
-     * @param id _more_
-     *
-     * @return _more_
-     */
-    public CapabilityCollection getCapabilityCollection(String id) {
-        return getRepositoryInfo().getCollection(id);
-    }
 
 
 

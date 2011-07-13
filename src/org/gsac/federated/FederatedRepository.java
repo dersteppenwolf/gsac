@@ -171,11 +171,11 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      * @return List of servers to search
      */
     private List<GsacRepositoryInfo> getApplicableServers(
-            GsacRequest request, String collectionType) {
+            GsacRequest request, ResourceClass resourceClass) {
         List<GsacRepositoryInfo> serversToUse =
             new ArrayList<GsacRepositoryInfo>(super.getServers(request));
         List<Capability> capabilities =
-            getCapabilityCollection(collectionType).getCapabilities();
+            getResourceManager(resourceClass).getCapabilityCollection().getCapabilities();
         for (Capability capability : capabilities) {
             if ( !request.defined(capability.getId())) {
                 continue;
@@ -189,7 +189,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                 boolean hasCapability = false;
                 for (CapabilityCollection collection :
                         info.getCollections()) {
-                    if (collection.getId().equals(collectionType)
+                    if (collection.getId().equals(resourceClass.getName())
                             && collection.isCapabilityUsed(capability)) {
                         hasCapability = true;
                         break;
@@ -237,7 +237,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      * @return List of servers to search
      */
     public List<GsacRepositoryInfo> getSiteServers(GsacRequest request) {
-        return getApplicableServers(request, CAPABILITIES_SITE);
+        return getApplicableServers(request, GsacSite.CLASS_SITE);
     }
 
 
@@ -248,8 +248,8 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      *
      * @return List of servers to search
      */
-    public List<GsacRepositoryInfo> getResourceServers(GsacRequest request) {
-        return getApplicableServers(request, CAPABILITIES_FILE);
+    public List<GsacRepositoryInfo> getFileServers(GsacRequest request) {
+        return getApplicableServers(request, GsacFile.CLASS_FILE);
     }
 
 
@@ -295,7 +295,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
         //Find the servers to use
         List<GsacRepositoryInfo> servers = forSite
                                            ? getSiteServers(request)
-                                           : getResourceServers(request);
+                                           : getFileServers(request);
 
         final String             urlArgs = getRemoteUrlArgs(request);
         final StringBuffer       msgBuff = new StringBuffer();
