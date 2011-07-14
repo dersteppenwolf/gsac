@@ -945,6 +945,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
 
 
             capabilities.add(makeEnumeratedCapabilty(slrSatelliteSearchInfo));
+            capabilities.addAll(getSiteManager().doGetQueryCapabilities());
             return capabilities;
         } catch (Exception exc) {
             throw new RuntimeException(exc);

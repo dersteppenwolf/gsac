@@ -1923,7 +1923,7 @@ public class GsacRepository implements GsacConstants {
      * @param request request
      * @param buffer buffer to append to
      */
-    public void addToSiteSearchForm(GsacRequest request, Appendable buffer) {
+    public void addToSearchForm(GsacRequest request, Appendable buffer, ResourceClass resourceClass) {
         //e.g.:
         //        buffer.append(HtmlUtil.formEntry("City:",
         //                       HtmlUtil.input(ARG_CITY,

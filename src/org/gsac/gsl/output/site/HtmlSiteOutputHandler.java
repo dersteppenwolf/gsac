@@ -124,18 +124,14 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             return;
         }
 
-
         if (request.isGsacUrl(URL_SITE_FORM)) {
             sb.append(HtmlUtil.p());
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_SITE_SEARCH)) {
-
             /*
             if(flexigridTemplate==null) {
                 flexigridTemplate  = getRepository().readResource("/flexigrid.site.html");
             }
-
-
             sb.append(
                       HtmlUtil.importJS(
                                         makeHtdocsUrl("/flexigrid/flexigrid.js")));
@@ -181,6 +177,10 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                  Appendable pw)
             throws IOException, ServletException {
 
+        handleSearchForm(request, response, pw, GsacSite.CLASS_SITE);
+        /*
+
+        ResourceClass resourceClass = GsacSite.CLASS_SITE;
         String url = makeUrl(URL_SITE_SEARCH);
         pw.append(HtmlUtil.formPost(url,
                                     HtmlUtil.attr("name", "searchform")));;
@@ -192,13 +192,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         buttons.append("</td>");
         addFormSwitchButton(request, buttons, GsacSite.CLASS_SITE);
         buttons.append("</tr></table>");
-
         pw.append(buttons.toString());
-
-        getSiteSearchForm(request, pw);
-
-
-
+        getSearchForm(request, pw, GsacSite.CLASS_SITE);
+        getRepositorySelect(request, pw);
 
 
         StringBuffer resultsSB = new StringBuffer();
@@ -213,6 +209,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         pw.append(buttons.toString());
         pw.append(HtmlUtil.formClose());
+        */
     }
 
 
@@ -252,35 +249,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                Appendable pw)
             throws IOException, ServletException {
         StringBuffer formBuffer  = new StringBuffer();
-
-        StringBuffer searchLinks = new StringBuffer();
-
         List<String> tabContents = new ArrayList<String>();
         List<String> tabTitles   = new ArrayList<String>();
-
-        for (GsacOutput output :
-                getRepository().getOutputs(GsacSite.CLASS_SITE)) {
-            if (output.getId().equals(OUTPUT_SITE_HTML)) {
-                continue;
-            }
-            Hashtable<String, String> outputMap = new Hashtable<String,
-                                                      String>();
-            outputMap.put(ARG_OUTPUT, output.getId());
-            String suffix    = output.getFileSuffix();
-            String searchUrl = makeUrl(URL_SITE_SEARCH) + ((suffix != null)
-                    ? suffix
-                    : "") + "?" + request.getUrlArgs(outputMap);
-            searchLinks.append(HtmlUtil.href(searchUrl, output.getLabel()));
-            searchLinks.append(HtmlUtil.br());
-        }
-        /*        formBuffer.append(
-            HtmlUtil.insetLeft(
-                HtmlUtil.makeShowHideBlock(
-                    msg("Search Links"),
-                    HtmlUtil.insetLeft(searchLinks.toString(), 10),
-                    false), 10));*/
-
-
 
 
         handleSearchForm(request, response, formBuffer);
@@ -296,16 +266,14 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             tabContents.add(message);
         }
 
+        StringBuffer searchLinks =  makeOutputLinks(request,  GsacSite.CLASS_SITE);
+
+
         tabTitles.add(msg("Search Again"));
         tabContents.add(formBuffer.toString());
 
-        tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
         tabTitles.add(msg("Search Links"));
-
-
-        //        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
-        //                                             formBuffer.toString(),
-        //                                             sites.size() == 0));
+        tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
 
         StringBuffer tabs = new StringBuffer();
         makeTabs(tabs, tabTitles, tabContents);

@@ -89,12 +89,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         StringBuffer sb = new StringBuffer();
         try {
             handleRequestInner(request, response, sb);
-
         } catch (IllegalArgumentException iae) {
             sb.append(
                 getRepository().makeErrorDialog(
                     "An error has occurred:<br>" + iae.getMessage()));
-
             handleSearchForm(request, response, sb);
             finishHtml(request, response, sb);
         }
@@ -119,7 +117,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         }
 
         String uri = request.getRequestURI();
-
         if (checkFormSwitch(request, response, GsacFile.CLASS_FILE)) {
             return;
         }
@@ -226,65 +223,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
     public void handleSearchForm(GsacRequest request, GsacResponse response,
                                  Appendable pw)
             throws IOException, ServletException {
-
-        pw.append(HtmlUtil.formPost(makeUrl(URL_FILE_SEARCH),
-                                    HtmlUtil.attr("name", "searchform")));;
-
-        String blankImg = iconUrl("/blank.gif");
-        //Put a blank image submit input here so any Enter key pressed does not
-        //default to a site submit button search
-        pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
-
-        StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
-        buttons.append("<td>");
-        buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
-        for (GsacOutput output :
-                getRepository().getOutputs(GsacFile.CLASS_FILE)) {
-            if (output.getToolbarLabel() == null) {
-                continue;
-            }
-            String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
-                                         HtmlUtil.attrs(new String[] {
-                HtmlUtil.ATTR_NAME, output.getId(), HtmlUtil.ATTR_TYPE,
-                HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
-                output.getToolbarLabel(),
-                //HtmlUtil.ATTR_CLASS, "gsac-download-button",
-                HtmlUtil.ATTR_TITLE, output.getLabel()
-            }));
-            buttons.append(HtmlUtil.space(2));
-            buttons.append(submit);
-        }
-
-
-        buttons.append("</td>");
-
-        addFormSwitchButton(request, buttons, GsacFile.CLASS_FILE);
-
-        buttons.append("</tr></table>");
-        pw.append(buttons.toString());
-
-        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
-                                    + URL_HTDOCS_BASE + "/CalendarPopup.js"));
-
-        CapabilityCollection resourceCollection =
-            getRepository().getResourceManager(GsacFile.CLASS_FILE).getCapabilityCollection();
-        if (resourceCollection != null) {
-            addCapabilitiesToForm(request, pw, resourceCollection, false);
-        }
-        getSiteSearchForm(request, pw);
-
-        StringBuffer resultsSB = new StringBuffer();
-        resultsSB.append(HtmlUtil.formTable());
-        getOutputSelect(GsacFile.CLASS_FILE, request, resultsSB);
-        getLimitSelect(request, resultsSB);
-        getResourceSortSelect(request, resultsSB);
-        resultsSB.append(HtmlUtil.formTableClose());
-        pw.append(getHeader(msg("Results")));
-        pw.append(HtmlUtil.makeShowHideBlock("", resultsSB.toString(),
-                                             false));
-
-        pw.append(buttons.toString());
-        pw.append(HtmlUtil.formClose());
+        handleSearchForm(request, response, pw, GsacFile.CLASS_FILE);
     }
 
 
@@ -310,21 +249,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             List<String> tabContents = new ArrayList<String>();
             List<String> tabTitles   = new ArrayList<String>();
 
-            StringBuffer searchLinks = new StringBuffer();
-            GsacRequest  tmpRequest  = new GsacRequest(request);
             StringBuffer toolbar     = new StringBuffer();
+
+            StringBuffer searchLinks =  makeOutputLinks(request, GsacFile.CLASS_FILE);
 
             for (GsacOutput output :
                     getRepository().getOutputs(GsacFile.CLASS_FILE)) {
-                if (output.getId().equals(OUTPUT_FILE_HTML)) {
-                    continue;
-                }
-                tmpRequest.put(ARG_OUTPUT, output.getId());
-                String suffix = output.getFileSuffix();
-                String searchUrl = makeUrl(URL_FILE_SEARCH)
-                                   + ((suffix != null)
-                                      ? suffix
-                                      : "") + "?" + tmpRequest.getUrlArgs();
                 if (output.getToolbarLabel() != null) {
                     String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
                                         HtmlUtil.attrs(new String[] {
@@ -338,27 +268,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         toolbar.append(HtmlUtil.space(2));
                     }
                     toolbar.append(submit);
-
                 }
-
-                searchLinks.append(HtmlUtil.href(searchUrl,
-                        output.getLabel()));
-                searchLinks.append(HtmlUtil.br());
             }
 
-
-            /*            formBuffer.append(
-                HtmlUtil.insetLeft(
-                    HtmlUtil.makeShowHideBlock(
-                                               msg("Search Links"),
-                        HtmlUtil.insetLeft(searchLinks.toString(), 10),
-                        false), 10));
-            */
-
-
             handleSearchForm(request, response, formBuffer);
-
-
 
             //            sb.append(HtmlUtil.makeShowHideBlock(msg("Search Again"),
             //                    formBuffer.toString(), false));
@@ -372,8 +285,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             tabTitles.add(msg("Search Again"));
             tabContents.add(formBuffer.toString());
 
-            tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
             tabTitles.add(msg("Search Links"));
+            tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
+
 
             StringBuffer tabs = new StringBuffer();
             makeTabs(tabs, tabTitles, tabContents);

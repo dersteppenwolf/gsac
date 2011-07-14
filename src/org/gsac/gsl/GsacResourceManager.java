@@ -220,7 +220,6 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return _more_
      */
     public String makeResourceUrl(String suffix) {
-        System.err.println ("url prefix:" + urlPrefix + " suffix:" + suffix);
         return   urlPrefix + suffix;
     }
 

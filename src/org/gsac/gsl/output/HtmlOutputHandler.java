@@ -172,6 +172,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
+    public void getSortSelect(GsacRequest request, Appendable pw, ResourceClass resourceClass) throws IOException {
+        if(resourceClass.equals(GsacSite.CLASS_SITE)) 
+            getSiteSortSelect(request, pw);
+        else if(resourceClass.equals(GsacFile.CLASS_FILE)) 
+            getFileSortSelect(request, pw);
+    }
+
+
     /**
      * _more_
      *
@@ -217,6 +225,65 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             valueWidget + orderWidget));
     }
 
+    public void handleSearchForm(GsacRequest request, GsacResponse response,
+                                 Appendable pw, ResourceClass resourceClass)
+            throws IOException, ServletException {
+
+        pw.append(HtmlUtil.formPost(getRepository().getResourceManager(resourceClass).makeSearchUrl(),
+                                    HtmlUtil.attr("name", "searchform")));;
+
+        String blankImg = iconUrl("/blank.gif");
+        //Put a blank image submit input here so any Enter key pressed does not
+        //default to a site submit button search
+        pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
+
+        StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
+        buttons.append("<td>");
+        buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
+        for (GsacOutput output :
+                getRepository().getOutputs(resourceClass)) {
+            if (output.getToolbarLabel() == null) {
+                continue;
+            }
+            String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
+                                         HtmlUtil.attrs(new String[] {
+                HtmlUtil.ATTR_NAME, output.getId(), HtmlUtil.ATTR_TYPE,
+                HtmlUtil.TYPE_SUBMIT, HtmlUtil.ATTR_VALUE,
+                output.getToolbarLabel(),
+                //HtmlUtil.ATTR_CLASS, "gsac-download-button",
+                HtmlUtil.ATTR_TITLE, output.getLabel()
+            }));
+            buttons.append(HtmlUtil.space(2));
+            buttons.append(submit);
+        }
+
+        buttons.append("</td>");
+        addFormSwitchButton(request, buttons, resourceClass);
+
+        buttons.append("</tr></table>");
+        pw.append(buttons.toString());
+
+        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
+                                    + URL_HTDOCS_BASE + "/CalendarPopup.js"));
+
+        getSearchForm(request, pw, resourceClass);
+        getRepositorySelect(request, pw);
+
+        StringBuffer resultsSB = new StringBuffer();
+        resultsSB.append(HtmlUtil.formTable());
+        getOutputSelect(resourceClass, request, resultsSB);
+        getLimitSelect(request, resultsSB);
+        getSortSelect(request, resultsSB, resourceClass);
+        resultsSB.append(HtmlUtil.formTableClose());
+        pw.append(getHeader(msg("Results")));
+        pw.append(HtmlUtil.makeShowHideBlock("", resultsSB.toString(),
+                                             false));
+
+        pw.append(buttons.toString());
+        pw.append(HtmlUtil.formClose());
+    }
+
+
 
     /**
      * _more_
@@ -226,7 +293,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @throws IOException On badness
      */
-    public void getResourceSortSelect(GsacRequest request, Appendable pw)
+    public void getFileSortSelect(GsacRequest request, Appendable pw)
             throws IOException {
         boolean sortCapable  = getRepository().isCapable(ARG_FILE_SORT_VALUE);
         boolean orderCapable = getRepository().isCapable(ARG_FILE_SORT_ORDER);
@@ -342,36 +409,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @throws IOException On badness
      */
-    public void getSiteSearchForm(GsacRequest request, Appendable pw)
+    public void getSearchForm(GsacRequest request, Appendable pw, ResourceClass resourceClass)
             throws IOException {
-        getRepository().addToSiteSearchForm(request, pw);
-        getRepositorySelect(request, pw);
+        getRepository().addToSearchForm(request, pw, resourceClass);
         CapabilityCollection collection =
-            getRepository().getResourceManager(GsacSite.CLASS_SITE).getCapabilityCollection();
+            getRepository().getResourceManager(resourceClass).getCapabilityCollection();
         if (collection != null) {
             addCapabilitiesToForm(request, pw, collection, true);
         }
-
-        /*
-        String[] haikus = {
-            "",
-            "The GSAC crashed.<br> I am the Blue Screen of Death.<br> No one hears your screams.",
-            "ABORTED effort.<br> Close all that you have.<br> You ask way too much.",
-            "Yesterday it worked.<br> Today it is not working.<br> Windows is like that.",
-            "The code was willing,<br> It considered your request<br> But the chips were weak.",
-            "A crash reduces<br> your expensive computer<br> to a simple stone.",
-            "To have no errors<br> Would be life without meaning<br> No struggle, no joy",
-            "Three things are certain:<br> Death, taxes, and lost data.<br> Guess which has occurred.",
-            "I have gray hair now<br>Javascript can make one old<br>Damn that learning curve!",
-            "Click anywhere<br>to stop the pain<br>for now."
-        };
-        int idx = (int) ((Math.random() * 1000) % haikus.length);
-        pw.append(getFormTableHeader(msg("Haiku")));
-        pw.append("<tr><td colspan=2>");
-        String haiku = "<i>" + haikus[idx] + "</i>";
-        pw.append(HtmlUtil.makeShowHideBlock(msg(""), haiku, false));
-        pw.append("</td></tr>");
-        */
     }
 
     /**
@@ -2203,5 +2248,25 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         return false;
     }
+
+
+    public StringBuffer makeOutputLinks(GsacRequest request,  ResourceClass resourceClass) {
+        StringBuffer searchLinks = new StringBuffer();
+        GsacResourceManager resourceManager = getRepository().getResourceManager(resourceClass);
+        for (GsacOutput output :
+                getRepository().getOutputs(resourceClass)) {
+            Hashtable<String, String> outputMap = new Hashtable<String,
+                                                      String>();
+            outputMap.put(ARG_OUTPUT, output.getId());
+            String suffix    = output.getFileSuffix();
+            String searchUrl = resourceManager.makeSearchUrl() + ((suffix != null)
+                    ? suffix
+                    : "") + "?" + request.getUrlArgs(outputMap);
+            searchLinks.append(HtmlUtil.href(searchUrl, output.getLabel()));
+            searchLinks.append(HtmlUtil.br());
+        }
+        return searchLinks;
+    }
+
 
 }
