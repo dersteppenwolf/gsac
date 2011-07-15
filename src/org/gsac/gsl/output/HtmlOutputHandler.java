@@ -52,28 +52,32 @@ import javax.servlet.http.*;
  * Class description
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
  */
 public class HtmlOutputHandler extends GsacOutputHandler {
 
-    /** _more_ */
+    /** help message */
     public static final String stringSearchHelp =
         "semi-colon separated list: p123;p456,  wildcards: p12* *123 *12* negate: !p123";
 
-    /** _more_ */
+    /** help message */
     public static final String dateHelp =
         "e.g., yyyy-mm-dd,  now, -1 week, +3 days, etc.";
 
-    /** _more_ */
+    /** help message */
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
-    /** _more_ */
+    /** for site table */
     private static String[] SITE_TABLE_LABELS;
 
-    /** _more_ */
+    /** for site table */
     private static String[] SITE_TABLE_SORTVALUES;
 
+
+    /** _more_ */
+    private static String[] NAV_LABELS;
+
+    /** _more_ */
+    private static String[] NAV_URLS;
 
     /**
      * ctor
@@ -131,16 +135,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                      + HtmlUtil.space(1) +
                                      HtmlUtil.input(ARG_LIMIT, request.getLimit()+"",HtmlUtil.SIZE_5)));
         */
-
-
         pw.append(formEntry(request, msgLabel("Limit"),
                             HtmlUtil.input(ARG_LIMIT,
                                            request.getLimit() + "",
                                            HtmlUtil.SIZE_5)));
-
     }
-
-
 
 
     /**
@@ -650,12 +649,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         return tfos;
     }
-
-    /** _more_ */
-    private static String[] NAV_LABELS;
-
-    /** _more_ */
-    private static String[] NAV_URLS;
 
 
     /**
