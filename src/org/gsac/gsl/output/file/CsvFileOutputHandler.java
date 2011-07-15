@@ -66,17 +66,18 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
      * _more_
      *
      * @param response The response
-     * @param object _more_
+     * @param resource _more_
      */
-    public void processObject(GsacResponse response, GsacResource object) {
+    public void processResource(GsacResponse response,
+                                GsacResource resource) {
         try {
-            GsacFile file = (GsacFile) object;
+            GsacFile file = (GsacFile) resource;
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             response.startResponse(GsacResponse.MIME_CSV);
             PrintWriter pw = response.getPrintWriter();
             if (firstTime) {
-                pw.print("#repositoryid, resourcetype, siteid, url\n");
+                pw.print("#id, type, siteid, url\n");
             }
             pw.print(file.getId());
             pw.print(",");

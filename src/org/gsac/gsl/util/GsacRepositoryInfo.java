@@ -287,7 +287,7 @@ public class GsacRepositoryInfo {
     /**
      * _more_
      *
-     * @param id _more_
+     * @param resourceClass The type of resource
      *
      * @return _more_
      */
@@ -306,7 +306,7 @@ public class GsacRepositoryInfo {
      * _more_
      *
      *
-     * @param collectionId _more_
+     * @param resourceClass The type of resource
      * @param capability _more_
      *
      * @return _more_

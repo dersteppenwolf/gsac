@@ -172,11 +172,23 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
-    public void getSortSelect(GsacRequest request, Appendable pw, ResourceClass resourceClass) throws IOException {
-        if(resourceClass.equals(GsacSite.CLASS_SITE)) 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param pw _more_
+     * @param resourceClass _more_
+     *
+     * @throws IOException _more_
+     */
+    public void getSortSelect(GsacRequest request, Appendable pw,
+                              ResourceClass resourceClass)
+            throws IOException {
+        if (resourceClass.equals(GsacSite.CLASS_SITE)) {
             getSiteSortSelect(request, pw);
-        else if(resourceClass.equals(GsacFile.CLASS_FILE)) 
+        } else if (resourceClass.equals(GsacFile.CLASS_FILE)) {
             getFileSortSelect(request, pw);
+        }
     }
 
 
@@ -225,11 +237,23 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             valueWidget + orderWidget));
     }
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     * @param pw _more_
+     * @param resourceClass _more_
+     *
+     * @throws IOException _more_
+     * @throws ServletException _more_
+     */
     public void handleSearchForm(GsacRequest request, GsacResponse response,
                                  Appendable pw, ResourceClass resourceClass)
             throws IOException, ServletException {
 
-        GsacResourceManager resourceManager = getRepository().getResourceManager(resourceClass);
+        GsacResourceManager resourceManager =
+            getRepository().getResourceManager(resourceClass);
         pw.append(HtmlUtil.formPost(resourceManager.makeSearchUrl(),
                                     HtmlUtil.attr("name", "searchform")));;
 
@@ -240,9 +264,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
         buttons.append("<td>");
-        buttons.append(HtmlUtil.submit(msg("Search " + resourceManager.getResourceLabel(true) ), ARG_SEARCH));
-        for (GsacOutput output :
-                getRepository().getOutputs(resourceClass)) {
+        buttons.append(
+            HtmlUtil.submit(
+                msg("Search " + resourceManager.getResourceLabel(true)),
+                ARG_SEARCH));
+        for (GsacOutput output : getRepository().getOutputs(resourceClass)) {
             if (output.getToolbarLabel() == null) {
                 continue;
             }
@@ -335,9 +361,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
-     *
-     * @param group _more_
-     *
      * @param resourceClass _more_
      * @param request The request
      * @param pw appendable to append to
@@ -407,16 +430,19 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @param request The request
      * @param pw appendable to append to
+     * @param resourceClass _more_
      *
      * @throws IOException On badness
      */
-    public void getSearchForm(GsacRequest request, Appendable pw, ResourceClass resourceClass)
+    public void getSearchForm(GsacRequest request, Appendable pw,
+                              ResourceClass resourceClass)
             throws IOException {
         getRepository().addToSearchForm(request, pw, resourceClass);
         CapabilityCollection collection =
-            getRepository().getResourceManager(resourceClass).getCapabilityCollection();
+            getRepository().getResourceManager(
+                resourceClass).getCapabilityCollection();
         if (collection != null) {
-            addCapabilitiesToForm(request, pw, collection, true);
+            addCapabilitiesToForm(request, pw, collection);
         }
     }
 
@@ -426,13 +452,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param request The request
      * @param pw _more_
      * @param collection _more_
-     * @param forSite _more_
      *
      * @throws IOException On badness
      */
     public void addCapabilitiesToForm(GsacRequest request, Appendable pw,
-                                      CapabilityCollection collection,
-                                      boolean forSite)
+                                      CapabilityCollection collection)
             throws IOException {
 
         List<Capability> capabilities = collection.getCapabilities();
@@ -1332,87 +1356,115 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @param request The request
      * @param pw appendable to append to
-     * @param site _more_
+     * @param resource _more_
      * @param fullMetadata _more_
      * @param includeMap _more_
      * @param includeLink _more_
      *
      * @throws IOException On badness
      */
-    public void getSiteHtml(GsacRequest request, Appendable pw,
-                            GsacSite site, boolean fullMetadata,
-                            boolean includeMap, boolean includeLink)
+    public void getResourceHtml(GsacRequest request, Appendable pw,
+                                GsacResource resource, boolean fullMetadata,
+                                boolean includeMap, boolean includeLink)
             throws IOException {
 
-        //Make sure the site has full metadata
+        if (resource == null) {
+            pw.append(
+                getRepository().makeErrorDialog(
+                    msg("Could not find resource")));
+            return;
+        }
+
+        //Make sure the resource has full metadata
         try {
             if (fullMetadata) {
                 if ( !request.defined(ARG_METADATA_LEVEL)) {
                     request.put(ARG_METADATA_LEVEL, "10");
                 }
-                getRepository().getMetadata(request, site);
+                getRepository().getMetadata(request, resource);
             }
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
         pw.append(HtmlUtil.formTable());
-        String siteCode = (includeLink
-                           ? makeResourceViewHref(site)
-                           : site.getLabel());
-        if (getDoSiteType()) {
-            pw.append(formEntry(request, msgLabel("Site Code"), siteCode));
+        String label = (includeLink
+                        ? makeResourceViewHref(resource)
+                        : resource.getLabel());
+        GsacResourceManager resourceManager =
+            getResourceManager(resource.getResourceClass());
+        pw.append(
+            formEntry(
+                request, msgLabel(resourceManager.getResourceLabel(false)),
+                label));
+        if (resource.getName() != null) {
+            pw.append(formEntry(request, msgLabel("Name"),
+                                resource.getName()));
         }
-
-        pw.append(formEntry(request, msgLabel("Name"), site.getName()));
-        if (site.getRepositoryInfo() != null) {
+        if (resource.getRepositoryInfo() != null) {
             pw.append(
                 formEntry(
                     request, msgLabel("Repository"),
-                    getRepository().getRemoteHref(site) + " "
+                    getRepository().getRemoteHref(resource) + " "
                     + HtmlUtil.href(
-                        getRepository().getRemoteUrl(site),
-                        site.getRepositoryInfo().getName())));
+                        getRepository().getRemoteUrl(resource),
+                        resource.getRepositoryInfo().getName())));
         }
-        if (getDoSiteType() && (site.getType() != null)) {
+        if (resource.getType() != null) {
             pw.append(formEntry(request, msgLabel("Type"),
-                                site.getType().getName()));
+                                resource.getType().getName()));
         }
-        if (getDoSiteStatus() && (site.getStatus() != null)) {
+        if (resource.getStatus() != null) {
             pw.append(formEntry(request, msgLabel("Status"),
-                                site.getStatus().getName()));
+                                resource.getStatus().getName()));
         }
+
+        List<GsacResource> relatedResources = resource.getRelatedResources();
+        for (GsacResource relatedResource : relatedResources) {
+            String resourceLabel =
+                getResourceManager(relatedResource).getResourceLabel(false);
+            if (relatedResource.getId() == null) {
+                pw.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                             relatedResource.getLabel()));
+            } else {
+                String resourceUrl = makeResourceViewUrl(relatedResource);
+                pw.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                             "<a href=\"" + resourceUrl
+                                             + "\">"
+                                             + resource.getLongLabel()
+                                             + "</a>"));
+            }
+        }
+
 
         String js = null;
         if (includeMap) {
             StringBuffer mapSB = new StringBuffer();
             if ( !request.get(ARG_WRAPXML, false)) {
                 js = createMap(request,
-                               (List<GsacResource>) Misc.newList(site),
+                               (List<GsacResource>) Misc.newList(resource),
                                mapSB, 400, 200);
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
-                                   formatLatLon(site) + mapSB));
+                                   formatLatLon(resource) + mapSB));
         }
 
 
-        if (site.getFromDate() != null) {
-            String dateString = formatDate(site);
+        if (resource.getFromDate() != null) {
+            String dateString = formatDate(resource);
             pw.append(formEntry(request, msgLabel("Date Range"), dateString));
         }
 
-        if (getDoResourceGroup()) {
-            List<ResourceGroup> groups = site.getResourceGroups();
-            if (groups.size() > 0) {
-                pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
-                        ? "Group"
-                        : "Groups"), getGroupHtml(groups,
-                        site.getResourceClass(), false)));
-            }
+        List<ResourceGroup> groups = resource.getResourceGroups();
+        if (groups.size() > 0) {
+            pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
+                                                     ? "Group"
+                                                     : "Groups"), getGroupHtml(groups,
+                                                                               resource.getResourceClass(), false)));
         }
 
 
-        processMetadata(request, pw, site, site.getMetadata(), fullMetadata,
-                        new Hashtable());
+        processMetadata(request, pw, resource, resource.getMetadata(),
+                        fullMetadata, new Hashtable());
 
         pw.append(HtmlUtil.formTableClose());
         if (js != null) {
@@ -1770,11 +1822,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String href    = makeResourceViewHref(resource);
             String mapInfo = href + HtmlUtil.br() + resource.getLabel();
             //Only include the full html when there are fewer than 100 resource
-            if ((resources.size() < 100) && (resource instanceof GsacSite)) {
+            if (resources.size() < 100) {
                 StringBuffer mapInfoSB = new StringBuffer();
-                //TODO: change this to getResourceHtml
-                getSiteHtml(request, mapInfoSB, (GsacSite) resource, false,
-                            false, true);
+                getResourceHtml(request, mapInfoSB, resource, false, false,
+                                true);
                 mapInfo = mapInfoSB.toString();
             }
             mapInfo = mapInfo.replace("\r", " ");
@@ -1934,16 +1985,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             //            labels.add("");
             //            sortValues.add("");
-            if (getDoSiteCode()) {
-                labels.add(msg("Site Code").replace(" ", "&nbsp;"));
-                sortValues.add(SORT_SITE_CODE);
-            }
+            labels.add(msg("Site Code").replace(" ", "&nbsp;"));
+            sortValues.add(SORT_SITE_CODE);
             labels.add(msg("Name"));
             sortValues.add(SORT_SITE_NAME);
-            if (getDoSiteType()) {
-                labels.add(msg("Type"));
-                sortValues.add(SORT_SITE_TYPE);
-            }
+            labels.add(msg("Type"));
+            sortValues.add(SORT_SITE_TYPE);
             labels.add(msg("Location") + " (lat,lon,m)");
             sortValues.add("");
             labels.add(msg("Date Range"));
@@ -1994,15 +2041,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(HtmlUtil.col(href));
             sb.append(HtmlUtil.col(site.getName(), clickEvent));
 
-            if (getDoSiteType()) {
-                if (site.getType() != null) {
-                    sb.append(HtmlUtil.col(site.getType().getName(),
-                                           clickEvent));
-                } else {
-                    sb.append(HtmlUtil.col("&nbsp;", clickEvent));
-                }
+            if (site.getType() != null) {
+                sb.append(HtmlUtil.col(site.getType().getName(), clickEvent));
+            } else {
+                sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
-
 
             sb.append("<td " + clickEvent + ">");
             sb.append(formatLatLon(site.getLatitude()));
@@ -2251,18 +2294,28 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
-    public StringBuffer makeOutputLinks(GsacRequest request,  ResourceClass resourceClass) {
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param resourceClass _more_
+     *
+     * @return _more_
+     */
+    public StringBuffer makeOutputLinks(GsacRequest request,
+                                        ResourceClass resourceClass) {
         StringBuffer searchLinks = new StringBuffer();
-        GsacResourceManager resourceManager = getRepository().getResourceManager(resourceClass);
-        for (GsacOutput output :
-                getRepository().getOutputs(resourceClass)) {
+        GsacResourceManager resourceManager =
+            getRepository().getResourceManager(resourceClass);
+        for (GsacOutput output : getRepository().getOutputs(resourceClass)) {
             Hashtable<String, String> outputMap = new Hashtable<String,
                                                       String>();
             outputMap.put(ARG_OUTPUT, output.getId());
-            String suffix    = output.getFileSuffix();
-            String searchUrl = resourceManager.makeSearchUrl() + ((suffix != null)
-                    ? suffix
-                    : "") + "?" + request.getUrlArgs(outputMap);
+            String suffix = output.getFileSuffix();
+            String searchUrl = resourceManager.makeSearchUrl()
+                               + ((suffix != null)
+                                  ? suffix
+                                  : "") + "?" + request.getUrlArgs(outputMap);
             searchLinks.append(HtmlUtil.href(searchUrl, output.getLabel()));
             searchLinks.append(HtmlUtil.br());
         }

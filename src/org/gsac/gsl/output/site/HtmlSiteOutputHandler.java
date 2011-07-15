@@ -227,12 +227,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     public void handleSingleSite(GsacRequest request, GsacResponse response,
                                  Appendable pw, GsacSite site)
             throws IOException, ServletException {
-        if (site == null) {
-            pw.append(
-                getRepository().makeErrorDialog(msg("Could not find site")));
-            return;
-        }
-        getSiteHtml(request, pw, site, true, true, false);
+        getResourceHtml(request, pw, site, true, true, false);
     }
 
     /**
@@ -266,7 +261,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             tabContents.add(message);
         }
 
-        StringBuffer searchLinks =  makeOutputLinks(request,  GsacSite.CLASS_SITE);
+        StringBuffer searchLinks = makeOutputLinks(request,
+                                       GsacSite.CLASS_SITE);
 
 
         tabTitles.add(msg("Search Again"));

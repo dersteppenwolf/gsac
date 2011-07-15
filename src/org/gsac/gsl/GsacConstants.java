@@ -50,10 +50,10 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String URL_SUFFIX_SEARCH = "/search";
 
-    /** _more_          */
+    /** _more_ */
     public static final String URL_SUFFIX_FORM = "/form";
 
-    /** _more_          */
+    /** _more_ */
     public static final String URL_SUFFIX_VIEW = "/view";
 
 

@@ -44,6 +44,9 @@ public class ResourceClass {
     private String name;
 
 
+    /**
+     * _more_
+     */
     public ResourceClass() {}
 
 
@@ -101,21 +104,21 @@ public class ResourceClass {
     }
 
     /**
-       Set the Name property.
-
-       @param value The new value for Name
-    **/
-    public void setNameForEncoding (String value) {
-	name = value;
+     *  Set the Name property.
+     *
+     *  @param value The new value for Name
+     */
+    public void setNameForEncoding(String value) {
+        name = value;
     }
 
     /**
-       Get the Name property.
-
-       @return The Name
-    **/
-    public String getNameForEncoding () {
-	return name;
+     *  Get the Name property.
+     *
+     *  @return The Name
+     */
+    public String getNameForEncoding() {
+        return name;
     }
 
 

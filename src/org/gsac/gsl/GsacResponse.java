@@ -308,8 +308,6 @@ public class GsacResponse {
     /**
      * _more_
      *
-     * @param site _more_
-     *
      * @param resource _more_
      */
     public final synchronized void addResource(GsacResource resource) {
@@ -319,8 +317,6 @@ public class GsacResponse {
 
     /**
      * _more_
-     *
-     * @param site _more_
      *
      * @param resource _more_
      */
@@ -339,7 +335,7 @@ public class GsacResponse {
     }
 
     /**
-     * Utility method to access the sites 
+     * Utility method to access the sites
      *
      * @return _more_
      */

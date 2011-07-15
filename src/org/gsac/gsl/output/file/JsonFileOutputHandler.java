@@ -91,7 +91,7 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
     }
 
     /**
-     * Special serializer for sites
+     * Special serializer for resources
      *
      *
      */

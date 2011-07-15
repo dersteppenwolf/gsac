@@ -60,17 +60,19 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     /** _more_ */
     private ResourceClass resourceClass;
 
-    /** _more_          */
+    /** _more_ */
     private List<GsacOutput> outputs = new ArrayList<GsacOutput>();
 
-    /** _more_          */
+    /** _more_ */
     private Hashtable<String, GsacOutput> outputMap = new Hashtable<String,
                                                           GsacOutput>();
 
 
+    /** _more_ */
     private CapabilityCollection capabilityCollection;
 
 
+    /** _more_ */
     private String urlPrefix;
 
     /**
@@ -84,7 +86,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         super(repository);
         this.resourceClass = resourceClass;
         urlPrefix = getRepository().getUrlBase() + URL_BASE + "/"
-            + getResourceClass().getName();
+                    + getResourceClass().getName();
 
     }
 
@@ -190,6 +192,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         return makeResourceUrl(URL_SUFFIX_SEARCH);
     }
 
+    /**
+     * _more_
+     *
+     * @param uri _more_
+     *
+     * @return _more_
+     */
     public boolean canHandleUri(String uri) {
         return uri.startsWith(urlPrefix);
     }
@@ -220,7 +229,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return _more_
      */
     public String makeResourceUrl(String suffix) {
-        return   urlPrefix + suffix;
+        return urlPrefix + suffix;
     }
 
 
@@ -344,14 +353,17 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public CapabilityCollection getCapabilityCollection() {
-        if(capabilityCollection == null) {
-            capabilityCollection = 
-                new CapabilityCollection(
-                                         getResourceClass(), 
-                                         getResourceLabel(false) +  "  Query",
-                                         getRepository().getServlet().getAbsoluteUrl(makeSearchUrl()), 
-                                         doGetQueryCapabilities());
+        if (capabilityCollection == null) {
+            capabilityCollection = new CapabilityCollection(
+                getResourceClass(), getResourceLabel(false) + "  Query",
+                getRepository().getServlet().getAbsoluteUrl(makeSearchUrl()),
+                doGetQueryCapabilities());
 
         }
         return capabilityCollection;

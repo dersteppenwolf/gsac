@@ -66,17 +66,18 @@ public class UrlFileOutputHandler extends StreamingOutputHandler {
      *
      * @param response The response
      * @param resource _more_
-     * @param object _more_
+     * @param resource _more_
      */
-    public void processObject(GsacResponse response, GsacResource object) {
+    public void processResource(GsacResponse response,
+                                GsacResource resource) {
         try {
-            GsacFile    resource  = (GsacFile) object;
+            GsacFile    file      = (GsacFile) resource;
             PrintWriter pw        = response.getPrintWriter();
             boolean     firstTime = !response.getHaveInitialized();
             if (firstTime) {
                 response.startResponse(GsacResponse.MIME_TEXT);
             }
-            pw.print(resource.getFileInfo().getUrl());
+            pw.print(file.getFileInfo().getUrl());
             pw.print("\n");
         } catch (Exception exc) {
             throw new RuntimeException(exc);

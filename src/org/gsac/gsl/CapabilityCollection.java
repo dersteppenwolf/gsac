@@ -21,8 +21,10 @@
 package org.gsac.gsl;
 
 
-import org.gsac.gsl.util.*;
 import org.gsac.gsl.model.ResourceClass;
+
+
+import org.gsac.gsl.util.*;
 
 import ucar.unidata.xml.XmlUtil;
 
@@ -80,16 +82,16 @@ public class CapabilityCollection {
     /**
      * _more_
      *
-     * @param id _more_
+     * @param resourceClass _more_
      * @param name _more_
      * @param url _more_
      * @param capabilities _more_
      */
-    public CapabilityCollection(ResourceClass resourceClass, String name, String url,
-                                List<Capability> capabilities) {
+    public CapabilityCollection(ResourceClass resourceClass, String name,
+                                String url, List<Capability> capabilities) {
         this.resourceClass = resourceClass;
-        this.name = name;
-        this.url  = url;
+        this.name          = name;
+        this.url           = url;
         setCapabilities(capabilities);
         this.used = getUsedSet(capabilities);
     }
@@ -117,8 +119,9 @@ public class CapabilityCollection {
      */
     public void toXml(Appendable sb) throws Exception {
         sb.append(XmlUtil.openTag(TAG_CAPABILITIES,
-                                  XmlUtil.attrs(ATTR_NAME, name, ATTR_ID, resourceClass.getName(),
-                                      ATTR_URL, url)));
+                                  XmlUtil.attrs(ATTR_NAME, name, ATTR_ID,
+                                      resourceClass.getName(), ATTR_URL,
+                                      url)));
         for (Capability capability : capabilities) {
             capability.toXml(sb);
         }
@@ -182,23 +185,23 @@ public class CapabilityCollection {
         return name;
     }
 
-/**
-Set the ResourceClass property.
+    /**
+     * Set the ResourceClass property.
+     *
+     * @param value The new value for ResourceClass
+     */
+    public void setResourceClass(ResourceClass value) {
+        resourceClass = value;
+    }
 
-@param value The new value for ResourceClass
-**/
-public void setResourceClass (ResourceClass value) {
-	resourceClass = value;
-}
-
-/**
-Get the ResourceClass property.
-
-@return The ResourceClass
-**/
-public ResourceClass getResourceClass () {
-	return resourceClass;
-}
+    /**
+     * Get the ResourceClass property.
+     *
+     * @return The ResourceClass
+     */
+    public ResourceClass getResourceClass() {
+        return resourceClass;
+    }
 
 
 

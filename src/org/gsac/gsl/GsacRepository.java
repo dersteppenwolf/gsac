@@ -219,7 +219,7 @@ public class GsacRepository implements GsacConstants {
     /** reference to html output handler */
     private HtmlOutputHandler htmlOutputHandler;
 
-    /** _more_          */
+    /** _more_ */
     private BrowseOutputHandler browseOutputHandler;
 
     /** Map of vocab id (usually the url argument id) to the vocabulary */
@@ -278,6 +278,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void init() throws Exception {
+
         InputStream inputStream;
         //load property files first
         String[] propertyFiles = { GSAC_PATH_RESOURCES + "/gsac.properties",
@@ -393,6 +394,7 @@ public class GsacRepository implements GsacConstants {
         initResourceManagers();
         initOutputHandlers();
         getRepositoryInfo();
+
     }
 
 
@@ -465,9 +467,7 @@ public class GsacRepository implements GsacConstants {
      * Add output type
      *
      *
-     * @param group Which group, e.g., SITE, FILE
-     *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      * @param output  output type
      */
     public void addOutput(ResourceClass resourceClass, GsacOutput output) {
@@ -481,9 +481,7 @@ public class GsacRepository implements GsacConstants {
      * Find the output handler
      *
      *
-     * @param group output group, e.g., SITE, FILE
-     *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      * @param output output type
      *
      * @return output handler
@@ -499,9 +497,7 @@ public class GsacRepository implements GsacConstants {
      * Find the output handler specified by the ARG_OUTPUT in the request within the given group of
      * otutput handlers
      *
-     * @param group output group, e.g., SITE, FILE
-     *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      * @param request the request
      *
      * @return the output handler
@@ -837,10 +833,12 @@ public class GsacRepository implements GsacConstants {
 
         for (CapabilityCollection collection : gri.getCollections()) {
             Hashtable<String, Capability> used =
-                collectionToUsedCapabilities.get(collection.getResourceClass().getName());
+                collectionToUsedCapabilities.get(
+                    collection.getResourceClass().getName());
             if (used == null) {
                 used = new Hashtable<String, Capability>();
-                collectionToUsedCapabilities.put(collection.getResourceClass().getName(), used);
+                collectionToUsedCapabilities.put(
+                    collection.getResourceClass().getName(), used);
             }
 
             List<Capability> mergedCapabilities =
@@ -1163,19 +1161,20 @@ public class GsacRepository implements GsacConstants {
                 numServiceRequests++;
                 //                getRepository().logInfo("start url:" + uri);
             }
-            String what = "other";
+            String  what              = "other";
 
             boolean isResourceRequest = false;
             for (GsacResourceManager gom : resourceManagers) {
-                if(gom.canHandleUri(uri)) {
+                if (gom.canHandleUri(uri)) {
                     what = gom.getResourceClass().getName();
                     GsacOutputHandler outputHandler =
                         getOutputHandler(gom.getResourceClass(), request);
-                    outputHandler.handleRequest(gom.getResourceClass(), request);
+                    outputHandler.handleRequest(gom.getResourceClass(),
+                            request);
                     isResourceRequest = true;
                 }
             }
-            if(isResourceRequest) {
+            if (isResourceRequest) {
                 //already done
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
@@ -1403,9 +1402,18 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param name _more_
+     *
+     * @return _more_
+     */
     public ResourceClass getResourceClass(String name) {
         for (GsacResourceManager gom : resourceManagers) {
-            if(gom.getResourceClass().getName().equals(name)) return gom.getResourceClass();
+            if (gom.getResourceClass().getName().equals(name)) {
+                return gom.getResourceClass();
+            }
         }
         return null;
     }
@@ -1415,7 +1423,7 @@ public class GsacRepository implements GsacConstants {
      * Handle the site search request
      *
      *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      * @param request The request
      * @param response The response
      *
@@ -1742,7 +1750,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      * @param gom _more_
      */
     public void addResourceManager(ResourceClass resourceClass,
@@ -1755,7 +1763,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      *
      * @return _more_
      */
@@ -1787,7 +1795,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      *
      * @return _more_
      */
@@ -1835,11 +1843,6 @@ public class GsacRepository implements GsacConstants {
             return resource;
         }
         resource = doGetResource(type, resourceId);
-        //Cache the dummy resource
-        //        if (resource == null) {
-        //            gom.cacheResource(new GsacSite(siteId, "", "", 0, 0, 0));
-        //        }
-
         if (resource != null) {
             gom.cacheResource(resource);
         }
@@ -1930,8 +1933,10 @@ public class GsacRepository implements GsacConstants {
      *
      * @param request request
      * @param buffer buffer to append to
+     * @param resourceClass Type of resource
      */
-    public void addToSearchForm(GsacRequest request, Appendable buffer, ResourceClass resourceClass) {
+    public void addToSearchForm(GsacRequest request, Appendable buffer,
+                                ResourceClass resourceClass) {
         //e.g.:
         //        buffer.append(HtmlUtil.formEntry("City:",
         //                       HtmlUtil.input(ARG_CITY,
@@ -2782,9 +2787,7 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
-     * @param group _more_
-     *
-     * @param resourceClass _more_
+     * @param resourceClass Type of resource
      * @return _more_
      */
     public List<GsacOutput> getOutputs(ResourceClass resourceClass) {

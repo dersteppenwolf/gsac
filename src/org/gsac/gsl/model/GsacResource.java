@@ -39,13 +39,11 @@ import java.util.List;
  */
 public abstract class GsacResource implements GsacArgs, GsacConstants {
 
-    /** site type */
-    private ResourceType type;
-
-
     /** _more_ */
     private String id;
 
+    /** site type */
+    private ResourceType type;
 
     /** _more_ */
     private List<GsacMetadata> metadata = new ArrayList();
@@ -62,7 +60,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** site status */
     private ResourceStatus status;
 
-    /** _more_          */
+    /** _more_ */
     private List<GsacResource> relatedResources =
         new ArrayList<GsacResource>();
 
@@ -131,7 +129,8 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      * @return _more_
      */
     public String getViewUrl() {
-        return URL_BASE + "/" + getResourceClass().getName() +URL_SUFFIX_VIEW;
+        return URL_BASE + "/" + getResourceClass().getName()
+               + URL_SUFFIX_VIEW;
     }
 
     /**
@@ -140,7 +139,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      * @return _more_
      */
     public String getIdArg() {
-        return getResourceClass().getName() +"." + ARG_SUFFIX_ID;
+        return getResourceClass().getName() + "." + ARG_SUFFIX_ID;
     }
 
 
@@ -160,6 +159,15 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public String getName() {
+        return null;
     }
 
     /**

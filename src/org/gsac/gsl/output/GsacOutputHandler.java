@@ -78,18 +78,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
     private GsacRepository gsacRepository;
 
     /** flags for repository capabilities */
-    private static boolean doSiteCode = true;
-
-    /** flags for repository capabilities */
-    private static boolean doSiteStatus = true;
-
-    /** flags for repository capabilities */
-    private static boolean doSiteType = true;
-
-    /** flags for repository capabilities */
-    private static boolean doSiteDateRange = true;
-
-    /** flags for repository capabilities */
     private static boolean doResourceGroup = true;
 
     /** flags for repository capabilities */
@@ -107,12 +95,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
         this.gsacRepository = gsacRepository;
-        doSiteCode          = getRepository().isCapable(ARG_SITE_CODE);
-        doSiteStatus        = getRepository().isCapable(ARG_SITE_STATUS);
         doResourceGroup     = getRepository().isCapable(ARG_RESOURCE_GROUP);
-        doSiteType          = getRepository().isCapable(ARG_SITE_TYPE);
-        //        doSiteDateRange = getRepository().isCapable(ARG_SITE_TYPE);
-
         doResourcePublishDate =
             getRepository().isCapable(ARG_FILE_PUBLISHDATE);
         doResourceFileSize = getRepository().isCapable(ARG_FILE_SIZE);
@@ -209,7 +192,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         handleResult(gsacRequest, gsacResponse);
         long t3 = System.currentTimeMillis();
         System.err.println("GSAC.handleRequest time to read:" + (t2 - t1)
-                           + " time to encode:" + (t3 - t2) + " #sites:"
+                           + " time to encode:" + (t3 - t2) + " #resources:"
                            + gsacResponse.getResources().size());
     }
 
@@ -443,14 +426,11 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public String makeResourceViewUrl(ResourceClass resourceClass,
                                       String args) {
-        return getResourceManager(resourceClass).makeViewUrl() + "?"
-                       + args;
+        return getResourceManager(resourceClass).makeViewUrl() + "?" + args;
     }
 
     /**
      * _more_
-     *
-     * @param site _more_
      *
      * @param resource _more_
      *
@@ -469,8 +449,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
     /**
      * _more_
-     *
-     * @param site _more_
      *
      * @param resource _more_
      *
@@ -502,8 +480,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param site _more_
      *
+     * @param resource _more_
      * @return _more_
      */
     public String formatLatLon(GsacResource resource) {
@@ -516,8 +494,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /**
      * _more_
      *
-     * @param site _more_
      *
+     * @param resourcee _more_
      * @return _more_
      */
     public String formatDate(GsacResource resourcee) {
@@ -559,39 +537,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public boolean getDoSiteCode() {
-        return doSiteCode;
-    }
-
-    /**
-     * get flag
-     *
-     * @return _more_
-     */
-    public boolean getDoSiteStatus() {
-        return doSiteStatus;
-    }
-
-    /**
-     * get flag
-     *
-     * @return _more_
-     */
     public boolean getDoResourceGroup() {
         return doResourceGroup;
     }
-
-    /**
-     * get flag
-     *
-     * @return _more_
-     */
-    public boolean getDoSiteType() {
-        return doSiteType;
-    }
-
-
-
-
 
 }

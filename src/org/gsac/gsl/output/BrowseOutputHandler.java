@@ -110,13 +110,15 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      */
     private void checkInit() {
         if (browseCapabilities == null) {
-            List<Capability>   tmp = new ArrayList<Capability>();
-            GsacRepositoryInfo gri = getRepository().getRepositoryInfo();
-            HashSet<String> seen = new HashSet<String>();
+            List<Capability>   tmp  = new ArrayList<Capability>();
+            GsacRepositoryInfo gri  = getRepository().getRepositoryInfo();
+            HashSet<String>    seen = new HashSet<String>();
             for (CapabilityCollection collection : gri.getCollections()) {
                 ResourceClass resourceClass = collection.getResourceClass();
                 for (Capability capability : collection.getCapabilities()) {
-                    if(seen.contains(capability.getId())) continue;
+                    if (seen.contains(capability.getId())) {
+                        continue;
+                    }
                     seen.add(capability.getId());
                     if (capability.isEnumeration()
                             || capability.getBrowse()) {
@@ -176,8 +178,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                     Capability capability)
             throws Exception {
         ResourceClass resourceClass = capability.getResourceClass();
-        String       letter = request.get(ARG_LETTER, "").toUpperCase();
-        StringBuffer html   = new StringBuffer();
+        String        letter = request.get(ARG_LETTER, "").toUpperCase();
+        StringBuffer  html          = new StringBuffer();
         initHtml(request, response, html);
         html.append(getHeader(request, capability));
         String[] letters = {
@@ -196,8 +198,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                         HtmlUtil.cssClass("gsac-firstletternav")));
             } else {
                 String url = getRepository().getUrl(URL_BROWSE_BASE) + "?"
-                    + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
-                    + "=" + l;
+                             + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
+                             + "=" + l;
                 links.add(
                     HtmlUtil.href(
                         url, l, HtmlUtil.cssClass("gsac-firstletternav")));
@@ -216,8 +218,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             GsacRequest searchRequest = new GsacRequest(request);
             searchRequest.put(capability.getId(), letter + "*");
             searchRequest.put(ARG_LIMIT, 10000 + "");
-            getRepository().processRequest(resourceClass,
-                                           searchRequest, response);
+            getRepository().processRequest(resourceClass, searchRequest,
+                                           response);
             List<GsacResource> resources = response.getResources();
             if (resources.size() == 0) {
                 html.append(
@@ -225,7 +227,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                         msg("No results found")));
             } else {
                 //TODO: Pick the resource
-                makeSiteHtmlTable(request, html, (List<GsacSite>)new ArrayList(resources));
+                makeSiteHtmlTable(request, html,
+                                  (List<GsacSite>) new ArrayList(resources));
             }
         }
         finishHtml(request, response, html);
@@ -284,7 +287,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             throws Exception {
 
         ResourceClass resourceClass = capability.getResourceClass();
-        List things = capability.getEnums();
+        List          things        = capability.getEnums();
         java.util.Collections.sort(things);
         StringBuffer sb          = new StringBuffer();
         String       firstLetter = null;

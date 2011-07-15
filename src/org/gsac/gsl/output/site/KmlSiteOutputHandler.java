@@ -127,7 +127,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             String       href = makeResourceViewHref(site);
             StringBuffer html = new StringBuffer();
             html.append(href);
-            getSiteHtml(request, html, site, false, false, true);
+            getResourceHtml(request, html, site, false, false, true);
             Element             groupElement = folder;
             List<ResourceGroup> groups       = site.getResourceGroups();
             if (groups.size() > 0) {

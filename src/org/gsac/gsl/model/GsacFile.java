@@ -20,7 +20,7 @@
 
 package org.gsac.gsl.model;
 
-
+import ucar.unidata.util.IOUtil;
 import org.gsac.gsl.GsacArgs;
 import org.gsac.gsl.GsacConstants;
 
@@ -129,6 +129,11 @@ public class GsacFile extends GsacResource {
     public String toString() {
         return this.fileInfo.toString();
     }
+
+    public String getLabel() {
+        return IOUtil.getFileTail(fileInfo.getUrl());
+    }
+
 
     /**
      * _more_

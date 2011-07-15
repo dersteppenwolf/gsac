@@ -18,8 +18,10 @@
  * 
  */
 
-package org.gsac.gsl;
+package org.gsac.gsl.test;
 
+
+import org.gsac.gsl.*;
 
 import org.gsac.gsl.model.*;
 

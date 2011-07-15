@@ -145,8 +145,7 @@ public abstract class FileManager extends GsacResourceManager {
      *
      *
      * @param level _more_
-     * @param gsacFile the file
-     * @param gsacResource _more_
+     * @param gsacResource the resource
      *
      * @throws Exception On badness
      */

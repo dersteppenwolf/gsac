@@ -60,7 +60,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
     /** The default repository class */
     private static final String DFLT_REPOSITORY_CLASS =
-        "org.gsac.gsl.DummyRepository";
+        "org.gsac.gsl.test.DummyRepository";
 
     /** The repository that does the work */
     private GsacRepository gsacRepository;

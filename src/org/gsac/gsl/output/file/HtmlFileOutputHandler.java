@@ -177,24 +177,20 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         for (GsacResource relatedResource : relatedResources) {
             String resourceLabel =
                 getResourceManager(relatedResource).getResourceLabel(false);
-            if (relatedResource.getId() == null) {
-                sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
-                                             relatedResource.getLabel()));
-            } else {
-                String resourceUrl = makeResourceViewUrl(relatedResource);
-                sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
-                                             "<a href=\"" + resourceUrl
-                                             + "\">"
-                                             + resource.getLongLabel()
-                                             + "</a>"));
-            }
+            String resourceUrl = makeResourceViewUrl(relatedResource);
+            sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                         "<a href=\"" + resourceUrl
+                                         + "\">"
+                                         + relatedResource.getLongLabel()
+                                         + "</a>"));
         }
 
 
         if (resource.getFromDate() != null) {
-            sb.append(HtmlUtil.formEntry(msgLabel("Date"),
-                                         "" + resource.getToDate()));
+            String dateString = formatDate(resource);
+            sb.append(formEntry(request, msgLabel(resource.getToDate()!=null?"Date Range":"Date"), dateString));
         }
+
 
         if (resource.getFileInfo().getFileSize() > 0) {
             sb.append(
@@ -251,7 +247,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
             StringBuffer toolbar     = new StringBuffer();
 
-            StringBuffer searchLinks =  makeOutputLinks(request, GsacFile.CLASS_FILE);
+            StringBuffer searchLinks = makeOutputLinks(request,
+                                           GsacFile.CLASS_FILE);
 
             for (GsacOutput output :
                     getRepository().getOutputs(GsacFile.CLASS_FILE)) {
@@ -314,7 +311,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         relatedResources.get(0)).getResourceLabel(false);
                 }
                 if (cnt == 0) {
-                    //                    pw.append(HtmlUtil.formPost(makeUrl(URL_FILE_SEARCH),
                     request.remove(ARG_OUTPUT);
                     sb.append(HtmlUtil.formPost(request.getUrl(null),
                             HtmlUtil.attr("name", "searchform")));;
@@ -331,13 +327,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     String[] labels = new String[] {
                         (includeExtraCol
                          ? ""
-                         : null), msg("Type"), msg("File"), msg(relatedLabel),
+                         : null),  msg("File"), msg("Type"), msg(relatedLabel),
                         msg("Date"), msg("File size")
                     };
                     String[] sortValues = new String[] {
                         (includeExtraCol
                          ? ""
-                         : null), SORT_FILE_TYPE, "", "",
+                         : null), "", SORT_FILE_TYPE,  "",
                         SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
                     };
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
@@ -362,6 +358,17 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(HtmlUtil.col(remoteHref));
                 }
                 sb.append("</tr></table></td>\n");
+                String href = makeResourceViewHref(resource);
+                //                sb.append(HtmlUtil.col(href));
+                String url = resource.getFileInfo().getUrl();
+                if (url != null) {
+                    String downloadHref  = HtmlUtil.href(url, HtmlUtil.img(iconUrl("/down_arrow.gif")));
+                    String tmp  = downloadHref +" "  + href;
+                    sb.append(HtmlUtil.col(tmp));
+                } else {
+                    sb.append(HtmlUtil.col("N/A"));
+                }
+
                 if (resource.getType() != null) {
                     sb.append(HtmlUtil.col(resource.getType().getName(),
                                            clickEvent));
@@ -369,15 +376,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(HtmlUtil.col("N/A", clickEvent));
                 }
 
-                String url = resource.getFileInfo().getUrl();
-                if (url != null) {
-                    sb.append(HtmlUtil.col("<a href=\"" + url + "\">"
-                                           + IOUtil.getFileTail(url)
-                                           + "</a>"));
-
-                } else {
-                    sb.append(HtmlUtil.col("N/A"));
-                }
 
                 StringBuffer relatedContent = new StringBuffer();
                 for (int relatedIdx = 0; relatedIdx < relatedResources.size();
