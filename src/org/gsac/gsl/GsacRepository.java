@@ -271,7 +271,6 @@ public class GsacRepository implements GsacConstants {
     public void initServlet(GsacServlet servlet) throws Exception {
         this.servlet = servlet;
         cmdLineProperties = servlet.getProperties();
-        System.err.println("cmd line:"+ cmdLineProperties);
         init();
     }
 
