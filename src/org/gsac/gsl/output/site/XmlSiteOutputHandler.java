@@ -52,11 +52,11 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
     /**
      * ctor
      *
-     * @param gsacServlet the servlet
+     * @param gsacRepository the repository
      */
-    public XmlSiteOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacSite.CLASS_SITE,
+    public XmlSiteOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_XML,
                                       "Site GSAC XML", "/sites.xml", true));
     }

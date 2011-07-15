@@ -103,11 +103,11 @@ public class RssFileOutputHandler extends GsacOutputHandler {
     /**
      * ctor
      *
-     * @param gsacServlet the servlet
+     * @param gsacRepository the repository
      */
-    public RssFileOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacFile.CLASS_FILE,
+    public RssFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_RSS,
                                       "File GSAC RSS", "/files.rss", true));
     }

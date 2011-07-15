@@ -48,11 +48,11 @@ public class WgetFileOutputHandler extends StreamingOutputHandler {
     /**
      * _more_
      *
-     * @param gsacServlet _more_
+     * @param gsacRepository _more_
      */
-    public WgetFileOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacFile.CLASS_FILE,
+    public WgetFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_WGET,
                                       "Wget Script", "/files.sh", true,
                                       "Wget Script"));

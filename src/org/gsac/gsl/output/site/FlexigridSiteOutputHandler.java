@@ -83,11 +83,11 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
-     * @param gsacServlet _more_
+     * @param gsacRepository _more_
      */
-    public FlexigridSiteOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacSite.CLASS_SITE,
+    public FlexigridSiteOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_FLEXIGRID,
                                       "Google Earth FLEXIGRID", false));
     }
@@ -128,7 +128,7 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
             throws Exception {
         StringBuffer sb = new StringBuffer();
         response.startResponse("text/xml");
-        getRepository().processRequest(GsacSite.CLASS_SITE, request,
+        getRepository().processRequest(getResourceClass(), request,
                                        response);
         List<GsacSite> sites = response.getSites();
         PrintWriter    pw    = response.getPrintWriter();

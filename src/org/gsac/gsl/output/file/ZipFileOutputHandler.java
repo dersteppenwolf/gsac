@@ -64,11 +64,11 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
-     * @param gsacServlet _more_
+     * @param gsacRepository _more_
      */
-    public ZipFileOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacFile.CLASS_FILE,
+    public ZipFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_ZIP,
                                       "Zip Files", "/files.zip", true,
                                       null /*"Zip Files"*/));

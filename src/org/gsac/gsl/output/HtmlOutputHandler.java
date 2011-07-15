@@ -82,10 +82,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /**
      * ctor
      *
-     * @param gsacServlet The servlet
+     * @param gsacRepository The repository
      */
-    public HtmlOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
+    public HtmlOutputHandler(GsacRepository gsacRepository) {
+        super(gsacRepository);
+    }
+
+
+    public HtmlOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
         HtmlUtil.setBlockHideShowImage(iconUrl("/minus.gif"),
                                        iconUrl("/plus.gif"));
 

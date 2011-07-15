@@ -85,10 +85,10 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
     /**
      * ctor
      *
-     * @param gsacServlet the servlet
+     * @param gsacRepository the repository
      */
-    public BrowseOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
+    public BrowseOutputHandler(GsacRepository gsacRepository) {
+        super(gsacRepository);
         checkInit();
 
         /**

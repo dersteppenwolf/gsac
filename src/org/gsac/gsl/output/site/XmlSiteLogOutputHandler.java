@@ -67,11 +67,11 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     /**
      * ctor
      *
-     * @param gsacServlet the servlet
+     * @param gsacRepository the repository
      */
-    public XmlSiteLogOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacSite.CLASS_SITE,
+    public XmlSiteLogOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository,  resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_XMLLOG,
                                       "XML Site Log", "/site.xml", true));
     }

@@ -413,25 +413,25 @@ public class GsacRepository implements GsacConstants {
      */
     public void initOutputHandlers() {
         //TODO: put the specification of the output handlers into a properties or xml file
-        htmlOutputHandler = new HtmlSiteOutputHandler(this);
-        new KmlSiteOutputHandler(this);
-        new TextSiteOutputHandler(this);
-        new RssSiteOutputHandler(this);
-        new AtomSiteOutputHandler(this);
-        new JsonSiteOutputHandler(this);
-        new XmlSiteLogOutputHandler(this);
-        new XmlSiteOutputHandler(this);
-        //        new FlexigridSiteOutputHandler(this);
+        htmlOutputHandler = new HtmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        new KmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        new TextSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        new RssSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        new AtomSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        new JsonSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        new XmlSiteLogOutputHandler(this, GsacSite.CLASS_SITE);
+        new XmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        //        new FlexigridSiteOutputHandler(this, GsacSite.CLASS_SITE);
 
-        new HtmlFileOutputHandler(this);
-        new CsvFileOutputHandler(this);
-        new DownloaderFileOutputHandler(this);
-        new WgetFileOutputHandler(this);
-        new UrlFileOutputHandler(this);
-        new JsonFileOutputHandler(this);
-        new ZipFileOutputHandler(this);
-        new RssFileOutputHandler(this);
-        new XmlFileOutputHandler(this);
+        new HtmlFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new CsvFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new DownloaderFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new WgetFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new UrlFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new JsonFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new ZipFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new RssFileOutputHandler(this, GsacFile.CLASS_FILE);
+        new XmlFileOutputHandler(this, GsacFile.CLASS_FILE);
 
         browseOutputHandler = new BrowseOutputHandler(this);
     }

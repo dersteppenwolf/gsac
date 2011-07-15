@@ -58,11 +58,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
     /**
      * _more_
      *
-     * @param gsacServlet _more_
+     * @param gsacRepository _more_
      */
-    public HtmlFileOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacFile.CLASS_FILE,
+    public HtmlFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_HTML,
                                       "File HTML"));
         //        getRepository().addOutput(OUTPUT_GROUP_FILE,new GsacOutput(this,
@@ -117,21 +117,21 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         }
 
         String uri = request.getRequestURI();
-        if (checkFormSwitch(request, response, GsacFile.CLASS_FILE)) {
+        if (checkFormSwitch(request, response, getResourceClass())) {
             return;
         }
 
         if (request.isGsacUrl(URL_FILE_FORM)) {
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_FILE_SEARCH)) {
-            getRepository().processRequest(GsacFile.CLASS_FILE, request,
+            getRepository().processRequest(getResourceClass(), request,
                                            response);
             checkMessage(request, response, sb);
             handleFileList(request, response, sb);
         } else if (request.defined(ARG_FILE_ID)) {
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
-                    GsacFile.CLASS_FILE, request.get(ARG_FILE_ID, ""));
+                    getResourceClass(), request.get(ARG_FILE_ID, ""));
             handleSingleResource(request, response, resource, sb);
         } else {
             throw new UnknownRequestException("Unknown request:" + uri);
@@ -219,7 +219,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
     public void handleSearchForm(GsacRequest request, GsacResponse response,
                                  Appendable pw)
             throws IOException, ServletException {
-        handleSearchForm(request, response, pw, GsacFile.CLASS_FILE);
+        handleSearchForm(request, response, pw, getResourceClass());
     }
 
 
@@ -248,10 +248,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             StringBuffer toolbar     = new StringBuffer();
 
             StringBuffer searchLinks = makeOutputLinks(request,
-                                           GsacFile.CLASS_FILE);
+                                           getResourceClass());
 
             for (GsacOutput output :
-                    getRepository().getOutputs(GsacFile.CLASS_FILE)) {
+                    getRepository().getOutputs(getResourceClass())) {
                 if (output.getToolbarLabel() != null) {
                     String submit = HtmlUtil.tag(HtmlUtil.TAG_INPUT,
                                         HtmlUtil.attrs(new String[] {

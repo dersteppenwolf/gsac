@@ -61,14 +61,14 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     /**
      * ctor
      *
-     * @param gsacServlet the servlet
+     * @param gsacRepository the repository
      */
-    public HtmlSiteOutputHandler(GsacRepository gsacServlet) {
-        super(gsacServlet);
-        getRepository().addOutput(GsacSite.CLASS_SITE,
+    public HtmlSiteOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
+        getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_HTML,
                                       "Site HTML"));
-        //        getRepository().addOutput(GsacSite.CLASS_SITE, new GsacOutput(this,
+        //        getRepository().addOutput(getResourceClass(), new GsacOutput(this,
         //                OUTPUT_SITE_DEFAULT, "Site Default"));
     }
 
@@ -120,7 +120,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         //        String uri = request.getRequestURI();
         String uri = request.getGsacUrlPath();
-        if (checkFormSwitch(request, response, GsacSite.CLASS_SITE)) {
+        if (checkFormSwitch(request, response, getResourceClass())) {
             return;
         }
 
@@ -143,7 +143,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
             */
             long t1 = System.currentTimeMillis();
-            getRepository().processRequest(GsacSite.CLASS_SITE, request,
+            getRepository().processRequest(getResourceClass(), request,
                                            response);
             long t2 = System.currentTimeMillis();
             checkMessage(request, response, sb);
@@ -153,7 +153,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                + (t3 - t2));
         } else if (request.defined(ARG_SITE_ID)) {
             GsacSite site = (GsacSite) getRepository().getResource(request,
-                                GsacSite.CLASS_SITE,
+                                getResourceClass(),
                                 request.get(ARG_SITE_ID, (String) null));
             handleSingleSite(request, response, sb, site);
         } else {
@@ -177,10 +177,10 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                  Appendable pw)
             throws IOException, ServletException {
 
-        handleSearchForm(request, response, pw, GsacSite.CLASS_SITE);
+        handleSearchForm(request, response, pw, getResourceClass());
         /*
 
-        ResourceClass resourceClass = GsacSite.CLASS_SITE;
+        ResourceClass resourceClass = getResourceClass();
         String url = makeUrl(URL_SITE_SEARCH);
         pw.append(HtmlUtil.formPost(url,
                                     HtmlUtil.attr("name", "searchform")));;
@@ -190,16 +190,16 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         buttons.append("<td>");
         buttons.append(HtmlUtil.submit(msg("Find Sites"), ARG_SEARCH));
         buttons.append("</td>");
-        addFormSwitchButton(request, buttons, GsacSite.CLASS_SITE);
+        addFormSwitchButton(request, buttons, getResourceClass());
         buttons.append("</tr></table>");
         pw.append(buttons.toString());
-        getSearchForm(request, pw, GsacSite.CLASS_SITE);
+        getSearchForm(request, pw, getResourceClass());
         getRepositorySelect(request, pw);
 
 
         StringBuffer resultsSB = new StringBuffer();
         resultsSB.append(HtmlUtil.formTable());
-        getOutputSelect(GsacSite.CLASS_SITE, request, resultsSB);
+        getOutputSelect(getResourceClass(), request, resultsSB);
         getLimitSelect(request, resultsSB);
         getSiteSortSelect(request, resultsSB);
         resultsSB.append(HtmlUtil.formTableClose());
@@ -262,7 +262,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
         StringBuffer searchLinks = makeOutputLinks(request,
-                                       GsacSite.CLASS_SITE);
+                                       getResourceClass());
 
 
         tabTitles.add(msg("Search Again"));

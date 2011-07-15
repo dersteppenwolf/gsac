@@ -86,6 +86,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /** flags for repository capabilities */
     private static boolean doResourceFileSize = true;
 
+    private ResourceClass resourceClass;
 
     /**
      * ctor
@@ -102,6 +103,15 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
     }
 
+
+    public GsacOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+        this.gsacRepository = gsacRepository;
+        this.resourceClass = resourceClass;
+    }
+
+    public ResourceClass getResourceClass() {
+        return resourceClass;
+    }
 
     /**
      * _more_
