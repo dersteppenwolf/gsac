@@ -340,14 +340,20 @@ public class GsacRepository implements GsacConstants {
                 break;
             }
         }
-        System.err.println("GSAC: catalina base:" + catalinaBase);
+
         if (catalinaBase != null) {
-            File catalinaConfFile = new File(catalinaBase
-                                             + "/conf/gsac.properties");
-            System.err.println("GSAC: looking for:" + catalinaConfFile);
-            if (catalinaConfFile.exists()) {
-                System.err.println("GSAC: loading " + catalinaConfFile);
-                properties.load(new FileInputStream(catalinaConfFile));
+            System.err.println("GSAC: catalina base:" + catalinaBase);
+            //Use the  url base as the tail of the local tomcat properties file
+            //in case we have different repositories running under the same tomcat
+            File[] catalinaConfFiles = {
+                new File(catalinaBase + "/conf/gsac.properties"),
+                new File(catalinaBase + "/conf/" +getUrlBase()+".properties"),};
+
+            for(File catalinaConfFile:catalinaConfFiles) {
+                if (catalinaConfFile.exists()) {
+                    System.err.println("GSAC: loading " + catalinaConfFile);
+                    properties.load(new FileInputStream(catalinaConfFile));
+                }
             }
         }
 
@@ -443,11 +449,18 @@ public class GsacRepository implements GsacConstants {
      * @param gsacDir the gsac dir
      */
     public void initLogDir(File gsacDir) {
-        logDirectory = new File(gsacDirectory.toString() + "/logs");
+        logDirectory = new File(gsacDir.toString() + "/logs");
+        System.err.println("GSAC: Logging to:" + logDirectory);
         if ( !logDirectory.exists()) {
+            System.err.println("GSAC: Making log dir:" + logDirectory);
             logDirectory.mkdir();
-            System.err.println("Logging to:" + logDirectory);
+            if(!logDirectory.exists()) {
+                System.err.println("GSAC: failed to created log directory:" + logDirectory);
+                System.err.println("GSAC: are permissions OK?");
+                return;
+            }
         }
+
         File   log4JFile = new File(logDirectory + "/" + "log4j.properties");
         String contents  = readResource("/log4j.properties");
         if (true || !log4JFile.exists()) {

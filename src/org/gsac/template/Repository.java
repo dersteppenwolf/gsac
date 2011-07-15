@@ -69,6 +69,13 @@ public class @MACRO.PREFIX@Repository extends GsacRepositoryImpl implements Gsac
         return null;
     }
 
+    public void initResourceManagers() {
+        //Override this to make your own set of resource managers
+        super.initResourceManagers();
+        //        getResourceManager(GsacSite.CLASS_SITE);
+        //        getResourceManager(GsacFile.CLASS_FILE);
+    }
+
 
     /*
      * CHANGEME Is this repository capable of certain things.

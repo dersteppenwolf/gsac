@@ -273,6 +273,21 @@ public class @MACRO.PREFIX@FileManager extends FileManager {
     }
 
 
+    public List<Capability> doGetQueryCapabilities() {
+        List<Capability> capabilities = new ArrayList<Capability>();
+        //CHANGEME
+        /*
+          you can use the default site capabilities:
+          addDefaultCapabilities(capabilities);
+          or add you own, e.g.:
+          Add in an example fruit enumerated query capability
+          String[]values = {"banana","apple","orange"};
+          Arrays.sort(values);
+          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
+        */
+        return capabilities;
+    }
+
 
 
 }
