@@ -58,11 +58,6 @@ public class GsacSite extends GsacResource implements Comparable {
     /** _more_ */
     private PoliticalLocation politicalLocation;
 
-    /** _more_ */
-    private Date fromDate;
-
-    /** _more_ */
-    private Date toDate;
 
     /**
      * ctor
@@ -235,42 +230,6 @@ public class GsacSite extends GsacResource implements Comparable {
     }
 
 
-
-    /**
-     *  Set the FromDate property.
-     *
-     *  @param value The new value for FromDate
-     */
-    public void setFromDate(Date value) {
-        fromDate = value;
-    }
-
-    /**
-     *  Get the FromDate property.
-     *
-     *  @return The FromDate
-     */
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    /**
-     *  Set the ToDate property.
-     *
-     *  @param value The new value for ToDate
-     */
-    public void setToDate(Date value) {
-        toDate = value;
-    }
-
-    /**
-     *  Get the ToDate property.
-     *
-     *  @return The ToDate
-     */
-    public Date getToDate() {
-        return toDate;
-    }
 
 
     /**

@@ -229,7 +229,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                  Appendable pw, ResourceClass resourceClass)
             throws IOException, ServletException {
 
-        pw.append(HtmlUtil.formPost(getRepository().getResourceManager(resourceClass).makeSearchUrl(),
+        GsacResourceManager resourceManager = getRepository().getResourceManager(resourceClass);
+        pw.append(HtmlUtil.formPost(resourceManager.makeSearchUrl(),
                                     HtmlUtil.attr("name", "searchform")));;
 
         String blankImg = iconUrl("/blank.gif");
@@ -239,7 +240,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
         buttons.append("<td>");
-        buttons.append(HtmlUtil.submit(msg("List Files"), ARG_SEARCH));
+        buttons.append(HtmlUtil.submit(msg("Search " + resourceManager.getResourceLabel(true) ), ARG_SEARCH));
         for (GsacOutput output :
                 getRepository().getOutputs(resourceClass)) {
             if (output.getToolbarLabel() == null) {

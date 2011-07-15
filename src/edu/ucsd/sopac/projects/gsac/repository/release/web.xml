@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+  <display-name>Sopac</display-name>
+
+  <description>
+  </description>
+  <context-param>
+    <param-name>gsac.repository.class</param-name>
+    <param-value>edu.ucsd.sopac.projects.gsac.repository.SopacRepository</param-value>
+    <description>
+    </description>
+  </context-param>
+
+  <servlet>
+    <servlet-name>GsacServlet</servlet-name>
+    <servlet-class>org.gsac.gsl.GsacServlet</servlet-class>
+  </servlet>
+
+   <!-- The mapping for the default servlet -->
+   <servlet-mapping>
+      <servlet-name>GsacServlet</servlet-name>
+      <url-pattern>/</url-pattern>
+   </servlet-mapping>
+
+</web-app>

@@ -34,6 +34,7 @@ import ucar.unidata.xml.XmlUtil;
 import java.io.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 import java.util.Hashtable;
@@ -111,8 +112,12 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         if (browseCapabilities == null) {
             List<Capability>   tmp = new ArrayList<Capability>();
             GsacRepositoryInfo gri = getRepository().getRepositoryInfo();
+            HashSet<String> seen = new HashSet<String>();
             for (CapabilityCollection collection : gri.getCollections()) {
+                ResourceClass resourceClass = collection.getResourceClass();
                 for (Capability capability : collection.getCapabilities()) {
+                    if(seen.contains(capability.getId())) continue;
+                    seen.add(capability.getId());
                     if (capability.isEnumeration()
                             || capability.getBrowse()) {
                         tmp.add(capability);
@@ -170,6 +175,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                     GsacResponse response,
                                     Capability capability)
             throws Exception {
+        ResourceClass resourceClass = capability.getResourceClass();
         String       letter = request.get(ARG_LETTER, "").toUpperCase();
         StringBuffer html   = new StringBuffer();
         initHtml(request, response, html);
@@ -190,8 +196,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                         HtmlUtil.cssClass("gsac-firstletternav")));
             } else {
                 String url = getRepository().getUrl(URL_BROWSE_BASE) + "?"
-                             + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
-                             + "=" + l;
+                    + ARG_BROWSE_WHAT + "=" + id + "&" + ARG_LETTER
+                    + "=" + l;
                 links.add(
                     HtmlUtil.href(
                         url, l, HtmlUtil.cssClass("gsac-firstletternav")));
@@ -210,15 +216,16 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
             GsacRequest searchRequest = new GsacRequest(request);
             searchRequest.put(capability.getId(), letter + "*");
             searchRequest.put(ARG_LIMIT, 10000 + "");
-            getRepository().processRequest(GsacSite.CLASS_SITE,
+            getRepository().processRequest(resourceClass,
                                            searchRequest, response);
-            List<GsacSite> sites = response.getSites();
-            if (sites.size() == 0) {
+            List<GsacResource> resources = response.getResources();
+            if (resources.size() == 0) {
                 html.append(
                     getRepository().makeInformationDialog(
                         msg("No results found")));
             } else {
-                makeSiteHtmlTable(request, html, sites);
+                //TODO: Pick the resource
+                makeSiteHtmlTable(request, html, (List<GsacSite>)new ArrayList(resources));
             }
         }
         finishHtml(request, response, html);
@@ -276,6 +283,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                                          Capability capability)
             throws Exception {
 
+        ResourceClass resourceClass = capability.getResourceClass();
         List things = capability.getEnums();
         java.util.Collections.sort(things);
         StringBuffer sb          = new StringBuffer();

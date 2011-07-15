@@ -45,6 +45,8 @@ public interface GsacArgs {
     /** _more_          */
     public static final String ARG_RESOURCE_PREFIX = "resource.";
 
+    public static final String ARG_RESOURCE_CLASS = ARG_RESOURCE_PREFIX+"class";
+
     /** _more_ */
     public static final String ARG_SITE_PREFIX = "site.";
 

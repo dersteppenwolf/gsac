@@ -51,11 +51,6 @@ public class GsacFile extends GsacResource {
     /** _more_ */
     private Date publishTime;
 
-    /** _more_ */
-    private Date startTime;
-
-    /** _more_ */
-    private Date endTime;
 
 
     /**
@@ -122,8 +117,8 @@ public class GsacFile extends GsacResource {
             addRelatedResource(relatedResource);
         }
         this.publishTime = publishTime;
-        this.startTime   = startTime;
-        this.endTime     = endTime;
+        setFromDate(startTime);
+        setToDate(endTime);
     }
 
     /**
@@ -200,42 +195,5 @@ public class GsacFile extends GsacResource {
         return publishTime;
     }
 
-
-
-    /**
-     *  Set the StartTime property.
-     *
-     *  @param value The new value for StartTime
-     */
-    public void setStartTime(Date value) {
-        startTime = value;
-    }
-
-    /**
-     *  Get the StartTime property.
-     *
-     *  @return The StartTime
-     */
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    /**
-     *  Set the EndTime property.
-     *
-     *  @param value The new value for EndTime
-     */
-    public void setEndTime(Date value) {
-        endTime = value;
-    }
-
-    /**
-     *  Get the EndTime property.
-     *
-     *  @return The EndTime
-     */
-    public Date getEndTime() {
-        return endTime;
-    }
 
 }

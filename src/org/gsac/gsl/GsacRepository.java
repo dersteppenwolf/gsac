@@ -1403,6 +1403,14 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    public ResourceClass getResourceClass(String name) {
+        for (GsacResourceManager gom : resourceManagers) {
+            if(gom.getResourceClass().getName().equals(name)) return gom.getResourceClass();
+        }
+        return null;
+    }
+
+
     /**
      * Handle the site search request
      *

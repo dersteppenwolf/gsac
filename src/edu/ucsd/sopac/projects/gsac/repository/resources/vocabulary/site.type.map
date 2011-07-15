@@ -1,0 +1,5 @@
+# map the GSAC internal site type (gnss.site.campaign) to the respective value in the
+# SITE table of the sopac db (CAMGPS)
+
+gnss.site.campaign=CAMGPS
+gnss.site.continuous=CONGPS

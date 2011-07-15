@@ -506,10 +506,10 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public String formatLatLon(GsacSite site) {
-        return formatLatLon(site.getLatitude()) + ","
-               + formatLatLon(site.getLongitude()) + ","
-               + site.getElevation();
+    public String formatLatLon(GsacResource resource) {
+        return formatLatLon(resource.getLatitude()) + ","
+               + formatLatLon(resource.getLongitude()) + ","
+               + resource.getElevation();
     }
 
 
@@ -520,9 +520,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
-    public String formatDate(GsacSite site) {
-        Date fromDate = site.getFromDate();
-        Date toDate   = site.getToDate();
+    public String formatDate(GsacResource resourcee) {
+        Date fromDate = resourcee.getFromDate();
+        Date toDate   = resourcee.getToDate();
         if ((fromDate != null) && (toDate != null)) {
             return formatDate(fromDate) + " - " + formatDate(toDate);
         } else if (fromDate != null) {

@@ -1,0 +1,39 @@
+
+So hopefully you've managed to generated the repository source package.
+
+There are a number of things you need to do.
+
+
+### Database ###
+Change dbresources/gsacdb_test.properties and dbresources/gsacdb_production.properties
+to point to your database.
+The default is Oracle. 
+If you aren't using oracle change the getDriverClassName() method in SopacDatabaseManager
+
+
+
+### Code changes ###
+The SopacStationManager and SopacResourceManager classes will need to be changed
+to implement the queries. See those classes for more details
+See the CHANGEME in the comments to see what needs to be changed. 
+
+
+### HTML ###
+Change the resources/header.html & footer.html to the html you want to use for the header and footer
+
+
+### Building ###
+To build run:
+ant
+
+The ant build targets will copy one of the db properties files to:
+resources/gsacsb.properties
+
+This builds a .zip of a stand-alone gsac server and a .war.
+Note: I have not actually tested the war file under Tomcat
+
+To run the server:
+ant runserver
+
+You can generate the Tables.java code by running:
+ant tables

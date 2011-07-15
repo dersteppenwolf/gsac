@@ -69,6 +69,11 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private EarthLocation earthLocation;
 
+    /** _more_ */
+    private Date fromDate;
+
+    /** _more_ */
+    private Date toDate;
 
 
     /**
@@ -469,6 +474,45 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     public double getElevation() {
         return getEarthLocation(true).getElevation();
     }
+
+
+    /**
+     *  Set the FromDate property.
+     *
+     *  @param value The new value for FromDate
+     */
+    public void setFromDate(Date value) {
+        fromDate = value;
+    }
+
+    /**
+     *  Get the FromDate property.
+     *
+     *  @return The FromDate
+     */
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    /**
+     *  Set the ToDate property.
+     *
+     *  @param value The new value for ToDate
+     */
+    public void setToDate(Date value) {
+        toDate = value;
+    }
+
+    /**
+     *  Get the ToDate property.
+     *
+     *  @return The ToDate
+     */
+    public Date getToDate() {
+        return toDate;
+    }
+
+
 
 
 

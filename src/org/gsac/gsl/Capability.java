@@ -22,6 +22,7 @@ package org.gsac.gsl;
 
 
 import org.gsac.gsl.util.*;
+import org.gsac.gsl.model.*;
 
 import ucar.unidata.xml.XmlUtil;
 
@@ -478,6 +479,11 @@ public class Capability {
         }
         enums = newEnums;
     }
+
+    public ResourceClass getResourceClass () {
+        return collection.getResourceClass ();
+    }
+
 
     /**
      * _more_

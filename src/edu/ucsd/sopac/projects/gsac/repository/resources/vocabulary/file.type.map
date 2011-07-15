@@ -1,0 +1,22 @@
+################################################################################################
+##data resources
+
+# these are appearing twice if we put them in resource.type.properties (coming from gsl layer)
+gnss.data.raw=gnss.data.raw
+gnss.data.rinex.observation=gnss.data.rinex.observation
+gnss.data.rinex.navigation=gnss.data.rinex.navigation
+gnss.data.rinex.meteorology=gnss.data.rinex.meteorology
+
+
+################################################################################################
+## metadata resources
+
+gnss.metadata.igs_site_log.text=gnss.metadata.igs_site_log.txt
+
+
+################################################################################################
+## product resources that have defined agency and latency prefixes in their filenames (see below)
+## more info: http://igscb.jpl.nasa.gov/components/dcnav/cddis_products_wwww.html
+
+gnss.product.sp3=gnss.product.sp3
+gnss.product.sinex=gnss.product.sinex 

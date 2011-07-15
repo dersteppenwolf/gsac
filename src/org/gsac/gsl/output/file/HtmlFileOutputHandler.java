@@ -191,9 +191,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         }
 
 
-        if (resource.getStartTime() != null) {
+        if (resource.getFromDate() != null) {
             sb.append(HtmlUtil.formEntry(msgLabel("Date"),
-                                         "" + resource.getStartTime()));
+                                         "" + resource.getToDate()));
         }
 
         if (resource.getFileInfo().getFileSize() > 0) {
@@ -397,11 +397,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
 
-                if (resource.getStartTime() == null) {
+                if (resource.getFromDate() == null) {
                     sb.append(HtmlUtil.col("N/A"));
                 } else {
-                    Date startTime = resource.getStartTime();
-                    Date endTime   = resource.getEndTime();
+                    Date startTime = resource.getFromDate();
+                    Date endTime   = resource.getToDate();
                     if ((endTime == null) || endTime.equals(startTime)) {
                         sb.append(HtmlUtil.col(formatDate(startTime),
                                 clickEvent));
