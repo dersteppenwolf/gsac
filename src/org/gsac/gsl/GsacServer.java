@@ -73,8 +73,11 @@ public class GsacServer {
             if (args[i].equals("-port")) {
                 port = new Integer(args[i + 1]).intValue();
                 i++;
+            } else if (args[i].endsWith(".properties")) {
+                properties.load(new FileInputStream(args[i]));
+                //                System.err.println ("Loading properties:" + properties);
             } else if (args[i].startsWith("-D")) {
-                //Look foe -Dproperty=value arguments
+                //Look for -Dproperty=value arguments
                 String[] toks = args[i].substring(2).split("=");
                 if (toks.length != 2) {
                     throw new IllegalArgumentException("Bad argument:"
@@ -84,7 +87,7 @@ public class GsacServer {
             }
         }
         GsacServlet              gsacServlet = doMakeServlet(port,
-                                                   properties);
+                                                             properties);
 
         Server                   server      = new Server(port);
         HandlerCollection        handlers    = new HandlerCollection();

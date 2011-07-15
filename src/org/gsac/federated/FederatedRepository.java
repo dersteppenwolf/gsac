@@ -103,7 +103,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
      */
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {
 
-        boolean doTest = true;
+        boolean doTest = false;
         //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
         //Get the comma separated list of server ids
         String serverList = getProperty("gsac.federated.servers",
@@ -121,6 +121,7 @@ public class FederatedRepository extends GsacRepositoryImpl implements GsacConst
                     "http://cddis.nasa.gov/favicon.ico"));
             */
         } else if (serverList != null) {
+            System.err.println("servers:" + serverList);
             //Look at each repository id and find the url, name and icon properties.
             //Note: We end up asking each repository for its own information so things like the
             //name and the icon can get overwritten

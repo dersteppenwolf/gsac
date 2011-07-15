@@ -194,6 +194,7 @@ public class GsacRepository implements GsacConstants {
     /** general properties */
     private Properties properties = new Properties();
 
+    private Properties cmdLineProperties;
 
     /** Make a cached list of servers. Cache for 6 hours */
     private TTLObject<List<GsacRepositoryInfo>> servers =
@@ -269,6 +270,8 @@ public class GsacRepository implements GsacConstants {
      */
     public void initServlet(GsacServlet servlet) throws Exception {
         this.servlet = servlet;
+        cmdLineProperties = servlet.getProperties();
+        System.err.println("cmd line:"+ cmdLineProperties);
         init();
     }
 
@@ -283,8 +286,7 @@ public class GsacRepository implements GsacConstants {
         //load property files first
         String[] propertyFiles = { GSAC_PATH_RESOURCES + "/gsac.properties",
                                    getLocalResourcePath("/gsac.properties"),
-                                   getLocalResourcePath(
-                                       "/gsacserver.properties") };
+                                   getLocalResourcePath("/gsacserver.properties") };
         for (String file : propertyFiles) {
             inputStream = getResourceInputStream(file);
             if (inputStream != null) {
@@ -2814,8 +2816,17 @@ public class GsacRepository implements GsacConstants {
         if (value != null) {
             return value;
         }
+        if(cmdLineProperties!=null) {
+            value = (String) cmdLineProperties.get(name);
+            if (value != null) {
+                return value;
+            }
+        }
+
         return (String) properties.get(name);
     }
+
+
 
 
     /**
