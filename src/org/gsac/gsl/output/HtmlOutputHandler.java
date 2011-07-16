@@ -66,18 +66,17 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /** help message */
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
-    /** for site table */
-    private static String[] SITE_TABLE_LABELS;
-
-    /** for site table */
-    private static String[] SITE_TABLE_SORTVALUES;
-
 
     /** _more_ */
     private static String[] NAV_LABELS;
 
     /** _more_ */
     private static String[] NAV_URLS;
+
+    /** _more_ */
+    private int tabCnt = 0;
+
+
 
     /**
      * ctor
@@ -263,7 +262,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         String blankImg = iconUrl("/blank.gif");
         //Put a blank image submit input here so any Enter key pressed does not
-        //default to a site submit button search
+        //default to a submit button search
         pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
 
         StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
@@ -1489,6 +1488,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                 boolean fullMetadata, Hashtable state)
             throws IOException {
 
+        GsacResourceManager resourceManager = getResourceManager(gsacResource);
+
+
         for (GsacMetadata metadata : metadataList) {
             processMetadata(request, pw, gsacResource, metadata,
                             fullMetadata, state);
@@ -1516,7 +1518,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     dateString =
                         HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
                             new String[] {
-                        ARG_SITE_ID, site.getSiteId(), ARG_SITE_CODE,
+                                                       resourceManager.getIdUrlArg(), site.getId(), 
+                                                       ARG_SITE_CODE,
                         site.getSiteCode(), ARG_FILE_DATADATE_FROM,
                         formatDateTime(equipment.getFromDate()),
                         ARG_FILE_DATADATE_TO,
@@ -1548,12 +1551,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                            buff.toString(), false)));
             }
         }
-
     }
 
 
-    /** _more_ */
-    private int tabCnt = 0;
 
     /**
      * _more_
@@ -1831,13 +1831,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             mapInfo = mapInfo.replace("\"", "\\\"");
             mapInfo = mapInfo.replace("/script", "\\/script");
             String url = getIconUrl(resource);
-            js.append("var siteInfo = \"" + mapInfo + "\";\n");
+            js.append("var resourceInfo = \"" + mapInfo + "\";\n");
             String entryId = resource.getId();
             entryId = cleanIdForJS(entryId);
             js.append(mapVarName + ".addMarker('" + entryId + "',"
                       + jsLLP(resource.getLatitude(),
                               resource.getLongitude()) + "," + "\"" + url
-                                  + "\"" + "," + "siteInfo);\n");
+                                  + "\"" + "," + "resourceInfo);\n");
         }
         return js.toString();
     }
@@ -1973,16 +1973,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void makeSiteHtmlTable(GsacRequest request, StringBuffer sb,
                                   List<GsacSite> sites) {
 
-        if ((sites.size() > 0) && (SITE_TABLE_LABELS == null)) {
+        if (sites.size() == 0) {
+            return;
+        }
+
+        String[] TABLE_LABELS = null;
+        
+        String[] TABLE_SORTVALUES = null;
+
+        if (TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
             String remoteHref = getRepository().getRemoteHref(sites.get(0));
-            if (remoteHref.length() > 0) {
-                //                labels.add("");
-                //                sortValues.add("");
-            }
-            //            labels.add("");
-            //            sortValues.add("");
             labels.add(msg("Site Code").replace(" ", "&nbsp;"));
             sortValues.add(SORT_SITE_CODE);
             labels.add(msg("Name"));
@@ -1997,39 +1999,40 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 labels.add(msg("Groups"));
                 sortValues.add("");
             }
-            SITE_TABLE_LABELS     = Misc.listToStringArray(labels);
-            SITE_TABLE_SORTVALUES = Misc.listToStringArray(sortValues);
+            TABLE_LABELS     = Misc.listToStringArray(labels);
+            TABLE_SORTVALUES = Misc.listToStringArray(sortValues);
         }
 
 
         int cnt = 0;
         for (GsacSite site : sites) {
+            GsacResourceManager resourceManager = getResourceManager(site);
             if (cnt++ == 0) {
                 try {
-                    String url = getResourceManager(site).makeSearchUrl();
+                    String url = resourceManager.makeSearchUrl();
                     sb.append(HtmlUtil.formPost(url,
                             HtmlUtil.attr("name", "searchform")));;
-                    sb.append(HtmlUtil.submit(msg("View Selected Sites"),
-                            ARG_SEARCH));
+                    sb.append(HtmlUtil.submit(msg("View Selected " + resourceManager.getResourceLabel(true)),
+                                              ARG_SEARCH));
                     sb.append(HtmlUtil.space(2));
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
                     makeSortHeader(request, sb, ARG_SITE_PREFIX,
-                                   SITE_TABLE_LABELS, SITE_TABLE_SORTVALUES);
+                                   TABLE_LABELS, TABLE_SORTVALUES);
                 } catch (Exception exc) {
                     throw new RuntimeException(exc);
                 }
             }
 
+            String idUrlArg = resourceManager.getIdUrlArg();
 
             String href = makeResourceViewHref(site);
-
-            openEntryRow(sb, site.getSiteId(), URL_SITE_VIEW, ARG_SITE_ID);
-            String cbx = HtmlUtil.checkbox(ARG_SITE_ID, site.getSiteId(),
+            openEntryRow(sb, site.getId(), URL_SITE_VIEW, idUrlArg);
+            String cbx = HtmlUtil.checkbox(idUrlArg, site.getId(),
                                            false);
 
-            String clickEvent = getEntryEventJS(site.getSiteId(),
-                                    URL_SITE_VIEW, ARG_SITE_ID)[1];
+            String clickEvent = getEntryEventJS(site.getId(),
+                                    URL_SITE_VIEW, idUrlArg)[1];
             sb.append(HtmlUtil.col(cbx));
             String remoteHref = getRepository().getRemoteHref(site);
             if (remoteHref.length() > 0) {
@@ -2055,9 +2058,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             sb.append("<td " + clickEvent + ">");
             if (site.getFromDate() != null) {
-                sb.append(formatDate(site.getFromDate()));
-                sb.append(" - ");
-                sb.append(formatDate(site.getToDate()));
+                sb.append(formatDate(site));
             } else {
                 sb.append("N/A");
             }
@@ -2065,15 +2066,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             if (getDoResourceGroup()) {
                 sb.append(HtmlUtil.col(getGroupHtml(site.getResourceGroups(),
-                        site.getResourceClass(), true) + "&nbsp;"));
+                                                    site.getResourceClass(), true) + "&nbsp;"));
             }
-
             sb.append("</tr>\n");
         }
-        if (cnt > 0) {
-            sb.append("</table>");
-            sb.append(HtmlUtil.formClose());
-        }
+        sb.append("</table>");
+        sb.append(HtmlUtil.formClose());
     }
 
 

@@ -46,11 +46,7 @@ public class GsacFile extends GsacResource {
     private FileInfo fileInfo;
 
     /** _more_ */
-    private String siteID;
-
-    /** _more_ */
     private Date publishTime;
-
 
 
     /**
@@ -164,23 +160,6 @@ public class GsacFile extends GsacResource {
     }
 
 
-    /**
-     *  Set the Site property.
-     *
-     *  @param value The new value for Site
-     */
-    public void xsetSiteID(String value) {
-        siteID = value;
-    }
-
-    /**
-     *  Get the Site property.
-     *
-     *  @return The Site
-     */
-    public String xgetSiteID() {
-        return siteID;
-    }
 
     /**
      *  Set the PublishTime property.

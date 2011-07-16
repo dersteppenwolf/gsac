@@ -139,17 +139,6 @@ public class GsacSite extends GsacResource implements Comparable {
     }
 
 
-
-
-    /**
-     *  Get the SiteId property.
-     *
-     *  @return The SiteId
-     */
-    public String getSiteId() {
-        return super.getId();
-    }
-
     /**
      * get the label used to display this site. It is either the site code
      * concatenated with the secondarySiteCode or just the site code

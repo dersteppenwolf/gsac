@@ -3136,33 +3136,4 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     *
-     * @throws Exception _more_
-     */
-    public static final void main(String[] args) throws Exception {
-        String[] urls = {
-            "http://localhost:8080/gsacfederated/gsacapi/site/search/sites.csv?output=site.csv&site.code=p1*&gsac.repository=http://cddis.gsfc.nasa.gov/gsacws&gsac.repository=http://facdev.unavco.org:9090/gsacws&gsac.repository=http://geoappdev02.ucsd.edu/gsacws&limit=1000&site.interval=interval.normal"
-            //            "http://localhost:8080/gsacws/gsacapi/site/search/sites.json?output=site.json&limit=10000&site.interval=interval.normal&site.sortorder=ascending"
-            //            "http://localhost:8080/gsacws/gsacapi/site/search?site.group=Aegean+1989",
-            //            "http://localhost:8080/gsacws/gsacapi/site/view?site.id=15896_5340_0",
-            //            "http://localhost:8080/gsacws/gsacapi/site/search?site.status=decomissioned",
-            //            "http://localhost:8080/gsacws/gsacapi/site/search?site.monument=deep+foundation+mast",
-            //            "http://localhost:8080/gsacws/gsacapi/file/search/resources.csv?output=resource.csv&resource.sortorder=ascending&site.code=p123&limit=1000&resource.datadate.to=2011-03-04&resource.datadate.from=2011-03-01&site.interval=interval.normal",
-        };
-        for (int i = 0; i < 1000; i++) {
-            for (String url : urls) {
-                System.out.println(i);
-                IOUtil.readContents(url);
-            }
-        }
-    }
-
-
-
-
 }

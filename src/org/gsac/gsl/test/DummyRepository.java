@@ -135,7 +135,7 @@ public class DummyRepository extends GsacRepositoryImpl {
      */
     private void addSite(GsacSite site) {
         sites.add(site);
-        siteMap.put(site.getSiteId(), site);
+        siteMap.put(site.getId(), site);
     }
 
 

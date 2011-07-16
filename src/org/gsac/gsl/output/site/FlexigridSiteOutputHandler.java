@@ -139,7 +139,7 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
         for (GsacSite site : sites) {
             Element row = XmlUtil.create(doc, TAG_ROW, root,
                                          new String[] { ATTR_ID,
-                    site.getSiteId() });
+                    site.getId() });
             String href = makeResourceViewHref(site);
             makeCell(row, href);
             makeCell(row, site.getName());
