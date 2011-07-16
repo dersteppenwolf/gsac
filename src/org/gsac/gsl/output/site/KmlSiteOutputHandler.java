@@ -63,9 +63,11 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
      * _more_
      *
      * @param gsacRepository _more_
+     * @param resourceClass _more_
      */
-    public KmlSiteOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
-        super(gsacRepository,  resourceClass);
+    public KmlSiteOutputHandler(GsacRepository gsacRepository,
+                                ResourceClass resourceClass) {
+        super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_KML,
                                       "Google Earth KML", "/sites.kml",
@@ -110,8 +112,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer sb = new StringBuffer();
         response.startResponse(GsacResponse.MIME_KML);
-        getRepository().processRequest(getResourceClass(), request,
-                                       response);
+        getRepository().processRequest(getResourceClass(), request, response);
         PrintWriter pw     = response.getPrintWriter();
         Element     root   = KmlUtil.kml("Site Search");
         Element     doc    = KmlUtil.document(root, "Sites", true);

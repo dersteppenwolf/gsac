@@ -20,12 +20,14 @@
 
 package org.gsac.gsl.model;
 
-import ucar.unidata.util.IOUtil;
+
 import org.gsac.gsl.GsacArgs;
 import org.gsac.gsl.GsacConstants;
 
 
 import org.gsac.gsl.util.*;
+
+import ucar.unidata.util.IOUtil;
 
 import java.util.Date;
 
@@ -126,6 +128,11 @@ public class GsacFile extends GsacResource {
         return this.fileInfo.toString();
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getLabel() {
         return IOUtil.getFileTail(fileInfo.getUrl());
     }

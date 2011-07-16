@@ -104,8 +104,10 @@ public class RssFileOutputHandler extends GsacOutputHandler {
      * ctor
      *
      * @param gsacRepository the repository
+     * @param resourceClass _more_
      */
-    public RssFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public RssFileOutputHandler(GsacRepository gsacRepository,
+                                ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_RSS,

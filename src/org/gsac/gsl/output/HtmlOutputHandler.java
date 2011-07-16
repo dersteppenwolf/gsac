@@ -88,7 +88,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
-    public HtmlOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    /**
+     * _more_
+     *
+     * @param gsacRepository _more_
+     * @param resourceClass _more_
+     */
+    public HtmlOutputHandler(GsacRepository gsacRepository,
+                             ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         HtmlUtil.setBlockHideShowImage(iconUrl("/minus.gif"),
                                        iconUrl("/plus.gif"));
@@ -1454,9 +1461,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         List<ResourceGroup> groups = resource.getResourceGroups();
         if (groups.size() > 0) {
             pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
-                                                     ? "Group"
-                                                     : "Groups"), getGroupHtml(groups,
-                                                                               resource.getResourceClass(), false)));
+                    ? "Group"
+                    : "Groups"), getGroupHtml(groups,
+                    resource.getResourceClass(), false)));
         }
 
 
@@ -1488,7 +1495,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                 boolean fullMetadata, Hashtable state)
             throws IOException {
 
-        GsacResourceManager resourceManager = getResourceManager(gsacResource);
+        GsacResourceManager resourceManager =
+            getResourceManager(gsacResource);
 
 
         for (GsacMetadata metadata : metadataList) {
@@ -1518,9 +1526,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     dateString =
                         HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
                             new String[] {
-                                                       resourceManager.getIdUrlArg(), site.getId(), 
-                                                       ARG_SITE_CODE,
-                        site.getSiteCode(), ARG_FILE_DATADATE_FROM,
+                        resourceManager.getIdUrlArg(), site.getId(),
+                        ARG_SITE_CODE, site.getSiteCode(),
+                        ARG_FILE_DATADATE_FROM,
                         formatDateTime(equipment.getFromDate()),
                         ARG_FILE_DATADATE_TO,
                         formatDateTime(equipment.getToDate())
@@ -1977,8 +1985,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return;
         }
 
-        String[] TABLE_LABELS = null;
-        
+        String[] TABLE_LABELS     = null;
+
         String[] TABLE_SORTVALUES = null;
 
         if (TABLE_LABELS == null) {
@@ -2012,8 +2020,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     String url = resourceManager.makeSearchUrl();
                     sb.append(HtmlUtil.formPost(url,
                             HtmlUtil.attr("name", "searchform")));;
-                    sb.append(HtmlUtil.submit(msg("View Selected " + resourceManager.getResourceLabel(true)),
-                                              ARG_SEARCH));
+                    sb.append(
+                        HtmlUtil.submit(
+                            msg(
+                            "View Selected "
+                            + resourceManager.getResourceLabel(
+                                true)), ARG_SEARCH));
                     sb.append(HtmlUtil.space(2));
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
@@ -2026,13 +2038,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             String idUrlArg = resourceManager.getIdUrlArg();
 
-            String href = makeResourceViewHref(site);
+            String href     = makeResourceViewHref(site);
             openEntryRow(sb, site.getId(), URL_SITE_VIEW, idUrlArg);
-            String cbx = HtmlUtil.checkbox(idUrlArg, site.getId(),
-                                           false);
+            String cbx = HtmlUtil.checkbox(idUrlArg, site.getId(), false);
 
-            String clickEvent = getEntryEventJS(site.getId(),
-                                    URL_SITE_VIEW, idUrlArg)[1];
+            String clickEvent = getEntryEventJS(site.getId(), URL_SITE_VIEW,
+                                    idUrlArg)[1];
             sb.append(HtmlUtil.col(cbx));
             String remoteHref = getRepository().getRemoteHref(site);
             if (remoteHref.length() > 0) {
@@ -2066,7 +2077,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             if (getDoResourceGroup()) {
                 sb.append(HtmlUtil.col(getGroupHtml(site.getResourceGroups(),
-                                                    site.getResourceClass(), true) + "&nbsp;"));
+                        site.getResourceClass(), true) + "&nbsp;"));
             }
             sb.append("</tr>\n");
         }

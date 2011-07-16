@@ -194,6 +194,7 @@ public class GsacRepository implements GsacConstants {
     /** general properties */
     private Properties properties = new Properties();
 
+    /** _more_          */
     private Properties cmdLineProperties;
 
     /** Make a cached list of servers. Cache for 6 hours */
@@ -269,7 +270,7 @@ public class GsacRepository implements GsacConstants {
      * @throws Exception On badness
      */
     public void initServlet(GsacServlet servlet) throws Exception {
-        this.servlet = servlet;
+        this.servlet      = servlet;
         cmdLineProperties = servlet.getProperties();
         init();
     }
@@ -285,7 +286,8 @@ public class GsacRepository implements GsacConstants {
         //load property files first
         String[] propertyFiles = { GSAC_PATH_RESOURCES + "/gsac.properties",
                                    getLocalResourcePath("/gsac.properties"),
-                                   getLocalResourcePath("/gsacserver.properties") };
+                                   getLocalResourcePath(
+                                       "/gsacserver.properties") };
         for (String file : propertyFiles) {
             inputStream = getResourceInputStream(file);
             if (inputStream != null) {
@@ -345,11 +347,13 @@ public class GsacRepository implements GsacConstants {
             System.err.println("GSAC: catalina base:" + catalinaBase);
             //Use the  url base as the tail of the local tomcat properties file
             //in case we have different repositories running under the same tomcat
-            File[] catalinaConfFiles = {
-                new File(catalinaBase + "/conf/gsac.properties"),
-                new File(catalinaBase + "/conf/" +getUrlBase()+".properties"),};
+            File[] catalinaConfFiles = { new File(catalinaBase
+                                           + "/conf/gsac.properties"),
+                                         new File(catalinaBase + "/conf/"
+                                             + getUrlBase()
+                                             + ".properties"), };
 
-            for(File catalinaConfFile:catalinaConfFiles) {
+            for (File catalinaConfFile : catalinaConfFiles) {
                 if (catalinaConfFile.exists()) {
                     System.err.println("GSAC: loading " + catalinaConfFile);
                     properties.load(new FileInputStream(catalinaConfFile));
@@ -418,7 +422,8 @@ public class GsacRepository implements GsacConstants {
      */
     public void initOutputHandlers() {
         //TODO: put the specification of the output handlers into a properties or xml file
-        htmlOutputHandler = new HtmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
+        htmlOutputHandler = new HtmlSiteOutputHandler(this,
+                GsacSite.CLASS_SITE);
         new KmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
         new TextSiteOutputHandler(this, GsacSite.CLASS_SITE);
         new RssSiteOutputHandler(this, GsacSite.CLASS_SITE);
@@ -454,8 +459,9 @@ public class GsacRepository implements GsacConstants {
         if ( !logDirectory.exists()) {
             System.err.println("GSAC: Making log dir:" + logDirectory);
             logDirectory.mkdir();
-            if(!logDirectory.exists()) {
-                System.err.println("GSAC: failed to created log directory:" + logDirectory);
+            if ( !logDirectory.exists()) {
+                System.err.println("GSAC: failed to created log directory:"
+                                   + logDirectory);
                 System.err.println("GSAC: are permissions OK?");
                 return;
             }
@@ -2828,7 +2834,7 @@ public class GsacRepository implements GsacConstants {
         if (value != null) {
             return value;
         }
-        if(cmdLineProperties!=null) {
+        if (cmdLineProperties != null) {
             value = (String) cmdLineProperties.get(name);
             if (value != null) {
                 return value;

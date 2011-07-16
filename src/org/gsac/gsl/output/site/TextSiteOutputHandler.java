@@ -55,8 +55,10 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      * _more_
      *
      * @param gsacRepository _more_
+     * @param resourceClass _more_
      */
-    public TextSiteOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public TextSiteOutputHandler(GsacRepository gsacRepository,
+                                 ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_CSV,

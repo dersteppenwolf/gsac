@@ -87,7 +87,7 @@ public class GsacServer {
             }
         }
         GsacServlet              gsacServlet = doMakeServlet(port,
-                                                             properties);
+                                                   properties);
 
         Server                   server      = new Server(port);
         HandlerCollection        handlers    = new HandlerCollection();

@@ -57,8 +57,10 @@ public class JsonFileOutputHandler extends GsacOutputHandler {
      * ctor
      *
      * @param gsacRepository servlet
+     * @param resourceClass _more_
      */
-    public JsonFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public JsonFileOutputHandler(GsacRepository gsacRepository,
+                                 ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_JSON,

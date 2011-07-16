@@ -42,8 +42,10 @@ public abstract class StreamingOutputHandler extends GsacOutputHandler {
      * _more_
      *
      * @param gsacRepository _more_
+     * @param resourceClass _more_
      */
-    public StreamingOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public StreamingOutputHandler(GsacRepository gsacRepository,
+                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
     }
 

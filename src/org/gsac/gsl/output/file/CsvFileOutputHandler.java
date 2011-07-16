@@ -53,8 +53,10 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
      * _more_
      *
      * @param gsacRepository _more_
+     * @param resourceClass _more_
      */
-    public CsvFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public CsvFileOutputHandler(GsacRepository gsacRepository,
+                                ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_CSV,

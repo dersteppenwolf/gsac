@@ -59,8 +59,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
      * _more_
      *
      * @param gsacRepository _more_
+     * @param resourceClass _more_
      */
-    public HtmlFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public HtmlFileOutputHandler(GsacRepository gsacRepository,
+                                 ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_HTML,
@@ -179,8 +181,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 getResourceManager(relatedResource).getResourceLabel(false);
             String resourceUrl = makeResourceViewUrl(relatedResource);
             sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
-                                         "<a href=\"" + resourceUrl
-                                         + "\">"
+                                         "<a href=\"" + resourceUrl + "\">"
                                          + relatedResource.getLongLabel()
                                          + "</a>"));
         }
@@ -188,7 +189,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         if (resource.getFromDate() != null) {
             String dateString = formatDate(resource);
-            sb.append(formEntry(request, msgLabel(resource.getToDate()!=null?"Date Range":"Date"), dateString));
+            sb.append(formEntry(request,
+                                msgLabel((resource.getToDate() != null)
+                                         ? "Date Range"
+                                         : "Date"), dateString));
         }
 
 
@@ -327,13 +331,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     String[] labels = new String[] {
                         (includeExtraCol
                          ? ""
-                         : null),  msg("File"), msg("Type"), msg(relatedLabel),
+                         : null), msg("File"), msg("Type"), msg(relatedLabel),
                         msg("Date"), msg("File size")
                     };
                     String[] sortValues = new String[] {
                         (includeExtraCol
                          ? ""
-                         : null), "", SORT_FILE_TYPE,  "",
+                         : null), "", SORT_FILE_TYPE, "",
                         SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
                     };
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
@@ -362,8 +366,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 //                sb.append(HtmlUtil.col(href));
                 String url = resource.getFileInfo().getUrl();
                 if (url != null) {
-                    String downloadHref  = HtmlUtil.href(url, HtmlUtil.img(iconUrl("/down_arrow.gif")));
-                    String tmp  = downloadHref +" "  + href;
+                    String downloadHref = HtmlUtil.href(
+                                              url,
+                                              HtmlUtil.img(
+                                                  iconUrl(
+                                                      "/down_arrow.gif")));
+                    String tmp = downloadHref + " " + href;
                     sb.append(HtmlUtil.col(tmp));
                 } else {
                     sb.append(HtmlUtil.col("N/A"));

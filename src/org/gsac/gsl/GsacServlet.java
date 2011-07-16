@@ -445,6 +445,11 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public Properties getProperties() {
         return properties;
     }

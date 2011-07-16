@@ -53,8 +53,10 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
      * ctor
      *
      * @param gsacRepository servlet
+     * @param resourceClass _more_
      */
-    public DownloaderFileOutputHandler(GsacRepository gsacRepository, ResourceClass resourceClass) {
+    public DownloaderFileOutputHandler(GsacRepository gsacRepository,
+                                       ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         GsacOutput output;
         getRepository().addOutput(getResourceClass(),
