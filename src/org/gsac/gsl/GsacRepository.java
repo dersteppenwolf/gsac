@@ -72,7 +72,7 @@ import javax.servlet.http.*;
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
-public class GsacRepository implements GsacConstants {
+public  class GsacRepository implements GsacConstants {
 
     /** gsac java package path prefix */
     public static final String GSAC_PATH_ROOT = "/org/gsac/gsl";
@@ -108,18 +108,6 @@ public class GsacRepository implements GsacConstants {
     /** property name for the repository description */
     public static final String PROP_REPOSITORY_DESCRIPTION =
         "gsac.repository.description";
-
-
-    /** cache id */
-    private static final String PROP_SITECAPABILITIES =
-        "prop.sitecapabilities";
-
-    /** cache id */
-    private static final String PROP_FILECAPABILITIES =
-        "prop.filecapabilities";
-
-    /** cache id */
-    private static final String PROP_FILETYPES = "prop.filetypes";
 
     /**
      * property for host name. This is the external host name that is used for things like kml, etc,
@@ -170,10 +158,6 @@ public class GsacRepository implements GsacConstants {
     private List<GsacResourceManager> resourceManagers =
         new ArrayList<GsacResourceManager>();
 
-
-    /** caches site group and types, etc. */
-    private TTLCache<String, Object> cache =
-        new TTLCache<String, Object>(TTLCache.MS_IN_AN_HOUR * 6);
 
     /** html header. Initialize in initServlet */
     private String htmlHeader = "<html><body>";
@@ -1440,7 +1424,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * Handle the site search request
+     * Handle the request
      *
      *
      * @param resourceClass Type of resource
@@ -1576,7 +1560,7 @@ public class GsacRepository implements GsacConstants {
      * to the internal values used by the derived repository.
      *
      *
-     * @param type vocabulary type (e.g., site.antenna)
+     * @param type vocabulary type 
      *
      * @return the new vocabulary object
      */
@@ -1787,8 +1771,9 @@ public class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public GsacResourceManager doMakeResourceManager(
-            ResourceClass resourceClass) {
+    public  GsacResourceManager doMakeResourceManager(ResourceClass resourceClass) {
+        return null;
+        /*
         if (resourceClass.equals(GsacSite.CLASS_SITE)) {
             return new SiteManager(this) {
                 public GsacResource getResource(String resourceId)
@@ -1808,7 +1793,7 @@ public class GsacRepository implements GsacConstants {
                 }
             };
         }
-        return null;
+        return null;*/
     }
 
 
@@ -1872,27 +1857,27 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * This should be overwritten by derived classes to create the site
+     * This should be overwritten by derived classes to create the resource
      *
      *
      * @param type _more_
-     * @param siteId site id
+     * @param resourceId resource id
      *
-     * @return site
+     * @return the resource
      *
      * @throws Exception on badnesss
      */
-    public GsacResource doGetResource(ResourceClass type, String siteId)
+    public GsacResource doGetResource(ResourceClass type, String resourceId)
             throws Exception {
         GsacResourceManager gom = getResourceManager(type);
-        return gom.getResource(siteId);
+        return gom.getResource(resourceId);
     }
 
     /**
-     * This gets called by OutputHandlers when they need all of the metadata for a site
-     * If the given site resource has all of its metadata already then this method just returns.
+     * This gets called by OutputHandlers when they need all of the metadata for a resource
+     * If the given  resource has all of its metadata already then this method just returns.
      * Else the method doGetFillMetadata is called. A repository implementation can overwrite
-     * this method to add the full metadata to the site
+     * this method to add the full metadata to the resource
      *
      *
      * @param request the request
@@ -1936,10 +1921,9 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * Clear the site cache
+     * Clear the cache
      */
     public void clearCache() {
-        cache = new TTLCache<String, Object>(TTLCache.MS_IN_AN_HOUR * 6);
         for (GsacResourceManager gom : resourceManagers) {
             gom.clearCache();
         }
@@ -2429,9 +2413,9 @@ public class GsacRepository implements GsacConstants {
         tmp = new StringBuffer();
 
         String[] args = { ARG_LIMIT, ARG_OFFSET, ARG_GZIP };
-        String[] descs = { "Number of returned sites or resources, e.g., "
+        String[] descs = { "Number of returned results, e.g., "
                            + ARG_LIMIT + "=2000",
-                           "Get next set of sites or resources, e.g., "
+                           "Get next set of results, e.g., "
                            + ARG_OFFSET + "=2000",
                            "GZIP the results, e.g. " + ARG_GZIP + "=true" };
 

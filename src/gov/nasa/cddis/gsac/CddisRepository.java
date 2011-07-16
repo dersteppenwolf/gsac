@@ -31,7 +31,7 @@ import org.gsac.gsl.util.*;
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
-public class CddisRepository extends GsacRepositoryImpl implements GsacConstants {
+public class CddisRepository extends GsacRepository implements GsacConstants {
 
 
     /**

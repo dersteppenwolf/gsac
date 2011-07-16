@@ -52,7 +52,7 @@ import java.util.concurrent.*;
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
-public class FederatedRepository extends GsacRepositoryImpl implements GsacConstants {
+public class FederatedRepository extends GsacRepository implements GsacConstants {
 
 
     /** Seconds to wait for all requests to finish */

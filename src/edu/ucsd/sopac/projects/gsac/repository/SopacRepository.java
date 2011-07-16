@@ -15,7 +15,7 @@ import org.gsac.gsl.util.*;
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
-public class SopacRepository extends GsacRepositoryImpl implements GsacConstants {
+public class SopacRepository extends GsacRepository implements GsacConstants {
 
     /** url path before the /gsacws/...  */
     private String urlBase = "";

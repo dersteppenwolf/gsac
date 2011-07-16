@@ -41,7 +41,7 @@ import java.util.List;
 
 
 /**
- * Handles all of the site related repository requests. If you are using the GsacRepositoryImpl/SiteManager
+ * Handles all of the site related repository requests. If you are using the GsacRepository/SiteManager
  * functionality then there are a minimum of 2 methods you need to overwrite:<br>
  * {@link #getSite} and {@link #handleSiteRequest}
  * This class has a default implementation of handleSiteRequest. To use this you need to

@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author    Jeff McWhirter (mcwhirter@unavco.org)
  */
-public class DummyRepository extends GsacRepositoryImpl {
+public abstract class DummyRepository extends GsacRepository {
 
     /** _more_ */
     private String urlBase = "";

@@ -15,7 +15,7 @@ import org.gsac.gsl.util.*;
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
  */
-public class @MACRO.PREFIX@Repository extends GsacRepositoryImpl implements GsacConstants {
+public class @MACRO.PREFIX@Repository extends GsacRepository implements GsacConstants {
 
     /**
      * ctor
