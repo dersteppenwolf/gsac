@@ -68,6 +68,12 @@ used by the javadoc target
       <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
     </target>
 
+
+    <target name="sopac" depends="init">
+      <echo message="Building SOPAC"/>
+      <ant antfile="${srcdir}/edu/ucsd/sopac/projects/gsac/repository/build.xml" inheritAll="false"/>
+    </target>
+
     <target name="client" depends="init">
       <echo message="Building GSAC client"/>
       <ant antfile="${srcdir}/org/gsac/client/build.xml" inheritAll="false"/>
