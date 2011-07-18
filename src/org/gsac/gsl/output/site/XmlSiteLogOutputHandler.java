@@ -187,9 +187,9 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
 
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_SITENAME, "",
-                              site.getName()));
+                              site.getLongName()));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FOURCHARACTERID, "",
-                              site.getSiteCode()));
+                              site.getShortName()));
         Date date = site.getFromDate();
         if (date != null) {
             pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_DATEINSTALLED, "",

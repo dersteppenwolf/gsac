@@ -47,9 +47,6 @@ public class GsacFile extends GsacResource {
     /** _more_ */
     private FileInfo fileInfo;
 
-    /** _more_ */
-    private Date publishTime;
-
 
     /**
      * ctor
@@ -114,9 +111,11 @@ public class GsacFile extends GsacResource {
         if (relatedResource != null) {
             addRelatedResource(relatedResource);
         }
-        this.publishTime = publishTime;
+        setPublishTime(publishTime);
         setFromDate(startTime);
         setToDate(endTime);
+        setShortName(IOUtil.getFileTail(fileInfo.getUrl()));
+        setLongName(fileInfo.getUrl());
     }
 
     /**
@@ -126,15 +125,6 @@ public class GsacFile extends GsacResource {
      */
     public String toString() {
         return this.fileInfo.toString();
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getLabel() {
-        return IOUtil.getFileTail(fileInfo.getUrl());
     }
 
 
@@ -164,26 +154,6 @@ public class GsacFile extends GsacResource {
      */
     public FileInfo getFileInfo() {
         return fileInfo;
-    }
-
-
-
-    /**
-     *  Set the PublishTime property.
-     *
-     *  @param value The new value for PublishTime
-     */
-    public void setPublishTime(Date value) {
-        publishTime = value;
-    }
-
-    /**
-     *  Get the PublishTime property.
-     *
-     *  @return The PublishTime
-     */
-    public Date getPublishTime() {
-        return publishTime;
     }
 
 

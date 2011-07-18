@@ -156,7 +156,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                                     site.getLabel(), html.toString(),
                                     site.getLatitude(), site.getLongitude(),
                                     0, styleId);
-            KmlUtil.snippet(placemark, site.getName());
+            KmlUtil.snippet(placemark, site.getShortName());
         }
         //      System.err.println("xml:" +  XmlUtil.toString(root));
         XmlUtil.toString(root, pw);

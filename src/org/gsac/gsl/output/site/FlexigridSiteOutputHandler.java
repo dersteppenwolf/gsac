@@ -143,16 +143,17 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
                     site.getId() });
             String href = makeResourceViewHref(site);
             makeCell(row, href);
-            makeCell(row, site.getName());
+            makeCell(row, site.getShortName());
             makeCell(row, site.getType().getName());
             makeCell(row, formatLatLon(site));
             makeCell(row, formatDate(site));
-            if (getDoResourceGroup()) {
-                List<ResourceGroup> groups = site.getResourceGroups();
-                makeCell(row,
-                         getGroupHtml(groups, site.getResourceClass(),
-                                      false));
-            }
+            //TODO:
+            //            if (getDoResourceGroup()) {
+            //                List<ResourceGroup> groups = site.getResourceGroups();
+            //                makeCell(row,
+            //                         getGroupHtml(groups, site.getResourceClass(),
+            //                                      false));
+            //            }
             /*
             Element         groupElement = folder;
             List<ResourceGroup> groups       = site.getResourceGroups();

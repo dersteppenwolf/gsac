@@ -110,7 +110,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                       "" + el.getLongitude()));
                                       }*/
             //TODO: add georss
-            pw.append(AtomUtil.makeEntry(site.getSiteCode(), url,
+            pw.append(AtomUtil.makeEntry(site.getShortName(), url,
                                          site.getToDate(), site.getLabel(),
                                          null, new String[][] {}));
         }

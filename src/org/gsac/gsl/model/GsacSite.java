@@ -44,20 +44,8 @@ public class GsacSite extends GsacResource implements Comparable {
     /** _more_ */
     public static final ResourceClass CLASS_SITE = new ResourceClass("site");
 
-    /** This is the site identifier that users are used to. e.g., P123 */
-    private String siteCode;
-
-    /** This can be used for a monument ID */
-    private String secondarySiteCode;
-
-
-    /** site name */
-    private String name;
-
-
     /** _more_ */
     private PoliticalLocation politicalLocation;
-
 
     /**
      * ctor
@@ -72,9 +60,7 @@ public class GsacSite extends GsacResource implements Comparable {
      * @param name _more_
      */
     public GsacSite(String siteId, String siteCode, String name) {
-        super(siteId);
-        this.siteCode = siteCode;
-        this.name     = name;
+        super(siteId, null, siteCode, name);
     }
 
 
@@ -105,9 +91,7 @@ public class GsacSite extends GsacResource implements Comparable {
      */
     public GsacSite(String siteId, String siteCode, String name,
                     ResourceType type, EarthLocation location) {
-        super(siteId, type);
-        this.siteCode = siteCode;
-        this.name     = name;
+        super(siteId, type, siteCode, name);
         setEarthLocation(location);
     }
 
@@ -135,21 +119,17 @@ public class GsacSite extends GsacResource implements Comparable {
                     + object.getClass().getName());
         }
         GsacSite that = (GsacSite) object;
-        return this.siteCode.compareTo(that.siteCode);
+        return this.getShortName().compareTo(that.getShortName());
     }
 
 
     /**
-     * get the label used to display this site. It is either the site code
-     * concatenated with the secondarySiteCode or just the site code
+     * get the label used to display this site.
      *
      * @return display label
      */
     public String getLabel() {
-        if (secondarySiteCode != null) {
-            return getSiteCode() + " - " + getSecondarySiteCode();
-        }
-        return getSiteCode();
+        return getShortName();
     }
 
     /**
@@ -158,46 +138,8 @@ public class GsacSite extends GsacResource implements Comparable {
      * @return _more_
      */
     public String getLongLabel() {
-        return getName() + " " + getLabel() + " (" + getSiteCode() + ")";
+        return getLongName() + " " + getLabel();
     }
-
-
-    /**
-     *  Set the SiteCode property.
-     *
-     *  @param value The new value for SiteCode
-     */
-    public void setSiteCode(String value) {
-        siteCode = value;
-    }
-
-    /**
-     *  Get the SiteCode property.
-     *
-     *  @return The SiteCode
-     */
-    public String getSiteCode() {
-        return siteCode;
-    }
-
-    /**
-     *  Set the Name property.
-     *
-     *  @param value The new value for Name
-     */
-    public void setName(String value) {
-        name = value;
-    }
-
-    /**
-     *  Get the Name property.
-     *
-     *  @return The Name
-     */
-    public String getName() {
-        return name;
-    }
-
 
 
     /**
@@ -219,25 +161,6 @@ public class GsacSite extends GsacResource implements Comparable {
     }
 
 
-
-
-    /**
-     *  Set the SecondarySiteCode property.
-     *
-     *  @param value The new value for SecondarySiteCode
-     */
-    public void setSecondarySiteCode(String value) {
-        secondarySiteCode = value;
-    }
-
-    /**
-     *  Get the SecondarySiteCode property.
-     *
-     *  @return The SecondarySiteCode
-     */
-    public String getSecondarySiteCode() {
-        return secondarySiteCode;
-    }
 
 
 }

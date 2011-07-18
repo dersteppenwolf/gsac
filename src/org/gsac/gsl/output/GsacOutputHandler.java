@@ -78,15 +78,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
     private GsacRepository gsacRepository;
 
     /** flags for repository capabilities */
-    private static boolean doResourceGroup = true;
-
-    /** flags for repository capabilities */
     private static boolean doResourcePublishDate = true;
 
     /** flags for repository capabilities */
     private static boolean doResourceFileSize = true;
 
-    /** _more_          */
+    /** _more_ */
     private ResourceClass resourceClass;
 
     /**
@@ -97,11 +94,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
         this.gsacRepository = gsacRepository;
-        doResourceGroup     = getRepository().isCapable(ARG_RESOURCE_GROUP);
         doResourcePublishDate =
             getRepository().isCapable(ARG_FILE_PUBLISHDATE);
         doResourceFileSize = getRepository().isCapable(ARG_FILE_SIZE);
-
     }
 
 
@@ -555,13 +550,5 @@ public abstract class GsacOutputHandler implements GsacConstants {
         return doResourceFileSize;
     }
 
-    /**
-     * get flag
-     *
-     * @return _more_
-     */
-    public boolean getDoResourceGroup() {
-        return doResourceGroup;
-    }
 
 }

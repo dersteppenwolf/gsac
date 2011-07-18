@@ -72,7 +72,7 @@ import javax.servlet.http.*;
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
-public  class GsacRepository implements GsacConstants {
+public class GsacRepository implements GsacConstants {
 
     /** gsac java package path prefix */
     public static final String GSAC_PATH_ROOT = "/org/gsac/gsl";
@@ -86,8 +86,6 @@ public  class GsacRepository implements GsacConstants {
     /** gsac java package path to the resources dir */
     public static final String GSAC_PATH_RESOURCES = GSAC_PATH_ROOT
                                                      + "/resources";
-
-
 
     /** property for the repository class to instantiate */
     public static final String PROP_REPOSITORY_CLASS =
@@ -130,10 +128,8 @@ public  class GsacRepository implements GsacConstants {
     /** xml attribute */
     public static final String ATTR_URL = "url";
 
-
     /** the servlet */
     private GsacServlet servlet;
-
 
     /** logger */
     private Logger LOG;
@@ -141,7 +137,7 @@ public  class GsacRepository implements GsacConstants {
     /** access logger */
     private Logger ACCESSLOG;
 
-    /** Points to wehre to write logs to. May be null */
+    /** Points to where to write logs to. May be null */
     private File logDirectory;
 
     /** local directory to write stuff to */
@@ -178,7 +174,7 @@ public  class GsacRepository implements GsacConstants {
     /** general properties */
     private Properties properties = new Properties();
 
-    /** _more_          */
+    /** _more_ */
     private Properties cmdLineProperties;
 
     /** Make a cached list of servers. Cache for 6 hours */
@@ -215,6 +211,8 @@ public  class GsacRepository implements GsacConstants {
     /** All the vocabularies */
     private List<Vocabulary> vocabularyList = new ArrayList<Vocabulary>();
 
+    /** _more_ */
+    private List<String> helpIndex;
 
     /**
      * noop constructor
@@ -285,30 +283,27 @@ public  class GsacRepository implements GsacConstants {
         mobileFooter =
             IOUtil.readContents(GSAC_PATH_RESOURCES + "/mobilefooter.html",
                                 mobileFooter);
-        mobileHeader = mobileFooter.replace("${urlroot}",
-                                            getUrlBase() + URL_BASE);
-        mobileFooter = mobileFooter.replace("${urlroot}",
-                                            getUrlBase() + URL_BASE);
+        mobileHeader = replaceMacros(mobileFooter);
+        mobileFooter = replaceMacros(mobileFooter);
 
         inputStream =
             getResourceInputStream(getLocalResourcePath("/header.html"));
         if (inputStream != null) {
             htmlHeader = IOUtil.readContents(inputStream);
-            htmlHeader = htmlHeader.replace("${urlroot}",
-                                            getUrlBase() + URL_BASE);
+            htmlHeader = replaceMacros(htmlHeader);
         }
 
         inputStream =
             getResourceInputStream(getLocalResourcePath("/footer.html"));
         if (inputStream != null) {
             htmlFooter = IOUtil.readContents(inputStream);
-            htmlFooter = htmlFooter.replace("${urlroot}",
-                                            getUrlBase() + URL_BASE);
+            htmlFooter = replaceMacros(htmlFooter);
         }
 
-        String[] files = { GSAC_PATH_RESOURCES + "/phrases.properties",
-                           getLocalResourcePath("/phrases.properties") };
-        for (String file : files) {
+        String[] phraseFiles = { GSAC_PATH_RESOURCES + "/phrases.properties",
+                                 getLocalResourcePath(
+                                     "/phrases.properties") };
+        for (String file : phraseFiles) {
             inputStream = getResourceInputStream(file);
             if (inputStream != null) {
                 msgProperties.load(inputStream);
@@ -316,8 +311,8 @@ public  class GsacRepository implements GsacConstants {
         }
 
         //Now look around the tomcat environment
-        //        System.err.println("System.properties:" + System.getProperties());
-        //        System.err.println("System.env:" + System.getenv());
+        //System.err.println("System.properties:" + System.getProperties());
+        //System.err.println("System.env:" + System.getenv());
         String catalinaBase = null;
         for (String arg : new String[] { "CATALINA_BASE", "catalina.base",
                                          "CATALINA_HOME", "catalina.home" }) {
@@ -353,7 +348,7 @@ public  class GsacRepository implements GsacConstants {
         } else {
             String userHome = System.getProperty("user.home");
             System.err.println(
-                "GSAC: attempt to set gsacDirectory from user.home system property: "
+                "GSAC: attempting to set gsacDirectory from user.home system property: "
                 + userHome);
             if (userHome != null) {
                 File localDir = new File(userHome + "/.gsac");
@@ -389,12 +384,11 @@ public  class GsacRepository implements GsacConstants {
         initResourceManagers();
         initOutputHandlers();
         getRepositoryInfo();
-
     }
 
 
     /**
-     * _more_
+     * Create the default set of resource managers
      */
     public void initResourceManagers() {
         getResourceManager(GsacSite.CLASS_SITE);
@@ -402,7 +396,7 @@ public  class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     * Create the default set of output handlers
      */
     public void initOutputHandlers() {
         //TODO: put the specification of the output handlers into a properties or xml file
@@ -1265,16 +1259,30 @@ public  class GsacRepository implements GsacConstants {
                 || uri.endsWith(".jnlp")) {
             String content = IOUtil.readContents(inputStream);
             inputStream.close();
-            content = content.replace("${urlroot}", getUrlBase() + URL_BASE);
-            content = content.replace("${fullurlroot}",
-                                      getAbsoluteUrl(getUrlBase()
-                                          + URL_BASE));
+            content     = replaceMacros(content);
+            content     = replaceMacros(content);
             inputStream = new ByteArrayInputStream(content.getBytes());
         }
         OutputStream outputStream = request.getOutputStream();
         IOUtil.writeTo(inputStream, outputStream);
         IOUtil.close(outputStream);
     }
+
+
+    /**
+     * _more_
+     *
+     * @param template _more_
+     *
+     * @return _more_
+     */
+    private String replaceMacros(String template) {
+        template = template.replace("${urlroot}", getUrlBase() + URL_BASE);
+        template = template.replace("${fullurlroot}",
+                                    getAbsoluteUrl(getUrlBase() + URL_BASE));
+        return template;
+    }
+
 
     /**
      * _more_
@@ -1303,8 +1311,7 @@ public  class GsacRepository implements GsacConstants {
         htmlOutputHandler.finishHtml(request, response, sb);
     }
 
-    /** _more_ */
-    private List<String> helpIndex;
+
 
     /**
      * _more_
@@ -1348,11 +1355,8 @@ public  class GsacRepository implements GsacConstants {
         if (inputStream != null) {
             contents = IOUtil.readContents(inputStream);
             inputStream.close();
-            contents = contents.replace("${urlroot}",
-                                        getUrlBase() + URL_BASE);
-            contents = contents.replace("${fullurlroot}",
-                                        getAbsoluteUrl(getUrlBase()
-                                            + URL_BASE));
+            contents = replaceMacros(contents);
+            contents = replaceMacros(contents);
         }
         sb.append(contents);
         htmlOutputHandler.finishHtml(request, response, sb);
@@ -1406,21 +1410,6 @@ public  class GsacRepository implements GsacConstants {
     }
 
 
-    /**
-     * _more_
-     *
-     * @param name _more_
-     *
-     * @return _more_
-     */
-    public ResourceClass getResourceClass(String name) {
-        for (GsacResourceManager gom : resourceManagers) {
-            if (gom.getResourceClass().getName().equals(name)) {
-                return gom.getResourceClass();
-            }
-        }
-        return null;
-    }
 
 
     /**
@@ -1560,7 +1549,7 @@ public  class GsacRepository implements GsacConstants {
      * to the internal values used by the derived repository.
      *
      *
-     * @param type vocabulary type 
+     * @param type vocabulary type
      *
      * @return the new vocabulary object
      */
@@ -1771,7 +1760,8 @@ public  class GsacRepository implements GsacConstants {
      *
      * @return _more_
      */
-    public  GsacResourceManager doMakeResourceManager(ResourceClass resourceClass) {
+    public GsacResourceManager doMakeResourceManager(
+            ResourceClass resourceClass) {
         return null;
         /*
         if (resourceClass.equals(GsacSite.CLASS_SITE)) {
@@ -1794,6 +1784,23 @@ public  class GsacRepository implements GsacConstants {
             };
         }
         return null;*/
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param name _more_
+     *
+     * @return _more_
+     */
+    public ResourceClass getResourceClass(String name) {
+        for (GsacResourceManager gom : resourceManagers) {
+            if (gom.getResourceClass().getName().equals(name)) {
+                return gom.getResourceClass();
+            }
+        }
+        return null;
     }
 
 
@@ -1896,9 +1903,6 @@ public  class GsacRepository implements GsacConstants {
     }
 
 
-
-
-
     /**
      * Gets called to add the full metadata to the resource.
      * If there is a resourcemanager then this is just a pass through
@@ -1964,15 +1968,13 @@ public  class GsacRepository implements GsacConstants {
             try {
                 mobileHeader = IOUtil.readContents(GSAC_PATH_RESOURCES
                         + "/mobileheader.html", mobileHeader);
-                mobileHeader = mobileHeader.replace("${urlroot}",
-                        getUrlBase() + URL_BASE);
+                mobileHeader = replaceMacros(mobileHeader);
                 InputStream inputStream = getResourceInputStream(
                                               getLocalResourcePath(
                                                   "/header.html"));
                 if (inputStream != null) {
                     htmlHeader = IOUtil.readContents(inputStream);
-                    htmlHeader = htmlHeader.replace("${urlroot}",
-                            getUrlBase() + URL_BASE);
+                    htmlHeader = replaceMacros(htmlHeader);
                     inputStream.close();
                 }
             } catch (Exception exc) {}
@@ -1995,15 +1997,13 @@ public  class GsacRepository implements GsacConstants {
             try {
                 mobileFooter = IOUtil.readContents(GSAC_PATH_RESOURCES
                         + "/mobilefooter.html", mobileFooter);
-                mobileFooter = mobileFooter.replace("${urlroot}",
-                        getUrlBase() + URL_BASE);
+                mobileFooter = replaceMacros(mobileFooter);
                 InputStream inputStream = getResourceInputStream(
                                               getLocalResourcePath(
                                                   "/footer.html"));
                 if (inputStream != null) {
                     htmlFooter = IOUtil.readContents(inputStream);
-                    htmlFooter = htmlFooter.replace("${urlroot}",
-                            getUrlBase() + URL_BASE);
+                    htmlFooter = replaceMacros(htmlFooter);
                     inputStream.close();
                 }
             } catch (Exception exc) {}
@@ -2071,7 +2071,7 @@ public  class GsacRepository implements GsacConstants {
                 getErrorLogger().error(message);
             }
         } else {
-            System.err.println("ERROR: " + getDTTM() + ": " + message);
+            System.err.println("GSAC ERROR: " + getDTTM() + ": " + message);
             if (exc != null) {
                 System.err.println("<stack>");
                 exc.printStackTrace();
@@ -2099,7 +2099,7 @@ public  class GsacRepository implements GsacConstants {
         if (logDirectory != null) {
             getErrorLogger().info(message);
         } else {
-            System.err.println("INFO: " + getDTTM() + ": " + message);
+            System.err.println("GSAC INFO: " + getDTTM() + ": " + message);
         }
     }
 
@@ -2413,10 +2413,10 @@ public  class GsacRepository implements GsacConstants {
         tmp = new StringBuffer();
 
         String[] args = { ARG_LIMIT, ARG_OFFSET, ARG_GZIP };
-        String[] descs = { "Number of returned results, e.g., "
-                           + ARG_LIMIT + "=2000",
-                           "Get next set of results, e.g., "
-                           + ARG_OFFSET + "=2000",
+        String[] descs = { "Number of returned results, e.g., " + ARG_LIMIT
+                           + "=2000",
+                           "Get next set of results, e.g., " + ARG_OFFSET
+                           + "=2000",
                            "GZIP the results, e.g. " + ARG_GZIP + "=true" };
 
         tmp.append(HtmlUtil.formTable());

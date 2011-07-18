@@ -45,6 +45,12 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** site type */
     private ResourceType type;
 
+    /** _more_          */
+    private String shortName;
+
+    /** _more_          */
+    private String longName;
+
     /** _more_ */
     private List<GsacMetadata> metadata = new ArrayList();
 
@@ -73,6 +79,11 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private Date toDate;
 
+    /** _more_ */
+    private Date publishTime;
+
+
+
 
     /**
      * ctor
@@ -97,6 +108,23 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     public GsacResource(String id, ResourceType type) {
         this(id);
         this.type = type;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param id _more_
+     * @param type _more_
+     * @param shortName _more_
+     * @param longName _more_
+     */
+    public GsacResource(String id, ResourceType type, String shortName,
+                        String longName) {
+        this.id        = id;
+        this.type      = type;
+        this.shortName = shortName;
+        this.longName  = longName;
     }
 
 
@@ -161,14 +189,6 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
         return id;
     }
 
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getName() {
-        return null;
-    }
 
     /**
      * _more_
@@ -176,7 +196,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      * @return _more_
      */
     public String getLabel() {
-        return this.toString();
+        return shortName;
     }
 
 
@@ -521,6 +541,62 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     }
 
 
+
+    /**
+     *  Set the PublishTime property.
+     *
+     *  @param value The new value for PublishTime
+     */
+    public void setPublishTime(Date value) {
+        publishTime = value;
+    }
+
+    /**
+     *  Get the PublishTime property.
+     *
+     *  @return The PublishTime
+     */
+    public Date getPublishTime() {
+        return publishTime;
+    }
+
+
+
+    /**
+     *  Set the ShortName property.
+     *
+     *  @param value The new value for ShortName
+     */
+    public void setShortName(String value) {
+        shortName = value;
+    }
+
+    /**
+     *  Get the ShortName property.
+     *
+     *  @return The ShortName
+     */
+    public String getShortName() {
+        return shortName;
+    }
+
+    /**
+     *  Set the LongName property.
+     *
+     *  @param value The new value for LongName
+     */
+    public void setLongName(String value) {
+        longName = value;
+    }
+
+    /**
+     *  Get the LongName property.
+     *
+     *  @return The LongName
+     */
+    public String getLongName() {
+        return longName;
+    }
 
 
 

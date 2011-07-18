@@ -120,9 +120,9 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                     }
                     colCnt++;
                     if (param.equals(ARG_SITE_CODE)) {
-                        pw.print(cleanString(site.getSiteCode(), delimiter));
+                        pw.print(cleanString(site.getShortName(), delimiter));
                     } else if (param.equals(ARG_SITE_NAME)) {
-                        pw.print(cleanString(site.getName(), delimiter));
+                        pw.print(cleanString(site.getLongName(), delimiter));
                     } else if (param.equals(ARG_SITE_ID)) {
                         pw.print(cleanString(site.getId(), delimiter));
                     } else if (param.equals(ARG_SITE_LATITUDE)) {

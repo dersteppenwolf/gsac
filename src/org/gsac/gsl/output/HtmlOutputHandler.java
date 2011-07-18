@@ -1400,9 +1400,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             formEntry(
                 request, msgLabel(resourceManager.getResourceLabel(false)),
                 label));
-        if (resource.getName() != null) {
+        if (resource.getLongName() != null) {
             pw.append(formEntry(request, msgLabel("Name"),
-                                resource.getName()));
+                                resource.getLongName()));
         }
         if (resource.getRepositoryInfo() != null) {
             pw.append(
@@ -1527,7 +1527,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                         HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
                             new String[] {
                         resourceManager.getIdUrlArg(), site.getId(),
-                        ARG_SITE_CODE, site.getSiteCode(),
+                        ARG_SITE_CODE, site.getShortName(),
                         ARG_FILE_DATADATE_FROM,
                         formatDateTime(equipment.getFromDate()),
                         ARG_FILE_DATADATE_TO,
@@ -1979,10 +1979,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param sites _more_
      */
     public void makeSiteHtmlTable(GsacRequest request, StringBuffer sb,
-                                  List<GsacSite> sites) {
+                                  List<GsacSite> resources) {
 
-        if (sites.size() == 0) {
+        if (resources.size() == 0) {
             return;
+        }
+
+        boolean doResourceGroups = false;
+        //See if there are any groups
+        for (GsacResource resource : resources) {
+            if(resource.getResourceGroups().size()>0) {
+                doResourceGroups = true;
+            }
         }
 
         String[] TABLE_LABELS     = null;
@@ -1992,7 +2000,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
-            String remoteHref = getRepository().getRemoteHref(sites.get(0));
+            String remoteHref = getRepository().getRemoteHref(resources.get(0));
             labels.add(msg("Site Code").replace(" ", "&nbsp;"));
             sortValues.add(SORT_SITE_CODE);
             labels.add(msg("Name"));
@@ -2003,7 +2011,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
             labels.add(msg("Date Range"));
             sortValues.add("");
-            if (getDoResourceGroup()) {
+            if (doResourceGroups) {
                 labels.add(msg("Groups"));
                 sortValues.add("");
             }
@@ -2011,10 +2019,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             TABLE_SORTVALUES = Misc.listToStringArray(sortValues);
         }
 
-
         int cnt = 0;
-        for (GsacSite site : sites) {
-            GsacResourceManager resourceManager = getResourceManager(site);
+        for (GsacResource resource : resources) {
+            GsacResourceManager resourceManager = getResourceManager(resource);
             if (cnt++ == 0) {
                 try {
                     String url = resourceManager.makeSearchUrl();
@@ -2038,46 +2045,46 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             String idUrlArg = resourceManager.getIdUrlArg();
 
-            String href     = makeResourceViewHref(site);
-            openEntryRow(sb, site.getId(), URL_SITE_VIEW, idUrlArg);
-            String cbx = HtmlUtil.checkbox(idUrlArg, site.getId(), false);
+            String href     = makeResourceViewHref(resource);
+            openEntryRow(sb, resource.getId(), URL_SITE_VIEW, idUrlArg);
+            String cbx = HtmlUtil.checkbox(idUrlArg, resource.getId(), false);
 
-            String clickEvent = getEntryEventJS(site.getId(), URL_SITE_VIEW,
+            String clickEvent = getEntryEventJS(resource.getId(), URL_SITE_VIEW,
                                     idUrlArg)[1];
             sb.append(HtmlUtil.col(cbx));
-            String remoteHref = getRepository().getRemoteHref(site);
+            String remoteHref = getRepository().getRemoteHref(resource);
             if (remoteHref.length() > 0) {
                 sb.append(HtmlUtil.col(remoteHref));
             }
             sb.append("</tr></table></td>\n");
             sb.append(HtmlUtil.col(href));
-            sb.append(HtmlUtil.col(site.getName(), clickEvent));
+            sb.append(HtmlUtil.col(resource.getShortName(), clickEvent));
 
-            if (site.getType() != null) {
-                sb.append(HtmlUtil.col(site.getType().getName(), clickEvent));
+            if (resource.getType() != null) {
+                sb.append(HtmlUtil.col(resource.getType().getName(), clickEvent));
             } else {
                 sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
 
             sb.append("<td " + clickEvent + ">");
-            sb.append(formatLatLon(site.getLatitude()));
+            sb.append(formatLatLon(resource.getLatitude()));
             sb.append(",");
-            sb.append(formatLatLon(site.getLongitude()));
+            sb.append(formatLatLon(resource.getLongitude()));
             sb.append(",");
-            sb.append(formatElevation(site.getElevation()));
+            sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
 
             sb.append("<td " + clickEvent + ">");
-            if (site.getFromDate() != null) {
-                sb.append(formatDate(site));
+            if (resource.getFromDate() != null) {
+                sb.append(formatDate(resource));
             } else {
                 sb.append("N/A");
             }
             sb.append("</td>");
 
-            if (getDoResourceGroup()) {
-                sb.append(HtmlUtil.col(getGroupHtml(site.getResourceGroups(),
-                        site.getResourceClass(), true) + "&nbsp;"));
+            if (doResourceGroups) {
+                sb.append(HtmlUtil.col(getGroupHtml(resource.getResourceGroups(),
+                        resource.getResourceClass(), true) + "&nbsp;"));
             }
             sb.append("</tr>\n");
         }

@@ -292,7 +292,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                 continue;
             }
             GsacSite site = makeSite(results, type);
-            site.setSiteCode(siteCode);
+            site.setShortName(siteCode);
             //This runs through the given columns in the resultset and adds a PropertyMetadata element for each
             addPropertyMetadata(results, site,
                                 new String[] { Tables.SITE_INFO_SLR.COL_STATE,
@@ -553,7 +553,8 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         String region    = results.getString(colCnt++);
         double elevation = 0;
 
-        site = new GsacSite(makeSiteId(type, siteName, results), "",
+
+        site = new GsacSite(makeSiteId(type, siteName, results), "FOOBAR",
                             siteName, latitude, longitude, elevation);
         site.setType(new ResourceType(type.getType(),
                                       type.getType().toUpperCase()));
