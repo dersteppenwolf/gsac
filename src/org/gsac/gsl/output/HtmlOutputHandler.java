@@ -1986,11 +1986,16 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         boolean doResourceGroups = false;
+        boolean doDateRange = false;
         //See if there are any groups
         for (GsacResource resource : resources) {
-            if(resource.getResourceGroups().size()>0) {
+            if(!doResourceGroups && resource.getResourceGroups().size()>0) {
                 doResourceGroups = true;
             }
+            if(!doDateRange && resource.getFromDate()!=null) {
+                doDateRange = true;
+            }
+            if(doResourceGroups && doDateRange) break;
         }
 
         String[] TABLE_LABELS     = null;
@@ -2009,7 +2014,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add(SORT_SITE_TYPE);
             labels.add(msg("Location") + " (lat,lon,m)");
             sortValues.add("");
-            labels.add(msg("Date Range"));
+            if(doDateRange) {
+                labels.add(msg("Date Range"));
+            }
             sortValues.add("");
             if (doResourceGroups) {
                 labels.add(msg("Groups"));
@@ -2058,7 +2065,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sb.append("</tr></table></td>\n");
             sb.append(HtmlUtil.col(href));
-            sb.append(HtmlUtil.col(resource.getShortName(), clickEvent));
+            sb.append(HtmlUtil.col(resource.getLongName(), clickEvent));
 
             if (resource.getType() != null) {
                 sb.append(HtmlUtil.col(resource.getType().getName(), clickEvent));
@@ -2074,13 +2081,16 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
 
-            sb.append("<td " + clickEvent + ">");
-            if (resource.getFromDate() != null) {
-                sb.append(formatDate(resource));
-            } else {
-                sb.append("N/A");
+
+            if(doDateRange) {
+                sb.append("<td " + clickEvent + ">");
+                if (resource.getFromDate() != null) {
+                    sb.append(formatDate(resource));
+                } else {
+                    sb.append("N/A");
+                }
+                sb.append("</td>");
             }
-            sb.append("</td>");
 
             if (doResourceGroups) {
                 sb.append(HtmlUtil.col(getGroupHtml(resource.getResourceGroups(),

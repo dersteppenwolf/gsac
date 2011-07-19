@@ -179,11 +179,16 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         for (GsacResource relatedResource : relatedResources) {
             String resourceLabel =
                 getResourceManager(relatedResource).getResourceLabel(false);
-            String resourceUrl = makeResourceViewUrl(relatedResource);
-            sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
-                                         "<a href=\"" + resourceUrl + "\">"
-                                         + relatedResource.getLongLabel()
-                                         + "</a>"));
+            if(relatedResource.getId()==null) {
+                sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                             relatedResource.getLongLabel()));
+            } else {
+                String resourceUrl = makeResourceViewUrl(relatedResource);
+                sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
+                                             "<a href=\"" + resourceUrl + "\">"
+                                             + relatedResource.getLongLabel()
+                                             + "</a>"));
+            }
         }
 
 
@@ -390,13 +395,17 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         relatedIdx++) {
                     GsacResource relatedResource =
                         relatedResources.get(relatedIdx);
-                    String relatedUrl = makeResourceViewUrl(relatedResource);
                     if (relatedIdx > 0) {
                         relatedContent.append("<br>");
                     }
-                    relatedContent.append("<a href=\"" + relatedUrl + "\">"
-                                          + relatedResource.getLongLabel()
-                                          + "</a>");
+                    if(relatedResource.getId()!=null) {
+                        String relatedUrl = makeResourceViewUrl(relatedResource);
+                        relatedContent.append("<a href=\"" + relatedUrl + "\">"
+                                              + relatedResource.getLongLabel()
+                                              + "</a>");
+                    } else {
+                        relatedContent.append(relatedResource.getLongLabel());
+                    }
                 }
                 if (relatedResources.size() == 0) {
                     relatedContent.append("NA");

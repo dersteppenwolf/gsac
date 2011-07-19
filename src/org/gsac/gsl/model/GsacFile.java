@@ -72,6 +72,14 @@ public class GsacFile extends GsacResource {
     }
 
 
+    public GsacFile(String repositoryId, FileInfo fileInfo,
+                    Date publishTime,
+                    ResourceType type) {
+        this(repositoryId, fileInfo, null, publishTime,
+             publishTime, publishTime, type);
+    }
+
+
 
     /**
      * ctor

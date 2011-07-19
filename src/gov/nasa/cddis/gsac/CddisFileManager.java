@@ -498,9 +498,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
         if (endDate == null) {
             endDate = startDate;
         }
-        GsacSite site = new GsacSite(null, monumentID.toUpperCase(),
-                                     monumentID.toUpperCase());
-
+        GsacSite site = new GsacSite(null, monumentID.toUpperCase(), "");
         Calendar calendar = Calendar.getInstance(TIMEZONE_UTC);
         calendar.setTime(startDate);
         String YYYY = "" + calendar.get(calendar.YEAR);
@@ -577,9 +575,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
                 "Could not find DORIS satellite:" + satellite);
         }
 
-        GsacSite site = new GsacSite(null, station.toUpperCase(),
-                                     station.toUpperCase());
-
+        GsacSite site = new GsacSite(null, station.toUpperCase(),"");
         Calendar calendar = Calendar.getInstance(TIMEZONE_UTC);
         calendar.setTime(startDate);
         String YYYY = "" + calendar.get(calendar.YEAR);
@@ -658,9 +654,7 @@ public class CddisFileManager extends FileManager implements CddisArgs {
 
         String SATNAME = satellite.replace("-", "").toLowerCase();
         //Use the sat name as the site name
-        GsacSite site = new GsacSite(null, satellite.toUpperCase(),
-                                     satellite.toUpperCase());
-
+        GsacSite site = new GsacSite(null, satellite.toUpperCase(), "");
         Calendar     calendar     = Calendar.getInstance(TIMEZONE_UTC);
         ResourceType resourceType = SLR_FILE_TYPES[0];
         if ((resourceTypes != null)
