@@ -121,7 +121,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                     "http://cddis.nasa.gov/favicon.ico"));
             */
         } else if (serverList != null) {
-            System.err.println("servers:" + serverList);
+            System.err.println("GSAC: servers:" + serverList);
             //Look at each repository id and find the url, name and icon properties.
             //Note: We end up asking each repository for its own information so things like the
             //name and the icon can get overwritten

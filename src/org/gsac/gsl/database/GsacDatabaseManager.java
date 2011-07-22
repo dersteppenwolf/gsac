@@ -136,7 +136,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
             throw new RuntimeException("Could not load the jdbc driver:"
                                        + getDriverClassName());
         }
-        System.err.println("DB: Creating data source");
+        //        System.err.println("DB: Creating data source");
         makeNewDataSource();
         //try to connect
         closeConnection(getConnection());
@@ -217,6 +217,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
                 InputStream propertiesIS =
                     IOUtil.getInputStream(propertiesFile, getClass());
                 properties.load(propertiesIS);
+                //                System.err.println("properties:" + properties);
                 loadedProperties = true;
             } catch (Exception exc) {
                 throw new IllegalArgumentException(
@@ -289,17 +290,21 @@ public abstract class GsacDatabaseManager implements GsacConstants,
     public String getDatabaseProperty(String name) {
         //Let the system properties override the files
         String value = System.getProperty(name);
+        //        System.err.println("db prop:" + name);
         if (value != null) {
+            //            System.err.println("\tsystem:" + value);
             return value.trim();
         }
         if (repository != null) {
             value = repository.getProperty(name);
             if (value != null) {
+                //                System.err.println("\trepository:" + value);
                 return value.trim();
             }
         }
         String fromProperties = (String) properties.get(name);
         if (fromProperties != null) {
+            //            System.err.println("\tmy props:" + fromProperties);
             return fromProperties.trim();
         }
         return null;
