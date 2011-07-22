@@ -141,9 +141,12 @@ public interface GsacArgs {
         ARG_SITE_CODE_SEARCHTYPE;
 
     /** _more_ */
-    public static final String ARG_RESOURCE_GROUP = ARG_RESOURCE_PREFIX
-                                                    + "group";
+    public static final String ARG_SUFFIX_GROUP =  "group";
 
+
+    /** _more_ */
+    public static final String ARG_SITE_GROUP = ARG_SITE_PREFIX
+                                                    + ARG_SUFFIX_GROUP;
 
     /** _more_ */
     public static final String ARG_SITE_TYPE = ARG_SITE_PREFIX + "type";
@@ -154,7 +157,7 @@ public interface GsacArgs {
 
     /** _more_ */
     public static final String[] SITE_ARGS = { ARG_SITE_CODE, ARG_SITENAME,
-            ARG_SITE_TYPE, ARG_RESOURCE_GROUP, ARG_SITE_STATUS };
+            ARG_SITE_TYPE, ARG_SITE_GROUP, ARG_SITE_STATUS };
 
 
     /** _more_ */

@@ -272,6 +272,7 @@ public abstract class SiteManager extends GsacResourceManager {
         Capability          siteCode;
         Capability          siteName;
         List<ResourceGroup> siteGroups = doGetResourceGroups();
+
         Capability[]        dflt       = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
                 "Site Code",
@@ -297,7 +298,7 @@ public abstract class SiteManager extends GsacResourceManager {
              ? null
              : initCapability(
                  new Capability(
-                     ARG_RESOURCE_GROUP, "Site Group",
+                                makeUrlArg(ARG_SUFFIX_GROUP), "Site Group",
                      IdLabel.toList(siteGroups),
                      true), CAPABILITY_GROUP_SITE_QUERY, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",

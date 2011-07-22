@@ -86,7 +86,8 @@ function RepositoryMap (mapId, params) {
             this.mapLayers = [
                          map_wms_openlayers,
                          map_yahoo,
-                         map_wms_topographic];
+                         //                         map_wms_topographic
+                         ];
         }
 
             

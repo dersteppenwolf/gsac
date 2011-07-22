@@ -173,15 +173,23 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     }
 
 
+    public String getUrlArgPrefix() {
+        return getResourceClass().getName();
+    }
+
+
     /**
      * _more_
      *
      * @return _more_
      */
     public String getIdUrlArg() {
-        return getResourceClass().getName() + ".id";
+        return makeUrlArg(ARG_SUFFIX_ID);
     }
 
+    public String makeUrlArg(String suffix) {
+        return getUrlArgPrefix() + "." +suffix;
+    }
 
     /**
      * _more_

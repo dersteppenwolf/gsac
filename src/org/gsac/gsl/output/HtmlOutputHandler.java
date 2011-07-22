@@ -780,9 +780,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String getGroupSearchLink(ResourceGroup group,
                                      ResourceClass resourceClass) {
+
+        GsacResourceManager resourceManager = getResourceManager(resourceClass);
         return getSearchLink(
-            group, getResourceManager(resourceClass).makeSearchUrl(),
-            ARG_RESOURCE_GROUP);
+            group, resourceManager.makeSearchUrl(),
+            resourceManager.makeUrlArg(ARG_SITE_GROUP));
     }
 
 
@@ -958,10 +960,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append(
             HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
         sb.append(HtmlUtil.importJS(makeHtdocsUrl("/repositorymap.js")));
-        sb.append(HtmlUtil.div("",
-                               HtmlUtil.style("width:" + width
-                                   + "px; height:" + height + "px") + " "
-                                       + HtmlUtil.id(mapVarName)));
         sb.append(
             HtmlUtil.div(
                 "",
@@ -1820,6 +1818,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         initMap(request, mapVarName, mapSB, width, height, false);
         pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
                                              false));
+
+
         StringBuffer js = new StringBuffer();
         for (GsacResource resource : resources) {
             if ( !resource.hasEarthLocation()) {
