@@ -505,9 +505,9 @@ public class SopacSiteManager extends SiteManager {
 		// TODO: since user has specified the site_type_code for us, we don't need to query
 		// both congps and camgps.  remove the siteTypeMode clause.
 
-		if (request.defined(ARG_RESOURCE_GROUP)) {
+		if (request.defined(ARG_SITE_GROUP)) {
 			List<Clause> groupClauses = new ArrayList<Clause>();
-			List<String> values = (List<String>) request.get(ARG_RESOURCE_GROUP,
+			List<String> values = (List<String>) request.get(ARG_SITE_GROUP,
 					new ArrayList());
 			String col = null;
 			int cnt = 0;
@@ -532,7 +532,7 @@ public class SopacSiteManager extends SiteManager {
 			} else if (Mode.SiteTableSiteType.CAMGPS.equals(_siteTypeMode)) {
 
 				groupClauses = new ArrayList<Clause>();
-				values = (List<String>) request.get(ARG_RESOURCE_GROUP,
+				values = (List<String>) request.get(ARG_SITE_GROUP,
 						new ArrayList());
 				col = Tables.GEODETIC_CAMPAIGN.COL_NAME;
 				//Handle the 4 cases

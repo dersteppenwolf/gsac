@@ -161,7 +161,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
                         msgBuff, "Site Name",
                         Tables.SITE_INFORMATION.COL_SITE_NAME, clauses);
 
-        if (request.defined(ARG_RESOURCE_GROUP)) {
+        if (request.defined(ARG_SITE_GROUP)) {
             //...
         }
 
