@@ -1010,8 +1010,8 @@ function CalendarPopup() {
         c.width = function (w) {
             return " WIDTH=\"" +w +"\" ";
         }
-        c.class = function(class) {
-            return " class=\"" + this.cssPrefix+ class +"\" ";
+        c.class = function(claz) {
+            return " class=\"" + this.cssPrefix+ claz +"\" ";
         }
         c.col = function(attrs, contents) {
             return  "<TD " + attrs +">" + contents +"</td>"; 
