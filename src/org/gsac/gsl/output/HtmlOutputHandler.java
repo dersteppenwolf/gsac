@@ -67,6 +67,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
 
+    public static final String PROP_GOOGLE_APIKEYS =
+        "gsac.google.apikeys";
+
+
+
     /** _more_ */
     private static String[] NAV_LABELS;
 
@@ -1813,8 +1818,17 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             List<GsacResource> resources, Appendable pw,
                             int width, int height)
             throws IOException {
-        String       mapVarName = "map" + HtmlUtil.blockCnt++;
+
         StringBuffer mapSB      = new StringBuffer();
+        if(isGoogleEarthEnabled(request)) {
+            getGoogleEarth(request,  resources, mapSB, width, height);
+            pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
+                                                 true));
+            return "";
+        }
+
+
+        String       mapVarName = "map" + HtmlUtil.blockCnt++;
         initMap(request, mapVarName, mapSB, width, height, false);
         pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
                                              false));
@@ -2051,7 +2065,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
             String idUrlArg = resourceManager.getIdUrlArg();
-
             String href     = makeResourceViewHref(resource);
             openEntryRow(sb, resource.getId(), URL_SITE_VIEW, idUrlArg);
             String cbx = HtmlUtil.checkbox(idUrlArg, resource.getId(), false);
@@ -2345,6 +2358,221 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         return searchLinks;
     }
+
+    public boolean isGoogleEarthEnabled(GsacRequest request) {
+        return getGoogleMapsKey(request) != null;
+    }
+
+    /** _more_          */
+    private List<List<String>> geKeys;
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     *
+     * @return _more_
+     */
+    public String[] getGoogleMapsKey(GsacRequest request) {
+        if (geKeys == null) {
+            String geAPIKeys = getRepository().getProperty(PROP_GOOGLE_APIKEYS,null);
+            if ((geAPIKeys == null) || (geAPIKeys.trim().length() == 0)) {
+                return null;
+            }
+            List<List<String>> tmpKeys = new ArrayList<List<String>>();
+            for (String line :
+                    StringUtil.split(geAPIKeys, ";", true, true)) {
+                List<String> toks = StringUtil.split(line, ":", true, true);
+                if (toks.size() > 1) {
+                    tmpKeys.add(toks);
+                }
+            }
+            geKeys = tmpKeys;
+        }
+        String hostname = request.getServerName();
+        for (List<String> tuple : geKeys) {
+            String server = tuple.get(0);
+            // check to see if this matches me 
+            if (server.equals("*") || (hostname.indexOf(server) >= 0)) {  // match
+                String mapsKey = tuple.get(1);
+                if (tuple.size() > 2) {
+                    return new String[] { mapsKey, tuple.get(2) };
+                } else {
+                    return new String[] { mapsKey, null };
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param width _more_
+     * @param height _more_
+     * @param url _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
+    public String getGoogleEarthPlugin(GsacRequest request, Appendable sb,
+                                       int width,
+                                       int height, String url)
+            throws IOException {
+
+
+        String[] keyAndOther = getGoogleMapsKey(request);
+        if (keyAndOther == null) {
+            sb.append("Google Earth is not enabled");
+            return null;
+        }
+
+        String otherOpts = "";
+        String mapsKey = "?key=" + keyAndOther[0];
+        if (keyAndOther[1] != null) {
+            otherOpts = ", {\"other_params\":\"" + keyAndOther[1] + "\"}";
+        }
+        //        Integer currentId = (Integer) request.getExtraProperty("ge.id");
+        int nextNum  = 1;
+        //        if(currentId != null) {
+        //            nextNum = currentId.intValue()+1;
+        //        }
+        String id =  "map3d" + nextNum;
+
+        sb.append(
+                  HtmlUtil.importJS("http://www.google.com/jsapi" +mapsKey));
+        sb.append(
+                  HtmlUtil.importJS(fileUrl("/googleearth.js")));
+        sb.append(HtmlUtil.script(
+                                  "google.load(\"earth\", \"1\"" + otherOpts+");"));
+
+        String template = "<div id=\"${id}_container\" style=\"border: 1px solid #888; width: ${width}px; height: ${height}px;\"><div id=\"${id}\" style=\"height: 100%;\"></div></div>";
+
+        template = template.replace("${width}", width + "");
+        template = template.replace("${height}", height + "");
+        template = template.replace("${id}", id);
+        template = template.replace("${id}", id);
+        sb.append(template);
+        sb.append(HtmlUtil.script("var  " + id + " = new GoogleEarth(" + HtmlUtil.squote(id) +", " + (url==null?"null":HtmlUtil.squote(url))+");\n"));
+        return id;
+    }
+
+
+    public void getGoogleEarth(GsacRequest request, 
+                               List<GsacResource> entries, Appendable sb,
+                               int width, int height)
+            throws IOException {
+        sb.append(
+                  "<table border=\"0\" width=\"100%\"><tr valign=\"top\"><td>");
+
+        StringBuffer mapSB = new StringBuffer();
+        String id = getGoogleEarthPlugin(request, mapSB, width, height, null);
+        StringBuffer js  = new StringBuffer();
+        List<String> categories  = new ArrayList<String>();
+        Hashtable<String,StringBuffer> catMap = new Hashtable<String,StringBuffer>();
+        for (GsacResource resource : entries) {
+            GsacResourceManager resourceManager = getResourceManager(resource);
+           
+            //            String category = resource.getTypeHandler().getCategory(resource);
+            String category = "";
+            StringBuffer catSB = catMap.get(category);
+            if(catSB==null) {
+                catMap.put(category, catSB = new StringBuffer());
+                categories.add(category);
+            }
+            catSB.append("&nbsp;&nbsp;");
+            String iconUrl = getIconUrl(resource);
+            catSB.append(HtmlUtil.img(iconUrl));
+            catSB.append(HtmlUtil.space(1));
+            double lat = resource.getLatitude();
+            double lon = resource.getLongitude();
+
+            String idUrlArg = resourceManager.getIdUrlArg();
+            String href     = resourceManager.makeViewUrl();
+            String xmlUrl = HtmlUtil.url(href, new String[] { idUrlArg,
+                                                              resource.getId(), ARG_WRAPXML, "true", });
+            System.err.println(xmlUrl);
+            String entryId = cleanIdForJS(resource.getId());
+            catSB.append("<a href=\"javascript:googleEarthResourceClicked(" + id +
+                         "," +
+                         HtmlUtil.squote(resource.getId())+
+                         "," + 
+                         HtmlUtil.squote(xmlUrl) +
+                         ");\">" 
+                      + resource.getLabel() + "</a><br>");
+            String icon = iconUrl;
+            String pointsString = "null";
+            //            String desc =  makeInfoBubble(request, resource);
+            String desc =  makeResourceViewHref(resource) +"<br>" +
+                resource.getLongLabel();
+            js.append(HtmlUtil.call(
+                                    id +".addPlacemark",
+                                    HtmlUtil.comma(HtmlUtil.squote(resource.getId()),HtmlUtil.squote(resource.getLabel()), HtmlUtil.squote(desc),
+                                                   ""+lat, ""+lon) +"," +
+                                    HtmlUtil.squote(icon) +"," +pointsString));
+            js.append("\n");
+        }
+
+        for(String category: categories) {
+            StringBuffer catSB = catMap.get(category);
+            sb.append(HtmlUtil.b(category));
+            sb.append(HtmlUtil.br());
+            sb.append(catSB);
+        }
+
+        sb.append("</td><td>");
+        sb.append(HtmlUtil.checkbox("tmp","true", true, HtmlUtil.id("googleearth.showdetails")));
+        sb.append(msg("Show details"));
+
+        sb.append(mapSB);
+        sb.append(HtmlUtil.script(js.toString()));
+        sb.append("</td></tr></table>");
+    }
+
+
+    /*
+    public String makeInfoBubble(Request request, Entry entry) throws Exception {
+        String fromEntry  = entry.getTypeHandler().getMapInfoBubble(request, entry);
+        if(fromEntry!=null) return fromEntry;
+        StringBuffer info = new StringBuffer("<table>");
+        info.append(entry.getTypeHandler().getInnerEntryContent(entry,
+                                                                request, 
+                                                                OutputHandler.OUTPUT_HTML, 
+                                                                true, false,false));
+
+        List<String> urls = new ArrayList<String>();
+        getMetadataManager().getThumbnailUrls(request,  entry, urls);
+        if(urls.size()>0) {
+            info.append("<tr><td colspan=2>" +HtmlUtil.img(urls.get(0), "", " width=300 ") +"</td></tr>");
+        } 
+        info.append("</table>");
+
+        if (entry.getResource().isImage()) {
+            String thumbUrl = getRepository().absoluteUrl(HtmlUtil.url(
+                                                                       request.url(repository.URL_ENTRY_GET)
+                                                                       + "/"
+                                                                       + getStorageManager().getFileTail(
+                                                                                                         entry), ARG_ENTRYID, entry.getId(),
+                                                                       ARG_IMAGEWIDTH, "300"));
+            info.append(HtmlUtil.img(thumbUrl,"",""));
+
+        }
+
+
+        String infoHtml= info.toString();
+        infoHtml = infoHtml.replace("\r", " ");
+        infoHtml = infoHtml.replace("\n", " ");
+        infoHtml = infoHtml.replace("\"", "\\\"");
+        infoHtml = infoHtml.replace("'", "\\'");
+        return infoHtml;
+    }
+
+    */
+
 
 
 }

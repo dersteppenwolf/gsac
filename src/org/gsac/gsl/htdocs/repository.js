@@ -682,6 +682,7 @@ function entryRowClick(event, entryId, url) {
 
 
 
+
 function entryHandleXml(request,entryId) {
     var rowId = "row_" +entryId;
     var divId = "div_" + entryId;
@@ -710,5 +711,31 @@ function entryHandleXml(request,entryId) {
 
 
 
+var googleEarthClickCnt =0;
 
+function googleEarthResourceClicked(googleEarth, id, detailsUrl) {
+    googleEarthClickCnt++;
+    var myClick = googleEarthClickCnt;
+    placemark =googleEarth.placemarks[id];
+    if(!placemark) {
+        return;
+    }
+    googleEarth.setLocation(placemark.lat,placemark.lon);
+    googleEarth.placemarkClick(id);
 
+    var cbx = util.getDomObject("googleearth.showdetails");
+    if(cbx) {
+        if(!cbx.obj.checked) return;
+    } 
+    var callback = function(request) {
+        if(myClick != googleEarthClickCnt) return;
+        var balloon = googleEarth.googleEarth.createHtmlStringBalloon('');
+        balloon.setFeature(placemark.placemark);
+        var xmlDoc=request.responseXML.documentElement;
+        text = getChildText(xmlDoc);
+        balloon.setContentString(text);
+        googleEarth.googleEarth.setBalloon(balloon);
+    }
+    util.loadXML(detailsUrl, callback,"");
+
+}

@@ -290,9 +290,12 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(),
                                              true));
 
+        System.err.println ("GE enabled "+ isGoogleEarthEnabled(request));
+
+
         String js = createMap(request,
                               (List<GsacResource>) new ArrayList(sites), pw,
-                              600, 400);
+                              800, 500);
         pw.append(HtmlUtil.script(js.toString()));
 
     }

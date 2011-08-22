@@ -110,7 +110,7 @@ public interface GsacConstants extends GsacArgs {
     public static final int DEFAULT_LIMIT = 1000;
 
     /** _more_ */
-    public static final int MAX_LIMIT = 10000;
+    public static final int MAX_LIMIT = 20000;
 
 
 

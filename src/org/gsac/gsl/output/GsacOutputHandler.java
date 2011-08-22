@@ -550,5 +550,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
         return doResourceFileSize;
     }
 
+    public String fileUrl(String tail) {
+        return getRepository().getUrlBase() + URL_HTDOCS_BASE + tail;
+    }
+
 
 }

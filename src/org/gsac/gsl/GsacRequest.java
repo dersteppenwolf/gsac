@@ -835,6 +835,10 @@ public class GsacRequest implements GsacConstants {
         return httpServletResponse;
     }
 
+    public String getServerName() {
+        return getHttpServletRequest().getServerName();
+    }
+
     /**
      * _more_
      *
@@ -994,6 +998,9 @@ public class GsacRequest implements GsacConstants {
     public boolean siteIdDefined() {
         return defined(ARG_SITE_ID);
     }
+
+
+
 
 
 }

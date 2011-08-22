@@ -161,7 +161,10 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     private String cleanString(String s, String delimiter) {
+        System.err.println("before: " + s +" :" + delimiter+":");
+        s = s.replaceAll(",","_COMMA_");
         s = s.replaceAll(delimiter, "\\" + delimiter);
+        System.err.println("after: " + s +" :" + delimiter+":");
         return s;
     }
 
