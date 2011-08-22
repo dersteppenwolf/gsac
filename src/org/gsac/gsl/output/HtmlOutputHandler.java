@@ -2376,13 +2376,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public String[] getGoogleMapsKey(GsacRequest request) {
         if (geKeys == null) {
             String geAPIKeys = getRepository().getProperty(PROP_GOOGLE_APIKEYS,null);
+            //            System.err.println ("api keys:" + geAPIKeys);
             if ((geAPIKeys == null) || (geAPIKeys.trim().length() == 0)) {
                 return null;
             }
             List<List<String>> tmpKeys = new ArrayList<List<String>>();
             for (String line :
                     StringUtil.split(geAPIKeys, ";", true, true)) {
-                List<String> toks = StringUtil.split(line, ":", true, true);
+                List<String> toks = StringUtil.split(line, ",", false, false);
                 if (toks.size() > 1) {
                     tmpKeys.add(toks);
                 }
@@ -2390,11 +2391,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             geKeys = tmpKeys;
         }
         String hostname = request.getServerName();
+        int port = request.getServerPort();
+        if(port!=80) {
+            hostname = hostname+":" + port;
+        }
+        //        System.err.println("hostname:" + hostname);
         for (List<String> tuple : geKeys) {
             String server = tuple.get(0);
             // check to see if this matches me 
-            if (server.equals("*") || (hostname.indexOf(server) >= 0)) {  // match
+            //            System.err.println("\tserver:" + server);
+            if (server.equals("*") || (hostname.endsWith(server))) {  
                 String mapsKey = tuple.get(1);
+                //                System.err.println("\tkey:" + mapsKey);
                 if (tuple.size() > 2) {
                     return new String[] { mapsKey, tuple.get(2) };
                 } else {
@@ -2495,7 +2503,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String href     = resourceManager.makeViewUrl();
             String xmlUrl = HtmlUtil.url(href, new String[] { idUrlArg,
                                                               resource.getId(), ARG_WRAPXML, "true", });
-            System.err.println(xmlUrl);
             String entryId = cleanIdForJS(resource.getId());
             catSB.append("<a href=\"javascript:googleEarthResourceClicked(" + id +
                          "," +

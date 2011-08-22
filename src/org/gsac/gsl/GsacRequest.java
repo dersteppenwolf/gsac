@@ -839,6 +839,10 @@ public class GsacRequest implements GsacConstants {
         return getHttpServletRequest().getServerName();
     }
 
+    public int getServerPort() {
+        return getHttpServletRequest().getServerPort();
+    }
+
     /**
      * _more_
      *
