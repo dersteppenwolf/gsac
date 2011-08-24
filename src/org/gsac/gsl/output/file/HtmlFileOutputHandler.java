@@ -192,12 +192,27 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         }
 
 
-        if (resource.getFromDate() != null) {
-            String dateString = formatDate(resource);
+        Date publishTime = resource.getPublishTime();
+        Date startTime = resource.getFromDate();
+        Date endTime   = resource.getToDate();
+
+        if (publishTime != null) {
+            
             sb.append(formEntry(request,
-                                msgLabel((resource.getToDate() != null)
-                                         ? "Date Range"
-                                         : "Date"), dateString));
+                                msgLabel("Publish Date"),
+                                formatDate(publishTime)));
+        }
+
+
+        if (startTime != null) {
+            if ((endTime == null) || endTime.equals(startTime)) {
+                sb.append(formEntry(request,
+                                    msgLabel("Date"), formatDate(startTime)));
+            } else  {
+                sb.append(formEntry(request,
+                                    msgLabel("Date Range"),
+                                    formatDate(resource)));
+            }
         }
 
 
@@ -412,11 +427,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
 
-                if (resource.getFromDate() == null) {
-                    sb.append(HtmlUtil.col("N/A"));
+                Date publishTime = resource.getPublishTime();
+                Date startTime = resource.getFromDate();
+                Date endTime   = resource.getToDate();
+
+                if (startTime==null) {
+                    sb.append(HtmlUtil.col(formatDate(publishTime)));
                 } else {
-                    Date startTime = resource.getFromDate();
-                    Date endTime   = resource.getToDate();
                     if ((endTime == null) || endTime.equals(startTime)) {
                         sb.append(HtmlUtil.col(formatDate(startTime),
                                 clickEvent));

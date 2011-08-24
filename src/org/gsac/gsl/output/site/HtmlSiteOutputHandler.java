@@ -151,8 +151,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             checkMessage(request, response, sb);
             handleSiteList(request, response, sb);
             long t3 = System.currentTimeMillis();
-            System.err.println("html site request:" + (t2 - t1) + " "
-                               + (t3 - t2));
+            //            System.err.println("html site request:" + (t2 - t1) + " " + (t3 - t2));
         } else if (request.defined(ARG_SITE_ID)) {
             GsacSite site = (GsacSite) getRepository().getResource(request,
                                 getResourceClass(),

@@ -122,7 +122,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String getSearchTypeSelect(GsacRequest request, String arg) {
         String select = HtmlUtil.select(arg, toTfoList(new String[][] {
-            { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
+             //            { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
             { SEARCHTYPE_EXACT, "Match exactly" },
             { SEARCHTYPE_BEGINSWITH, "Begins with" },
             { SEARCHTYPE_CONTAINS, "Contains" }
@@ -2412,7 +2412,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public String[] getGoogleMapsKey(GsacRequest request) {
         if (geKeys == null) {
             String geAPIKeys = getRepository().getProperty(PROP_GOOGLE_APIKEYS,null);
-            System.err.println ("api keys:" + geAPIKeys);
+            //            System.err.println ("api keys:" + geAPIKeys);
             if ((geAPIKeys == null) || (geAPIKeys.trim().length() == 0)) {
                 return null;
             }
@@ -2431,11 +2431,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if(port!=80) {
             hostname = hostname+":" + port;
         }
-        System.err.println("hostname:" + hostname);
+        //        System.err.println("hostname:" + hostname);
         for (List<String> tuple : geKeys) {
             String server = tuple.get(0);
             // check to see if this matches me 
-            System.err.println("\tserver:" + server);
+            //            System.err.println("\tserver:" + server);
             if (server.equals("*") || (hostname.endsWith(server))) {  
                 String mapsKey = tuple.get(1);
                 //                System.err.println("\tkey:" + mapsKey);

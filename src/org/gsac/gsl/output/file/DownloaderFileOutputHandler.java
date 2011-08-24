@@ -85,7 +85,6 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         String path = request.getRequestURI();
         //If the path does not end with .jnlp then send a redirect
 
-
         //        System.err.println("path:" + path);
         if ( !path.endsWith(".jnlp")) {
             String redirectUrl = path + "/files.jnlp" + "?"
@@ -96,15 +95,14 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         }
 
         String codebase = makeUrl(URL_FILE_SEARCH);
-        String href     = "file..jnlp?" + request.getUrlArgs();
-        //        System.err.println("getting jnlp file");
+        String href     = "file.jnlp?" + request.getUrlArgs();
         response.startResponse(GsacResponse.MIME_JNLP);
         InputStream inputStream = getRepository().getResourceInputStream(
                                       "/org/gsac/gsl/resources/gsac.jnlp");
         String contents = IOUtil.readContents(inputStream);
-        System.err.println("read:" + contents);
         GsacRequest newRequest = new GsacRequest(request);
         newRequest.put(ARG_OUTPUT, UrlFileOutputHandler.OUTPUT_FILE_URL);
+        newRequest.remove(OUTPUT_FILE_DOWNLOAD);
         String dataUrl = makeUrl(URL_FILE_SEARCH + "?"
                                  + newRequest.getUrlArgs());
         String fullUrlRoot =
@@ -118,6 +116,8 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
 
         contents = contents.replace("${codebase}", codebase);
         contents = contents.replace("${href}", href);
+
+        //        System.err.println("jnlp file:" + contents);
 
         PrintWriter pw = response.getPrintWriter();
         pw.append(contents);

@@ -292,7 +292,7 @@ public abstract class SiteManager extends GsacResourceManager {
             initCapability(
                 new Capability(
                     ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
-                    true), CAPABILITY_GROUP_SITE_QUERY, "", "",
+                    true), CAPABILITY_GROUP_ADVANCED, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
             ((siteGroups.size() == 0)
              ? null
@@ -300,8 +300,7 @@ public abstract class SiteManager extends GsacResourceManager {
                  new Capability(
                                 makeUrlArg(ARG_SUFFIX_GROUP), "Site Group",
                      IdLabel.toList(siteGroups),
-                                /*CAPABILITY_GROUP_ADVANCED*/
-                     true), CAPABILITY_GROUP_SITE_QUERY, null)),
+                     true), CAPABILITY_GROUP_ADVANCED, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",
                 Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
                     "Spatial bounds within which the site lies")
