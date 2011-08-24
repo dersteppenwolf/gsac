@@ -249,12 +249,17 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         List<String> tabContents = new ArrayList<String>();
         List<String> tabTitles   = new ArrayList<String>();
 
+        List<String> resultsContents = new ArrayList<String>();
+        List<String> resultsTitles   = new ArrayList<String>();
 
         handleSearchForm(request, response, formBuffer);
+
         List<GsacSite> sites = response.getSites();
         if (sites.size() == 0) {
             pw.append(
                 getRepository().makeInformationDialog(msg("No sites found")));
+            pw.append(formBuffer);
+            return;
         }
 
         String message = response.getQueryInfo();
@@ -264,8 +269,19 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
         StringBuffer searchLinks = makeOutputLinks(request,
-                                       getResourceClass());
+                                                   getResourceClass());
 
+        StringBuffer extraSB = new StringBuffer();
+
+        if ((message != null) && (message.length() > 0)) {
+            extraSB.append(getHeader(msg("Search Criteria")));
+            extraSB.append(message);
+        }
+        extraSB.append(formBuffer);
+        
+        extraSB.append(HtmlUtil.p());
+        extraSB.append(getHeader(msg("Search Links")));
+        extraSB.append(HtmlUtil.insetLeft(searchLinks.toString(), 10));
 
         tabTitles.add(msg("Search Again"));
         tabContents.add(formBuffer.toString());
@@ -275,18 +291,16 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer tabs = new StringBuffer();
         makeTabs(tabs, tabTitles, tabContents);
-        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
+
+
+        /*        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
                                              tabs.toString(),
-                                             sites.size() == 0));
-
-        if (sites.size() == 0) {
-            return;
-        }
-
+                                             false));
+        */
+        pw.append(HtmlUtil.h2(msg("Search Results")));
         makeNextPrevHeader(request, response, pw);
 
-        List<String> resultsContents = new ArrayList<String>();
-        List<String> resultsTitles   = new ArrayList<String>();
+
         StringBuffer listSB = new StringBuffer();
         makeSiteHtmlTable(request, listSB, sites);
         resultsContents.add(listSB.toString());
@@ -300,7 +314,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         resultsTitles.add(msg("Map"));
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
-
+        resultsTitles.add(msg("Search Info"));
+        resultsContents.add(extraSB.toString());
 
         makeTabs(pw, resultsTitles, resultsContents);
 

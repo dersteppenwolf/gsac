@@ -272,6 +272,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         pw.append(HtmlUtil.formPost(resourceManager.makeSearchUrl(),
                                     HtmlUtil.attr("name", "searchform")));;
 
+        //        pw.append(HtmlUtil.cssLink(makeHtdocsUrl("/chosen/chosen.css")));
+
         String blankImg = iconUrl("/blank.gif");
         //Put a blank image submit input here so any Enter key pressed does not
         //default to a submit button search
@@ -301,7 +303,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         buttons.append("</td>");
         addFormSwitchButton(request, buttons, resourceClass);
-
         buttons.append("</tr></table>");
         pw.append(buttons.toString());
 
@@ -322,6 +323,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                              false));
 
         pw.append(buttons.toString());
+
+
+        /*        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
+                                    + URL_HTDOCS_BASE + "/chosen/chosen.jquery.js"));
+        pw.append("<script type=\"text/javascript\"> jQuery(\".chzn-select\").chosen(); </script>");
+        */
+
         pw.append(HtmlUtil.formClose());
     }
 
@@ -415,7 +423,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String makeMultiSelect(GsacRequest request, String arg,
                                   List enums, String dflt) {
-        List<TwoFacedObject> tfos     = toTfoList(enums);
+        List<TwoFacedObject> tfos     = toTfoList(enums,30);
         List                 selected = request.getList(arg);
         if ((selected.size() == 0) && (dflt != null)) {
             selected.add(dflt);
@@ -435,8 +443,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return sb.toString();
         } else {
             return HtmlUtil.select(arg, tfos, selected,
-                                   " MULTIPLE SIZE= "
-                                   + Math.min(4, tfos.size()));
+                                   " style=\"min-width:300px;\" " +
+                                   " multiple size=\""
+                                   + Math.min(4, tfos.size())+"\"");
+
+            //            return HtmlUtil.select(arg, tfos, selected,
+            //                                   HtmlUtil.cssClass("chzn-select") +
+            //                                   " multiple style=\"width:350px;\" ");
         }
     }
 
@@ -1906,13 +1919,22 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     public List<TwoFacedObject> toTfoList(List things) {
+        return toTfoList(things,-1);
+    }
+
+    public List<TwoFacedObject> toTfoList(List things, int lengthLimit) {
         List<TwoFacedObject> tfos = new ArrayList<TwoFacedObject>();
         tfos.add(new TwoFacedObject(ARG_UNDEFINED_LABEL,
                                     ARG_UNDEFINED_VALUE));
+
         for (Object obj : things) {
             if (obj instanceof NamedThing) {
                 NamedThing thing = (NamedThing) obj;
-                tfos.add(new TwoFacedObject(thing.getName(), thing.getId()));
+                String label = thing.getName();
+                if(lengthLimit>0 && label.length()>lengthLimit) {
+                    label = label.substring(0,lengthLimit)+"...";
+                }
+                tfos.add(new TwoFacedObject(label, thing.getId()));
             } else {
                 tfos.add(new TwoFacedObject(obj.toString()));
             }
