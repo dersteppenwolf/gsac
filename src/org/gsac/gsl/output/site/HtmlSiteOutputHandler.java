@@ -285,18 +285,28 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         makeNextPrevHeader(request, response, pw);
 
+        List<String> resultsContents = new ArrayList<String>();
+        List<String> resultsTitles   = new ArrayList<String>();
         StringBuffer listSB = new StringBuffer();
         makeSiteHtmlTable(request, listSB, sites);
-        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(),
-                                             true));
+        resultsContents.add(listSB.toString());
+        resultsTitles.add(msg("Sites"));
 
-        System.err.println ("GE enabled "+ isGoogleEarthEnabled(request));
-
-
+        StringBuffer mapSB = new StringBuffer();
         String js = createMap(request,
-                              (List<GsacResource>) new ArrayList(sites), pw,
-                              800, 500);
-        pw.append(HtmlUtil.script(js.toString()));
+                              (List<GsacResource>) new ArrayList(sites), mapSB,
+                              800, 600,false);
+        resultsContents.add(mapSB.toString());
+        resultsTitles.add(msg("Map"));
+        //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
+
+
+
+        makeTabs(pw, resultsTitles, resultsContents);
+
+        if(js.length()>0) {
+            pw.append(HtmlUtil.script(js.toString()));
+        }
 
     }
 

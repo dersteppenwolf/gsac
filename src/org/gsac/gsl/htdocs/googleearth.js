@@ -46,6 +46,8 @@ function GoogleEarth(id, url) {
         this.googleEarth.getView().setAbstractView(la);
     }
 
+
+
     this.initCallback = function(instance) {
         this.googleEarth = instance;
         this.googleEarth.getWindow().setVisibility(true);
@@ -70,10 +72,18 @@ function GoogleEarth(id, url) {
             if(!firstPlacemark) firstPlacemark = placemark;
             this.addThePlacemark(placemark);
         }
+        var lookAt = this.googleEarth.getView().copyAsLookAt(this.googleEarth.ALTITUDE_RELATIVE_TO_GROUND);
+        //        lookAt.setLatitude(lat);
+        //        lookAt.setLongitude(lon);
+        this.googleEarth.getView().setAbstractView(lookAt);
         if(firstPlacemark) {
             this.setLocation(firstPlacemark.lat,
-                             firstPlacemark.lon);
+                             firstPlacemark.lon,true);
         }
+
+
+
+
     }
     
 
@@ -150,12 +160,16 @@ function GoogleEarth(id, url) {
     }
 
 
-    this.setLocation = function(lat,lon) {
-        var DEFAULT_RANGE = 4999999;
+
+    this.setLocation = function(lat,lon,doRange) {
         if (!this.googleEarth) return;
         var lookAt = this.googleEarth.getView().copyAsLookAt(this.googleEarth.ALTITUDE_RELATIVE_TO_GROUND);
         lookAt.setLatitude(lat);
         lookAt.setLongitude(lon);
+        if(doRange) {
+            var DEFAULT_RANGE = 4999999;
+            lookAt.setRange(DEFAULT_RANGE);
+        }
         //        lookAt.setRange(DEFAULT_RANGE);
         this.googleEarth.getView().setAbstractView(lookAt);
     }

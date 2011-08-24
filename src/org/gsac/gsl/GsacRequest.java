@@ -258,7 +258,9 @@ public class GsacRequest implements GsacConstants {
 
 
         String ua = getUserAgent("").toLowerCase();
-        isMobile = ua.indexOf("iphone") >= 0;
+        isMobile = 
+            ua.indexOf("iphone") >= 0 ||
+            ua.indexOf("android") >= 0;
 
     }
 

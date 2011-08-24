@@ -29,7 +29,8 @@ input {
    color: black;
    margin: 0px;
    padding: 10px;
-   min-height:1500px;
+   padding-top: 0px;
+   min-height:1000px;
 }
 
 .gsac-header {
@@ -97,6 +98,19 @@ input {
 
 .gsac-header2-separator {
 }
+
+.gsac-map-table {
+   border : 1px #888 solid;
+}
+
+
+.gsac-map-resources {
+   max-height:600px;
+   overflow-y: auto;
+   min-width: 100px;
+}
+
+
 
 .gsac-helpimg {
          margin-top:20px;

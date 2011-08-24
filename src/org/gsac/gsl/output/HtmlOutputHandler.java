@@ -1449,7 +1449,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if ( !request.get(ARG_WRAPXML, false)) {
                 js = createMap(request,
                                (List<GsacResource>) Misc.newList(resource),
-                               mapSB, 400, 200);
+                               mapSB, 400, 200, true);
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
                                    formatLatLon(resource) + mapSB));
@@ -1723,8 +1723,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param titles _more_
      * @param tabs _more_
      */
-    public void makeTabs(StringBuffer tabHtml, List<String> titles,
+    public void makeTabs(Appendable tabHtml, List<String> titles,
                          List<String> tabs) {
+        try {
         String tabId = "tabId" + (tabCnt++);
         tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_DIV, HtmlUtil.id(tabId)));
         tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_UL));
@@ -1747,6 +1748,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                        + tabId + "').tabs();\n});\n"));
         tabHtml.append("\n\n");
         //                                String tabHtml =  HtmlUtil.makeTabs(titles, tabs, true);
+        } catch(IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
 
     }
 
@@ -1816,22 +1820,30 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String createMap(GsacRequest request,
                             List<GsacResource> resources, Appendable pw,
-                            int width, int height)
+                            int width, int height, boolean addToggle)
             throws IOException {
 
         StringBuffer mapSB      = new StringBuffer();
         if(isGoogleEarthEnabled(request)) {
             getGoogleEarth(request,  resources, mapSB, width, height);
-            pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
-                                                 true));
+            if(addToggle) {
+                pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
+                                                     true));
+            } else  {
+                pw.append(mapSB.toString());
+            }
             return "";
         }
 
 
         String       mapVarName = "map" + HtmlUtil.blockCnt++;
         initMap(request, mapVarName, mapSB, width, height, false);
-        pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
-                                             false));
+        if(addToggle) {
+            pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
+                                                 false));
+        } else {
+            pw.append(mapSB.toString());
+        }
 
 
         StringBuffer js = new StringBuffer();
@@ -2360,6 +2372,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
     public boolean isGoogleEarthEnabled(GsacRequest request) {
+        //For now don't do this for iphones
+        if(request.isMobile()) return false;
         return getGoogleMapsKey(request) != null;
     }
 
@@ -2475,7 +2489,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                int width, int height)
             throws IOException {
         sb.append(
-                  "<table border=\"0\" width=\"100%\"><tr valign=\"top\"><td>");
+                  "<table  class=\"gsac-map-table\" border=\"0\" width=\"100%\"><tr valign=\"top\">");
 
         StringBuffer mapSB = new StringBuffer();
         String id = getGoogleEarthPlugin(request, mapSB, width, height, null);
@@ -2524,13 +2538,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             js.append("\n");
         }
 
+
+        sb.append("<td>");
+        sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV, HtmlUtil.cssClass("gsac-map-resources")));
         for(String category: categories) {
             StringBuffer catSB = catMap.get(category);
-            sb.append(HtmlUtil.b(category));
-            sb.append(HtmlUtil.br());
+            if(category.length()>0) {
+                sb.append(HtmlUtil.b(category));
+                sb.append(HtmlUtil.br());
+            }
             sb.append(catSB);
         }
-
+        sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
         sb.append("</td><td>");
         sb.append(HtmlUtil.checkbox("tmp","true", true, HtmlUtil.id("googleearth.showdetails")));
         sb.append(msg("Show details"));
