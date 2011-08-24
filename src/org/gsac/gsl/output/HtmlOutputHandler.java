@@ -2412,7 +2412,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public String[] getGoogleMapsKey(GsacRequest request) {
         if (geKeys == null) {
             String geAPIKeys = getRepository().getProperty(PROP_GOOGLE_APIKEYS,null);
-            //            System.err.println ("api keys:" + geAPIKeys);
+            System.err.println ("api keys:" + geAPIKeys);
             if ((geAPIKeys == null) || (geAPIKeys.trim().length() == 0)) {
                 return null;
             }
@@ -2431,11 +2431,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if(port!=80) {
             hostname = hostname+":" + port;
         }
-        //        System.err.println("hostname:" + hostname);
+        System.err.println("hostname:" + hostname);
         for (List<String> tuple : geKeys) {
             String server = tuple.get(0);
             // check to see if this matches me 
-            //            System.err.println("\tserver:" + server);
+            System.err.println("\tserver:" + server);
             if (server.equals("*") || (hostname.endsWith(server))) {  
                 String mapsKey = tuple.get(1);
                 //                System.err.println("\tkey:" + mapsKey);
@@ -2573,7 +2573,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
         sb.append("</td><td>");
-        sb.append(HtmlUtil.checkbox("tmp","true", true, HtmlUtil.id("googleearth.showdetails")));
+        sb.append(HtmlUtil.checkbox("tmp","true", false, HtmlUtil.id("googleearth.showdetails")));
         sb.append(msg("Show details"));
 
         sb.append(mapSB);

@@ -300,6 +300,7 @@ public abstract class SiteManager extends GsacResourceManager {
                  new Capability(
                                 makeUrlArg(ARG_SUFFIX_GROUP), "Site Group",
                      IdLabel.toList(siteGroups),
+                                /*CAPABILITY_GROUP_ADVANCED*/
                      true), CAPABILITY_GROUP_SITE_QUERY, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",
                 Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
