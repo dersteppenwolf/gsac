@@ -802,7 +802,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         GsacResourceManager resourceManager = getResourceManager(resourceClass);
         return getSearchLink(
             group, resourceManager.makeSearchUrl(),
-            resourceManager.makeUrlArg(ARG_SITE_GROUP));
+            resourceManager.makeUrlArg(ARG_SUFFIX_GROUP));
     }
 
 
