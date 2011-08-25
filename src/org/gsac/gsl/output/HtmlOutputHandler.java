@@ -507,6 +507,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             capabilityGroup = capability.getGroup();
             if (capabilityGroup == null) {
                 capabilityGroup = "Advanced Query";
+            } else if(capabilityGroup.trim().length()==0) {
+                capabilityGroup = "Advanced Query";
             }
             capBuff = capabilityGroupMap.get(capabilityGroup);
             if (capBuff == null) {
@@ -2394,8 +2396,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
     public boolean isGoogleEarthEnabled(GsacRequest request) {
-        //For now don't do this for iphones
+        //Not enabled for for iphones, android or linux
         if(request.isMobile()) return false;
+        String userAgent = request.getUserAgent("").toLowerCase();
+        if(userAgent.indexOf("linux")>=0) return false;
+        //        System.err.println("user agent: " + userAgent);
         return getGoogleMapsKey(request) != null;
     }
 
