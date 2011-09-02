@@ -1,0 +1,29 @@
+######################################################################
+GSAC SourceForge tree
+######################################################################
+
+The top-level build script builds:
+
+package: src/org/gsac/gsl
+This is the base GSL layer. The build results in library  lib/gsacws.jar
+This jar needs to be copied to the lib subdir here.
+
+package: src/org/gsac/federated
+This is the federated GSAC repository implementation. The build results in a gsacfederated.jar
+
+package: src/org/gsac/client
+The GSAC client package. Build results in a gsacclient.zip for release.
+
+package: src/org/gsac/template
+This is a Java source template that can be built to start a GSAC repository package.
+Look at src/org/gsac/README for instructions
+
+
+package: src/org/gsac/ramadda
+This is the GSAC RAMADDA plugin. Build results in a gsacplugin.jar which needs to be
+installed in the RAMADDA  plugins directory. This defines a set of GSAC RAMADDA entry types and
+holds an implementation of the GsacRepository  (RamaddaGsacRepository). There is also an
+NtipHarvester for harvesting ntrip source tables for real time feeds.
+
+package: src/gov/nasa/cddis/gsac
+The CDDIS GSAC repository. Build results in a gsacws.war. 
