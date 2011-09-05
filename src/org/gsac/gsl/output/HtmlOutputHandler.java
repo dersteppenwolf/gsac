@@ -306,8 +306,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         buttons.append("</tr></table>");
         pw.append(buttons.toString());
 
-        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
+        /*        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
                                     + URL_HTDOCS_BASE + "/CalendarPopup.js"));
+        */
 
         getSearchForm(request, pw, resourceClass);
         getRepositorySelect(request, pw);
@@ -908,7 +909,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append("\n");
 
 
-        sb.append(HtmlUtil.script("jQuery.noConflict();"));
+        //        sb.append(HtmlUtil.script("jQuery.noConflict();"));
 
         /*
           The lightbox code is conflicting with openlayers maps
@@ -928,8 +929,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         sb.append(HtmlUtil.importJS(getRepository().getUrlBase()
                                     + URL_HTDOCS_BASE + "/repository.js"));
+        /*
         sb.append(HtmlUtil.importJS(getRepository().getUrlBase()
                                     + URL_HTDOCS_BASE + "/CalendarPopup.js"));
+        */
         sb.append(HtmlUtil.div("",
                                HtmlUtil.id("tooltipdiv")
                                + HtmlUtil.cssClass("tooltip-outer")));
@@ -1970,6 +1973,40 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String timeString = ((date == null)
                              ? timeArg
                              : formatTime(date));
+
+        String timeField = "";
+        if(includeTime) {
+            timeField =  " T:"
+                + HtmlUtil.input(
+                                 name + ".time", timeString,
+                                 HtmlUtil.sizeAttr(6)
+                                 + HtmlUtil.attr(
+                                                 HtmlUtil.ATTR_TITLE,
+                                                 timeHelp));
+        }
+
+        String inputId = "dateinput" + (HtmlUtil.blockCnt++);
+        
+        String js = "<script>jQuery(function() {jQuery( " + HtmlUtil.squote("#" + inputId) +" ).datepicker({ dateFormat: 'yy-mm-dd',changeMonth: true, changeYear: true,constrainInput:false });});</script>";
+        if(true) {
+            return "\n" + js +"\n" +
+                HtmlUtil.input(name, dateString,
+                               HtmlUtil.SIZE_10 + HtmlUtil.id(inputId)
+                               + HtmlUtil.title(dateHelp))+"\n";
+        }
+
+        /*
+        String js = "<script>jQuery(function() {$( " + HtmlUtil.squote("#" + inputId) +" ).datepicker({ dateFormat: 'yy-mm-dd' });});</script>";
+
+        if(true) {
+            return "\n" +
+                HtmlUtil.input(name, dateString,
+                               HtmlUtil.SIZE_10 + HtmlUtil.id(inputId)
+                               + HtmlUtil.title(dateHelp)) +
+                timeField+"\n" + js +"\n";
+        }
+        */
+
 
         return HtmlUtil.input(
             name, dateString,
