@@ -20,6 +20,9 @@ used by the javadoc target
     </target>
 
 
+   <target name="release" depends="init,purge" >
+        <antcall target="gsac"/>
+   </target>
 
     <target name="javadoc" depends="init">
         <javadoc
