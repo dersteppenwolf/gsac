@@ -55,10 +55,20 @@ public class IrisRepository extends GsacRepository implements GsacConstants {
             return new IrisSiteManager(this);
         }
         if(type.equals(GsacFile.CLASS_FILE)) {
+            ucar.unidata.util.Misc.printStack("file");
             return new IrisFileManager(this);
         }
         return null;
     }
+
+    public void initOutputHandlers(ResourceClass resourceClass) {
+        if(resourceClass.equals(GsacFile.CLASS_FILE)) {
+            return;
+        }
+        super.initOutputHandlers(resourceClass);
+    }
+
+
 
     public void initResourceManagers() {
         //Override this to make your own set of resource managers

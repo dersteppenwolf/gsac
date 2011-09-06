@@ -15,10 +15,13 @@ import org.gsac.gsl.util.*;
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.xml.XmlUtil;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -28,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 import org.w3c.dom.*;
 
@@ -44,8 +48,29 @@ public class IrisSiteManager extends SiteManager {
 
     public static final String IRIS_URL = "http://www.iris.edu/ws/station/query";
 
+    public static final String ARG_SITE_STARTDATE = "site.startdate";
+    public static final String ARG_SITE_STARTDATE_FROM = ARG_SITE_STARTDATE +".from";
+    public static final String ARG_SITE_STARTDATE_TO = ARG_SITE_STARTDATE +".to";
+
+    public static final String ARG_SITE_ENDDATE = "site.enddate";
+    public static final String ARG_SITE_ENDDATE_FROM = ARG_SITE_ENDDATE +".from";
+    public static final String ARG_SITE_ENDDATE_TO = ARG_SITE_ENDDATE +".to";
+
+
     public static final String ARG_IRIS_STA = "sta";
     public static final String ARG_IRIS_NET = "net";
+    public static final String ARG_IRIS_MINLAT = "minlat";
+    public static final String ARG_IRIS_MAXLAT = "maxlat";
+    public static final String ARG_IRIS_MINLON = "minlon";
+    public static final String ARG_IRIS_MAXLON = "maxlon";
+
+    public static final String ARG_IRIS_STARTBEFORE = "startbefore";
+    public static final String ARG_IRIS_STARTAFTER = "startafter";
+    public static final String ARG_IRIS_ENDBEFORE = "endbefore";
+    public static final String ARG_IRIS_ENDAFTER = "endafter";
+
+
+
 
     /**
      * ctor
@@ -65,15 +90,64 @@ public class IrisSiteManager extends SiteManager {
             throws Exception {
         StringBuffer msgBuff    = new StringBuffer();
 
-        /*
-        if (request.defined(ARG_NORTH) && 
-        if (request.defined(ARG_SOUTH)) {
-        if (request.defined(ARG_EAST)) {
-        if (request.defined(ARG_WEST)) {
-            appendSearchCriteria(msgBuff, "west&gt;=",
-                                 "" + request.get(ARG_WEST, 0.0));
-        */
         List<String> args = new ArrayList<String>();
+
+        String[] gsacSpatialArgs = new String[]{
+            ARG_NORTH,
+            ARG_WEST,
+            ARG_SOUTH,
+            ARG_EAST
+        };
+        String[] irisSpatialArgs = new String[]{
+            ARG_IRIS_MAXLAT,
+            ARG_IRIS_MINLON,
+            ARG_IRIS_MINLAT,
+            ARG_IRIS_MAXLON,
+        };
+
+        Date[][] dateRanges = new Date[][]{
+            request.getDateRange(ARG_SITE_STARTDATE_FROM,
+                                 ARG_SITE_STARTDATE_TO, null, null),
+            request.getDateRange(ARG_SITE_ENDDATE_FROM,
+                                 ARG_SITE_ENDDATE_TO, null, null),
+        };
+        String[][] dateArgs = new String[][]{
+            new String[]{
+                ARG_IRIS_STARTAFTER,
+                ARG_IRIS_STARTBEFORE},
+            new String[]{
+                ARG_IRIS_ENDAFTER,
+                ARG_IRIS_ENDBEFORE},
+        };
+
+        SimpleDateFormat sdf = null;
+        for(int i=0;i<dateRanges.length;i++) {
+            Date[] dateRange= dateRanges[i];
+            for(int j=0;j<2;j++) {
+                if(dateRange[j]!=null) {
+                    if(sdf == null) {
+                        sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        sdf.setTimeZone(GsacOutputHandler.TIMEZONE_DEFAULT);
+                    }
+                    String dateString = sdf.format(dateRange[j]);
+                    args.add(HtmlUtil.arg(dateArgs[i][j],
+                                          dateString));
+                    appendSearchCriteria(msgBuff, dateArgs[i][j]+":",
+                                         dateString);
+                }
+            }
+        }
+
+
+        String[] spatialNames = new String[]{"North","West","South","East",};
+        for(int i=0;i<gsacSpatialArgs.length;i++) {
+            if (request.defined(gsacSpatialArgs[i])) {
+                args.add(HtmlUtil.arg(irisSpatialArgs[i],request.get(gsacSpatialArgs[i],"")));
+                appendSearchCriteria(msgBuff, spatialNames[i]+":",
+                                     request.get(gsacSpatialArgs[i],""));
+            }
+        }
+
         List<String> siteCodes = request.get(ARG_SITE_CODE, new ArrayList<String>());
         for(String siteCode: siteCodes) {
             if(siteCode.length()==0) continue;
@@ -102,7 +176,19 @@ public class IrisSiteManager extends SiteManager {
         List<GsacSite> sites = new ArrayList<GsacSite>();
         String url = IRIS_URL+"?" + StringUtil.join("&",args);
         System.err.println("IRIS: url=" + url);
-        Element root   = XmlUtil.getRoot(url, getClass());
+        String          xml  = null;
+
+        //Iris throws a 404 if the are no results from the query
+        try {
+             xml  = IOUtil.readContents(url, getClass());
+        } catch(IOException ioe) {
+            return sites;
+        }
+        Element         root = XmlUtil.getRoot(xml);
+        if(root==null) {
+            System.err.println ("GSAC: XML parse error:" + xml);
+            return sites;
+        }
         NodeList networkElements = XmlUtil.getElements(root, IrisXml.TAG_NETWORK);
         for (int i = 0; i < networkElements.getLength(); i++) {
             Element networkElement = (Element) networkElements.item(i);
@@ -197,12 +283,25 @@ public class IrisSiteManager extends SiteManager {
                                           Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
                            "Spatial bounds within which the site lies")
         };
+
+
+
         siteCode.setBrowse(true);
         for (Capability capability : dflt) {
             if (capability != null) {
                 capabilities.add(capability);
             }
         }
+        capabilities.add(initCapability(new Capability(ARG_SITE_STARTDATE,
+                                                       "Start Date",
+                                                       Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY,
+                                        "Station start date"));
+
+        capabilities.add(initCapability(new Capability(ARG_SITE_ENDDATE,
+                                                       "End Date",
+                                                       Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY,
+                                        "Station end date"));
+
         return capabilities;
     }
 
