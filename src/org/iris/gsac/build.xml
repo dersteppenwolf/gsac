@@ -9,9 +9,6 @@
     The basedir (below) needs to be set to the base_directory relative to this build.xml
     The localinit target defines the properties for the build. These properties need to be changed.
     
-    The default build target is test_build. This copies the dbresources/gsacdb_test.properties file 
-    to resources/gsacdb.properties and makes a .zip and .war in the dist dir
-
     Once run you can run the server with:
     ant runserver
 -->
@@ -96,9 +93,6 @@
         <ant antfile="${srcdir}/org/gsac/gsl/build.xml" target="gsacjar"/>
 -->
 
-        <property name="db.properties" value="${repositorydir}/dbresources/gsacdb_${build}.properties"/>
-        <copy overwrite="true"    file="${db.properties}"  
-                 tofile="${repositorydir}/resources/gsacdb.properties" />
         <property name="server.properties" value="${repositorydir}/resources/gsacserver_${build}.properties"/>
         <copy overwrite="true"    file="${server.properties}"  
                  tofile="${repositorydir}/resources/gsacserver.properties" />
@@ -231,7 +225,6 @@
 
     <target name="srcrelease" depends="init,clean">
         <echo message="Making src jar ${jardir}/${srcjarfile}"/>
-        <delete file="${repositorydir}/resources/gsacdb.properties"/>
         <jar 
             basedir="${srcdir}"
             update="false"
