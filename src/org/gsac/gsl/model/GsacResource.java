@@ -431,7 +431,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
         EarthLocation location = earthLocation;
         if (location == null) {
             if (makeNewIfNeeded) {
-                location = new EarthLocation();
+                earthLocation = location = new EarthLocation();
             }
         }
         if (location == null) {

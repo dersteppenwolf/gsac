@@ -16,18 +16,19 @@
     ant runserver
 -->
 
-<project basedir="@MACRO.DOTS@" default="test_build" name="GSAC Build">
+<project basedir="../../../.." default="test_build" name="GSAC Build">
 
     <target name="localinit">
 <!-- base name for build products -->
-        <property name="basename" value="@MACRO.BASENAME@"/>
+        <property name="basename" value="gsaciris"/>
+
 
 <!-- Where the main source dir is at (relative to the top level src dir) -->
-        <property name="repository_relative_dir" value="@MACRO.SRCDIR@"/>
-        <property name="repositorypackage" value="@MACRO.PACKAGE@"/>
+        <property name="repository_relative_dir" value="org/iris/gsac"/>
+        <property name="repositorypackage" value="org.iris.gsac"/>
 
-        <property name="serverclass" value="${repositorypackage}.@MACRO.PREFIX@Server"/>
-        <property name="repositoryclass" value="${repositorypackage}.@MACRO.PREFIX@Repository"/>
+        <property name="serverclass" value="${repositorypackage}.IrisServer"/>
+        <property name="repositoryclass" value="${repositorypackage}.IrisRepository"/>
 
 <!-- The root of the Tomcat URL -->
         <property name="urlroot" value="/${basename}"/>
@@ -59,7 +60,7 @@
         <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
         
 
-        <property name="classpath" value="${srcdir}:${libdir}/@MACRO.DBJAR@:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
+        <property name="classpath" value="${srcdir}:${libdir}/postgres.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
 
 
 
@@ -123,7 +124,7 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="${basename}"/>
               <attribute name="Main-class" value="${serverclass}"/>
-              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar @MACRO.DBJAR@ ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar postgres.jar ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
             </manifest> 
         </jar>
     </target>
@@ -159,7 +160,7 @@
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-util.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/gson-1.5.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/servlet-api.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/@MACRO.DBJAR@"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/postgres.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-dbcp.jar}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-pool.jar}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/log4j-1.2.15.jar"/>
@@ -191,7 +192,7 @@
 
 
     <target name="tables" depends="init">
-      <java classname="${repositorypackage}.@MACRO.PREFIX@DatabaseManager" maxmemory="512mb">
+      <java classname="${repositorypackage}.IrisDatabaseManager" maxmemory="512mb">
           <classpath>
              <pathelement path="${classpath}"/>
              <pathelement location=""/>

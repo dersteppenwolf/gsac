@@ -1,0 +1,18 @@
+
+###########################################
+This README gets included in the release
+###########################################
+
+
+This is the stand-alone GSAC IRIS GSAC Repository server. 
+You will need Java 1.6 (or higher) to run this server.
+
+Look at  gsacrepository.sh to configure the database connection then do:
+source gsacrepository.sh
+
+Or change the permissions and run:
+chmod 755 gsacrepository.sh
+./gsacrepository.sh
+
+
+
