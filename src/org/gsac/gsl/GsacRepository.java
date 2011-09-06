@@ -400,29 +400,44 @@ public class GsacRepository implements GsacConstants {
      * Create the default set of output handlers
      */
     public void initOutputHandlers() {
-        //TODO: put the specification of the output handlers into a properties or xml file
-        htmlOutputHandler = new HtmlSiteOutputHandler(this,
-                GsacSite.CLASS_SITE);
-        new KmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
-        new TextSiteOutputHandler(this, GsacSite.CLASS_SITE);
-        new RssSiteOutputHandler(this, GsacSite.CLASS_SITE);
-        new AtomSiteOutputHandler(this, GsacSite.CLASS_SITE);
-        new JsonSiteOutputHandler(this, GsacSite.CLASS_SITE);
-        new XmlSiteLogOutputHandler(this, GsacSite.CLASS_SITE);
-        new XmlSiteOutputHandler(this, GsacSite.CLASS_SITE);
-        //        new FlexigridSiteOutputHandler(this, GsacSite.CLASS_SITE);
-
-        new HtmlFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new CsvFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new DownloaderFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new WgetFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new UrlFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new JsonFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new ZipFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new RssFileOutputHandler(this, GsacFile.CLASS_FILE);
-        new XmlFileOutputHandler(this, GsacFile.CLASS_FILE);
-
+        for(GsacResourceManager resourceManager:  getResourceManagers()) {
+            initOutputHandlers(resourceManager.getResourceClass());
+        }
         browseOutputHandler = new BrowseOutputHandler(this);
+    }
+
+    public void initOutputHandlers(ResourceClass resourceClass) {
+        //TODO: put the specification of the output handlers into a properties or xml file
+        //Or into the resourcemanager
+
+        if(resourceClass.equals(GsacSite.CLASS_SITE)) {
+            //TODO: If we don't have a site then we don't have this member
+            htmlOutputHandler = new HtmlSiteOutputHandler(this,
+                                                          resourceClass);
+            new KmlSiteOutputHandler(this, resourceClass);
+            new TextSiteOutputHandler(this, resourceClass);
+            new RssSiteOutputHandler(this, resourceClass);
+            new AtomSiteOutputHandler(this, resourceClass);
+            new JsonSiteOutputHandler(this, resourceClass);
+            new XmlSiteLogOutputHandler(this, resourceClass);
+            new XmlSiteOutputHandler(this, resourceClass);
+            //        new FlexigridSiteOutputHandler(this, resourceClass);
+        } else if(resourceClass.equals(GsacFile.CLASS_FILE)) {
+            new HtmlFileOutputHandler(this, resourceClass);
+            new CsvFileOutputHandler(this, resourceClass);
+            new DownloaderFileOutputHandler(this, resourceClass);
+            new WgetFileOutputHandler(this, resourceClass);
+            new UrlFileOutputHandler(this, resourceClass);
+            new JsonFileOutputHandler(this, resourceClass);
+            new ZipFileOutputHandler(this, resourceClass);
+            new RssFileOutputHandler(this, resourceClass);
+            new XmlFileOutputHandler(this, resourceClass);
+        }
+
+    }
+
+
+    public void initBrowseOutputHandlers() {
     }
 
 
