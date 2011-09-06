@@ -2473,14 +2473,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if(port!=80) {
             hostname = hostname+":" + port;
         }
-        //        System.err.println("hostname:" + hostname);
+        System.err.println("get google earth key hostame = " + hostname);
         for (List<String> tuple : geKeys) {
             String server = tuple.get(0);
             // check to see if this matches me 
-            //            System.err.println("\tserver:" + server);
+            System.err.println("\tserver:" + server);
             if (server.equals("*") || (hostname.endsWith(server))) {  
                 String mapsKey = tuple.get(1);
-                //                System.err.println("\tkey:" + mapsKey);
+                System.err.println("\t\tkey:" + mapsKey);
                 if (tuple.size() > 2) {
                     return new String[] { mapsKey, tuple.get(2) };
                 } else {
