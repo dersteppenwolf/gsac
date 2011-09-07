@@ -63,6 +63,7 @@ used by the javadoc target
       <antcall target="cddis"/>
       <antcall target="federated"/>
       <antcall target="ramadda"/>
+      <antcall target="iris"/>
     </target>
 
 
@@ -91,6 +92,11 @@ used by the javadoc target
     <target name="cddis" depends="init">
       <echo message="Building GSAC CDDIS"/>
       <ant antfile="${srcdir}/gov/nasa/cddis/gsac/build.xml" inheritAll="false"/>
+    </target>
+
+    <target name="iris" depends="init">
+      <echo message="Building GSAC IRIS"/>
+      <ant antfile="${srcdir}/org/iris/gsac/build.xml" inheritAll="false"/>
     </target>
 
     <target name="federated" depends="init">
