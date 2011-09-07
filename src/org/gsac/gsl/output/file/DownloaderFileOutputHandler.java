@@ -118,7 +118,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         contents = contents.replace("${codebase}", codebase);
         contents = contents.replace("${href}", href);
 
-        System.err.println("jnlp file:" + contents);
+        //        System.err.println("jnlp file:" + contents);
 
         PrintWriter pw = response.getPrintWriter();
         pw.append(contents);
