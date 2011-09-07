@@ -179,13 +179,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         for (GsacResource relatedResource : relatedResources) {
             String resourceLabel =
                 getResourceManager(relatedResource).getResourceLabel(false);
-            if(relatedResource.getId()==null) {
+            if (relatedResource.getId() == null) {
                 sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
                                              relatedResource.getLongLabel()));
             } else {
                 String resourceUrl = makeResourceViewUrl(relatedResource);
                 sb.append(HtmlUtil.formEntry(msgLabel(resourceLabel),
-                                             "<a href=\"" + resourceUrl + "\">"
+                                             "<a href=\"" + resourceUrl
+                                             + "\">"
                                              + relatedResource.getLongLabel()
                                              + "</a>"));
             }
@@ -193,24 +194,22 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
 
         Date publishTime = resource.getPublishTime();
-        Date startTime = resource.getFromDate();
-        Date endTime   = resource.getToDate();
+        Date startTime   = resource.getFromDate();
+        Date endTime     = resource.getToDate();
 
         if (publishTime != null) {
-            
-            sb.append(formEntry(request,
-                                msgLabel("Publish Date"),
+
+            sb.append(formEntry(request, msgLabel("Publish Date"),
                                 formatDate(publishTime)));
         }
 
 
         if (startTime != null) {
             if ((endTime == null) || endTime.equals(startTime)) {
-                sb.append(formEntry(request,
-                                    msgLabel("Date"), formatDate(startTime)));
-            } else  {
-                sb.append(formEntry(request,
-                                    msgLabel("Date Range"),
+                sb.append(formEntry(request, msgLabel("Date"),
+                                    formatDate(startTime)));
+            } else {
+                sb.append(formEntry(request, msgLabel("Date Range"),
                                     formatDate(resource)));
             }
         }
@@ -413,11 +412,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     if (relatedIdx > 0) {
                         relatedContent.append("<br>");
                     }
-                    if(relatedResource.getId()!=null) {
-                        String relatedUrl = makeResourceViewUrl(relatedResource);
-                        relatedContent.append("<a href=\"" + relatedUrl + "\">"
-                                              + relatedResource.getLongLabel()
-                                              + "</a>");
+                    if (relatedResource.getId() != null) {
+                        String relatedUrl =
+                            makeResourceViewUrl(relatedResource);
+                        relatedContent.append("<a href=\"" + relatedUrl
+                                + "\">" + relatedResource.getLongLabel()
+                                + "</a>");
                     } else {
                         relatedContent.append(relatedResource.getLongLabel());
                     }
@@ -428,10 +428,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 sb.append(HtmlUtil.col(relatedContent.toString()));
 
                 Date publishTime = resource.getPublishTime();
-                Date startTime = resource.getFromDate();
-                Date endTime   = resource.getToDate();
+                Date startTime   = resource.getFromDate();
+                Date endTime     = resource.getToDate();
 
-                if (startTime==null) {
+                if (startTime == null) {
                     sb.append(HtmlUtil.col(formatDate(publishTime)));
                 } else {
                     if ((endTime == null) || endTime.equals(startTime)) {

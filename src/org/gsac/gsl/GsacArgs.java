@@ -141,12 +141,12 @@ public interface GsacArgs {
         ARG_SITE_CODE_SEARCHTYPE;
 
     /** _more_ */
-    public static final String ARG_SUFFIX_GROUP =  "group";
+    public static final String ARG_SUFFIX_GROUP = "group";
 
 
     /** _more_ */
     public static final String ARG_SITE_GROUP = ARG_SITE_PREFIX
-                                                    + ARG_SUFFIX_GROUP;
+                                                + ARG_SUFFIX_GROUP;
 
     /** _more_ */
     public static final String ARG_SITE_TYPE = ARG_SITE_PREFIX + "type";

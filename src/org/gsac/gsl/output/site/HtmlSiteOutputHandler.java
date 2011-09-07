@@ -244,9 +244,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     public void handleSiteList(GsacRequest request, GsacResponse response,
                                Appendable pw)
             throws IOException, ServletException {
-        StringBuffer formBuffer  = new StringBuffer();
-        List<String> tabContents = new ArrayList<String>();
-        List<String> tabTitles   = new ArrayList<String>();
+        StringBuffer formBuffer      = new StringBuffer();
+        List<String> tabContents     = new ArrayList<String>();
+        List<String> tabTitles       = new ArrayList<String>();
 
         List<String> resultsContents = new ArrayList<String>();
         List<String> resultsTitles   = new ArrayList<String>();
@@ -268,7 +268,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
         StringBuffer searchLinks = makeOutputLinks(request,
-                                                   getResourceClass());
+                                       getResourceClass());
 
         StringBuffer extraSB = new StringBuffer();
 
@@ -277,7 +277,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             extraSB.append(message);
         }
         extraSB.append(formBuffer);
-        
+
         extraSB.append(HtmlUtil.p());
         extraSB.append(getHeader(msg("Search Links")));
         extraSB.append(HtmlUtil.insetLeft(searchLinks.toString(), 10));
@@ -307,8 +307,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         StringBuffer mapSB = new StringBuffer();
         String js = createMap(request,
-                              (List<GsacResource>) new ArrayList(sites), mapSB,
-                              800, 600,false);
+                              (List<GsacResource>) new ArrayList(sites),
+                              mapSB, 800, 600, false);
         resultsContents.add(mapSB.toString());
         resultsTitles.add(msg("Map"));
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
@@ -318,7 +318,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         makeTabs(pw, resultsTitles, resultsContents);
 
-        if(js.length()>0) {
+        if (js.length() > 0) {
             pw.append(HtmlUtil.script(js.toString()));
         }
 

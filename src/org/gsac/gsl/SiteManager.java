@@ -298,7 +298,7 @@ public abstract class SiteManager extends GsacResourceManager {
              ? null
              : initCapability(
                  new Capability(
-                                makeUrlArg(ARG_SUFFIX_GROUP), "Site Group",
+                     makeUrlArg(ARG_SUFFIX_GROUP), "Site Group",
                      IdLabel.toList(siteGroups),
                      true), CAPABILITY_GROUP_ADVANCED, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",

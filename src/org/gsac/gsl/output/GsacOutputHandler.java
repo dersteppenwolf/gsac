@@ -487,9 +487,21 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String makeUrl(String suffix) {
+        return makeUrl(null, suffix);
+    }
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param suffix _more_
+     *
+     * @return _more_
+     */
+    public String makeUrl(GsacRequest request, String suffix) {
         String url = getRepository().getUrlBase() + suffix;
         if (shouldUrlsBeAbsolute()) {
-            url = getRepository().getAbsoluteUrl(url);
+            url = getRepository().getAbsoluteUrl(request, url);
         }
         return url;
     }
@@ -550,6 +562,13 @@ public abstract class GsacOutputHandler implements GsacConstants {
         return doResourceFileSize;
     }
 
+    /**
+     * _more_
+     *
+     * @param tail _more_
+     *
+     * @return _more_
+     */
     public String fileUrl(String tail) {
         return getRepository().getUrlBase() + URL_HTDOCS_BASE + tail;
     }

@@ -173,6 +173,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getUrlArgPrefix() {
         return getResourceClass().getName();
     }
@@ -187,8 +192,15 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         return makeUrlArg(ARG_SUFFIX_ID);
     }
 
+    /**
+     * _more_
+     *
+     * @param suffix _more_
+     *
+     * @return _more_
+     */
     public String makeUrlArg(String suffix) {
-        return getUrlArgPrefix() + "." +suffix;
+        return getUrlArgPrefix() + "." + suffix;
     }
 
     /**

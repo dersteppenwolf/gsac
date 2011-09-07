@@ -67,8 +67,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
 
-    public static final String PROP_GOOGLE_APIKEYS =
-        "gsac.google.apikeys";
+    /** _more_          */
+    public static final String PROP_GOOGLE_APIKEYS = "gsac.google.apikeys";
 
 
 
@@ -122,7 +122,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String getSearchTypeSelect(GsacRequest request, String arg) {
         String select = HtmlUtil.select(arg, toTfoList(new String[][] {
-             //            { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
+            //            { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
             { SEARCHTYPE_EXACT, "Match exactly" },
             { SEARCHTYPE_BEGINSWITH, "Begins with" },
             { SEARCHTYPE_CONTAINS, "Contains" }
@@ -424,7 +424,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String makeMultiSelect(GsacRequest request, String arg,
                                   List enums, String dflt) {
-        List<TwoFacedObject> tfos     = toTfoList(enums,30);
+        List<TwoFacedObject> tfos     = toTfoList(enums, 30);
         List                 selected = request.getList(arg);
         if ((selected.size() == 0) && (dflt != null)) {
             selected.add(dflt);
@@ -444,9 +444,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return sb.toString();
         } else {
             return HtmlUtil.select(arg, tfos, selected,
-                                   " style=\"min-width:300px;\" " +
-                                   " multiple size=\""
-                                   + Math.min(4, tfos.size())+"\"");
+                                   " style=\"min-width:300px;\" "
+                                   + " multiple size=\""
+                                   + Math.min(4, tfos.size()) + "\"");
 
             //            return HtmlUtil.select(arg, tfos, selected,
             //                                   HtmlUtil.cssClass("chzn-select") +
@@ -508,7 +508,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             capabilityGroup = capability.getGroup();
             if (capabilityGroup == null) {
                 capabilityGroup = "Advanced Query";
-            } else if(capabilityGroup.trim().length()==0) {
+            } else if (capabilityGroup.trim().length() == 0) {
                 capabilityGroup = "Advanced Query";
             }
             capBuff = capabilityGroupMap.get(capabilityGroup);
@@ -802,10 +802,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public String getGroupSearchLink(ResourceGroup group,
                                      ResourceClass resourceClass) {
 
-        GsacResourceManager resourceManager = getResourceManager(resourceClass);
-        return getSearchLink(
-            group, resourceManager.makeSearchUrl(),
-            resourceManager.makeUrlArg(ARG_SUFFIX_GROUP));
+        GsacResourceManager resourceManager =
+            getResourceManager(resourceClass);
+        return getSearchLink(group, resourceManager.makeSearchUrl(),
+                             resourceManager.makeUrlArg(ARG_SUFFIX_GROUP));
     }
 
 
@@ -1744,29 +1744,31 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void makeTabs(Appendable tabHtml, List<String> titles,
                          List<String> tabs) {
         try {
-        String tabId = "tabId" + (tabCnt++);
-        tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_DIV, HtmlUtil.id(tabId)));
-        tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_UL));
-        int cnt = 1;
-        for (String title : titles) {
-            tabHtml.append("<li><a href=\"#" + tabId + "-" + (cnt++) + "\">"
-                           + title + "</a></li>");
-        }
-        tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_UL));
-        cnt = 1;
-        for (String tabContents : tabs) {
-            tabHtml.append(HtmlUtil.div(tabContents,
-                                        HtmlUtil.id(tabId + "-" + (cnt++))));
-            tabHtml.append("\n");
-        }
+            String tabId = "tabId" + (tabCnt++);
+            tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_DIV,
+                                         HtmlUtil.id(tabId)));
+            tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_UL));
+            int cnt = 1;
+            for (String title : titles) {
+                tabHtml.append("<li><a href=\"#" + tabId + "-" + (cnt++)
+                               + "\">" + title + "</a></li>");
+            }
+            tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_UL));
+            cnt = 1;
+            for (String tabContents : tabs) {
+                tabHtml.append(HtmlUtil.div(tabContents,
+                                            HtmlUtil.id(tabId + "-"
+                                                + (cnt++))));
+                tabHtml.append("\n");
+            }
 
-        tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
-        tabHtml.append("\n");
-        tabHtml.append(HtmlUtil.script("\njQuery(function(){\njQuery('#"
-                                       + tabId + "').tabs();\n});\n"));
-        tabHtml.append("\n\n");
-        //                                String tabHtml =  HtmlUtil.makeTabs(titles, tabs, true);
-        } catch(IOException ioe) {
+            tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
+            tabHtml.append("\n");
+            tabHtml.append(HtmlUtil.script("\njQuery(function(){\njQuery('#"
+                                           + tabId + "').tabs();\n});\n"));
+            tabHtml.append("\n\n");
+            //                                String tabHtml =  HtmlUtil.makeTabs(titles, tabs, true);
+        } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
 
@@ -1831,6 +1833,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param pw appendable to append to
      * @param width map width
      * @param height map height
+     * @param addToggle _more_
      *
      * @return the map
      *
@@ -1841,24 +1844,24 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             int width, int height, boolean addToggle)
             throws IOException {
 
-        StringBuffer mapSB      = new StringBuffer();
-        if(isGoogleEarthEnabled(request)) {
-            getGoogleEarth(request,  resources, mapSB, width, height);
-            if(addToggle) {
-                pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
-                                                     true));
-            } else  {
+        StringBuffer mapSB = new StringBuffer();
+        if (isGoogleEarthEnabled(request)) {
+            getGoogleEarth(request, resources, mapSB, width, height);
+            if (addToggle) {
+                pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
+                        mapSB.toString(), true));
+            } else {
                 pw.append(mapSB.toString());
             }
             return "";
         }
 
 
-        String       mapVarName = "map" + HtmlUtil.blockCnt++;
+        String mapVarName = "map" + HtmlUtil.blockCnt++;
         initMap(request, mapVarName, mapSB, width, height, false);
-        if(addToggle) {
-            pw.append(HtmlUtil.makeShowHideBlock(msg("Map"), mapSB.toString(),
-                                                 false));
+        if (addToggle) {
+            pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
+                    mapSB.toString(), false));
         } else {
             pw.append(mapSB.toString());
         }
@@ -1924,9 +1927,17 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     public List<TwoFacedObject> toTfoList(List things) {
-        return toTfoList(things,-1);
+        return toTfoList(things, -1);
     }
 
+    /**
+     * _more_
+     *
+     * @param things _more_
+     * @param lengthLimit _more_
+     *
+     * @return _more_
+     */
     public List<TwoFacedObject> toTfoList(List things, int lengthLimit) {
         List<TwoFacedObject> tfos = new ArrayList<TwoFacedObject>();
         tfos.add(new TwoFacedObject(ARG_UNDEFINED_LABEL,
@@ -1935,9 +1946,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         for (Object obj : things) {
             if (obj instanceof NamedThing) {
                 NamedThing thing = (NamedThing) obj;
-                String label = thing.getName();
-                if(lengthLimit>0 && label.length()>lengthLimit) {
-                    label = label.substring(0,lengthLimit)+"...";
+                String     label = thing.getName();
+                if ((lengthLimit > 0) && (label.length() > lengthLimit)) {
+                    label = label.substring(0, lengthLimit) + "...";
                 }
                 tfos.add(new TwoFacedObject(label, thing.getId()));
             } else {
@@ -1974,25 +1985,26 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                              ? timeArg
                              : formatTime(date));
 
-        String timeField = "";
-        if(includeTime) {
-            timeField =  " T:"
-                + HtmlUtil.input(
-                                 name + ".time", timeString,
-                                 HtmlUtil.sizeAttr(6)
-                                 + HtmlUtil.attr(
-                                                 HtmlUtil.ATTR_TITLE,
-                                                 timeHelp));
+        String timeField  = "";
+        if (includeTime) {
+            timeField = " T:"
+                        + HtmlUtil.input(name + ".time", timeString,
+                                         HtmlUtil.sizeAttr(6)
+                                         + HtmlUtil.attr(HtmlUtil.ATTR_TITLE,
+                                             timeHelp));
         }
 
         String inputId = "dateinput" + (HtmlUtil.blockCnt++);
-        
-        String js = "<script>jQuery(function() {jQuery( " + HtmlUtil.squote("#" + inputId) +" ).datepicker({ dateFormat: 'yy-mm-dd',changeMonth: true, changeYear: true,constrainInput:false });});</script>";
-        if(true) {
-            return "\n" + js +"\n" +
-                HtmlUtil.input(name, dateString,
-                               HtmlUtil.SIZE_10 + HtmlUtil.id(inputId)
-                               + HtmlUtil.title(dateHelp))+"\n";
+
+        String js =
+            "<script>jQuery(function() {jQuery( "
+            + HtmlUtil.squote("#" + inputId)
+            + " ).datepicker({ dateFormat: 'yy-mm-dd',changeMonth: true, changeYear: true,constrainInput:false });});</script>";
+        if (true) {
+            return "\n" + js + "\n"
+                   + HtmlUtil.input(name, dateString,
+                                    HtmlUtil.SIZE_10 + HtmlUtil.id(inputId)
+                                    + HtmlUtil.title(dateHelp)) + "\n";
         }
 
         /*
@@ -2064,6 +2076,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param request The request
      * @param sb Buffer to append to
      * @param sites _more_
+     * @param resources _more_
      */
     public void makeSiteHtmlTable(GsacRequest request, StringBuffer sb,
                                   List<GsacSite> resources) {
@@ -2073,16 +2086,19 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         boolean doResourceGroups = false;
-        boolean doDateRange = false;
+        boolean doDateRange      = false;
         //See if there are any groups
         for (GsacResource resource : resources) {
-            if(!doResourceGroups && resource.getResourceGroups().size()>0) {
+            if ( !doResourceGroups
+                    && (resource.getResourceGroups().size() > 0)) {
                 doResourceGroups = true;
             }
-            if(!doDateRange && resource.getFromDate()!=null) {
+            if ( !doDateRange && (resource.getFromDate() != null)) {
                 doDateRange = true;
             }
-            if(doResourceGroups && doDateRange) break;
+            if (doResourceGroups && doDateRange) {
+                break;
+            }
         }
 
         String[] TABLE_LABELS     = null;
@@ -2092,7 +2108,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
-            String remoteHref = getRepository().getRemoteHref(resources.get(0));
+            String remoteHref =
+                getRepository().getRemoteHref(resources.get(0));
             labels.add(msg("Site Code").replace(" ", "&nbsp;"));
             sortValues.add(SORT_SITE_CODE);
             labels.add(msg("Name"));
@@ -2101,7 +2118,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add(SORT_SITE_TYPE);
             labels.add(msg("Location") + " (lat,lon,m)");
             sortValues.add("");
-            if(doDateRange) {
+            if (doDateRange) {
                 labels.add(msg("Date Range"));
             }
             sortValues.add("");
@@ -2115,7 +2132,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         int cnt = 0;
         for (GsacResource resource : resources) {
-            GsacResourceManager resourceManager = getResourceManager(resource);
+            GsacResourceManager resourceManager =
+                getResourceManager(resource);
             if (cnt++ == 0) {
                 try {
                     String url = resourceManager.makeSearchUrl();
@@ -2142,8 +2160,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             openEntryRow(sb, resource.getId(), URL_SITE_VIEW, idUrlArg);
             String cbx = HtmlUtil.checkbox(idUrlArg, resource.getId(), false);
 
-            String clickEvent = getEntryEventJS(resource.getId(), URL_SITE_VIEW,
-                                    idUrlArg)[1];
+            String clickEvent = getEntryEventJS(resource.getId(),
+                                    URL_SITE_VIEW, idUrlArg)[1];
             sb.append(HtmlUtil.col(cbx));
             String remoteHref = getRepository().getRemoteHref(resource);
             if (remoteHref.length() > 0) {
@@ -2154,7 +2172,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(HtmlUtil.col(resource.getLongName(), clickEvent));
 
             if (resource.getType() != null) {
-                sb.append(HtmlUtil.col(resource.getType().getName(), clickEvent));
+                sb.append(HtmlUtil.col(resource.getType().getName(),
+                                       clickEvent));
             } else {
                 sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
@@ -2168,7 +2187,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
 
 
-            if(doDateRange) {
+            if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
                 if (resource.getFromDate() != null) {
                     sb.append(formatDate(resource));
@@ -2179,8 +2198,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
             if (doResourceGroups) {
-                sb.append(HtmlUtil.col(getGroupHtml(resource.getResourceGroups(),
-                        resource.getResourceClass(), true) + "&nbsp;"));
+                sb.append(
+                    HtmlUtil.col(
+                        getGroupHtml(
+                            resource.getResourceGroups(),
+                            resource.getResourceClass(), true) + "&nbsp;"));
             }
             sb.append("</tr>\n");
         }
@@ -2432,16 +2454,27 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         return searchLinks;
     }
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     *
+     * @return _more_
+     */
     public boolean isGoogleEarthEnabled(GsacRequest request) {
         //Not enabled for for iphones, android or linux
-        if(request.isMobile()) return false;
+        if (request.isMobile()) {
+            return false;
+        }
         String userAgent = request.getUserAgent("").toLowerCase();
-        if(userAgent.indexOf("linux")>=0) return false;
+        if (userAgent.indexOf("linux") >= 0) {
+            return false;
+        }
         //        System.err.println("user agent: " + userAgent);
         return getGoogleMapsKey(request) != null;
     }
 
-    /** _more_          */
+    /** _more_ */
     private List<List<String>> geKeys;
 
     /**
@@ -2453,14 +2486,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String[] getGoogleMapsKey(GsacRequest request) {
         if (geKeys == null) {
-            String geAPIKeys = getRepository().getProperty(PROP_GOOGLE_APIKEYS,null);
+            String geAPIKeys =
+                getRepository().getProperty(PROP_GOOGLE_APIKEYS, null);
             //            System.err.println ("api keys:" + geAPIKeys);
             if ((geAPIKeys == null) || (geAPIKeys.trim().length() == 0)) {
                 return null;
             }
             List<List<String>> tmpKeys = new ArrayList<List<String>>();
-            for (String line :
-                    StringUtil.split(geAPIKeys, ";", true, true)) {
+            for (String line : StringUtil.split(geAPIKeys, ";", true, true)) {
                 List<String> toks = StringUtil.split(line, ",", false, false);
                 if (toks.size() > 1) {
                     tmpKeys.add(toks);
@@ -2469,16 +2502,16 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             geKeys = tmpKeys;
         }
         String hostname = request.getServerName();
-        int port = request.getServerPort();
-        if(port!=80) {
-            hostname = hostname+":" + port;
+        int    port     = request.getServerPort();
+        if (port != 80) {
+            hostname = hostname + ":" + port;
         }
         //        System.err.println("get google earth key hostame = " + hostname);
         for (List<String> tuple : geKeys) {
             String server = tuple.get(0);
             // check to see if this matches me 
             //            System.err.println("\tserver:" + server);
-            if (server.equals("*") || (hostname.endsWith(server))) {  
+            if (server.equals("*") || (hostname.endsWith(server))) {
                 String mapsKey = tuple.get(1);
                 //                System.err.println("\t\tkey:" + mapsKey);
                 if (tuple.size() > 2) {
@@ -2497,6 +2530,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * _more_
      *
      * @param request _more_
+     * @param sb _more_
      * @param width _more_
      * @param height _more_
      * @param url _more_
@@ -2504,10 +2538,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      *
      * @throws Exception _more_
+     *
+     * @throws IOException _more_
      */
     public String getGoogleEarthPlugin(GsacRequest request, Appendable sb,
-                                       int width,
-                                       int height, String url)
+                                       int width, int height, String url)
             throws IOException {
 
 
@@ -2518,55 +2553,71 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         String otherOpts = "";
-        String mapsKey = "?key=" + keyAndOther[0];
+        String mapsKey   = "?key=" + keyAndOther[0];
         if (keyAndOther[1] != null) {
             otherOpts = ", {\"other_params\":\"" + keyAndOther[1] + "\"}";
         }
         //        Integer currentId = (Integer) request.getExtraProperty("ge.id");
-        int nextNum  = 1;
+        int nextNum = 1;
         //        if(currentId != null) {
         //            nextNum = currentId.intValue()+1;
         //        }
-        String id =  "map3d" + nextNum;
+        String id = "map3d" + nextNum;
 
-        sb.append(
-                  HtmlUtil.importJS("http://www.google.com/jsapi" +mapsKey));
-        sb.append(
-                  HtmlUtil.importJS(fileUrl("/googleearth.js")));
-        sb.append(HtmlUtil.script(
-                                  "google.load(\"earth\", \"1\"" + otherOpts+");"));
+        sb.append(HtmlUtil.importJS("http://www.google.com/jsapi" + mapsKey));
+        sb.append(HtmlUtil.importJS(fileUrl("/googleearth.js")));
+        sb.append(HtmlUtil.script("google.load(\"earth\", \"1\"" + otherOpts
+                                  + ");"));
 
-        String template = "<div id=\"${id}_container\" style=\"border: 1px solid #888; width: ${width}px; height: ${height}px;\"><div id=\"${id}\" style=\"height: 100%;\"></div></div>";
+        String template =
+            "<div id=\"${id}_container\" style=\"border: 1px solid #888; width: ${width}px; height: ${height}px;\"><div id=\"${id}\" style=\"height: 100%;\"></div></div>";
 
         template = template.replace("${width}", width + "");
         template = template.replace("${height}", height + "");
         template = template.replace("${id}", id);
         template = template.replace("${id}", id);
         sb.append(template);
-        sb.append(HtmlUtil.script("var  " + id + " = new GoogleEarth(" + HtmlUtil.squote(id) +", " + (url==null?"null":HtmlUtil.squote(url))+");\n"));
+        sb.append(HtmlUtil.script("var  " + id + " = new GoogleEarth("
+                                  + HtmlUtil.squote(id) + ", "
+                                  + ((url == null)
+                                     ? "null"
+                                     : HtmlUtil.squote(url)) + ");\n"));
         return id;
     }
 
 
-    public void getGoogleEarth(GsacRequest request, 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param entries _more_
+     * @param sb _more_
+     * @param width _more_
+     * @param height _more_
+     *
+     * @throws IOException _more_
+     */
+    public void getGoogleEarth(GsacRequest request,
                                List<GsacResource> entries, Appendable sb,
                                int width, int height)
             throws IOException {
         sb.append(
-                  "<table  class=\"gsac-map-table\" border=\"0\" width=\"100%\"><tr valign=\"top\">");
+            "<table  class=\"gsac-map-table\" border=\"0\" width=\"100%\"><tr valign=\"top\">");
 
-        StringBuffer mapSB = new StringBuffer();
+        StringBuffer mapSB      = new StringBuffer();
         String id = getGoogleEarthPlugin(request, mapSB, width, height, null);
-        StringBuffer js  = new StringBuffer();
-        List<String> categories  = new ArrayList<String>();
-        Hashtable<String,StringBuffer> catMap = new Hashtable<String,StringBuffer>();
+        StringBuffer js         = new StringBuffer();
+        List<String> categories = new ArrayList<String>();
+        Hashtable<String, StringBuffer> catMap = new Hashtable<String,
+                                                     StringBuffer>();
         for (GsacResource resource : entries) {
-            GsacResourceManager resourceManager = getResourceManager(resource);
-           
+            GsacResourceManager resourceManager =
+                getResourceManager(resource);
+
             //            String category = resource.getTypeHandler().getCategory(resource);
-            String category = "";
-            StringBuffer catSB = catMap.get(category);
-            if(catSB==null) {
+            String       category = "";
+            StringBuffer catSB    = catMap.get(category);
+            if (catSB == null) {
                 catMap.put(category, catSB = new StringBuffer());
                 categories.add(category);
             }
@@ -2574,40 +2625,41 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String iconUrl = getIconUrl(resource);
             catSB.append(HtmlUtil.img(iconUrl));
             catSB.append(HtmlUtil.space(1));
-            double lat = resource.getLatitude();
-            double lon = resource.getLongitude();
+            double lat      = resource.getLatitude();
+            double lon      = resource.getLongitude();
 
             String idUrlArg = resourceManager.getIdUrlArg();
             String href     = resourceManager.makeViewUrl();
             String xmlUrl = HtmlUtil.url(href, new String[] { idUrlArg,
-                                                              resource.getId(), ARG_WRAPXML, "true", });
+                    resource.getId(), ARG_WRAPXML, "true", });
             String entryId = cleanIdForJS(resource.getId());
-            catSB.append("<a href=\"javascript:googleEarthResourceClicked(" + id +
-                         "," +
-                         HtmlUtil.squote(resource.getId())+
-                         "," + 
-                         HtmlUtil.squote(xmlUrl) +
-                         ");\">" 
-                      + resource.getLabel() + "</a><br>");
-            String icon = iconUrl;
+            catSB.append("<a href=\"javascript:googleEarthResourceClicked("
+                         + id + "," + HtmlUtil.squote(resource.getId()) + ","
+                         + HtmlUtil.squote(xmlUrl) + ");\">"
+                         + resource.getLabel() + "</a><br>");
+            String icon         = iconUrl;
             String pointsString = "null";
             //            String desc =  makeInfoBubble(request, resource);
-            String desc =  makeResourceViewHref(resource) +"<br>" +
-                resource.getLongLabel();
-            js.append(HtmlUtil.call(
-                                    id +".addPlacemark",
-                                    HtmlUtil.comma(HtmlUtil.squote(resource.getId()),HtmlUtil.squote(resource.getLabel()), HtmlUtil.squote(desc),
-                                                   ""+lat, ""+lon) +"," +
-                                    HtmlUtil.squote(icon) +"," +pointsString));
+            String desc = makeResourceViewHref(resource) + "<br>"
+                          + resource.getLongLabel();
+            js.append(
+                HtmlUtil.call(
+                    id + ".addPlacemark",
+                    HtmlUtil.comma(
+                        HtmlUtil.squote(resource.getId()),
+                        HtmlUtil.squote(resource.getLabel()),
+                        HtmlUtil.squote(desc), "" + lat, "" + lon) + ","
+                            + HtmlUtil.squote(icon) + "," + pointsString));
             js.append("\n");
         }
 
 
         sb.append("<td>");
-        sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV, HtmlUtil.cssClass("gsac-map-resources")));
-        for(String category: categories) {
+        sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV,
+                                HtmlUtil.cssClass("gsac-map-resources")));
+        for (String category : categories) {
             StringBuffer catSB = catMap.get(category);
-            if(category.length()>0) {
+            if (category.length() > 0) {
                 sb.append(HtmlUtil.b(category));
                 sb.append(HtmlUtil.br());
             }
@@ -2615,54 +2667,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
         sb.append("</td><td>");
-        sb.append(HtmlUtil.checkbox("tmp","true", false, HtmlUtil.id("googleearth.showdetails")));
+        sb.append(HtmlUtil.checkbox("tmp", "true", false,
+                                    HtmlUtil.id("googleearth.showdetails")));
         sb.append(msg("Show details"));
 
         sb.append(mapSB);
         sb.append(HtmlUtil.script(js.toString()));
         sb.append("</td></tr></table>");
     }
-
-
-    /*
-    public String makeInfoBubble(Request request, Entry entry) throws Exception {
-        String fromEntry  = entry.getTypeHandler().getMapInfoBubble(request, entry);
-        if(fromEntry!=null) return fromEntry;
-        StringBuffer info = new StringBuffer("<table>");
-        info.append(entry.getTypeHandler().getInnerEntryContent(entry,
-                                                                request, 
-                                                                OutputHandler.OUTPUT_HTML, 
-                                                                true, false,false));
-
-        List<String> urls = new ArrayList<String>();
-        getMetadataManager().getThumbnailUrls(request,  entry, urls);
-        if(urls.size()>0) {
-            info.append("<tr><td colspan=2>" +HtmlUtil.img(urls.get(0), "", " width=300 ") +"</td></tr>");
-        } 
-        info.append("</table>");
-
-        if (entry.getResource().isImage()) {
-            String thumbUrl = getRepository().absoluteUrl(HtmlUtil.url(
-                                                                       request.url(repository.URL_ENTRY_GET)
-                                                                       + "/"
-                                                                       + getStorageManager().getFileTail(
-                                                                                                         entry), ARG_ENTRYID, entry.getId(),
-                                                                       ARG_IMAGEWIDTH, "300"));
-            info.append(HtmlUtil.img(thumbUrl,"",""));
-
-        }
-
-
-        String infoHtml= info.toString();
-        infoHtml = infoHtml.replace("\r", " ");
-        infoHtml = infoHtml.replace("\n", " ");
-        infoHtml = infoHtml.replace("\"", "\\\"");
-        infoHtml = infoHtml.replace("'", "\\'");
-        return infoHtml;
-    }
-
-    */
-
 
 
 }

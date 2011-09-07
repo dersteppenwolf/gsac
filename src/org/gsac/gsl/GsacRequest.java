@@ -258,9 +258,8 @@ public class GsacRequest implements GsacConstants {
 
 
         String ua = getUserAgent("").toLowerCase();
-        isMobile = 
-            ua.indexOf("iphone") >= 0 ||
-            ua.indexOf("android") >= 0;
+        isMobile = (ua.indexOf("iphone") >= 0)
+                   || (ua.indexOf("android") >= 0);
 
     }
 
@@ -837,10 +836,20 @@ public class GsacRequest implements GsacConstants {
         return httpServletResponse;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getServerName() {
         return getHttpServletRequest().getServerName();
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public int getServerPort() {
         return getHttpServletRequest().getServerPort();
     }

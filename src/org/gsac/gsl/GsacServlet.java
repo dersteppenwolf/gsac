@@ -341,19 +341,39 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
 
 
     /**
+     * _more_
+     *
+     * @param path _more_
+     *
+     * @return _more_
+     */
+    public String getAbsoluteUrl(String path) {
+        return getAbsoluteUrl(null, path);
+    }
+
+
+    /**
      * Utility to create a fully qualified URL (including hostname)
      *
+     *
+     * @param request _more_
      * @param path url path
      *
      * @return fully qualified URL
      */
-    public String getAbsoluteUrl(String path) {
-        String hostname = getRepository().getHostname();
-        //        hostname = "localhost";
+    public String getAbsoluteUrl(GsacRequest request, String path) {
+        String hostname = null;
+        int    port     = getPort();
+        if (request != null) {
+            hostname = request.getServerName();
+            port     = request.getServerPort();
+        }
+        if (hostname == null) {
+            hostname = getRepository().getHostname();
+        }
         if (hostname == null) {
             hostname = getLocalHostname();
         }
-        int port = getPort();
         if (port == 80) {
             return "http://" + hostname + path;
         } else {

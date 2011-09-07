@@ -400,20 +400,25 @@ public class GsacRepository implements GsacConstants {
      * Create the default set of output handlers
      */
     public void initOutputHandlers() {
-        for(GsacResourceManager resourceManager:  getResourceManagers()) {
+        for (GsacResourceManager resourceManager : getResourceManagers()) {
             initOutputHandlers(resourceManager.getResourceClass());
         }
         browseOutputHandler = new BrowseOutputHandler(this);
     }
 
+    /**
+     * _more_
+     *
+     * @param resourceClass _more_
+     */
     public void initOutputHandlers(ResourceClass resourceClass) {
         //TODO: put the specification of the output handlers into a properties or xml file
         //Or into the resourcemanager
 
-        if(resourceClass.equals(GsacSite.CLASS_SITE)) {
+        if (resourceClass.equals(GsacSite.CLASS_SITE)) {
             //TODO: If we don't have a site then we don't have this member
             htmlOutputHandler = new HtmlSiteOutputHandler(this,
-                                                          resourceClass);
+                    resourceClass);
             new KmlSiteOutputHandler(this, resourceClass);
             new TextSiteOutputHandler(this, resourceClass);
             new RssSiteOutputHandler(this, resourceClass);
@@ -422,7 +427,7 @@ public class GsacRepository implements GsacConstants {
             new XmlSiteLogOutputHandler(this, resourceClass);
             new XmlSiteOutputHandler(this, resourceClass);
             //        new FlexigridSiteOutputHandler(this, resourceClass);
-        } else if(resourceClass.equals(GsacFile.CLASS_FILE)) {
+        } else if (resourceClass.equals(GsacFile.CLASS_FILE)) {
             new HtmlFileOutputHandler(this, resourceClass);
             new CsvFileOutputHandler(this, resourceClass);
             new DownloaderFileOutputHandler(this, resourceClass);
@@ -437,8 +442,10 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-    public void initBrowseOutputHandlers() {
-    }
+    /**
+     * _more_
+     */
+    public void initBrowseOutputHandlers() {}
 
 
     /**
@@ -1275,8 +1282,8 @@ public class GsacRepository implements GsacConstants {
                 || uri.endsWith(".jnlp")) {
             String content = IOUtil.readContents(inputStream);
             inputStream.close();
-            content     = replaceMacros(content);
-            content     = replaceMacros(content);
+            content     = replaceMacros(request, content);
+            content     = replaceMacros(request, content);
             inputStream = new ByteArrayInputStream(content.getBytes());
         }
         OutputStream outputStream = request.getOutputStream();
@@ -1293,9 +1300,22 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     private String replaceMacros(String template) {
+        return replaceMacros(null, template);
+    }
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param template _more_
+     *
+     * @return _more_
+     */
+    private String replaceMacros(GsacRequest request, String template) {
         template = template.replace("${urlroot}", getUrlBase() + URL_BASE);
         template = template.replace("${fullurlroot}",
-                                    getAbsoluteUrl(getUrlBase() + URL_BASE));
+                                    getAbsoluteUrl(request,
+                                        getUrlBase() + URL_BASE));
         return template;
     }
 
@@ -1371,8 +1391,8 @@ public class GsacRepository implements GsacConstants {
         if (inputStream != null) {
             contents = IOUtil.readContents(inputStream);
             inputStream.close();
-            contents = replaceMacros(contents);
-            contents = replaceMacros(contents);
+            contents = replaceMacros(request, contents);
+            contents = replaceMacros(request, contents);
         }
         sb.append(contents);
         htmlOutputHandler.finishHtml(request, response, sb);
@@ -2357,13 +2377,12 @@ public class GsacRepository implements GsacConstants {
         PrintWriter        pw  = response.getPrintWriter();
         GsacRepositoryInfo gri = getRepositoryInfo();
 
-        pw.append(
-            XmlUtil.openTag(
-                TAG_REPOSITORY,
-                XmlUtil.attrs(
-                    ATTR_URL,
-                    getServlet().getAbsoluteUrl(getUrlBase() + URL_BASE),
-                    ATTR_NAME, gri.getName())));
+        pw.append(XmlUtil.openTag(TAG_REPOSITORY,
+                                  XmlUtil.attrs(ATTR_URL,
+                                      getServlet().getAbsoluteUrl(request,
+                                          getUrlBase()
+                                          + URL_BASE), ATTR_NAME,
+                                              gri.getName())));
 
 
         pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
@@ -2749,14 +2768,26 @@ public class GsacRepository implements GsacConstants {
     /**
      * Make the given path into a full url
      *
+     *
+     * @param request _more_
      * @param path path
      *
      * @return full url
      */
-    public String getAbsoluteUrl(String path) {
-        return servlet.getAbsoluteUrl(path);
+    public String getAbsoluteUrl(GsacRequest request, String path) {
+        return servlet.getAbsoluteUrl(request, path);
     }
 
+    /**
+     * _more_
+     *
+     * @param path _more_
+     *
+     * @return _more_
+     */
+    public String getAbsoluteUrl(String path) {
+        return servlet.getAbsoluteUrl(null, path);
+    }
 
     /**
      * get the local directory we can write things to

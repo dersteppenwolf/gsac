@@ -45,10 +45,10 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** site type */
     private ResourceType type;
 
-    /** _more_          */
+    /** _more_ */
     private String shortName;
 
-    /** _more_          */
+    /** _more_ */
     private String longName;
 
     /** _more_ */

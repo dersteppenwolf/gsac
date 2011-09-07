@@ -181,7 +181,7 @@
             jarfile="${downloaderjar}">
             <include name="org/**/*.class"/>
         </jar>
-        <property name="keydir" value="${user.home}/unavco"/>
+        <property name="keydir" value="${user.home}/work/unavco"/>
         <property name="sign_keystore" value="${keydir}/.keystore"/>
         <property name="keypassfile" value="${keydir}/.keypass"/>
         <property file="${keypassfile}"/>

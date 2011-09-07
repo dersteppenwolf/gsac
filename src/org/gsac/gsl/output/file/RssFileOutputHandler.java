@@ -148,8 +148,8 @@ public class RssFileOutputHandler extends GsacOutputHandler {
                 resource.getType() + " - "
                 + IOUtil.getFileTail(resource.getFileInfo().getUrl());
             pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
-            String url =
-                getRepository().getAbsoluteUrl(makeResourceViewUrl(resource));
+            String url = getRepository().getAbsoluteUrl(request,
+                             makeResourceViewUrl(resource));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
             pw.append(XmlUtil.tag(TAG_RSS_GUID, "", url));
 

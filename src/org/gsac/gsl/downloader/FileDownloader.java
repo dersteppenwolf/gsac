@@ -55,8 +55,6 @@ import javax.swing.*;
  */
 public class FileDownloader {
 
-    /** number of download threads */
-    public static final int THREAD_CNT = 4;
 
     /** command line args */
     private String[] args;
@@ -104,6 +102,9 @@ public class FileDownloader {
     /** overwrite files widget */
     private JCheckBox overwriteCbx;
 
+    /** _more_          */
+    private JCheckBox multiThreadsCbx;
+
     /** widget */
     private JCheckBox keepPathsCbx;
 
@@ -142,17 +143,22 @@ public class FileDownloader {
         keepPathsCbx = new JCheckBox("Make local directories", true);
         keepPathsCbx.setToolTipText(
             "Make local directories from FTP directories");
+
         overwriteCbx = new JCheckBox("Overwrite files", false);
         overwriteCbx.setToolTipText("Overwrite existing files?");
+        multiThreadsCbx = new JCheckBox("Download in parallel", false);
+        multiThreadsCbx.setToolTipText("Download multiple files at once");
+
 
         JComponent buttons =
-            GuiUtils.leftRight(GuiUtils.doLayout(new JComponent[] {
+            GuiUtils.doLayout(new JComponent[] {
                 downloadBtn =
                     GuiUtils.makeButton("Download", this, "doDownload"),
                 GuiUtils.makeButton("Quit", this, "quit") }, 2,
-                    GuiUtils.WT_N,
-                    GuiUtils.WT_N), GuiUtils.hbox(keepPathsCbx,
-                        overwriteCbx));
+                    GuiUtils.WT_N, GuiUtils.WT_N);
+
+        JComponent bottom = GuiUtils.leftRight(GuiUtils.hbox(keepPathsCbx,
+                                overwriteCbx /*, multiThreadsCbx*/), buttons);
 
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(false);
@@ -167,7 +173,7 @@ public class FileDownloader {
                             GuiUtils.makeButton(
                                 "Reload", this, "fetchFileList")), new Insets(
                                     2, 2, 0, 2)), GuiUtils.makeScrollPane(
-                                        urlList, 100, 50), buttons);
+                                        urlList, 100, 50), bottom);
         message1Lbl = new JLabel(" ");
         message2Lbl = GuiUtils.rLabel(" ");
         JComponent statusBar =
@@ -336,8 +342,11 @@ public class FileDownloader {
             }
         };
 
-        runnableCnt[0] = 4;
-        for (int i = 0; i < THREAD_CNT; i++) {
+        int numThreads = (multiThreadsCbx.isSelected()
+                          ? 4
+                          : 1);
+        runnableCnt[0] = numThreads;
+        for (int i = 0; i < numThreads; i++) {
             Misc.run(runnable);
         }
 

@@ -94,20 +94,21 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
             return;
         }
 
-        String codebase = makeUrl(URL_FILE_SEARCH);
+        String codebase = makeUrl(request, URL_FILE_SEARCH);
         String href     = "file.jnlp?" + request.getUrlArgs();
         response.startResponse(GsacResponse.MIME_JNLP);
         InputStream inputStream = getRepository().getResourceInputStream(
                                       "/org/gsac/gsl/resources/gsac.jnlp");
-        String contents = IOUtil.readContents(inputStream);
+        String      contents   = IOUtil.readContents(inputStream);
         GsacRequest newRequest = new GsacRequest(request);
         newRequest.put(ARG_OUTPUT, UrlFileOutputHandler.OUTPUT_FILE_URL);
         newRequest.remove(OUTPUT_FILE_DOWNLOAD);
-        String dataUrl = makeUrl(URL_FILE_SEARCH + "?"
+        String dataUrl = makeUrl(request,
+                                 URL_FILE_SEARCH + "?"
                                  + newRequest.getUrlArgs());
-        String fullUrlRoot =
-            getRepository().getAbsoluteUrl(getRepository().getUrlBase()
-                                           + URL_BASE);
+        String fullUrlRoot = getRepository().getAbsoluteUrl(request,
+                                 getRepository().getUrlBase() + URL_BASE);
+
         //Do this a couple of times
         contents = contents.replace("${fullurlroot}", fullUrlRoot);
         contents = contents.replace("${fullurlroot}", fullUrlRoot);
@@ -117,7 +118,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
         contents = contents.replace("${codebase}", codebase);
         contents = contents.replace("${href}", href);
 
-        //        System.err.println("jnlp file:" + contents);
+        System.err.println("jnlp file:" + contents);
 
         PrintWriter pw = response.getPrintWriter();
         pw.append(contents);
