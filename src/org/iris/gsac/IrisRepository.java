@@ -1,5 +1,24 @@
 /*
+ * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
+ */
+/*
+ *
  */
 
 package org.iris.gsac;
@@ -35,12 +54,21 @@ public class IrisRepository extends GsacRepository implements GsacConstants {
      */
     private void initResources() throws Exception {
         String packageName = getClass().getPackage().getName();
-        packageName = packageName.replace(".","/");
+        packageName = packageName.replace(".", "/");
     }
 
 
+    /**
+     * _more_
+     *
+     * @param type _more_
+     *
+     * @return _more_
+     */
     public String getExternalVocabulary(String type) {
-        if(type.equals(ARG_SITE_GROUP)) return "";
+        if (type.equals(ARG_SITE_GROUP)) {
+            return "";
+        }
         return super.getExternalVocabulary(type);
     }
 
@@ -48,21 +76,28 @@ public class IrisRepository extends GsacRepository implements GsacConstants {
     /**
      * Factory method to create the SiteManager
      *
+     *
+     * @param type _more_
      * @return site manager
      */
     public GsacResourceManager doMakeResourceManager(ResourceClass type) {
-        if(type.equals(GsacSite.CLASS_SITE)) {
+        if (type.equals(GsacSite.CLASS_SITE)) {
             return new IrisSiteManager(this);
         }
-        if(type.equals(GsacFile.CLASS_FILE)) {
+        if (type.equals(GsacFile.CLASS_FILE)) {
             ucar.unidata.util.Misc.printStack("file");
             return new IrisFileManager(this);
         }
         return null;
     }
 
+    /**
+     * _more_
+     *
+     * @param resourceClass _more_
+     */
     public void initOutputHandlers(ResourceClass resourceClass) {
-        if(resourceClass.equals(GsacFile.CLASS_FILE)) {
+        if (resourceClass.equals(GsacFile.CLASS_FILE)) {
             return;
         }
         super.initOutputHandlers(resourceClass);
@@ -70,6 +105,9 @@ public class IrisRepository extends GsacRepository implements GsacConstants {
 
 
 
+    /**
+     * _more_
+     */
     public void initResourceManagers() {
         //Override this to make your own set of resource managers
         //        super.initResourceManagers();
@@ -82,6 +120,14 @@ public class IrisRepository extends GsacRepository implements GsacConstants {
      * CHANGEME Is this repository capable of certain things.
      * By default the base repository does  a properties look up.
      * See resources/gsac.properties
+     */
+
+    /**
+     * _more_
+     *
+     * @param arg _more_
+     *
+     * @return _more_
      */
     public boolean isCapable(String arg) {
         return super.isCapable(arg);

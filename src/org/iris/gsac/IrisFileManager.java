@@ -1,5 +1,24 @@
 /*
+ * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
+ */
+/*
+ *
  */
 
 package org.iris.gsac;
@@ -49,9 +68,9 @@ public class IrisFileManager extends FileManager {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request,
-                                      GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
+
         //Some example code to handle the default url arguments
         //NOTE: This isn't as well organized as the IrisSiteManager 
 
@@ -60,8 +79,9 @@ public class IrisFileManager extends FileManager {
 
         StringBuffer msgBuff = new StringBuffer();
         //Here we get the site clauses
-        List<Clause> siteClauses =
-            getSiteManager().getSiteClauses(request, response, new ArrayList<String>(), msgBuff);
+        List<Clause> siteClauses = getSiteManager().getSiteClauses(request,
+                                       response, new ArrayList<String>(),
+                                       msgBuff);
         if (siteClauses.size() > 0) {
             Clause siteClause = Clause.and(siteClauses);
             //Then we do an inner select
@@ -100,8 +120,7 @@ public class IrisFileManager extends FileManager {
                         args = (List<String>) request.getList(
                             ARG_FILE_TYPE))));
             */
-            addSearchCriteria(msgBuff, "Resource Type", args,
-                              ARG_FILE_TYPE);
+            addSearchCriteria(msgBuff, "Resource Type", args, ARG_FILE_TYPE);
         }
 
 
@@ -123,8 +142,7 @@ public class IrisFileManager extends FileManager {
 
 
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
-                                                    ARG_FILE_DATADATE_TO, null,
-                                                    null);
+                                   ARG_FILE_DATADATE_TO, null, null);
 
         if (dataDateRange[0] != null) {
             //add in clauses for dataDateRange
@@ -142,11 +160,12 @@ public class IrisFileManager extends FileManager {
         tableNames.add("files table name");
 
         Clause mainClause = Clause.and(clauses);
-        Statement statement = getDatabaseManager().select(
-                                                          getResourceColumns(),
-                                                          mainClause.getTableNames(tableNames),
-                                                          mainClause);
-        SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement, request.getOffset(), request.getLimit());
+        Statement statement =
+            getDatabaseManager().select(getResourceColumns(),
+                                        mainClause.getTableNames(tableNames),
+                                        mainClause);
+        SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement,
+                                    request.getOffset(), request.getLimit());
         int cnt = 0;
         while (iter.getNext() != null) {
             response.addResource(makeFile(iter.getResults()));
@@ -165,12 +184,20 @@ public class IrisFileManager extends FileManager {
                            + "ms");
 
         setSearchCriteriaMessage(response, msgBuff);
+
     }
 
-    
+
+    /**
+     * _more_
+     *
+     * @param level _more_
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+     */
     public void doGetResourceMetadata(int level, GsacFile gsacResource)
-        throws Exception {
-    }
+            throws Exception {}
 
 
     /**
@@ -255,8 +282,8 @@ public class IrisFileManager extends FileManager {
      */
     public List<ResourceType> doGetResourceTypes() {
         List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
-        resourceTypes.add(new ResourceType("rinex","RINEX Files"));
-        resourceTypes.add(new ResourceType("qc","QC Files"));
+        resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
+        resourceTypes.add(new ResourceType("qc", "QC Files"));
         return resourceTypes;
     }
 
@@ -269,10 +296,16 @@ public class IrisFileManager extends FileManager {
      * @return sitemanager
      */
     public IrisSiteManager getSiteManager() {
-        return (IrisSiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
+        return (IrisSiteManager) getRepository().getResourceManager(
+            GsacSite.CLASS_SITE);
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
         //CHANGEME
