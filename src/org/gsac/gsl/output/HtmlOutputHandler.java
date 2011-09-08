@@ -1331,6 +1331,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 IconMetadata.getIconMetadata(resource.getMetadata())) {
             return iconMetadata.getUrl();
         }
+        GsacRepositoryInfo rep = resource.getRepositoryInfo();
+        if(rep!=null && rep.getIcon()!=null) {
+            return rep.getIcon();
+        }
         return getRepository().getAbsoluteUrl(iconUrl("/site.png"));
     }
 
