@@ -82,7 +82,7 @@ public class GsacClient implements GsacConstants {
     public static final String ARG_OUTPUT = "output";
 
     /** cmd line arg */
-    public static final String ARG_FILE = "file";
+    public static final String ARG_OUT = "out";
 
     /** cmd line arg */
     public static final String ARG_INFO = "info";
@@ -440,7 +440,7 @@ public class GsacClient implements GsacConstants {
      * @throws Exception On badness
      */
     private void processUrl(String url) throws Exception {
-        processUrl(url, getProperty(ARG_FILE, null));
+        processUrl(url, getProperty(ARG_OUT, null));
     }
 
 
@@ -720,7 +720,7 @@ public class GsacClient implements GsacConstants {
         System.err.println("\t-" + ARG_QUERY + " site|file or: -"
                            + QUERY_FILE + "|-" + QUERY_SITE);
         System.err.println("\t-" + ARG_OUTPUT + " csv|xml|url");
-        System.err.println("\t-" + ARG_FILE + " outputfile");
+        System.err.println("\t-" + ARG_OUT + " <outputfile>  Write the output to the specified file");
         System.err.println("\tany number of query arguments, e.g.:");
         System.err.println("\t-site.code \"P12*\"");
         System.err.println("\t-" + ARG_BBOX + " west south east north");
