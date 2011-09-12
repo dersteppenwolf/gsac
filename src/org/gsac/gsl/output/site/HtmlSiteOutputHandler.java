@@ -308,7 +308,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer mapSB = new StringBuffer();
         String js = createMap(request,
                               (List<GsacResource>) new ArrayList(sites),
-                              mapSB, 800, 600, false);
+                              mapSB, -1, 500, false);
         resultsContents.add(mapSB.toString());
         resultsTitles.add(msg("Map"));
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));

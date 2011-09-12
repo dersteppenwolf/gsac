@@ -710,7 +710,6 @@ function entryHandleXml(request,entryId) {
 
 
 
-
 var googleEarthClickCnt =0;
 
 function googleEarthResourceClicked(googleEarth, id, detailsUrl) {
@@ -721,7 +720,7 @@ function googleEarthResourceClicked(googleEarth, id, detailsUrl) {
         return;
     }
     googleEarth.setLocation(placemark.lat,placemark.lon);
-    googleEarth.placemarkClick(id);
+    //    googleEarth.placemarkClick(id);
 
     var cbx = util.getDomObject("googleearth.showdetails");
     if(cbx) {
@@ -731,6 +730,8 @@ function googleEarthResourceClicked(googleEarth, id, detailsUrl) {
         if(myClick != googleEarthClickCnt) return;
         var balloon = googleEarth.googleEarth.createHtmlStringBalloon('');
         balloon.setFeature(placemark.placemark);
+        balloon.setMaxHeight(300);
+        balloon.setMaxWidth(500);
         var xmlDoc=request.responseXML.documentElement;
         text = getChildText(xmlDoc);
         balloon.setContentString(text);

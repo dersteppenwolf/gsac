@@ -66,6 +66,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /** help message */
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
+    public static int    DFLT_EARTH_HEIGHT = 500;
+
+    public static final int EARTH_ENTRIES_WIDTH = 150;
 
     /** _more_          */
     public static final String PROP_GOOGLE_APIKEYS = "gsac.google.apikeys";
@@ -2561,11 +2564,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (keyAndOther[1] != null) {
             otherOpts = ", {\"other_params\":\"" + keyAndOther[1] + "\"}";
         }
-        //        Integer currentId = (Integer) request.getExtraProperty("ge.id");
         int nextNum = 1;
-        //        if(currentId != null) {
-        //            nextNum = currentId.intValue()+1;
-        //        }
         String id = "map3d" + nextNum;
 
         sb.append(HtmlUtil.importJS("http://www.google.com/jsapi" + mapsKey));
@@ -2573,6 +2572,20 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append(HtmlUtil.script("google.load(\"earth\", \"1\"" + otherOpts
                                   + ");"));
 
+        String style = "";
+        if(width>0) {
+            style+="width:"+ width+"px; ";
+        }
+        if(height<=0) {
+            height =DFLT_EARTH_HEIGHT;
+        }
+        style+="height:"+ height+"px; ";
+
+        String earthHtml =HtmlUtil.div("", HtmlUtil.id(id) + HtmlUtil.style(style) +
+                                       HtmlUtil.cssClass("gsac-earth-container"));
+
+        sb.append(earthHtml);
+        /*
         String template =
             "<div id=\"${id}_container\" style=\"border: 1px solid #888; width: ${width}px; height: ${height}px;\"><div id=\"${id}\" style=\"height: 100%;\"></div></div>";
 
@@ -2581,6 +2594,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         template = template.replace("${id}", id);
         template = template.replace("${id}", id);
         sb.append(template);
+        */
         sb.append(HtmlUtil.script("var  " + id + " = new GoogleEarth("
                                   + HtmlUtil.squote(id) + ", "
                                   + ((url == null)
@@ -2614,6 +2628,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         List<String> categories = new ArrayList<String>();
         Hashtable<String, StringBuffer> catMap = new Hashtable<String,
                                                      StringBuffer>();
+        int cnt =0;
         for (GsacResource resource : entries) {
             GsacResourceManager resourceManager =
                 getResourceManager(resource);
@@ -2626,6 +2641,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 categories.add(category);
             }
             catSB.append("&nbsp;&nbsp;");
+            if(cnt++ > 200) {
+                catSB.append("...<br>");
+                break;
+            }
             String iconUrl = getIconUrl(resource);
             catSB.append(HtmlUtil.img(iconUrl));
             catSB.append(HtmlUtil.space(1));
@@ -2658,7 +2677,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
-        sb.append("<td>");
+        sb.append("<td width=\"" + EARTH_ENTRIES_WIDTH +"\">");
         sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV,
                                 HtmlUtil.cssClass("gsac-map-resources")));
         for (String category : categories) {
@@ -2671,11 +2690,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
         sb.append("</td><td>");
+        sb.append(mapSB);
         sb.append(HtmlUtil.checkbox("tmp", "true", false,
                                     HtmlUtil.id("googleearth.showdetails")));
-        sb.append(msg("Show details"));
-
-        sb.append(mapSB);
+        sb.append(HtmlUtil.italics(msg("Show details")));
         sb.append(HtmlUtil.script(js.toString()));
         sb.append("</td></tr></table>");
     }
