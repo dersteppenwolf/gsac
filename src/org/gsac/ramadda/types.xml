@@ -16,7 +16,7 @@ this defines a set of new gsac ramadda types
   </type>
 
 
-  <type name="gsacresource"  description="GSAC Resource" handler="org.gsac.ramadda.GsacResourceTypeHandler" category="GSAC Entries" foruser="false">
+  <type name="gsacfile"  description="GSAC File" handler="org.gsac.ramadda.GsacFileTypeHandler" category="GSAC Entries" foruser="false">
      <column name="siteid" type="string"     label="Site" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
      <property name="form.show.area" value="false"/>
      <property name="form.show.location" value="false"/>
@@ -25,7 +25,7 @@ this defines a set of new gsac ramadda types
   </type>
 
 
-  <type name="gsacstream"  super="gsacresource" description="GNSS Stream" handler="org.gsac.ramadda.GsacResourceTypeHandler" >
+  <type name="gsacstream"  super="gsacfile" description="GNSS Stream" handler="org.gsac.ramadda.GsacFileTypeHandler" >
      <property name="form.show.url" value="true"/>
      <property name="form.label.url" value="GNSS Stream URL"/>
      <property name="form.show.file" value="false"/>
