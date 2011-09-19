@@ -1486,6 +1486,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             pw.append(formEntry(request, msgLabel("Date Range"), dateString));
         }
 
+
+        if (resource.getPublishTime() != null) {
+            String dateString = formatDate(resource.getPublishTime());
+            pw.append(formEntry(request, msgLabel("Pubish Date"), dateString));
+        }
+
+
+        if (resource.getModificationDate() != null) {
+            String dateString = formatDate(resource.getModificationDate());
+            pw.append(formEntry(request, msgLabel("Modification Date"), dateString));
+        }
+
         List<ResourceGroup> groups = resource.getResourceGroups();
         if (groups.size() > 0) {
             pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
