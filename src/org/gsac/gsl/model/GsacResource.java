@@ -82,10 +82,18 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private Date publishTime;
 
+    private Date modificationDate;
 
 
+    public Date getModificationDate() {
+		return modificationDate;
+	}
 
-    /**
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	/**
      * ctor
      */
     public GsacResource() {}
