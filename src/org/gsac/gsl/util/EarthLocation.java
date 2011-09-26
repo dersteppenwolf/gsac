@@ -61,6 +61,22 @@ public class EarthLocation {
         this.elevation = elevation;
     }
 
+
+    /**
+     * Normalize the longitude to lie between +/-180
+     * @param lon east latitude in degrees
+     * @return normalized lon
+     */
+    static public double normalizeLongitude(double lon) {
+        if ((lon < -180.) || (lon > 180.)) {
+            return Math.IEEEremainder(lon, 360.0);
+        } else {
+            return lon;
+        }
+    }
+
+
+
     /**
      *  Set the Latitude property.
      *

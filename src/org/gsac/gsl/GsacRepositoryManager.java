@@ -816,29 +816,29 @@ public abstract class GsacRepositoryManager implements GsacConstants {
             clauses.add(
                 Clause.le(
                     longitudeColumn,
-                    normalizeLongitude(request.getLatLon(ARG_EAST, 0.0))));
+                    EarthLocation.normalizeLongitude(request.getLatLon(ARG_EAST, 0.0))));
             appendSearchCriteria(
                 tmpMsgBuff, "east&lt;=",
-                "" + normalizeLongitude(request.getLatLon(ARG_EAST, 0.0)));
+                "" + EarthLocation.normalizeLongitude(request.getLatLon(ARG_EAST, 0.0)));
         }
         if (request.defined(ARG_WEST)) {
             cnt++;
             clauses.add(
                 Clause.ge(
                     longitudeColumn,
-                    normalizeLongitude(request.getLatLon(ARG_WEST, 0.0))));
+                    EarthLocation.normalizeLongitude(request.getLatLon(ARG_WEST, 0.0))));
             appendSearchCriteria(
                 tmpMsgBuff, "west&gt;=",
-                "" + normalizeLongitude(request.getLatLon(ARG_WEST, 0.0)));
+                "" + EarthLocation.normalizeLongitude(request.getLatLon(ARG_WEST, 0.0)));
         }
         if (cnt == 4) {
             msgBuff.append(
                 "<tr valign=center><td><b>Bounds=</b></td>"
                 + "<td><table border=0><tr><td colspan=2 align=center>"
                 + request.get(ARG_NORTH, 0.0) + "</td></tr><tr><td>"
-                + normalizeLongitude(request.get(ARG_WEST, 0.0))
+                + EarthLocation.normalizeLongitude(request.get(ARG_WEST, 0.0))
                 + "</td><td>"
-                + normalizeLongitude(request.get(ARG_EAST, 0.0))
+                + EarthLocation.normalizeLongitude(request.get(ARG_EAST, 0.0))
                 + "</td></tr>" + "<tr><td colspan=2 align=center>"
                 + request.get(ARG_SOUTH, 0.0) + "</td></tr></table>"
                 + "</td></tr>\n");
@@ -850,19 +850,6 @@ public abstract class GsacRepositoryManager implements GsacConstants {
     }
 
 
-
-    /**
-     * Normalize the longitude to lie between +/-180
-     * @param lon east latitude in degrees
-     * @return normalized lon
-     */
-    static public double normalizeLongitude(double lon) {
-        if ((lon < -180.) || (lon > 180.)) {
-            return Math.IEEEremainder(lon, 360.0);
-        } else {
-            return lon;
-        }
-    }
 
 
 }

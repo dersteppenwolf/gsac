@@ -1910,7 +1910,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             entryId = cleanIdForJS(entryId);
             js.append(mapVarName + ".addMarker('" + entryId + "',"
                       + jsLLP(resource.getLatitude(),
-                              resource.getLongitude()) + "," + "\"" + url
+                              EarthLocation.normalizeLongitude(resource.getLongitude())) + "," + "\"" + url
                                   + "\"" + "," + "resourceInfo);\n");
         }
         return js.toString();
@@ -2197,10 +2197,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
 
+
             sb.append("<td " + clickEvent + ">");
             sb.append(formatLatLon(resource.getLatitude()));
             sb.append(",");
-            sb.append(formatLatLon(resource.getLongitude()));
+            sb.append(formatLatLon(EarthLocation.normalizeLongitude(resource.getLongitude())));
             sb.append(",");
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
@@ -2661,7 +2662,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             catSB.append(HtmlUtil.img(iconUrl));
             catSB.append(HtmlUtil.space(1));
             double lat      = resource.getLatitude();
-            double lon      = resource.getLongitude();
+            double lon      = EarthLocation.normalizeLongitude(resource.getLongitude());
 
             String idUrlArg = resourceManager.getIdUrlArg();
             String href     = resourceManager.makeViewUrl();
