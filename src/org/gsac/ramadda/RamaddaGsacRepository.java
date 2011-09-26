@@ -207,13 +207,11 @@ public class RamaddaGsacRepository extends GsacRepository {
             clauses.add(Clause.join(Tables.ENTRIES.COL_ID,
                                     GsacSiteTypeHandler.GSAC_COL_ID));
         }
-        System.err.println(clauses);
+        //        System.err.println(clauses);
         getResourceManager(GsacSite.CLASS_SITE).setSearchCriteriaMessage(
             response, msgBuff);
         processSiteRequest(response, clauses, tables);
     }
-
-
 
 
     /**
@@ -251,34 +249,58 @@ public class RamaddaGsacRepository extends GsacRepository {
             Object[] values = entry.getValues();
 
 
-            response.addResource(makeSite(entry));
+            response.addResource(makeSiteFromEntry(entry));
         }
     }
 
 
-    /**
-     * _more_
-     *
-     *
-     * @param type _more_
-     * @param siteId _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception _more_
-     */
-    public GsacResource doGetObject(ResourceClass type, String siteId)
-            throws Exception {
-        if (type.equals(GsacSite.CLASS_SITE)) {
-            Entry entry = getRepository().getEntryManager().getEntry(
-                              getRepository().getTmpRequest(), siteId);
-            if (entry == null) {
-                return null;
-            }
-            return makeSite(entry);
+    public GsacResourceManager doMakeResourceManager(
+            ResourceClass resourceClass) {
+        if (resourceClass.equals(GsacSite.CLASS_SITE)) {
+            return new SiteManager(this) {
+                public GsacResource getResource(String resourceId)
+                        throws Exception {
+                    Entry entry = getRamaddaRepository().getEntryManager().getEntry(
+                                                                             getRamaddaRepository().getTmpRequest(), resourceId);
+                    if (entry == null) {
+                        return null;
+                    }
+                    return makeSiteFromEntry(entry);
+                }
+                public void handleRequest(GsacRequest request,
+                                          GsacResponse response)
+                    throws Exception {
+                    handleSiteRequest(request, response);
+                }
+                public String toString() {
+                    return "my site manager";
+                }
+                public List<Capability> doGetQueryCapabilities() {
+                    List<Capability> capabilities  = new ArrayList<Capability>();
+                    addDefaultCapabilities(capabilities);
+                    return capabilities;
+                }
+            };
         }
-        return null;
+        if (resourceClass.equals(GsacFile.CLASS_FILE)) {
+            return new FileManager(this) {
+                public void handleRequest(GsacRequest request,
+                                          GsacResponse response)
+                        throws Exception {}
+                public List<Capability> doGetQueryCapabilities() {
+                    List<Capability> capabilities  = new ArrayList<Capability>();
+                    addDefaultCapabilities(capabilities);
+                    return capabilities;
+                }
+                public GsacResource getResource(String resourceId)
+                        throws Exception {
+                    return null;
+                }
+            };
+        }
+        return super.doMakeResourceManager(resourceClass);
     }
+
 
     /**
      * _more_
@@ -289,7 +311,7 @@ public class RamaddaGsacRepository extends GsacRepository {
      *
      * @throws Exception _more_
      */
-    public GsacSite makeSite(Entry entry) throws Exception {
+    public GsacSite makeSiteFromEntry(Entry entry) throws Exception {
         Object[] values = entry.getValues();
         GsacSite site = new GsacSite(entry.getId(),
                                      (String) entry.getValue(0, ""),
@@ -302,6 +324,10 @@ public class RamaddaGsacRepository extends GsacRepository {
 
 
         return site;
+    }
+
+    public Repository getRamaddaRepository() {
+        return getRepository();
     }
 
     /**

@@ -9,7 +9,7 @@ to be a RAMADDA admin
 
 <!-- Put these here so ramadda shows links (because of the toplevel=true) -->
       <api request="/gsacapi/site/form"           method="processGsacSiteRequest" toplevel="true" name="GSAC"/>
-      <api request="/gsacapi/resource/form"       method="processGsacResourceRequest" toplevel="false" name="Search Resources"/>
+      <api request="/gsacapi/resource/form"       method="processGsacFileRequest" toplevel="false" name="Search Resources"/>
 
 <!-- Any other gsac request comes here -->
 
