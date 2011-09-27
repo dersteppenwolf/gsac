@@ -157,8 +157,8 @@ public abstract class SiteManager extends GsacResourceManager {
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
         long t2 = System.currentTimeMillis();
-        System.err.println("read " + iter.getCount() + " sites in "
-                           + (t2 - t1) + "ms");
+        //        System.err.println("read " + iter.getCount() + " sites in "
+        //                           + (t2 - t1) + "ms");
         return iter.getCount();
     }
 
