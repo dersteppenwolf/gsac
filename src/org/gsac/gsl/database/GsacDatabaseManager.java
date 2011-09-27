@@ -334,7 +334,48 @@ public abstract class GsacDatabaseManager implements GsacConstants,
     }
 
 
+    /**
+     * get number of connections
+     *
+     * @return number of connections
+     *
+     * @throws nothing
+     */
+    public int getConnectionCount() {
+    
+    	return connectionCnt;
+    
+    }
 
+    
+    /**
+     * increment number of connections
+     *
+     * @return nothing
+     *
+     * @throws nothing
+     */
+    public void incrConnectionCount() {
+    
+    	connectionCnt++;
+    
+    }
+
+    
+    /**
+     * decrement number of connections
+     *
+     * @return nothing
+     *
+     * @throws nothing
+     */
+    public void decrConnectionCount() {
+    
+    	connectionCnt--;
+    
+    }
+    
+    
     /**
      * get a connection from the pool
      *
@@ -347,7 +388,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
         //TODO: lets try out not using the connection pooling
         connection = DriverManager.getConnection(jdbcUrl, connectionProps);
         //        connection = dataSource.getConnection();
-        connectionCnt++;
+        incrConnectionCount();
         //        System.err.println ("open:" + connectionCnt);
         return connection;
     }
@@ -363,9 +404,9 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      */
     public void closeConnection(Connection connection) {
         try {
-            connectionCnt--;
+            decrConnectionCount();
             connection.close();
-            if (connectionCnt > 3) {
+            if (getConnectionCount() > 3) {
                 //                Misc.printStack("close:" + connectionCnt,10);
                 //                System.err.println("db connection close:" + connectionCnt);
             }
