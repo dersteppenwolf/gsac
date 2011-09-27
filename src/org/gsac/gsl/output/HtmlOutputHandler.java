@@ -2297,14 +2297,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         String event1 = HtmlUtil.onMouseOver(
                             HtmlUtil.call(
-                                "entryRowOver",
+                                "gsacRowOver",
                                 HtmlUtil.squote(
                                     entryId))) + HtmlUtil.onMouseOut(
                                         HtmlUtil.call(
-                                            "entryRowOut",
+                                            "gsacRowOut",
                                             HtmlUtil.squote(entryId)));
 
-        String event2 = HtmlUtil.onMouseClick(HtmlUtil.call("entryRowClick",
+        String event2 = HtmlUtil.onMouseClick(HtmlUtil.call("gsacRowClick",
                             "event," + HtmlUtil.squote(entryId) + ","
                             + HtmlUtil.squote(xmlUrl)));
         return new String[] { event1, event2 };
@@ -2581,7 +2581,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String id = "map3d" + nextNum;
 
         sb.append(HtmlUtil.importJS("http://www.google.com/jsapi" + mapsKey));
-        sb.append(HtmlUtil.importJS(fileUrl("/googleearth.js")));
+        sb.append(HtmlUtil.importJS(fileUrl("/google/googleearth.js")));
+        sb.append(HtmlUtil.importJS(fileUrl("/google/extensions-0.2.1.pack.js")));
         sb.append(HtmlUtil.script("google.load(\"earth\", \"1\"" + otherOpts
                                   + ");"));
 
@@ -2608,7 +2609,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         template = template.replace("${id}", id);
         sb.append(template);
         */
-        sb.append(HtmlUtil.script("var  " + id + " = new GoogleEarth("
+        sb.append(HtmlUtil.script("var  " + id + " = new RamaddaEarth("
                                   + HtmlUtil.squote(id) + ", "
                                   + ((url == null)
                                      ? "null"
@@ -2666,12 +2667,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             String idUrlArg = resourceManager.getIdUrlArg();
             String href     = resourceManager.makeViewUrl();
-            String xmlUrl = HtmlUtil.url(href, new String[] { idUrlArg,
+            String detailsUrl = HtmlUtil.url(href, new String[] { idUrlArg,
                     resource.getId(), ARG_WRAPXML, "true", });
             String entryId = cleanIdForJS(resource.getId());
-            catSB.append("<a href=\"javascript:googleEarthResourceClicked("
-                         + id + "," + HtmlUtil.squote(resource.getId()) + ","
-                         + HtmlUtil.squote(xmlUrl) + ");\">"
+            catSB.append("<a href=\"javascript:" + id +".entryClicked(" +
+                         HtmlUtil.squote(resource.getId()) +
+                         ");\">"
                          + resource.getLabel() + "</a><br>");
             String icon         = iconUrl;
             String pointsString = "null";
@@ -2684,8 +2685,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     HtmlUtil.comma(
                         HtmlUtil.squote(resource.getId()),
                         HtmlUtil.squote(resource.getLabel()),
-                        HtmlUtil.squote(desc), "" + lat, "" + lon) + ","
-                            + HtmlUtil.squote(icon) + "," + pointsString));
+                        HtmlUtil.squote(desc), "" + lat, "" + lon) + "," +
+                    HtmlUtil.comma(HtmlUtil.squote(detailsUrl),
+                                   HtmlUtil.squote(icon), pointsString)));
             js.append("\n");
         }
 
@@ -2704,9 +2706,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
         sb.append("</td><td>");
         sb.append(mapSB);
+        sb.append(HtmlUtil.italics(msgLabel("On click")));
+        sb.append(HtmlUtil.space(2));
         sb.append(HtmlUtil.checkbox("tmp", "true", false,
                                     HtmlUtil.id("googleearth.showdetails")));
+        sb.append(HtmlUtil.space(1));
         sb.append(HtmlUtil.italics(msg("Show details")));
+
+        sb.append(HtmlUtil.space(2));
+        sb.append(HtmlUtil.checkbox("tmp", "true", false,
+                                    HtmlUtil.id("googleearth.zoomonclick")));
+        sb.append(HtmlUtil.space(1));
+        sb.append(HtmlUtil.italics(msg("Zoom")));
         sb.append(HtmlUtil.script(js.toString()));
         sb.append("</td></tr></table>");
     }

@@ -1,7 +1,8 @@
-//
 //Provides a wrapper around using the google earth plugin
-//Supports multiple google earths in one web page
-//
+//Supports multiple google earths in one web page                                             
+//Note: This has been copied from ramadda's googleearth.js
+//If you make any changes (for the better) make the changes in ramadda's version
+//and copy them back to the gsl
 
 //list of all the RamaddaEarth objects 
 var  ramaddaEarths = new Array();

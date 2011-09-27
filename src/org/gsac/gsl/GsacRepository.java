@@ -1312,6 +1312,7 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     private String replaceMacros(GsacRequest request, String template) {
+        template = template.replace("${htdocs}", getUrlBase() + URL_HTDOCS_BASE);
         template = template.replace("${urlroot}", getUrlBase() + URL_BASE);
         template = template.replace("${fullurlroot}",
                                     getAbsoluteUrl(request,
