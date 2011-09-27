@@ -1785,12 +1785,7 @@ function gsacRowClick(event, entryId, url) {
         img.obj.src =  icon_progress;
     }
     util.loadXML( url, gsacHandleXml,entryId);
-
 }
-
-
-
-
 
 
 
@@ -1802,28 +1797,24 @@ function gsacHandleXml(request,entryId) {
     if(img) {
         img.obj.src =  icon_blank;
     }
-
     row = util.getDomObject(divId);
     if(!row) return;
     div = util.getDomObject("tooltipdiv");
     if(!div) return;
-    var xmlDoc=request.responseXML.documentElement;
-    text = getChildText(xmlDoc);
-    div.style["left"]  =util.getLeft(row.obj)+"px";
-    var bottom = util.getBottom(row.obj);
 
-
-
-    //    div.style["top"]  = bottom+"px";
-    div.obj.innerHTML = "<div class=tooltip-inner><div id=\"tooltipwrapper\" ><table><tr valign=top><img width=\"16\" onmousedown=\"hideEntryPopup();\" id=\"tooltipclose\"  src=" + icon_close +"></td><td>" + text+"</table></div></div>";
-
+    text = getChildText(request.responseXML.documentElement);
     checkTabs(text);
+    var html =  "<div class=tooltip-inner><div id=\"tooltipwrapper\" ><table><tr valign=top><img width=\"16\" onmousedown=\"hideEntryPopup();\" id=\"tooltipclose\"  src=" + icon_close +"></td><td>" + text+"</table></div></div>";
+
+    jQuery("#tooltipdiv" ).html(html);
     popupObject = div;
     showObject(div);
+    var row = jQuery( "#" + divId );
     jQuery("#tooltipdiv" ).position({
-            of: jQuery( "#" + divId ),
+            of: row,
                 my: 'left top',
                 at: 'left bottom',
+                offset: "-4 2",
                 collision: "none none"
                 });
 }

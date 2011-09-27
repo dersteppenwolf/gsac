@@ -2239,13 +2239,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param baseUrl _more_
      * @param urlArg _more_
      */
-    public void openEntryRow(Appendable sb, String id, String baseUrl,
+    public void openEntryRow(Appendable sb, String resourceId, String baseUrl,
                              String urlArg) {
         try {
-            String   rowId  = "row_" + id;
-            String   divId  = "div_" + id;
-            String   imgId  = "img_" + id;
-            String[] events = getEntryEventJS(id, baseUrl, urlArg);
+            String domId = cleanIdForJS(resourceId);
+            String   rowId  = "row_" + domId;
+            String   divId  = "div_" + domId;
+            String   imgId  = "img_" + domId;
+            String[] events = getEntryEventJS(resourceId, baseUrl, urlArg);
             String   event1 = events[0];
             String   event2 = events[1];
             String dartImg =
@@ -2258,7 +2259,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                       + event1 + ">");
 
             sb.append(
-                "<td  " + HtmlUtil.id(divId)
+                "<td><div " + HtmlUtil.id(divId)
                 + "><table border=0 class=\"gsac-innerresult-table\" cellpadding=0 cellspacing=0><tr>");
             sb.append(HtmlUtil.col(dartImg));
         } catch (IOException ioe) {
@@ -2275,7 +2276,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     private String cleanIdForJS(String s) {
-        s = s.replace("'", "\\'");
+        s = s.replaceAll("'", "\\'");
+        s = s.replaceAll(":","").replaceAll("=","");
         return s;
     }
 
@@ -2367,7 +2369,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             } else {
                 sb.append(HtmlUtil.href(request.getUrl(sortMap), labels[i]));
             }
-            sb.append("</td>");
+            sb.append("</div></td>");
         }
         sb.append("</tr>");
     }
