@@ -129,8 +129,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      * @throws Exception On badness
      */
     public void addDateRangeClause(List<Clause> clauses, String column1,
-                                   String column2, Date[] dateRange)
-            throws Exception {
+                                   String column2, Date[] dateRange) {
         if (dateRange[0] != null) {
             clauses.add(Clause.ge(column1, dateRange[0]));
         }
