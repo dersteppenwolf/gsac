@@ -788,6 +788,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
                 colNames.add("COL_" + COLNAME);
                 pw.append(sp2 + "public static final String COL_" + COLNAME
                           + " =  NAME + \"." + colName + "\";\n");
+                pw.append(sp2 + "public static final String ORA_" + COLNAME
+                        + " =  \"" + colName + "\";\n");
             }
 
             pw.append("\n");
