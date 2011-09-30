@@ -52,7 +52,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     private String longName;
 
     /** _more_ */
-    private List<GsacMetadata> metadata = new ArrayList();
+    private List<GsacMetadata> metadata = new ArrayList<GsacMetadata>();
 
     /** _more_ */
     private int metadataLevel = 0;
@@ -61,7 +61,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     private GsacRepositoryInfo repositoryInfo;
 
     /** The groups this site is part of */
-    private List<ResourceGroup> resourceGroups = new ArrayList();
+    private List<ResourceGroup> resourceGroups = new ArrayList<ResourceGroup>();
 
     /** site status */
     private ResourceStatus status;
