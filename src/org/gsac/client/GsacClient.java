@@ -53,6 +53,8 @@ import java.util.Properties;
 
 public class GsacClient implements GsacConstants {
 
+    public static final String USER_AGENT = "gsac client v1.0";
+
     /** cmd line arg */
     public static final String ARG_SERVER = "server";
 
@@ -144,6 +146,7 @@ public class GsacClient implements GsacConstants {
 
         //Make a dummy repository
         repository = new GsacRepository();
+        repository.setUserAgent(USER_AGENT);
 
         //If the cmd line args are ok then process the query
         if (processArgs(args)) {
@@ -584,7 +587,8 @@ public class GsacClient implements GsacConstants {
     private String fetchUrl(String url) throws Exception {
         URL           theUrl     = new URL(url);
         URLConnection connection = theUrl.openConnection();
-        connection.setRequestProperty("User-agent", "gsac client");
+        System.err.println (" **** FETCH ****");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
         InputStream   is         = connection.getInputStream();
         String        contents   = readContents(is);
         is.close();

@@ -196,8 +196,8 @@ public class GsacRequest implements GsacConstants {
      * @return _more_
      */
     public String getOriginatingIP() {
-        if (defined(ARG_IP)) {
-            return get(ARG_IP, "");
+        if (defined(ARG_REQUEST_IP)) {
+            return get(ARG_REQUEST_IP, "");
         }
         return getRequestIP();
     }

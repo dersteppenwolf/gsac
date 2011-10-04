@@ -49,6 +49,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -187,6 +188,8 @@ public class GsacRepository implements GsacConstants {
      *   This is repository specific, so, for example, the federated repository uses /gsacfederated
      */
     private String urlBase;
+
+    private String userAgent;
 
     /** This repositories information */
     private GsacRepositoryInfo myInfo;
@@ -2146,9 +2149,12 @@ public class GsacRepository implements GsacConstants {
     public static final String LOG_MACRO_USERAGENT = "%{User-agent}i";
     public static final String LOG_MACRO_REFERER = "%{Referer}i";
     public static final String LOG_MACRO_USER = "%u";
+    public static final String LOG_MACRO_TIME = "%t";
+    public static final String LOG_MACRO_METHOD = "%m";
+    public static final String LOG_MACRO_PATH = "%U";
+    public static final String LOG_MACRO_PROTOCOL = "%H";
 
-
-
+    public static final String LOG_TEMPLATE = "%h [%t] \"%r\"  \"%{Referer}i\" \"%{User-agent}i\"";
 
     /**
      * _more_
@@ -2161,25 +2167,35 @@ public class GsacRepository implements GsacConstants {
         String uri    = request.getRequestURI();
         String method = request.getMethod();
         String userAgent = request.getUserAgent("none");
+
+        String time = GsacOutputHandler.makeDateFormat("dd/MMM/yyyy:HH:mm:ss Z").format(new Date());
         int response = 200;  // always set to this in GsacResponse.startResponse()
-        String requestPath = method +" " + uri +" HTTP/1.0";
-        String message = "%h %l %u %t \"%r\"  \"%{Referer}i\" \"%{User-agent}i\"";
+        String requestPath = method +" " + uri +" " + request.getHttpServletRequest().getProtocol();
+        String referer = request.getHttpServletRequest().getHeader("referer");
+        if(referer==null) referer = "-";
+        String message = getLogTemplate();
 
         message = message.replace(LOG_MACRO_IP, ip);
+        message = message.replace(LOG_MACRO_TIME, time);
+        message = message.replace(LOG_MACRO_METHOD, method);
+        message = message.replace(LOG_MACRO_PATH, uri);
+        message = message.replace(LOG_MACRO_PROTOCOL, request.getHttpServletRequest().getProtocol());
         message = message.replace(LOG_MACRO_REQUEST, requestPath);
         message = message.replace(LOG_MACRO_USERAGENT, userAgent);
-        message = message.replace(LOG_MACRO_REFERER, "-");
+        message = message.replace(LOG_MACRO_REFERER, referer);
         message = message.replace(LOG_MACRO_USER, "-");
 
-
-//        String message = ip + " " + uri + " " + method + " " + response;
         if (logDirectory != null) {
             getAccessLogger().info(message);
         } else {
-            System.err.println("[GSAC] " + getDTTM() + ": " + message);
+            System.err.println("GSAC REQUEST:" + message);
         }
     }
 
+
+    public String getLogTemplate() {
+        return LOG_TEMPLATE;
+    }
 
     /**
      * throws error
@@ -2319,6 +2335,10 @@ public class GsacRepository implements GsacConstants {
             ARG_OUTPUT, output
         });
         URLConnection connection = new URL(url).openConnection();
+        String userAgent  =getUserAgent();
+        if(userAgent!=null) {
+            connection.setRequestProperty("User-Agent", userAgent);
+        }
         connection.setConnectTimeout(1000 * URL_TIMEOUT_SECONDS);
         InputStream inputStream = connection.getInputStream();
         if (zipit) {
@@ -2783,6 +2803,7 @@ public class GsacRepository implements GsacConstants {
         exceptArgs.add(ARG_REPOSITORY);
         exceptArgs.add(ARG_GZIP);
         exceptArgs.add(ARG_OUTPUT);
+
         return request.getUrlArgs(newArg, exceptArgs);
     }
 
@@ -3193,6 +3214,26 @@ public class GsacRepository implements GsacConstants {
         }
         return sb.toString();
     }
+
+    /**
+       Set the UserAgent property.
+
+       @param value The new value for UserAgent
+    **/
+    public void setUserAgent (String value) {
+	userAgent = value;
+    }
+
+    /**
+       Get the UserAgent property.
+
+       @return The UserAgent
+    **/
+    public String getUserAgent () {
+	return userAgent;
+    }
+
+
 
 
 }

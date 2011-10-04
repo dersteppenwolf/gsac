@@ -84,6 +84,8 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         }
     }
 
+
+
     /**
      * initialize resources
      * CHANGME: Change the header.html and footer.html
@@ -298,7 +300,8 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                                            ? getSiteServers(request)
                                            : getFileServers(request);
 
-        final String             urlArgs = getRemoteUrlArgs(request);
+        String remoteArgs= getRemoteUrlArgs(request);
+        final String             urlArgs = remoteArgs+"&" + HtmlUtil.arg(ARG_REQUEST_IP,request.getRequestIP());
         final StringBuffer       msgBuff = new StringBuffer();
         msgBuff.append("Repositories searched:<ul>");
 
@@ -475,6 +478,10 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         //        return  Executors.newFixedThreadPool(callables.size());
     }
 
+
+    public String getUserAgent () {
+        return "gsac federated";
+    }
 
 
     /**
