@@ -470,6 +470,8 @@ public class GsacRepository implements GsacConstants {
 
         File   log4JFile = new File(logDirectory + "/" + "log4j.properties");
         String contents  = readResource("/log4j.properties");
+        //Always write out the log4j file
+        //Note: If the installer modified their file this would overwrite it
         if (true || !log4JFile.exists()) {
             try {
                 contents = contents.replace("${gsac.logdir}",
@@ -480,7 +482,6 @@ public class GsacRepository implements GsacConstants {
             }
         }
         org.apache.log4j.PropertyConfigurator.configure(log4JFile.toString());
-
     }
 
 
@@ -1991,7 +1992,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /** LOOK: */
-    boolean readHtmlEveryTime = false;
+    boolean readHtmlEveryTime = true;
 
     /**
      * Override this to return the html header to use for html pages
@@ -2140,6 +2141,15 @@ public class GsacRepository implements GsacConstants {
         }
     }
 
+    public static final String LOG_MACRO_IP = "%h";
+    public static final String LOG_MACRO_REQUEST = "%r";
+    public static final String LOG_MACRO_USERAGENT = "%{User-agent}i";
+    public static final String LOG_MACRO_REFERER = "%{Referer}i";
+    public static final String LOG_MACRO_USER = "%u";
+
+
+
+
     /**
      * _more_
      *
@@ -2150,12 +2160,23 @@ public class GsacRepository implements GsacConstants {
         String ip     = request.getOriginatingIP();
         String uri    = request.getRequestURI();
         String method = request.getMethod();
+        String userAgent = request.getUserAgent("none");
         int response = 200;  // always set to this in GsacResponse.startResponse()
-        String message = ip + " " + uri + " " + method + " " + response;
+        String requestPath = method +" " + uri +" HTTP/1.0";
+        String message = "%h %l %u %t \"%r\"  \"%{Referer}i\" \"%{User-agent}i\"";
+
+        message = message.replace(LOG_MACRO_IP, ip);
+        message = message.replace(LOG_MACRO_REQUEST, requestPath);
+        message = message.replace(LOG_MACRO_USERAGENT, userAgent);
+        message = message.replace(LOG_MACRO_REFERER, "-");
+        message = message.replace(LOG_MACRO_USER, "-");
+
+
+//        String message = ip + " " + uri + " " + method + " " + response;
         if (logDirectory != null) {
             getAccessLogger().info(message);
         } else {
-            System.err.println("[ACCESS] " + getDTTM() + ": " + message);
+            System.err.println("[GSAC] " + getDTTM() + ": " + message);
         }
     }
 

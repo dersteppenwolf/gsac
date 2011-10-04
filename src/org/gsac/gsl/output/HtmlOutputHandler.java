@@ -1487,11 +1487,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
-        if (resource.getPublishTime() != null) {
-            String dateString = formatDate(resource.getPublishTime());
-            pw.append(formEntry(request, msgLabel("Pubish Date"), dateString));
+        if (resource.getPublishDate() != null) {
+            String dateString = formatDate(resource.getPublishDate());
+            pw.append(formEntry(request, msgLabel("Publish Date"), dateString));
         }
-
 
         if (resource.getModificationDate() != null) {
             String dateString = formatDate(resource.getModificationDate());

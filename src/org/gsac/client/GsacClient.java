@@ -584,6 +584,7 @@ public class GsacClient implements GsacConstants {
     private String fetchUrl(String url) throws Exception {
         URL           theUrl     = new URL(url);
         URLConnection connection = theUrl.openConnection();
+        connection.setRequestProperty("User-agent", "gsac client");
         InputStream   is         = connection.getInputStream();
         String        contents   = readContents(is);
         is.close();

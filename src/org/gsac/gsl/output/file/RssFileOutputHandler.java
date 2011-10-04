@@ -138,11 +138,11 @@ public class RssFileOutputHandler extends GsacOutputHandler {
                               + " resource results"));
         for (GsacFile resource : response.getFiles()) {
             pw.append(XmlUtil.openTag(TAG_RSS_ITEM));
-            if (resource.getPublishTime() != null) {
+            if (resource.getPublishDate() != null) {
                 pw.append(
                     XmlUtil.tag(
                         TAG_RSS_PUBDATE, "",
-                        rssSdf.format(resource.getPublishTime())));
+                        rssSdf.format(resource.getPublishDate())));
             }
             String title =
                 resource.getType() + " - "

@@ -80,7 +80,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     private Date toDate;
 
     /** _more_ */
-    private Date publishTime;
+    private Date publishDate;
 
     private Date modificationDate;
 
@@ -554,18 +554,31 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      *  Set the PublishTime property.
      *
      *  @param value The new value for PublishTime
+     * @deprecated use setPublishDate
      */
     public void setPublishTime(Date value) {
-        publishTime = value;
+        setPublishDate(value);
+    }
+
+
+    /**
+     *  Set the PublishDate property.
+     *
+     *  @param value The new value for PublishDate
+     * @deprecated use setPublishDate
+     */
+
+    public void setPublishDate(Date value) {
+        publishDate = value;
     }
 
     /**
-     *  Get the PublishTime property.
+     *  Get the PublishDate property.
      *
-     *  @return The PublishTime
+     *  @return The PublishDate
      */
-    public Date getPublishTime() {
-        return publishTime;
+    public Date getPublishDate() {
+        return publishDate;
     }
 
 

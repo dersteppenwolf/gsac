@@ -193,7 +193,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         }
 
 
-        Date publishTime = resource.getPublishTime();
+        Date publishTime = resource.getPublishDate();
         Date startTime   = resource.getFromDate();
         Date endTime     = resource.getToDate();
 
@@ -427,7 +427,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
 
-                Date publishTime = resource.getPublishTime();
+                Date publishTime = resource.getPublishDate();
                 Date startTime   = resource.getFromDate();
                 Date endTime     = resource.getToDate();
 
