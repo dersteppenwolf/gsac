@@ -118,35 +118,19 @@ public class GsacRepository implements GsacConstants {
     /** property for port we run on */
     private static final String PROP_PORT = "gsac.server.port";
 
-    /** xml tag name for the repository info */
-    public static final String TAG_REPOSITORY = "repository";
 
-    /** xml tag name */
-    public static final String TAG_DESCRIPTION = "description";
-
-    /** xml attribute */
-    public static final String ATTR_NAME = "name";
-
-    /** xml attribute */
-    public static final String ATTR_URL = "url";
 
     /** the servlet */
     private GsacServlet servlet;
-
-    /** logger */
-    private Logger LOG;
-
-    /** access logger */
-    private Logger ACCESSLOG;
-
-    /** Points to where to write logs to. May be null */
-    private File logDirectory;
 
     /** local directory to write stuff to */
     private File gsacDirectory;
 
     /** the database manager */
     private GsacDatabaseManager databaseManager;
+
+    /** _more_          */
+    private GsacLogManager logManager;
 
     /** _more_ */
     private Hashtable<ResourceClass, GsacResourceManager> resourceManagerMap =
@@ -189,6 +173,7 @@ public class GsacRepository implements GsacConstants {
      */
     private String urlBase;
 
+    /** _more_ */
     private String userAgent;
 
     /** This repositories information */
@@ -376,7 +361,7 @@ public class GsacRepository implements GsacConstants {
         if (gsacDirectory != null) {
             System.err.println("GSAC: using gsac directory: "
                                + gsacDirectory);
-            initLogDir(gsacDirectory);
+            getLogManager().initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
                                            + "/gsac.properties");
             System.err.println("GSAC: looking for: " + localPropertiesFile);
@@ -450,42 +435,6 @@ public class GsacRepository implements GsacConstants {
      */
     public void initBrowseOutputHandlers() {}
 
-
-    /**
-     * initialize the log directory. This will make a /logs sub-directory of the gsacDir. It will then write the
-     * log4j.properties from the resources java dir
-     *
-     * @param gsacDir the gsac dir
-     */
-    public void initLogDir(File gsacDir) {
-        logDirectory = new File(gsacDir.toString() + "/logs");
-        System.err.println("GSAC: Logging to:" + logDirectory);
-        if ( !logDirectory.exists()) {
-            System.err.println("GSAC: Making log dir:" + logDirectory);
-            logDirectory.mkdir();
-            if ( !logDirectory.exists()) {
-                System.err.println("GSAC: failed to created log directory:"
-                                   + logDirectory);
-                System.err.println("GSAC: are permissions OK?");
-                return;
-            }
-        }
-
-        File   log4JFile = new File(logDirectory + "/" + "log4j.properties");
-        String contents  = readResource("/log4j.properties");
-        //Always write out the log4j file
-        //Note: If the installer modified their file this would overwrite it
-        if (true || !log4JFile.exists()) {
-            try {
-                contents = contents.replace("${gsac.logdir}",
-                                            logDirectory.toString());
-                IOUtil.writeFile(log4JFile, contents);
-            } catch (Exception exc) {
-                throw new RuntimeException(exc);
-            }
-        }
-        org.apache.log4j.PropertyConfigurator.configure(log4JFile.toString());
-    }
 
 
     /**
@@ -788,7 +737,8 @@ public class GsacRepository implements GsacConstants {
                     System.err.println("Initializing remote repository:"
                                        + info + " " + exc);
                     exc.printStackTrace();
-                    logError("Initializing remote repository:" + info, exc);
+                    getLogManager().logError(
+                        "Initializing remote repository:" + info, exc);
                 }
             }
             //If there were any errors then reset the ttl for the list holder
@@ -1097,6 +1047,32 @@ public class GsacRepository implements GsacConstants {
         return null;
     }
 
+
+
+    /**
+     * Get the logmanager. If not created yet then this calls the factory method doMakeLogManager
+     *
+     * @return logmanager
+     */
+    public GsacLogManager getLogManager() {
+        if (logManager == null) {
+            logManager = doMakeLogManager();
+        }
+        return logManager;
+    }
+
+
+    /**
+     * Factory method for making the GsacLogManager.
+     * Derived classes should override this method and create their
+     * own log manager.
+     *
+     * @return log manager
+     */
+    public GsacLogManager doMakeLogManager() {
+        return new GsacLogManager(this);
+    }
+
     /**
      * translate the given phrase. use the msgProperties
      *
@@ -1184,7 +1160,6 @@ public class GsacRepository implements GsacConstants {
             boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
             if (serviceRequest) {
                 numServiceRequests++;
-                //                getRepository().logInfo("start url:" + uri);
             }
             String  what              = "other";
 
@@ -1218,16 +1193,16 @@ public class GsacRepository implements GsacConstants {
                 handleViewRequest(request, new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
-                //                logError("Unknown request:" + uri, null);
+                //getLogManager().logError("Unknown request:" + uri, null);
             }
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
                 //                System.out.println(request.toString());
-                logAccess(request, what);
+                getLogManager().logAccess(request, what);
             }
         } catch (UnknownRequestException exc) {
-            logError("Unknown request:" + uri + "?" + request.getUrlArgs(),
-                     null);
+            getLogManager().logError("Unknown request:" + uri + "?"
+                                     + request.getUrlArgs(), null);
             request.sendError(HttpServletResponse.SC_NOT_FOUND,
                               "Unknown request:" + uri);
         } catch (java.net.SocketException sexc) {
@@ -1235,8 +1210,8 @@ public class GsacRepository implements GsacConstants {
         } catch (Exception exc) {
             //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
-            logError("Error processing request:" + uri + "?"
-                     + request.getUrlArgs(), thr);
+            getLogManager().logError("Error processing request:" + uri + "?"
+                                     + request.getUrlArgs(), thr);
             try {
                 request.sendError(
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -1316,7 +1291,8 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     private String replaceMacros(GsacRequest request, String template) {
-        template = template.replace("${htdocs}", getUrlBase() + URL_HTDOCS_BASE);
+        template = template.replace("${htdocs}",
+                                    getUrlBase() + URL_HTDOCS_BASE);
         template = template.replace("${urlroot}", getUrlBase() + URL_BASE);
         template = template.replace("${fullurlroot}",
                                     getAbsoluteUrl(request,
@@ -2070,31 +2046,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    private Logger getErrorLogger() {
-        if (LOG == null) {
-            LOG = Logger.getLogger("org.gsac.gsl");
-        }
-        return LOG;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    private Logger getAccessLogger() {
-        if (ACCESSLOG == null) {
-            ACCESSLOG = Logger.getLogger("org.gsac.gsl.access");
-        }
-        return ACCESSLOG;
-    }
-
-
 
     /**
      * Log the error
@@ -2103,32 +2054,7 @@ public class GsacRepository implements GsacConstants {
      * @param exc exception
      */
     public void logError(String message, Throwable exc) {
-        if (logDirectory != null) {
-            if (exc != null) {
-                getErrorLogger().error(message + "\n<stack>\n" + exc + "\n"
-                                       + LogUtil.getStackTrace(exc)
-                                       + "\n</stack>");
-            } else {
-                getErrorLogger().error(message);
-            }
-        } else {
-            System.err.println("GSAC ERROR: " + getDTTM() + ": " + message);
-            if (exc != null) {
-                System.err.println("<stack>");
-                exc.printStackTrace();
-                System.err.println("</stack>");
-            }
-        }
-    }
-
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getDTTM() {
-        return new Date().toString();
+        getLogManager().logError(message, exc);
     }
 
     /**
@@ -2137,65 +2063,12 @@ public class GsacRepository implements GsacConstants {
      * @param message message
      */
     public void logInfo(String message) {
-        if (logDirectory != null) {
-            getErrorLogger().info(message);
-        } else {
-            System.err.println("GSAC INFO: " + getDTTM() + ": " + message);
-        }
-    }
-
-    public static final String LOG_MACRO_IP = "%h";
-    public static final String LOG_MACRO_REQUEST = "%r";
-    public static final String LOG_MACRO_USERAGENT = "%{User-agent}i";
-    public static final String LOG_MACRO_REFERER = "%{Referer}i";
-    public static final String LOG_MACRO_USER = "%u";
-    public static final String LOG_MACRO_TIME = "%t";
-    public static final String LOG_MACRO_METHOD = "%m";
-    public static final String LOG_MACRO_PATH = "%U";
-    public static final String LOG_MACRO_PROTOCOL = "%H";
-
-    public static final String LOG_TEMPLATE = "%h [%t] \"%r\"  \"%{Referer}i\" \"%{User-agent}i\"";
-
-    /**
-     * _more_
-     *
-     * @param request the request
-     * @param what _more_
-     */
-    public void logAccess(GsacRequest request, String what) {
-        String ip     = request.getOriginatingIP();
-        String uri    = request.getRequestURI();
-        String method = request.getMethod();
-        String userAgent = request.getUserAgent("none");
-
-        String time = GsacOutputHandler.makeDateFormat("dd/MMM/yyyy:HH:mm:ss Z").format(new Date());
-        int response = 200;  // always set to this in GsacResponse.startResponse()
-        String requestPath = method +" " + uri +" " + request.getHttpServletRequest().getProtocol();
-        String referer = request.getHttpServletRequest().getHeader("referer");
-        if(referer==null) referer = "-";
-        String message = getLogTemplate();
-
-        message = message.replace(LOG_MACRO_IP, ip);
-        message = message.replace(LOG_MACRO_TIME, time);
-        message = message.replace(LOG_MACRO_METHOD, method);
-        message = message.replace(LOG_MACRO_PATH, uri);
-        message = message.replace(LOG_MACRO_PROTOCOL, request.getHttpServletRequest().getProtocol());
-        message = message.replace(LOG_MACRO_REQUEST, requestPath);
-        message = message.replace(LOG_MACRO_USERAGENT, userAgent);
-        message = message.replace(LOG_MACRO_REFERER, referer);
-        message = message.replace(LOG_MACRO_USER, "-");
-
-        if (logDirectory != null) {
-            getAccessLogger().info(message);
-        } else {
-            System.err.println("GSAC REQUEST:" + message);
-        }
+        getLogManager().logInfo(message);
     }
 
 
-    public String getLogTemplate() {
-        return LOG_TEMPLATE;
-    }
+
+
 
     /**
      * throws error
@@ -2243,11 +2116,12 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * If the given resource is from a remote repository then create and return
+     * the view URL that points to that resource. Else return null.
      *
-     * @param resource _more_
+     * @param resource the resource
      *
-     * @return _more_
+     * @return its remote url or null if its not a remote resource
      */
     public String getRemoteUrl(GsacResource resource) {
         if (resource.getRepositoryInfo() == null) {
@@ -2335,8 +2209,8 @@ public class GsacRepository implements GsacConstants {
             ARG_OUTPUT, output
         });
         URLConnection connection = new URL(url).openConnection();
-        String userAgent  =getUserAgent();
-        if(userAgent!=null) {
+        String        userAgent  = getUserAgent();
+        if (userAgent != null) {
             connection.setRequestProperty("User-Agent", userAgent);
         }
         connection.setConnectTimeout(1000 * URL_TIMEOUT_SECONDS);
@@ -2418,23 +2292,7 @@ public class GsacRepository implements GsacConstants {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter        pw  = response.getPrintWriter();
         GsacRepositoryInfo gri = getRepositoryInfo();
-
-        pw.append(XmlUtil.openTag(TAG_REPOSITORY,
-                                  XmlUtil.attrs(ATTR_URL,
-                                      getServlet().getAbsoluteUrl(request,
-                                          getUrlBase()
-                                          + URL_BASE), ATTR_NAME,
-                                              gri.getName())));
-
-
-        pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
-                              XmlUtil.getCdata(gri.getDescription())));
-
-        for (CapabilityCollection collection : gri.getCollections()) {
-            collection.toXml(pw);
-        }
-
-        pw.append(XmlUtil.closeTag(TAG_REPOSITORY));
+        gri.toXml(this, request, pw);
         response.endResponse();
     }
 
@@ -3216,21 +3074,21 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-       Set the UserAgent property.
-
-       @param value The new value for UserAgent
-    **/
-    public void setUserAgent (String value) {
-	userAgent = value;
+     *  Set the UserAgent property.
+     *
+     *  @param value The new value for UserAgent
+     */
+    public void setUserAgent(String value) {
+        userAgent = value;
     }
 
     /**
-       Get the UserAgent property.
-
-       @return The UserAgent
-    **/
-    public String getUserAgent () {
-	return userAgent;
+     *  Get the UserAgent property.
+     *
+     *  @return The UserAgent
+     */
+    public String getUserAgent() {
+        return userAgent;
     }
 
 

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 import java.util.HashSet;
 import java.util.List;
-
+import ucar.unidata.xml.XmlUtil;
 
 
 /**
@@ -41,6 +41,20 @@ import java.util.List;
  * @author         Enter your name here...
  */
 public class GsacRepositoryInfo {
+
+    /** xml tag name for the repository info */
+    public static final String TAG_REPOSITORY = "repository";
+
+    /** xml tag name */
+    public static final String TAG_DESCRIPTION = "description";
+
+    /** xml attribute */
+    public static final String ATTR_NAME = "name";
+
+    /** xml attribute */
+    public static final String ATTR_URL = "url";
+
+
 
     /** _more_ */
     private String url;
@@ -102,6 +116,26 @@ public class GsacRepositoryInfo {
         this.url  = url;
         this.name = name;
         this.icon = icon;
+    }
+
+    public void toXml(GsacRepository repository, GsacRequest request, PrintWriter pw) throws Exception {
+        pw.append(XmlUtil.openTag(TAG_REPOSITORY,
+                                  XmlUtil.attrs(ATTR_URL,
+                                                repository.getServlet().getAbsoluteUrl(request,
+                                                                                       repository.getUrlBase()
+                                                                                       + repository.URL_BASE), ATTR_NAME,
+                                                this.getName())));
+
+
+        pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
+                              XmlUtil.getCdata(this.getDescription())));
+
+        for (CapabilityCollection collection : this.getCollections()) {
+            collection.toXml(pw);
+        }
+
+        pw.append(XmlUtil.closeTag(TAG_REPOSITORY));
+
     }
 
     /**

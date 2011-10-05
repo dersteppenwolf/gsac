@@ -62,8 +62,8 @@ import java.util.Properties;
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 
-public abstract class GsacDatabaseManager implements GsacConstants,
-        SqlUtil.ConnectionManager {
+public abstract class GsacDatabaseManager extends GsacManager 
+    implements SqlUtil.ConnectionManager {
 
     /** default jdbc driver class name */
     private static final String DB_DRIVER_CLASSNAME =
@@ -97,10 +97,6 @@ public abstract class GsacDatabaseManager implements GsacConstants,
     /** _more_ */
     private int connectionCnt = 0;
 
-    /** the repository */
-    private GsacRepository repository;
-
-
     /** the user name */
     private String userName;
 
@@ -120,7 +116,7 @@ public abstract class GsacDatabaseManager implements GsacConstants,
      * @param repository The repository
      */
     public GsacDatabaseManager(GsacRepository repository) {
-        this.repository = repository;
+        super(repository);
     }
 
     /**
@@ -243,8 +239,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
                     + PROP_GSAC_DB_JDBCURL);
         }
 
-        if (repository != null) {
-            repository.logInfo("jdbc url: " + jdbcUrl);
+        if (getRepository() != null) {
+            getRepository().logInfo("jdbc url: " + jdbcUrl);
         }
         jdbcUrl = jdbcUrl.replace("${username}", userName);
         jdbcUrl = jdbcUrl.replace("${password}", password);
@@ -295,8 +291,8 @@ public abstract class GsacDatabaseManager implements GsacConstants,
             //            System.err.println("\tsystem:" + value);
             return value.trim();
         }
-        if (repository != null) {
-            value = repository.getProperty(name);
+        if (getRepository() != null) {
+            value = getRepository().getProperty(name);
             if (value != null) {
                 //                System.err.println("\trepository:" + value);
                 return value.trim();
