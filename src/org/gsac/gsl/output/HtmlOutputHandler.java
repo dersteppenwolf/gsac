@@ -1474,7 +1474,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if ( !request.get(ARG_WRAPXML, false)) {
                 js = createMap(request,
                                (List<GsacResource>) Misc.newList(resource),
-                               mapSB, 400, 200, true);
+                               mapSB, 400, 200, true, false);
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
                                    formatLatLon(resource) + mapSB));
@@ -1859,12 +1859,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String createMap(GsacRequest request,
                             List<GsacResource> resources, Appendable pw,
-                            int width, int height, boolean addToggle)
+                            int width, int height, boolean addToggle, boolean showList)
             throws IOException {
 
         StringBuffer mapSB = new StringBuffer();
         if (isGoogleEarthEnabled(request)) {
-            getGoogleEarth(request, resources, mapSB, width, height);
+            getGoogleEarth(request, resources, mapSB, width, height, showList);
             if (addToggle) {
                 pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
                         mapSB.toString(), true));
@@ -2632,10 +2632,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public void getGoogleEarth(GsacRequest request,
                                List<GsacResource> entries, Appendable sb,
-                               int width, int height)
+                               int width, int height,         boolean showList)
             throws IOException {
-        sb.append(
-            "<table  class=\"gsac-map-table\" border=\"0\" width=\"100%\"><tr valign=\"top\">");
+
 
         StringBuffer mapSB      = new StringBuffer();
         String id = getGoogleEarthPlugin(request, mapSB, width, height, null);
@@ -2661,7 +2660,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 break;
             }
             String iconUrl = getIconUrl(resource);
-            catSB.append(HtmlUtil.img(iconUrl));
+            String resourceUrl = makeResourceViewUrl(resource);
+            catSB.append(HtmlUtil.href(resourceUrl, HtmlUtil.img(iconUrl,"Click to view resource")));
             catSB.append(HtmlUtil.space(1));
             double lat      = resource.getLatitude();
             double lon      = EarthLocation.normalizeLongitude(resource.getLongitude());
@@ -2693,34 +2693,41 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
-        sb.append("<td width=\"" + EARTH_ENTRIES_WIDTH +"\">");
-        sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV,
-                                HtmlUtil.cssClass("gsac-map-resources")));
-        for (String category : categories) {
-            StringBuffer catSB = catMap.get(category);
-            if (category.length() > 0) {
-                sb.append(HtmlUtil.b(category));
-                sb.append(HtmlUtil.br());
+        sb.append(
+            "<table  class=\"gsac-map-table\" border=\"0\" width=\"100%\"><tr valign=\"top\">");
+        if(showList) {
+            sb.append("<td width=\"" + EARTH_ENTRIES_WIDTH +"\">");
+            sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV,
+                                    HtmlUtil.cssClass("gsac-map-resources")));
+            for (String category : categories) {
+                StringBuffer catSB = catMap.get(category);
+                if (category.length() > 0) {
+                    sb.append(HtmlUtil.b(category));
+                    sb.append(HtmlUtil.br());
+                }
+                sb.append(catSB);
             }
-            sb.append(catSB);
+            sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
+            sb.append("</td><td>");
         }
-        sb.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
-        sb.append("</td><td>");
+        sb.append("<td>");
         sb.append(mapSB);
-        sb.append(HtmlUtil.italics(msgLabel("On click")));
-        sb.append(HtmlUtil.space(2));
-        sb.append(HtmlUtil.checkbox("tmp", "true", false,
-                                    HtmlUtil.id("googleearth.showdetails")));
-        sb.append(HtmlUtil.space(1));
-        sb.append(HtmlUtil.italics(msg("Show details")));
-
-        sb.append(HtmlUtil.space(2));
-        sb.append(HtmlUtil.checkbox("tmp", "true", false,
-                                    HtmlUtil.id("googleearth.zoomonclick")));
-        sb.append(HtmlUtil.space(1));
-        sb.append(HtmlUtil.italics(msg("Zoom")));
-        sb.append(HtmlUtil.script(js.toString()));
+        if(showList) {
+            sb.append(HtmlUtil.italics(msgLabel("On click")));
+            sb.append(HtmlUtil.space(2));
+            sb.append(HtmlUtil.checkbox("tmp", "true", false,
+                                        HtmlUtil.id("googleearth.showdetails")));
+            sb.append(HtmlUtil.space(1));
+            sb.append(HtmlUtil.italics(msg("Show details")));
+            
+            sb.append(HtmlUtil.space(2));
+            sb.append(HtmlUtil.checkbox("tmp", "true", false,
+                                        HtmlUtil.id("googleearth.zoomonclick")));
+            sb.append(HtmlUtil.space(1));
+            sb.append(HtmlUtil.italics(msg("Zoom")));
+        }
         sb.append("</td></tr></table>");
+        sb.append(HtmlUtil.script(js.toString()));
     }
 
 
