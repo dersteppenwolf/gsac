@@ -1776,11 +1776,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_UL));
             int cnt = 1;
             for (String title : titles) {
-                tabHtml.append("<li><a href=\"#" + tabId + "-" + (cnt++)
-                               + "\">" + title + "</a></li>");
+                tabHtml.append("<li><a href=\"#" + tabId + "-" + (cnt++) +
+                               "\">" + title + "</a></li>");
             }
             tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_UL));
             cnt = 1;
+
             for (String tabContents : tabs) {
                 tabHtml.append(HtmlUtil.div(tabContents,
                                             HtmlUtil.cssClass("ui-tabs-hide") +
@@ -1790,7 +1791,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
             tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
-            tabHtml.append("\n");
+            tabHtml.append("\n"); 
             tabHtml.append(HtmlUtil.script("\njQuery(function(){\njQuery('#"
                                            + tabId + "').tabs();\n});\n"));
             tabHtml.append("\n\n");
