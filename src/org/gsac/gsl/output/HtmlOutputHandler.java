@@ -866,6 +866,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public boolean initHtml(GsacRequest request, GsacResponse response,
                             Appendable sb)
             throws Exception {
+
+        return initHtml(request, response, sb, "");
+    }
+
+    public boolean initHtml(GsacRequest request, GsacResponse response,
+                            Appendable sb, String title)
+            throws Exception {
         if (request.get(ARG_WRAPXML, false)) {
             response.startResponse(GsacResponse.MIME_XML);
             sb.append("<contents>");
@@ -885,6 +892,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             header = header.replace("${gsac.name}",
                                     getRepository().getRepositoryName());
+            header = header.replace("${gsac.title}", title);
             hasCssMacro = header.indexOf("${gsac.css}") >= 0;
             if (hasCssMacro) {
                 header = header.replace("${gsac.css}", cssLink);
@@ -1775,6 +1783,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             cnt = 1;
             for (String tabContents : tabs) {
                 tabHtml.append(HtmlUtil.div(tabContents,
+                                            HtmlUtil.cssClass("ui-tabs-hide") +
                                             HtmlUtil.id(tabId + "-"
                                                 + (cnt++))));
                 tabHtml.append("\n");
@@ -1862,19 +1871,37 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                             int width, int height, boolean addToggle, boolean showList)
             throws IOException {
 
-        StringBuffer mapSB = new StringBuffer();
         if (isGoogleEarthEnabled(request)) {
-            getGoogleEarth(request, resources, mapSB, width, height, showList);
-            if (addToggle) {
-                pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
-                        mapSB.toString(), true));
-            } else {
-                pw.append(mapSB.toString());
-            }
-            return "";
+            return createEarth(request, resources, pw, width, height, addToggle, showList);
         }
+        return createFlatMap(request,resources, pw,
+                             width, height, addToggle, showList);
+    }
 
 
+    public String createEarth(GsacRequest request,
+                            List<GsacResource> resources, Appendable pw,
+                            int width, int height, boolean addToggle, boolean showList)
+            throws IOException {
+
+        StringBuffer mapSB = new StringBuffer();
+        getGoogleEarth(request, resources, mapSB, width, height, showList);
+        if (addToggle) {
+            pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
+                                                 mapSB.toString(), true));
+        } else {
+            pw.append(mapSB.toString());
+        }
+        return "";
+    }
+
+
+    public String createFlatMap(GsacRequest request,
+                            List<GsacResource> resources, Appendable pw,
+                            int width, int height, boolean addToggle, boolean showList)
+            throws IOException {
+
+        StringBuffer mapSB = new StringBuffer();
         String mapVarName = "map" + HtmlUtil.blockCnt++;
         initMap(request, mapVarName, mapSB, width, height, false);
         if (addToggle) {
@@ -1915,6 +1942,33 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         return js.toString();
     }
 
+
+    public String createMap(GsacRequest request,
+                            List<GsacResource> resources, List<String> tabTitles,
+                            List<String> tabContents,
+                            int width, int height, boolean addToggle, boolean showList)
+            throws IOException {
+
+        StringBuffer js  = new StringBuffer();
+        boolean doFlat = true;
+        if (isGoogleEarthEnabled(request)) {
+//            doFlat = false;
+            StringBuffer pw = new StringBuffer();
+            js.append(createEarth(request, resources, pw, width, height, addToggle, showList));
+            tabTitles.add(msg("Earth"));
+            tabContents.add(pw.toString());
+        }
+
+        if(doFlat) {
+            StringBuffer pw = new StringBuffer();
+            js.append(createFlatMap(request,resources, pw,
+                                    width, height, addToggle, showList));
+            tabTitles.add(msg("Map"));
+            tabContents.add(pw.toString());
+        }
+
+        return js.toString();
+    }
 
 
 

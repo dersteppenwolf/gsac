@@ -116,34 +116,21 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     public void handleRequestInner(GsacRequest request,
                                    GsacResponse response, StringBuffer sb)
             throws Exception {
-        if ( !initHtml(request, response, sb)) {
-            return;
-        }
-
-        //        String uri = request.getRequestURI();
-        String uri = request.getGsacUrlPath();
         if (checkFormSwitch(request, response, getResourceClass())) {
             return;
         }
 
-        if (request.isGsacUrl(URL_SITE_FORM)) {
+
+        if(request.isGsacUrl(URL_SITE_FORM)) {
+            if ( !initHtml(request, response, sb, msg("Site Search Form"))) {
+                return;
+            }
             sb.append(HtmlUtil.p());
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_SITE_SEARCH)) {
-            /*
-            if(flexigridTemplate==null) {
-                flexigridTemplate  = getRepository().readResource("/flexigrid.site.html");
+            if ( !initHtml(request, response, sb, msg("Site Search Results"))) {
+                return;
             }
-            sb.append(
-                      HtmlUtil.importJS(
-                                        makeHtdocsUrl("/flexigrid/flexigrid.js")));
-            Hashtable<String, String> outputMap = new Hashtable<String,
-                                                      String>();
-            outputMap.put(ARG_OUTPUT, FlexigridSiteOutputHandler.OUTPUT_SITE_FLEXIGRID);
-            String searchUrl = makeUrl(URL_SITE_SEARCH) +  "?" + request.getUrlArgs(outputMap);
-
-            sb.append(flexigridTemplate.replace("${data.url}", searchUrl));
-            */
             long t1 = System.currentTimeMillis();
             getRepository().processRequest(getResourceClass(), request,
                                            response);
@@ -153,12 +140,15 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             long t3 = System.currentTimeMillis();
             //            System.err.println("html site request:" + (t2 - t1) + " " + (t3 - t2));
         } else if (request.defined(ARG_SITE_ID)) {
+            if ( !initHtml(request, response, sb, msg("Site View"))) {
+                return;
+            }
             GsacSite site = (GsacSite) getRepository().getResource(request,
                                 getResourceClass(),
                                 request.get(ARG_SITE_ID, (String) null));
             handleSingleSite(request, response, sb, site);
         } else {
-            throw new UnknownRequestException("Unknown request:" + uri);
+            throw new UnknownRequestException("Unknown request:" + request.getGsacUrlPath());
         }
         finishHtml(request, response, sb);
     }
@@ -305,12 +295,11 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         resultsContents.add(listSB.toString());
         resultsTitles.add(msg("Sites"));
 
-        StringBuffer mapSB = new StringBuffer();
+
         String js = createMap(request,
                               (List<GsacResource>) new ArrayList(sites),
-                              mapSB, -1, 500, false, true);
-        resultsContents.add(mapSB.toString());
-        resultsTitles.add(msg("Map"));
+                              resultsTitles, resultsContents, -1, 500, false, true);
+
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
         resultsTitles.add(msg("Search Info"));

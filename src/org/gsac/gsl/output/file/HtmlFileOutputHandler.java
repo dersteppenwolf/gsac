@@ -114,23 +114,31 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                    GsacResponse response, StringBuffer sb)
             throws Exception {
 
-        if ( !initHtml(request, response, sb)) {
-            return;
-        }
 
-        String uri = request.getRequestURI();
         if (checkFormSwitch(request, response, getResourceClass())) {
             return;
         }
 
+
+        String uri = request.getRequestURI();
         if (request.isGsacUrl(URL_FILE_FORM)) {
+            if ( !initHtml(request, response, sb, msg("File Search Form"))) {
+                return;
+            }
+
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_FILE_SEARCH)) {
+            if ( !initHtml(request, response, sb, msg("File Search Results"))) {
+                return;
+            }
             getRepository().processRequest(getResourceClass(), request,
                                            response);
             checkMessage(request, response, sb);
             handleFileList(request, response, sb);
         } else if (request.defined(ARG_FILE_ID)) {
+            if ( !initHtml(request, response, sb, msg("File View"))) {
+                return;
+            }
             GsacFile resource =
                 (GsacFile) getRepository().getResource(request,
                     getResourceClass(), request.get(ARG_FILE_ID, ""));

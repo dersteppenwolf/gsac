@@ -158,7 +158,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         }
 
         StringBuffer html = new StringBuffer();
-        initHtml(request, response, html);
+        initHtml(request, response, html,msg("Browse"));
         html.append(getHeader(request, null));
         finishHtml(request, response, html);
     }
@@ -180,7 +180,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         ResourceClass resourceClass = capability.getResourceClass();
         String        letter = request.get(ARG_LETTER, "").toUpperCase();
         StringBuffer  html          = new StringBuffer();
-        initHtml(request, response, html);
+        initHtml(request, response, html,msg("Browse"));
         html.append(getHeader(request, capability));
         String[] letters = {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -326,7 +326,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         }
         sb.append("</div>");
         StringBuffer html = new StringBuffer();
-        initHtml(request, response, html);
+        initHtml(request, response, html,msg("Browse"));
         html.append(getHeader(request, capability));
         if ((things.size() > 10) && (header.size() > 4)) {
             String headerHtml =

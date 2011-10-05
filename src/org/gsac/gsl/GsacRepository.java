@@ -1313,7 +1313,7 @@ public class GsacRepository implements GsacConstants {
             throws Exception {
         response.startResponse(GsacResponse.MIME_HTML);
         StringBuffer sb = new StringBuffer();
-        htmlOutputHandler.initHtml(request, response, sb);
+        htmlOutputHandler.initHtml(request, response, sb, "");
 
         String[] files = { getLocalHtdocsPath("/index.html"),
                            GSAC_PATH_HTDOCS + "/index.html" };
@@ -1367,7 +1367,7 @@ public class GsacRepository implements GsacConstants {
         }
 
         StringBuffer sb = new StringBuffer();
-        htmlOutputHandler.initHtml(request, response, sb);
+        htmlOutputHandler.initHtml(request, response, sb,"Help");
         String contents = "Could not read file:" + path;
         if (inputStream != null) {
             contents = IOUtil.readContents(inputStream);
@@ -1393,7 +1393,7 @@ public class GsacRepository implements GsacConstants {
         response.startResponse(GsacResponse.MIME_TEXT);
         request.put(ARG_DECORATE, "false");
         StringBuffer sb = new StringBuffer();
-        htmlOutputHandler.initHtml(request, response, sb);
+        htmlOutputHandler.initHtml(request, response, sb,"Statistics");
 
         sb.append(HtmlUtil.formTable());
         DecimalFormat fmt         = new DecimalFormat("#0");
@@ -2328,7 +2328,7 @@ public class GsacRepository implements GsacConstants {
         GsacRepositoryInfo       gri     = getRepositoryInfo();
         StringBuffer             sb      = new StringBuffer();
 
-        getHtmlOutputHandler().initHtml(request, response, sb);
+        getHtmlOutputHandler().initHtml(request, response, sb,"Repository Information");
         sb.append(getHeader(gri.getName()));
         sb.append(HtmlUtil.br());
         sb.append(gri.getDescription());

@@ -402,42 +402,44 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                 StringBuffer msgBuff, String label,
                                 String column, List<Clause> clauses) {
 
-        if (request.defined(arg)) {
-            String searchType = request.get(searchTypeArg, SEARCHTYPE_EXACT);
-            List<Clause> valueClauses = new ArrayList<Clause>();
-            List<String> values       = (List<String>) (doUpperLowerCase
-                    ? request.getUpperAndLowerCaseDelimiterSeparatedList(arg)
-                    : request.getDelimiterSeparatedList(arg));
-            int     cnt  = 0;
-            HashSet seen = new HashSet();
-            for (String value : values) {
-                if ( !seen.contains(value.toLowerCase())) {
-                    appendSearchCriteria(msgBuff, ((cnt++ == 0)
-                            ? label + "="
-                            : ""), value);
-                    seen.add(value.toLowerCase());
-                }
-                String searchTypeToUse = searchType;
-                if (value.startsWith("*") && value.endsWith("*")) {
-                    searchTypeToUse = SEARCHTYPE_CONTAINS;
-                    value           = value.substring(1, value.length());
-                    value           = value.substring(0, value.length() - 1);
-                } else if (value.startsWith("*")) {
-                    searchTypeToUse = SEARCHTYPE_ENDSWITH;
-                    value           = value.substring(1, value.length());
-                } else if (value.endsWith("*")) {
-                    searchTypeToUse = SEARCHTYPE_BEGINSWITH;
-                    value           = value.substring(0, value.length() - 1);
-                }
-                valueClauses.add(
-                    GsacDatabaseManager.getStringSearchClause(
-                        searchTypeToUse, column, value));
-
-            }
-            if (valueClauses.size() > 0) {
-                clauses.add(Clause.or(valueClauses));
-            }
+        if (!request.defined(arg)) {
+            return;
         }
+        String searchType = request.get(searchTypeArg, SEARCHTYPE_EXACT);
+        List<Clause> valueClauses = new ArrayList<Clause>();
+        List<String> values       = (List<String>) (doUpperLowerCase
+                                                    ? request.getUpperAndLowerCaseDelimiterSeparatedList(arg)
+                                                    : request.getDelimiterSeparatedList(arg));
+        int     cnt  = 0;
+        HashSet seen = new HashSet();
+        for (String value : values) {
+            if ( !seen.contains(value.toLowerCase())) {
+                appendSearchCriteria(msgBuff, ((cnt++ == 0)
+                                               ? label + "="
+                                               : ""), value);
+                seen.add(value.toLowerCase());
+            }
+            String searchTypeToUse = searchType;
+            if (value.startsWith("*") && value.endsWith("*")) {
+                searchTypeToUse = SEARCHTYPE_CONTAINS;
+                value           = value.substring(1, value.length());
+                value           = value.substring(0, value.length() - 1);
+            } else if (value.startsWith("*")) {
+                searchTypeToUse = SEARCHTYPE_ENDSWITH;
+                value           = value.substring(1, value.length());
+            } else if (value.endsWith("*")) {
+                searchTypeToUse = SEARCHTYPE_BEGINSWITH;
+                value           = value.substring(0, value.length() - 1);
+            }
+            valueClauses.add(
+                             GsacDatabaseManager.getStringSearchClause(
+                                                                       searchTypeToUse, column, value));
+
+        }
+        if (valueClauses.size() > 0) {
+            clauses.add(Clause.or(valueClauses));
+        }
+
     }
 
 
