@@ -23,6 +23,7 @@ package org.gsac.gsl;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.file.*;
 import org.gsac.gsl.util.*;
 
 
@@ -58,6 +59,27 @@ public abstract class FileManager extends GsacResourceManager {
     public FileManager(GsacRepository repository) {
         super(repository, GsacFile.CLASS_FILE);
     }
+
+
+
+    /**
+     * Create the default output handlers for this resource
+     *
+     */
+    @Override
+    public void initOutputHandlers() {
+        super.initOutputHandlers();
+        new HtmlFileOutputHandler(getRepository(), getResourceClass());
+        new CsvFileOutputHandler(getRepository(), getResourceClass());
+        new DownloaderFileOutputHandler(getRepository(), getResourceClass());
+        new WgetFileOutputHandler(getRepository(), getResourceClass());
+        new UrlFileOutputHandler(getRepository(), getResourceClass());
+        new JsonFileOutputHandler(getRepository(), getResourceClass());
+        new ZipFileOutputHandler(getRepository(), getResourceClass());
+        new RssFileOutputHandler(getRepository(), getResourceClass());
+        new XmlFileOutputHandler(getRepository(), getResourceClass());
+    }
+
 
 
     /**

@@ -24,6 +24,9 @@ package org.gsac.gsl;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
+
+
+import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
 
@@ -315,5 +318,21 @@ public abstract class SiteManager extends GsacResourceManager {
     }
 
 
+
+    /**
+     * Create the default output handlers for this resource
+     *
+     */
+    @Override
+    public void initOutputHandlers() {
+        super.initOutputHandlers();
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());
+        new TextSiteOutputHandler(getRepository(), getResourceClass());
+        new RssSiteOutputHandler(getRepository(), getResourceClass());
+        new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
+        new XmlSiteOutputHandler(getRepository(), getResourceClass());
+    }
 
 }

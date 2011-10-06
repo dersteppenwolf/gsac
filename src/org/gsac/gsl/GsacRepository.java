@@ -129,7 +129,7 @@ public class GsacRepository implements GsacConstants {
     /** the database manager */
     private GsacDatabaseManager databaseManager;
 
-    /** _more_          */
+    /** _more_ */
     private GsacLogManager logManager;
 
     /** _more_ */
@@ -388,45 +388,12 @@ public class GsacRepository implements GsacConstants {
      * Create the default set of output handlers
      */
     public void initOutputHandlers() {
-        for (GsacResourceManager resourceManager : getResourceManagers()) {
-            initOutputHandlers(resourceManager.getResourceClass());
-        }
+        htmlOutputHandler = new HtmlSiteOutputHandler(this,
+                GsacSite.CLASS_SITE);
         browseOutputHandler = new BrowseOutputHandler(this);
-    }
-
-    /**
-     * _more_
-     *
-     * @param resourceClass _more_
-     */
-    public void initOutputHandlers(ResourceClass resourceClass) {
-        //TODO: put the specification of the output handlers into a properties or xml file
-        //Or into the resourcemanager
-
-        if (resourceClass.equals(GsacSite.CLASS_SITE)) {
-            //TODO: If we don't have a site then we don't have this member
-            htmlOutputHandler = new HtmlSiteOutputHandler(this,
-                    resourceClass);
-            new KmlSiteOutputHandler(this, resourceClass);
-            new TextSiteOutputHandler(this, resourceClass);
-            new RssSiteOutputHandler(this, resourceClass);
-            new AtomSiteOutputHandler(this, resourceClass);
-            new JsonSiteOutputHandler(this, resourceClass);
-            new XmlSiteLogOutputHandler(this, resourceClass);
-            new XmlSiteOutputHandler(this, resourceClass);
-            //        new FlexigridSiteOutputHandler(this, resourceClass);
-        } else if (resourceClass.equals(GsacFile.CLASS_FILE)) {
-            new HtmlFileOutputHandler(this, resourceClass);
-            new CsvFileOutputHandler(this, resourceClass);
-            new DownloaderFileOutputHandler(this, resourceClass);
-            new WgetFileOutputHandler(this, resourceClass);
-            new UrlFileOutputHandler(this, resourceClass);
-            new JsonFileOutputHandler(this, resourceClass);
-            new ZipFileOutputHandler(this, resourceClass);
-            new RssFileOutputHandler(this, resourceClass);
-            new XmlFileOutputHandler(this, resourceClass);
+        for (GsacResourceManager resourceManager : getResourceManagers()) {
+            resourceManager.initOutputHandlers();
         }
-
     }
 
 
@@ -1367,7 +1334,7 @@ public class GsacRepository implements GsacConstants {
         }
 
         StringBuffer sb = new StringBuffer();
-        htmlOutputHandler.initHtml(request, response, sb,"Help");
+        htmlOutputHandler.initHtml(request, response, sb, "Help");
         String contents = "Could not read file:" + path;
         if (inputStream != null) {
             contents = IOUtil.readContents(inputStream);
@@ -1393,7 +1360,7 @@ public class GsacRepository implements GsacConstants {
         response.startResponse(GsacResponse.MIME_TEXT);
         request.put(ARG_DECORATE, "false");
         StringBuffer sb = new StringBuffer();
-        htmlOutputHandler.initHtml(request, response, sb,"Statistics");
+        htmlOutputHandler.initHtml(request, response, sb, "Statistics");
 
         sb.append(HtmlUtil.formTable());
         DecimalFormat fmt         = new DecimalFormat("#0");
@@ -2328,7 +2295,8 @@ public class GsacRepository implements GsacConstants {
         GsacRepositoryInfo       gri     = getRepositoryInfo();
         StringBuffer             sb      = new StringBuffer();
 
-        getHtmlOutputHandler().initHtml(request, response, sb,"Repository Information");
+        getHtmlOutputHandler().initHtml(request, response, sb,
+                                        "Repository Information");
         sb.append(getHeader(gri.getName()));
         sb.append(HtmlUtil.br());
         sb.append(gri.getDescription());

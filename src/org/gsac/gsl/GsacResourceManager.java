@@ -90,6 +90,14 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
     }
 
+
+    /**
+     * _more_
+     *
+     */
+    public void initOutputHandlers() {}
+
+
     /**
      * _more_
      *

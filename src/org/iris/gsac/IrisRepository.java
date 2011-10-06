@@ -91,19 +91,6 @@ public class IrisRepository extends GsacRepository implements GsacConstants {
         return null;
     }
 
-    /**
-     * _more_
-     *
-     * @param resourceClass _more_
-     */
-    public void initOutputHandlers(ResourceClass resourceClass) {
-        if (resourceClass.equals(GsacFile.CLASS_FILE)) {
-            return;
-        }
-        super.initOutputHandlers(resourceClass);
-    }
-
-
 
     /**
      * _more_
