@@ -141,7 +141,8 @@ input {
    border : 1px #666 solid;
    margin:0px;
    position: absolute; 
-   visibility: hidden; 
+   left:-10000px;
+//   visibility: hidden; 
    z-index: 1;
   -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
@@ -316,7 +317,8 @@ input {
    border : 1px #000 solid;
    background-color : #FFFFFF;
    position: absolute; 
-   visibility: hidden; 
+   left:-10000px;
+//   visibility: hidden; 
    z-index: 1;
 }
 

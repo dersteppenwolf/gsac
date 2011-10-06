@@ -1358,8 +1358,13 @@ function showPopup(event, srcId, popupId, alignLeft) {
     popupSrcId = srcId;
 
     showObject(popup);
-    //    var options = {};
-    //    $( "#"+popupId ).show( "blind", options,"slow");
+    jQuery("#"+popupId ).position({
+                of: jQuery( "#" + srcId ),
+                my: 'left top',
+                at: 'left bottom',
+                collision: "none none"
+                });
+    //Do it again to fix a safari bug
     jQuery("#"+popupId ).position({
                 of: jQuery( "#" + srcId ),
                 my: 'left top',
