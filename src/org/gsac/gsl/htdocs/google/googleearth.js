@@ -426,6 +426,7 @@ function  RamaddaEarth(id, url) {
         var myClick = this.googleEarthClickCnt;
         ramaddaPlacemark =this.placemarks[id];
         if(!ramaddaPlacemark) {
+            alert("no placemark: " + id);
             return;
         }
         this.googleEarth.setBalloon(null);

@@ -1755,9 +1755,6 @@ function gsacRowOver(entryId) {
 }
 
 
-
-
-
 function gsacRowOut(entryId) {
     var rowId = "row_" +entryId;
     var divId = "div_" + entryId;
@@ -1803,19 +1800,29 @@ function gsacHandleXml(request,entryId) {
         img.obj.src =  icon_blank;
     }
     row = util.getDomObject(divId);
-    if(!row) return;
+    if(!row) {
+        return;
+    }
     div = util.getDomObject("tooltipdiv");
-    if(!div) return;
+    if(!div) {
+        return;
+    }
+
 
     text = getChildText(request.responseXML.documentElement);
     checkTabs(text);
     var html =  "<div class=tooltip-inner><div id=\"tooltipwrapper\" ><table><tr valign=top><img width=\"16\" onmousedown=\"hideEntryPopup();\" id=\"tooltipclose\"  src=" + icon_close +"></td><td>" + text+"</table></div></div>";
 
-    jQuery("#tooltipdiv" ).html(html);
+
+    jQuery("#tooltipdiv").html(html);
     popupObject = div;
     showObject(div);
     var row = jQuery( "#" + divId );
-    jQuery("#tooltipdiv" ).position({
+    if(row.size()==0) {
+        alert("Could not find row:" + divId);
+        return;
+    }
+    jQuery("#tooltipdiv").position({
             of: row,
                 my: 'left top',
                 at: 'left bottom',

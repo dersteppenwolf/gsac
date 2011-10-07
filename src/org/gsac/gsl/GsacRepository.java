@@ -388,8 +388,7 @@ public class GsacRepository implements GsacConstants {
      * Create the default set of output handlers
      */
     public void initOutputHandlers() {
-        htmlOutputHandler = new HtmlSiteOutputHandler(this,
-                GsacSite.CLASS_SITE);
+        htmlOutputHandler = new HtmlOutputHandler(this);
         browseOutputHandler = new BrowseOutputHandler(this);
         for (GsacResourceManager resourceManager : getResourceManagers()) {
             resourceManager.initOutputHandlers();
@@ -1134,6 +1133,7 @@ public class GsacRepository implements GsacConstants {
             for (GsacResourceManager gom : resourceManagers) {
                 if (gom.canHandleUri(uri)) {
                     what = gom.getResourceClass().getName();
+
                     GsacOutputHandler outputHandler =
                         getOutputHandler(gom.getResourceClass(), request);
                     outputHandler.handleRequest(gom.getResourceClass(),

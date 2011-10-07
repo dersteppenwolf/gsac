@@ -1935,7 +1935,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             js.append("var resourceInfo = \"" + mapInfo + "\";\n");
             String entryId = resource.getId();
             entryId = cleanIdForJS(entryId);
-            js.append(mapVarName + ".addMarker('" + entryId + "',"
+            js.append(mapVarName + ".addMarker(" +HtmlUtil.squote(entryId) + ","
                       + jsLLP(resource.getLatitude(),
                               EarthLocation.normalizeLongitude(resource.getLongitude())) + "," + "\"" + url
                                   + "\"" + "," + "resourceInfo);\n");
@@ -2330,8 +2330,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     private String cleanIdForJS(String s) {
-        s = s.replaceAll("'", "\\'");
-        s = s.replaceAll(":","").replaceAll("=","");
+        s = s.replaceAll(" ", "_");
+        s = s.replaceAll("'", "_");
+        s = s.replaceAll(":","_");
+        s = s.replaceAll("=","_");
         return s;
     }
 
@@ -2727,7 +2729,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     resource.getId(), ARG_WRAPXML, "true", });
             String entryId = cleanIdForJS(resource.getId());
             catSB.append("<a href=\"javascript:" + id +".entryClicked(" +
-                         HtmlUtil.squote(resource.getId()) +
+                         HtmlUtil.squote(entryId) +
                          ");\">"
                          + resource.getLabel() + "</a><br>");
             String icon         = iconUrl;
@@ -2735,15 +2737,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             //            String desc =  makeInfoBubble(request, resource);
             String desc = makeResourceViewHref(resource) + "<br>"
                           + resource.getLongLabel();
-            js.append(
+            desc = desc.replaceAll("'","&#145;");
+            String call =
                 HtmlUtil.call(
                     id + ".addPlacemark",
                     HtmlUtil.comma(
-                        HtmlUtil.squote(resource.getId()),
-                        HtmlUtil.squote(resource.getLabel()),
-                        HtmlUtil.squote(desc), "" + lat, "" + lon) + "," +
+                                   HtmlUtil.squote(cleanIdForJS(resource.getId())),
+                                   HtmlUtil.squote(resource.getLabel()),
+                                   HtmlUtil.squote(desc), "" + lat, "" + lon) + "," +
                     HtmlUtil.comma(HtmlUtil.squote(detailsUrl),
-                                   HtmlUtil.squote(icon), pointsString)));
+                                   HtmlUtil.squote(icon), pointsString));
+            js.append(call);
+            if(call.indexOf("iggins")>=0) System.err.println(call);
             js.append("\n");
         }
 

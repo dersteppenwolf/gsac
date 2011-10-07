@@ -326,6 +326,7 @@ public abstract class SiteManager extends GsacResourceManager {
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
+        new HtmlSiteOutputHandler(getRepository(), getResourceClass());
         new KmlSiteOutputHandler(getRepository(), getResourceClass());
         new TextSiteOutputHandler(getRepository(), getResourceClass());
         new RssSiteOutputHandler(getRepository(), getResourceClass());
