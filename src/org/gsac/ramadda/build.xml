@@ -69,7 +69,6 @@
 -->
 	    </jar>
         <jar 
-            basedir="${libdir}"
             update="true"
             compress="true"
             jarfile="${jars_dest}/${jarfile}">

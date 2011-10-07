@@ -254,6 +254,11 @@ public class RamaddaGsacRepository extends GsacRepository {
     }
 
 
+    public void initResourceManagers() {
+        getResourceManager(GsacSite.CLASS_SITE);
+        //        getResourceManager(GsacFile.CLASS_FILE);
+    }
+
     public GsacResourceManager doMakeResourceManager(
             ResourceClass resourceClass) {
         if (resourceClass.equals(GsacSite.CLASS_SITE)) {

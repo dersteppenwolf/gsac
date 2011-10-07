@@ -1552,59 +1552,92 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         if (fullMetadata) {
-            int          cnt  = 0;
-            StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-            for (GnssEquipment equipment :
-                    GnssEquipment.getMetadata(metadataList)) {
-                if (cnt == 0) {
-                    buff.append(tableHeader(new String[] { msg("Date"),
-                            msg("Antenna"), msg("Dome"), msg("Receiver"),
-                            msg("Antenna Height") }));
-                }
-                cnt++;
+            processMetadataGnssEquipment(request, gsacResource,resourceManager, pw,metadataList);
+            processMetadataGnssStream(request, gsacResource,resourceManager, pw,metadataList);
+        }
+    }
 
-                buff.append("<tr valign=top>");
-                buff.append("<td>&nbsp;");
-                String dateString = formatDateTime(equipment.getFromDate())
-                                    + " - "
-                                    + formatDateTime(equipment.getToDate());
-                if (gsacResource instanceof GsacSite) {
-                    GsacSite site = (GsacSite) gsacResource;
-                    dateString =
-                        HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
-                            new String[] {
-                        resourceManager.getIdUrlArg(), site.getId(),
-                        ARG_SITE_CODE, site.getShortName(),
-                        ARG_FILE_DATADATE_FROM,
-                        formatDateTime(equipment.getFromDate()),
-                        ARG_FILE_DATADATE_TO,
-                        formatDateTime(equipment.getToDate())
-                    }), dateString);
-                }
-
-                buff.append(dateString);
-                buff.append("&nbsp;</td>");
-                equipmentRow(buff, equipment.getAntenna(),
-                             equipment.getAntennaSerial());
-                equipmentRow(buff, equipment.getDome(),
-                             equipment.getDomeSerial());
-                equipmentRow(buff, equipment.getReceiver(),
-                             equipment.getReceiverSerial());
-                buff.append("<td>&nbsp;");
-                //                buff.append(equipment.getXyzOffset()[0] + "/"
-                //                            + equipment.getXyzOffset()[1] + "/"
-                //                            + equipment.getXyzOffset()[2]);
-
-                buff.append("" + equipment.getXyzOffset()[2]);
-                buff.append("&nbsp;</td>");
-                buff.append("</tr>");
+    private void processMetadataGnssEquipment(GsacRequest request, 
+                                              GsacResource gsacResource,
+                                              GsacResourceManager resourceManager,
+                                              Appendable pw,List<GsacMetadata> metadataList) throws IOException {
+        int cnt =0;
+        StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
+        for (GnssEquipment equipment :
+                 GnssEquipment.getMetadata(metadataList)) {
+            if (cnt == 0) {
+                buff.append(tableHeader(new String[] { msg("Date"),
+                                                       msg("Antenna"), msg("Dome"), msg("Receiver"),
+                                                       msg("Antenna Height") }));
             }
-            if (cnt > 0) {
-                buff.append(HtmlUtil.formTableClose());
-                pw.append(formEntryTop(request, msgLabel("Equipment"),
-                                       HtmlUtil.makeShowHideBlock("",
-                                           buff.toString(), false)));
+            cnt++;
+
+            buff.append("<tr valign=top>");
+            buff.append("<td>&nbsp;");
+            String dateString = formatDateTime(equipment.getFromDate())
+                + " - "
+                + formatDateTime(equipment.getToDate());
+            if (gsacResource instanceof GsacSite) {
+                GsacSite site = (GsacSite) gsacResource;
+                dateString =
+                    HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
+                                               new String[] {
+                                                   resourceManager.getIdUrlArg(), site.getId(),
+                                                   ARG_SITE_CODE, site.getShortName(),
+                                                   ARG_FILE_DATADATE_FROM,
+                                                   formatDateTime(equipment.getFromDate()),
+                                                   ARG_FILE_DATADATE_TO,
+                                                   formatDateTime(equipment.getToDate())
+                                               }), dateString);
             }
+
+            buff.append(dateString);
+            buff.append("&nbsp;</td>");
+            equipmentRow(buff, equipment.getAntenna(),
+                         equipment.getAntennaSerial());
+            equipmentRow(buff, equipment.getDome(),
+                         equipment.getDomeSerial());
+            equipmentRow(buff, equipment.getReceiver(),
+                         equipment.getReceiverSerial());
+            buff.append("<td>&nbsp;");
+            //                buff.append(equipment.getXyzOffset()[0] + "/"
+            //                            + equipment.getXyzOffset()[1] + "/"
+            //                            + equipment.getXyzOffset()[2]);
+
+            buff.append("" + equipment.getXyzOffset()[2]);
+            buff.append("&nbsp;</td>");
+            buff.append("</tr>");
+        }
+        if (cnt > 0) {
+            buff.append(HtmlUtil.formTableClose());
+            pw.append(formEntryTop(request, msgLabel("Equipment"),
+                                   HtmlUtil.makeShowHideBlock("",
+                                                              buff.toString(), false)));
+        }
+    }
+
+
+
+    private void processMetadataGnssStream(GsacRequest request, 
+                                              GsacResource gsacResource,
+                                              GsacResourceManager resourceManager,
+                                              Appendable pw,List<GsacMetadata> metadataList) throws IOException {
+        int cnt =0;
+        StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
+        for (GnssStream  stream :
+                 GnssStream.getMetadata(metadataList)) {
+            if (cnt == 0) {
+                //                buff.append(tableHeader(new String[] { msg("Date"),
+                //                                                       msg("Antenna"), msg("Dome"), msg("Receiver"),
+//                                                       msg("Antenna Height") }));
+            }
+            cnt++;
+        }
+        if (cnt > 0) {
+            buff.append(HtmlUtil.formTableClose());
+            pw.append(formEntryTop(request, msgLabel("Streams"),
+                                   HtmlUtil.makeShowHideBlock("",
+                                                              buff.toString(), false)));
         }
     }
 
