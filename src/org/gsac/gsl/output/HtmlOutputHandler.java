@@ -2748,7 +2748,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     HtmlUtil.comma(HtmlUtil.squote(detailsUrl),
                                    HtmlUtil.squote(icon), pointsString));
             js.append(call);
-            if(call.indexOf("iggins")>=0) System.err.println(call);
             js.append("\n");
         }
 
