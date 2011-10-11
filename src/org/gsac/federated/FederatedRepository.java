@@ -402,12 +402,17 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             return 0;
         }
         for (GsacSite site : sites) {
-            String id = getRemoteId(callable.repository, site.getId());
+            String id = getRemoteId(makeRepositoryInfo(callable.repository), site.getId());
             site.setId(id);
             site.setRepositoryInfo(callable.repository);
             response.addResource(site);
         }
         return sites.size();
+    }
+
+
+    public GsacRepositoryInfo makeRepositoryInfo(GsacRepositoryInfo that) {
+        return new GsacRepositoryInfo(that.getUrl(), that.getName(), that.getIcon());
     }
 
 
