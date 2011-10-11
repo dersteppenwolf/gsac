@@ -21,7 +21,8 @@
 package org.gsac.gsl.metadata;
 
 
-import org.gsac.gsl.GsacRequest;
+import org.gsac.gsl.*;
+import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 
 
@@ -37,7 +38,7 @@ import java.util.List;
  * Generic metadata  class
  *
  */
-public class GsacMetadata {
+public class GsacMetadata implements GsacConstants, GsacArgs {
 
     /** _more_ */
     public static final String TYPE_IMAGE = "imageurl";
@@ -109,9 +110,12 @@ public class GsacMetadata {
      *
      * @throws IOException _more_
      */
-    public void addHtml(GsacRequest request, HtmlOutputHandler outputHandler,
-                        Appendable pw)
+    public boolean addHtml(GsacRequest request, 
+                           GsacResource gsacResource,
+                           HtmlOutputHandler outputHandler,
+                           Appendable pw)
             throws IOException {
+        return false;
         //NOOP
         //Assume this is in a  2 column table. First column is
         //the label. Second is the html content.

@@ -55,10 +55,8 @@ public class GnssStream extends GsacMetadata {
      *
      * @return _more_
      */
-    public static List<GnssStream> getMetadata(
-            List<GsacMetadata> metadata) {
-        return (List<GnssStream>) findMetadata(metadata,
-                GnssStream.class);
+    public static List<GnssStream> getMetadata(List<GsacMetadata> metadata) {
+        return (List<GnssStream>) findMetadata(metadata, GnssStream.class);
     }
 
 

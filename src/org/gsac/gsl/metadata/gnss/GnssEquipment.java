@@ -22,28 +22,25 @@ package org.gsac.gsl.metadata.gnss;
 
 
 import org.gsac.gsl.metadata.*;
-
-
 import org.gsac.gsl.util.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 /**
- * Generic metadata  class
+ * Holds gnss equipment metadata
  *
  */
 public class GnssEquipment extends GsacMetadata {
 
-    /** _more_ */
+    /** type id */
     public static final String TYPE_GNSS_EQUIPMENT = "gnss.equipment";
 
-    /** _more_ */
+    /** date range */
     private Date fromDate;
 
-    /** _more_ */
+    /** date range */
     private Date toDate;
 
     /** _more_ */

@@ -23,7 +23,6 @@ package org.gsac.gsl.output;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
-import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
@@ -66,11 +65,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /** help message */
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
 
-    public static int    DFLT_EARTH_HEIGHT = 500;
+    /** _more_ */
+    public static int DFLT_EARTH_HEIGHT = 500;
 
+    /** _more_ */
     public static final int EARTH_ENTRIES_WIDTH = 150;
 
-    /** _more_          */
+    /** _more_ */
     public static final String PROP_GOOGLE_APIKEYS = "gsac.google.apikeys";
 
 
@@ -870,6 +871,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         return initHtml(request, response, sb, "");
     }
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param response _more_
+     * @param sb _more_
+     * @param title _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public boolean initHtml(GsacRequest request, GsacResponse response,
                             Appendable sb, String title)
             throws Exception {
@@ -892,7 +905,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             header = header.replace("${gsac.name}",
                                     getRepository().getRepositoryName());
-            header = header.replace("${gsac.title}", title);
+            header      = header.replace("${gsac.title}", title);
             hasCssMacro = header.indexOf("${gsac.css}") >= 0;
             if (hasCssMacro) {
                 header = header.replace("${gsac.css}", cssLink);
@@ -1343,7 +1356,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return iconMetadata.getUrl();
         }
         GsacRepositoryInfo rep = resource.getRepositoryInfo();
-        if(rep!=null && rep.getIcon()!=null) {
+        if ((rep != null) && (rep.getIcon() != null)) {
             return rep.getIcon();
         }
         return getRepository().getAbsoluteUrl(iconUrl("/site.png"));
@@ -1497,12 +1510,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (resource.getPublishDate() != null) {
             String dateString = formatDate(resource.getPublishDate());
-            pw.append(formEntry(request, msgLabel("Publish Date"), dateString));
+            pw.append(formEntry(request, msgLabel("Publish Date"),
+                                dateString));
         }
 
         if (resource.getModificationDate() != null) {
             String dateString = formatDate(resource.getModificationDate());
-            pw.append(formEntry(request, msgLabel("Modification Date"), dateString));
+            pw.append(formEntry(request, msgLabel("Modification Date"),
+                                dateString));
         }
 
         List<ResourceGroup> groups = resource.getResourceGroups();
@@ -1550,97 +1565,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             processMetadata(request, pw, gsacResource, metadata,
                             fullMetadata, state);
         }
-
-        if (fullMetadata) {
-            processMetadataGnssEquipment(request, gsacResource,resourceManager, pw,metadataList);
-            processMetadataGnssStream(request, gsacResource,resourceManager, pw,metadataList);
-        }
     }
-
-    private void processMetadataGnssEquipment(GsacRequest request, 
-                                              GsacResource gsacResource,
-                                              GsacResourceManager resourceManager,
-                                              Appendable pw,List<GsacMetadata> metadataList) throws IOException {
-        int cnt =0;
-        StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-        for (GnssEquipment equipment :
-                 GnssEquipment.getMetadata(metadataList)) {
-            if (cnt == 0) {
-                buff.append(tableHeader(new String[] { msg("Date"),
-                                                       msg("Antenna"), msg("Dome"), msg("Receiver"),
-                                                       msg("Antenna Height") }));
-            }
-            cnt++;
-
-            buff.append("<tr valign=top>");
-            buff.append("<td>&nbsp;");
-            String dateString = formatDateTime(equipment.getFromDate())
-                + " - "
-                + formatDateTime(equipment.getToDate());
-            if (gsacResource instanceof GsacSite) {
-                GsacSite site = (GsacSite) gsacResource;
-                dateString =
-                    HtmlUtil.href(HtmlUtil.url(makeUrl(URL_FILE_FORM),
-                                               new String[] {
-                                                   resourceManager.getIdUrlArg(), site.getId(),
-                                                   ARG_SITE_CODE, site.getShortName(),
-                                                   ARG_FILE_DATADATE_FROM,
-                                                   formatDateTime(equipment.getFromDate()),
-                                                   ARG_FILE_DATADATE_TO,
-                                                   formatDateTime(equipment.getToDate())
-                                               }), dateString);
-            }
-
-            buff.append(dateString);
-            buff.append("&nbsp;</td>");
-            equipmentRow(buff, equipment.getAntenna(),
-                         equipment.getAntennaSerial());
-            equipmentRow(buff, equipment.getDome(),
-                         equipment.getDomeSerial());
-            equipmentRow(buff, equipment.getReceiver(),
-                         equipment.getReceiverSerial());
-            buff.append("<td>&nbsp;");
-            //                buff.append(equipment.getXyzOffset()[0] + "/"
-            //                            + equipment.getXyzOffset()[1] + "/"
-            //                            + equipment.getXyzOffset()[2]);
-
-            buff.append("" + equipment.getXyzOffset()[2]);
-            buff.append("&nbsp;</td>");
-            buff.append("</tr>");
-        }
-        if (cnt > 0) {
-            buff.append(HtmlUtil.formTableClose());
-            pw.append(formEntryTop(request, msgLabel("Equipment"),
-                                   HtmlUtil.makeShowHideBlock("",
-                                                              buff.toString(), false)));
-        }
-    }
-
-
-
-    private void processMetadataGnssStream(GsacRequest request, 
-                                              GsacResource gsacResource,
-                                              GsacResourceManager resourceManager,
-                                              Appendable pw,List<GsacMetadata> metadataList) throws IOException {
-        int cnt =0;
-        StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-        for (GnssStream  stream :
-                 GnssStream.getMetadata(metadataList)) {
-            if (cnt == 0) {
-                //                buff.append(tableHeader(new String[] { msg("Date"),
-                //                                                       msg("Antenna"), msg("Dome"), msg("Receiver"),
-//                                                       msg("Antenna Height") }));
-            }
-            cnt++;
-        }
-        if (cnt > 0) {
-            buff.append(HtmlUtil.formTableClose());
-            pw.append(formEntryTop(request, msgLabel("Streams"),
-                                   HtmlUtil.makeShowHideBlock("",
-                                                              buff.toString(), false)));
-        }
-    }
-
 
 
     /**
@@ -1662,6 +1587,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             throws IOException {
 
         if ( !metadata.getForDisplay()) {
+            return;
+        }
+
+        //Check if this metadata can display itself
+        if (metadata.addHtml(request, gsacObject, this, pw)) {
             return;
         }
 
@@ -1788,9 +1718,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return;
         }
 
-        metadata.addHtml(request, this, pw);
-
-
     }
 
     /**
@@ -1809,22 +1736,22 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             tabHtml.append(HtmlUtil.open(HtmlUtil.TAG_UL));
             int cnt = 1;
             for (String title : titles) {
-                tabHtml.append("<li><a href=\"#" + tabId + "-" + (cnt++) +
-                               "\">" + title + "</a></li>");
+                tabHtml.append("<li><a href=\"#" + tabId + "-" + (cnt++)
+                               + "\">" + title + "</a></li>");
             }
             tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_UL));
             cnt = 1;
 
             for (String tabContents : tabs) {
                 tabHtml.append(HtmlUtil.div(tabContents,
-                                            HtmlUtil.cssClass("ui-tabs-hide") +
-                                            HtmlUtil.id(tabId + "-"
+                                            HtmlUtil.cssClass("ui-tabs-hide")
+                                            + HtmlUtil.id(tabId + "-"
                                                 + (cnt++))));
                 tabHtml.append("\n");
             }
 
             tabHtml.append(HtmlUtil.close(HtmlUtil.TAG_DIV));
-            tabHtml.append("\n"); 
+            tabHtml.append("\n");
             tabHtml.append(HtmlUtil.script("\njQuery(function(){\njQuery('#"
                                            + tabId + "').tabs();\n});\n"));
             tabHtml.append("\n\n");
@@ -1837,27 +1764,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
 
-    /**
-     * _more_
-     *
-     * @param buff _more_
-     * @param name _more_
-     * @param serial _more_
-     *
-     * @throws IOException On badness
-     */
-    private void equipmentRow(Appendable buff, String name, String serial)
-            throws IOException {
-        buff.append("<td>&nbsp;");
-        if (name != null) {
-            buff.append(name);
-            if (serial != null) {
-                buff.append("<br><i>#" + serial + "</i>");
-            }
-        }
-        buff.append("&nbsp;</td>");
-
-    }
 
     /**
      * _more_
@@ -1895,6 +1801,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param width map width
      * @param height map height
      * @param addToggle _more_
+     * @param showList _more_
      *
      * @return the map
      *
@@ -1902,27 +1809,45 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String createMap(GsacRequest request,
                             List<GsacResource> resources, Appendable pw,
-                            int width, int height, boolean addToggle, boolean showList)
+                            int width, int height, boolean addToggle,
+                            boolean showList)
             throws IOException {
 
         if (isGoogleEarthEnabled(request)) {
-            return createEarth(request, resources, pw, width, height, addToggle, showList);
+            return createEarth(request, resources, pw, width, height,
+                               addToggle, showList);
         }
-        return createFlatMap(request,resources, pw,
-                             width, height, addToggle, showList);
+        return createFlatMap(request, resources, pw, width, height,
+                             addToggle, showList);
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param resources _more_
+     * @param pw _more_
+     * @param width _more_
+     * @param height _more_
+     * @param addToggle _more_
+     * @param showList _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public String createEarth(GsacRequest request,
-                            List<GsacResource> resources, Appendable pw,
-                            int width, int height, boolean addToggle, boolean showList)
+                              List<GsacResource> resources, Appendable pw,
+                              int width, int height, boolean addToggle,
+                              boolean showList)
             throws IOException {
 
         StringBuffer mapSB = new StringBuffer();
         getGoogleEarth(request, resources, mapSB, width, height, showList);
         if (addToggle) {
             pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
-                                                 mapSB.toString(), true));
+                    mapSB.toString(), true));
         } else {
             pw.append(mapSB.toString());
         }
@@ -1930,13 +1855,29 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param resources _more_
+     * @param pw _more_
+     * @param width _more_
+     * @param height _more_
+     * @param addToggle _more_
+     * @param showList _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public String createFlatMap(GsacRequest request,
-                            List<GsacResource> resources, Appendable pw,
-                            int width, int height, boolean addToggle, boolean showList)
+                                List<GsacResource> resources, Appendable pw,
+                                int width, int height, boolean addToggle,
+                                boolean showList)
             throws IOException {
 
-        StringBuffer mapSB = new StringBuffer();
-        String mapVarName = "map" + HtmlUtil.blockCnt++;
+        StringBuffer mapSB      = new StringBuffer();
+        String       mapVarName = "map" + HtmlUtil.blockCnt++;
         initMap(request, mapVarName, mapSB, width, height, false);
         if (addToggle) {
             pw.append(HtmlUtil.makeShowHideBlock(msg("Map"),
@@ -1968,35 +1909,56 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             js.append("var resourceInfo = \"" + mapInfo + "\";\n");
             String entryId = resource.getId();
             entryId = cleanIdForJS(entryId);
-            js.append(mapVarName + ".addMarker(" +HtmlUtil.squote(entryId) + ","
-                      + jsLLP(resource.getLatitude(),
-                              EarthLocation.normalizeLongitude(resource.getLongitude())) + "," + "\"" + url
-                                  + "\"" + "," + "resourceInfo);\n");
+            js.append(
+                mapVarName + ".addMarker(" + HtmlUtil.squote(entryId) + ","
+                + jsLLP(
+                    resource.getLatitude(),
+                    EarthLocation.normalizeLongitude(
+                        resource.getLongitude())) + "," + "\"" + url + "\""
+                            + "," + "resourceInfo);\n");
         }
         return js.toString();
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param resources _more_
+     * @param tabTitles _more_
+     * @param tabContents _more_
+     * @param width _more_
+     * @param height _more_
+     * @param addToggle _more_
+     * @param showList _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public String createMap(GsacRequest request,
-                            List<GsacResource> resources, List<String> tabTitles,
-                            List<String> tabContents,
-                            int width, int height, boolean addToggle, boolean showList)
+                            List<GsacResource> resources,
+                            List<String> tabTitles, List<String> tabContents,
+                            int width, int height, boolean addToggle,
+                            boolean showList)
             throws IOException {
 
-        StringBuffer js  = new StringBuffer();
-        boolean doFlat = true;
+        StringBuffer js     = new StringBuffer();
+        boolean      doFlat = true;
         if (isGoogleEarthEnabled(request)) {
-//            doFlat = false;
+            //            doFlat = false;
             StringBuffer pw = new StringBuffer();
-            js.append(createEarth(request, resources, pw, width, height, addToggle, showList));
+            js.append(createEarth(request, resources, pw, width, height,
+                                  addToggle, showList));
             tabTitles.add(msg("Earth"));
             tabContents.add(pw.toString());
         }
 
-        if(doFlat) {
+        if (doFlat) {
             StringBuffer pw = new StringBuffer();
-            js.append(createFlatMap(request,resources, pw,
-                                    width, height, addToggle, showList));
+            js.append(createFlatMap(request, resources, pw, width, height,
+                                    addToggle, showList));
             tabTitles.add(msg("Map"));
             tabContents.add(pw.toString());
         }
@@ -2181,7 +2143,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @param request The request
      * @param sb Buffer to append to
-     * @param sites _more_
      * @param resources _more_
      */
     public void makeSiteHtmlTable(GsacRequest request, StringBuffer sb,
@@ -2288,7 +2249,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("<td " + clickEvent + ">");
             sb.append(formatLatLon(resource.getLatitude()));
             sb.append(",");
-            sb.append(formatLatLon(EarthLocation.normalizeLongitude(resource.getLongitude())));
+            sb.append(
+                formatLatLon(
+                    EarthLocation.normalizeLongitude(
+                        resource.getLongitude())));
             sb.append(",");
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
@@ -2322,14 +2286,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * _more_
      *
      * @param sb _more_
-     * @param id _more_
+     * @param resourceId _more_
      * @param baseUrl _more_
      * @param urlArg _more_
      */
-    public void openEntryRow(Appendable sb, String resourceId, String baseUrl,
-                             String urlArg) {
+    public void openEntryRow(Appendable sb, String resourceId,
+                             String baseUrl, String urlArg) {
         try {
-            String domId = cleanIdForJS(resourceId);
+            String   domId  = cleanIdForJS(resourceId);
             String   rowId  = "row_" + domId;
             String   divId  = "div_" + domId;
             String   imgId  = "img_" + domId;
@@ -2365,8 +2329,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     private String cleanIdForJS(String s) {
         s = s.replaceAll(" ", "_");
         s = s.replaceAll("'", "_");
-        s = s.replaceAll(":","_");
-        s = s.replaceAll("=","_");
+        s = s.replaceAll(":", "_");
+        s = s.replaceAll("=", "_");
         return s;
     }
 
@@ -2648,8 +2612,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @return _more_
      *
-     * @throws Exception _more_
-     *
      * @throws IOException _more_
      */
     public String getGoogleEarthPlugin(GsacRequest request, Appendable sb,
@@ -2668,26 +2630,29 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (keyAndOther[1] != null) {
             otherOpts = ", {\"other_params\":\"" + keyAndOther[1] + "\"}";
         }
-        int nextNum = 1;
-        String id = "map3d" + nextNum;
+        int    nextNum = 1;
+        String id      = "map3d" + nextNum;
 
         sb.append(HtmlUtil.importJS("http://www.google.com/jsapi" + mapsKey));
         sb.append(HtmlUtil.importJS(fileUrl("/google/googleearth.js")));
-        sb.append(HtmlUtil.importJS(fileUrl("/google/extensions-0.2.1.pack.js")));
+        sb.append(
+            HtmlUtil.importJS(fileUrl("/google/extensions-0.2.1.pack.js")));
         sb.append(HtmlUtil.script("google.load(\"earth\", \"1\"" + otherOpts
                                   + ");"));
 
         String style = "";
-        if(width>0) {
-            style+="width:"+ width+"px; ";
+        if (width > 0) {
+            style += "width:" + width + "px; ";
         }
-        if(height<=0) {
-            height =DFLT_EARTH_HEIGHT;
+        if (height <= 0) {
+            height = DFLT_EARTH_HEIGHT;
         }
-        style+="height:"+ height+"px; ";
+        style += "height:" + height + "px; ";
 
-        String earthHtml =HtmlUtil.div("", HtmlUtil.id(id) + HtmlUtil.style(style) +
-                                       HtmlUtil.cssClass("gsac-earth-container"));
+        String earthHtml =
+            HtmlUtil.div("",
+                         HtmlUtil.id(id) + HtmlUtil.style(style)
+                         + HtmlUtil.cssClass("gsac-earth-container"));
 
         sb.append(earthHtml);
         /*
@@ -2717,12 +2682,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @param sb _more_
      * @param width _more_
      * @param height _more_
+     * @param showList _more_
      *
      * @throws IOException _more_
      */
     public void getGoogleEarth(GsacRequest request,
                                List<GsacResource> entries, Appendable sb,
-                               int width, int height,         boolean showList)
+                               int width, int height, boolean showList)
             throws IOException {
 
 
@@ -2732,7 +2698,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         List<String> categories = new ArrayList<String>();
         Hashtable<String, StringBuffer> catMap = new Hashtable<String,
                                                      StringBuffer>();
-        int cnt =0;
+        int cnt = 0;
         for (GsacResource resource : entries) {
             GsacResourceManager resourceManager =
                 getResourceManager(resource);
@@ -2745,41 +2711,44 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 categories.add(category);
             }
             catSB.append("&nbsp;&nbsp;");
-            if(cnt++ > 200) {
+            if (cnt++ > 200) {
                 catSB.append("...<br>");
                 break;
             }
-            String iconUrl = getIconUrl(resource);
+            String iconUrl     = getIconUrl(resource);
             String resourceUrl = makeResourceViewUrl(resource);
-            catSB.append(HtmlUtil.href(resourceUrl, HtmlUtil.img(iconUrl,"Click to view resource")));
+            catSB.append(HtmlUtil.href(resourceUrl,
+                                       HtmlUtil.img(iconUrl,
+                                           "Click to view resource")));
             catSB.append(HtmlUtil.space(1));
-            double lat      = resource.getLatitude();
-            double lon      = EarthLocation.normalizeLongitude(resource.getLongitude());
+            double lat = resource.getLatitude();
+            double lon =
+                EarthLocation.normalizeLongitude(resource.getLongitude());
 
             String idUrlArg = resourceManager.getIdUrlArg();
             String href     = resourceManager.makeViewUrl();
             String detailsUrl = HtmlUtil.url(href, new String[] { idUrlArg,
                     resource.getId(), ARG_WRAPXML, "true", });
             String entryId = cleanIdForJS(resource.getId());
-            catSB.append("<a href=\"javascript:" + id +".entryClicked(" +
-                         HtmlUtil.squote(entryId) +
-                         ");\">"
+            catSB.append("<a href=\"javascript:" + id + ".entryClicked("
+                         + HtmlUtil.squote(entryId) + ");\">"
                          + resource.getLabel() + "</a><br>");
             String icon         = iconUrl;
             String pointsString = "null";
             //            String desc =  makeInfoBubble(request, resource);
             String desc = makeResourceViewHref(resource) + "<br>"
                           + resource.getLongLabel();
-            desc = desc.replaceAll("'","&#145;");
+            desc = desc.replaceAll("'", "&#145;");
             String call =
                 HtmlUtil.call(
                     id + ".addPlacemark",
                     HtmlUtil.comma(
-                                   HtmlUtil.squote(cleanIdForJS(resource.getId())),
-                                   HtmlUtil.squote(resource.getLabel()),
-                                   HtmlUtil.squote(desc), "" + lat, "" + lon) + "," +
-                    HtmlUtil.comma(HtmlUtil.squote(detailsUrl),
-                                   HtmlUtil.squote(icon), pointsString));
+                        HtmlUtil.squote(cleanIdForJS(resource.getId())),
+                        HtmlUtil.squote(resource.getLabel()),
+                        HtmlUtil.squote(desc), "" + lat, "" + lon) + ","
+                            + HtmlUtil.comma(
+                                HtmlUtil.squote(detailsUrl),
+                                HtmlUtil.squote(icon), pointsString));
             js.append(call);
             js.append("\n");
         }
@@ -2787,8 +2756,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         sb.append(
             "<table  class=\"gsac-map-table\" border=\"0\" width=\"100%\"><tr valign=\"top\">");
-        if(showList) {
-            sb.append("<td width=\"" + EARTH_ENTRIES_WIDTH +"\">");
+        if (showList) {
+            sb.append("<td width=\"" + EARTH_ENTRIES_WIDTH + "\">");
             sb.append(HtmlUtil.open(HtmlUtil.TAG_DIV,
                                     HtmlUtil.cssClass("gsac-map-resources")));
             for (String category : categories) {
@@ -2804,17 +2773,21 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
         sb.append("<td>");
         sb.append(mapSB);
-        if(showList) {
+        if (showList) {
             sb.append(HtmlUtil.italics(msgLabel("On click")));
             sb.append(HtmlUtil.space(2));
-            sb.append(HtmlUtil.checkbox("tmp", "true", false,
-                                        HtmlUtil.id("googleearth.showdetails")));
+            sb.append(
+                HtmlUtil.checkbox(
+                    "tmp", "true", false,
+                    HtmlUtil.id("googleearth.showdetails")));
             sb.append(HtmlUtil.space(1));
             sb.append(HtmlUtil.italics(msg("Show details")));
-            
+
             sb.append(HtmlUtil.space(2));
-            sb.append(HtmlUtil.checkbox("tmp", "true", false,
-                                        HtmlUtil.id("googleearth.zoomonclick")));
+            sb.append(
+                HtmlUtil.checkbox(
+                    "tmp", "true", false,
+                    HtmlUtil.id("googleearth.zoomonclick")));
             sb.append(HtmlUtil.space(1));
             sb.append(HtmlUtil.italics(msg("Zoom")));
         }
