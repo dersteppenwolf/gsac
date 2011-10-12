@@ -44,9 +44,6 @@ public class GsacSite extends GsacResource implements Comparable {
     /** _more_ */
     public static final ResourceClass CLASS_SITE = new ResourceClass("site");
 
-    /** _more_ */
-    private PoliticalLocation politicalLocation;
-
     /**
      * ctor
      */
@@ -140,27 +137,6 @@ public class GsacSite extends GsacResource implements Comparable {
     public String getLongLabel() {
         return getLongName() + " " + getLabel();
     }
-
-
-    /**
-     *  Set the PoliticalLocation property.
-     *
-     *  @param value The new value for PoliticalLocation
-     */
-    public void setPoliticalLocation(PoliticalLocation value) {
-        politicalLocation = value;
-    }
-
-    /**
-     *  Get the PoliticalLocation property.
-     *
-     *  @return The PoliticalLocation
-     */
-    public PoliticalLocation getPoliticalLocation() {
-        return politicalLocation;
-    }
-
-
 
 
 }

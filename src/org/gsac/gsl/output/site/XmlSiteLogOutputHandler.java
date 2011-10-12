@@ -295,8 +295,64 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                     XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION, "", ""));
             pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_NOTES, "", ""));
             pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSRECEIVER));
+
+            pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSANTENNA));
+
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_ANTENNATYPE, "",
+                                  getNonNullString(equipment.getAntenna())));
+            pw.append(
+                XmlUtil.tag(
+                    XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
+                    getNonNullString(equipment.getAntennaSerial())));
+
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "",
+                                  ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC,
+                                  "", ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
+                                  ""));
+            pw.append(
+                XmlUtil.tag(
+                    XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH, "", ""));
+
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "",
+                                  getNonNullString(equipment.getDome())));
+            pw.append(
+                XmlUtil.tag(
+                    XmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
+                    getNonNullString(equipment.getDomeSerial())));
+
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "",
+                                  ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH,
+                                  "", ""));
+
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
+                                  sdf2.format(equipment.getFromDate())));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
+                                  sdf2.format(equipment.getToDate())));
+            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSANTENNA));
+
+
+
+
         }
 
     }
+
+    /**
+     * _more_
+     *
+     * @param s _more_
+     *
+     * @return _more_
+     */
+    private String getNonNullString(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s;
+    }
+
 
 }

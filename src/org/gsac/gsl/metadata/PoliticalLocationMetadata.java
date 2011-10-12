@@ -18,7 +18,7 @@
  * 
  */
 
-package org.gsac.gsl.util;
+package org.gsac.gsl.metadata;
 
 
 
@@ -30,7 +30,10 @@ package org.gsac.gsl.util;
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
  */
-public class PoliticalLocation {
+public class PoliticalLocationMetadata extends GsacMetadata {
+
+    /** _more_ */
+    public static final String TYPE_POLITICALLOCATION = "politicallocation";
 
     /** _more_ */
     private String country;
@@ -43,11 +46,12 @@ public class PoliticalLocation {
 
 
 
-
     /**
      * _more_
      */
-    public PoliticalLocation() {}
+    public PoliticalLocationMetadata() {
+        super(TYPE_POLITICALLOCATION);
+    }
 
 
     /**
@@ -57,7 +61,9 @@ public class PoliticalLocation {
      * @param state _more_
      * @param city _more_
      */
-    public PoliticalLocation(String country, String state, String city) {
+    public PoliticalLocationMetadata(String country, String state,
+                                     String city) {
+        super(TYPE_POLITICALLOCATION);
         this.city    = city;
         this.state   = state;
         this.country = country;

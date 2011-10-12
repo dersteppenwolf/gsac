@@ -24,35 +24,31 @@ package org.gsac.gsl.util;
 
 
 /**
- * Class description
- *
- *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * Holds a lat/lon/alt
  */
 public class EarthLocation {
 
-    /** _more_ */
+    /** lat */
     private double latitude;
 
-    /** _more_ */
+    /** lon */
     private double longitude;
 
-    /** _more_ */
+    /** elevation */
     private double elevation;
 
     /**
-     * _more_
+     * ctor
      */
     public EarthLocation() {}
 
 
     /**
-     * _more_
+     * ctor
      *
-     * @param latitude _more_
-     * @param longitude _more_
-     * @param elevation _more_
+     * @param latitude latitude
+     * @param longitude  longitude
+     * @param elevation elevation
      */
     public EarthLocation(double latitude, double longitude,
                          double elevation) {
