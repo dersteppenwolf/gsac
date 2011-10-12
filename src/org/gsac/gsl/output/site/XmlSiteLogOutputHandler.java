@@ -242,6 +242,54 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
           <mi:notes/>
           </siteLocation>
         */
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_SITELOCATION));
+
+        List<GsacMetadata> politicalMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(
+                    PoliticalLocationMetadata.class));
+        PoliticalLocationMetadata plm = null;
+
+        //Just use the first one
+        if (politicalMetadata.size() > 0) {
+            plm = (PoliticalLocationMetadata) politicalMetadata.get(0);
+        }
+        if (plm == null) {
+            plm = new PoliticalLocationMetadata();
+        }
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_COUNTRY, "",
+                              getNonNullString(plm.getCountry())));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_STATE, "",
+                              getNonNullString(plm.getState())));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_CITY, "",
+                              getNonNullString(plm.getCity())));
+
+        EarthLocation el = site.getEarthLocation();
+
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_MI_APPROXIMATEPOSITIONITRF));
+
+        if (el.hasXYZ()) {
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_XCOORDINATEINMETERS, "",
+                                  el.getX() + ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_YCOORDINATEINMETERS, "",
+                                  el.getY() + ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ZCOORDINATEINMETERS, "",
+                                  el.getZ() + ""));
+        } else {
+            //What should we do here? Add empty tags?
+        }
+
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_LATITUDE_NORTH, "",
+                              el.getLatitude() + ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_LONGITUDE_EAST, "",
+                              el.getLongitude() + ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ELEVATION_M_ELLIPS, "",
+                              el.getElevation() + ""));
+
+        pw.append(
+            XmlUtil.closeTag(XmlSiteLog.TAG_MI_APPROXIMATEPOSITIONITRF));
+
+        pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITELOCATION));
     }
 
     /**

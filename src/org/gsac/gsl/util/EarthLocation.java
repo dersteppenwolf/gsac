@@ -37,6 +37,15 @@ public class EarthLocation {
     /** elevation */
     private double elevation;
 
+    /** _more_          */
+    private double x = Double.NaN;
+
+    /** _more_          */
+    private double y = Double.NaN;
+
+    /** _more_          */
+    private double z = Double.NaN;
+
     /**
      * ctor
      */
@@ -127,6 +136,79 @@ public class EarthLocation {
         return elevation;
     }
 
+
+    public boolean hasXYZ() {
+        return x==x && y==y && z==z;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param x _more_
+     * @param y _more_
+     * @param z _more_
+     */
+    public void setXYZ(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+
+    /**
+     *  Set the X property.
+     *
+     *  @param value The new value for X
+     */
+    public void setX(double value) {
+        x = value;
+    }
+
+    /**
+     *  Get the X property.
+     *
+     *  @return The X
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     *  Set the Y property.
+     *
+     *  @param value The new value for Y
+     */
+    public void setY(double value) {
+        y = value;
+    }
+
+    /**
+     *  Get the Y property.
+     *
+     *  @return The Y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     *  Set the Z property.
+     *
+     *  @param value The new value for Z
+     */
+    public void setZ(double value) {
+        z = value;
+    }
+
+    /**
+     *  Get the Z property.
+     *
+     *  @return The Z
+     */
+    public double getZ() {
+        return z;
+    }
 
 
 
