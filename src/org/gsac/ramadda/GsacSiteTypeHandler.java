@@ -64,6 +64,11 @@ import java.util.List;
 public class GsacSiteTypeHandler extends GenericTypeHandler {
 
     /** _more_ */
+    public static final String TYPE_STREAM = "gsacstream";
+
+
+
+    /** _more_ */
     public static final String TABLE_GSACSITE = "gsacsite";
 
     /** _more_ */

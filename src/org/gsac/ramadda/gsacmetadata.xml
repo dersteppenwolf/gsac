@@ -57,6 +57,12 @@ ${Personnel}
 
 
 
+    <type   name="GNSS Stream"       searchable="false"       id="gsac.stream" >
+      <element name="Server" />
+      <element name="Mount Point" />
+    </type>     
+
+
     <type   name="Format"       searchable="false"       id="gsac.stream.format" >
       <element name="Format" />
       <element name="Details" />

@@ -185,16 +185,15 @@ public class NtripHarvester extends WebHarvester {
                                       Entry baseGroup, List<Entry> entries)
             throws Exception {
 
-        GsacFileTypeHandler resourceTypeHandler =
+        GsacFileTypeHandler streamTypeHandler =
             (GsacFileTypeHandler) getRepository().getTypeHandler(
-                GsacFileTypeHandler.TYPE_STREAM, false, false);
-        GsacSiteTypeHandler siteTypeHandler =
+                GsacSiteTypeHandler.TYPE_STREAM, false, false);
+        /*        GsacSiteTypeHandler siteTypeHandler =
             (GsacSiteTypeHandler) getRepository().getTypeHandler(
                 GsacSiteTypeHandler.CLASS_SITE, false, false);
-
+        */
 
         User        user        = getUser();
-        TypeHandler typeHandler = resourceTypeHandler;
         String      url         = urlEntry.getUrl();
 
         if (url.endsWith("/")) {
@@ -205,8 +204,6 @@ public class NtripHarvester extends WebHarvester {
 
         logHarvesterInfo("Processing source table:" + url);
         String contents = IOUtil.readContents(url, getClass(), null);
-
-
 
         if (contents == null) {
             logHarvesterInfo("Unable to read source table:" + url);
@@ -291,17 +288,19 @@ public class NtripHarvester extends WebHarvester {
                 Date now = new Date();
                 String sitePath = baseGroup.getFullName()
                                   + Entry.PATHDELIMITER + siteId;
+                boolean haveISeenThisSite = true;
                 Entry siteEntry = siteMap.get(sitePath);
                 if (siteEntry == null) {
                     siteEntry = getEntryManager().findEntryFromName(sitePath,
                             user, false);
+                    haveISeenThisSite = false;
                 }
 
                 boolean newSite = false;
                 if (siteEntry == null) {
                     newSite = true;
                     siteEntry =
-                        siteTypeHandler.createEntry(repository.getGUID());
+                        streamTypeHandler.createEntry(repository.getGUID());
                     siteEntry.initEntry(siteId, "", baseGroup, getUser(),
                                         new Resource(), "", now.getTime(),
                                         now.getTime(), now.getTime(),
@@ -311,6 +310,8 @@ public class NtripHarvester extends WebHarvester {
                     System.err.println("\t" + (newSite
                             ? "new site:"
                             : "old site:") + siteEntry.getFullName());
+                } else if(!haveISeenThisSite) {
+                    //TODO: Delete all of the stream metadata
                 }
                 siteMap.put(sitePath, siteEntry);
 
@@ -326,6 +327,8 @@ public class NtripHarvester extends WebHarvester {
                     getEntryManager().storeEntry(siteEntry);
                 }
 
+
+                /*
                 boolean newEntry = false;
                 Entry streamEntry = getEntryManager().findEntryFromName(
                                         siteEntry.getFullName()
@@ -353,6 +356,7 @@ public class NtripHarvester extends WebHarvester {
                             : "old stream:") + streamEntry.getFullName());
                 }
                 streamEntry.setLocation(latitude, longitude, 0);
+
                 Metadata formatMetadata =
                     new Metadata(getRepository().getGUID(),
                                  streamEntry.getId(),
@@ -378,9 +382,10 @@ public class NtripHarvester extends WebHarvester {
                 } else {
                     getEntryManager().storeEntry(streamEntry);
                 }
+                */
 
-                //For now stop at 50
-                if (myCnt++ > 50) {
+                //For now stop at 5 for testing
+                if (myCnt++ > 5) {
                     break;
                 }
             } catch (Exception exc) {

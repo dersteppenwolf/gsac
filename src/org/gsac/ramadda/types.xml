@@ -25,7 +25,8 @@ this defines a set of new gsac ramadda types
   </type>
 
 
-  <type name="gsacstream"  super="gsacfile" description="GNSS Stream" handler="org.gsac.ramadda.GsacFileTypeHandler" >
+
+  <type name="gsacstream"  super="gsacsite" description="GNSS Stream" handler="org.gsac.ramadda.GsacSiteTypeHandler" >
      <property name="form.show.url" value="true"/>
      <property name="form.label.url" value="GNSS Stream URL"/>
      <property name="form.show.file" value="false"/>
