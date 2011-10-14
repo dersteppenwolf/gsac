@@ -147,7 +147,7 @@ public abstract class SiteManager extends GsacResourceManager {
         //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
-            GsacSite site = makeSite(iter.getResults());
+            GsacSite site = makeSite(request, iter.getResults());
             if (site == null) {
                 continue;
             }
@@ -251,6 +251,10 @@ public abstract class SiteManager extends GsacResourceManager {
      *
      * @throws Exception on badness
      */
+    public GsacSite makeSite(GsacRequest request, ResultSet results) throws Exception {
+        return makeSite(results);
+    }
+
     public GsacSite makeSite(ResultSet results) throws Exception {
         notImplemented("makeSite needs to be implemented");
         return null;

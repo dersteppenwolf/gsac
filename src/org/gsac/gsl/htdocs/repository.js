@@ -1379,25 +1379,26 @@ function showPopup(event, srcId, popupId, alignLeft) {
 function showStickyPopup(event, srcId, popupId, alignLeft) {
     var popup = util.getDomObject(popupId);
     var srcObj = util.getDomObject(srcId);
-    if(!popup || !srcObj) return;
-    event = util.getEvent(event);
-    x = util.getEventX(event);
-    y = util.getEventY(event);
-    if(srcObj.obj.offsetLeft && srcObj.obj.offsetWidth) {
-        x = util.getLeft(srcObj.obj);
-        y = srcObj.obj.offsetHeight+util.getTop(srcObj.obj) + 2;
-    } 
-
-    if(alignLeft) {
-        x = util.getLeft(srcObj.obj);
-        y = srcObj.obj.offsetHeight+util.getTop(srcObj.obj) + 2;
-    } else {
-        x+=2;
-        x+=3;
+    if(!popup || !srcObj) {
+        return;
     }
-
     showObject(popup);
-    util.setPosition(popup, x,y);
+    var source = jQuery("#" + srcId)
+    jQuery("#" + popupId).position({
+            of: source,
+                my: 'left top',
+                at: 'left bottom',
+                offset: "-4 2",
+                collision: "none none"
+                });
+
+    jQuery("#" + popupId).position({
+            of: source,
+                my: 'left top',
+                at: 'left bottom',
+                offset: "-4 2",
+                collision: "none none"
+                });
 }
 
 

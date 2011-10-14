@@ -597,6 +597,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                          request.get(arg,
                                          ARG_UNDEFINED_VALUE), "SIZE=3");*/
                 widget = radioSB.toString();
+            } else if (capability.getType().equals(
+                    Capability.TYPE_CHECKBOX)) {
+                widget = HtmlUtil.checkbox(arg, "true",
+                                           request.get(arg, false));
             }
             if (widget != null) {
                 String desc = capability.getDescription();

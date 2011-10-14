@@ -100,6 +100,9 @@ public class Capability {
     /** type */
     public static final String TYPE_BOOLEAN = "boolean";
 
+    /** type */
+    public static final String TYPE_CHECKBOX = "checkbox";
+
     /** _more_ */
     public static final String TYPE_DATERANGE = "date_range";
 

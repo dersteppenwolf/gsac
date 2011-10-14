@@ -75,22 +75,20 @@ public class GnssStreamGroup extends MetadataGroup {
         for (GnssStream stream : GnssStream.getMetadata(getMetadata())) {
             if (cnt == 0) {
                 buff.append(outputHandler.tableHeader(new String[] {
-                    outputHandler.msg("Date"),
-                    outputHandler.msg("Antenna"), outputHandler.msg("Dome"),
-                    outputHandler.msg("Receiver"),
-                    outputHandler.msg("Antenna Height") }));
+                    outputHandler.msg("URL"), }));
             }
             cnt++;
 
             buff.append("<tr valign=top>");
             buff.append("<td>&nbsp;");
+            buff.append(HtmlUtil.href(stream.getUrl(), stream.getUrl()));
             buff.append("</td>");
             buff.append("</tr>");
         }
         if (cnt > 0) {
             buff.append(HtmlUtil.formTableClose());
             pw.append(outputHandler.formEntryTop(request,
-                    outputHandler.msgLabel("Stream"),
+                    outputHandler.msgLabel("Streams"),
                     HtmlUtil.makeShowHideBlock("", buff.toString(), false)));
         }
 

@@ -40,12 +40,36 @@ public class GnssStream extends GsacMetadata {
     public static final String TYPE_GNSS_STREAM = "gnss.stream";
 
 
+    /** _more_          */
+    private String url;
+
+
 
     /**
      * _more_
      */
     public GnssStream() {
         super(TYPE_GNSS_STREAM);
+    }
+
+    /**
+     * _more_
+     *
+     * @param url _more_
+     */
+    public GnssStream(String url) {
+        this();
+        this.url = url;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public String toString() {
+        return url;
     }
 
     /**
@@ -58,6 +82,26 @@ public class GnssStream extends GsacMetadata {
     public static List<GnssStream> getMetadata(List<GsacMetadata> metadata) {
         return (List<GnssStream>) findMetadata(metadata, GnssStream.class);
     }
+
+    /**
+     *  Set the Url property.
+     *
+     *  @param value The new value for Url
+     */
+    public void setUrl(String value) {
+        url = value;
+    }
+
+    /**
+     *  Get the Url property.
+     *
+     *  @return The Url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+
 
 
 }

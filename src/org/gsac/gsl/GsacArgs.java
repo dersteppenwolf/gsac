@@ -91,22 +91,29 @@ public interface GsacArgs {
                                                         + ".to";
 
 
-    
-    /** _more_ */
-    public static final String ARG_SITE_MODIFYDATE = ARG_SITE_PREFIX + "modifydate";
 
     /** _more_ */
-    public static final String ARG_SITE_MODIFYDATE_FROM = ARG_SITE_MODIFYDATE + ".from";
+    public static final String ARG_SITE_MODIFYDATE = ARG_SITE_PREFIX
+                                                     + "modifydate";
 
     /** _more_ */
-    public static final String ARG_SITE_MODIFYDATE_TO = ARG_SITE_MODIFYDATE + ".to";
+    public static final String ARG_SITE_MODIFYDATE_FROM = ARG_SITE_MODIFYDATE
+                                                          + ".from";
 
-    
-    
+    /** _more_ */
+    public static final String ARG_SITE_MODIFYDATE_TO = ARG_SITE_MODIFYDATE
+                                                        + ".to";
+
+
+
 
     /** _more_ */
     public static final String ARG_SITE_LOCATION = ARG_SITE_PREFIX
                                                    + "location";
+
+    /** _more_          */
+    public static final String ARG_SITE_HASSTREAM = ARG_SITE_PREFIX
+                                                    + "hasstream";
 
     /** _more_ */
     public static final String ARG_SITE_LATITUDE = ARG_SITE_PREFIX
