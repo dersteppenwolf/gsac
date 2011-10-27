@@ -71,6 +71,9 @@ public class GsacResponse {
     public static final String MIME_KML =
         "application/vnd.google-earth.kml+xml";
 
+    public static final String MIME_KMZ =
+        "application/vnd.google-earth.kmz";
+
     /** _more_ */
     public static final String MIME_JSON = "application/json";
 
