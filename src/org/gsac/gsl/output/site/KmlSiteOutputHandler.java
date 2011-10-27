@@ -29,6 +29,8 @@ import org.gsac.gsl.output.*;
 
 import org.w3c.dom.*;
 
+import ucar.unidata.util.IOUtil;
+
 import ucar.unidata.data.gis.KmlUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.Misc;
@@ -45,6 +47,7 @@ import java.util.List;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.util.zip.*;
 
 
 /**
@@ -58,6 +61,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
 
     /** output id */
     public static final String OUTPUT_SITE_KML = "site.kml";
+    public static final String OUTPUT_SITE_KMZ = "site.kmz";
 
     /**
      * _more_
@@ -71,6 +75,11 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_KML,
                                       "Google Earth KML", "/sites.kml",
+                                      true));
+
+        getRepository().addOutput(getResourceClass(),
+                                  new GsacOutput(this, OUTPUT_SITE_KMZ,
+                                      "Google Earth KMZ", "/sites.kmz",
                                       true));
     }
 
@@ -101,8 +110,11 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             throws Exception {
         String path = request.getRequestURI();
         //If the path does not end with .kml then send a redirect
-        if ( !path.endsWith(".kml")) {
-            path = path + "/sites.kml";
+
+        boolean kmz = request.get(ARG_OUTPUT,"").equals(OUTPUT_SITE_KMZ);
+        
+        if (kmz && !path.endsWith(".kmz")) {
+            path = path + "/sites.kmz";
             String redirectUrl = path + "?" + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
             response.endResponse();
@@ -110,14 +122,22 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
 
+        if (!path.endsWith(".kml") && !path.endsWith(".kmz")) {
+            path = path + "/sites.kml";
+            String redirectUrl = path + "?" + request.getUrlArgs();
+            response.sendRedirect(redirectUrl);
+            response.endResponse();
+            return;
+        }
+
+        boolean kml = path.endsWith(".kml");
+
+
         StringBuffer sb = new StringBuffer();
-        response.startResponse(GsacResponse.MIME_KML);
+        response.startResponse(kml?GsacResponse.MIME_KML:GsacResponse.MIME_KMZ);
         getRepository().processRequest(getResourceClass(), request, response);
-        PrintWriter pw     = response.getPrintWriter();
         Element     root   = KmlUtil.kml("Site Search");
         Element     doc    = KmlUtil.document(root, "Sites", true);
-
-
         Element     folder = doc;
         //        Element folder = KmlUtil.folder(doc, "Site Groups", false);
         List<GsacSite>             sites    = response.getSites();
@@ -159,7 +179,23 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             KmlUtil.snippet(placemark, site.getShortName());
         }
         //      System.err.println("xml:" +  XmlUtil.toString(root));
-        XmlUtil.toString(root, pw);
+
+
+        if(kml) {
+            PrintWriter pw     = response.getPrintWriter();
+            XmlUtil.toString(root, pw);
+        } else {
+            StringBuffer kmlBuffer  = new StringBuffer();
+            XmlUtil.toString(root, kmlBuffer);            
+            OutputStream os = request.getOutputStream();
+            ZipOutputStream zos =  new ZipOutputStream(os);
+            zos.setLevel(0);
+            zos.putNextEntry(new ZipEntry("sites.kml"));
+            byte[] bytes = kmlBuffer.toString().getBytes();
+            zos.write(bytes, 0, bytes.length);
+            zos.closeEntry();
+            IOUtil.close(zos);
+        }
         response.endResponse();
     }
 
