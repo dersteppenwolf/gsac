@@ -31,6 +31,8 @@ import java.io.*;
 
 
 import java.util.List;
+//import java.util.Date;
+//import java.text.SimpleDateFormat;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -81,21 +83,25 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             
             PrintWriter pw = response.getPrintWriter();
             if (firstTime) {
-                pw.print("#Id, Type, Md5, FileSize, Url\n");
+                pw.print("#Id, Type, Md5, FileSize, PublishDate, Url\n");
                 
             }
             pw.print(file.getId() + "," );
             pw.print(file.getType().getLabel() + "," );
             pw.print( fi.getMd5() + "," );
             pw.print( fi.getFileSize() + "," );
+            // TODO: Apparently the publish date does not include mm:ss
+            //Date date = file.getPublishDate();
+            //SimpleDateFormat sdf = makeDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            //pw.print( sdf.format(date) + "," );
+            pw.print( file.getPublishDate() + "," );
             //List<GsacResource> relatedResources = file.getRelatedResources();
             //if (relatedResources.size() == 1) {
             //    pw.print(relatedResources.get(0).getId());
             //} else {
-            //    //TODO:
+            //    
            // }
-            pw.print(fi.getUrl());
-            pw.print("\n");
+            pw.print( fi.getUrl().replace( "\\s+$", "" ) + "\n" );
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
