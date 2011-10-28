@@ -74,26 +74,27 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                                 GsacResource resource) {
         try {
             GsacFile file = (GsacFile) resource;
+            FileInfo fi = file.getFileInfo();
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             response.startResponse(GsacResponse.MIME_CSV);
+            
             PrintWriter pw = response.getPrintWriter();
             if (firstTime) {
-                pw.print("#id, type, siteid, url\n");
+                pw.print("#Id, Type, Md5, FileSize, Url\n");
+                
             }
-            pw.print(file.getId());
-            pw.print(",");
-            pw.print(file.getType().getId());
-            pw.print(",");
-            List<GsacResource> relatedResources = file.getRelatedResources();
-            if (relatedResources.size() == 1) {
-                pw.print(relatedResources.get(0).getId());
-            } else {
-                //TODO:
-            }
-
-            pw.print(",");
-            pw.print(file.getFileInfo().getUrl());
+            pw.print(file.getId() + "," );
+            pw.print(file.getType().getLabel() + "," );
+            pw.print( fi.getMd5() + "," );
+            pw.print( fi.getFileSize() + "," );
+            //List<GsacResource> relatedResources = file.getRelatedResources();
+            //if (relatedResources.size() == 1) {
+            //    pw.print(relatedResources.get(0).getId());
+            //} else {
+            //    //TODO:
+           // }
+            pw.print(fi.getUrl());
             pw.print("\n");
         } catch (Exception exc) {
             throw new RuntimeException(exc);
