@@ -86,6 +86,7 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         gsonBuilder.setPrettyPrinting();
         gsonBuilder.setDateFormat(DateFormat.LONG);
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
+        gsonBuilder.serializeSpecialFloatingPointValues();
         Gson           gson  = gsonBuilder.create();
         List<GsacSite> sites = response.getSites();
         String         json  = gson.toJson(sites);
