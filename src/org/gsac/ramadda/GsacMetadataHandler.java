@@ -59,6 +59,10 @@ import java.util.List;
  */
 public class GsacMetadataHandler extends MetadataHandler {
 
+    public static final String TYPE_STREAM = "gsac.stream";
+
+    public static final String TYPE_NTRIP = "gsac.ntrip";
+
     /** _more_ */
     public static final String TYPE_STREAM_FORMAT = "gsac.stream.format";
 

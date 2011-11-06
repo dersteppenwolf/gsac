@@ -82,6 +82,7 @@ public class GnssStreamGroup extends MetadataGroup {
             buff.append("<tr valign=top>");
             buff.append("<td>&nbsp;");
             buff.append(HtmlUtil.href(stream.getUrl(), stream.getUrl()));
+            //            double[]stats
             buff.append("</td>");
             buff.append("</tr>");
         }
