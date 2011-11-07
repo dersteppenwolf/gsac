@@ -22,6 +22,8 @@ package org.gsac.gsl.metadata.gnss;
 
 
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.util.NtripLine;
+import org.gsac.gsl.util.Tuple;
 
 
 import org.gsac.gsl.util.*;
@@ -43,13 +45,9 @@ public class GnssStream extends GsacMetadata {
     /** _more_ */
     private String url;
 
-    private String ntripLine;
+    private NtripLine ntripLine;
 
-    /** _more_          */
-    private double[] stats;
-
-    /** _more_          */
-    private String[] statsNames;
+    private Tuple stats;
 
 
     /**
@@ -64,9 +62,9 @@ public class GnssStream extends GsacMetadata {
      *
      * @param url _more_
      */
-    public GnssStream(String url) {
+    public GnssStream(NtripLine ntripLine) {
         this();
-        this.url = url;
+        this.ntripLine = ntripLine;
     }
 
 
@@ -87,7 +85,7 @@ public class GnssStream extends GsacMetadata {
 
        @param value The new value for NtripLine
     **/
-    public void setNtripLine (String value) {
+    public void setNtripLine (NtripLine value) {
 	ntripLine = value;
     }
 
@@ -96,11 +94,9 @@ public class GnssStream extends GsacMetadata {
 
        @return The NtripLine
     **/
-    public String getNtripLine () {
+    public NtripLine getNtripLine () {
 	return ntripLine;
     }
-
-
 
 
     /**
@@ -109,48 +105,20 @@ public class GnssStream extends GsacMetadata {
      * @param stats _more_
      * @param statsNames _more_
      */
-    public void setStats(double[] stats, String[] statsNames) {
+    public void setStats(Tuple stats) {
         this.stats      = stats;
-        this.statsNames = statsNames;
     }
 
-    /**
-     *  Set the Stats property.
-     *
-     *  @param value The new value for Stats
-     */
-    public void setStats(double[] value) {
-        stats = value;
-    }
+
 
     /**
      *  Get the Stats property.
      *
      *  @return The Stats
      */
-    public double[] getStats() {
+    public Tuple getStats() {
         return stats;
     }
-
-    /**
-     *  Set the StatsNames property.
-     *
-     *  @param value The new value for StatsNames
-     */
-    public void setStatsNames(String[] value) {
-        statsNames = value;
-    }
-
-    /**
-     *  Get the StatsNames property.
-     *
-     *  @return The StatsNames
-     */
-    public String[] getStatsNames() {
-        return statsNames;
-    }
-
-
 
     /**
      * _more_
