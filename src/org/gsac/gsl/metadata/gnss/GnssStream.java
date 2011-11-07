@@ -23,7 +23,6 @@ package org.gsac.gsl.metadata.gnss;
 
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.NtripLine;
-import org.gsac.gsl.util.Tuple;
 
 
 import org.gsac.gsl.util.*;
@@ -47,7 +46,6 @@ public class GnssStream extends GsacMetadata {
 
     //    private NtripLine ntripLine;
 
-    private Tuple stats;
 
 
     /**
@@ -103,27 +101,6 @@ public class GnssStream extends GsacMetadata {
     }
     **/
 
-
-    /**
-     * _more_
-     *
-     * @param stats _more_
-     * @param statsNames _more_
-     */
-    public void setStats(Tuple stats) {
-        this.stats      = stats;
-    }
-
-
-
-    /**
-     *  Get the Stats property.
-     *
-     *  @return The Stats
-     */
-    public Tuple getStats() {
-        return stats;
-    }
 
     /**
      * _more_

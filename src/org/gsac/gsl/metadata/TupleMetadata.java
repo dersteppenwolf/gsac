@@ -18,7 +18,7 @@
  * 
  */
 
-package org.gsac.gsl.util;
+package org.gsac.gsl.metadata;
 
 
 
@@ -26,7 +26,9 @@ package org.gsac.gsl.util;
 /**
  * Holds an array of doubles plus String names
  */
-public class Tuple {
+public class TupleMetadata extends GsacMetadata {
+
+    public static final String TYPE_TUPLE = "tuple";
 
     /** _more_          */
     private double[] values;
@@ -40,10 +42,17 @@ public class Tuple {
      * @param values _more_
      * @param names _more_
      */
-    public Tuple(double[] values, String[] names) {
+    public TupleMetadata(String type, double[] values, String[] names) {
+        super(type);
         this.values = values;
         this.names  = names;
     }
+
+
+    public TupleMetadata(double[] values, String[] names) {
+        this(TYPE_TUPLE, values, names);
+    }
+
 
     /**
      *  Set the Values property.
