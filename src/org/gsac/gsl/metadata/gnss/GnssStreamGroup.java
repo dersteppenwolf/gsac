@@ -72,7 +72,7 @@ public class GnssStreamGroup extends MetadataGroup {
 
         int          cnt  = 0;
         StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-        for (GnssStream stream : GnssStream.getMetadata(getMetadata())) {
+        for (NtripMetadata stream : NtripMetadata.getMetadata(getMetadata())) {
             if (cnt == 0) {
                 buff.append(outputHandler.tableHeader(new String[] {
                     outputHandler.msg("URL"), }));
@@ -81,7 +81,7 @@ public class GnssStreamGroup extends MetadataGroup {
 
             buff.append("<tr valign=top>");
             buff.append("<td>&nbsp;");
-            buff.append(HtmlUtil.href(stream.getUrl(), stream.getUrl()));
+            //            buff.append(HtmlUtil.href(stream.getUrl(), stream.getUrl()));
             //            double[]stats
             buff.append("</td>");
             buff.append("</tr>");

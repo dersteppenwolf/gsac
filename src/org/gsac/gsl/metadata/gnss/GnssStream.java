@@ -45,7 +45,7 @@ public class GnssStream extends GsacMetadata {
     /** _more_ */
     private String url;
 
-    private NtripLine ntripLine;
+    //    private NtripLine ntripLine;
 
     private Tuple stats;
 
@@ -62,10 +62,12 @@ public class GnssStream extends GsacMetadata {
      *
      * @param url _more_
      */
+    /*
     public GnssStream(NtripLine ntripLine) {
         this();
         this.ntripLine = ntripLine;
     }
+    */
 
 
     /**
@@ -85,18 +87,21 @@ public class GnssStream extends GsacMetadata {
 
        @param value The new value for NtripLine
     **/
+    /*
     public void setNtripLine (NtripLine value) {
 	ntripLine = value;
     }
+    */
 
     /**
        Get the NtripLine property.
 
        @return The NtripLine
-    **/
+
     public NtripLine getNtripLine () {
 	return ntripLine;
     }
+    **/
 
 
     /**

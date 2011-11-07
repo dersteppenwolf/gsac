@@ -18,7 +18,8 @@
  * 
  */
 
-package org.gsac.gsl.util;
+package org.gsac.gsl.metadata.gnss;
+import org.gsac.gsl.metadata.*;
 
 
 import ucar.unidata.util.DateUtil;
@@ -42,16 +43,18 @@ import java.util.List;
  * @author IDV Development Team
  * @version $Revision: 1.3 $
  */
-public class NtripLine {
+public class NtripMetadata extends GsacMetadata {
+
+    public static final String TYPE_NTRIP = "gnss.ntrip";
 
     /** _more_ */
-    public static final String TYPE_STR = "STR";
+    public static final String NTRIP_TYPE_STR = "STR";
 
     /** _more_ */
-    public static final String TYPE_CAS = "CAS";
+    public static final String NTRIP_TYPE_CAS = "CAS";
 
     /** _more_ */
-    public static final String TYPE_NET = "NET";
+    public static final String NTRIP_TYPE_NET = "NET";
 
     /** _more_ */
     private String mountPoint;
@@ -110,6 +113,17 @@ public class NtripLine {
 
 
 
+    public NtripMetadata() {
+        super(TYPE_NTRIP);
+    }
+
+
+    public static List<NtripMetadata> getMetadata(List<GsacMetadata> metadata) {
+        return (List<NtripMetadata>) findMetadata(metadata, NtripMetadata.class);
+    }
+
+
+
     /**
      * _more_
      *
@@ -120,7 +134,7 @@ public class NtripLine {
      * @return _more_
      * @throws Exception _more_
      */
-    public static List<NtripLine> readSourceTable(String url,
+    public static List<NtripMetadata> readSourceTable(String url,
             StringBuffer errorBuff)
             throws Exception {
         if (url.endsWith("/")) {
@@ -128,7 +142,7 @@ public class NtripLine {
         }
 
 
-        String contents = IOUtil.readContents(url, NtripLine.class, null);
+        String contents = IOUtil.readContents(url, NtripMetadata.class, null);
         if (contents == null) {
             errorBuff.append("Could not read url:" + url);
             return null;
@@ -137,7 +151,7 @@ public class NtripLine {
         contents = contents.replaceAll("<br>", "");
         List<String>    toks = StringUtil.split(contents, "\n", false, false);
 
-        List<NtripLine> results = new ArrayList();
+        List<NtripMetadata> results = new ArrayList();
         int             myCnt   = 0;
         int             lineCnt = 0;
         boolean         tooMany = toks.size() > 100;
@@ -156,23 +170,23 @@ public class NtripLine {
 
         }
         for (; lineCnt < toks.size(); lineCnt++) {
-            String textLine = toks.get(lineCnt).trim();
-            if (textLine.equals("ENDSOURCETABLE")) {
+            String textMetadata = toks.get(lineCnt).trim();
+            if (textMetadata.equals("ENDSOURCETABLE")) {
                 break;
             }
-            List<String> cols = StringUtil.split(textLine, ";", false, false);
+            List<String> cols = StringUtil.split(textMetadata, ";", false, false);
             if (cols.size() == 0) {
                 continue;
             }
             int    col  = 0;
             String type = cols.get(col++);
-            if ( !type.equals(TYPE_STR)) {
-                if ( !type.equals(TYPE_NET) && !type.equals(TYPE_CAS)) {
-                    errorBuff.append("Unknown type:" + textLine);
+            if ( !type.equals(NTRIP_TYPE_STR)) {
+                if ( !type.equals(NTRIP_TYPE_NET) && !type.equals(NTRIP_TYPE_CAS)) {
+                    errorBuff.append("Unknown type:" + textMetadata);
                 }
                 continue;
             }
-            NtripLine line = new NtripLine();
+            NtripMetadata line = new NtripMetadata();
             line.mountPoint = cols.get(col++);
             line.feedUrl    = url + "/" + line.mountPoint;
             line.identifier = cols.get(col++).trim();
