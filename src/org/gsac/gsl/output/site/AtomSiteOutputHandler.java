@@ -28,9 +28,9 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
-import org.w3c.dom.*;
+import org.gsac.gsl.util.AtomUtil;
 
-import ucar.unidata.xml.AtomUtil;
+import org.w3c.dom.*;
 
 import ucar.unidata.xml.XmlUtil;
 
@@ -89,7 +89,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
         pw.append(AtomUtil.openFeed());
         pw.append(AtomUtil.makeTitle(getRepository().getRepositoryName()
                                      + " ATOM Site Feed"));
-        pw.append(AtomUtil.makeLink(AtomUtil.LINK_SELF, request.toString()));
+        pw.append(AtomUtil.makeLink(request.toString()));
         /*
     public static String makeEntry(String title,
                                    String id,
@@ -110,9 +110,11 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                                       "" + el.getLongitude()));
                                       }*/
             //TODO: add georss
-            pw.append(AtomUtil.makeEntry(site.getShortName(), url,
+            pw.append(AtomUtil.makeEntry(site.getShortName(),
+                                         (String) site.getId(),
+                                         site.getPublishDate(),
                                          site.getToDate(), site.getLabel(),
-                                         null, new String[][] {}));
+                                         "", null, null));
         }
         pw.append(AtomUtil.closeFeed());
         response.endResponse();

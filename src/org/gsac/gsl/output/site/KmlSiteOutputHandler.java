@@ -29,10 +29,10 @@ import org.gsac.gsl.output.*;
 
 import org.w3c.dom.*;
 
-import ucar.unidata.util.IOUtil;
-
 import ucar.unidata.data.gis.KmlUtil;
 import ucar.unidata.util.HtmlUtil;
+
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 
@@ -44,10 +44,10 @@ import java.util.ArrayList;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.zip.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.util.zip.*;
 
 
 /**
@@ -61,6 +61,8 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
 
     /** output id */
     public static final String OUTPUT_SITE_KML = "site.kml";
+
+    /** _more_          */
     public static final String OUTPUT_SITE_KMZ = "site.kmz";
 
     /**
@@ -111,8 +113,8 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         String path = request.getRequestURI();
         //If the path does not end with .kml then send a redirect
 
-        boolean kmz = request.get(ARG_OUTPUT,"").equals(OUTPUT_SITE_KMZ);
-        
+        boolean kmz = request.get(ARG_OUTPUT, "").equals(OUTPUT_SITE_KMZ);
+
         if (kmz && !path.endsWith(".kmz")) {
             path = path + "/sites.kmz";
             String redirectUrl = path + "?" + request.getUrlArgs();
@@ -122,7 +124,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
 
-        if (!path.endsWith(".kml") && !path.endsWith(".kmz")) {
+        if ( !path.endsWith(".kml") && !path.endsWith(".kmz")) {
             path = path + "/sites.kml";
             String redirectUrl = path + "?" + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
@@ -130,15 +132,17 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             return;
         }
 
-        boolean kml = path.endsWith(".kml");
+        boolean      kml = path.endsWith(".kml");
 
 
-        StringBuffer sb = new StringBuffer();
-        response.startResponse(kml?GsacResponse.MIME_KML:GsacResponse.MIME_KMZ);
+        StringBuffer sb  = new StringBuffer();
+        response.startResponse(kml
+                               ? GsacResponse.MIME_KML
+                               : GsacResponse.MIME_KMZ);
         getRepository().processRequest(getResourceClass(), request, response);
-        Element     root   = KmlUtil.kml("Site Search");
-        Element     doc    = KmlUtil.document(root, "Sites", true);
-        Element     folder = doc;
+        Element root   = KmlUtil.kml("Site Search");
+        Element doc    = KmlUtil.document(root, "Sites", true);
+        Element folder = doc;
         //        Element folder = KmlUtil.folder(doc, "Site Groups", false);
         List<GsacSite>             sites    = response.getSites();
         Hashtable<String, Element> groupMap = new Hashtable<String,
@@ -181,14 +185,14 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         //      System.err.println("xml:" +  XmlUtil.toString(root));
 
 
-        if(kml) {
-            PrintWriter pw     = response.getPrintWriter();
+        if (kml) {
+            PrintWriter pw = response.getPrintWriter();
             XmlUtil.toString(root, pw);
         } else {
-            StringBuffer kmlBuffer  = new StringBuffer();
-            XmlUtil.toString(root, kmlBuffer);            
-            OutputStream os = request.getOutputStream();
-            ZipOutputStream zos =  new ZipOutputStream(os);
+            StringBuffer kmlBuffer = new StringBuffer();
+            XmlUtil.toString(root, kmlBuffer);
+            OutputStream    os  = request.getOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(os);
             zos.setLevel(0);
             zos.putNextEntry(new ZipEntry("sites.kml"));
             byte[] bytes = kmlBuffer.toString().getBytes();

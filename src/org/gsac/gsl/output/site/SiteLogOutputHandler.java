@@ -92,7 +92,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
      * @param resourceClass _more_
      */
     public SiteLogOutputHandler(GsacRepository gsacRepository,
-                                   ResourceClass resourceClass) {
+                                ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_LOG,
@@ -113,7 +113,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_TEXT);
-        PrintWriter pw = response.getPrintWriter();
+        PrintWriter    pw    = response.getPrintWriter();
         List<GsacSite> sites = response.getSites();
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site

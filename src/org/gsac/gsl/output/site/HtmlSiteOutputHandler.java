@@ -121,14 +121,15 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         }
 
 
-        if(request.isGsacUrl(URL_SITE_FORM)) {
+        if (request.isGsacUrl(URL_SITE_FORM)) {
             if ( !initHtml(request, response, sb, msg("Site Search Form"))) {
                 return;
             }
             sb.append(HtmlUtil.p());
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_SITE_SEARCH)) {
-            if ( !initHtml(request, response, sb, msg("Site Search Results"))) {
+            if ( !initHtml(request, response, sb,
+                           msg("Site Search Results"))) {
                 return;
             }
             long t1 = System.currentTimeMillis();
@@ -148,7 +149,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                                 request.get(ARG_SITE_ID, (String) null));
             handleSingleSite(request, response, sb, site);
         } else {
-            throw new UnknownRequestException("Unknown request:" + request.getGsacUrlPath());
+            throw new UnknownRequestException("Unknown request:"
+                    + request.getGsacUrlPath());
         }
         finishHtml(request, response, sb);
     }
@@ -298,7 +300,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         String js = createMap(request,
                               (List<GsacResource>) new ArrayList(sites),
-                              resultsTitles, resultsContents, -1, 500, false, true);
+                              resultsTitles, resultsContents, -1, 500, false,
+                              true);
 
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
