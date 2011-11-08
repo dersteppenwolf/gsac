@@ -539,10 +539,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 String min = arg + ".min";
                 String max = arg + ".max";
                 widget =
-                    " " + msgLabel("Min")
+                    " " + msgLabel("Min") + " "
                     + HtmlUtil.input(min, request.get(min, "") + "",
                                      HtmlUtil.SIZE_5) + HtmlUtil.space(2)
-                                         + msgLabel("Max")
+                                         + msgLabel("Max") + " "
                                          + HtmlUtil.input(max,
                                              request.get(max, "") + "",
                                              HtmlUtil.SIZE_5);
@@ -611,7 +611,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 }
                 capBuff.append(formEntryTop(request,
                                             msgLabel(capability.getLabel()),
-                                            widget + suffix));
+                                            widget + " " + suffix));
             } else {
                 getRepository().logError("Unknown capability:" + capability,
                                          null);
@@ -1704,6 +1704,28 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             LinkMetadata mtd = (LinkMetadata) metadata;
             pw.append(formEntry(request, msgLabel("Link"),
                                 HtmlUtil.href(mtd.getUrl(), mtd.getLabel())));
+            return;
+        }
+
+        if (metadata instanceof TupleMetadata) {
+            TupleMetadata mtd    = (TupleMetadata) metadata;
+            StringBuffer  sb     = new StringBuffer();
+            double[]      values = mtd.getValues();
+            Parameter[]   params = mtd.getParameters();
+            sb.append(HtmlUtil.formTable());
+            for (int i = 0; i < values.length; i++) {
+                Parameter param = params[i];
+                sb.append(HtmlUtil.formEntry(param.getName(),
+                                             values[i] + " "
+                                             + ((param.getUnit() != null)
+                        ? param.getUnit()
+                        : "")));
+            }
+            sb.append(HtmlUtil.formTableClose());
+
+            pw.append(formEntryTop(request, mtd.getLabel() + ":",
+                                   HtmlUtil.makeShowHideBlock("",
+                                       sb.toString(), false)));
             return;
         }
 
