@@ -1509,7 +1509,7 @@ public class GsacRepository implements GsacConstants {
         try {
             InputStream is = getResourceInputStream(path);
             if (is == null) {
-                System.err.println("Failed to read vocabulary for:" + path);
+                //                System.err.println("GSAC: Failed to read vocabulary for:" + path);
                 return "";
             }
             return IOUtil.readContents(is);

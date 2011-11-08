@@ -84,6 +84,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+        response.setReturnFilename("sites.xml");
         response.startResponse(GsacResponse.MIME_ATOM);
         PrintWriter pw = response.getPrintWriter();
         pw.append(AtomUtil.openFeed());

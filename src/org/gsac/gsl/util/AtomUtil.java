@@ -297,9 +297,11 @@ public class AtomUtil {
 
         sb.append(extraStuff);
 
-        for (Link link : links) {
-            sb.append(makeLink(link));
-            sb.append("\n");
+        if(links!=null) {
+            for (Link link : links) {
+                sb.append(makeLink(link));
+                sb.append("\n");
+            }
         }
         sb.append(XmlUtil.closeTag(TAG_ENTRY));
         sb.append("\n");

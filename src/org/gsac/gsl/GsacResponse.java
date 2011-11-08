@@ -136,6 +136,7 @@ public class GsacResponse {
         if (request.get(GsacArgs.ARG_GZIP, false)) {
             mimeType = MIME_ZIP;
         }
+        System.err.println ("mime:" + mimeType);
         response.setContentType(mimeType);
         response.setStatus(200);
     }
