@@ -74,18 +74,14 @@ public class GnssStreamGroup extends MetadataGroup {
         StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
         for (NtripMetadata ntripMetadata :
                 NtripMetadata.getMetadata(getMetadata())) {
-            if (cnt == 0) {
-                buff.append(outputHandler.tableHeader(new String[] {
-                    outputHandler.msg("URL"), }));
-            }
             cnt++;
-
-            buff.append("<tr valign=top>");
-            buff.append("<td>&nbsp;");
             buff.append(HtmlUtil.href(ntripMetadata.getFeedUrl(),
                                       ntripMetadata.getFeedUrl()));
-            buff.append("</td>");
-            buff.append("</tr>");
+            
+            buff.append("<br>");
+            buff.append(HtmlUtil.space(3));
+            buff.append(HtmlUtil.makeToggleInline("", " " + ntripMetadata.getHtml(), false));
+            buff.append("<br>");
         }
         if (cnt > 0) {
             buff.append(HtmlUtil.formTableClose());

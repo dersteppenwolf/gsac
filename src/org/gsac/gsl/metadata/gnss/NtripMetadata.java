@@ -47,6 +47,8 @@ import java.util.List;
  */
 public class NtripMetadata extends GsacMetadata {
 
+    private static final String COL_DELIMITER = ";";
+
     /** _more_          */
     public static final String TYPE_NTRIP = "gnss.ntrip";
 
@@ -123,6 +125,25 @@ public class NtripMetadata extends GsacMetadata {
         super(TYPE_NTRIP);
     }
 
+    public String getHtml() {
+        return 
+            format + COL_DELIMITER + 
+            formatDetails + COL_DELIMITER + 
+            carrier + COL_DELIMITER + 
+            navSystem + COL_DELIMITER + 
+            network + COL_DELIMITER + 
+            country + COL_DELIMITER + 
+            latitude + COL_DELIMITER + 
+            longitude + COL_DELIMITER + 
+            nmea + COL_DELIMITER + 
+            solution + COL_DELIMITER + 
+            generator + COL_DELIMITER + 
+            compression + COL_DELIMITER + 
+            authentication + COL_DELIMITER + 
+            fee + COL_DELIMITER + 
+            bitRate;
+    }
+
 
     /**
      * _more_
@@ -189,7 +210,9 @@ public class NtripMetadata extends GsacMetadata {
             if (textMetadata.equals("ENDSOURCETABLE")) {
                 break;
             }
-            List<String> cols = StringUtil.split(textMetadata, ";", false,
+
+
+            List<String> cols = StringUtil.split(textMetadata, COL_DELIMITER, false,
                                     false);
             if (cols.size() == 0) {
                 continue;

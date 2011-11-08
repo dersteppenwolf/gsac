@@ -23,6 +23,9 @@ input {
 }
 
 
+
+
+
 .gsac-content {
    font-size: 12pt;
    font-family: Arial, Helvetica, sans-serif;       
@@ -349,4 +352,8 @@ input {
 
 .gsac-earth-container {
    border : 1px #888 solid;
+}
+
+.toggleblocklabellink {
+   text-decoration: none;
 }
