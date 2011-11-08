@@ -24,13 +24,14 @@ package org.gsac.gsl.util;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
+import ucar.unidata.xml.XmlUtil;
+
 import java.io.PrintWriter;
 
 import java.util.ArrayList;
 
 import java.util.HashSet;
 import java.util.List;
-import ucar.unidata.xml.XmlUtil;
 
 
 /**
@@ -118,13 +119,27 @@ public class GsacRepositoryInfo {
         this.icon = icon;
     }
 
-    public void toXml(GsacRepository repository, GsacRequest request, PrintWriter pw) throws Exception {
-        pw.append(XmlUtil.openTag(TAG_REPOSITORY,
-                                  XmlUtil.attrs(ATTR_URL,
-                                                repository.getServlet().getAbsoluteUrl(request,
-                                                                                       repository.getUrlBase()
-                                                                                       + repository.URL_BASE), ATTR_NAME,
-                                                this.getName())));
+    /**
+     * _more_
+     *
+     * @param repository _more_
+     * @param request _more_
+     * @param pw _more_
+     *
+     * @throws Exception _more_
+     */
+    public void toXml(GsacRepository repository, GsacRequest request,
+                      PrintWriter pw)
+            throws Exception {
+        pw.append(
+            XmlUtil.openTag(
+                TAG_REPOSITORY,
+                XmlUtil.attrs(
+                    ATTR_URL,
+                    repository.getServlet().getAbsoluteUrl(
+                        request,
+                        repository.getUrlBase()
+                        + repository.URL_BASE), ATTR_NAME, this.getName())));
 
 
         pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",

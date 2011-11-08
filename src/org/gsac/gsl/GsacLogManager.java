@@ -68,7 +68,7 @@ public class GsacLogManager extends GsacManager {
     /** apache style log macro */
     public static final String LOG_MACRO_PROTOCOL = "%H";
 
-    /** quote       */
+    /** quote */
     public static final String QUOTE = "\"";
 
     /** The template to use for logging */
@@ -99,7 +99,7 @@ public class GsacLogManager extends GsacManager {
     }
 
     /**
-     * initialize the log directory. This will make a /logs sub-directory of the gsacDir. 
+     * initialize the log directory. This will make a /logs sub-directory of the gsacDir.
      * It will then write the log4j.properties from the resources java dir
      *
      * @param gsacDir the gsac dir

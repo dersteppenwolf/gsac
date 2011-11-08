@@ -337,76 +337,76 @@ public class XmlSiteLog {
 
 
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_DATASTREAMS =
         "realtime:dataStreams";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_SITESTREAM =
         "realtime:siteStream";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_HOSTNAME = "realtime:hostname";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_PORT = "realtime:port";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_SAMPINTERVAL =
         "realtime:sampInterval";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_DATAFORMAT =
         "realtime:dataFormat";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_NTRIPMOUNT =
         "realtime:ntripMount";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_MOUNTPOINT =
         "realtime:mountPoint";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_SOURCEID = "realtime:sourceID";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_COUNTRYCODE =
         "realtime:countryCode";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_NETWORK = "realtime:network";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_ALLOWCONNECTIONS =
         "realtime:allowConnections";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_REQUIREAUTHENTICATION =
         "realtime:requireAuthentication";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_ENCRIPTION =
         "realtime:encription";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_FEESAPPLY = "realtime:feesApply";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_BITRATE = "realtime:bitrate";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_CARRIERPHASE =
         "realtime:carrierPhase";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_NAVSYSTEM = "realtime:navSystem";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_PUBLISHEDSTREAM =
         "realtime:publishedStream";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TAG_REALTIME_IPADDRESS = "realtime:ipAddress";
 
 

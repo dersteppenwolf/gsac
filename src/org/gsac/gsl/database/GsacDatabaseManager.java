@@ -62,8 +62,8 @@ import java.util.Properties;
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 
-public abstract class GsacDatabaseManager extends GsacManager 
-    implements SqlUtil.ConnectionManager {
+public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
+    .ConnectionManager {
 
     /** default jdbc driver class name */
     private static final String DB_DRIVER_CLASSNAME =
@@ -338,12 +338,12 @@ public abstract class GsacDatabaseManager extends GsacManager
      * @throws nothing
      */
     public int getConnectionCount() {
-    
-    	return connectionCnt;
-    
+
+        return connectionCnt;
+
     }
 
-    
+
     /**
      * increment number of connections
      *
@@ -352,12 +352,12 @@ public abstract class GsacDatabaseManager extends GsacManager
      * @throws nothing
      */
     public void incrConnectionCount() {
-    
-    	connectionCnt++;
-    
+
+        connectionCnt++;
+
     }
 
-    
+
     /**
      * decrement number of connections
      *
@@ -366,12 +366,12 @@ public abstract class GsacDatabaseManager extends GsacManager
      * @throws nothing
      */
     public void decrConnectionCount() {
-    
-    	connectionCnt--;
-    
+
+        connectionCnt--;
+
     }
-    
-    
+
+
     /**
      * get a connection from the pool
      *
@@ -785,7 +785,7 @@ public abstract class GsacDatabaseManager extends GsacManager
                 pw.append(sp2 + "public static final String COL_" + COLNAME
                           + " =  NAME + \"." + colName + "\";\n");
                 pw.append(sp2 + "public static final String ORA_" + COLNAME
-                        + " =  \"" + colName + "\";\n");
+                          + " =  \"" + colName + "\";\n");
             }
 
             pw.append("\n");

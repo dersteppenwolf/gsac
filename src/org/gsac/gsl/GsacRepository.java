@@ -388,7 +388,7 @@ public class GsacRepository implements GsacConstants {
      * Create the default set of output handlers
      */
     public void initOutputHandlers() {
-        htmlOutputHandler = new HtmlOutputHandler(this);
+        htmlOutputHandler   = new HtmlOutputHandler(this);
         browseOutputHandler = new BrowseOutputHandler(this);
         for (GsacResourceManager resourceManager : getResourceManagers()) {
             resourceManager.initOutputHandlers();

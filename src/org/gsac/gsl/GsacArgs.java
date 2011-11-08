@@ -111,7 +111,7 @@ public interface GsacArgs {
     public static final String ARG_SITE_LOCATION = ARG_SITE_PREFIX
                                                    + "location";
 
-    /** _more_          */
+    /** _more_ */
     public static final String ARG_SITE_HASSTREAM = ARG_SITE_PREFIX
                                                     + "hasstream";
 

@@ -102,7 +102,7 @@ public class FileDownloader {
     /** overwrite files widget */
     private JCheckBox overwriteCbx;
 
-    /** _more_          */
+    /** _more_ */
     private JCheckBox multiThreadsCbx;
 
     /** widget */

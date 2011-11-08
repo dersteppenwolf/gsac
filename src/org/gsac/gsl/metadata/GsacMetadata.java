@@ -105,15 +105,16 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
      * _more_
      *
      * @param request _more_
+     * @param gsacResource _more_
      * @param outputHandler _more_
      * @param pw _more_
      *
+     *
+     * @return _more_
      * @throws IOException _more_
      */
-    public boolean addHtml(GsacRequest request, 
-                           GsacResource gsacResource,
-                           HtmlOutputHandler outputHandler,
-                           Appendable pw)
+    public boolean addHtml(GsacRequest request, GsacResource gsacResource,
+                           HtmlOutputHandler outputHandler, Appendable pw)
             throws IOException {
         return false;
         //NOOP

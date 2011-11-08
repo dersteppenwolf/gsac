@@ -76,32 +76,32 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                                 GsacResource resource) {
         try {
             GsacFile file = (GsacFile) resource;
-            FileInfo fi = file.getFileInfo();
+            FileInfo fi   = file.getFileInfo();
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
             response.startResponse(GsacResponse.MIME_CSV);
-            
+
             PrintWriter pw = response.getPrintWriter();
             if (firstTime) {
                 pw.print("#Id, Type, Md5, FileSize, PublishDate, Url\n");
-                
+
             }
-            pw.print(file.getId() + "," );
-            pw.print(file.getType().getLabel() + "," );
-            pw.print( fi.getMd5() + "," );
-            pw.print( fi.getFileSize() + "," );
+            pw.print(file.getId() + ",");
+            pw.print(file.getType().getLabel() + ",");
+            pw.print(fi.getMd5() + ",");
+            pw.print(fi.getFileSize() + ",");
             // TODO: Apparently the publish date does not include mm:ss
             //Date date = file.getPublishDate();
             //SimpleDateFormat sdf = makeDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
             //pw.print( sdf.format(date) + "," );
-            pw.print( file.getPublishDate() + "," );
+            pw.print(file.getPublishDate() + ",");
             //List<GsacResource> relatedResources = file.getRelatedResources();
             //if (relatedResources.size() == 1) {
             //    pw.print(relatedResources.get(0).getId());
             //} else {
             //    
-           // }
-            pw.print( fi.getUrl().replace( "\\s+$", "" ) + "\n" );
+            // }
+            pw.print(fi.getUrl().replace("\\s+$", "") + "\n");
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }

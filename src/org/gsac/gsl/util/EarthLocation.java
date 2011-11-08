@@ -37,13 +37,13 @@ public class EarthLocation {
     /** elevation */
     private double elevation;
 
-    /** _more_          */
+    /** _more_ */
     private double x = Double.NaN;
 
-    /** _more_          */
+    /** _more_ */
     private double y = Double.NaN;
 
-    /** _more_          */
+    /** _more_ */
     private double z = Double.NaN;
 
     /**
@@ -137,8 +137,13 @@ public class EarthLocation {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public boolean hasXYZ() {
-        return x==x && y==y && z==z;
+        return (x == x) && (y == y) && (z == z);
     }
 
 

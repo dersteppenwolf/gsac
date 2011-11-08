@@ -128,7 +128,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
             handleSearchForm(request, response, sb);
         } else if (request.isGsacUrl(URL_FILE_SEARCH)) {
-            if ( !initHtml(request, response, sb, msg("File Search Results"))) {
+            if ( !initHtml(request, response, sb,
+                           msg("File Search Results"))) {
                 return;
             }
             getRepository().processRequest(getResourceClass(), request,

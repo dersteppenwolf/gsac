@@ -402,21 +402,22 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                 StringBuffer msgBuff, String label,
                                 String column, List<Clause> clauses) {
 
-        if (!request.defined(arg)) {
+        if ( !request.defined(arg)) {
             return;
         }
-        String searchType = request.get(searchTypeArg, SEARCHTYPE_EXACT);
+        String       searchType = request.get(searchTypeArg,
+                                      SEARCHTYPE_EXACT);
         List<Clause> valueClauses = new ArrayList<Clause>();
         List<String> values       = (List<String>) (doUpperLowerCase
-                                                    ? request.getUpperAndLowerCaseDelimiterSeparatedList(arg)
-                                                    : request.getDelimiterSeparatedList(arg));
+                ? request.getUpperAndLowerCaseDelimiterSeparatedList(arg)
+                : request.getDelimiterSeparatedList(arg));
         int     cnt  = 0;
         HashSet seen = new HashSet();
         for (String value : values) {
             if ( !seen.contains(value.toLowerCase())) {
                 appendSearchCriteria(msgBuff, ((cnt++ == 0)
-                                               ? label + "="
-                                               : ""), value);
+                        ? label + "="
+                        : ""), value);
                 seen.add(value.toLowerCase());
             }
             String searchTypeToUse = searchType;
@@ -432,8 +433,8 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                 value           = value.substring(0, value.length() - 1);
             }
             valueClauses.add(
-                             GsacDatabaseManager.getStringSearchClause(
-                                                                       searchTypeToUse, column, value));
+                GsacDatabaseManager.getStringSearchClause(
+                    searchTypeToUse, column, value));
 
         }
         if (valueClauses.size() > 0) {
@@ -817,32 +818,37 @@ public abstract class GsacRepositoryManager implements GsacConstants {
             clauses.add(
                 Clause.le(
                     longitudeColumn,
-                    EarthLocation.normalizeLongitude(request.getLatLon(ARG_EAST, 0.0))));
+                    EarthLocation.normalizeLongitude(
+                        request.getLatLon(ARG_EAST, 0.0))));
             appendSearchCriteria(
                 tmpMsgBuff, "east&lt;=",
-                "" + EarthLocation.normalizeLongitude(request.getLatLon(ARG_EAST, 0.0)));
+                "" + EarthLocation.normalizeLongitude(
+                    request.getLatLon(ARG_EAST, 0.0)));
         }
         if (request.defined(ARG_WEST)) {
             cnt++;
             clauses.add(
                 Clause.ge(
                     longitudeColumn,
-                    EarthLocation.normalizeLongitude(request.getLatLon(ARG_WEST, 0.0))));
+                    EarthLocation.normalizeLongitude(
+                        request.getLatLon(ARG_WEST, 0.0))));
             appendSearchCriteria(
                 tmpMsgBuff, "west&gt;=",
-                "" + EarthLocation.normalizeLongitude(request.getLatLon(ARG_WEST, 0.0)));
+                "" + EarthLocation.normalizeLongitude(
+                    request.getLatLon(ARG_WEST, 0.0)));
         }
         if (cnt == 4) {
             msgBuff.append(
                 "<tr valign=center><td><b>Bounds=</b></td>"
                 + "<td><table border=0><tr><td colspan=2 align=center>"
                 + request.get(ARG_NORTH, 0.0) + "</td></tr><tr><td>"
-                + EarthLocation.normalizeLongitude(request.get(ARG_WEST, 0.0))
-                + "</td><td>"
-                + EarthLocation.normalizeLongitude(request.get(ARG_EAST, 0.0))
-                + "</td></tr>" + "<tr><td colspan=2 align=center>"
-                + request.get(ARG_SOUTH, 0.0) + "</td></tr></table>"
-                + "</td></tr>\n");
+                + EarthLocation.normalizeLongitude(
+                    request.get(ARG_WEST, 0.0)) + "</td><td>"
+                        + EarthLocation.normalizeLongitude(
+                            request.get(ARG_EAST, 0.0)) + "</td></tr>"
+                                + "<tr><td colspan=2 align=center>"
+                                + request.get(ARG_SOUTH, 0.0)
+                                + "</td></tr></table>" + "</td></tr>\n");
         } else {
             msgBuff.append(tmpMsgBuff);
         }

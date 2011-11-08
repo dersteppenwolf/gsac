@@ -62,7 +62,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
     /** output id */
     public static final String OUTPUT_SITE_KML = "site.kml";
 
-    /** _more_          */
+    /** _more_ */
     public static final String OUTPUT_SITE_KMZ = "site.kmz";
 
     /**

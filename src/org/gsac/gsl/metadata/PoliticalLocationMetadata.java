@@ -20,9 +20,10 @@
 
 package org.gsac.gsl.metadata;
 
+
 import org.gsac.gsl.*;
-import org.gsac.gsl.output.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
 
 import java.io.IOException;
 
@@ -59,25 +60,34 @@ public class PoliticalLocationMetadata extends GsacMetadata {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param gsacResource _more_
+     * @param outputHandler _more_
+     * @param pw _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public boolean addHtml(GsacRequest request, GsacResource gsacResource,
                            HtmlOutputHandler outputHandler, Appendable pw)
             throws IOException {
-        if(country!=null)  {
+        if (country != null) {
             pw.append(outputHandler.formEntry(request,
-                                              outputHandler.msgLabel("Country"),
-                                              country));
+                    outputHandler.msgLabel("Country"), country));
         }
 
-        if(state!=null)  {
+        if (state != null) {
             pw.append(outputHandler.formEntry(request,
-                                              outputHandler.msgLabel("State"),
-                                              state));
+                    outputHandler.msgLabel("State"), state));
         }
 
-        if(city!=null)  {
+        if (city != null) {
             pw.append(outputHandler.formEntry(request,
-                                              outputHandler.msgLabel("City"),
-                                              city));
+                    outputHandler.msgLabel("City"), city));
         }
 
         return true;

@@ -245,16 +245,28 @@ public abstract class SiteManager extends GsacResourceManager {
     /**
      * Create a single site from the given resultset
      *
+     *
+     * @param request _more_
      * @param results db results
      *
      * @return the site
      *
      * @throws Exception on badness
      */
-    public GsacSite makeSite(GsacRequest request, ResultSet results) throws Exception {
+    public GsacSite makeSite(GsacRequest request, ResultSet results)
+            throws Exception {
         return makeSite(results);
     }
 
+    /**
+     * _more_
+     *
+     * @param results _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
     public GsacSite makeSite(ResultSet results) throws Exception {
         notImplemented("makeSite needs to be implemented");
         return null;

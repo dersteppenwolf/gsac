@@ -19,6 +19,8 @@
  */
 
 package org.gsac.gsl.metadata.gnss;
+
+
 import org.gsac.gsl.metadata.*;
 
 
@@ -45,6 +47,7 @@ import java.util.List;
  */
 public class NtripMetadata extends GsacMetadata {
 
+    /** _more_          */
     public static final String TYPE_NTRIP = "gnss.ntrip";
 
     /** _more_ */
@@ -113,13 +116,25 @@ public class NtripMetadata extends GsacMetadata {
 
 
 
+    /**
+     * _more_
+     */
     public NtripMetadata() {
         super(TYPE_NTRIP);
     }
 
 
-    public static List<NtripMetadata> getMetadata(List<GsacMetadata> metadata) {
-        return (List<NtripMetadata>) findMetadata(metadata, NtripMetadata.class);
+    /**
+     * _more_
+     *
+     * @param metadata _more_
+     *
+     * @return _more_
+     */
+    public static List<NtripMetadata> getMetadata(
+            List<GsacMetadata> metadata) {
+        return (List<NtripMetadata>) findMetadata(metadata,
+                NtripMetadata.class);
     }
 
 
@@ -149,12 +164,12 @@ public class NtripMetadata extends GsacMetadata {
         }
         //Don't ask...
         contents = contents.replaceAll("<br>", "");
-        List<String>    toks = StringUtil.split(contents, "\n", false, false);
+        List<String> toks = StringUtil.split(contents, "\n", false, false);
 
         List<NtripMetadata> results = new ArrayList();
-        int             myCnt   = 0;
-        int             lineCnt = 0;
-        boolean         tooMany = toks.size() > 100;
+        int                 myCnt   = 0;
+        int                 lineCnt = 0;
+        boolean             tooMany = toks.size() > 100;
         for (; lineCnt < toks.size(); lineCnt++) {
             String line = toks.get(lineCnt).trim();
             if (lineCnt == 0) {
@@ -174,14 +189,16 @@ public class NtripMetadata extends GsacMetadata {
             if (textMetadata.equals("ENDSOURCETABLE")) {
                 break;
             }
-            List<String> cols = StringUtil.split(textMetadata, ";", false, false);
+            List<String> cols = StringUtil.split(textMetadata, ";", false,
+                                    false);
             if (cols.size() == 0) {
                 continue;
             }
             int    col  = 0;
             String type = cols.get(col++);
             if ( !type.equals(NTRIP_TYPE_STR)) {
-                if ( !type.equals(NTRIP_TYPE_NET) && !type.equals(NTRIP_TYPE_CAS)) {
+                if ( !type.equals(NTRIP_TYPE_NET)
+                        && !type.equals(NTRIP_TYPE_CAS)) {
                     errorBuff.append("Unknown type:" + textMetadata);
                 }
                 continue;

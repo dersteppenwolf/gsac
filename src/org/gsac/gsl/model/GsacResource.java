@@ -61,7 +61,8 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     private GsacRepositoryInfo repositoryInfo;
 
     /** The groups this site is part of */
-    private List<ResourceGroup> resourceGroups = new ArrayList<ResourceGroup>();
+    private List<ResourceGroup> resourceGroups =
+        new ArrayList<ResourceGroup>();
 
     /** site status */
     private ResourceStatus status;
@@ -82,18 +83,29 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private Date publishDate;
 
+    /** _more_          */
     private Date modificationDate;
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public Date getModificationDate() {
-		return modificationDate;
-	}
+        return modificationDate;
+    }
 
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
+    /**
+     * _more_
+     *
+     * @param modificationDate _more_
+     */
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
 
-	/**
+    /**
      * ctor
      */
     public GsacResource() {}

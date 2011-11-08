@@ -28,14 +28,25 @@ package org.gsac.gsl;
  */
 public abstract class GsacManager implements GsacConstants {
 
+    /** _more_          */
     private GsacRepository repository;
 
+    /**
+     * _more_
+     *
+     * @param repository _more_
+     */
     public GsacManager(GsacRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public GsacRepository getRepository() {
-       return repository;
+        return repository;
     }
 
 

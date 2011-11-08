@@ -26,73 +26,89 @@ package org.gsac.gsl.metadata;
 /**
  * Holds an array of doubles plus String names
  */
-public class TupleMetadata extends GsacMetadata {
-
-    /** _more_          */
-    public static final String TYPE_TUPLE = "tuple";
+public class Parameter {
 
     /** _more_ */
-    private double[] values;
+    private String id;
 
     /** _more_ */
-    private Parameter[] parameters;
+    private String name;
+
+    /** _more_ */
+    private String unit;
+
 
 
     /**
      * _more_
      *
-     *
-     * @param type _more_
-     * @param label _more_
      * @param values _more_
      * @param names _more_
-     * @param parameters _more_
+     *
+     * @param id _more_
+     * @param name _more_
+     * @param unit _more_
      */
-    public TupleMetadata(String type, String label, double[] values,
-                         Parameter[] parameters) {
-        super(type, label);
-        this.values     = values;
-        this.parameters = parameters;
+    public Parameter(String id, String name, String unit) {
+        this.id   = id;
+        this.name = name;
+        this.unit = unit;
     }
-
 
 
     /**
-     *  Set the Values property.
+     *  Set the Id property.
      *
-     *  @param value The new value for Values
+     *  @param value The new value for Id
      */
-    public void setValues(double[] value) {
-        values = value;
+    public void setId(String value) {
+        id = value;
     }
 
     /**
-     *  Get the Values property.
+     *  Get the Id property.
      *
-     *  @return The Values
+     *  @return The Id
      */
-    public double[] getValues() {
-        return values;
+    public String getId() {
+        return id;
     }
 
     /**
-     * Set the Parameters property.
+     *  Set the Name property.
      *
-     * @param value The new value for Parameters
+     *  @param value The new value for Name
      */
-    public void setParameters(Parameter[] value) {
-        parameters = value;
+    public void setName(String value) {
+        name = value;
     }
 
     /**
-     * Get the Parameters property.
+     *  Get the Name property.
      *
-     * @return The Parameters
+     *  @return The Name
      */
-    public Parameter[] getParameters() {
-        return parameters;
+    public String getName() {
+        return name;
     }
 
+    /**
+     *  Set the Unit property.
+     *
+     *  @param value The new value for Unit
+     */
+    public void setUnit(String value) {
+        unit = value;
+    }
+
+    /**
+     *  Get the Unit property.
+     *
+     *  @return The Unit
+     */
+    public String getUnit() {
+        return unit;
+    }
 
 
 }
