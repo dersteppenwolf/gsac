@@ -80,7 +80,7 @@ public class GnssStreamGroup extends MetadataGroup {
             
             buff.append("<br>");
             buff.append(HtmlUtil.space(3));
-            buff.append(HtmlUtil.makeToggleInline("", " " + ntripMetadata.getHtml(), false));
+            buff.append(HtmlUtil.makeToggleInline("", " NTRIP:" + ntripMetadata.getHtml(), false));
             buff.append("<br>");
         }
         if (cnt > 0) {
