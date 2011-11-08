@@ -20,6 +20,9 @@
 
 package org.gsac.gsl.output.file;
 
+
+
+
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
@@ -56,6 +59,10 @@ public class RssFileOutputHandler extends GsacOutputHandler {
 
     /** _more_ */
     public static final String ATTR_RSS_VERSION = "version";
+    
+    /** _more_ */
+    public static final String ATTR_GEORSS_NS = "http://www.georss.org/georss";
+    public static final String PRFX_GEORSS_NS = "xmlns:georss";
 
     /** _more_ */
     public static final String TAG_RSS_RSS = "rss";
@@ -94,7 +101,7 @@ public class RssFileOutputHandler extends GsacOutputHandler {
 
     /** _more_ */
     SimpleDateFormat rssSdf =
-        new SimpleDateFormat("EEE dd, MMM yyyy HH:mm:ss Z");
+        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
 
 
     /**
@@ -128,13 +135,13 @@ public class RssFileOutputHandler extends GsacOutputHandler {
         PrintWriter pw = response.getPrintWriter();
         pw.append(XmlUtil.XML_HEADER + "\n");
         pw.append(XmlUtil.openTag(TAG_RSS_RSS,
-                                  XmlUtil.attrs(ATTR_RSS_VERSION, "2.0")));
-        pw.append(XmlUtil.openTag(TAG_RSS_CHANNEL));
+                                  XmlUtil.attrs(ATTR_RSS_VERSION, "2.0", PRFX_GEORSS_NS, ATTR_GEORSS_NS)) + "\n");
+        pw.append(XmlUtil.openTag(TAG_RSS_CHANNEL) + "\n");
         pw.append(XmlUtil.tag(TAG_RSS_TITLE, "",
                               getRepository().getRepositoryName()
                               + " resource results"));
         for (GsacFile resource : response.getFiles()) {
-            pw.append(XmlUtil.openTag(TAG_RSS_ITEM));
+            pw.append(XmlUtil.openTag(TAG_RSS_ITEM) + "\n");
             if (resource.getPublishDate() != null) {
                 pw.append(
                     XmlUtil.tag(
@@ -144,7 +151,7 @@ public class RssFileOutputHandler extends GsacOutputHandler {
             String title =
                 resource.getType() + " - "
                 + IOUtil.getFileTail(resource.getFileInfo().getUrl());
-            pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title));
+            pw.append(XmlUtil.tag(TAG_RSS_TITLE, "", title.trim()));
             String url = getRepository().getAbsoluteUrl(request,
                              makeResourceViewUrl(resource));
             pw.append(XmlUtil.tag(TAG_RSS_LINK, "", url));
