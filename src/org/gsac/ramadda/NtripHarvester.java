@@ -20,7 +20,7 @@
 
 package org.gsac.ramadda;
 
-import org.gsac.gsl.util.NtripLine;
+import org.gsac.gsl.metadata.gnss.NtripMetadata;
 import org.ramadda.repository.*;
 import org.ramadda.repository.auth.User;
 import org.ramadda.repository.harvester.*;
@@ -201,8 +201,8 @@ public class NtripHarvester extends WebHarvester {
         System.err.println("url:" + url);
         System.err.println("Processing source table:" + url);
         StringBuffer errorBuff = new StringBuffer();
-        //Use NtripLine (from the GSL)  to read and parse the source table
-        List<NtripLine> lines = NtripLine.readSourceTable(url, errorBuff);
+        //Use NtripMetadata (from the GSL)  to read and parse the source table
+        List<NtripMetadata> lines = NtripMetadata.readSourceTable(url, errorBuff);
         if (lines == null) {
             logHarvesterError("UnavcoSiteManager.initPboSourceTable: Unable to read source table:"
                              + url + " " + errorBuff, null);
@@ -210,7 +210,7 @@ public class NtripHarvester extends WebHarvester {
         }
 
         Hashtable<String, Entry> siteMap = new Hashtable<String, Entry>();
-        for(NtripLine line: lines) {
+        for(NtripMetadata line: lines) {
             String siteId         = line.getIdentifier();
             if (siteId.indexOf("_") >= 0) {
                 siteId = siteId.substring(0, siteId.indexOf("_"));
