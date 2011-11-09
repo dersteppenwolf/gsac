@@ -396,8 +396,8 @@ public class XmlSiteLog {
         "realtime:requireAuthentication";
 
     /** _more_ */
-    public static final String TAG_REALTIME_ENCRIPTION =
-        "realtime:encription";
+    public static final String TAG_REALTIME_ENCRYPTION =
+        "realtime:encryption";
 
     /** _more_ */
     public static final String TAG_REALTIME_FEESAPPLY = "realtime:feesApply";

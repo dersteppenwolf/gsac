@@ -416,7 +416,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
               <realtime:network>OCRTN</realtime:network>
               <realtime:allowConnections>true</realtime:allowConnections>
               <realtime:requireAuthentication>true</realtime:requireAuthentication>
-              <realtime:encription>false</realtime:encription>
+              <realtime:encryption>false</realtime:encryption>
               <realtime:feesApply>false</realtime:feesApply>
               <realtime:bitrate>8000</realtime:bitrate>
               <realtime:carrierPhase>L1+L2</realtime:carrierPhase>
@@ -457,11 +457,15 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                           ntrip.getCountry()));
             pw.append(tag(XmlSiteLog.TAG_REALTIME_NETWORK,
                           ntrip.getNetwork()));
-            //????           pw.append(tag(XmlSiteLog.TAG_REALTIME_ALLOWCONNECTIONS, ntrip.get()));
+
+            //Hard code allowconnections
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_ALLOWCONNECTIONS, "true"));
+
             pw.append(tag(XmlSiteLog.TAG_REALTIME_REQUIREAUTHENTICATION,
                           ntrip.getAuthentication()));
-            //????            pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRIPTION, ntrip.get()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY, ntrip.getFee()));
+            //compression is same as encryption
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRYPTION, ntrip.getCompression()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY, ntrip.getFee().toLowerCase().equals("y")?"true":"false"));
             pw.append(tag(XmlSiteLog.TAG_REALTIME_BITRATE,
                           "" + ntrip.getBitRate()));
             pw.append(tag(XmlSiteLog.TAG_REALTIME_CARRIERPHASE,
