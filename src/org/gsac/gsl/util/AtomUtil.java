@@ -20,8 +20,6 @@
 
 package org.gsac.gsl.util;
 
-import java.util.TimeZone;
-
 
 import ucar.unidata.xml.XmlUtil;
 
@@ -32,6 +30,8 @@ import java.util.Date;
 
 import java.util.List;
 
+import java.util.TimeZone;
+
 
 /**
  * A collection of utilities for atom feeds xml.
@@ -41,6 +41,7 @@ import java.util.List;
 
 public class AtomUtil {
 
+    /** _more_          */
     public static final TimeZone TIMEZONE_DEFAULT =
         TimeZone.getTimeZone("UTC");
 
@@ -65,6 +66,8 @@ public class AtomUtil {
 
     /** _more_ */
     public static final String REL_IMAGE = "image";
+
+    /** _more_          */
     public static final String REL_ALTERNATE = "alternate";
 
 
@@ -142,9 +145,9 @@ public class AtomUtil {
      * @return _more_
      */
     public static String format(Date date) {
-        synchronized(atomSdf) {
+        synchronized (atomSdf) {
             //The sdf produces a time zone that isn't RFC3399 compatible so we just tack on the "Z"
-            return atomSdf.format(date)+"Z";
+            return atomSdf.format(date) + "Z";
         }
     }
 
@@ -224,15 +227,18 @@ public class AtomUtil {
     /**
      * _more_
      *
+     *
+     * @param id _more_
      * @return _more_
      */
     public static String openFeed(String id) {
-        return XmlUtil.openTag(TAG_FEED,
-                               XmlUtil.attrs(ATTR_XMLNS, XMLNS,
-                                             ATTR_XMLNS_GEORSS,
-                                             XMLNS_GEORSS)) +
-            XmlUtil.tag(TAG_ID,"",id) +
-            XmlUtil.tag(TAG_UPDATED,"",format(new Date()));
+        return XmlUtil.openTag(
+            TAG_FEED,
+            XmlUtil.attrs(
+                ATTR_XMLNS, XMLNS, ATTR_XMLNS_GEORSS,
+                XMLNS_GEORSS)) + XmlUtil.tag(TAG_ID, "", id)
+                               + XmlUtil.tag(
+                                   TAG_UPDATED, "", format(new Date()));
     }
 
     /**
@@ -268,21 +274,22 @@ public class AtomUtil {
      * @param updated _more_
      * @param summary _more_
      * @param content _more_
+     * @param author _more_
+     * @param authorUrl _more_
      * @param links _more_
      * @param extraStuff _more_
      *
      * @return _more_
      */
     public static String makeEntry(String title, String id, Date published,
-                                   Date updated, 
-                                   String summary,
-                                   String content, 
-                                   String author,
-                                   String authorUrl,
-                                   List<Link> links,
+                                   Date updated, String summary,
+                                   String content, String author,
+                                   String authorUrl, List<Link> links,
                                    String extraStuff) {
         StringBuffer sb = new StringBuffer();
-        if(updated == null) updated = published;
+        if (updated == null) {
+            updated = published;
+        }
         /* <entry>
    <title>Batman thoughts</title>
    <id>tag:xahlee.org,2006-09-09:015218</id>
@@ -316,16 +323,16 @@ public class AtomUtil {
             sb.append(XmlUtil.tag(TAG_SUMMARY, "",
                                   XmlUtil.getCdata(summary)));
         }
-        if (content != null && content.length()>0) {
+        if ((content != null) && (content.length() > 0)) {
             sb.append(XmlUtil.tag(TAG_CONTENT, "",
                                   XmlUtil.getCdata(content)));
         }
 
-        if(extraStuff!=null) {
+        if (extraStuff != null) {
             sb.append(extraStuff);
         }
 
-        if(links!=null) {
+        if (links != null) {
             for (Link link : links) {
                 sb.append(makeLink(link));
                 sb.append("\n");

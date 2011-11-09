@@ -36,6 +36,8 @@ import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
 
+import java.net.URL;
+
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
@@ -121,6 +123,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
             addSiteIdentification(pw, site);
             addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
+            addSiteStream(pw, site);
         }
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_IGSSITELOG));
         //Done
@@ -386,6 +389,109 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
 
         }
 
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteStream(PrintWriter pw, GsacSite site)
+            throws Exception {
+        /*
+          <realtime:publishedStream>
+              <realtime:ipAddress>132.239.152.74</realtime:ipAddress>
+              <realtime:port>6005</realtime:port>
+              <realtime:sampInterval>1</realtime:sampInterval>
+              <realtime:dataFormat>RTCM_3.0</realtime:dataFormat>
+              <realtime:ntripParams>
+              <realtime:mountPoint>WHYT0</realtime:mountPoint>
+              <realtime:sourceID>WHTY:Lake Forest, CA</realtime:sourceID>
+              <realtime:countryCode>USA</realtime:countryCode>
+              <realtime:network>OCRTN</realtime:network>
+              <realtime:allowConnections>true</realtime:allowConnections>
+              <realtime:requireAuthentication>true</realtime:requireAuthentication>
+              <realtime:encription>false</realtime:encription>
+              <realtime:feesApply>false</realtime:feesApply>
+              <realtime:bitrate>8000</realtime:bitrate>
+              <realtime:carrierPhase>L1+L2</realtime:carrierPhase>
+              <realtime:navSystem>GPS</realtime:navSystem>
+              <realtime:nmea></realtime:nmea>
+              <realtime:solution></realtime:solution>
+              </realtime:ntripParams>
+              <realtime:startDate/>
+          </realtime:publishedStream>
+        */
+        List<GsacMetadata> ntripMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(NtripMetadata.class));
+        int cnt = 0;
+        for (GsacMetadata metadata : ntripMetadata) {
+            NtripMetadata ntrip = (NtripMetadata) metadata;
+            if (cnt == 0) {
+                pw.append(
+                    XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
+            }
+            cnt++;
+            pw.append(
+                XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM));
+            URL url = new URL(ntrip.getUrlRoot());
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, url.getHost()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_PORT, "" + url.getPort()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_SAMPINTERVAL,
+                          "" + ntrip.getBitRate()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_DATAFORMAT,
+                          ntrip.getFormat()));
+            pw.append(XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
+
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_MOUNTPOINT,
+                          ntrip.getMountPoint()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_SOURCEID,
+                          ntrip.getIdentifier()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_COUNTRYCODE,
+                          ntrip.getCountry()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_NETWORK,
+                          ntrip.getNetwork()));
+            //????           pw.append(tag(XmlSiteLog.TAG_REALTIME_ALLOWCONNECTIONS, ntrip.get()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_REQUIREAUTHENTICATION,
+                          ntrip.getAuthentication()));
+            //????            pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRIPTION, ntrip.get()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY, ntrip.getFee()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_BITRATE,
+                          "" + ntrip.getBitRate()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_CARRIERPHASE,
+                          ntrip.getCarrier()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_NAVSYSTEM,
+                          ntrip.getNavSystem()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_NMEA,
+                          "" + ntrip.getNmea()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_SOLUTION,
+                          "" + ntrip.getSolution()));
+            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
+            pw.append(
+                XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM));
+        }
+        if (cnt > 0) {
+            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
+        }
+
+    }
+
+    /**
+     * _more_
+     *
+     * @param tag _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    private String tag(String tag, String contents) {
+        return XmlUtil.tag(tag, "", contents);
     }
 
     /**

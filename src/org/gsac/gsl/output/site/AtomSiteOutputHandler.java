@@ -35,13 +35,14 @@ import org.w3c.dom.*;
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
 
 
 import java.text.DateFormat;
 
 import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -90,10 +91,12 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
         response.setReturnFilename("sites.xml");
         response.startResponse(GsacResponse.MIME_ATOM);
         PrintWriter pw = response.getPrintWriter();
-        pw.append(AtomUtil.openFeed(getRepository().getAbsoluteUrl(request, request.getRequestURI())));
+        pw.append(AtomUtil.openFeed(getRepository().getAbsoluteUrl(request,
+                request.getRequestURI())));
         pw.append(AtomUtil.makeTitle(getRepository().getRepositoryName()
                                      + " ATOM Site Feed"));
-        pw.append(AtomUtil.makeLink(getRepository().getAbsoluteUrl(request, request.toString())));
+        pw.append(AtomUtil.makeLink(getRepository().getAbsoluteUrl(request,
+                request.toString())));
         for (GsacSite site : response.getSites()) {
             String url = getRepository().getAbsoluteUrl(request,
                              makeResourceViewUrl(site));
@@ -106,17 +109,14 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
                 pw.append(XmlUtil.tag(TAG_RSS_GEOLON, "",
                                       "" + el.getLongitude()));
                                       }*/
-            List<AtomUtil.Link> links  = new ArrayList<AtomUtil.Link>();
+            List<AtomUtil.Link> links = new ArrayList<AtomUtil.Link>();
             links.add(new AtomUtil.Link(AtomUtil.REL_ALTERNATE, url));
-            pw.append(AtomUtil.makeEntry(site.getShortName(),
-                                         url,
+            pw.append(AtomUtil.makeEntry(site.getShortName(), url,
                                          site.getPublishDate(),
-                                         site.getToDate(), 
-                                         site.getLabel(),
-                                         site.getShortName(), 
-                                         "gsac",
-                                         "http://www.unavco.org", 
-                                         links, null));
+                                         site.getToDate(), site.getLabel(),
+                                         site.getShortName(), "gsac",
+                                         "http://www.unavco.org", links,
+                                         null));
         }
         pw.append(AtomUtil.closeFeed());
         response.endResponse();

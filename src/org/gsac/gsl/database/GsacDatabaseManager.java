@@ -334,41 +334,25 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      * get number of connections
      *
      * @return number of connections
-     *
-     * @throws nothing
      */
     public int getConnectionCount() {
-
         return connectionCnt;
-
     }
 
 
     /**
      * increment number of connections
-     *
-     * @return nothing
-     *
-     * @throws nothing
      */
     public void incrConnectionCount() {
-
         connectionCnt++;
-
     }
 
 
     /**
      * decrement number of connections
-     *
-     * @return nothing
-     *
-     * @throws nothing
      */
     public void decrConnectionCount() {
-
         connectionCnt--;
-
     }
 
 

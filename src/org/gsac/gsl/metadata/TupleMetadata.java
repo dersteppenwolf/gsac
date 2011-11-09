@@ -28,7 +28,7 @@ package org.gsac.gsl.metadata;
  */
 public class TupleMetadata extends GsacMetadata {
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_TUPLE = "tuple";
 
     /** _more_ */

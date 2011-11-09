@@ -352,12 +352,22 @@ public class XmlSiteLog {
     public static final String TAG_REALTIME_PORT = "realtime:port";
 
     /** _more_ */
+    public static final String TAG_REALTIME_NMEA = "realtime:nmea";
+
+    /** _more_ */
+    public static final String TAG_REALTIME_SOLUTION = "realtime:solution";
+
+    /** _more_ */
     public static final String TAG_REALTIME_SAMPINTERVAL =
         "realtime:sampInterval";
 
     /** _more_ */
     public static final String TAG_REALTIME_DATAFORMAT =
         "realtime:dataFormat";
+
+    /** _more_ */
+    public static final String TAG_REALTIME_NTRIPPARAMS =
+        "realtime:ntripParams";
 
     /** _more_ */
     public static final String TAG_REALTIME_NTRIPMOUNT =

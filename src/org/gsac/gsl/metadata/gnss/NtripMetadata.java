@@ -47,9 +47,10 @@ import java.util.List;
  */
 public class NtripMetadata extends GsacMetadata {
 
+    /** _more_ */
     private static final String COL_DELIMITER = ";";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_NTRIP = "gnss.ntrip";
 
     /** _more_ */
@@ -65,7 +66,7 @@ public class NtripMetadata extends GsacMetadata {
     private String mountPoint;
 
     /** _more_ */
-    private String feedUrl;
+    private String urlRoot;
 
     /** _more_ */
     private String identifier;
@@ -125,23 +126,19 @@ public class NtripMetadata extends GsacMetadata {
         super(TYPE_NTRIP);
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getHtml() {
-        return 
-            format + COL_DELIMITER + 
-            formatDetails + COL_DELIMITER + 
-            carrier + COL_DELIMITER + 
-            navSystem + COL_DELIMITER + 
-            network + COL_DELIMITER + 
-            country + COL_DELIMITER + 
-            latitude + COL_DELIMITER + 
-            longitude + COL_DELIMITER + 
-            nmea + COL_DELIMITER + 
-            solution + COL_DELIMITER + 
-            generator + COL_DELIMITER + 
-            compression + COL_DELIMITER + 
-            authentication + COL_DELIMITER + 
-            fee + COL_DELIMITER + 
-            bitRate;
+        return format + COL_DELIMITER + formatDetails + COL_DELIMITER
+               + carrier + COL_DELIMITER + navSystem + COL_DELIMITER
+               + network + COL_DELIMITER + country + COL_DELIMITER + latitude
+               + COL_DELIMITER + longitude + COL_DELIMITER + nmea
+               + COL_DELIMITER + solution + COL_DELIMITER + generator
+               + COL_DELIMITER + compression + COL_DELIMITER + authentication
+               + COL_DELIMITER + fee + COL_DELIMITER + bitRate;
     }
 
 
@@ -212,8 +209,8 @@ public class NtripMetadata extends GsacMetadata {
             }
 
 
-            List<String> cols = StringUtil.split(textMetadata, COL_DELIMITER, false,
-                                    false);
+            List<String> cols = StringUtil.split(textMetadata, COL_DELIMITER,
+                                    false, false);
             if (cols.size() == 0) {
                 continue;
             }
@@ -228,7 +225,7 @@ public class NtripMetadata extends GsacMetadata {
             }
             NtripMetadata line = new NtripMetadata();
             line.mountPoint = cols.get(col++);
-            line.feedUrl    = url + "/" + line.mountPoint;
+            line.urlRoot    = url;
             line.identifier = cols.get(col++).trim();
             if (line.identifier.length() == 0) {
                 line.identifier = line.mountPoint;
@@ -278,21 +275,32 @@ public class NtripMetadata extends GsacMetadata {
     }
 
     /**
-     * Set the FeedUrl property.
+     *  Set the UrlRoot property.
      *
-     * @param value The new value for FeedUrl
+     *  @param value The new value for UrlRoot
      */
-    public void setFeedUrl(String value) {
-        feedUrl = value;
+    public void setUrlRoot(String value) {
+        urlRoot = value;
     }
+
+    /**
+     *  Get the UrlRoot property.
+     *
+     *  @return The UrlRoot
+     */
+    public String getUrlRoot() {
+        return urlRoot;
+    }
+
+
 
     /**
      * Get the FeedUrl property.
      *
      * @return The FeedUrl
      */
-    public String getFeedUrl() {
-        return feedUrl;
+    public String getStreamUrl() {
+        return urlRoot + "/" + mountPoint;
     }
 
     /**

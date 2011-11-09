@@ -28,7 +28,7 @@ package org.gsac.gsl;
  */
 public abstract class GsacManager implements GsacConstants {
 
-    /** _more_          */
+    /** _more_ */
     private GsacRepository repository;
 
     /**

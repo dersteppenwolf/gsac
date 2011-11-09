@@ -83,7 +83,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private Date publishDate;
 
-    /** _more_          */
+    /** _more_ */
     private Date modificationDate;
 
 

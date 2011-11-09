@@ -71,7 +71,7 @@ public class GsacResponse {
     public static final String MIME_KML =
         "application/vnd.google-earth.kml+xml";
 
-    /** _more_          */
+    /** _more_ */
     public static final String MIME_KMZ = "application/vnd.google-earth.kmz";
 
     /** _more_ */
@@ -136,7 +136,7 @@ public class GsacResponse {
         if (request.get(GsacArgs.ARG_GZIP, false)) {
             mimeType = MIME_ZIP;
         }
-        System.err.println ("mime:" + mimeType);
+        System.err.println("mime:" + mimeType);
         response.setContentType(mimeType);
         response.setStatus(200);
     }
