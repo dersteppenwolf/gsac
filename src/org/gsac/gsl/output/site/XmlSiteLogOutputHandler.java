@@ -440,9 +440,18 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
             cnt++;
             pw.append(
                 XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM));
-            URL url = new URL(ntrip.getUrlRoot());
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, url.getHost()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_PORT, "" + url.getPort()));
+            //Check for a malformed URL
+            String ntripUrl = ntrip.getUrlRoot();
+            if(!(ntripUrl.startsWith("http:")||ntripUrl.startsWith("https:"))) {
+                ntripUrl = "http://" + ntripUrl;
+            }
+            try {
+                URL url = new URL(ntripUrl);
+                pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, url.getHost()));
+                pw.append(tag(XmlSiteLog.TAG_REALTIME_PORT, "" + url.getPort()));
+            } catch(java.net.MalformedURLException mue) {
+                pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, "Bad url: " + ntripUrl));
+            }
             pw.append(tag(XmlSiteLog.TAG_REALTIME_SAMPINTERVAL,
                           "" + ntrip.getBitRate()));
             pw.append(tag(XmlSiteLog.TAG_REALTIME_DATAFORMAT,

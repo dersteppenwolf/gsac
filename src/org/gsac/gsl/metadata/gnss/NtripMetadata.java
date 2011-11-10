@@ -249,7 +249,6 @@ public class NtripMetadata extends GsacMetadata {
 
 
 
-
             results.add(line);
         }
         return results;
