@@ -20,6 +20,8 @@
 
 package org.gsac.gsl.metadata.gnss;
 
+import org.gsac.gsl.*;
+import org.gsac.gsl.model.*;
 
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.output.*;
@@ -35,12 +37,14 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
 
+import java.io.*;
+
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.net.URL;
-import java.io.*;
 
 
 /**
@@ -52,15 +56,18 @@ import java.io.*;
 public class StreamMetadata extends GsacMetadata {
 
 
+    /** _more_          */
     public static final String TYPE_PUBLISHED = "published";
+
+    /** _more_          */
     public static final String TYPE_SITE = "site";
 
 
-    /** _more_ */
-    private String url;
-
+    /** _more_          */
     private String type = TYPE_PUBLISHED;
 
+    /** _more_ */
+    private String url;
 
     /** _more_ */
     private String format;
@@ -72,45 +79,85 @@ public class StreamMetadata extends GsacMetadata {
 
     /**
      * _more_
+     *
+     * @param that _more_
+     */
+    public StreamMetadata(StreamMetadata that) {
+        this.type    = that.type;
+        this.url     = that.url;
+        this.format  = that.format;
+        this.bitRate = that.bitRate;
+    }
+
+
+    /**
+     * _more_
      */
     public StreamMetadata() {
         //        super(TYPE_NTRIP);
     }
 
+    /**
+     * _more_
+     *
+     * @param type _more_
+     */
     public StreamMetadata(String type) {
         super(type);
     }
 
-    public void encode(PrintWriter pw, GsacOutputHandler outputHandler, String type) throws Exception {
-            String mainTag = XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM;
-            if(this.getType().equals(StreamMetadata.TYPE_SITE)) {
-                mainTag = XmlSiteLog.TAG_REALTIME_SITESTREAM;
-            }
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param outputHandler _more_
+     * @param type _more_
+     *
+     * @throws Exception _more_
+     */
+    public void encode(Appendable pw, GsacOutputHandler outputHandler,
+                       String type)
+            throws Exception {
+        String mainTag = XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM;
+        if (this.getType().equals(StreamMetadata.TYPE_SITE)) {
+            mainTag = XmlSiteLog.TAG_REALTIME_SITESTREAM;
+        }
 
-            pw.append(XmlUtil.openTag(mainTag));
+        pw.append(XmlUtil.openTag(mainTag));
 
-            String ntripUrl = this.getUrl();
-            if(ntripUrl.indexOf(":")<0) {
-                ntripUrl = "http://" + ntripUrl;
-            }
-            try {
-                URL url = new URL(ntripUrl);
-                pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, url.getHost()));
-                pw.append(tag(XmlSiteLog.TAG_REALTIME_PORT, "" + url.getPort()));
-            } catch(java.net.MalformedURLException mue) {
-                pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, "Bad url: " + ntripUrl));
-            }
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_SAMPINTERVAL,
-                          "" + this.getBitRate()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_DATAFORMAT,
+        String ntripUrl = this.getUrl();
+        if (ntripUrl.indexOf(":") < 0) {
+            ntripUrl = "http://" + ntripUrl;
+        }
+        try {
+            URL url = new URL(ntripUrl);
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, url.getHost()));
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_PORT, "" + url.getPort()));
+        } catch (java.net.MalformedURLException mue) {
+            pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS,
+                          "Bad url: " + ntripUrl));
+        }
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_SAMPINTERVAL,
+                      "" + this.getBitRate()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_DATAFORMAT, this.getFormat()));
 
-                          this.getFormat()));
-
-            encodeInner(pw, outputHandler, type);
-            pw.append(
-                      XmlUtil.closeTag(mainTag));
+        encodeInner(pw, outputHandler, type);
+        pw.append(XmlUtil.closeTag(mainTag));
     }
 
+
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param outputHandler _more_
+     * @param type _more_
+     *
+     * @throws Exception _more_
+     */
+    public void encodeInner(Appendable pw, GsacOutputHandler outputHandler,
+                            String type)
+            throws Exception {}
 
     /**
      * _more_
@@ -125,7 +172,13 @@ public class StreamMetadata extends GsacMetadata {
     }
 
 
-    public void encodeInner(PrintWriter pw, GsacOutputHandler outputHandler, String type) throws Exception {}
+    public boolean addHtml(GsacRequest request, GsacResource gsacResource,
+                           HtmlOutputHandler outputHandler, Appendable pw)
+            throws IOException {
+        pw.append(HtmlUtil.href(this.getUrl(),
+                                this.getUrl()));
+        return true;
+    }
 
 
 
@@ -143,41 +196,41 @@ public class StreamMetadata extends GsacMetadata {
     }
 
     /**
-       Set the Url property.
-
-       @param value The new value for Url
-    **/
-    public void setUrl (String value) {
-	url = value;
+     *  Set the Url property.
+     *
+     *  @param value The new value for Url
+     */
+    public void setUrl(String value) {
+        url = value;
     }
 
     /**
-       Get the Url property.
-
-       @return The Url
-    **/
-    public String getUrl () {
-	return url;
+     *  Get the Url property.
+     *
+     *  @return The Url
+     */
+    public String getUrl() {
+        return url;
     }
 
 
-/**
-Set the Type property.
+    /**
+     * Set the Type property.
+     *
+     * @param value The new value for Type
+     */
+    public void setType(String value) {
+        type = value;
+    }
 
-@param value The new value for Type
-**/
-public void setType (String value) {
-	type = value;
-}
-
-/**
-Get the Type property.
-
-@return The Type
-**/
-public String getType () {
-	return type;
-}
+    /**
+     * Get the Type property.
+     *
+     * @return The Type
+     */
+    public String getType() {
+        return type;
+    }
 
     /**
      * Set the Format property.

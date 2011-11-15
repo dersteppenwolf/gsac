@@ -427,18 +427,21 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
               <realtime:startDate/>
           </realtime:publishedStream>
         */
-        List<GsacMetadata> ntripMetadata =
+        GsacMetadata.debug = true;
+        System.err.println("Finding metadata");
+        List<GsacMetadata> streamMetadata =
             site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(NtripMetadata.class));
+                new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
+        GsacMetadata.debug = false;
         int cnt = 0;
-        for (GsacMetadata metadata : ntripMetadata) {
-            NtripMetadata ntrip = (NtripMetadata) metadata;
+        for (GsacMetadata metadata : streamMetadata) {
+            StreamMetadata stream = (StreamMetadata) metadata;
             if (cnt == 0) {
                 pw.append(
                     XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
             }
             cnt++;
-            ntrip.encode(pw, this,"xmlsitelog");
+            stream.encode(pw, this,"xmlsitelog");
         }
         if (cnt > 0) {
             pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));

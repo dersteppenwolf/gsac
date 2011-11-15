@@ -21,10 +21,12 @@
 package org.gsac.gsl.metadata.gnss;
 
 
+import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.model.*;
+
 import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
-import ucar.unidata.xml.XmlUtil;
 
 
 import ucar.unidata.util.DateUtil;
@@ -35,14 +37,17 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
+import ucar.unidata.xml.XmlUtil;
+
+import java.io.*;
+
+import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import java.net.URL;
-import java.io.*;
 
 /**
  *
@@ -129,6 +134,19 @@ public class NtripMetadata extends StreamMetadata {
     /**
      * _more_
      *
+     * @param args _more_
+     */
+    public static void main(String[] args) {
+
+        System.err.println(
+            NtripMetadata.class.isAssignableFrom(StreamMetadata.class));
+        System.err.println(
+            StreamMetadata.class.isAssignableFrom(NtripMetadata.class));
+    }
+
+    /**
+     * _more_
+     *
      * @return _more_
      */
     public String getHtml() {
@@ -138,7 +156,7 @@ public class NtripMetadata extends StreamMetadata {
                + COL_DELIMITER + longitude + COL_DELIMITER + nmea
                + COL_DELIMITER + solution + COL_DELIMITER + generator
                + COL_DELIMITER + compression + COL_DELIMITER + authentication
-            + COL_DELIMITER + fee + COL_DELIMITER + getBitRate();
+               + COL_DELIMITER + fee + COL_DELIMITER + getBitRate();
     }
 
 
@@ -155,8 +173,18 @@ public class NtripMetadata extends StreamMetadata {
                 NtripMetadata.class);
     }
 
-
-    public void encodeInner(PrintWriter pw, GsacOutputHandler outputHandler, String type) throws Exception {
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param outputHandler _more_
+     * @param type _more_
+     *
+     * @throws Exception _more_
+     */
+    public void encodeInner(Appendable pw, GsacOutputHandler outputHandler,
+                            String type)
+            throws Exception {
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
 
         pw.append(tag(XmlSiteLog.TAG_REALTIME_MOUNTPOINT,
@@ -165,8 +193,7 @@ public class NtripMetadata extends StreamMetadata {
                       this.getIdentifier()));
         pw.append(tag(XmlSiteLog.TAG_REALTIME_COUNTRYCODE,
                       this.getCountry()));
-        pw.append(tag(XmlSiteLog.TAG_REALTIME_NETWORK,
-                      this.getNetwork()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_NETWORK, this.getNetwork()));
 
         //Hard code allowconnections
         pw.append(tag(XmlSiteLog.TAG_REALTIME_ALLOWCONNECTIONS, "true"));
@@ -174,21 +201,37 @@ public class NtripMetadata extends StreamMetadata {
         pw.append(tag(XmlSiteLog.TAG_REALTIME_REQUIREAUTHENTICATION,
                       this.getAuthentication()));
         //compression is same as encryption
-        pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRYPTION, this.getCompression()));
-        pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY, this.getFee().toLowerCase().equals("y")?"true":"false"));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRYPTION,
+                      this.getCompression()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY,
+                      this.getFee().toLowerCase().equals("y")
+                      ? "true"
+                      : "false"));
         pw.append(tag(XmlSiteLog.TAG_REALTIME_BITRATE,
                       "" + this.getBitRate()));
         pw.append(tag(XmlSiteLog.TAG_REALTIME_CARRIERPHASE,
                       this.getCarrier()));
         pw.append(tag(XmlSiteLog.TAG_REALTIME_NAVSYSTEM,
                       this.getNavSystem()));
-        pw.append(tag(XmlSiteLog.TAG_REALTIME_NMEA,
-                      "" + this.getNmea()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_NMEA, "" + this.getNmea()));
         pw.append(tag(XmlSiteLog.TAG_REALTIME_SOLUTION,
                       "" + this.getSolution()));
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
     }
 
+
+    public boolean addHtml(GsacRequest request, GsacResource gsacResource,
+                           HtmlOutputHandler outputHandler, Appendable pw)
+        throws IOException {
+        super.addHtml(request, gsacResource, outputHandler, pw);
+
+        pw.append("<br>");
+        pw.append(HtmlUtil.space(3));
+        pw.append(HtmlUtil.makeToggleInline("",
+                                            " STREAM:" + this.getHtml(), false));
+        pw.append("<br>");
+        return true;
+    }
 
 
 

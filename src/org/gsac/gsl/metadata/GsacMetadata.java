@@ -188,9 +188,15 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
                 //            } else if (metadata.getClass().isAssignableFrom(c)) {
             } else if (c.isAssignableFrom(metadata.getClass())) {
                 result.add(metadata);
+            } else {
+                if(debug) {
+                    System.err.println("Not:" + c.getName() + " " + metadata.getClass().getName());
+                }
             }
         }
     }
+
+    public static boolean debug = false;
 
     /**
      * _more_
@@ -298,7 +304,9 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
                                   List<GsacMetadata> result) {
             if (metadata.getClass().equals(theClass)) {
                 result.add(metadata);
-            }
+            } else if (theClass.isAssignableFrom(metadata.getClass())) {
+                result.add(metadata);
+            } 
         }
     }
 }
