@@ -22,6 +22,9 @@ package org.gsac.gsl.metadata.gnss;
 
 
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.output.*;
+import org.gsac.gsl.util.*;
+import ucar.unidata.xml.XmlUtil;
 
 
 import ucar.unidata.util.DateUtil;
@@ -38,6 +41,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
+import java.net.URL;
+import java.io.*;
 
 /**
  *
@@ -45,7 +50,7 @@ import java.util.List;
  * @author IDV Development Team
  * @version $Revision: 1.3 $
  */
-public class NtripMetadata extends GsacMetadata {
+public class NtripMetadata extends StreamMetadata {
 
     /** _more_ */
     private static final String COL_DELIMITER = ";";
@@ -71,8 +76,6 @@ public class NtripMetadata extends GsacMetadata {
     /** _more_ */
     private String identifier;
 
-    /** _more_ */
-    private String format;
 
     /** _more_ */
     private String formatDetails;
@@ -113,9 +116,6 @@ public class NtripMetadata extends GsacMetadata {
     /** _more_ */
     private String fee;
 
-    /** _more_ */
-    private int bitRate;
-
 
 
 
@@ -132,13 +132,13 @@ public class NtripMetadata extends GsacMetadata {
      * @return _more_
      */
     public String getHtml() {
-        return format + COL_DELIMITER + formatDetails + COL_DELIMITER
+        return getFormat() + COL_DELIMITER + formatDetails + COL_DELIMITER
                + carrier + COL_DELIMITER + navSystem + COL_DELIMITER
                + network + COL_DELIMITER + country + COL_DELIMITER + latitude
                + COL_DELIMITER + longitude + COL_DELIMITER + nmea
                + COL_DELIMITER + solution + COL_DELIMITER + generator
                + COL_DELIMITER + compression + COL_DELIMITER + authentication
-               + COL_DELIMITER + fee + COL_DELIMITER + bitRate;
+            + COL_DELIMITER + fee + COL_DELIMITER + getBitRate();
     }
 
 
@@ -154,6 +154,41 @@ public class NtripMetadata extends GsacMetadata {
         return (List<NtripMetadata>) findMetadata(metadata,
                 NtripMetadata.class);
     }
+
+
+    public void encodeInner(PrintWriter pw, GsacOutputHandler outputHandler, String type) throws Exception {
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
+
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_MOUNTPOINT,
+                      this.getMountPoint()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_SOURCEID,
+                      this.getIdentifier()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_COUNTRYCODE,
+                      this.getCountry()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_NETWORK,
+                      this.getNetwork()));
+
+        //Hard code allowconnections
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_ALLOWCONNECTIONS, "true"));
+
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_REQUIREAUTHENTICATION,
+                      this.getAuthentication()));
+        //compression is same as encryption
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRYPTION, this.getCompression()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY, this.getFee().toLowerCase().equals("y")?"true":"false"));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_BITRATE,
+                      "" + this.getBitRate()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_CARRIERPHASE,
+                      this.getCarrier()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_NAVSYSTEM,
+                      this.getNavSystem()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_NMEA,
+                      "" + this.getNmea()));
+        pw.append(tag(XmlSiteLog.TAG_REALTIME_SOLUTION,
+                      "" + this.getSolution()));
+        pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
+    }
+
 
 
 
@@ -226,11 +261,12 @@ public class NtripMetadata extends GsacMetadata {
             NtripMetadata line = new NtripMetadata();
             line.mountPoint = cols.get(col++);
             line.urlRoot    = url;
+            line.setUrl(line.urlRoot + "/" + line.mountPoint);
             line.identifier = cols.get(col++).trim();
             if (line.identifier.length() == 0) {
                 line.identifier = line.mountPoint;
             }
-            line.format        = cols.get(col++);
+            line.setFormat(cols.get(col++));
             line.formatDetails = cols.get(col++);
             line.carrier       = cols.get(col++);
             line.navSystem     = cols.get(col++);
@@ -245,7 +281,7 @@ public class NtripMetadata extends GsacMetadata {
             line.compression    = cols.get(col++);
             line.authentication = cols.get(col++);
             line.fee            = cols.get(col++);
-            line.bitRate        = Integer.parseInt(cols.get(col++));
+            line.setBitRate(Integer.parseInt(cols.get(col++)));
 
 
 
@@ -292,16 +328,6 @@ public class NtripMetadata extends GsacMetadata {
     }
 
 
-
-    /**
-     * Get the FeedUrl property.
-     *
-     * @return The FeedUrl
-     */
-    public String getStreamUrl() {
-        return urlRoot + "/" + mountPoint;
-    }
-
     /**
      * Set the Identifier property.
      *
@@ -320,23 +346,6 @@ public class NtripMetadata extends GsacMetadata {
         return identifier;
     }
 
-    /**
-     * Set the Format property.
-     *
-     * @param value The new value for Format
-     */
-    public void setFormat(String value) {
-        format = value;
-    }
-
-    /**
-     * Get the Format property.
-     *
-     * @return The Format
-     */
-    public String getFormat() {
-        return format;
-    }
 
     /**
      * Set the FormatDetails property.
@@ -571,24 +580,5 @@ public class NtripMetadata extends GsacMetadata {
     public String getFee() {
         return fee;
     }
-
-    /**
-     * Set the BitRate property.
-     *
-     * @param value The new value for BitRate
-     */
-    public void setBitRate(int value) {
-        bitRate = value;
-    }
-
-    /**
-     * Get the BitRate property.
-     *
-     * @return The BitRate
-     */
-    public int getBitRate() {
-        return bitRate;
-    }
-
 
 }

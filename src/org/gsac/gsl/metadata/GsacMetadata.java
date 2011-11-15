@@ -182,7 +182,11 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
                 group.findMetadata(group.getMetadata(), c, result);
                 continue;
             }
+
             if (metadata.getClass().equals(c)) {
+                result.add(metadata);
+                //            } else if (metadata.getClass().isAssignableFrom(c)) {
+            } else if (c.isAssignableFrom(metadata.getClass())) {
                 result.add(metadata);
             }
         }

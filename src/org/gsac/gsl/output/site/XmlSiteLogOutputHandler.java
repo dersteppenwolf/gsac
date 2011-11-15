@@ -438,56 +438,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                     XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
             }
             cnt++;
-            pw.append(
-                XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM));
-            //Check for a malformed URL
-            String ntripUrl = ntrip.getUrlRoot();
-            if(!(ntripUrl.startsWith("http:")||ntripUrl.startsWith("https:"))) {
-                ntripUrl = "http://" + ntripUrl;
-            }
-            try {
-                URL url = new URL(ntripUrl);
-                pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, url.getHost()));
-                pw.append(tag(XmlSiteLog.TAG_REALTIME_PORT, "" + url.getPort()));
-            } catch(java.net.MalformedURLException mue) {
-                pw.append(tag(XmlSiteLog.TAG_REALTIME_IPADDRESS, "Bad url: " + ntripUrl));
-            }
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_SAMPINTERVAL,
-                          "" + ntrip.getBitRate()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_DATAFORMAT,
-                          ntrip.getFormat()));
-            pw.append(XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
-
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_MOUNTPOINT,
-                          ntrip.getMountPoint()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_SOURCEID,
-                          ntrip.getIdentifier()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_COUNTRYCODE,
-                          ntrip.getCountry()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_NETWORK,
-                          ntrip.getNetwork()));
-
-            //Hard code allowconnections
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_ALLOWCONNECTIONS, "true"));
-
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_REQUIREAUTHENTICATION,
-                          ntrip.getAuthentication()));
-            //compression is same as encryption
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_ENCRYPTION, ntrip.getCompression()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_FEESAPPLY, ntrip.getFee().toLowerCase().equals("y")?"true":"false"));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_BITRATE,
-                          "" + ntrip.getBitRate()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_CARRIERPHASE,
-                          ntrip.getCarrier()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_NAVSYSTEM,
-                          ntrip.getNavSystem()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_NMEA,
-                          "" + ntrip.getNmea()));
-            pw.append(tag(XmlSiteLog.TAG_REALTIME_SOLUTION,
-                          "" + ntrip.getSolution()));
-            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_NTRIPPARAMS));
-            pw.append(
-                XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_PUBLISHEDSTREAM));
+            ntrip.encode(pw, this,"xmlsitelog");
         }
         if (cnt > 0) {
             pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
