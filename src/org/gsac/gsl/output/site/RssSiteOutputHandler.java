@@ -61,7 +61,8 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
     public static final String TAG_RSS_RSS = "rss";
 
     /** _more_ */
-    public static final String ATTR_GEORSS_NS = "http://www.georss.org/georss";
+    public static final String ATTR_GEORSS_NS =
+        "http://www.georss.org/georss";
 
     /** _more */
     public static final String PRFX_GEORSS_NS = "xmlns:georss";
@@ -135,7 +136,9 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
 
         pw.append(XmlUtil.XML_HEADER + "\n");
         pw.append(XmlUtil.openTag(TAG_RSS_RSS,
-        		XmlUtil.attrs(ATTR_RSS_VERSION, "2.0", PRFX_GEORSS_NS, ATTR_GEORSS_NS)) + "\n");
+                                  XmlUtil.attrs(ATTR_RSS_VERSION, "2.0",
+                                      PRFX_GEORSS_NS,
+                                      ATTR_GEORSS_NS)) + "\n");
         pw.append(XmlUtil.openTag(TAG_RSS_CHANNEL) + "\n");
         pw.append(XmlUtil.tag(TAG_RSS_TITLE, "",
                               getRepository().getRepositoryName()

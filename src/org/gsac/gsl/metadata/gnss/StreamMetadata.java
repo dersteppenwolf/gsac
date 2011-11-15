@@ -20,10 +20,11 @@
 
 package org.gsac.gsl.metadata.gnss;
 
+
 import org.gsac.gsl.*;
-import org.gsac.gsl.model.*;
 
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.XmlSiteLog;
 
@@ -56,14 +57,14 @@ import java.util.List;
 public class StreamMetadata extends GsacMetadata {
 
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_PUBLISHED = "published";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_SITE = "site";
 
 
-    /** _more_          */
+    /** _more_ */
     private String type = TYPE_PUBLISHED;
 
     /** _more_ */
@@ -172,11 +173,22 @@ public class StreamMetadata extends GsacMetadata {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param gsacResource _more_
+     * @param outputHandler _more_
+     * @param pw _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public boolean addHtml(GsacRequest request, GsacResource gsacResource,
                            HtmlOutputHandler outputHandler, Appendable pw)
             throws IOException {
-        pw.append(HtmlUtil.href(this.getUrl(),
-                                this.getUrl()));
+        pw.append(HtmlUtil.href(this.getUrl(), this.getUrl()));
         return true;
     }
 

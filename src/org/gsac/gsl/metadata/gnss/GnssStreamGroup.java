@@ -75,8 +75,9 @@ public class GnssStreamGroup extends MetadataGroup {
         for (StreamMetadata streamMetadata :
                 StreamMetadata.getStreamMetadata(getMetadata())) {
             cnt++;
-            
-            streamMetadata.addHtml(request, gsacResource, outputHandler, buff);
+
+            streamMetadata.addHtml(request, gsacResource, outputHandler,
+                                   buff);
         }
         if (cnt > 0) {
             buff.append(HtmlUtil.formTableClose());

@@ -220,15 +220,27 @@ public class NtripMetadata extends StreamMetadata {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param gsacResource _more_
+     * @param outputHandler _more_
+     * @param pw _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public boolean addHtml(GsacRequest request, GsacResource gsacResource,
                            HtmlOutputHandler outputHandler, Appendable pw)
-        throws IOException {
+            throws IOException {
         super.addHtml(request, gsacResource, outputHandler, pw);
 
         pw.append("<br>");
         pw.append(HtmlUtil.space(3));
-        pw.append(HtmlUtil.makeToggleInline("",
-                                            " STREAM:" + this.getHtml(), false));
+        pw.append(HtmlUtil.makeToggleInline("", " STREAM:" + this.getHtml(),
+                                            false));
         pw.append("<br>");
         return true;
     }

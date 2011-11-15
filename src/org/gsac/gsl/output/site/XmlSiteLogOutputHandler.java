@@ -441,7 +441,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                     XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
             }
             cnt++;
-            stream.encode(pw, this,"xmlsitelog");
+            stream.encode(pw, this, "xmlsitelog");
         }
         if (cnt > 0) {
             pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
