@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+
+<!-- 
+       $Id: build.xml,v 1.10 2009/01/08 23:38:44 rt Exp $ 
+-->
+
+
+<project name="nees-www" default="ftp-test" basedir=".">
+
+	<description>
+		For more information, try: ant usage
+	</description>
+	
+	
+	<!-- =================================================================== -->
+	<!--   Global and Local settings                                         -->
+	<!-- =================================================================== -->
+	
+	<property file="build.properties" />
+	
+	<!-- =================================================================== -->
+	<!-- Initialization target                                               -->
+	<!-- =================================================================== -->
+
+	<target name="init" description="Initialize Properties">
+
+		<tstamp>
+		  <format property="year" pattern="yyyy"/>
+		</tstamp>
+		
+		<property name="build.log" value="${DSTAMP}-build.log" />
+		
+		<echo message="Initialize ${DSTAMP}"/>
+
+		<property name="archive.host" value="http://swave.ucsd.edu:8080"/>
+		<property name="datadate.from" value="2011-11-01"/>
+		<property name="datadate.to" value="2011-11-02"/>
+		<property name="site.group" value="BARD"/>
+		<property name="file.type" value="gnss.data.rinex.observation"/>
+		<property name="service.endpoint" value="/gsacws/gsacapi/file/search/files.xml"/>
+		<property name="service.url" 
+			value="${archive.host}${service.endpoint}?output=file.gsacxml&amp;file.datadate.from=${datadate.from}&amp;file.datadate.to=${datadate.to}&amp;site.group=${site.group}&amp;file.type=${file.type}"/>
+		<property name="service.result.file" value="q-${site.group}-${DSTAMP}.xml"/>
+		<echo message="Query: ${service.url}"/>
+		
+		<property name="userid" value="anonymous"/>
+		<property name="password" value="sopac@ucsd.edu"/>
+
+		<property name="target.dir" value="./gsacfiles"/>
+		
+	</target>
+
+	<target name="file-query" depends="init" description="Query Archive REST Service for Files">
+		<echo message="Querying archive..."/>
+		<get src="${service.url}" dest="${service.result.file}"/>
+		<echo message="Parsing GSAC XML ${service.result.file}"/>
+		<xslt style="file-gsac.xsl" in="${service.result.file}" out="out.xml">
+			<param name="dstamp" expression="${DSTAMP}"/>
+		</xslt>
+		<mkdir dir="${target.dir}"/>
+		
+	</target>
+	
+	<target name="xslt1-test" depends="init"  description="Test of generated XSLT">
+
+		<echo message="Parsing gsac filexml ..."/>
+		
+		<xslt style="file-gsac.xsl" in="${service.result.file}" out="out.xml">
+			<param name="dstamp" expression="${DSTAMP}"/>
+		</xslt>
+
+	</target>
+
+	<target name="ftp-test" depends="init" description="test of ftp task">
+
+		<echo message="get a file by ftp"/>
+
+		<mkdir dir="${target.dir}"/>
+
+		<!-- 
+			Note that the ftp task uses the dir attribute of the fileset
+			class to specify the local directory.  The remotedir attribute
+			is still required.
+		 -->
+<!--
+		<ftp server="garner.ucsd.edu" action="get" remotedir="pub/rinex/2011/306"
+				userid="anonymous"
+				password="hankr@ucsd.edu"
+				verbose="yes"
+				preserveLastModified="true">
+			<fileset dir="${target.dir}/pub/rinex/2011/306">
+				<include name="pkdb3060.11o.Z"/>
+			</fileset>
+		</ftp>
+-->
+		<ftp-get server="garner.ucsd.edu"
+			remotedir="pub/rinex/2011/306"
+			userid="${userid}"
+			password="${password}"
+			filesetref="ftp-files"/>
+		
+	</target>
+
+	<fileset id="ftp-files" dir="./gsacfiles/pub/rinex/2011/306">
+		<include name="pkdb3060.11o.Z"/>
+		<include name="pkdb3060.11d.Z"/>
+	</fileset>
+		
+	<macrodef name="ftp-get">
+		<attribute name="server"/>
+		<attribute name="remotedir"/>
+		<attribute name="userid"/>
+		<attribute name="password"/>
+		<attribute name="filesetref"/>
+			<sequential>
+				<echo message="remotedir: @{remotedir}"/>
+			<ftp server="@{server}" action="get" remotedir="@{remotedir}"
+					userid="@{userid}"
+					password="@{password}"
+					verbose="yes"
+					preserveLastModified="true">
+				<fileset refid="@{filesetref}"/>
+			</ftp>
+			</sequential>
+	</macrodef>
+		   	
+	<target name="get-test">
+
+		<get src="ftp://garner.ucsd.edu/pub/rinex/2001/001/"
+			dest="list.txt"
+			username="anonymous"
+			password="hankr@ucsd.edu"/>
+
+	</target>
+	
+	<target name="make-xml" depends="get-test">
+
+		<!-- The following is a way to make an xml file of the ftp listing. -->
+		<concat destfile="garner.xml" overwrite="yes">
+			<header>&lt;?xml version="1.0"?&gt;
+&lt;document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:type="xs:string" content-type="text/plain"&gt;</header>
+			<fileset file="list.txt"/>
+			<footer>&lt;/document&gt;
+</footer>
+		</concat>
+				
+	</target>
+
+	<!-- Parsing the ftp listing requires a 2.0 compatible parser. --> 
+	<target name="parse" depends="make-xml">
+	
+		<xslt style="parse.xsl" in="garner.xml" out="out.xml">
+			<classpath location="/home/admin/saxon9he.jar"/>
+			<factory name="net.sf.saxon.TransformerFactoryImpl"/>
+		</xslt>
+	</target>
+    
+    
+</project>

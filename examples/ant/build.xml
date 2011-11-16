@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<!-- 
+       $Id: build.xml,v 1.10 2009/01/08 23:38:44 rt Exp $ 
+-->
+
+
+<project name="gsacws" default="call-ftptask" basedir=".">
+
+	<description>
+		For more information, try: ant usage
+	</description>
+	
+	
+	<!-- =================================================================== -->
+	<!--   Global and Local settings                                         -->
+	<!-- =================================================================== -->
+	
+	<property file="build.properties" />
+	
+	<!-- =================================================================== -->
+	<!-- Initialization target                                               -->
+	<!-- =================================================================== -->
+
+	<target name="init" description="Initialize Properties">
+
+		<tstamp>
+		  <format property="year" pattern="yyyy"/>
+		</tstamp>
+		
+		<property name="build.log" value="${DSTAMP}-build.log" />
+		
+		<echo message="Initialize ${DSTAMP}"/>
+
+		<property name="archive.host" value="http://swave.ucsd.edu:8080"/>
+		<property name="datadate.from" value="2011-11-01"/>
+		<property name="datadate.to" value="2011-11-02"/>
+		<property name="site.group" value="BARD"/>
+		<property name="file.type" value="gnss.data.rinex.observation"/>
+		<property name="service.endpoint" value="/gsacws/gsacapi/file/search/files.xml"/>
+		<property name="service.url" 
+			value="${archive.host}${service.endpoint}?output=file.gsacxml&amp;file.datadate.from=${datadate.from}&amp;file.datadate.to=${datadate.to}&amp;site.group=${site.group}&amp;file.type=${file.type}"/>
+		<property name="service.result.file" value="q-${site.group}-${DSTAMP}.xml"/>
+		<property name="ant.make.ftp.task.file" value="build-${DTSTAMP}.xml"/>
+
+		<!--echo message="Query: ${service.url}"/ -->
+
+		<property name="userid" value="anonymous"/>
+		<property name="password" value="sopac@ucsd.edu"/>
+		<property name="target.dir" value="./gsacfiles"/>
+	</target>
+
+	<target name="file-query" depends="init" description="Query Archive REST Service for Files">
+		<echo message="Querying archive..."/>
+		<get src="${service.url}" dest="${service.result.file}"/>
+	</target>
+	
+	<target name="make-ftptask" depends="file-query"  description="Create an Ant task that will retrieve files.">
+
+		<echo message="Parsing GSAC XML ${service.result.file}"/>
+		<xslt style="gsac-to-ftptask.xsl" in="${service.result.file}" out="build-ftp.xml">
+			<param name="dstamp" expression="${DSTAMP}"/>
+			<param name="server" expression="garner.ucsd.edu"/>
+			<param name="userid" expression="${userid}"/>
+			<param name="password" expression="${password}"/>
+			<param name="remote-dir" expression="pub/rinex/2011/305"/>
+			<param name="dir" expression="./gsacfiles/pub/rinex/2011/305"/>
+		</xslt>
+		<mkdir dir="${target.dir}"/>
+
+	</target>
+	
+	<target name="call-ftptask" depends="make-ftptask">
+
+		<echo message="Antcall ftp task..."/>
+		<ant antfile="build-ftp.xml" />
+	</target>
+
+</project>
