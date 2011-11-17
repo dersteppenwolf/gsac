@@ -127,7 +127,8 @@ public class StreamMetadata extends GsacMetadata {
         pw.append(XmlUtil.openTag(mainTag));
 
         String ntripUrl = this.getUrl();
-        if (ntripUrl.indexOf(":") < 0) {
+        //Tack on a http: if there isn't anything
+        if (ntripUrl.indexOf("://") < 0) {
             ntripUrl = "http://" + ntripUrl;
         }
         try {
