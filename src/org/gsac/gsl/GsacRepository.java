@@ -1115,6 +1115,17 @@ public class GsacRepository implements GsacConstants {
             uri = uri.substring(0, uri.length() - 1);
         }
 
+
+        //Check for bots
+        if (repelRobots()) {
+            if (request.isSpider()) {
+                request.sendError(HttpServletResponse.SC_FORBIDDEN,
+                                  "No bots for now");
+                return;
+            }
+        }
+
+
         //TODO: What to do with a head request
         if (request.getMethod().toUpperCase().equals("HEAD")) {
             System.err.println("GSAC: got a  head request:" + uri);
@@ -1187,6 +1198,15 @@ public class GsacRepository implements GsacConstants {
         }
     }
 
+
+    /**
+     * Should we check block robots
+     *
+     * @return true by default
+     */
+    public boolean repelRobots() {
+        return true;
+    }
 
     /**
      * the GsacRepository holds all of its web content in the java jar files and
