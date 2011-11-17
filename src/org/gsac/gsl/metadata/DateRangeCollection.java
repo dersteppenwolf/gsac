@@ -20,9 +20,16 @@
 
 package org.gsac.gsl.metadata;
 
+import org.gsac.gsl.*;
+import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.*;
+
 
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.HtmlUtil;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +57,24 @@ public class DateRangeCollection extends GsacMetadata {
      */
     public void addDateRange(long date1, long date2) {
         dateRanges.add(new long[] { date1, date2 });
+    }
+
+    public boolean addHtml(GsacRequest request, GsacResource gsacResource,
+                           HtmlOutputHandler outputHandler, Appendable pw)
+            throws IOException {
+        if(dateRanges.size()==0) return true;
+        StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
+        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[]{HtmlUtil.b("From"),HtmlUtil.b("To")})));
+        for(long[]tuple: dateRanges) {
+            String from = outputHandler.formatDate(new Date(tuple[0]));
+            String to = outputHandler.formatDate(new Date(tuple[1]));
+            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[]{from,to})));
+        }
+        buff.append(HtmlUtil.formTableClose());
+        pw.append(outputHandler.formEntryTop(request,
+                                             outputHandler.msgLabel("Data Availability"),
+                                             HtmlUtil.makeShowHideBlock("", buff.toString(), false)));
+        return true;
     }
 
 
