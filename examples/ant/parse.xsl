@@ -1,3 +1,17 @@
+<?xml version="1.0" standalone="yes"?>
+
+<!-- $Id: -->
+
+<!-- 
+
+  This is an XSLT 2.0 script that parses an ftp directory list.
+  The idea is that a script can get a directory listing and 
+  compare with local files to determine what to download.
+  There may be features in the ant ftp task that also 
+  accomplish this....
+
+-->
+ 
 <xsl:stylesheet
   version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
