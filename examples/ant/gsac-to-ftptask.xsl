@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
-<!-- $Id: $ -->
+<!-- $Id$ -->
 
 <!--
      This script parses GSAC XML to find the file information.
