@@ -1,3 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
+<!-- $Id: $ -->
+
+<!--
+     This script parses GSAC XML to find the file information.
+     It is an example of using an Ant task to process the GSAC 
+     service request, create a build file that will download the 
+     files in the query result.  
+-->
+
 <xsl:stylesheet
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
