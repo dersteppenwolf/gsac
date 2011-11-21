@@ -116,6 +116,7 @@ public abstract class SiteManager extends GsacResourceManager {
         List<String> tableNames = new ArrayList<String>();
         Clause       clause     = getSiteClause(request, response,
                                       tableNames);
+        //        System.err.println("Site clauses:" + clause);
         Statement statement = getDatabaseManager().select(columns,
                                   clause.getTableNames(tableNames), clause,
                                   getSiteSelectSuffix(request), -1);
