@@ -2699,6 +2699,17 @@ public class GsacRepository implements GsacConstants {
         return getUrl(URL_HTDOCS_BASE + "/icons" + icon);
     }
 
+    /**
+     * _more_
+     *
+     * @param path _more_
+     *
+     * @return _more_
+     */
+    public String htdocsUrl(String path) {
+        return getUrl(URL_HTDOCS_BASE + path);
+    }
+
 
     /**
      * preprend the url base to  the given path

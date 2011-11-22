@@ -143,12 +143,12 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         /*
              c1                c2
              |-----------------|
-         s               e
-         s                         e
-                s        e
-                s                  e
-      s   e
-                                   s   e          
+         S               E
+         S                         E
+                S        E
+                S                  E
+      S   E
+                                   S   E          
         */
 
         Date s = dateRange[0];
