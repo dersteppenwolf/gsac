@@ -64,7 +64,7 @@ public class RssFileOutputHandler extends GsacOutputHandler {
     public static final String ATTR_GEORSS_NS =
         "http://www.georss.org/georss";
 
-    /** _more_          */
+    /** _more_ */
     public static final String PRFX_GEORSS_NS = "xmlns:georss";
 
     /** _more_ */

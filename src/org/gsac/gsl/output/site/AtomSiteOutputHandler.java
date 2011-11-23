@@ -113,7 +113,8 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
             links.add(new AtomUtil.Link(AtomUtil.REL_ALTERNATE, url));
             pw.append(AtomUtil.makeEntry(site.getShortName(), url,
                                          site.getPublishDate(),
-                                         site.getToDate(), site.getLabel(),
+                                         site.getToDate(), null, null,
+                                         site.getLabel(),
                                          site.getShortName(), "gsac",
                                          "http://www.unavco.org", links,
                                          null));

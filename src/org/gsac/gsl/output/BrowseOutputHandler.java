@@ -139,7 +139,8 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      *
      * @throws Exception on badness
      */
-    public void handleBrowseRequest(GsacRequest request,
+    @Override
+    public void handleRequestBrowse(GsacRequest request,
                                     GsacResponse response)
             throws Exception {
         List   things    = null;

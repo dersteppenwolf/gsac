@@ -130,7 +130,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      */
     public void addDateRangeClause(List<Clause> clauses, String column1,
                                    String column2, Date[] dateRange) {
-        if(column1.equals(column2)) {
+        if (column1.equals(column2)) {
             if (dateRange[0] != null) {
                 clauses.add(Clause.ge(column1, dateRange[0]));
             }
@@ -138,7 +138,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                 clauses.add(Clause.le(column2, dateRange[1]));
             }
             return;
-        } 
+        }
 
         /*
              c1                c2
@@ -148,7 +148,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                 S        E
                 S                  E
       S   E
-                                   S   E          
+                                   S   E
         */
 
         Date s = dateRange[0];

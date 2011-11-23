@@ -20,17 +20,20 @@
 
 package org.gsac.gsl.metadata;
 
+
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 
-
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.HtmlUtil;
 
+
+import ucar.unidata.util.Misc;
+
 import java.io.IOException;
-import java.util.Date;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -59,21 +62,39 @@ public class DateRangeCollection extends GsacMetadata {
         dateRanges.add(new long[] { date1, date2 });
     }
 
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param gsacResource _more_
+     * @param outputHandler _more_
+     * @param pw _more_
+     *
+     * @return _more_
+     *
+     * @throws IOException _more_
+     */
     public boolean addHtml(GsacRequest request, GsacResource gsacResource,
                            HtmlOutputHandler outputHandler, Appendable pw)
             throws IOException {
-        if(dateRanges.size()==0) return true;
+        if (dateRanges.size() == 0) {
+            return true;
+        }
         StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[]{HtmlUtil.b("From"),HtmlUtil.b("To")})));
-        for(long[]tuple: dateRanges) {
+        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] {
+            HtmlUtil.b("From"),
+            HtmlUtil.b("To") })));
+        for (long[] tuple : dateRanges) {
             String from = outputHandler.formatDate(new Date(tuple[0]));
-            String to = outputHandler.formatDate(new Date(tuple[1]));
-            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[]{from,to})));
+            String to   = outputHandler.formatDate(new Date(tuple[1]));
+            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] { from,
+                    to })));
         }
         buff.append(HtmlUtil.formTableClose());
-        pw.append(outputHandler.formEntryTop(request,
-                                             outputHandler.msgLabel("Data Availability"),
-                                             HtmlUtil.makeShowHideBlock("", buff.toString(), false)));
+        pw.append(
+            outputHandler.formEntryTop(
+                request, outputHandler.msgLabel("Data Availability"),
+                HtmlUtil.makeShowHideBlock("", buff.toString(), false)));
         return true;
     }
 

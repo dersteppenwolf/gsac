@@ -189,13 +189,15 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
             } else if (c.isAssignableFrom(metadata.getClass())) {
                 result.add(metadata);
             } else {
-                if(debug) {
-                    System.err.println("Not:" + c.getName() + " " + metadata.getClass().getName());
+                if (debug) {
+                    System.err.println("Not:" + c.getName() + " "
+                                       + metadata.getClass().getName());
                 }
             }
         }
     }
 
+    /** _more_          */
     public static boolean debug = false;
 
     /**
@@ -306,7 +308,7 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
                 result.add(metadata);
             } else if (theClass.isAssignableFrom(metadata.getClass())) {
                 result.add(metadata);
-            } 
+            }
         }
     }
 }

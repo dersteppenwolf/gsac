@@ -1,22 +1,23 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
- * http://www.unavco.org
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at
- * your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
- * General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation,
- * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- */
+* Copyright 2008-2011 Jeff McWhirter/ramadda.org
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this 
+* software and associated documentation files (the "Software"), to deal in the Software 
+* without restriction, including without limitation the rights to use, copy, modify, 
+* merge, publish, distribute, sublicense, and/or sell copies of the Software, and to 
+* permit persons to whom the Software is furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all copies 
+* or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+* INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+* PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
+* FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+* OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+* DEALINGS IN THE SOFTWARE.
+*/
+
 
 package org.gsac.gsl.util;
 
@@ -35,13 +36,13 @@ import java.util.TimeZone;
 
 /**
  * A collection of utilities for atom feeds xml.
+ * NOTE: This is copied from the RAMADDA source. I couldn't deal with yet another jar
  *
- * @author IDV development team
  */
 
 public class AtomUtil {
 
-    /** _more_          */
+    /** _more_ */
     public static final TimeZone TIMEZONE_DEFAULT =
         TimeZone.getTimeZone("UTC");
 
@@ -61,15 +62,27 @@ public class AtomUtil {
     public static final String XMLNS_GEORSS = "http://www.georss.org/georss";
 
 
+
     /** _more_ */
     public static final String REL_SELF = "self";
 
     /** _more_ */
     public static final String REL_IMAGE = "image";
 
-    /** _more_          */
+    /** _more_ */
     public static final String REL_ALTERNATE = "alternate";
 
+    public static final String REL_ESIP_DOCUMENTATION = "http://esipfed.org/ns/discovery/1.1/documentation#";
+    public static final String REL_ESIP_BROWSE = "http://esipfed.org/ns/discovery/1.1/browse#";
+    public static final String REL_ESIP_METADATA = "http://esipfed.org/ns/discovery/1.1/metadata#";
+    public static final String REL_ESIP_DATA = "http://esipfed.org/ns/discovery/1.1/data#";
+
+
+
+
+    public static final String TAG_TIME_START = "time:start";
+
+    public static final String TAG_TIME_END = "time:end";
 
     /** _more_ */
     public static final String TAG_FEED = "feed";
@@ -151,6 +164,11 @@ public class AtomUtil {
         }
     }
 
+    public static String makeTimeRange(Date date1, Date date2) {
+        return XmlUtil.tag(TAG_TIME_START,"",format(date1)) +
+            XmlUtil.tag(TAG_TIME_END,"",format(date2));
+    }
+
 
     /**
      * _more_
@@ -183,15 +201,19 @@ public class AtomUtil {
      * @return _more_
      */
     public static String makeLink(Link link) {
-        if (link.title != null) {
-            return XmlUtil.tag(TAG_LINK,
-                               XmlUtil.attrs(ATTR_REL, link.rel, ATTR_HREF,
-                                             link.url, ATTR_TITLE,
-                                             link.title));
+        StringBuffer attrs = new StringBuffer();
+        if(link.mimeType!=null && link.mimeType.length()>0) {
+            attrs.append(XmlUtil.attrs(ATTR_TYPE, link.mimeType));
+        }
+        if(link.rel!=null && link.rel.length()>0) {
+            attrs.append(XmlUtil.attrs(ATTR_REL, link.rel));
+        }
+        if(link.title!=null && link.title.length()>0) {
+            attrs.append(XmlUtil.attrs(ATTR_TITLE, link.title));
         }
         return XmlUtil.tag(TAG_LINK,
-                           XmlUtil.attrs(ATTR_REL, link.rel, ATTR_HREF,
-                                         link.url));
+                           attrs+XmlUtil.attrs(ATTR_HREF, link.url));
+
     }
 
 
@@ -232,13 +254,15 @@ public class AtomUtil {
      * @return _more_
      */
     public static String openFeed(String id) {
-        return XmlUtil.openTag(
-            TAG_FEED,
-            XmlUtil.attrs(
-                ATTR_XMLNS, XMLNS, ATTR_XMLNS_GEORSS,
-                XMLNS_GEORSS)) + XmlUtil.tag(TAG_ID, "", id)
-                               + XmlUtil.tag(
-                                   TAG_UPDATED, "", format(new Date()));
+        String blobOfNamespaces =
+            " xmlns:opensearch=\"http://a9.com/-/spec/opensearch/1.1/\" xmlns:time=\"http://a9.com/-/opensearch/extensions/time/1.0/\"  xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gmi=\"http://www.isotc211.org/2005/gmi\" xmlns:gml=\"http://www.opengis.net/gml\" ";
+        return XmlUtil.openTag(TAG_FEED,
+                               XmlUtil.attrs(ATTR_XMLNS, XMLNS,
+                                             ATTR_XMLNS_GEORSS,
+                                             XMLNS_GEORSS) +
+                               blobOfNamespaces) +
+            XmlUtil.tag(TAG_ID, "", id) + 
+            XmlUtil.tag(TAG_UPDATED, "",format(new Date()));
     }
 
     /**
@@ -282,7 +306,8 @@ public class AtomUtil {
      * @return _more_
      */
     public static String makeEntry(String title, String id, Date published,
-                                   Date updated, String summary,
+                                   Date updated, Date fromDate, Date toDate,
+                                   String summary,
                                    String content, String author,
                                    String authorUrl, List<Link> links,
                                    String extraStuff) {
@@ -316,11 +341,14 @@ public class AtomUtil {
             sb.append(XmlUtil.tag(TAG_UPDATED, "", format(updated)));
         }
 
+        if(fromDate!=null && toDate!=null) {
+            sb.append(makeTimeRange(fromDate, toDate));
+        }
         sb.append(makeAuthor(author, authorUrl));
 
 
         if ((summary != null) && (summary.length() > 0)) {
-            sb.append(XmlUtil.tag(TAG_SUMMARY, "",
+            sb.append(XmlUtil.tag(TAG_SUMMARY, XmlUtil.attrs(ATTR_TYPE,"html"),
                                   XmlUtil.getCdata(summary)));
         }
         if ((content != null) && (content.length() > 0)) {
@@ -363,6 +391,8 @@ public class AtomUtil {
         /** _more_ */
         private String title;
 
+        private String  mimeType;
+
         /**
          * _more_
          *
@@ -390,9 +420,14 @@ public class AtomUtil {
          * @param title _more_
          */
         public Link(String rel, String url, String title) {
+            this(rel, url, title, null);
+        }
+
+        public Link(String rel, String url, String title, String mimeType) {
             this.rel   = rel;
             this.url   = url;
             this.title = title;
+            this.mimeType = mimeType;
         }
     }
 }

@@ -71,6 +71,11 @@ import javax.servlet.http.*;
  * the method:{@link #handleRequest(GsacRequest)}
  * This serves to dispatch the request to the appropriate handler
  *
+ * The repository has one or more GsacResourceManager-s. Each of these handle
+ * a certain ResourceClass of resources (e.g., GsacSite.CLASS_SITE, GsacFile.CLASS_FILE).
+ * The resourceManager creates a set of GsacOutputHandler-s. These
+ * do t he work of encoding the results (e.g., into HTML, XML, CSV, etc).
+ *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
 public class GsacRepository implements GsacConstants {
@@ -118,25 +123,26 @@ public class GsacRepository implements GsacConstants {
     /** property for port we run on */
     private static final String PROP_PORT = "gsac.server.port";
 
-
-
     /** the servlet */
     private GsacServlet servlet;
 
     /** local directory to write stuff to */
     private File gsacDirectory;
 
+    /** _more_          */
+    private String userAgent;
+
     /** the database manager */
     private GsacDatabaseManager databaseManager;
 
-    /** _more_ */
+    /** handles logging */
     private GsacLogManager logManager;
 
-    /** _more_ */
+    /** mapping from ResourceClass to GsacResourceManager. */
     private Hashtable<ResourceClass, GsacResourceManager> resourceManagerMap =
         new Hashtable<ResourceClass, GsacResourceManager>();
 
-    /** _more_ */
+    /** All the resource managers */
     private List<GsacResourceManager> resourceManagers =
         new ArrayList<GsacResourceManager>();
 
@@ -160,7 +166,7 @@ public class GsacRepository implements GsacConstants {
     /** general properties */
     private Properties properties = new Properties();
 
-    /** _more_ */
+    /** from the cmd line_ */
     private Properties cmdLineProperties;
 
     /** Make a cached list of servers. Cache for 6 hours */
@@ -173,8 +179,6 @@ public class GsacRepository implements GsacConstants {
      */
     private String urlBase;
 
-    /** _more_ */
-    private String userAgent;
 
     /** This repositories information */
     private GsacRepositoryInfo myInfo;
@@ -190,7 +194,7 @@ public class GsacRepository implements GsacConstants {
     /** reference to html output handler */
     private HtmlOutputHandler htmlOutputHandler;
 
-    /** _more_ */
+    /** handles the browse pages */
     private BrowseOutputHandler browseOutputHandler;
 
     /** Map of vocab id (usually the url argument id) to the vocabulary */
@@ -207,6 +211,7 @@ public class GsacRepository implements GsacConstants {
      * noop constructor
      */
     public GsacRepository() {
+        //This says not to popup a dialog box
         LogUtil.setTestMode(true);
     }
 
@@ -217,20 +222,12 @@ public class GsacRepository implements GsacConstants {
      * @param servlet the servlet
      */
     public GsacRepository(GsacServlet servlet) {
+        this();
         this.servlet = servlet;
-        LogUtil.setTestMode(true);
     }
 
 
 
-    /**
-     * Get the servlet
-     *
-     * @return The servlet
-     */
-    public GsacServlet getServlet() {
-        return servlet;
-    }
 
 
     /**
@@ -266,6 +263,7 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
+        //Get the html header and footer
         mobileHeader =
             IOUtil.readContents(GSAC_PATH_RESOURCES + "/mobileheader.html",
                                 mobileHeader);
@@ -289,6 +287,7 @@ public class GsacRepository implements GsacConstants {
             htmlFooter = replaceMacros(htmlFooter);
         }
 
+        //Load in the phrases
         String[] phraseFiles = { GSAC_PATH_RESOURCES + "/phrases.properties",
                                  getLocalResourcePath(
                                      "/phrases.properties") };
@@ -299,7 +298,7 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        //Now look around the tomcat environment
+        //Now look around the tomcat environment for a configuration file
         //System.err.println("System.properties:" + System.getProperties());
         //System.err.println("System.env:" + System.getenv());
         String catalinaBase = null;
@@ -329,6 +328,7 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
+        //See if we have a local directory to write the logs to
         String dir = getProperty(PROP_GSACDIRECTORY, (String) null);
         if (dir != null) {
             gsacDirectory = new File(dir);
@@ -370,8 +370,12 @@ public class GsacRepository implements GsacConstants {
                 properties.load(new FileInputStream(localPropertiesFile));
             }
         }
+        //Create the resource managers
         initResourceManagers();
+
+        //Create the output handlers
         initOutputHandlers();
+
         getRepositoryInfo();
     }
 
@@ -384,23 +388,173 @@ public class GsacRepository implements GsacConstants {
         getResourceManager(GsacFile.CLASS_FILE);
     }
 
+
+
+    /**
+     * _more_
+     *
+     * @param resourceClass Type of resource
+     *
+     * @return _more_
+     */
+    public GsacResourceManager getResourceManager(
+            ResourceClass resourceClass) {
+        GsacResourceManager gom = resourceManagerMap.get(resourceClass);
+        if (gom == null) {
+            gom = doMakeResourceManager(resourceClass);
+            if (gom == null) {
+                throw new IllegalArgumentException("Unknown resource class:"
+                        + resourceClass.getName());
+            }
+            addResourceManager(resourceClass, gom);
+        }
+        return gom;
+    }
+
+    /**
+     * Get the list of resource managers
+     *
+     * @return list of resource managers
+     */
+    public List<GsacResourceManager> getResourceManagers() {
+        return resourceManagers;
+    }
+
+
     /**
      * Create the default set of output handlers
      */
     public void initOutputHandlers() {
+        //Just create one for local access
         htmlOutputHandler   = new HtmlOutputHandler(this);
         browseOutputHandler = new BrowseOutputHandler(this);
+
+        //Go through the resource managers and have them create their output handlers
         for (GsacResourceManager resourceManager : getResourceManagers()) {
             resourceManager.initOutputHandlers();
         }
     }
 
 
-    /**
-     * _more_
-     */
-    public void initBrowseOutputHandlers() {}
 
+    /**
+     * Main entry point for incoming requests
+     *
+     * @param request the request
+     *
+     * @throws IOException On badness
+     * @throws ServletException On badness
+     */
+    public void handleRequest(GsacRequest request)
+            throws IOException, ServletException {
+        String uri   = request.getRequestURI();
+        int    index = uri.indexOf("?");
+        if (index >= 0) {
+            uri = uri.substring(0, index);
+        }
+        if (uri.endsWith("/")) {
+            uri = uri.substring(0, uri.length() - 1);
+        }
+
+
+        //Check for bots
+        if (repelRobots()) {
+            if (request.isSpider()) {
+                request.sendError(HttpServletResponse.SC_FORBIDDEN,
+                                  "No bots for now");
+                return;
+            }
+        }
+
+
+        //TODO: What to do with a head request
+        if (request.getMethod().toUpperCase().equals("HEAD")) {
+            System.err.println("GSAC: got a  head request:" + uri);
+            return;
+        }
+
+        try {
+            //We either have service requests or /htdocs requests
+            boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
+            if (serviceRequest) {
+                numServiceRequests++;
+            }
+            String  what              = "other";
+
+            boolean isResourceRequest = false;
+            //Check the resource managers
+            for (GsacResourceManager resourceManager : resourceManagers) {
+                //If this resource manager handles the request then find the
+                //output handler for the given ResourceClass/request
+                //and tell it to do its stuff
+                if (resourceManager.canHandleUri(uri)) {
+                    what = resourceManager.getResourceClass().getName();
+                    GsacOutputHandler outputHandler =
+                        getOutputHandler(resourceManager.getResourceClass(),
+                                         request);
+                    outputHandler.handleRequest(
+                        resourceManager.getResourceClass(), request);
+                    isResourceRequest = true;
+                }
+            }
+            //Check for other content requests
+            if (isResourceRequest) {
+                //already done
+            } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
+                //browse request
+                browseOutputHandler.handleRequestBrowse(request);
+            } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
+                handleRequestStats(request, new GsacResponse(request));
+            } else if (uri.indexOf(URL_HELP) >= 0) {
+                handleRequestHelp(request, new GsacResponse(request));
+            } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
+                handleRequestHtdocs(request);
+            } else if (uri.endsWith(URL_BASE) || uri.equals(getUrlBase())) {
+                //This is for /gsacws/gsacpi top level requests. It just lists the index page.
+                handleRequestIndex(request, new GsacResponse(request));
+            } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
+                //Repository information
+                handleRequestView(request, new GsacResponse(request));
+            } else {
+                throw new UnknownRequestException("");
+                //getLogManager().logError("Unknown request:" + uri, null);
+            }
+            //Only log the access if it is actually a service request (as opposed to htdocs requests)
+            if (serviceRequest) {
+                //                System.out.println(request.toString());
+                getLogManager().logAccess(request, what);
+            }
+        } catch (UnknownRequestException exc) {
+            getLogManager().logError("Unknown request:" + uri + "?"
+                                     + request.getUrlArgs(), null);
+            request.sendError(HttpServletResponse.SC_NOT_FOUND,
+                              "Unknown request:" + uri);
+        } catch (java.net.SocketException sexc) {
+            //Ignore the client closing the connection
+        } catch (Exception exc) {
+            //Get the actual exception
+            Throwable thr = LogUtil.getInnerException(exc);
+            getLogManager().logError("Error processing request:" + uri + "?"
+                                     + request.getUrlArgs(), thr);
+            try {
+                request.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "An error occurred:" + thr);
+            } catch (Exception ignoreThisOne) {}
+        }
+    }
+
+
+
+
+    /**
+     * Get the servlet
+     *
+     * @return The servlet
+     */
+    public GsacServlet getServlet() {
+        return servlet;
+    }
 
 
     /**
@@ -435,7 +589,7 @@ public class GsacRepository implements GsacConstants {
 
     /**
      * Find the output handler specified by the ARG_OUTPUT in the request within the given group of
-     * otutput handlers
+     * output handlers
      *
      * @param resourceClass Type of resource
      * @param request the request
@@ -984,7 +1138,8 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * Get the databasemanager. If not created yet then this calls the factory method doMakeDatabaseManager
+     * Get the databasemanager.
+     * If not created yet then this calls the factory method doMakeDatabaseManager
      *
      * @return databasemanager
      */
@@ -1053,11 +1208,12 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * Is this repository capable of certain things
+     * Is this repository capable of certain things.
      *
-     * @param arg _more_
      *
-     * @return _more_
+     * @param arg This is usually the name of the URL argument, e.g., ARG_FILE_SORT_VALUE, ARG_FILE_SORT_ORDER, ARG_FILE_SIZE
+     *
+     * @return Is this repository capable
      */
     public boolean isCapable(String arg) {
         String  key    = "capability." + arg;
@@ -1065,17 +1221,6 @@ public class GsacRepository implements GsacConstants {
         return result;
     }
 
-    /**
-     * _more_
-     *
-     * @param arg _more_
-     * @param value _more_
-     *
-     * @return _more_
-     */
-    public String toRepositoryNamespace(String arg, String value) {
-        return value;
-    }
 
     /**
      * Return the full hostname of the server. If null then the GSL uses the hostname from the localhost inet address
@@ -1096,107 +1241,20 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+
+
     /**
-     * Main entry point for incoming requests
+     * _more_
      *
-     * @param request the request
+     * @param arg _more_
+     * @param value _more_
      *
-     * @throws IOException On badness
-     * @throws ServletException On badness
+     * @return _more_
      */
-    public void handleRequest(GsacRequest request)
-            throws IOException, ServletException {
-        String uri   = request.getRequestURI();
-        int    index = uri.indexOf("?");
-        if (index >= 0) {
-            uri = uri.substring(0, index);
-        }
-        if (uri.endsWith("/")) {
-            uri = uri.substring(0, uri.length() - 1);
-        }
-
-
-        //Check for bots
-        if (repelRobots()) {
-            if (request.isSpider()) {
-                request.sendError(HttpServletResponse.SC_FORBIDDEN,
-                                  "No bots for now");
-                return;
-            }
-        }
-
-
-        //TODO: What to do with a head request
-        if (request.getMethod().toUpperCase().equals("HEAD")) {
-            System.err.println("GSAC: got a  head request:" + uri);
-            return;
-        }
-
-        try {
-            //We either have service requests or /htdcos requests
-            boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
-            if (serviceRequest) {
-                numServiceRequests++;
-            }
-            String  what              = "other";
-
-            boolean isResourceRequest = false;
-            for (GsacResourceManager gom : resourceManagers) {
-                if (gom.canHandleUri(uri)) {
-                    what = gom.getResourceClass().getName();
-
-                    GsacOutputHandler outputHandler =
-                        getOutputHandler(gom.getResourceClass(), request);
-                    outputHandler.handleRequest(gom.getResourceClass(),
-                            request);
-                    isResourceRequest = true;
-                }
-            }
-            if (isResourceRequest) {
-                //already done
-            } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
-                //browse request
-                browseOutputHandler.handleBrowseRequest(request);
-            } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
-                handleStatsRequest(request, new GsacResponse(request));
-            } else if (uri.indexOf(URL_HELP) >= 0) {
-                handleHelpRequest(request, new GsacResponse(request));
-            } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
-                handleHtdocsRequest(request);
-            } else if (uri.endsWith(URL_BASE) || uri.equals(getUrlBase())) {
-                //This is for /gsacws/gsacpi top level requests. It just lists the index page.
-                handleIndexRequest(request, new GsacResponse(request));
-            } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
-                //Repository information
-                handleViewRequest(request, new GsacResponse(request));
-            } else {
-                throw new UnknownRequestException("");
-                //getLogManager().logError("Unknown request:" + uri, null);
-            }
-            //Only log the access if it is actually a service request (as opposed to htdocs requests)
-            if (serviceRequest) {
-                //                System.out.println(request.toString());
-                getLogManager().logAccess(request, what);
-            }
-        } catch (UnknownRequestException exc) {
-            getLogManager().logError("Unknown request:" + uri + "?"
-                                     + request.getUrlArgs(), null);
-            request.sendError(HttpServletResponse.SC_NOT_FOUND,
-                              "Unknown request:" + uri);
-        } catch (java.net.SocketException sexc) {
-            //Ignore the client closing the connection
-        } catch (Exception exc) {
-            //Get the actual exception
-            Throwable thr = LogUtil.getInnerException(exc);
-            getLogManager().logError("Error processing request:" + uri + "?"
-                                     + request.getUrlArgs(), thr);
-            try {
-                request.sendError(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "An error occurred:" + thr);
-            } catch (Exception ignoreThisOne) {}
-        }
+    public String toRepositoryNamespace(String arg, String value) {
+        return value;
     }
+
 
 
     /**
@@ -1221,7 +1279,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleHtdocsRequest(GsacRequest request) throws Exception {
+    public void handleRequestHtdocs(GsacRequest request) throws Exception {
         String      uri         = request.getRequestURI();
         int idx = uri.indexOf(URL_HTDOCS_BASE) + URL_HTDOCS_BASE.length();
         String      path        = uri.substring(idx);
@@ -1289,19 +1347,20 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * This handles the request for the main page of the repository.
      *
-     * @param request _more_
-     * @param response _more_
+     * @param request the request
+     * @param response the response
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
-    public void handleIndexRequest(GsacRequest request, GsacResponse response)
+    public void handleRequestIndex(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_HTML);
         StringBuffer sb = new StringBuffer();
         htmlOutputHandler.initHtml(request, response, sb, "");
 
+        //Look in the derived repository and the base one for an index.html file
         String[] files = { getLocalHtdocsPath("/index.html"),
                            GSAC_PATH_HTDOCS + "/index.html" };
         for (String file : files) {
@@ -1318,14 +1377,14 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * _more_
+     * Shows the integrated help
      *
      * @param request the request
      * @param response The response to write to
      *
      * @throws Exception On badness
      */
-    public void handleHelpRequest(GsacRequest request, GsacResponse response)
+    public void handleRequestHelp(GsacRequest request, GsacResponse response)
             throws Exception {
         if (helpIndex == null) {
             InputStream inputStream =
@@ -1375,7 +1434,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleStatsRequest(GsacRequest request, GsacResponse response)
+    public void handleRequestStats(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_TEXT);
         request.put(ARG_DECORATE, "false");
@@ -1808,35 +1867,6 @@ public class GsacRepository implements GsacConstants {
     }
 
 
-    /**
-     * _more_
-     *
-     * @param resourceClass Type of resource
-     *
-     * @return _more_
-     */
-    public GsacResourceManager getResourceManager(
-            ResourceClass resourceClass) {
-        GsacResourceManager gom = resourceManagerMap.get(resourceClass);
-        if (gom == null) {
-            gom = doMakeResourceManager(resourceClass);
-            if (gom == null) {
-                throw new IllegalArgumentException("Unknown resource class:"
-                        + resourceClass.getName());
-            }
-            addResourceManager(resourceClass, gom);
-        }
-        return gom;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public List<GsacResourceManager> getResourceManagers() {
-        return resourceManagers;
-    }
 
 
     /**
@@ -2216,7 +2246,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleCapabilitiesRequest(GsacRequest request,
+    public void handleRequestCapabilities(GsacRequest request,
                                           GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
@@ -2236,7 +2266,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleCapabilityRequest(GsacRequest request,
+    public void handleRequestCapability(GsacRequest request,
                                         GsacResponse response)
             throws Exception {
 
@@ -2273,7 +2303,7 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleViewRequestXml(GsacRequest request,
+    public void handleRequestViewXml(GsacRequest request,
                                      GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
@@ -2294,20 +2324,20 @@ public class GsacRepository implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public void handleViewRequest(GsacRequest request, GsacResponse response)
+    public void handleRequestView(GsacRequest request, GsacResponse response)
             throws Exception {
 
         if (request.get(ARG_OUTPUT, "").equals(OUTPUT_XML)) {
-            handleViewRequestXml(request, response);
+            handleRequestViewXml(request, response);
             return;
         }
 
         if (request.get(ARG_OUTPUT, "").equals(OUTPUT_GSACXML)) {
-            handleCapabilitiesRequest(request, response);
+            handleRequestCapabilities(request, response);
             return;
         }
         if (request.defined(ARG_CAPABILITY)) {
-            handleCapabilityRequest(request, response);
+            handleRequestCapability(request, response);
             return;
         }
 
@@ -3072,17 +3102,20 @@ public class GsacRepository implements GsacConstants {
         return sb.toString();
     }
 
-    /**
-     *  Set the UserAgent property.
-     *
-     *  @param value The new value for UserAgent
-     */
-    public void setUserAgent(String value) {
-        userAgent = value;
-    }
 
     /**
-     *  Get the UserAgent property.
+     * _more_
+     *
+     * @param userAgent _more_
+     */
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+
+    /**
+     * Get the UserAgent property. This is sent when this repository makes
+     * a request to another repository (e.g. in the federated repository).
      *
      *  @return The UserAgent
      */
