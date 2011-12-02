@@ -5,12 +5,26 @@
 -->
 
 
-<project name="gsacws" default="call-ftptask" basedir=".">
+<project name="gsacws" default="info" basedir=".">
 
 	<description>
 		For more information, try: ant usage
 	</description>
 	
+	<target name="info">
+		<echo>
+This file demonstrates various ant tasks to utilize the GSAC-WS web
+services along with network tasks and XSLT to query the availability
+of files and then download them. 
+
+The following targets cat be specified:
+
+example1 - Query the GSAC-WS service for all the files in the BARD
+           network (group) and download them.  Requires modules 
+           apache-commons-net and apache-commons-n
+           
+</echo>
+	</target>
 	
 	<!-- =================================================================== -->
 	<!--   Global and Local settings                                         -->
@@ -32,7 +46,7 @@
 		
 		<echo message="Initialize ${DSTAMP}"/>
 
-		<property name="archive.host" value="http://swave.ucsd.edu:8080"/>
+		<property name="archive.host" value="http://geoappdev02.ucsd.edu"/>
 		<property name="datadate.from" value="2011-11-01"/>
 		<property name="datadate.to" value="2011-11-02"/>
 		<property name="site.group" value="BARD"/>
@@ -42,21 +56,18 @@
 			value="${archive.host}${service.endpoint}?output=file.gsacxml&amp;file.datadate.from=${datadate.from}&amp;file.datadate.to=${datadate.to}&amp;site.group=${site.group}&amp;file.type=${file.type}"/>
 		<property name="service.result.file" value="q-${site.group}-${DSTAMP}.xml"/>
 		<property name="ant.make.ftp.task.file" value="build-${DTSTAMP}.xml"/>
-
-		<!--echo message="Query: ${service.url}"/ -->
-
 		<property name="userid" value="anonymous"/>
 		<property name="password" value="sopac@ucsd.edu"/>
 		<property name="target.dir" value="./gsacfiles"/>
 	</target>
 
-	<target name="file-query" depends="init" description="Query Archive REST Service for Files">
+	<!-- 
+		The first example uses the built-in xslt 1.0, and is a very limited example that
+		gets the files from one day.
+	-->
+	<target name="example1" depends="init" description="Query Archive REST Service for Files">
 		<echo message="Querying archive..."/>
 		<get src="${service.url}" dest="${service.result.file}"/>
-	</target>
-	
-	<target name="make-ftptask" depends="file-query"  description="Create an Ant task that will retrieve files.">
-
 		<echo message="Parsing GSAC XML ${service.result.file}"/>
 		<xslt style="gsac-to-ftptask.xsl" in="${service.result.file}" out="build-ftp.xml">
 			<param name="dstamp" expression="${DSTAMP}"/>
@@ -64,14 +75,9 @@
 			<param name="userid" expression="${userid}"/>
 			<param name="password" expression="${password}"/>
 			<param name="remote-dir" expression="pub/rinex/2011/305"/>
-			<param name="dir" expression="./gsacfiles/pub/rinex/2011/305"/>
+			<param name="dir" expression="./gsacfiles/pub/rinex/305"/>
 		</xslt>
 		<mkdir dir="${target.dir}"/>
-
-	</target>
-	
-	<target name="call-ftptask" depends="make-ftptask">
-
 		<echo message="Antcall ftp task..."/>
 		<ant antfile="build-ftp.xml" />
 	</target>
