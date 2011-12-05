@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# GET-FILES.PL - Call GSAC REST services to compare/get files. It will ouput 
+# GET-FILES.PL - Call GSAC REST services to compare/get files. It will output 
 # two or three lines per file. E.g.:
 #
 # R:ftp://garner......   The remote file information.
