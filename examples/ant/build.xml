@@ -22,7 +22,9 @@ The following targets cat be specified:
 example1 - Query the GSAC-WS service for all the files in the BARD
            network (group) and download them.  Requires modules 
            apache-commons-net and apache-commons-n
-           
+
+example2 - Query the GSAC-WS service and use XSLT 2.0 template
+			
 </echo>
 	</target>
 	
@@ -44,9 +46,9 @@ example1 - Query the GSAC-WS service for all the files in the BARD
 		
 		<property name="build.log" value="${DSTAMP}-build.log" />
 		
-		<echo message="Initialize ${DSTAMP}"/>
+		<echo>Initialize ${DSTAMP}</echo>
 
-		<property name="archive.host" value="http://geoappdev02.ucsd.edu"/>
+		<property name="archive.host" value="http://swave.ucsd.edu:8080"/>
 		<property name="datadate.from" value="2011-11-01"/>
 		<property name="datadate.to" value="2011-11-02"/>
 		<property name="site.group" value="BARD"/>
@@ -61,14 +63,17 @@ example1 - Query the GSAC-WS service for all the files in the BARD
 		<property name="target.dir" value="./gsacfiles"/>
 	</target>
 
+	 
+
+	
 	<!-- 
 		The first example uses the built-in xslt 1.0, and is a very limited example that
 		gets the files from one day.
 	-->
 	<target name="example1" depends="init" description="Query Archive REST Service for Files">
-		<echo message="Querying archive..."/>
+		<echo>Querying GSAC-WS archive...</echo>
 		<get src="${service.url}" dest="${service.result.file}"/>
-		<echo message="Parsing GSAC XML ${service.result.file}"/>
+		<echo>Parsing GSAC XML ${service.result.file} to Ant FTP task</echo>
 		<xslt style="gsac-to-ftptask.xsl" in="${service.result.file}" out="build-ftp.xml">
 			<param name="dstamp" expression="${DSTAMP}"/>
 			<param name="server" expression="garner.ucsd.edu"/>
@@ -78,8 +83,68 @@ example1 - Query the GSAC-WS service for all the files in the BARD
 			<param name="dir" expression="./gsacfiles/pub/rinex/305"/>
 		</xslt>
 		<mkdir dir="${target.dir}"/>
-		<echo message="Antcall ftp task..."/>
+		<echo>Calling Ant FTP task...</echo>
 		<ant antfile="build-ftp.xml" />
 	</target>
 
+	<!--
+		This example uses XLST 2.0 through the Saxon library and gets files for the 
+		last week. It does this by using XSLT to first create a properties file, then
+		an ant file that uses it. The XSLT template calculates the date from the 
+		present to 7 days into the past.
+	-->
+	<target name="example2" depends="init" description="Query files for last week">
+		<echo>Creating ant build file...</echo>
+		<!-- 
+			Note: XSLT requires an input document, but all these values
+			could be read as xml properties.
+		-->
+		<echoxml file="example2-properties.xml">
+			<properties>
+				<archive>
+					<host>${archive.host}</host>
+				</archive>
+				<site>
+					<group>${site.group}</group>
+				</site>
+				<file>
+					<type>${file.type}</type>
+				</file>
+				<service>
+					<endpoint>${service.endpoint}</endpoint>
+				</service>
+				<userid>${userid}</userid>
+				<password>${password}</password>
+				<target>
+					<dir>${target.dir}</dir>
+				</target>
+			</properties>
+		</echoxml>
+		<!-- Perhaps there is a way to do date or duration conversion. The following 
+		     uses XSLT 2.0 to accomplish this, creating the task that will query GSAC
+		     for files for the last week.
+		-->
+		<xslt  style="make-get-task2.xsl" in="example2-properties.xml" out="get-task2.xml"
+			classpath="${ant.home}/lib/saxon9he.jar:">
+			<factory name="net.sf.saxon.TransformerFactoryImpl"/>
+		</xslt>
+		<ant antfile="get-task2.xml"/>
+
+<!--
+
+		<get src="${service.url}" dest="${service.result.file}"/>
+		<echo>Parsing GSAC XML ${service.result.file} to Ant FTP task</echo>
+		<xslt style="gsac-to-ftptask2.xsl" in="${service.result.file}" out="build-ftp2.xml">
+			<classpath location="${ANT.HOME}/lib/saxon9he.jar"/>
+			<factory name="net.sf.saxon.TransformerFactoryImpl"/>
+			<param name="dstamp" expression="${DSTAMP}"/>
+			<param name="userid" expression="${userid}"/>
+			<param name="password" expression="${password}"/>
+			<param name="dir" expression="./gsacfiles"/>
+		</xslt>
+		<echo>Calling Ant FTP task...</echo>
+		<ant antfile="build-ftp2.xml" />
+-->
+	</target>
+	
 </project>
