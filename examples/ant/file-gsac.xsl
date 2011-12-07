@@ -2,16 +2,14 @@
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-	<xsl:param name="dstamp"/>
+	<!-- An example that parses the GSAC XML to a simpler XML of just the file information. -->
 
 	<xsl:output method="xml" indent="yes"/>
 
-	<xsl:variable name="nl"><xsl:text>
-</xsl:text></xsl:variable>
-
-	<variable name="cur-year" select="substring($dstamp,1,4)"/>
-	<variable name="cur-month" select="substring($dstamp,5,2)"/>
-	<variable name="cur-day" select="substring($dstamp,7,2)"/>
+	<xsl:variable name="nl" select="codepoints-to-string((13,10))"/>
+	<xsl:variable name="cur-year" select="substring($dstamp,1,4)"/>
+	<xsl:variable name="cur-month" select="substring($dstamp,5,2)"/>
+	<xsl:variable name="cur-day" select="substring($dstamp,7,2)"/>
 
 	<xsl:template match="/">
 		<files>
