@@ -17,6 +17,8 @@
 	
 	<xsl:variable name="classpath" select="'${ant.home}/lib/saxon9he.jar'"/>
 	
+	<!-- TODO: get date from param, that way can be changed -->
+	
 	<!-- It may look clumsy, but you can perform date/duration calculations and date formating --> 
 	<xsl:variable name="datadate.to" select="format-date( current-date(), '[Y]-[M01]-[D01]' )"/>
 	<xsl:variable name="datadate.from"
@@ -30,7 +32,7 @@
 		'&amp;file.datadate.to=', $datadate.to,
 		'&amp;site.group=', $site.group,
 		'&amp;file.type=', $file.type )"/>
-	<xsl:variable name="service.result.file" select="concat( 'q-', $datadate.to, '.xml')"/>
+	<xsl:variable name="service.result.file" select="/properties/service/result/file"/>
 	<xsl:variable name="target.dir" select="/properties/target/dir"/>
 	<xsl:variable name="userid" select="/properties/userid"/>
 	<xsl:variable name="password" select="/properties/password"/>
@@ -44,17 +46,6 @@
 	<target name="gsacws-get" description="Query Archive REST Service for Files">
 		<echo>Querying GSAC-WS archive...</echo>
 		<get src="{$service-url}" dest="{$service.result.file}"/>
-		<echo>Parsing GSAC XML <xsl:value-of select="$service.result.file"/> to Ant FTP task</echo>
-		<xslt style="gsac-to-ftptask2.xsl" in="{$service.result.file}" out="build-ftp2.xml"
-			classpath="${{ant.home}}/lib/saxon9he.jar">
-			<factory name="net.sf.saxon.TransformerFactoryImpl"/>
-			<param name="userid" expression="{$userid}"/>
-			<param name="password" expression="{$password}"/>
-			<param name="dir" expression="{$target.dir}"/>
-		</xslt>
-		<mkdir dir="{$target.dir}"/>
-		<echo>Calling Ant FTP task...</echo>
-		<!-- ant antfile="build-ftp2.xml" / -->
 	</target>
 	
 </project>

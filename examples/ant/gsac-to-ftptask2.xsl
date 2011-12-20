@@ -22,46 +22,67 @@
 
 	<xsl:output method="xml" indent="yes"/>
 
-	<xsl:variable name="nl" select="codepoints-to-string((13,10))"/>
+	<xsl:variable name="nl">
+</xsl:variable>  <!-- select="codepoints-to-string((13,10))"/> -->
 	<!-- get the date from the param or from current date? -->
 	<xsl:variable name="datadate.to" select="format-date( current-date(), '[Y]-[M01]-[D01]' )"/>
 	<xsl:variable name="datadate.from"
 		select="format-date(xs:date(current-date() - xs:dayTimeDuration('P7D')),'[Y]-[M01]-[D01]')"/>
 	
- 
  	<xsl:template match="/">
 <project name="gsacws" default="get-files" basedir=".">
 
-	<fileset id="ftp-files" dir="{$dir}">
-		<xsl:apply-templates select="//object[@class='org.gsac.gsl.model.FileInfo']"/>
-	</fileset>
+	<!-- Create the filesets to be used by the ftp tasks. -->
+	<xsl:for-each-group select="/object/method[@name='add'][object[@class='org.gsac.gsl.model.GsacFile']]"
+		group-by="object/property[@name='PublishTime']/object/constructor/long">
+			
+		<xsl:variable name="id" select="concat('f-',position())"/>
+		<xsl:variable name="url" select="normalize-space(object/property[@name='FileInfo']/object/property[@name='Url']/string)"/>
+		<!-- Extract the directory by tokenizing the string on the directory separator. -->
+		<xsl:variable name="pseq" select="tokenize($url,'/')"/>
+		<!-- Ignore the hostname and top most directory. Based on a priori knowledge of the directory.... -->
+		<xsl:variable name="rdir" select="string-join( (for $i in (5 to (count($pseq) - 1)) return $pseq[$i], ''), '/')"/>
+
+		<fileset id="{$id}" dir="{$dir}">
+			<xsl:for-each select="current-group()">
+				<xsl:variable name="furl" select="normalize-space(object/property[@name='FileInfo']/object/property[@name='Url']/string)"/>
+				<xsl:variable name="fseq" select="tokenize($furl,'/')"/>
+				<xsl:variable name="fname" select="concat($rdir,$fseq[last()])"/>
+				<include name="{$fname}"/>
+			</xsl:for-each>
+		</fileset>
+	
+	</xsl:for-each-group>
 
 	<target name="get-files">
 		<mkdir dir="{$dir}"/>
-		<ftp server="{$host}" action="get" remotedir="/"
-					userid="{$userid}"
-					password="{$password}"
-					verbose="yes"
-					preserveLastModified="true">
-				<fileset refid="ftp-files"/>
-			</ftp>
+		<parallel>
+	
+			<!-- Create the ftp tasks in parallel. -->
+			<xsl:for-each-group select="/object/method[@name='add'][object[@class='org.gsac.gsl.model.GsacFile']]"
+				group-by="object/property[@name='PublishTime']/object/constructor/long">
+				
+				<xsl:variable name="id" select="concat('f-',position())"/>
+				<xsl:variable name="url" select="normalize-space(object/property[@name='FileInfo']/object/property[@name='Url']/string)"/>
+				<xsl:variable name="seq" select="tokenize($url,'/')"/>
+				<xsl:variable name="ftp-host" select="$seq[3]"/>
+				<xsl:variable name="pub-dir" select="$seq[4]"/>
+	
+					<ftp server="{$ftp-host}" action="get" remotedir="{$pub-dir}"
+								userid="{$userid}"
+								password="{$password}"
+								verbose="yes"
+								preserveLastModified="true">
+						<fileset refid="{$id}"/>
+					</ftp>
+		
+			</xsl:for-each-group>
+	
+		</parallel>
 	
 	</target>
 
 </project>
 	</xsl:template>
 	
-	<xsl:template match="object[@class='org.gsac.gsl.model.FileInfo']">
-		<xsl:variable name="fname" select="normalize-space(../../property[@name='ShortName']/string)"/>
-		<include name="{$fname}"/>
-	</xsl:template>
-
-<!--
-  <xsl:template match="@*|node()">
-    <xsl:copy>
-      <xsl:apply-templates select="@*|node()"/>
-    </xsl:copy>
-  </xsl:template>
--->
-
 </xsl:stylesheet>
