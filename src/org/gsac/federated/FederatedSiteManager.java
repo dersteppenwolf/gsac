@@ -138,8 +138,9 @@ public class FederatedSiteManager extends SiteManager {
             throw new IllegalArgumentException("Could not find repository:"
                     + baseUrl);
         }
-        
-        site.setRepositoryInfo(getFederatedRepository().makeRepositoryInfo(info));
+
+        site.setRepositoryInfo(
+            getFederatedRepository().makeRepositoryInfo(info));
         site.setId(getRepository().getRemoteId(info, site.getId()));
         return site;
     }
@@ -168,7 +169,8 @@ public class FederatedSiteManager extends SiteManager {
      * @return site search capabilities
      */
     public List<Capability> doGetQueryCapabilities() {
-        return getFederatedRepository().doGetQueryCapabilities(getResourceClass());
+        return getFederatedRepository().doGetQueryCapabilities(
+            getResourceClass());
     }
 
 

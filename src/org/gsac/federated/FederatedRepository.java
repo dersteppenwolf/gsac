@@ -44,9 +44,11 @@ import java.util.concurrent.*;
 
 
 /**
- * This is the core implementation of the gsac federated repository. It provides the base GsacRepository class
- * a list of remote servers in the doMakeServerInfoList where it creates the servers from the resoruces/gsac.properties
- * file
+ * This is the core implementation of the gsac federated repository. It provides the base 
+ * GsacRepository class a list of remote servers in the doMakeServerInfoList.
+ * The set of remote repositories is defined in resources/gsacserver_test.properties  and
+ * resources/gsacserver_production.properties. These get copied to resources/gsacserver.properties
+ * during the ANT build process. Consult those files to see how to define the remote servers
  *
  * The queries are all handled by the handleFederatedRequest method
  *
@@ -65,7 +67,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
     /** Max number of threads to use for remote queries */
     private static final int MAX_THREADS = 5;
 
-    /** _more_          */
+    /** URL argument to remove duplicate file results */
     private static final String ARG_REMOVEDUPLICATES = "removeduplicates";
 
 
@@ -113,9 +115,9 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
 
         if (doTest) {
             servers.add(
-                        new GsacRepositoryInfo(
-                                               "http://localhost:8081/gsacws", "UNAVCO@local host",
-                                               "http://www.unavco.org/favicon.ico"));
+                new GsacRepositoryInfo(
+                    "http://localhost:8081/gsacws", "UNAVCO@local host",
+                    "http://www.unavco.org/favicon.ico"));
             /*
             servers.add(
                 new GsacRepositoryInfo(
@@ -168,8 +170,8 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
      * does not have that capability to search on tectonic_plate then we don't include that repository
      *
      * @param request The request
-     * @param forSite Is this for a site search
      * @param collectionType This is the capability collection type, e.g., sites, resources, etc
+     * @param resourceClass What type of resource (eg., file, site)
      *
      * @return List of servers to search
      */
@@ -178,7 +180,8 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         List<GsacRepositoryInfo> serversToUse =
             new ArrayList<GsacRepositoryInfo>(super.getServers(request));
         List<Capability> capabilities =
-            getResourceManager(resourceClass).getCapabilityCollection().getCapabilities();
+            getResourceManager(
+                resourceClass).getCapabilityCollection().getCapabilities();
         for (Capability capability : capabilities) {
             if ( !request.defined(capability.getId())) {
                 continue;
@@ -296,13 +299,15 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             throws Exception {
         boolean removeDuplicates = request.get(ARG_REMOVEDUPLICATES, false);
         //Find the servers to use
-        List<GsacRepositoryInfo> servers = forSite
-                                           ? getSiteServers(request)
-                                           : getFileServers(request);
+        List<GsacRepositoryInfo> servers    = forSite
+                ? getSiteServers(request)
+                : getFileServers(request);
 
-        String remoteArgs= getRemoteUrlArgs(request);
-        final String             urlArgs = remoteArgs+"&" + HtmlUtil.arg(ARG_REQUEST_IP,request.getRequestIP());
-        final StringBuffer       msgBuff = new StringBuffer();
+        String                   remoteArgs = getRemoteUrlArgs(request);
+        final String urlArgs = remoteArgs + "&"
+                               + HtmlUtil.arg(ARG_REQUEST_IP,
+                                   request.getRequestIP());
+        final StringBuffer msgBuff = new StringBuffer();
         msgBuff.append("Repositories searched:<ul>");
 
         //Go through each server and only use those that don't have too many open requests
@@ -402,7 +407,8 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             return 0;
         }
         for (GsacSite site : sites) {
-            String id = getRemoteId(makeRepositoryInfo(callable.repository), site.getId());
+            String id = getRemoteId(makeRepositoryInfo(callable.repository),
+                                    site.getId());
             site.setId(id);
             site.setRepositoryInfo(callable.repository);
             response.addResource(site);
@@ -411,8 +417,16 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
     }
 
 
+    /**
+     * Create a new GsacRepositoryInfo object from the given one
+     *
+     * @param that The info object to copy
+     *
+     * @return The copy
+     */
     public GsacRepositoryInfo makeRepositoryInfo(GsacRepositoryInfo that) {
-        return new GsacRepositoryInfo(that.getUrl(), that.getName(), that.getIcon());
+        return new GsacRepositoryInfo(that.getUrl(), that.getName(),
+                                      that.getIcon());
     }
 
 
@@ -470,9 +484,9 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
      * Create if needed and return the singleton thread pooler
      *
      *
-     * @param callables _more_
+     * @param callables List of callables
      *
-     * @return _more_
+     * @return The executor
      */
     private synchronized ExecutorService getExecutor(
             List<RepositoryCallable> callables) {
@@ -484,7 +498,12 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
     }
 
 
-    public String getUserAgent () {
+    /**
+     * The http user agent we pass to the external repositories
+     *
+     * @return the user agent string
+     */
+    public String getUserAgent() {
         return "gsac federated";
     }
 
@@ -526,6 +545,13 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
     }
 
 
+    /**
+     * factory method for creating the ResourceManager
+     *
+     * @param resourceClass What type of resource
+     *
+     * @return The manager for the resource type
+     */
     public GsacResourceManager doMakeResourceManager(
             ResourceClass resourceClass) {
         if (resourceClass.equals(GsacSite.CLASS_SITE)) {
@@ -547,10 +573,10 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
      */
     private abstract static class RepositoryCallable implements Callable<Boolean> {
 
-        /** _more_          */
+        /** Tracks what strings we've seen. For removing duplicates */
         private HashSet<String> seen;
 
-        /** _more_          */
+        /** do we try to remove duplicate file results */
         private boolean removeDuplicates = false;
 
 
@@ -570,8 +596,8 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
          * ctor
          *
          * @param repository The remote repostiory
-         * @param seen _more_
-         * @param removeDuplicates _more_
+         * @param seen Tracks what strings we've seen. For removing duplicates
+         * @param removeDuplicates try to remove duplicates from results
          */
         public RepositoryCallable(GsacRepositoryInfo repository,
                                   HashSet<String> seen,
@@ -582,18 +608,19 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         }
 
         /**
-         * _more_
+         * Have we seen the given string. i.e., this might be the file tail of a result. This
+         * is used to track and remove duplicates
          *
-         * @param s _more_
+         * @param fileTailOrOtherId The string to check
          *
-         * @return _more_
+         * @return Have we seen this fileTailOrOtherId
          */
-        public boolean checkAndAddSeen(String s) {
+        public boolean checkAndAddSeen(String fileTailOrOtherId) {
             synchronized (seen) {
-                if (seen.contains(s)) {
+                if (seen.contains(fileTailOrOtherId)) {
                     return true;
                 }
-                seen.add(s);
+                seen.add(fileTailOrOtherId);
                 return false;
             }
         }
@@ -609,9 +636,9 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         }
 
         /**
-         * _more_
+         * remove duplicates
          *
-         * @return _more_
+         * @return remove duplicates
          */
         public boolean getRemoveDuplicates() {
             return removeDuplicates;
@@ -620,11 +647,20 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
     }
 
 
-    public List<Capability> doGetQueryCapabilities(ResourceClass resourceClass) {
+    /**
+     * Get the merged query capabilities for the given resource type
+     *
+     * @param resourceClass resource type
+     *
+     * @return query capabilities
+     */
+    public List<Capability> doGetQueryCapabilities(
+            ResourceClass resourceClass) {
         List<Capability> capabilities = new ArrayList<Capability>();
         HashSet          seen         = new HashSet();
         for (GsacRepositoryInfo info : getServers()) {
-            CapabilityCollection collection = info.getCollection(resourceClass);
+            CapabilityCollection collection =
+                info.getCollection(resourceClass);
             if (collection != null) {
                 for (Capability capability : collection.getCapabilities()) {
                     if (seen.contains(capability.getId())) {

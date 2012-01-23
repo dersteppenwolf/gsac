@@ -131,7 +131,8 @@ public class FederatedFileManager extends FileManager {
             throw new IllegalArgumentException("Could not find repository:"
                     + baseUrl);
         }
-        resource.setRepositoryInfo(getFederatedRepository().makeRepositoryInfo(info));
+        resource.setRepositoryInfo(
+            getFederatedRepository().makeRepositoryInfo(info));
         resource.setId(getRepository().getRemoteId(info, resource.getId()));
         return resource;
     }
@@ -160,8 +161,14 @@ public class FederatedFileManager extends FileManager {
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<Capability> doGetQueryCapabilities() {
-        return getFederatedRepository().doGetQueryCapabilities(getResourceClass());
+        return getFederatedRepository().doGetQueryCapabilities(
+            getResourceClass());
     }
 
 
