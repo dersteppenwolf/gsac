@@ -44,3 +44,55 @@ This compiles the gsacserver and makes a  <root>/dist/gsacserver directory.
 cd to the <root>/dist/gsacserver directory and run the gsacserver.jar
 
 
+
+##### Configuration on tomcat  ######
+When running under tomcat (or some other servlet container) the Gsac will write log
+files to its "home" directory if one is set. The home directory is defined with the property:
+   gsac.directory=/path/to/writable/gsac/home/directory
+
+You can set this in your local gsac.properties file.
+If you use the test and production build targets you can have 2 different properties in:
+resource/gsacserver_production.properties
+resource/gsacserver_test.properties
+
+At Unavco we don't include the gsac.directory in the .war but rather pick it up from the tomcat environment.
+
+Below is the README from the Unavco Gsac Repository. wes is the web server machine.
+
+We run 2 different gsacs on wes - this Unavco Repository and also
+the federated gsac repository (in the main GSAC source tree from
+sourceforge)
+
+http://facdev.unavco.org/gsacws/gsacapi/site/form
+http://facility.unavco.org/gsacws/gsacapi/site/form
+http://facdev.unavco.org/gsacfederated/gsacapi/site/form
+http://facility.unavco.org/gsacws/gsacapi/site/form
+
+Both of these repositories are run on both the development server 
+(/usr/local/apachetomcatdev) and the live server (/usr/local/apachetomcat).
+
+There is some configuration that goes on under the tomcat conf and log dirs to
+tell the gsac instance where to write its log files.
+
+The core GsacRepository looks for a properties file:
+<tomcat home>/conf/<gsac.baseurl>
+where gsac.baseurl is defined in the resources/gsac.properties here as gsacws
+
+So, on wes we have:
+/usr/local/apachetomcatdev/conf/gsacws.properties
+/usr/local/apachetomcatdev/conf/gsacfederated.properties
+/usr/local/apachetomcat/conf/gsacws.properties
+/usr/local/apachetomcat/conf/gsacfederated.properties
+
+These just have one property  - the gsac.directory property:
+gsac.directory=/usr/local/apachetomcatdev/logs/gsac/gsacws
+gsac.directory=/usr/local/apachetomcatdev/logs/gsac/gsacfederated
+gsac.directory=/usr/local/apachetomcat/logs/gsac/gsacws
+gsac.directory=/usr/local/apachetomcat/logs/gsac/gsacfederated
+
+This tells the GSAC where it can write log files, etc.
+
+
+
+
+
