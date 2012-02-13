@@ -352,13 +352,16 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
                     boolean includeExtraCol =
+
                         getRepository().getRemoteHref(resource).length() > 0;
+                    includeExtraCol =false;
+
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
                     String[] labels = new String[] {
                         (includeExtraCol
-                         ? ""
+                         ? "&nbsp;"
                          : null), msg("File"), msg("Type"), msg(relatedLabel),
                         msg("Date"), msg("File size")
                     };
@@ -382,9 +385,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(),
                                  true);
-
                 //                sb.append(HtmlUtil.col(cbx));
-
                 String remoteHref = getRepository().getRemoteHref(resource);
                 if (remoteHref.length() > 0) {
                     sb.append(HtmlUtil.col(remoteHref));

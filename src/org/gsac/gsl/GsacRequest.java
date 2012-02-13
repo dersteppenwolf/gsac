@@ -277,8 +277,9 @@ public class GsacRequest implements GsacConstants {
         return ((userAgent.indexOf("googlebot") >= 0)
                 || (userAgent.indexOf("slurp") >= 0)
                 || (userAgent.indexOf("spider") >= 0)
-                || (userAgent.indexOf("bots") >= 0)
-                || (userAgent.indexOf("msnbot") >= 0));
+                || (userAgent.indexOf("crawler") >= 0)
+                || (userAgent.indexOf("bot") >= 0));
+
     }
 
 

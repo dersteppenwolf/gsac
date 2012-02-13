@@ -84,6 +84,9 @@ public class GsacResponse {
     /** _more_ */
     private GsacRequest request;
 
+    /** count the resource objects added */
+    private int resourceCount = 0;
+
     /** _more_ */
     private boolean haveInitialized = false;
 
@@ -308,6 +311,7 @@ public class GsacResponse {
     }
 
 
+
     /**
      * _more_
      *
@@ -315,8 +319,13 @@ public class GsacResponse {
      */
     public final synchronized void addResource(GsacResource resource) {
         handleNewResource(resource);
+        resourceCount++;
     }
 
+
+    public int getNumResources() {
+        return resourceCount;
+    }
 
     /**
      * _more_

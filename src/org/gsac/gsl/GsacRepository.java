@@ -483,6 +483,7 @@ public class GsacRepository implements GsacConstants {
 
             boolean isResourceRequest = false;
             //Check the resource managers
+            GsacResponse response = null;
             for (GsacResourceManager resourceManager : resourceManagers) {
                 //If this resource manager handles the request then find the
                 //output handler for the given ResourceClass/request
@@ -492,8 +493,8 @@ public class GsacRepository implements GsacConstants {
                     GsacOutputHandler outputHandler =
                         getOutputHandler(resourceManager.getResourceClass(),
                                          request);
-                    outputHandler.handleRequest(
-                        resourceManager.getResourceClass(), request);
+                    response  =  outputHandler.handleRequest(
+                                                             resourceManager.getResourceClass(), request);
                     isResourceRequest = true;
                 }
             }
@@ -504,17 +505,17 @@ public class GsacRepository implements GsacConstants {
                 //browse request
                 browseOutputHandler.handleRequestBrowse(request);
             } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
-                handleRequestStats(request, new GsacResponse(request));
+                handleRequestStats(request, response = new GsacResponse(request));
             } else if (uri.indexOf(URL_HELP) >= 0) {
-                handleRequestHelp(request, new GsacResponse(request));
+                handleRequestHelp(request, response = new GsacResponse(request));
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleRequestHtdocs(request);
             } else if (uri.endsWith(URL_BASE) || uri.equals(getUrlBase())) {
                 //This is for /gsacws/gsacpi top level requests. It just lists the index page.
-                handleRequestIndex(request, new GsacResponse(request));
+                handleRequestIndex(request, response = new GsacResponse(request));
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
                 //Repository information
-                handleRequestView(request, new GsacResponse(request));
+                handleRequestView(request, response = new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
                 //getLogManager().logError("Unknown request:" + uri, null);
@@ -522,6 +523,11 @@ public class GsacRepository implements GsacConstants {
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
                 //                System.out.println(request.toString());
+                if(response!=null) {
+                    if(response.getNumResources()>0) {
+                        System.err.println("resource:" + what +" " + response.getNumResources());
+                    }
+                }
                 getLogManager().logAccess(request, what);
             }
         } catch (UnknownRequestException exc) {

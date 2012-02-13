@@ -184,10 +184,13 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @throws Exception On badness
      */
-    public final void handleRequest(ResourceClass type,
+    public final GsacResponse handleRequest(ResourceClass type,
                                     GsacRequest gsacRequest)
             throws Exception {
-        handleRequest(type, gsacRequest, doMakeResponse(gsacRequest));
+        GsacResponse response = doMakeResponse(gsacRequest);
+        handleRequest(type, gsacRequest, response);
+
+        return response;
     }
 
 
