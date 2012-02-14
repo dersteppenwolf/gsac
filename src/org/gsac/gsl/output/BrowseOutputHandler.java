@@ -140,7 +140,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      * @throws Exception on badness
      */
     @Override
-    public void handleRequestBrowse(GsacRequest request,
+    public ResourceClass handleRequestBrowse(GsacRequest request,
                                     GsacResponse response)
             throws Exception {
         List   things    = null;
@@ -154,7 +154,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                 } else {
                     handleStringRequest(request, response, capability);
                 }
-                return;
+                return capability.getResourceClass();
             }
         }
 
@@ -162,6 +162,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         initHtml(request, response, html, msg("Browse"));
         html.append(getHeader(request, null));
         finishHtml(request, response, html);
+        return null;
     }
 
 

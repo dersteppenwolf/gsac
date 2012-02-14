@@ -503,7 +503,11 @@ public class GsacRepository implements GsacConstants {
                 //already done
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
-                browseOutputHandler.handleRequestBrowse(request);
+                response  = browseOutputHandler.doMakeResponse(request);
+                ResourceClass resourceClass = browseOutputHandler.handleRequestBrowse(request, response);
+                if(resourceClass!=null) {
+                    what = resourceClass.getName();
+                }
             } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
                 handleRequestStats(request, response = new GsacResponse(request));
             } else if (uri.indexOf(URL_HELP) >= 0) {
@@ -523,12 +527,11 @@ public class GsacRepository implements GsacConstants {
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
                 //                System.out.println(request.toString());
+                int resourceCnt = -1;
                 if(response!=null) {
-                    if(response.getNumResources()>0) {
-                        System.err.println("resource:" + what +" " + response.getNumResources());
-                    }
+                    resourceCnt = response.getNumResources();
                 }
-                getLogManager().logAccess(request, what);
+                getLogManager().logAccess(request, what, resourceCnt);
             }
         } catch (UnknownRequestException exc) {
             getLogManager().logError("Unknown request:" + uri + "?"

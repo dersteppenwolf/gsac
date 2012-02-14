@@ -142,7 +142,7 @@ public class GsacLogManager extends GsacManager {
      * @param request the request
      * @param what _more_
      */
-    public void logAccess(GsacRequest request, String what) {
+    public void logAccess(GsacRequest request, String what, int count) {
         String ip        = request.getOriginatingIP();
         String uri       = request.getRequestURI();
         String method    = request.getMethod();
@@ -169,6 +169,10 @@ public class GsacLogManager extends GsacManager {
         message = message.replace(LOG_MACRO_USERAGENT, userAgent);
         message = message.replace(LOG_MACRO_REFERER, referer);
         message = message.replace(LOG_MACRO_USER, "-");
+        message = message+" " + what;
+        if(count>=0) {
+            message = message+" " + count;
+        }
 
         if (logDirectory != null) {
             getAccessLogger().info(message);

@@ -30,6 +30,7 @@ import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
 
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.LogUtil;
 
 
 import java.io.*;
@@ -746,6 +747,7 @@ public class GsacClient implements GsacConstants {
      * @throws Exception On badness
      */
     public static void main(String[] args) throws Exception {
+        LogUtil.setTestMode(true);
         try {
             GsacClient client = new GsacClient(args);
         } catch (Exception exc) {
