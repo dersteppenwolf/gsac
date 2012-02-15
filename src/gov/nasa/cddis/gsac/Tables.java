@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2009 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -33,7 +33,7 @@ public abstract class Tables {
 
 
     public static class DORIS_2009 extends Tables {
-        public static final String NAME = "doris_2009";
+        public static final String NAME = "doris_all";  //"doris_2010";
 
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
@@ -57,7 +57,7 @@ public abstract class Tables {
 
 
     public static class GPS_TRACKING2009 extends Tables {
-        public static final String NAME = "gps_tracking2009";
+        public static final String NAME = "GNSS_ALL";  //"gps_tracking2010";
 
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
@@ -110,7 +110,7 @@ public abstract class Tables {
 
 
     public static class SATELLITESQL_2009 extends Tables {
-        public static final String NAME = "satellitesql_2009";
+        public static final String NAME = "SLR_ALL";  //"satellitesql_2010";
 
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
@@ -527,7 +527,7 @@ public abstract class Tables {
 
 
     public static class VLBI_EXP2009 extends Tables {
-        public static final String NAME = "vlbi_exp2009";
+        public static final String NAME = "vlbi_expFull";   //"vlbi_exp2010";
 
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
