@@ -28,9 +28,9 @@ import org.gsac.gsl.util.GsacRepositoryInfo;
 
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LogUtil;
 
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.LogUtil;
 
 
 import java.io.*;
@@ -54,6 +54,7 @@ import java.util.Properties;
 
 public class GsacClient implements GsacConstants {
 
+    /** _more_          */
     public static final String USER_AGENT = "gsac client v1.0";
 
     /** cmd line arg */
@@ -82,9 +83,6 @@ public class GsacClient implements GsacConstants {
     public static final String ARG_BBOX = "bbox";
 
     /** cmd line arg */
-    public static final String ARG_OUTPUT = "output";
-
-    /** cmd line arg */
     public static final String ARG_OUT = "out";
 
     /** cmd line arg */
@@ -92,8 +90,8 @@ public class GsacClient implements GsacConstants {
 
 
     /** These are the command line arguments that are just for the client and do not get passed along on the request */
-    public static final String[] clientArgs = { ARG_OUTPUT, ARG_SERVER,
-            ARG_QUERY, ARG_DOWNLOAD, ARG_KEEP_PATHS };
+    public static final String[] clientArgs = { ARG_SERVER, ARG_QUERY,
+            ARG_DOWNLOAD, ARG_KEEP_PATHS };
 
 
 
@@ -103,20 +101,9 @@ public class GsacClient implements GsacConstants {
     /** for querying files */
     public static final String QUERY_FILE = "file";
 
-    /** for command line arguments that specify a local file. See usage method       */
+    /** for command line arguments that specify a local file. See usage method */
     public static final String FILE_PREFIX = "file:";
 
-    /** output types */
-    public static final String OUTPUT_CSV = "csv";
-
-    /** output types */
-    public static final String OUTPUT_XML = "xml";
-
-    /** output types */
-    public static final String OUTPUT_URL = "url";
-
-    /** output types */
-    public static final String OUTPUT_JSON = "json";
 
     /** client properties */
     private Properties properties = new Properties();
@@ -344,6 +331,10 @@ public class GsacClient implements GsacConstants {
     }
 
 
+    /** _more_          */
+    public static final String OUTPUT_FILE_URL = "file.url";
+
+
     /**
      * process the query
      *
@@ -362,7 +353,7 @@ public class GsacClient implements GsacConstants {
             //Since we are in download mode we set the query to be a file query
             //and the output to be the URL listing
             properties.put(ARG_QUERY, QUERY_FILE);
-            properties.put(ARG_OUTPUT, OUTPUT_URL);
+            properties.put(GsacArgs.ARG_OUTPUT, OUTPUT_FILE_URL);
         }
         //Find out what we are querying and do the query
         String queryType = getProperty(ARG_QUERY, QUERY_SITE);
@@ -386,15 +377,15 @@ public class GsacClient implements GsacConstants {
     private void processSiteQuery() throws Exception {
         List<String[]> args = new ArrayList<String[]>();
         args.addAll(queryArgs);
-        String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
-        if (output.equals(OUTPUT_CSV)) {
+        boolean gotOutput = false;
+        for (String[] pair : args) {
+            if (pair[0].equals(GsacArgs.ARG_OUTPUT)) {
+                gotOutput = true;
+                break;
+            }
+        }
+        if ( !gotOutput) {
             args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.csv" });
-        } else if (output.equals(OUTPUT_XML)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.xml" });
-        } else if (output.equals(OUTPUT_JSON)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "site.json" });
-        } else {
-            usage("Unknown site output:" + output);
         }
         String url = createUrl(GsacConstants.URL_SITE_SEARCH, args);
         System.err.println("Processing site query:");
@@ -414,18 +405,17 @@ public class GsacClient implements GsacConstants {
         args.addAll(queryArgs);
         //Add the output type. These types (e.g., "file.csv") are thos defined by the
         //gsac output handlers in org/gsac/gsl/output/file
-        String output = getProperty(ARG_OUTPUT, OUTPUT_CSV);
-        if (output.equals(OUTPUT_CSV)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.csv" });
-        } else if (output.equals(OUTPUT_XML)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.xml" });
-        } else if (output.equals(OUTPUT_URL)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.url" });
-        } else if (output.equals(OUTPUT_JSON)) {
-            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.json" });
-        } else {
-            usage("Unknown file output:" + output);
+        boolean gotOutput = false;
+        for (String[] pair : args) {
+            if (pair[0].equals(GsacArgs.ARG_OUTPUT)) {
+                gotOutput = true;
+                break;
+            }
         }
+        if ( !gotOutput) {
+            args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.csv" });
+        }
+
         //Make the url
         String url = createUrl(GsacConstants.URL_FILE_SEARCH, args);
         System.err.println("Processing file query:");
@@ -588,10 +578,9 @@ public class GsacClient implements GsacConstants {
     private String fetchUrl(String url) throws Exception {
         URL           theUrl     = new URL(url);
         URLConnection connection = theUrl.openConnection();
-        System.err.println (" **** FETCH ****");
         connection.setRequestProperty("User-Agent", USER_AGENT);
-        InputStream   is         = connection.getInputStream();
-        String        contents   = readContents(is);
+        InputStream is       = connection.getInputStream();
+        String      contents = readContents(is);
         is.close();
         return contents;
     }
@@ -725,8 +714,9 @@ public class GsacClient implements GsacConstants {
 
         System.err.println("\t-" + ARG_QUERY + " site|file or: -"
                            + QUERY_FILE + "|-" + QUERY_SITE);
-        System.err.println("\t-" + ARG_OUTPUT + " csv|xml|url");
-        System.err.println("\t-" + ARG_OUT + " <outputfile>  Write the output to the specified file");
+        System.err.println(
+            "\t-" + ARG_OUT
+            + " <outputfile>  Write the output to the specified file");
         System.err.println("\tany number of query arguments, e.g.:");
         System.err.println("\t-site.code \"P12*\"");
         System.err.println("\t-" + ARG_BBOX + " west south east north");
