@@ -129,7 +129,7 @@ public class GsacRepository implements GsacConstants {
     /** local directory to write stuff to */
     private File gsacDirectory;
 
-    /** _more_          */
+    /** _more_ */
     private String userAgent;
 
     /** the database manager */
@@ -447,6 +447,7 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleRequest(GsacRequest request)
             throws IOException, ServletException {
+
         String uri   = request.getRequestURI();
         int    index = uri.indexOf("?");
         if (index >= 0) {
@@ -493,8 +494,8 @@ public class GsacRepository implements GsacConstants {
                     GsacOutputHandler outputHandler =
                         getOutputHandler(resourceManager.getResourceClass(),
                                          request);
-                    response  =  outputHandler.handleRequest(
-                                                             resourceManager.getResourceClass(), request);
+                    response = outputHandler.handleRequest(
+                        resourceManager.getResourceClass(), request);
                     isResourceRequest = true;
                 }
             }
@@ -503,23 +504,29 @@ public class GsacRepository implements GsacConstants {
                 //already done
             } else if (uri.indexOf(URL_BROWSE_BASE) >= 0) {
                 //browse request
-                response  = browseOutputHandler.doMakeResponse(request);
-                ResourceClass resourceClass = browseOutputHandler.handleRequestBrowse(request, response);
-                if(resourceClass!=null) {
+                response = browseOutputHandler.doMakeResponse(request);
+                ResourceClass resourceClass =
+                    browseOutputHandler.handleRequestBrowse(request,
+                        response);
+                if (resourceClass != null) {
                     what = resourceClass.getName();
                 }
             } else if (uri.indexOf(URL_STATS_BASE) >= 0) {
-                handleRequestStats(request, response = new GsacResponse(request));
+                handleRequestStats(request,
+                                   response = new GsacResponse(request));
             } else if (uri.indexOf(URL_HELP) >= 0) {
-                handleRequestHelp(request, response = new GsacResponse(request));
+                handleRequestHelp(request,
+                                  response = new GsacResponse(request));
             } else if (uri.indexOf(URL_HTDOCS_BASE) >= 0) {
                 handleRequestHtdocs(request);
             } else if (uri.endsWith(URL_BASE) || uri.equals(getUrlBase())) {
                 //This is for /gsacws/gsacpi top level requests. It just lists the index page.
-                handleRequestIndex(request, response = new GsacResponse(request));
+                handleRequestIndex(request,
+                                   response = new GsacResponse(request));
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
                 //Repository information
-                handleRequestView(request, response = new GsacResponse(request));
+                handleRequestView(request,
+                                  response = new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
                 //getLogManager().logError("Unknown request:" + uri, null);
@@ -528,7 +535,7 @@ public class GsacRepository implements GsacConstants {
             if (serviceRequest) {
                 //                System.out.println(request.toString());
                 int resourceCnt = -1;
-                if(response!=null) {
+                if (response != null) {
                     resourceCnt = response.getNumResources();
                 }
                 getLogManager().logAccess(request, what, resourceCnt);
@@ -551,6 +558,7 @@ public class GsacRepository implements GsacConstants {
                     "An error occurred:" + thr);
             } catch (Exception ignoreThisOne) {}
         }
+
     }
 
 
@@ -2120,6 +2128,22 @@ public class GsacRepository implements GsacConstants {
                + id;
     }
 
+
+    /**
+     * _more_
+     *
+     * @param id _more_
+     *
+     * @return _more_
+     */
+    public String[] decodeRemoteId(String id) {
+        System.err.println("id:" + id);
+        List<String> pair     = StringUtil.splitUpTo(id, ":", 2);
+        String       host     = new String(XmlUtil.decodeBase64(pair.get(0)));
+        String       remoteId = pair.get(1);
+        return new String[] { host, remoteId };
+    }
+
     /**
      * _more_
      *
@@ -2142,6 +2166,21 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
+     * _more_
+     *
+     * @param resource _more_
+     *
+     * @return _more_
+     */
+    public boolean isRemoteResource(GsacResource resource) {
+        if (resource.getRepositoryInfo() == null) {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
      * If the given resource is from a remote repository then create and return
      * the view URL that points to that resource. Else return null.
      *
@@ -2150,7 +2189,7 @@ public class GsacRepository implements GsacConstants {
      * @return its remote url or null if its not a remote resource
      */
     public String getRemoteUrl(GsacResource resource) {
-        if (resource.getRepositoryInfo() == null) {
+        if ( !isRemoteResource(resource)) {
             return null;
         }
         List<String> pair = StringUtil.splitUpTo(resource.getId(), ":", 2);

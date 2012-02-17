@@ -124,7 +124,12 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                     } else if (param.equals(ARG_SITE_NAME)) {
                         pw.print(cleanString(site.getLongName(), delimiter));
                     } else if (param.equals(ARG_SITE_ID)) {
-                        pw.print(cleanString(site.getId(), delimiter));
+                        String id = site.getId();
+                        if(getRepository().isRemoteResource(site)) {
+                            String[] pair = getRepository().decodeRemoteId(id);
+                            id = pair[0]+":" + pair[1];
+                        }
+                        pw.print(cleanString(id, delimiter));
                     } else if (param.equals(ARG_SITE_LATITUDE)) {
                         pw.print(site.getLatitude());
                     } else if (param.equals(ARG_SITE_LONGITUDE)) {

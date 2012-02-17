@@ -86,7 +86,12 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                 pw.print("#Id, Type, Md5, FileSize, PublishDate, Url\n");
 
             }
-            pw.print(file.getId() + ",");
+            String id = file.getId();
+            if(getRepository().isRemoteResource(file)) {
+                String[] pair = getRepository().decodeRemoteId(id);
+                id = pair[0]+":" + pair[1];
+            }
+            pw.print(id + ",");
             pw.print(file.getType().getLabel() + ",");
             pw.print(fi.getMd5() + ",");
             pw.print(fi.getFileSize() + ",");
