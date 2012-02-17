@@ -1,5 +1,5 @@
 /*
- *
+ * $Id: SopacFileManager.java 291 2011-11-02 21:46:04Z hankr $
  */
 
 package edu.ucsd.sopac.projects.gsac.repository;
@@ -28,6 +28,11 @@ import java.util.Set;
 public class SopacFileManager extends FileManager implements
 		SopacProperties {
 
+	private static final String IS_SITE_BASED_RESOURCE = "IS_SITE_BASED_RESOURCE";
+	private static final String TRUE = "TRUE";
+	private static final String FALSE = "FALSE";
+	private static final String SITE_TYPE_MODE = "SITE_TYPE_MODE";
+	
 	/**
 	 * ctor
 	 *
@@ -48,6 +53,8 @@ public class SopacFileManager extends FileManager implements
 	 */
 	public void handleRequest(GsacRequest request, GsacResponse response)
 			throws Exception {
+		
+		System.err.println( "SopacFileManager.handleRequest" );
 
 		long t1 = System.currentTimeMillis();
 		StringBuffer msgBuff = new StringBuffer();
@@ -64,6 +71,8 @@ public class SopacFileManager extends FileManager implements
 		// get and handle site clauses from SiteManager //////////////////////////
 		//////////////////////////////////////////////////////////////////////////
 
+		request.putProperty( "SITE_TYPE_MODE", "CONGPS" );
+		request.putProperty( IS_SITE_BASED_RESOURCE, TRUE );
 		List<Clause> siteClauses = getSiteManager().getSiteClauses(request,
 				response, tableNames, msgBuff);
 
@@ -131,7 +140,7 @@ public class SopacFileManager extends FileManager implements
 				}
 			}
 			if (!(clauseToRemove == null)) {
-				System.err.println("removing clause");
+				//System.err.println("removing clause");
 				siteClauses.remove(clauseToRemove);
 				clauseToRemove = null;
 			}
@@ -231,28 +240,27 @@ public class SopacFileManager extends FileManager implements
 
 			List<Clause> fileTypeClauses = new ArrayList<Clause>();
 			if (request.getList(ARG_FILE_TYPE).size() > 0) {
-
+				
 				args = (List<String>) request.getList(ARG_FILE_TYPE);
 				for (String arg : args) {
 					currentFileType = arg;
-					System.err.println("arg resource type: " + arg);
+					//System.err.println("arg resource type: " + arg);
 					// contain restrictions specific to a file type (and sub-type),
 					// use "AND" here
 					List<Clause> fileTypeSubTypeClauses = new ArrayList<Clause>();
 					List<Clause> specificFileTypeClauses = new ArrayList<Clause>();
 
-					// pj, 01/28/2011: vocab changes.  now "gnss.rinex.observation" instead
-					// of "rinex"
-					// TODO: change from solution to product
+					// pj, 01/28/2011: vocab changes.  now "gnss.rinex.observation"
 					if (arg.startsWith("gnss.data.rinex")
-							|| arg.startsWith("gnss.solution")) {
+							|| arg.startsWith("gnss.product")) {
 
 						// file type and sub type use AND
 						// when we add a specific file/subfile type (e.g., rinex obs) to
 						// another, we use OR
 
 						if (arg.equals("gnss.data.rinex.observation")) {
-							_isSiteBasedResource = true;
+							// Set the request property
+							request.putProperty( IS_SITE_BASED_RESOURCE, TRUE );
 							//System.err
 							//		.println("arg equals 1, set dt to rinex, dst to obs");
 							fileTypeSubTypeClauses.add(Clause.eq(
@@ -262,7 +270,7 @@ public class SopacFileManager extends FileManager implements
 							supportedFileType = true;
 						}
 						if (arg.equals("gnss.data.rinex.navigation")) { // set DATA_TYPE to rinex
-							_isSiteBasedResource = true;
+							request.putProperty( IS_SITE_BASED_RESOURCE, TRUE );
 							fileTypeSubTypeClauses.add(Clause.eq(
 									Tables.DATA_TYPE.COL_DATA_TYPE, "rinex"));
 							fileTypeSubTypeClauses.add(Clause.eq(
@@ -270,7 +278,7 @@ public class SopacFileManager extends FileManager implements
 							supportedFileType = true;
 						}
 						if (arg.equals("gnss.data.rinex.meteorology")) {
-							_isSiteBasedResource = true;
+							request.putProperty( IS_SITE_BASED_RESOURCE, TRUE );
 							fileTypeSubTypeClauses.add(Clause.eq(
 									Tables.DATA_TYPE.COL_DATA_TYPE, "rinex"));
 							fileTypeSubTypeClauses.add(Clause.eq(
@@ -278,9 +286,8 @@ public class SopacFileManager extends FileManager implements
 							supportedFileType = true;
 						}
 
-						// TODO: change from solution to product
 						if (arg.equals("gnss.product.sinex")) {
-							_isSiteBasedResource = false;
+							request.putProperty( IS_SITE_BASED_RESOURCE, FALSE );
 							fileTypeSubTypeClauses.add(Clause.eq(
 									Tables.DATA_TYPE.COL_DATA_TYPE, "product"));
 							fileTypeSubTypeClauses.add(Clause.eq(
@@ -288,7 +295,7 @@ public class SopacFileManager extends FileManager implements
 							supportedFileType = true;
 						}
 						if (arg.equals("gnss.product.sp3")) {
-							_isSiteBasedResource = false;
+							request.putProperty( IS_SITE_BASED_RESOURCE, FALSE );
 							fileTypeSubTypeClauses.add(Clause.eq(
 									Tables.DATA_TYPE.COL_DATA_TYPE, "product"));
 							fileTypeSubTypeClauses.add(Clause.eq(
@@ -300,12 +307,13 @@ public class SopacFileManager extends FileManager implements
 						// no sub type: raw, sitelog					
 						//System.err.println("type has no sub type");
 
-						if (arg.equals("gnss.metadata.igs_site_log.text")) { //sitelog
+						if (arg.equals("gnss.metadata.igs_site_log.text")) {
 							fileTypeSubTypeClauses.add(Clause.eq(
 									Tables.DATA_TYPE.COL_DATA_TYPE, "sitelog"));
 							fileTypeSubTypeClauses.add(Clause.eq(
-									Tables.DATA_RECORD.COL_DIRECTORY,
-									"/docs/site_logs"));
+									Tables.DATA_RECORD.COL_DIRECTORY, "/docs/site_logs"));
+							fileTypeSubTypeClauses.add(Clause.like(
+									Tables.DATA_RECORD.COL_FILE_BASENAME, "%.txt" ));
 							supportedFileType = true;
 						} else if (arg.equals("gnss.data.raw")) { //raw
 							fileTypeSubTypeClauses.add(Clause.eq(
@@ -333,10 +341,11 @@ public class SopacFileManager extends FileManager implements
 				//			 add DATA_FILE_EXISTS restriction to all queries as an "AND"
 				miscResourceClauses.add(Clause.eq(
 						Tables.DATA_RECORD.COL_DATA_FILE_EXISTS_FLAG, 1));
+				
+				//System.err.println( "request.getProperty: " +  request.getProperty( IS_SITE_BASED_RESOURCE ) );
 
 				// site-based file types only - add "SITE ID is not null"
-				if (_isSiteBasedResource) {
-
+				if (request.getProperty(IS_SITE_BASED_RESOURCE).equals(TRUE)) {	
 					if (!addedMonumentJoin) {
 						tableNames.add(Tables.SITE.NAME);
 						clauses.add(monumentJoin);
@@ -347,8 +356,7 @@ public class SopacFileManager extends FileManager implements
 				}
 				// remove any site-based clauses if a non-site based data type
 				else {
-					System.err
-							.println("non site-based resource.  remove any site-based clauses");
+					System.err.println("non site-based resource.  remove any site-based clauses");
 					if (addedMonumentJoin) {
 						tableNames.remove(Tables.SITE.NAME);
 						clauses.remove(monumentJoin);
@@ -454,10 +462,10 @@ public class SopacFileManager extends FileManager implements
 
 		// perform resource query //////////////////////////////////////////
 		// debugging
-		for (Clause c : clauses) {
-			String col = (String) c.getColumn();
-			//System.err.println("master clauses list2 : clause col: " + col);
-		}
+		//for (Clause c : clauses) {
+		//	String col = (String) c.getColumn();
+		//  System.err.println("master clauses list2 : clause col: " + col);
+		//}
 		Clause mainClause = Clause.and(clauses);
 		//System.err.println("select stmt");
 
@@ -470,14 +478,17 @@ public class SopacFileManager extends FileManager implements
 			return;
 		}
 		
-		Statement statement = getDatabaseManager().select(getResourceColumns(),
+		Boolean isSiteBasedResource = request.getProperty(IS_SITE_BASED_RESOURCE).equals(TRUE);
+		
+		Statement statement = getDatabaseManager().select(
+				getResourceColumns(isSiteBasedResource),
 				mainClause.getTableNames(tableNames), mainClause);
 		int cnt=0;
 		try {
 			SqlUtil.Iterator iter = SqlUtil.getIterator(statement,
 					request.getOffset(), request.getLimit());
 			while (iter.getNext() != null) {
-				response.addResource(makeResource(iter.getResults()));
+				response.addResource(makeResource(iter.getResults(),isSiteBasedResource));
 				cnt++;
 				if (!iter.countOK()) {
 					response.setExceededLimit();
@@ -502,14 +513,14 @@ public class SopacFileManager extends FileManager implements
 	 * Get the columns to select for resources
 	 * @return resource columns
 	 */
-	private String getResourceColumns() {
+	private String getResourceColumns(Boolean isSiteBasedResource) {
 		//return "files.column1,files.column2, etc";
 
 		// path, fileSize, md5),
 		// site, publishTime, fromTime, toTime,
 		// toFileType(type));
 
-		if (_isSiteBasedResource) {
+		if (isSiteBasedResource) {
 			return ("DATA_RECORD.SITE_ID,DATA_RECORD.FILE_BASENAME,DATA_RECORD.YEAR,DATA_RECORD.DAY,"
 					+ "DATA_RECORD.CHECK_SUM,DATA_RECORD.START_TIME,DATA_RECORD.STOP_TIME,DATA_RECORD.FILE_CREATE_TIME,"
 					+ "DATA_RECORD.FILE_LOCATION,DATA_RECORD.PERCENT_COMPLETE,DATA_RECORD.INSERT_DATE,"
@@ -523,8 +534,9 @@ public class SopacFileManager extends FileManager implements
 		}
 	}
 
+	
 	/**
-	 * CHANGEME
+	 * 
 	 * Create a resource from the given results
 	 *
 	 * @param results result set
@@ -533,8 +545,10 @@ public class SopacFileManager extends FileManager implements
 	 *
 	 * @throws Exception On badness
 	 */
-	public GsacFile makeResource(ResultSet results) throws Exception {
-		//return null;
+	public GsacFile makeResource(ResultSet results, Boolean isSiteBasedResource) throws Exception {
+		
+		//System.err.println("makeResource...");
+
 		int col = 1;
 		/*
 		 String exportID = results.getString(col++);
@@ -549,25 +563,23 @@ public class SopacFileManager extends FileManager implements
 		 int sampleInterval = results.getInt(col++);
 		 */
 
-		// TODO: this may be null if file is auto file
-
-		//if (results.getString(col++)==null)return null;
-
 		// we may not be returning a site ID
 		String siteID = null;
-		if (_isSiteBasedResource)
+		if (isSiteBasedResource) {
 			siteID = results.getString(col++);
-
+			//System.err.println("siteID: " + siteID );
+		}
+		
 		String basename = results.getString(col++);
 		int year = results.getInt(col++);
 		int doy = results.getInt(col++);
-		String md5 = results.getString(col++); // remove whitespace at end?
+		String md5 = results.getString(col++).replace("\\s+$",""); 
 		Date fromTime = results.getDate(col++); // start_date
 		Date toTime = results.getDate(col++); // end_date
 		Date publishTime = results.getDate(col++);
 
-		setPath(results.getString(col++)); // file_location
-
+		String path = getPath(results.getString(col++)); // file_location
+		
 		int pctComplete = results.getInt(col++);
 		Date insertDate = results.getDate(col++);
 		long fileSize = results.getLong(col++);
@@ -577,67 +589,66 @@ public class SopacFileManager extends FileManager implements
 
 		String exportID = "sopac." + dataRecordId; // repository id in GsacFile
 
-		setExportTypeId(dataType, dataSubType);
-
+		// TODO: CHANGE to id based on file type (Paul's note ???)
 		ExportType type = ExportType.findType(ExportType.GROUP_ALL_TYPES,
-				_exportTypeId); // here CHANGE to id based on file type
+				getExportTypeId(dataType, dataSubType)); 
 
-		//System.err
-		//		.println("makeResource(): site: " + siteID + " path: " + _path + " publish date: " + publishTime);
+		//System.err.println("makeResource(): site: " + siteID + " path: " + _path + " publish date: " + publishTime);
 
-		// siteID may be null for non-site based resource types, and for auto files
-		//GsacSite site = getSiteManager().getSiteForResource(siteID);
 		GsacSite site = null;
 
-		if (!(siteID == null))
+		if (!(siteID == null)) {
 			site = getSiteManager().getSiteForResource(siteID);
+		}
 
-		GsacFile resource = new GsacFile(exportID, new FileInfo(_path,
+		GsacFile resource = new GsacFile(exportID, new FileInfo(path,
 				fileSize, md5), site, publishTime, fromTime, toTime,
 				toResourceType(type));
 		return resource;
 	}
 
-	private boolean setExportTypeId(String dataType, String dataSubType) {
+	
+	private int getExportTypeId(String dataType, String dataSubType) {
 		//System.err.println("setExportTypeId: dataType: " + dataType + " dataSubType: " + dataSubType);
 
 		if (dataType.equals("rinex") && dataSubType.equals("obs"))
-			_exportTypeId = 1;
+			return 1;
 		if (dataType.equals("rinex") && dataSubType.equals("nav"))
-			_exportTypeId = 2;
+			return 2;
 		if (dataType.equals("rinex") && dataSubType.equals("met"))
-			_exportTypeId = 3;
+			return 3;
 		if (dataType.equals("raw"))
-			_exportTypeId = 4;
+			return 4;
 		if (dataType.equals("sitelog"))
-			_exportTypeId = 5;
+			return 5;
 		if (dataType.equals("products") && dataSubType.equals("sinex"))
-			_exportTypeId = 6;
+			return 6;
 		if (dataType.equals("products") && dataSubType.equals("sp3"))
-			_exportTypeId = 7;
+			return 7;
 
-		return false;
+		return 0;
 	}
 
-	private void setPath(String path) {
-		_path = path;
-		//System.err.println("in setpath()");
+
+	
+	private String getPath(String path) {
+		//System.err.println("in getpath()");
 		// change any lox hostnames to garner
-		if (_path != null) {
+		if (path != null) {
 
 			//System.err.println("in setpath(), not null");
-			if (_path.contains("lox.ucsd.edu")) {
+			if (path.contains("lox.ucsd.edu")) {
 
 				//System.err.println("in setpath(), replace string");
-				_path = _path.replaceFirst("lox.ucsd.edu",
+				path = path.replaceFirst("lox.ucsd.edu",
 						SopacProperties.SOPAC_ARCHIVE_HOSTNAME);
 			}
 		}
+		return path;
 	}
 
+	
 	/**
-	 * CHANGEME
-	 * We don't have example code for this
 	 *
 	 * @param resourceId _more_
 	 *
@@ -646,39 +657,100 @@ public class SopacFileManager extends FileManager implements
 	 * @throws Exception _more_
 	 */
 	public GsacResource getResource(String resourceId) throws Exception {
-		//TODO:
+		
+		//System.err.println("GsacResource, resourceId: " + resourceId );
+		
+		if ((resourceId == null) || (resourceId.length() == 0)) {
+			return null;
+		}
+
+		StringBuffer msgBuff = new StringBuffer();
+		List<Clause> clauses = new ArrayList<Clause>();
+		List<String> tableNames = new ArrayList<String>();
+		Set<String> tableNamesFromSiteClauses = new HashSet<String>();
+
+		// add initial tables to table names.  we may remove SITE if a non-site 
+		// type query
+		tableNames.add(Tables.DATA_RECORD.NAME);
+//		List<Clause> fileClauses = new ArrayList<Clause>();
+		Clause clause = Clause.eq( Tables.DATA_RECORD.COL_DATA_RECORD_ID, resourceId.replace("sopac.", ""));
+
+		Statement statement = getDatabaseManager().select(
+                   "DATA_RECORD.FILE_BASENAME, DATA_RECORD.YEAR, DATA_RECORD.DAY,"
+                 + "DATA_RECORD.CHECK_SUM, DATA_RECORD.START_TIME, DATA_RECORD.STOP_TIME, DATA_RECORD.FILE_CREATE_TIME,"
+                 + "DATA_RECORD.FILE_LOCATION, DATA_RECORD.PERCENT_COMPLETE, DATA_RECORD.INSERT_DATE,"
+                 + "DATA_RECORD.FILE_SIZE, DATA_RECORD.DATA_RECORD_ID, DATA_TYPE_ID",
+			clause.getTableNames(tableNames), clause);
+		int cnt=0;
+		try {
+            ResultSet results = statement.getResultSet();
+            while (results.next()) {
+            	// TODO: does API allow multiple files?
+
+
+            	String baseName = results.getString(1);
+            	//System.err.println("baseName: " + baseName);
+            	String checkSum = results.getString(4);
+        		Date fromTime = results.getDate( 5 ); // start_date
+        		Date toTime = results.getDate( 6 ); // end_date
+            	String location = results.getString(8);
+            	//System.err.println("location: " + location );
+        		Date publishTime = results.getDate( 10 );
+        		long fileSize = results.getLong( 11 );
+        		//System.err.println( "FileSize: " + fileSize );
+        		int dataTypeID = results.getInt( 13 );
+        		//System.err.println( "dataTypeID: " + dataTypeID );
+		
+            	// TODO: here CHANGE to id based on file type (Paul's note ???)
+        		int typeId = 0;
+
+        		// TODO: get this from the database, but 
+        		switch( dataTypeID ) {
+        		case 21: typeId = getExportTypeId( "products", "sinex"); break;
+        		case 66: typeId = getExportTypeId( "products", "sp3" ); break;
+        		case 72: typeId = getExportTypeId( "raw", "" ); break;
+        		case 73: typeId = getExportTypeId( "raw", "" ); break;
+        		case 74: typeId = getExportTypeId( "raw", "" ); break;
+        		case 75: typeId = getExportTypeId( "raw", "" ); break;
+        		case 76: typeId = getExportTypeId( "rinex", "met" ); break;
+        		case 77: typeId = getExportTypeId( "rinex", "nav" ); break;
+        		case 78: typeId = getExportTypeId( "rinex", "obs" ); break;
+        		case 81: typeId = getExportTypeId( "sitelog", "" ); break;
+        		default: typeId = 0;
+        		}
+        		
+        		ExportType type = ExportType.findType(ExportType.GROUP_ALL_TYPES, typeId); 
+
+            	GsacFile resource = new GsacFile( resourceId,
+            			new FileInfo( location, fileSize, checkSum),
+            				null,
+            				publishTime,
+            				fromTime,
+            				toTime,
+            				toResourceType(type) );
+
+            	return resource;
+            }
+            
+//            GsacFile resource = new GsacFile(exportID, new FileInfo(_path,
+//                    fileSize, md5), site, publishTime, fromTime, toTime,
+//                    toResourceType(type));
+		
+		} finally {
+			getDatabaseManager().closeAndReleaseConnection(statement);
+		}
+		//long t2 = System.currentTimeMillis();
+		//System.err.println("read " + cnt + " resources in " + (t2 - t1) + "ms");
+		
 		return null;
 	}
 
+
 	/**
-	 * Create the list of resource types that are shown to the user
+	 * helper method
 	 *
-	 * @return resource types
+	 * @return sitemanager
 	 */
-	/*
-
-	public List<ResourceType> doGetResourceTypes() {
-		List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
-		resourceTypes.add(new ResourceType("rinex", "RINEX Observation"));
-		resourceTypes.add(new ResourceType("nav", "RINEX Navigation"));
-		resourceTypes.add(new ResourceType("met", "RINEX Meteorology"));
-		resourceTypes.add(new ResourceType("sitelog", "Site Log"));
-		resourceTypes.add(new ResourceType("raw", "Raw GPS Data"));
-		resourceTypes.add(new ResourceType("sinex", "SINEX"));
-		resourceTypes.add(new ResourceType("sp3", "sp3"));
-		// TODO: add to db
-		//resourceTypes.add(new ResourceType("qc", "QC"));
-		return resourceTypes;
-	}
-*/
-	
-	
-
-		/**
-		 * helper method
-		 *
-		 * @return sitemanager
-		 */
 	public SopacSiteManager getSiteManager() {
             return (SopacSiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
 	}
@@ -728,11 +800,5 @@ public class SopacFileManager extends FileManager implements
 			throw new RuntimeException(exc);
 		}
 	}
-
-	private boolean _isSiteBasedResource = false;
-
-	int _exportTypeId;
-
-	String _path;
 
 }
