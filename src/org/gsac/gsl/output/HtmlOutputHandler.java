@@ -2262,7 +2262,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sb.append("</tr></table></td>\n");
             sb.append(HtmlUtil.col(href));
-            sb.append(HtmlUtil.col(resource.getLongName(), clickEvent));
+            sb.append(HtmlUtil.col(resource.getLongName()+" &nbsp; ", clickEvent));
 
             if (resource.getType() != null) {
                 sb.append(HtmlUtil.col(resource.getType().getName(),
