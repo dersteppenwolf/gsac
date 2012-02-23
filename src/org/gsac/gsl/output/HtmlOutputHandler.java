@@ -470,7 +470,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void getSearchForm(GsacRequest request, Appendable pw,
                               ResourceClass resourceClass)
             throws IOException {
-        getRepository().addToSearchForm(request, pw, resourceClass);
+        //Ask the repository to add to the search form
+        //if it returns false then don't do anything here
+        if ( !getRepository().addToSearchForm(request, pw, resourceClass)) {
+            return;
+        }
         CapabilityCollection collection =
             getRepository().getResourceManager(
                 resourceClass).getCapabilityCollection();
@@ -570,7 +574,32 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                         : stringSearchHelp) + HtmlUtil.attr(
                             HtmlUtil.ATTR_WIDTH,
                             "" + capability.getColumns())) + searchType;
+            } else if (capability.getType().equals(
+                    Capability.TYPE_STRING_BUTTONS)) {
+                String searchType = HtmlUtil.makeToggleInline("",
+                                        getSearchTypeSelect(request,
+                                            arg + SEARCHTYPE_SUFFIX), false);
 
+                widget = HtmlUtil.input(arg, request.get(arg, ((dflt != null)
+                        ? dflt
+                        : "")), HtmlUtil.title((tooltip != null)
+                        ? tooltip
+                        : stringSearchHelp) + HtmlUtil.attr(
+                            HtmlUtil.ATTR_WIDTH,
+                            "" + capability.getColumns())) + searchType;
+                StringBuffer radio   = new StringBuffer();
+                String       modeArg = arg + "_mode";
+                String       mode    = request.get(modeArg, "");
+                for (IdLabel tfo : capability.getEnums()) {
+                    radio.append(HtmlUtil.radio(arg + "_mode",
+                            tfo.getId().toString(),
+                            tfo.getId().toString().equals(mode)));
+                    radio.append(" ");
+                    radio.append(tfo.getLabel());
+                }
+                radio.append(HtmlUtil.br());
+                radio.append(widget);
+                widget = radio.toString();
             } else if (capability.getType().equals(
                     Capability.TYPE_SPATIAL_BOUNDS)) {
                 widget = makeMapSelector(request, arg, true, "", "");
@@ -609,9 +638,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 } else {
                     desc = HtmlUtil.img(iconUrl("/help.png"), desc) + " ";
                 }
-                capBuff.append(formEntryTop(request,
-                                            msgLabel(capability.getLabel()),
-                                            widget + " " + suffix));
+                capBuff.append(capabilityFormEntry(request,
+                        msgLabel(capability.getLabel()),
+                        widget + " " + suffix));
             } else {
                 getRepository().logError("Unknown capability:" + capability,
                                          null);
@@ -1377,12 +1406,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String formEntry(GsacRequest request, String label,
                             String contents) {
-        if (request.isMobile()) {
-            return "<tr><td><div class=\"formlabel\">" + label + "</div>"
-                   + contents + "</td></tr>";
-        } else {
-            return HtmlUtil.formEntry(label, contents);
-        }
+        return getRepository().formEntry(request, label, contents);
     }
 
     /**
@@ -1396,16 +1420,22 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public String formEntryTop(GsacRequest request, String label,
                                String contents) {
-        if (request.isMobile()) {
-            return "<tr><td><div class=\"formlabel\">" + label + "</div>"
-                   + contents + "</td></tr>";
-        } else {
-            return HtmlUtil.formEntryTop(label, contents);
-        }
+        return getRepository().formEntryTop(request, label, contents);
     }
 
-
-
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param label _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    public String capabilityFormEntry(GsacRequest request, String label,
+                                      String contents) {
+        return getRepository().capabilityFormEntry(request, label, contents);
+    }
 
 
     /**
@@ -2262,7 +2292,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sb.append("</tr></table></td>\n");
             sb.append(HtmlUtil.col(href));
-            sb.append(HtmlUtil.col(resource.getLongName()+" &nbsp; ", clickEvent));
+            sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ",
+                                   clickEvent));
 
             if (resource.getType() != null) {
                 sb.append(HtmlUtil.col(resource.getType().getName(),

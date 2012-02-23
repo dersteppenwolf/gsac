@@ -94,6 +94,9 @@ public class Capability {
     /** type */
     public static final String TYPE_STRING = "string";
 
+    /** _more_          */
+    public static final String TYPE_STRING_BUTTONS = "stringbuttons";
+
     /** type */
     public static final String TYPE_NUMERIC = "numeric";
 
@@ -461,7 +464,7 @@ public class Capability {
                     + capability);
             }
             if (existingCapability.getType().equals(TYPE_ENUMERATION)) {
-                System.err.println("Merging " + existingCapability.getId());
+                //                System.err.println("Merging " + existingCapability.getId());
                 existingCapability.mergeEnums(capability.getEnums());
             }
             return existingCapability;

@@ -52,6 +52,10 @@ input {
 }
 
 
+legend {
+     font-weight: bold;
+}
+
 .gsac-header-selected {
      font-weight: bold;
      color: black;

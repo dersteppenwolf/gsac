@@ -381,6 +381,72 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
+     * _more_
+     *
+     * @param request _more_
+     * @param label _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    public String formEntry(GsacRequest request, String label,
+                            String contents) {
+        if (request.isMobile()) {
+            return "<tr><td><div class=\"formlabel\">" + label + "</div>"
+                   + contents + "</td></tr>";
+        } else {
+            return HtmlUtil.formEntry(label, contents);
+        }
+    }
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param label _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    public String formEntryTop(GsacRequest request, String label,
+                               String contents) {
+        if (request.isMobile()) {
+            return "<tr><td><div class=\"formlabel\">" + label + "</div>"
+                   + contents + "</td></tr>";
+        } else {
+            return HtmlUtil.formEntryTop(label, contents);
+        }
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param request _more_
+     * @param label _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    public String capabilityFormEntry(GsacRequest request, String label,
+                                      String contents) {
+        if (request.isMobile()) {
+            return "<tr><td><div class=\"formlabel\">" + label + "</div>"
+                   + contents + "</td></tr>";
+        } else {
+            if (label.endsWith(":")) {
+                label = label.substring(0, label.length() - 1);
+            }
+            return "<tr><td colspan=2><fieldset><legend>" + label
+                   + "</legend>" + contents + "</fieldset></td></tr>";
+            //            return HtmlUtil.formEntry(label, contents);
+        }
+    }
+
+
+
+    /**
      * Create the default set of resource managers
      */
     public void initResourceManagers() {
@@ -1993,13 +2059,16 @@ public class GsacRepository implements GsacConstants {
      * @param request request
      * @param buffer buffer to append to
      * @param resourceClass Type of resource
+     *
+     * @return _more_
      */
-    public void addToSearchForm(GsacRequest request, Appendable buffer,
-                                ResourceClass resourceClass) {
+    public boolean addToSearchForm(GsacRequest request, Appendable buffer,
+                                   ResourceClass resourceClass) {
         //e.g.:
         //        buffer.append(HtmlUtil.formEntry("City:",
         //                       HtmlUtil.input(ARG_CITY,
         //                       request.get(ARG_CITY, (String) null)));
+        return true;
     }
 
 
