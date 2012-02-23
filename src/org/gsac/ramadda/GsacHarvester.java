@@ -226,27 +226,32 @@ public class GsacHarvester extends WebHarvester {
         }
         List<String> toks      = StringUtil.split(contents, "\n", true, true);
         double[]     latLonAlt = new double[3];
-        System.out.println("#siteId,latitude,longitude,altitude");
+        //        System.out.println("#siteId,latitude,longitude,altitude");
         User        user       = getUser();
         List<Entry> oldEntries = new ArrayList<Entry>();
+        int cnt = 0;
         for (String line : toks) {
             if (line.startsWith("#")) {
                 continue;
             }
+            //Test
+            if(cnt++>100) break;
             List<String> cols = StringUtil.split(line, ";", true, true);
+            //            System.err.println("line:" + line);
+            //            System.err.println("cols:" + cols);
             int          col           = 0;
             String       siteId        = cols.get(col++);
             String       wholesaler    = cols.get(col++);
             String       charId        = cols.get(col++);
-            String       descriptiveId = cols.get(col++).replace("\\", "");
+            String       descriptiveId = cols.get(col++).replaceAll("\\", "").replaceAll("_"," ");
             String       createTime    = cols.get(col++);
             Date         dttm          = DateUtil.parse(createTime);
             double       x             = Double.parseDouble(cols.get(col++));
             double       y             = Double.parseDouble(cols.get(col++));
             double       z             = Double.parseDouble(cols.get(col++));
-            double       accuracy      = Double.parseDouble(cols.get(col++));
-            //jeffmc comment out so we can build            latLonAlt = GeoUtils.wgs84XYZToLatLonAlt(x, y, z, latLonAlt);
-            latLonAlt = null;
+            double       accuracy      = col<cols.size()?Double.parseDouble(cols.get(col++)):1.0;
+            latLonAlt = GeoUtils.wgs84XYZToLatLonAlt(x, y, z, latLonAlt);
+
 
 
             long    date     = dttm.getTime();
@@ -255,9 +260,9 @@ public class GsacHarvester extends WebHarvester {
             if (entry == null) {
                 entry = typeHandler.createEntry(getRepository().getGUID());
             }
-
-            Object[] values = new Object[] { siteId, wholesaler };
+            Object[] values = new Object[] { siteId, wholesaler, "active"  };
             //TODO: Date logic
+            //            System.err.println ("description:" + descriptiveId);
             entry.initEntry(charId, descriptiveId, baseGroup, user, null,
                             null, date, date, date, date, values);
             entry.setLocation(latLonAlt[0], latLonAlt[1], latLonAlt[2]);

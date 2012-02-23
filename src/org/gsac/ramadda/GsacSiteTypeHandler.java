@@ -66,8 +66,6 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
     /** _more_ */
     public static final String TYPE_STREAM = "gsacstream";
 
-
-
     /** _more_ */
     public static final String TABLE_GSACSITE = "gsacsite";
 
@@ -96,7 +94,7 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
     public static final String COL_SITEID = "siteid";
 
     /** _more_ */
-    public static final String COL_WHOLESALER = "wholesaler";
+    public static final String COL_SOURCE = "source";
 
 
     /**
@@ -158,7 +156,7 @@ public class GsacSiteTypeHandler extends GenericTypeHandler {
             throws Exception {
 
         Clause clause = Clause.and(Clause.eq(COL_SITEID, siteId),
-                                   Clause.eq(COL_WHOLESALER, wholesaler));
+                                   Clause.eq(COL_SOURCE, wholesaler));
         String[] ids = SqlUtil.readString(
                            getDatabaseManager().getIterator(
                                getDatabaseManager().select(

@@ -5,14 +5,15 @@ this defines a set of new gsac ramadda types
 -->
 
   <type name="gsacsite"  description="GSAC Site" handler="org.gsac.ramadda.GsacSiteTypeHandler" >
+     <property name="icon" value="/gsac/site.png"/>
+     <property name="form.area.show" value="false"/>
+     <property name="form.location.show" value="true"/>
+     <property name="form.altitude.show" value="true"/>
+     <property name="form.resource.show" value="false"/>
      <column name="siteid" type="string"     label="Site ID" columns="10"  showinhtml="true" cansearch="true" isindex="true"/>
+     <column name="source" type="enumerationplus"     label="Source" columns="20"  showinhtml="true" cansearch="true" isindex="true"/>
      <column name="status" type="enumeration"  values="active,inactive"  default="active"  label="Site Status" showinhtml="true" cansearch="true" isindex="true"/>
 
-     <column name="source" type="string"     label="Source" columns="20"  showinhtml="true" cansearch="true" isindex="true"/>
-     <property name="icon" value="/gsac/site.png"/>
-     <property name="form.show.location" value="true"/>
-     <property name="form.show.altitude" value="true"/>
-     <property name="form.show.resource" value="false"/>
   </type>
 
 
