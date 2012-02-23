@@ -24,6 +24,7 @@ package gov.nasa.cddis.gsac;
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.util.*;
 
 
@@ -53,6 +54,17 @@ import java.util.List;
  * @author   Jeff McWhirter
  */
 public class CddisSiteManager extends SiteManager implements CddisArgs {
+
+
+
+    /** _more_ */
+    public static final String MODE_SITECODE = "mode.sitecode";
+
+    /** _more_ */
+    public static final String MODE_SITENAME = "mode.sitename";
+
+    /** _more_ */
+    public static final String MODE_DOMESNUMBER = "mode.domesnumber";
 
     /** column name for the common columns across the different site tables */
     public static final String COL_SITE_NAME = "site_name";
@@ -416,7 +428,23 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
             }
         }
 
-
+        //Check for the general site text search and just set the appropriate url args
+        if (request.defined(ARG_SITE_TEXT)) {
+            String text = request.get(ARG_SITE_TEXT, "");
+            String searchType = request.get(ARG_SITE_TEXT
+                                            + SEARCHTYPE_SUFFIX, "");
+            String mode = request.get(ARG_SITE_TEXT_MODE, "");
+            if (mode.equals(MODE_SITECODE)) {
+                request.put(ARG_SITECODE, text);
+                request.put(ARG_SITECODE_SEARCHTYPE, searchType);
+            } else if (mode.equals(MODE_SITENAME)) {
+                request.put(ARG_SITENAME, text);
+                request.put(ARG_SITENAME_SEARCHTYPE, searchType);
+            } else if (mode.equals(MODE_DOMESNUMBER)) {
+                request.put(ARG_DOMES_NUMBER, text);
+                request.put(ARG_DOMES_NUMBER + SEARCHTYPE_SUFFIX, searchType);
+            }
+        }
 
         //Add in the site code, site name  and domes number queries
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
@@ -579,6 +607,57 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
 
 
     /**
+     * _more_
+     *
+     * @param capabilities _more_
+     */
+    public void addDefaultCapabilities(List<Capability> capabilities) {
+        String              help = HtmlOutputHandler.stringSearchHelp;
+        Capability          siteCode;
+        List<ResourceGroup> siteGroups    = doGetResourceGroups();
+        List<IdLabel>       siteCodeModes = IdLabel.toList(new String[][] {
+            { MODE_SITECODE, "Site Code" }, { MODE_SITENAME, "Site Name" },
+            { MODE_DOMESNUMBER, "DOMES Number" },
+        });
+
+        Capability[] dflt = { initCapability(new Capability(ARG_SITE_TYPE,
+                                "Site Type", new ArrayList<IdLabel>(),
+                                true), CAPABILITY_GROUP_SITE_QUERY,
+                                       "Type of the site", null,
+                                       makeVocabulary(ARG_SITE_TYPE)),
+                              siteCode = initCapability(
+                                  new Capability(
+                                      ARG_SITE_TEXT, "Search Field",
+                                      Capability.TYPE_STRING_BUTTONS,
+                                      siteCodeModes,
+                                      false), CAPABILITY_GROUP_SITE_QUERY,
+                                          "Short name of the site",
+                                          "Short name of the site. " + help),
+                              initCapability(new Capability(ARG_SITE_STATUS,
+                                  "Site Status", new ArrayList<IdLabel>(),
+                                  true), CAPABILITY_GROUP_ADVANCED, "", "",
+                                         makeVocabulary(ARG_SITE_STATUS)),
+                              ((siteGroups.size() == 0)
+                               ? null
+                               : initCapability(
+                                   new Capability(
+                                       makeUrlArg(ARG_SUFFIX_GROUP),
+                                       "Site Group",
+                                       IdLabel.toList(siteGroups),
+                                       true), CAPABILITY_GROUP_ADVANCED,
+                                           null)),
+                              initCapability(new Capability(ARG_BBOX, "Bounds", Capability
+                                  .TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies") };
+        siteCode.setBrowse(true);
+        for (Capability capability : dflt) {
+            if (capability != null) {
+                capabilities.add(capability);
+            }
+        }
+    }
+
+
+    /**
      * Get the extra site search capabilities.
      *
      * @return site search capabilities
@@ -651,9 +730,9 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
                     "SLR Site Type", IdLabel.toList(slrSiteTypes), true));
             capability.setGroup(CAPABILITY_GROUP_ADVANCED);
 
-            capabilities.add(capability = new Capability(ARG_DOMES_NUMBER,
-                    "Domes Number", Capability.TYPE_STRING));
-            capability.setGroup(CAPABILITY_GROUP_SITE_QUERY);
+            //            capabilities.add(capability = new Capability(ARG_DOMES_NUMBER,
+            //                    "Domes Number", Capability.TYPE_STRING));
+            //            capability.setGroup(CAPABILITY_GROUP_SITE_QUERY);
 
             for (CddisSearchInfo info : SEARCH_STRINGS) {
                 capabilities.add(capability =
