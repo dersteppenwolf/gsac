@@ -35,6 +35,13 @@ import org.gsac.gsl.util.*;
  */
 public interface CddisArgs {
 
+    /** _more_          */
+    public static final String ARG_SITE_TEXT = "site.text";
+
+    /** _more_          */
+    public static final String ARG_SITE_TEXT_MODE = ARG_SITE_TEXT + "_mode";
+
+
     /** _more_ */
     public static final String ARG_VLBI_SITE_TYPE =
         GsacArgs.ARG_SITE_PREFIX + Tables.SITE_INFO_VLBI.COL_SITE_TYPE;
