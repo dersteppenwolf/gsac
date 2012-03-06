@@ -52,8 +52,16 @@ input {
 }
 
 
-legend {
-     font-weight: bold;
+.gsac-legend {
+   font-size: 10pt;
+  font-weight: bold;
+  margin-left:2px;
+}
+
+.gsac-fieldset {
+   border : 1px #ccc solid;
+   padding:5px;
+   padding-bottom:10px;
 }
 
 .gsac-header-selected {

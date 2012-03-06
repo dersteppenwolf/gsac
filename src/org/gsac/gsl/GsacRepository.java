@@ -438,7 +438,7 @@ public class GsacRepository implements GsacConstants {
             if (label.endsWith(":")) {
                 label = label.substring(0, label.length() - 1);
             }
-            return "<tr><td colspan=2><fieldset><legend>" + label
+            return "<tr><td colspan=2><fieldset class=\"gsac-fieldset\"><legend class=\"gsac-legend\">" + label
                    + "</legend>" + contents + "</fieldset></td></tr>";
             //            return HtmlUtil.formEntry(label, contents);
         }
