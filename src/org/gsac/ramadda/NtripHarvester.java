@@ -162,7 +162,7 @@ public class NtripHarvester extends WebHarvester {
         Entry  rootGroup     = getBaseGroup();
         User   user          = getUser();
         Entry baseGroup =
-            getEntryManager().findEntryFromName(rootGroup.getFullName()
+            getEntryManager().findEntryFromName(getRequest(), rootGroup.getFullName()
                 + Entry.PATHDELIMITER + baseGroupName, user, true);
         processSourceTable(urlEntry, baseGroup, entries);
         return true;
@@ -224,7 +224,7 @@ public class NtripHarvester extends WebHarvester {
             boolean haveISeenThisSite = true;
             Entry siteEntry = siteMap.get(sitePath);
             if (siteEntry == null) {
-                siteEntry = getEntryManager().findEntryFromName(sitePath,
+                siteEntry = getEntryManager().findEntryFromName(getRequest(), sitePath,
                                                                 user, false);
                 haveISeenThisSite = false;
             }
