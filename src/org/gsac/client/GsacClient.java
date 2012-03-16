@@ -54,7 +54,7 @@ import java.util.Properties;
 
 public class GsacClient implements GsacConstants {
 
-    /** _more_          */
+    /** _more_ */
     public static final String USER_AGENT = "gsac client v1.0";
 
     /** cmd line arg */
@@ -331,7 +331,7 @@ public class GsacClient implements GsacConstants {
     }
 
 
-    /** _more_          */
+    /** _more_ */
     public static final String OUTPUT_FILE_URL = "file.url";
 
 
@@ -412,6 +412,17 @@ public class GsacClient implements GsacConstants {
                 break;
             }
         }
+        if ( !gotOutput) {
+            String outputFromProperties =
+                (String) properties.get(GsacArgs.ARG_OUTPUT);
+            if (outputFromProperties != null) {
+                gotOutput = true;
+                args.add(new String[] { GsacArgs.ARG_OUTPUT,
+                                        outputFromProperties });
+            }
+        }
+
+
         if ( !gotOutput) {
             args.add(new String[] { GsacArgs.ARG_OUTPUT, "file.csv" });
         }
