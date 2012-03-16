@@ -4,7 +4,7 @@
 this defines a set of new gsac ramadda types
 -->
 
-  <type name="gsacsite"  description="GSAC Site" handler="org.gsac.ramadda.GsacSiteTypeHandler" >
+  <type name="gsacsite"  description="GSAC Site" handler="org.gsac.ramadda.GsacSiteTypeHandler"  category="GSAC">
      <property name="icon" value="/gsac/site.png"/>
      <property name="form.area.show" value="false"/>
      <property name="form.location.show" value="true"/>
@@ -27,7 +27,7 @@ this defines a set of new gsac ramadda types
 
 
 
-  <type name="gsacstream"  super="gsacsite" description="GNSS Stream" handler="org.gsac.ramadda.GsacSiteTypeHandler" >
+  <type name="gsacstream"  super="gsacsite" description="GNSS Stream" handler="org.gsac.ramadda.GsacSiteTypeHandler"  category="GSAC">
      <property name="form.show.url" value="true"/>
      <property name="form.label.url" value="GNSS Stream URL"/>
      <property name="form.show.file" value="false"/>
