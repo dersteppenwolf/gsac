@@ -26,57 +26,45 @@ import org.ramadda.repository.auth.User;
 import org.ramadda.repository.harvester.*;
 
 
-
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
 
 import ucar.unidata.util.DateUtil;
-import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
-
-
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlUtil;
-
-import java.io.File;
-
-
-import java.sql.Statement;
 
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 
 
 /**
+ * A harvester for the old GSAC MC and DHF files
  *
- *
- * @author IDV Development Team
- * @version $Revision: 1.3 $
  */
 public class GsacHarvester extends WebHarvester {
 
+    StringBuffer status = new StringBuffer();
+
     /**
-     * _more_
+     * ctor
      *
-     * @param repository _more_
-     * @param id _more_
+     * @param repository the repository
+     * @param id id of this harvester
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public GsacHarvester(Repository repository, String id) throws Exception {
         super(repository, id);
     }
 
     /**
-     * _more_
+     * ctor
      *
-     * @param repository _more_
-     * @param element _more_
+     * @param repository the repository
+     * @param element xml
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     public GsacHarvester(Repository repository, Element element)
             throws Exception {
@@ -85,46 +73,55 @@ public class GsacHarvester extends WebHarvester {
 
 
     /**
-     * _more_
+     * Get the description of this harveter type
      *
-     * @return _more_
+     * @return the description
      */
+    @Override
     public String getDescription() {
         return "GSAC DHF and MC Files";
     }
 
 
+    @Override
+    public String getExtraInfo() throws Exception {
+        return status.toString();
+    }
 
     /**
-     * _more_
+     * Override base class method to add items to the harvester edit form
      *
-     * @param request _more_
-     * @param entrySB _more_
-     * @param urlEntry _more_
-     * @param cnt _more_
+     * @param request the request
+     * @param entrySB buffer
+     * @param urlEntry The URL
+     * @param cnt which entry
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
+    @Override
     protected void addEntryToForm(Request request, StringBuffer entrySB,
                                   HarvesterEntry urlEntry, int cnt)
             throws Exception {
+        //Just add the parent entry selector widget
         addBaseFolderToForm(request, entrySB, urlEntry, cnt);
     }
 
 
     /**
-     * _more_
+     * This method gets called by the base UrlHarvester class. It either handles the DHF or rhe MC files
      *
-     * @param urlEntry _more_
-     * @param entries _more_
+     * @param urlEntry Holds the URL to harvest
+     * @param entries Add new entries to this list and the base class inserts them into the repository
      *
      *
-     * @return _more_
-     * @throws Exception _more_
+     * @return Everything is cool
+     * @throws Exception On badness
      */
+    @Override
     protected boolean processEntry(HarvesterEntry urlEntry,
                                    List<Entry> entries)
             throws Exception {
+        status = new StringBuffer();
         String baseGroupId = urlEntry.getBaseGroupId();
         Entry  baseGroup   = ((baseGroupId.length() == 0)
                               ? null
@@ -133,10 +130,12 @@ public class GsacHarvester extends WebHarvester {
 
         String url         = urlEntry.getUrl();
 
-        //        http://www.panga.cwu.edu/data_ftp_pub/GSAC/full/panga.full.mc
+        //e.g. -        http://www.panga.cwu.edu/data_ftp_pub/GSAC/full/panga.full.mc
         if (IOUtil.hasSuffix(url.toLowerCase(), "mc")) {
+            status.append("Processing MC file: " + url+"<br>");
             processMCFile(urlEntry, baseGroup, entries);
         } else if (IOUtil.hasSuffix(url.toLowerCase(), "dhf")) {
+            status.append("Processing DHF file: " + url+"<br>");
             processDHFFile(urlEntry, baseGroup);
         } else {
             throw new IllegalArgumentException("Unknown file type:" + url);
@@ -145,15 +144,13 @@ public class GsacHarvester extends WebHarvester {
     }
 
 
-    //# DHF_fields unique_info_id;wholesaler;data_type;unique_site_id;start_time;end_time;dhr_create_time;info_url;file_size;file_create_time;file_checksum;provider;file_grouping;file_compression
-
     /**
-     * _more_
+     * Process the DHF file. Note - this does not do anything
      *
-     * @param urlEntry _more_
-     * @param baseGroup _more_
+     * @param urlEntry The URL
+     * @param baseGroup The parent entry
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     protected void processDHFFile(HarvesterEntry urlEntry, Entry baseGroup)
             throws Exception {
@@ -179,94 +176,125 @@ public class GsacHarvester extends WebHarvester {
                 continue;
             }
             List<String> cols = StringUtil.split(line, ";", true, true);
-            int          col            = 0;
-            String       uniqueId       = cols.get(col++);
-            String       wholesaler     = cols.get(col++);
-            String       dataType       = cols.get(col++);
-            String       siteId         = cols.get(col++);
-            String       startTime      = cols.get(col++);
-            String       endTime        = cols.get(col++);
-            String       dhrCreateTime  = cols.get(col++);
-            String       url            = cols.get(col++);
-            long         fileSize       = Long.parseLong(cols.get(col++));
-            String       fileCreateTime = cols.get(col++);
-            String       checksum       = cols.get(col++);
-            String       provider       = cols.get(col++);
-            String       fileGrouping   = cols.get(col++);
-            String       compression    = cols.get(col++);
+            //# DHF_fields unique_info_id;wholesaler;data_type;unique_site_id;start_time;end_time;dhr_create_time;info_url;file_size;file_create_time;file_checksum;provider;file_grouping;file_compression
+            int    col            = 0;
+            String uniqueId       = cols.get(col++);
+            String wholesaler     = cols.get(col++);
+            String dataType       = cols.get(col++);
+            String siteId         = cols.get(col++);
+            String startTime      = cols.get(col++);
+            String endTime        = cols.get(col++);
+            String dhrCreateTime  = cols.get(col++);
+            String url            = cols.get(col++);
+            long   fileSize       = Long.parseLong(cols.get(col++));
+            String fileCreateTime = cols.get(col++);
+            String checksum       = cols.get(col++);
+            String provider       = cols.get(col++);
+            String fileGrouping   = cols.get(col++);
+            String compression    = cols.get(col++);
         }
 
     }
 
 
-    //   # MC_fields unique_site_id;wholesaler;char_id;descriptive_id;dhr_create_time;x;y;z;coord_accuracy
+
+
+
+    
+
+
 
     /**
-     * _more_
+     * Process the  MC file.
      *
-     * @param urlEntry _more_
-     * @param baseGroup _more_
-     * @param entries _more_
+     * @param urlEntry The URL
+     * @param baseGroup Parent entry
+     * @param entries Add any new entries to the entries list
      *
-     * @throws Exception _more_
+     * @throws Exception On badness
      */
     protected void processMCFile(HarvesterEntry urlEntry, Entry baseGroup,
                                  List<Entry> entries)
             throws Exception {
 
-        GsacSiteTypeHandler typeHandler =
-            (GsacSiteTypeHandler) getRepository().getTypeHandler(
-                GsacSiteTypeHandler.CLASS_SITE, false, false);
+        //Read the MC file
         String contents = IOUtil.readContents(urlEntry.getUrl(), getClass(),
                               null);
         if (contents == null) {
-            getRepository().getLogManager().logError(
-                "GsacHarvester: could not read MC file:" + urlEntry.getUrl());
+            status.append("Error reading MC file<br>");
+            logHarvesterError("GsacHarvester: could not read MC file:"
+                              + urlEntry.getUrl(), null);
             return;
         }
-        List<String> toks      = StringUtil.split(contents, "\n", true, true);
+
+        //This is the type of entry we are creating
+        GsacSiteTypeHandler typeHandler =
+            (GsacSiteTypeHandler) getRepository().getTypeHandler(
+                GsacSiteTypeHandler.CLASS_SITE, false, false);
+
+        //The user that will own the entries
+        User         user      = getUser();
+
+        List<String> lines     = StringUtil.split(contents, "\n", true, true);
         double[]     latLonAlt = new double[3];
-        //        System.out.println("#siteId,latitude,longitude,altitude");
-        User        user       = getUser();
+
+        //Keep a list of the existing entries that we find
         List<Entry> oldEntries = new ArrayList<Entry>();
-        int cnt = 0;
-        for (String line : toks) {
+
+        int         cnt        = 0;
+        System.err.println("# lines:" + lines.size());
+        for (String line : lines) {
             if (line.startsWith("#")) {
                 continue;
             }
-            //Test
-            if(cnt++>100) break;
+            //For testing limit the number of entries to 100
+            if (cnt++ > 150) {
+                break;
+            }
+
+            //   # MC_fields unique_site_id;wholesaler;char_id;descriptive_id;dhr_create_time;x;y;z;coord_accuracy
             List<String> cols = StringUtil.split(line, ";", true, true);
-            //            System.err.println("line:" + line);
-            //            System.err.println("cols:" + cols);
-            int          col           = 0;
-            String       siteId        = cols.get(col++);
-            String       wholesaler    = cols.get(col++);
-            String       charId        = cols.get(col++);
-            String       descriptiveId = cols.get(col++).replaceAll("\\", "").replaceAll("_"," ");
-            String       createTime    = cols.get(col++);
-            Date         dttm          = DateUtil.parse(createTime);
-            double       x             = Double.parseDouble(cols.get(col++));
-            double       y             = Double.parseDouble(cols.get(col++));
-            double       z             = Double.parseDouble(cols.get(col++));
-            double       accuracy      = col<cols.size()?Double.parseDouble(cols.get(col++)):1.0;
+            if (cols.size() < 8) {
+                logHarvesterInfo("Incorrect # columns:" + cols.size()
+                                 + " in line:" + line);
+                continue;
+            }
+
+            int    col        = 0;
+            String siteId     = cols.get(col++);
+            String wholesaler = cols.get(col++);
+            String charId     = cols.get(col++);
+            String descriptiveId = cols.get(col++).replaceAll("\\\\",
+                                            "").replaceAll("_", " ");
+            String createTime = cols.get(col++);
+            Date   dttm       = DateUtil.parse(createTime);
+            double x          = Double.parseDouble(cols.get(col++));
+            double y          = Double.parseDouble(cols.get(col++));
+            double z          = Double.parseDouble(cols.get(col++));
+            double accuracy   = (col < cols.size())
+                                ? Double.parseDouble(cols.get(col++))
+                                : 1.0;
             latLonAlt = GeoUtils.wgs84XYZToLatLonAlt(x, y, z, latLonAlt);
 
+            long date = dttm.getTime();
 
-
-            long    date     = dttm.getTime();
+            //Look for an existing entry with the given site id and source
             Entry   entry    = typeHandler.findSiteEntry(siteId, wholesaler);
             boolean newEntry = (entry == null);
+
+            //Create the entry if its a new one
             if (entry == null) {
                 entry = typeHandler.createEntry(getRepository().getGUID());
             }
-            Object[] values = new Object[] { siteId, wholesaler, "active"  };
+
+            //The values array holds the extra attributes of the site entry
+            //These are defined in the types.xml file
+            Object[] values = new Object[] { siteId, wholesaler, "active" };
+
             //TODO: Date logic
-            //            System.err.println ("description:" + descriptiveId);
             entry.initEntry(charId, descriptiveId, baseGroup, user, null,
                             null, date, date, date, date, values);
             entry.setLocation(latLonAlt[0], latLonAlt[1], latLonAlt[2]);
-            //            System.err.println ("adding:" + entry);
             if (newEntry) {
                 entries.add(entry);
             } else {
@@ -274,10 +302,18 @@ public class GsacHarvester extends WebHarvester {
             }
         }
 
+
+
+        //if we had existing entries then they have been updated and we need to update the DB
         if (oldEntries.size() > 0) {
             getRepository().getEntryManager().insertEntries(oldEntries,
                     false, true);
         }
+        if(entries.size()>0)
+            status.append("Added " + entries.size() +" new sites<br>");
+        if(oldEntries.size()>0)
+            status.append("Updated " + oldEntries.size() +" existing sites<br>");
+
     }
 
 }
