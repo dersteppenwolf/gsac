@@ -381,7 +381,7 @@ public class RamaddaGsacRepository extends GsacRepository {
             }
             result.putProperty(Repository.PROP_NAVLINKS,
                                getRepository().getNavLinks(request));
-            getRepository().decorateResult(request, result);
+            getRepository().getPageHandler().decorateResult(request, result);
             return new StringBuffer(new String(result.getContent()));
         } catch (Exception exc) {
             throw new RuntimeException(exc);
