@@ -77,19 +77,60 @@ public class DateRangeCollection extends GsacMetadata {
     public boolean addHtml(GsacRequest request, GsacResource gsacResource,
                            HtmlOutputHandler outputHandler, Appendable pw)
             throws IOException {
+        GsacRepository repository = outputHandler.getRepository();
         if (dateRanges.size() == 0) {
             return true;
         }
         StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] {
-            HtmlUtil.b("From"),
-            HtmlUtil.b("To") })));
+        long min = dateRanges.get(0)[0];
+        long max = dateRanges.get(0)[1];
         for (long[] tuple : dateRanges) {
+            min = Math.min(min, tuple[0]);
+            max = Math.max(max, tuple[1]);
+        }
+        
+        System.err.println("# date ranges:" + dateRanges.size());
+        int rowWidth = 1000;
+
+        //        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] {
+        //            HtmlUtil.b("From"),
+        //            HtmlUtil.b("To") })));
+        buff.append("<table border=1 cellspacing=0 cellpadding=0><tr>");
+        long lastTime  = 0;
+        for (int i=0;i<dateRanges.size();i++) {
+            long[] tuple =  dateRanges.get(i);
             String from = outputHandler.formatDate(new Date(tuple[0]));
             String to   = outputHandler.formatDate(new Date(tuple[1]));
-            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] { from,
-                    to })));
+            double timeDelta = (double)(tuple[1]-tuple[0]);
+            double percentOfTimeRange = timeDelta/(max-min);
+            int width = (int)(rowWidth*percentOfTimeRange);
+
+            if(i>0) {
+                double percentOfTimeRange2 = (tuple[0]-lastTime)/(double)(max-min);
+                int width2 = (int)(rowWidth*percentOfTimeRange2);
+                buff.append("<td>");
+                buff.append(HtmlUtil.img(repository.iconUrl("/blank.gif"),
+                                         "",
+                                         HtmlUtil.attr(HtmlUtil.ATTR_WIDTH,""+width2) +
+                                         HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT,"10")
+                                         ));
+                
+                buff.append("</td>");
+            }
+            lastTime = tuple[1];
+            System.err.println(from + " " + to + " width:" + width +" %:" + percentOfTimeRange);
+            buff.append("<td bgcolor=red>");
+            buff.append(HtmlUtil.img(repository.iconUrl("/blank.gif"),
+                                     "",
+                                     HtmlUtil.attr(HtmlUtil.ATTR_WIDTH,""+width) +
+                                     HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT,"10")
+));
+            
+            buff.append("</td>");
+            //            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] { from,
+            //                    to })));
         }
+        buff.append("</table>");
         buff.append(HtmlUtil.formTableClose());
         pw.append(
             outputHandler.formEntryTop(

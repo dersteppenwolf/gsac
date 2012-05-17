@@ -279,6 +279,24 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         double       value;
         boolean      addedAny = false;
         int          cnt      = 0;
+
+
+
+        //Check for the opensearch bbox argument
+        if (request.defined(ARG_BBOX)) {
+
+            List<String> wsen = StringUtil.split(request.get(ARG_BBOX,""),",");
+            if(wsen.size()!=4) {
+                throw new IllegalArgumentException("Incorrect number of coordinates:" + request.get(ARG_BBOX,""));
+            }
+            request.put(ARG_WEST, wsen.get(0));
+            request.put(ARG_SOUTH, wsen.get(1));
+            request.put(ARG_EAST, wsen.get(2));
+            request.put(ARG_NORTH, wsen.get(3));
+        }
+
+
+
         if (request.defined(ARG_NORTH)) {
             cnt++;
             clauses.add(Clause.le(latCol,
@@ -486,7 +504,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                     List<Clause> clauses) {
         List<String> args =
             (List<String>) request.getDelimiterSeparatedList(arg);
-        System.err.println("args:" + args);
+        //        System.err.println("args:" + args);
         clauses.add(Clause.or(Clause.makeStringClauses(column, args)));
         addSearchCriteria(msgBuff, label, args, arg);
     }
@@ -821,6 +839,21 @@ public abstract class GsacRepositoryManager implements GsacConstants {
                                      StringBuffer msgBuff) {
         int          cnt        = 0;
         StringBuffer tmpMsgBuff = new StringBuffer();
+        //Check for the opensearch bbox argument
+        if (request.defined(ARG_BBOX)) {
+
+            List<String> wsen = StringUtil.split(request.get(ARG_BBOX,""),",");
+            if(wsen.size()!=4) {
+                throw new IllegalArgumentException("Incorrect number of coordinates:" + request.get(ARG_BBOX,""));
+            }
+            request.put(ARG_WEST, wsen.get(0));
+            request.put(ARG_SOUTH, wsen.get(1));
+            request.put(ARG_EAST, wsen.get(2));
+            request.put(ARG_NORTH, wsen.get(3));
+        }
+
+
+
         if (request.defined(ARG_NORTH)) {
             cnt++;
             clauses.add(Clause.le(latitudeColumn,

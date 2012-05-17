@@ -1386,7 +1386,7 @@ public class GsacRepository implements GsacConstants {
             return;
         }
         if (uri.endsWith(".js") || uri.endsWith(".css")
-                || uri.endsWith(".jnlp")) {
+            || uri.endsWith(".jnlp") || uri.endsWith(".xml")) {
             String content = IOUtil.readContents(inputStream);
             inputStream.close();
             content     = replaceMacros(request, content);
@@ -1419,8 +1419,12 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     private String replaceMacros(GsacRequest request, String template) {
+
         template = template.replace("${htdocs}",
                                     getUrlBase() + URL_HTDOCS_BASE);
+
+        template = template.replace("${description}", getRepositoryDescription());
+        template = template.replace("${name}", getRepositoryName());
         template = template.replace("${urlroot}", getUrlBase() + URL_BASE);
         template = template.replace("${fullurlroot}",
                                     getAbsoluteUrl(request,
@@ -2206,7 +2210,6 @@ public class GsacRepository implements GsacConstants {
      * @return _more_
      */
     public String[] decodeRemoteId(String id) {
-        System.err.println("id:" + id);
         List<String> pair     = StringUtil.splitUpTo(id, ":", 2);
         String       host     = new String(XmlUtil.decodeBase64(pair.get(0)));
         String       remoteId = pair.get(1);
