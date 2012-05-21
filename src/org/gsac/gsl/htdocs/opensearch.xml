@@ -1,12 +1,15 @@
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:geo="http://a9.com/-/opensearch/extensions/geo/1.0/" xmlns:time="http://a9.com/-/opensearch/extensions/time/1.0/">
-  <ShortName><![CDATA[${name}]]></ShortName>
-  <Description><![CDATA[${description}]]></Description>
-  <Contact><![CDATA[jeffmc@unavco.org]]></Contact>
-  <SyndicationRight><![CDATA[open]]></SyndicationRight>
-  <AdultContent><![CDATA[false]]></AdultContent>
-  <Language><![CDATA[en-us]]></Language>
-  <OutputEncoding><![CDATA[UTF-8]]></OutputEncoding>
-  <InputEncoding><![CDATA[UTF-8]]></InputEncoding>
-  <Image><![CDATA[http://www.unavco.org/lib/images/banner/uv-logo.png]]></Image>
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" 
+xmlns:geo="http://a9.com/-/opensearch/extensions/geo/1.0/" 
+xmlns:time="http://a9.com/-/opensearch/extensions/time/1.0/">
+  <ShortName>${name}</ShortName>
+  <Description>${description}</Description>
+  <Contact>jeffmc@unavco.org</Contact>
+  <SyndicationRight>open</SyndicationRight>
+  <AdultContent>false</AdultContent>
+  <Language>en-us</Language>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image>http://www.unavco.org/lib/images/banner/uv-logo.png</Image>
   <Url template="${fullurlroot}/site/search/sites.atom?output=site.gsacatom&amp;site.code={searchTerms}&amp;bbox={geo:box}&amp;site.sortorder=ascending&amp;limit=1000" type="application/atom+xml"></Url>
 </OpenSearchDescription>

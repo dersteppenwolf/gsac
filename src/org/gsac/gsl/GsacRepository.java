@@ -2316,7 +2316,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /** _more_ */
-    public static final int URL_TIMEOUT_SECONDS = 30;
+    public static final int URL_TIMEOUT_SECONDS = 60;
 
 
     /**
