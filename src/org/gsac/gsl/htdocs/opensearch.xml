@@ -11,5 +11,5 @@ xmlns:time="http://a9.com/-/opensearch/extensions/time/1.0/">
   <OutputEncoding>UTF-8</OutputEncoding>
   <InputEncoding>UTF-8</InputEncoding>
   <Image>http://www.unavco.org/lib/images/banner/uv-logo.png</Image>
-  <Url template="${fullurlroot}/site/search/sites.atom?output=site.gsacatom&amp;site.code={searchTerms}&amp;bbox={geo:box}&amp;site.sortorder=ascending&amp;limit=1000" type="application/atom+xml"></Url>
+  <Url template="${fullurlroot}/site/search/sites.atom?output=site.gsacatom&amp;site.code={searchTerms?}&amp;bbox={geo:box?}&amp;site.sortorder=ascending&amp;limit=1000" type="application/atom+xml"></Url>
 </OpenSearchDescription>
