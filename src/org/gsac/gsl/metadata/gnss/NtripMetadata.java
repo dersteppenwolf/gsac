@@ -313,7 +313,9 @@ public class NtripMetadata extends StreamMetadata {
                 }
                 continue;
             }
+
             NtripMetadata line = new NtripMetadata();
+            try {
             line.mountPoint = cols.get(col++);
             line.urlRoot    = url;
             line.setUrl(line.urlRoot + "/" + line.mountPoint);
@@ -337,10 +339,10 @@ public class NtripMetadata extends StreamMetadata {
             line.authentication = cols.get(col++);
             line.fee            = cols.get(col++);
             line.setBitRate(Integer.parseInt(cols.get(col++)));
-
-
-
             results.add(line);
+            } catch(NumberFormatException nfe) {
+                System.err.println ("Format error:" + nfe+" "  + cols);
+            }
         }
         return results;
     }

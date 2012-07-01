@@ -77,7 +77,7 @@ public class SopacDatabaseManager extends GsacDatabaseManager {
      *
      * @throws Exception on badness
      */
-    public void init() throws Exception {
+    public void skipThis_init() throws Exception {
         // Load the database driver
 /*
     	try {
@@ -127,7 +127,7 @@ public class SopacDatabaseManager extends GsacDatabaseManager {
         return ds;
     }
 
-    public Connection getConnection() throws Exception {
+    public Connection skipThis_getConnection() throws Exception {
         Connection connection;
         //TODO: lets try out not using the connection pooling
         connection = dataSource.getConnection();
@@ -143,7 +143,7 @@ public class SopacDatabaseManager extends GsacDatabaseManager {
      *
      * @return _more_
      */
-    public String getPoolStats() {
+    public String skipThis_getPoolStats() {
         return "#active:1 #idle:1" + maxActive + " maxIdle:1";
 /*        
         "#active:" + dataSource.getNumActive() + " #idle:"

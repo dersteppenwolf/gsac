@@ -183,8 +183,8 @@ public class NtripHarvester extends WebHarvester {
                                       Entry baseGroup, List<Entry> entries)
         throws Exception {
 
-        GsacFileTypeHandler streamTypeHandler =
-            (GsacFileTypeHandler) getRepository().getTypeHandler(
+        GsacSiteTypeHandler streamTypeHandler =
+            (GsacSiteTypeHandler) getRepository().getTypeHandler(
                                                                  GsacSiteTypeHandler.TYPE_STREAM, false, false);
         /*        GsacSiteTypeHandler siteTypeHandler =
                   (GsacSiteTypeHandler) getRepository().getTypeHandler(

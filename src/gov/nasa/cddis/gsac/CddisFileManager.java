@@ -460,7 +460,9 @@ public class CddisFileManager extends FileManager implements CddisArgs {
             timeString = timeString.replace(" ", "0");
         }
         timeString = StringUtil.splitUpTo(timeString, ".", 2).get(0);
-        return sdf.parse(dateString + " " + timeString);
+        synchronized(sdf) {
+            return sdf.parse(dateString + " " + timeString);
+        }
     }
 
 
@@ -702,20 +704,20 @@ public class CddisFileManager extends FileManager implements CddisArgs {
                                      + (tmpCalendar.get(Calendar.MONTH) + 1)
                                      + "-" + "1";
 
-            Date dataStartDate = yyyyMMDDSdf.parse(startDateString);
-            //            System.err.println ("cal:" + tmpCalendar.getTime() +" " + tmpCalendar.get(Calendar.YEAR));
-
-
-            //            tmpCalendar.add(Calendar.MONTH,1);
-            //            tmpCalendar.add(Calendar.DAY_OF_MONTH,-1);
-
             String endDateString =
                 tmpCalendar.get(Calendar.YEAR) + "-"
                 + (tmpCalendar.get(Calendar.MONTH) + 1) + "-"
                 + (tmpCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-            Date dataEndDate = yyyyMMDDSdf.parse(endDateString);
-
+            Date dataStartDate;
+            Date dataEndDate;
+            synchronized(yyyyMMDDSdf) {
+                dataStartDate = yyyyMMDDSdf.parse(startDateString);
+                dataEndDate = yyyyMMDDSdf.parse(endDateString);
+            }
+            //            System.err.println ("cal:" + tmpCalendar.getTime() +" " + tmpCalendar.get(Calendar.YEAR));
+            //            tmpCalendar.add(Calendar.MONTH,1);
+            //            tmpCalendar.add(Calendar.DAY_OF_MONTH,-1);
             //            System.err.println ("date:" + startDateString +" -- " + endDateString +" " + dataEndDate);
             GsacFile resource = new GsacFile(resourceID, new FileInfo(path),
                                              site, publishDate,

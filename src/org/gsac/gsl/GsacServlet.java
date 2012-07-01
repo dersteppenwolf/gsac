@@ -184,7 +184,12 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
             haveInitialized = true;
 
 
-            ServletContext context = getServletContext();
+            ServletContext context = null;
+            try {
+                context = getServletContext();
+            } catch(Exception exc) {
+                System.err.println ("GSAC: Could not access servlet config");
+            }
 
             if (context != null) {
                 //Load properties from the war
