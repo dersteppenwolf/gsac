@@ -12,8 +12,9 @@ import org.gsac.gsl.util.*;
 
 
 /**
+ * Main entry point into the @MACRO.NAME@ repository
  *
- * @author Jeff McWhirter mcwhirter@unavco.org
+ * See the CHANGEME 
  */
 public class @MACRO.PREFIX@Repository extends GsacRepository implements GsacConstants {
 
@@ -21,23 +22,22 @@ public class @MACRO.PREFIX@Repository extends GsacRepository implements GsacCons
      * ctor
      */
     public @MACRO.PREFIX@Repository() {
-        try {
-            initResources();
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
-        }
     }
 
-    /**
-     * initialize resources
-     * CHANGME: Change the header.html and footer.html
-     *
-     * @throws Exception on badness
-     */
-    private void initResources() throws Exception {
-        String packageName = getClass().getPackage().getName();
-        packageName = packageName.replace(".","/");
+
+    /** CHANGEME
+        Create the resource managers
+        Override this to make your own set of resource managers
+    */
+    public void initResourceManagers() {
+        //If you only want sites or files then don't call this:
+        super.initResourceManagers();
+
+        //But do call one of these:
+        //        getResourceManager(GsacSite.CLASS_SITE);
+        //        getResourceManager(GsacFile.CLASS_FILE);
     }
+
 
 
     /**
@@ -55,9 +55,9 @@ public class @MACRO.PREFIX@Repository extends GsacRepository implements GsacCons
 
 
     /**
-     * Factory method to create the SiteManager
+     * Factory method to create the resource manager that manages the given ResourceClass
      *
-     * @return site manager
+     * @return resource manager
      */
     public GsacResourceManager doMakeResourceManager(ResourceClass type) {
         if(type.equals(GsacSite.CLASS_SITE)) {
@@ -67,23 +67,6 @@ public class @MACRO.PREFIX@Repository extends GsacRepository implements GsacCons
             return new @MACRO.PREFIX@FileManager(this);
         }
         return null;
-    }
-
-    public void initResourceManagers() {
-        //Override this to make your own set of resource managers
-        super.initResourceManagers();
-        //        getResourceManager(GsacSite.CLASS_SITE);
-        //        getResourceManager(GsacFile.CLASS_FILE);
-    }
-
-
-    /*
-     * CHANGEME Is this repository capable of certain things.
-     * By default the base repository does  a properties look up.
-     * See resources/gsac.properties
-     */
-    public boolean isCapable(String arg) {
-        return super.isCapable(arg);
     }
 
 

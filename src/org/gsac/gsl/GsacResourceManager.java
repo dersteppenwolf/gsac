@@ -53,7 +53,6 @@ import java.util.List;
 public abstract class GsacResourceManager extends GsacRepositoryManager {
 
     /** cache */
-
     private TTLCache<Object, GsacResource> resourceCache =
         new TTLCache<Object, GsacResource>(TTLCache.MS_IN_A_DAY);
 
@@ -261,18 +260,6 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     }
 
 
-    /**
-     * handle the request
-     *
-     * @param request The request
-     * @param response The response
-     *
-     * @throws Exception on badness
-     */
-    public abstract void handleRequest(GsacRequest request,
-                                       GsacResponse response)
-     throws Exception;
-
 
     /**
      * get all of the metadata for the given resource
@@ -454,6 +441,198 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     public List<ResourceGroup> doGetResourceGroups() {
         return new ArrayList<ResourceGroup>();
     }
+
+
+
+    /**
+     * Main entry point to handle search requests for resources
+     * Handle the resource request. A derived class can overwrite this method to do
+     * whatever they feel like doing. If not overwritten then this method
+     * does a basic select query and processes the results making use of the
+     * derived class methods:<pre>
+     * {@link #getSiteClauses} - returns a list of the select clauses. This list is then anded together to form the query
+     * {@link #getSiteSelectColumns} - The comma separated list of fully qualified (i.e., tablename prepended) column names to select
+     * {@link #getSiteOrder} - optional method to return the order by sql directive
+     * {@link #makeSite}  - This creates the GsacSite from the given resultset
+     * </pre>
+     *
+     * @param request the resquest
+     * @param response the response
+     *
+     * @throws Exception on badness
+     */
+    public void handleRequest(GsacRequest request, GsacResponse response)
+            throws Exception {
+        String columns = getResourceSelectColumns();
+        if (columns == null) {
+            return;
+        }
+        if (getDatabaseManager() == null) {
+            return;
+        }
+        long         t1         = System.currentTimeMillis();
+        List<String> tableNames = new ArrayList<String>();
+        Clause       clause     = getResourceClause(request, response,
+                                      tableNames);
+        //        System.err.println("Resource clauses:" + clause);
+        Statement statement = getDatabaseManager().select(columns,
+                                  clause.getTableNames(tableNames), clause,
+                                  getResourceSelectSuffix(request), -1);
+
+        processStatement(request, response, statement, request.getOffset(),
+                         request.getLimit());
+    }
+
+
+
+    /**
+     * Iterate on the query statement and create resource.
+     * Skip by the given offset and only process limit resources
+     *
+     * @param request the request
+     * @param response the response
+     * @param statement statement
+     * @param offset skip
+     * @param limit max number of resources to create
+     *
+     * @return count of how many resources were created
+     *
+     * @throws Exception On badness
+     */
+    public int processStatement(GsacRequest request, GsacResponse response,
+                                Statement statement, int offset, int limit)
+            throws Exception {
+        long t1 = System.currentTimeMillis();
+        //Iterate on the query results
+        SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
+        while (iter.getNext() != null) {
+            GsacResource resource = makeResource(request, iter.getResults());
+            if (resource == null) {
+                continue;
+            }
+            response.addResource(resource);
+            if ( !iter.countOK()) {
+                response.setExceededLimit();
+                break;
+            }
+        }
+        iter.close();
+        getDatabaseManager().closeAndReleaseConnection(statement);
+        long t2 = System.currentTimeMillis();
+        //        System.err.println("read " + iter.getCount() + " resources in "
+        //                           + (t2 - t1) + "ms");
+        return iter.getCount();
+    }
+
+
+
+    /**
+     * get the resource query clause. This also sets the seach criteria message on the response
+     *
+     * @param request the resquest
+     * @param response the response
+     * @param tableNames List of table names for the query
+     *
+     * @return resource query clause
+     */
+    public Clause getResourceClause(GsacRequest request, GsacResponse response,
+                                List<String> tableNames) {
+        StringBuffer msgBuff = new StringBuffer();
+        List<Clause> clauses = getResourceClauses(request, response, tableNames,
+                                   msgBuff);
+        setSearchCriteriaMessage(response, msgBuff);
+        return Clause.and(clauses);
+    }
+
+
+    /**
+     * Get the comma delimited list of columns to select on a resource query
+     *
+     *
+     * @return resource columns
+     */
+    public String getResourceSelectColumns() {
+        notImplemented("getResourceSelectColumns needs to be implemented");
+        return "";
+    }
+
+
+    /**
+     * this returns the order by clause and anything else that needs to be tacked onto the end of the resource query
+     *
+     * @param request The request
+     *
+     * @return the sql suffix
+     */
+    public String getResourceSelectSuffix(GsacRequest request) {
+        return getResourceOrder(request);
+    }
+
+
+    /**
+     * Get the order by sql directive when doing resource queries
+     *
+     * @param request the request
+     *
+     * @return the order by sql directive
+     */
+    public String getResourceOrder(GsacRequest request) {
+        return "";
+    }
+
+
+    /**
+     * Get the list of clauses when querying resources
+     *
+     * @param request the request
+     * @param response the response
+     * @param tableNames List of table names. add any table names in the query to this list
+     * @param msgBuff for the search criteria
+     *
+     * @return resource query clauses
+     */
+    public List<Clause> getResourceClauses(GsacRequest request,
+                                       GsacResponse response,
+                                       List<String> tableNames,
+                                       StringBuffer msgBuff) {
+        notImplemented("getResourceClauses needs to be implemented");
+        return null;
+    }
+
+
+
+    /**
+     * Create a single resource from the given resultset
+     *
+     *
+     * @param request _more_
+     * @param results db results
+     *
+     * @return the site
+     *
+     * @throws Exception on badness
+     */
+    public GsacResource makeResource(GsacRequest request, ResultSet results)
+            throws Exception {
+        return makeResource(results);
+    }
+
+    /**
+     * _more_
+     *
+     * @param results _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
+    public GsacResource makeResource(ResultSet results) throws Exception {
+        notImplemented("makeResource needs to be implemented");
+        return null;
+    }
+
+
+
 
 
 }

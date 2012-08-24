@@ -88,194 +88,7 @@ public abstract class SiteManager extends GsacResourceManager {
 
 
     /**
-     * Handle the site request. A derived class can overwrite this method to do
-     * whatever they feel like doing. If not overwritten then this method
-     * does a basic select query and processes the results making use of the
-     * derived class methods:<pre>
-     * {@link #getSiteClauses} - returns a list of the select clauses. This list is then anded together to form the query
-     * {@link #getSiteSelectColumns} - The comma separated list of fully qualified (i.e., tablename prepended) column names to select
-     * {@link #getSiteOrder} - optional method to return the order by sql directive
-     * {@link #makeSite}  - This creates the GsacSite from the given resultset
-     * </pre>
-     *
-     * @param request the resquest
-     * @param response the response
-     *
-     * @throws Exception on badness
-     */
-    public void handleRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
-        String columns = getSiteSelectColumns();
-        if (columns == null) {
-            return;
-        }
-        if (getDatabaseManager() == null) {
-            return;
-        }
-        long         t1         = System.currentTimeMillis();
-        List<String> tableNames = new ArrayList<String>();
-        Clause       clause     = getSiteClause(request, response,
-                                      tableNames);
-        //        System.err.println("Site clauses:" + clause);
-        Statement statement = getDatabaseManager().select(columns,
-                                  clause.getTableNames(tableNames), clause,
-                                  getSiteSelectSuffix(request), -1);
-
-        processStatement(request, response, statement, request.getOffset(),
-                         request.getLimit());
-    }
-
-
-
-    /**
-     * Iterate on the query statement and create sites.
-     * Skip by the given offset and only process limit sites
-     *
-     * @param request the request
-     * @param response the response
-     * @param statement statement
-     * @param offset skip
-     * @param limit max number of sites to create
-     *
-     * @return count of how many sites were created
-     *
-     * @throws Exception On badness
-     */
-    public int processStatement(GsacRequest request, GsacResponse response,
-                                Statement statement, int offset, int limit)
-            throws Exception {
-        long t1 = System.currentTimeMillis();
-        //Iterate on the query results
-        SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
-        while (iter.getNext() != null) {
-            GsacSite site = makeSite(request, iter.getResults());
-            if (site == null) {
-                continue;
-            }
-            response.addResource(site);
-            if ( !iter.countOK()) {
-                response.setExceededLimit();
-                break;
-            }
-        }
-        iter.close();
-        getDatabaseManager().closeAndReleaseConnection(statement);
-        long t2 = System.currentTimeMillis();
-        //        System.err.println("read " + iter.getCount() + " sites in "
-        //                           + (t2 - t1) + "ms");
-        return iter.getCount();
-    }
-
-
-
-    /**
-     * get the site query clause. This also sets the seach criteria message on the response
-     *
-     * @param request the resquest
-     * @param response the response
-     * @param tableNames List of table names for the query
-     *
-     * @return site query clause
-     */
-    public Clause getSiteClause(GsacRequest request, GsacResponse response,
-                                List<String> tableNames) {
-        StringBuffer msgBuff = new StringBuffer();
-        List<Clause> clauses = getSiteClauses(request, response, tableNames,
-                                   msgBuff);
-        setSearchCriteriaMessage(response, msgBuff);
-        return Clause.and(clauses);
-    }
-
-
-    /**
-     * Get the comma delimited list of columns to select on a site query
-     *
-     *
-     * @return site columns
-     */
-    public String getSiteSelectColumns() {
-        notImplemented("getSiteSelectColumns needs to be implemented");
-        return "";
-    }
-
-
-    /**
-     * this returns the order by clause and anything else that needs to be tacked onto the end of the site query
-     *
-     * @param request The request
-     *
-     * @return the sql suffix
-     */
-    public String getSiteSelectSuffix(GsacRequest request) {
-        return getSiteOrder(request);
-    }
-
-
-    /**
-     * Get the order by sql directive when doing site queries
-     *
-     * @param request the request
-     *
-     * @return the order by sql directive
-     */
-    public String getSiteOrder(GsacRequest request) {
-        return "";
-    }
-
-
-    /**
-     * Get the list of clauses when querying sites
-     *
-     * @param request the request
-     * @param response the response
-     * @param tableNames List of table names. add any table names in the query to this list
-     * @param msgBuff for the search criteria
-     *
-     * @return site query clauses
-     */
-    public List<Clause> getSiteClauses(GsacRequest request,
-                                       GsacResponse response,
-                                       List<String> tableNames,
-                                       StringBuffer msgBuff) {
-        notImplemented("getSiteClauses needs to be implemented");
-        return null;
-    }
-
-
-
-    /**
-     * Create a single site from the given resultset
-     *
-     *
-     * @param request _more_
-     * @param results db results
-     *
-     * @return the site
-     *
-     * @throws Exception on badness
-     */
-    public GsacSite makeSite(GsacRequest request, ResultSet results)
-            throws Exception {
-        return makeSite(results);
-    }
-
-    /**
-     * _more_
-     *
-     * @param results _more_
-     *
-     * @return _more_
-     *
-     * @throws Exception _more_
-     */
-    public GsacSite makeSite(ResultSet results) throws Exception {
-        notImplemented("makeSite needs to be implemented");
-        return null;
-    }
-
-
-    /**
-     * Helper method to create default site query capabilities.
+     * Helper method to create default resource query capabilities.
      * This adds capabilities for:<ul>
      * <li> site code
      * <li> site name
@@ -353,5 +166,25 @@ public abstract class SiteManager extends GsacResourceManager {
         new SiteLogOutputHandler(getRepository(), getResourceClass());
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
     }
+
+
+
+    /** 
+     * For backwards compatability with sopac
+     *
+    public String getSiteSelectSuffix(GsacRequest request) {
+        return getResourceSelectSuffix(request);
+    }
+
+    /** 
+     * For backwards compatability with sopac
+     *
+     */
+    public Clause getSiteClause(GsacRequest request, GsacResponse response,
+                                List<String> tableNames) {
+        return  getResourceClause(request, response, tableNames);
+    }
+
+
 
 }

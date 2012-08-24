@@ -264,7 +264,7 @@ public class CddisSiteManager extends SiteManager implements CddisArgs {
         //Do the select
         Statement statement = getDatabaseManager().select(columnsToSelect,
                                   tableNames, clause,
-                                  getSiteSelectSuffix(request), -1);
+                                  getResourceSelectSuffix(request), -1);
         //Iterate on the results (note: the Iterator takes care of closing and release the DB resources)
         SqlUtil.Iterator iter  = SqlUtil.getIterator(statement, 0, -1);
         int              myCnt = 0;

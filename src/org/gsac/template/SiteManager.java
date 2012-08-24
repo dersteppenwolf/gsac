@@ -37,21 +37,6 @@ import java.util.List;
 public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
     
-    /** CHANGEME  basic site query info.    
-        Set this to your table columns    */
-    private static final String SITE_WHAT = " distinct "
-                                               + SqlUtil.comma(new String[] {
-                                                       "YourSiteTable.column1",
-                                                       "YourSiteTable.column2",
-                                                       "etc"
-                                                   });
-
-    /** CHANGEME Default query order. 
-        Set this to what you want to sort on */
-    private static final String SITE_ORDER =
-        " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
-
-
     /**
      * ctor
      *
@@ -62,17 +47,97 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     }
 
 
-    /** CHANGEME This is the main entry point for handling queries
+    /**
+     CHANGEME
+     * Get the extra site search capabilities. 
+     *
+     * @return site search capabilities
+     */
+    public List<Capability> doGetQueryCapabilities() {
+        List<Capability> capabilities = new ArrayList<Capability>();
+        /*
+          you can use the default site capabilities:
+          addDefaultCapabilities(capabilities);
+          or add you own, e.g.:
+          Add in an example fruit enumerated query capability
+          String[]values = {"banana","apple","orange"};
+          Arrays.sort(values);
+          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
+        */
+        return capabilities;
+    }
+
+
+    /** 
+        This is the main entry point for handling queries
         If you don't implement this method then the base SiteManager
         class will 
      **/
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
+        //CHANGEME 
         super.handleRequest(request, response);
+
+        /**
+           Here's how to access the arguments
+           if (request.defined(ARG_NORTH)) {
+                request.get(ARG_NORTH, 0.0);
+           }
+           ARG_SOUTH,ARG_EAST, ARG_WEST
+        */
+
+        StringBuffer msgBuff = new StringBuffer();
+        List<GsacSite> sites = new ArrayList<GsacSite>();
+        //Create the sites ...
+        //sites.add(new GsacSite(...));
+        for (GsacSite site : sites) {
+            response.addResource(site);
+        }
+        setSearchCriteriaMessage(response, msgBuff);
     }
 
 
     /**
+     * CHANGEME
+     * create and return the resource (site) identified by the given resource id
+     *
+     * @param resourceId resource id. This isn't the resource code but actually the monument id
+     *
+     * @return the resource or null if not found
+     *
+     * @throws Exception on badness
+     */
+    public GsacResource getResource(String resourceId) throws Exception {
+        /* e.g.:
+        //Here is some example code from Unavco for making a query
+
+        Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
+                                  new Integer(resourceId).intValue());
+        Statement statement = getDatabaseManager().select(
+                                                          getResourceSelectColumns(), 
+                                                          clause.getTableNames(), clause);
+        try {
+            ResultSet results = statement.getResultSet();
+            if (!results.next()) {
+                results.close();
+                return null;
+            }
+            GsacSite site = makeSite(results);
+            results.close();
+            return site;
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+        */
+        return  null;
+    }
+
+
+
+
+    /**
+     * An example method that shows how to use the Clause class to assemble a set of database
+     * search clauses from the URL arguments
      *
      * @param request the resquest
      * @param response the response
@@ -80,17 +145,13 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @return list of clauses for selecting sites
      */
-    public List<Clause> getSiteClauses(GsacRequest request,
-                                          GsacResponse response,
-                                          List<String> tableNames,
-                                          StringBuffer msgBuff) {
-
+    public List<Clause> getResourceClauses(GsacRequest request,
+                                           GsacResponse response,
+                                           List<String> tableNames,
+                                           StringBuffer msgBuff) {
         List<Clause> clauses = new ArrayList();
-
-
         String latCol = "replace me with correct column name";
         String lonCol = "replace me with correct column name";
-
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latCol,
                                   request.get(ARG_NORTH, 0.0)));
@@ -143,13 +204,12 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
             if (request.defined(argValues[0])) {
                 //There might be more than one argument and also it can be comma separated
                 args = (List<String>) request.getDelimiterSeparatedList(
-                    argValues[0]);
+                        argValues[0]);
                 clauses.add(Clause.or(Clause.makeStringClauses(argValues[1],
                         args)));
                 addSearchCriteria(msgBuff, argValues[2], args);
             }
         }
-
         */
 
         //Add in the site code and site name queries
@@ -164,45 +224,103 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
         if (request.defined(ARG_SITE_GROUP)) {
             //...
         }
-
         */
-
         return clauses;
     }
 
+
     /**
-     * CHANGEME
-     * Get the resource from the database
+     * get all of the metadata for the given site
      *
-     * @param resourceId resource id. This isn't the resource code but actually the monument id
+     * @param gsacResource resource
      *
-     * @return the resource or null if not found
-     *
-     * @throws Exception on badness
+     * @throws Exception On badness
      */
-    public GsacResource getResource(String resourceId) throws Exception {
-        /* e.g.:
-        Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
-                                  new Integer(resourceId).intValue());
-        Statement statement = getDatabaseManager().select(
-                                                          getSiteSelectColumns(), 
-                                                          clause.getTableNames(), clause);
-        try {
-            ResultSet results = statement.getResultSet();
-            if (!results.next()) {
-                results.close();
-                return null;
-            }
-            GsacSite site = makeSite(results);
-            results.close();
-            return site;
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-        */
-        return  null;
+    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
+        //The Unavco repository adds in GnssEquipment metadata and other things
     }
 
+
+    /**
+     * Get the site group list. This is used by the addDefaultSiteCapabilities 
+     *
+     * @return resource group list
+     */
+    public List<ResourceGroup> doGetResourceGroups() {
+        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
+        /**
+           CHANGEME
+        groups.add(new ResourceGroup("group1","Group 1"));
+        groups.add(new ResourceGroup("group2", "Group 2"));
+        groups.add(new ResourceGroup("group3","Group 3"));
+        Collections.sort((List) groups);
+        */
+        return groups;
+    }
+
+
+    /*************************************************************************************************
+     * The code below here inherits some of .....
+    *************************************************************************************************/
+
+
+    /** CHANGEME Default query order. 
+        Set this to what you want to sort on */
+    private static final String SITE_ORDER =
+        " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
+
+
+    /**
+     * Get the columns that are to be searched on
+     *
+     * @param request the request
+     *
+     * @return comma delimited fully qualified column names to select on
+     */
+    public String getResourceSelectColumns() {
+        return " distinct "
+            + SqlUtil.comma(new String[] {
+                    "YourSiteTable.column1",
+                    "YourSiteTable.column2",
+                    "etc"
+                });
+    }
+
+
+    /**
+     * Get the order by clause
+     *
+     * @param request the request
+     *
+     * @return order by clause
+     */
+    public String getResourceOrder(GsacRequest request) {
+        if(request  == null || !request.defined(ARG_SITE_SORT_VALUE)) {
+            return SITE_ORDER;
+        } 
+        boolean ascending = request.getSiteAscending();
+        StringBuffer cols = new StringBuffer();
+        //CHANGEME: set this to use your column names for sorting
+        for(String sort: request.getDelimiterSeparatedList(ARG_SITE_SORT_VALUE)) {
+            String col = null;
+            if(sort.equals(SORT_SITE_CODE)) {
+                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_CODE;
+            } else if(sort.equals(SORT_SITE_NAME)) {
+                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_NAME;
+            } else  if(sort.equals(SORT_SITE_TYPE)) {
+                //                col = Tables.MV_DAI_PRO.COL_SITE_TYPE;
+            } 
+            if(col!=null) {
+                if(cols.length()!=0) cols.append(",");
+                //Oracle has a UPPER operator. We use this to sort on upper case
+                cols.append("UPPER(" +col+")");
+            }
+        }
+        if(cols.length()>0) {
+            return orderBy(cols.toString(), ascending);
+        }
+        return SITE_ORDER;
+    }
 
     /**
      * CHANGEME
@@ -260,109 +378,6 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     }
 
 
-
-    /**
-     * get all of the metadata for the given site
-     *
-     * @param gsacResource resource
-     *
-     * @throws Exception On badness
-     */
-    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
-        //The unavcorepository adds in GnssEquipment metadata and other things
-    }
-
-    /**
-     * Get the extra site search capabilities. 
-     *
-     * @return site search capabilities
-     */
-    public List<Capability> doGetQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
-        //CHANGEME
-        /*
-          you can use the default site capabilities:
-          addDefaultCapabilities(capabilities);
-          or add you own, e.g.:
-          Add in an example fruit enumerated query capability
-          String[]values = {"banana","apple","orange"};
-          Arrays.sort(values);
-          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
-        */
-        return capabilities;
-    }
-
-
-    /**
-     * Get the site group list. This is used by the addDefaultSiteCapabilities 
-     *
-     * @return site group list
-     */
-    public List<ResourceGroup> doGetResourceGroups() {
-        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
-        /**
-           CHANGEME
-        groups.add(new ResourceGroup("group1","Group 1"));
-        groups.add(new ResourceGroup("group2", "Group 2"));
-        groups.add(new ResourceGroup("group3","Group 3"));
-        Collections.sort((List) groups);
-        */
-        return groups;
-    }
-
-
-    /**
-     * Get the columns that are to be searched on
-     *
-     * @param request the request
-     *
-     * @return comma delimited fully qualified column names to select on
-     */
-    public String getSiteSelectColumns() {
-        return SITE_WHAT;
-    }
-
-    /**
-     * Get the order by clause
-     *
-     * @param request the request
-     *
-     * @return order by clause
-     */
-    public String getSiteOrder(GsacRequest request) {
-        if(request  == null || !request.defined(ARG_SITE_SORT_VALUE)) {
-            return SITE_ORDER;
-        } 
-        boolean ascending = request.getSiteAscending();
-        StringBuffer cols = new StringBuffer();
-        //CHANGEME: set this to use your column names for sorting
-        for(String sort: request.getDelimiterSeparatedList(ARG_SITE_SORT_VALUE)) {
-            String col = null;
-            if(sort.equals(SORT_SITE_CODE)) {
-                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_CODE;
-            } else if(sort.equals(SORT_SITE_NAME)) {
-                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_NAME;
-            } else  if(sort.equals(SORT_SITE_TYPE)) {
-                //                col = Tables.MV_DAI_PRO.COL_SITE_TYPE;
-            } 
-            if(col!=null) {
-                if(cols.length()!=0) cols.append(",");
-                //Oracle has a UPPER operator. We use this to sort on upper case
-                cols.append("UPPER(" +col+")");
-            }
-        }
-        if(cols.length()>0) {
-            return orderBy(cols.toString(), ascending);
-        }
-        return SITE_ORDER;
-    }
-
-    public String getSiteSelectSuffix(GsacRequest request) {
-        return super.getSiteSelectSuffix(request);
-        //At unavco we end up doing a group by on our site select
-        //Something like:
-        //	return SITE_GROUP_BY+(request!=null?" " +getSiteOrder(request):"") ;
-    }
 
 
 
