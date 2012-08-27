@@ -192,6 +192,29 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
     }
 
+    private  boolean loadedProperties = false;
+
+    private void loadDatabaseProperties() {
+        if (loadedProperties) {
+            return;
+        }
+
+        String propertiesFile = getPropertiesFile();
+        if (propertiesFile == null) {
+            throw new IllegalArgumentException(
+                                               "No database properties file");
+        }
+        try {
+            InputStream propertiesIS =
+                IOUtil.getInputStream(propertiesFile, getClass());
+            properties.load(propertiesIS);
+            //                System.err.println("properties:" + properties);
+            loadedProperties = true;
+        } catch (Exception exc) {
+            throw new IllegalArgumentException(
+                                               "Could not load properties:" + propertiesFile);
+        }
+    }
 
     /**
      * This needs to be overwritten by the derived class to create the data source
@@ -202,26 +225,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      */
     public BasicDataSource doMakeDataSource() throws Exception {
         //Read the username, password and jdbcurl from the properties file
-        boolean loadedProperties = false;
-        if ( !loadedProperties) {
-            String propertiesFile = getPropertiesFile();
-            if (propertiesFile == null) {
-                throw new IllegalArgumentException(
-                    "No database properties file");
-            }
-            try {
-                InputStream propertiesIS =
-                    IOUtil.getInputStream(propertiesFile, getClass());
-                properties.load(propertiesIS);
-                //                System.err.println("properties:" + properties);
-                loadedProperties = true;
-            } catch (Exception exc) {
-                throw new IllegalArgumentException(
-                    "Could not load properties:" + propertiesFile);
-            }
-        }
-
-
+        loadDatabaseProperties();
         userName = getDatabaseProperty(PROP_GSAC_DB_USERNAME);
         password = getDatabaseProperty(PROP_GSAC_DB_PASSWORD);
         jdbcUrl  = getDatabaseProperty(PROP_GSAC_DB_JDBCURL);
@@ -284,6 +288,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      * @return _more_
      */
     public String getDatabaseProperty(String name) {
+        loadDatabaseProperties();
         //Let the system properties override the files
         String value = System.getProperty(name);
         //        System.err.println("db prop:" + name);
@@ -298,6 +303,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
                 return value.trim();
             }
         }
+
         String fromProperties = (String) properties.get(name);
         if (fromProperties != null) {
             //            System.err.println("\tmy props:" + fromProperties);
@@ -322,6 +328,9 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      * @return jdbc driver classname
      */
     public String getDriverClassName() {
+        System.err.println ("properties:" + properties);
+
+
         String driver =
             (String) getDatabaseProperty(PROP_GSAC_DB_DRIVERCLASS);
         return (driver == null)
