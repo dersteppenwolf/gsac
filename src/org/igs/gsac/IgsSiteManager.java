@@ -14,6 +14,7 @@ import org.gsac.gsl.util.*;
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -141,25 +142,25 @@ public class IgsSiteManager extends SiteManager {
         String lonCol =  Tables.SITELOG_LOCATION.COL_LONGITUDEEAST;
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latCol,
-                                  request.get(ARG_NORTH, 0.0)));
+                                  convertToStupidFormat(request.get(ARG_NORTH, 0.0))));
             appendSearchCriteria(msgBuff, "north&lt;=",
                                  "" + request.get(ARG_NORTH, 0.0));
         }
         if (request.defined(ARG_SOUTH)) {
             clauses.add(Clause.ge(latCol,
-                                  request.get(ARG_SOUTH, 0.0)));
+                                  convertToStupidFormat(request.get(ARG_SOUTH, 0.0))));
             appendSearchCriteria(msgBuff, "south&gt;=",
                                  "" + request.get(ARG_SOUTH, 0.0));
         }
         if (request.defined(ARG_EAST)) {
             clauses.add(Clause.le(lonCol,
-                                  request.get(ARG_EAST, 0.0)));
+                                  convertToStupidFormat(request.get(ARG_EAST, 0.0))));
             appendSearchCriteria(msgBuff, "east&lt;=",
                                  "" + request.get(ARG_EAST, 0.0));
         }
         if (request.defined(ARG_WEST)) {
             clauses.add(Clause.ge(lonCol,
-                                  request.get(ARG_WEST, 0.0)));
+                                  convertToStupidFormat(request.get(ARG_WEST, 0.0))));
             appendSearchCriteria(msgBuff, "west&gt;=",
                                  "" + request.get(ARG_WEST, 0.0));
         }
@@ -287,24 +288,59 @@ public class IgsSiteManager extends SiteManager {
         String state= results.getString(colCnt++);
         String country= results.getString(colCnt++);
         String tectonic= results.getString(colCnt++);
-        double x= results.getDouble(colCnt++);
-        double y= results.getDouble(colCnt++);
-        double z = results.getDouble(colCnt++);
-        double latitude   = results.getDouble(colCnt++);
-        double longitude  = results.getDouble(colCnt++);
-        double elevation  = 0.0; // FIX pull out number from this weird sting with the height level by name  !!!  results.getDouble(colCnt++);
+        colCnt+=3;
+        //        double x= results.getDouble(colCnt++);
+        //        double y= results.getDouble(colCnt++);
+        //        double z = results.getDouble(colCnt++);
 
-        System.err.println (x +" "+ y +" "+ z +" " + latitude +" " +longitude); 
+        String latString = results.getString(colCnt++);
+        String lonString = results.getString(colCnt++);
+        String elevationString = results.getString(colCnt++);
+        double latitude   = Double.parseDouble(latString.trim());
+        double longitude   = Double.parseDouble(lonString.trim());
+
+        elevationString = StringUtil.findPattern(elevationString,"([\\d\\.-]+)");
+        System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
+
+        double elevation  = Double.parseDouble(elevationString);
+        
+        String ellipsoid ="";
+        latitude = convertToDecimalDegrees(latitude);
+        longitude = convertToDecimalDegrees(longitude);
 
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "",
-                                  latitude, longitude, elevation);
+                                     latitude, longitude, elevation);
         site.setType(new ResourceType("gnss.site.continuous"));
 
         return site;
         
     }
 
+
+    public static double convertToStupidFormat(double decimalDegrees) {
+        String msg  = "" + decimalDegrees;
+        int degrees = (int)decimalDegrees;
+        decimalDegrees = decimalDegrees-degrees;
+        int  minutes = (int)(decimalDegrees/60);
+        double seconds = decimalDegrees-(minutes*60);
+        double result = degrees*10000+minutes*1000 + seconds;
+        System.err.println("decimal:" + msg +" stupid format:" +  result + " " + degrees +" " + minutes +" " + seconds);
+        return result;
+    }
+
+    public static double convertToDecimalDegrees(double stupidFormat) {
+        //505216.68 -1141736.6
+        int intValue = (int) stupidFormat;
+        double decimalValue = stupidFormat-intValue;
+        double seconds = (intValue%100)+decimalValue;
+        intValue = intValue/100;
+        double minutes = (double)(intValue%100);
+        intValue = intValue/100;
+        double degrees = (double) intValue;
+        System.err.println("convert:" + stupidFormat + " to:" + degrees +" " + minutes +" " + seconds);
+        return degrees+minutes/60.0+seconds/360.0;
+    }
 
 
 
