@@ -77,25 +77,8 @@ public class IgsSiteManager extends SiteManager {
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         //CHANGEME 
-        //super.handleRequest(request, response);
+        super.handleRequest(request, response);
 
-        /**
-           Here's how to access the arguments
-           if (request.defined(ARG_NORTH)) {
-                request.get(ARG_NORTH, 0.0);
-           }
-           ARG_SOUTH,ARG_EAST, ARG_WEST
-        */
-
-        StringBuffer msgBuff = new StringBuffer();
-	    msgBuff.append ("this is a message");
-        List<GsacSite> sites = new ArrayList<GsacSite>();
-        //Create the sites ...
-        sites.add(new GsacSite("xxx", "p123", "pbo place", 40., -107, 123. ));
-        for (GsacSite site : sites) {
-            response.addResource(site);
-        }
-        setSearchCriteriaMessage(response, msgBuff);
     }
 
 
@@ -125,7 +108,7 @@ public class IgsSiteManager extends SiteManager {
                 results.close();
                 return null;
             }
-            GsacSite site = makeSite(results);
+            GsacSite site = (GsacSite)makeResource(results);
             results.close();
             return site;
         } finally {
@@ -142,7 +125,7 @@ public class IgsSiteManager extends SiteManager {
     /**
      * An example method that shows how to use the Clause class to assemble a set of database
      * search clauses from the URL arguments
-     *
+     * 
      * @param request the resquest
      * @param response the response
      * @param msgBuff buffer to append search criteria to
@@ -154,8 +137,8 @@ public class IgsSiteManager extends SiteManager {
                                            List<String> tableNames,
                                            StringBuffer msgBuff) {
         List<Clause> clauses = new ArrayList();
-        String latCol = "replace me with correct column name";
-        String lonCol = "replace me with correct column name";
+        String latCol = Tables.SITELOG_LOCATION.COL_LATITUDENORTH;
+        String lonCol =  Tables.SITELOG_LOCATION.COL_LONGITUDEEAST;
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latCol,
                                   request.get(ARG_NORTH, 0.0)));
@@ -184,15 +167,9 @@ public class IgsSiteManager extends SiteManager {
 
         List   args         = null;
         if (request.defined(ARG_SITE_ID)) {
-            //Here we use makeIntClauses for the site id
-            /*            clauses.add(
-                Clause.or(
-                    Clause.makeIntClauses(
-                        Tables.MV_DAI_PRO.COL_MON_ID,
-                        args = (List<String>) request.getList(
-                            ARG_SITE_ID))));
-            */
-            addSearchCriteria(msgBuff, "Site ID", args);
+           addStringSearch(request, ARG_SITE_ID, " ",
+                        msgBuff, "Site ID",
+                        Tables.SITELOG_LOCATION.COL_FOURID, clauses);
         }
 
         //Add in the site type, status, etc
@@ -217,18 +194,11 @@ public class IgsSiteManager extends SiteManager {
         */
 
         //Add in the site code and site name queries
-        /*
+        
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
                         msgBuff, "Site Code",
-                        "e.g. Tables.MV_DAI_PRO.COL_MON_SITE_CODE", clauses);
-        addStringSearch(request, ARG_SITENAME, ARG_SITENAME_SEARCHTYPE,
-                        msgBuff, "Site Name",
-                        Tables.SITE_INFORMATION.COL_SITE_NAME, clauses);
+                        Tables.SITELOG_LOCATION.COL_FOURID, clauses);
 
-        if (request.defined(ARG_SITE_GROUP)) {
-            //...
-        }
-        */
         return clauses;
     }
 
@@ -271,7 +241,7 @@ public class IgsSiteManager extends SiteManager {
     /** CHANGEME Default query order. 
         Set this to what you want to sort on */
     private static final String SITE_ORDER =
-        " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
+        " ORDER BY  " + Tables.SITELOG_LOCATION.COL_FOURID + " ASC ";
 
 
     /**
@@ -282,12 +252,7 @@ public class IgsSiteManager extends SiteManager {
      * @return comma delimited fully qualified column names to select on
      */
     public String getResourceSelectColumns() {
-        return " distinct "
-            + SqlUtil.comma(new String[] {
-                    "YourSiteTable.column1",
-                    "YourSiteTable.column2",
-                    "etc"
-                });
+        return Tables.SITELOG_LOCATION.COLUMNS ;
     }
 
 
@@ -299,31 +264,8 @@ public class IgsSiteManager extends SiteManager {
      * @return order by clause
      */
     public String getResourceOrder(GsacRequest request) {
-        if(request  == null || !request.defined(ARG_SITE_SORT_VALUE)) {
-            return SITE_ORDER;
-        } 
-        boolean ascending = request.getSiteAscending();
-        StringBuffer cols = new StringBuffer();
-        //CHANGEME: set this to use your column names for sorting
-        for(String sort: request.getDelimiterSeparatedList(ARG_SITE_SORT_VALUE)) {
-            String col = null;
-            if(sort.equals(SORT_SITE_CODE)) {
-                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_CODE;
-            } else if(sort.equals(SORT_SITE_NAME)) {
-                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_NAME;
-            } else  if(sort.equals(SORT_SITE_TYPE)) {
-                //                col = Tables.MV_DAI_PRO.COL_SITE_TYPE;
-            } 
-            if(col!=null) {
-                if(cols.length()!=0) cols.append(",");
-                //Oracle has a UPPER operator. We use this to sort on upper case
-                cols.append("UPPER(" +col+")");
-            }
-        }
-        if(cols.length()>0) {
-            return orderBy(cols.toString(), ascending);
-        }
-        return SITE_ORDER;
+       // return SITE_ORDER;
+	   return null;
     }
 
     /**
@@ -336,49 +278,31 @@ public class IgsSiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacSite makeSite(ResultSet results) throws Exception {
-        return null;
-        /** e.g.:
+    @Override
+    public GsacSite makeResource(ResultSet results) throws Exception {
         int    colCnt     = 1;
-        int    monId      = results.getInt(colCnt++);
+        /* order must match coulmn order in e.g. SITELOG_LOCATION.COLUMNS */
         String fourCharId = results.getString(colCnt++);
-        String name       = results.getString(colCnt++);
+        String city= results.getString(colCnt++);
+        String state= results.getString(colCnt++);
+        String country= results.getString(colCnt++);
+        String tectonic= results.getString(colCnt++);
+        double x= results.getDouble(colCnt++);
+        double y= results.getDouble(colCnt++);
+        double z = results.getDouble(colCnt++);
         double latitude   = results.getDouble(colCnt++);
         double longitude  = results.getDouble(colCnt++);
-        double elevation  = results.getDouble(colCnt++);
-        String type       = results.getString(colCnt++);
-        if (type == null) {
-            type = "";
-        }
-        String  status = results.getString(colCnt++);
-        String  groups = results.getString(colCnt++);
+        double elevation  = 0.0; // FIX pull out number from this weird sting with the height level by name  !!!  results.getDouble(colCnt++);
 
-        GsacSite site = new GsacSite("" + monId, fourCharId, name,
+        System.err.println (x +" "+ y +" "+ z +" " + latitude +" " +longitude); 
+
+
+        GsacSite site = new GsacSite(fourCharId, fourCharId, "",
                                   latitude, longitude, elevation);
-        site.setType(new ResourceType(type));
-        if ((groups != null) && (groups.trim().length() > 0)) {
-            List<String> toks = new ArrayList<String>();
-            for (String tok : groups.split(",")) {
-                toks.add(tok.trim());
-            }
-            Collections.sort(toks);
-            for (String tok : (List<String>) toks) {
-                site.addResourceGroup(new ResourceGroup(tok));
-            }
-        }
+        site.setType(new ResourceType("gnss.site.continuous"));
 
-        //Add icons based on type
-        if (type.toLowerCase().equals(SITETYPE_CAMPAIGN)) {
-            site.addMetadata(
-            new IconMetadata(
-                    "http://facility.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
-        } else {
-            site.addMetadata(
-            new IconMetadata(
-                    "http://facility.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
-        }
         return site;
-        */
+        
     }
 
 
