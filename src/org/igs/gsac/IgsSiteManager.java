@@ -133,6 +133,7 @@ public class IgsSiteManager extends SiteManager {
                                            GsacResponse response,
                                            List<String> tableNames,
                                            StringBuffer msgBuff) {
+        tableNames.add(Tables.SITELOG_LOCATION.NAME);
         List<Clause> clauses = new ArrayList();
         String latCol = Tables.SITELOG_LOCATION.COL_LATITUDENORTH;
         String lonCol =  Tables.SITELOG_LOCATION.COL_LONGITUDEEAST;
@@ -256,7 +257,7 @@ public class IgsSiteManager extends SiteManager {
         String elevationString = results.getString(colCnt++);
         elevationString = StringUtil.findPattern(elevationString,"([\\d\\.-]+)");
         double elevation  = elevationString!=null?Double.parseDouble(elevationString):0.0;
-        System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
+        //        System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "",
                                      latitude, longitude, elevation);
@@ -286,7 +287,7 @@ public class IgsSiteManager extends SiteManager {
         double minutes = (double)(intValue%100);
         intValue = intValue/100;
         double degrees = (double) intValue;
-        System.err.println("convert:" + stupidFormat + " to:" + degrees +" " + minutes +" " + seconds);
+        //        System.err.println("convert:" + stupidFormat + " to:" + degrees +" " + minutes +" " + seconds);
         return degrees+minutes/60.0+seconds/360.0;
     }
 
