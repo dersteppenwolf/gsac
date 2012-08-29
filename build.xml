@@ -64,6 +64,7 @@ used by the javadoc target
       <antcall target="federated"/>
       <antcall target="ramadda"/>
       <antcall target="iris"/>
+      <antcall target="igs"/>
     </target>
 
 
@@ -97,6 +98,11 @@ used by the javadoc target
     <target name="iris" depends="init">
       <echo message="Building GSAC IRIS"/>
       <ant antfile="${srcdir}/org/iris/gsac/build.xml" inheritAll="false"/>
+    </target>
+
+    <target name="igs" depends="init">
+      <echo message="Building GSAC IGS"/>
+      <ant antfile="${srcdir}/org/igs/gsac/build.xml" inheritAll="false"/>
     </target>
 
     <target name="federated" depends="init">
