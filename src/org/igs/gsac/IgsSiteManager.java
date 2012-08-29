@@ -8,6 +8,7 @@ import org.igs.gsac.database.*;
 
 
 import org.gsac.gsl.*;
+import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.*;
@@ -22,10 +23,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -58,16 +57,18 @@ public class IgsSiteManager extends SiteManager {
      */
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
-        /*
-          you can use the default site capabilities:
-          addDefaultCapabilities(capabilities);
-          or add you own, e.g.:
-          Add in an example fruit enumerated query capability
-          String[]values = {"banana","apple","orange"};
-          Arrays.sort(values);
-          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
-        */
-        addDefaultCapabilities(capabilities);
+
+        String              help = HtmlOutputHandler.stringSearchHelp;
+        Capability          siteCode = initCapability(new Capability(ARG_SITE_CODE,
+                                                                     "Site Code",
+                                                                     Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                                                      "Short name of the site",
+                                                      "Short name of the site. " + help);
+        siteCode.setBrowse(true);
+        capabilities.add(siteCode);
+        capabilities.add(initCapability(new Capability(ARG_BBOX, "Bounds",
+                                      Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
+                                        "Spatial bounds within which the site lies"));
         return capabilities;
     }
 
@@ -96,12 +97,8 @@ public class IgsSiteManager extends SiteManager {
      * @throws Exception on badness
      */
     public GsacResource getResource(String resourceId) throws Exception {
-        /* e.g.:
-        //Here is some example code from Unavco for making a query
-
-
-        Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
-                                  new Integer(resourceId).intValue());
+        
+        Clause clause = Clause.eq(Tables.SITELOG_LOCATION.COL_FOURID, resourceId);
         Statement statement = getDatabaseManager().select(
                                                           getResourceSelectColumns(), 
                                                           clause.getTableNames(), clause);
@@ -117,9 +114,6 @@ public class IgsSiteManager extends SiteManager {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-        */
-        return  new GsacSite("xxx", "p123", "xxxpbo place", 40., -107, 123. );
-        //return  null;
     }
 
 
@@ -167,37 +161,14 @@ public class IgsSiteManager extends SiteManager {
                                  "" + request.get(ARG_WEST, 0.0));
         }
 
-
-        List   args         = null;
         if (request.defined(ARG_SITE_ID)) {
            addStringSearch(request, ARG_SITE_ID, " ",
                         msgBuff, "Site ID",
                         Tables.SITELOG_LOCATION.COL_FOURID, clauses);
         }
 
-        //Add in the site type, status, etc
-        /*
-        String[][] enumArgs = {
-            { GsacArgs.ARG_SITE_TYPE, "e.g. Tables.MV_DAI_PRO.COL_SITE_TYPE",
-              "Site Type" },
-            { GsacArgs.ARG_SITE_STATUS, "e.g. Tables.MV_DAI_PRO.COL_OPERATIONAL",
-              "Site Status" }
-        };
 
-        for (String[] argValues : enumArgs) {
-            if (request.defined(argValues[0])) {
-                //There might be more than one argument and also it can be comma separated
-                args = (List<String>) request.getDelimiterSeparatedList(
-                        argValues[0]);
-                clauses.add(Clause.or(Clause.makeStringClauses(argValues[1],
-                        args)));
-                addSearchCriteria(msgBuff, argValues[2], args);
-            }
-        }
-        */
-
-        //Add in the site code and site name queries
-        
+        //Add in the site code 
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
                         msgBuff, "Site Code",
                         Tables.SITELOG_LOCATION.COL_FOURID, clauses);
@@ -215,24 +186,6 @@ public class IgsSiteManager extends SiteManager {
      */
     public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
         //The Unavco repository adds in GnssEquipment metadata and other things
-    }
-
-
-    /**
-     * Get the site group list. This is used by the addDefaultSiteCapabilities 
-     *
-     * @return resource group list
-     */
-    public List<ResourceGroup> doGetResourceGroups() {
-        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
-        /**
-           CHANGEME
-        groups.add(new ResourceGroup("group1","Group 1"));
-        groups.add(new ResourceGroup("group2", "Group 2"));
-        groups.add(new ResourceGroup("group3","Group 3"));
-        Collections.sort((List) groups);
-        */
-        return groups;
     }
 
 
@@ -297,24 +250,17 @@ public class IgsSiteManager extends SiteManager {
 
         String latString = results.getString(colCnt++);
         String lonString = results.getString(colCnt++);
+        double latitude   = convertFromStupidFormat(Double.parseDouble(latString.trim()));
+        double longitude   = convertFromStupidFormat(Double.parseDouble(lonString.trim()));
+
         String elevationString = results.getString(colCnt++);
-        double latitude   = Double.parseDouble(latString.trim());
-        double longitude   = Double.parseDouble(lonString.trim());
-
         elevationString = StringUtil.findPattern(elevationString,"([\\d\\.-]+)");
+        double elevation  = elevationString!=null?Double.parseDouble(elevationString):0.0;
         System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
-
-        double elevation  = Double.parseDouble(elevationString);
-        
-        String ellipsoid ="";
-        latitude = convertToDecimalDegrees(latitude);
-        longitude = convertToDecimalDegrees(longitude);
-
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "",
                                      latitude, longitude, elevation);
         site.setType(new ResourceType("gnss.site.continuous"));
-
         return site;
         
     }
@@ -331,7 +277,7 @@ public class IgsSiteManager extends SiteManager {
         return result;
     }
 
-    public static double convertToDecimalDegrees(double stupidFormat) {
+    public static double convertFromStupidFormat(double stupidFormat) {
         //505216.68 -1141736.6
         int intValue = (int) stupidFormat;
         double decimalValue = stupidFormat-intValue;
