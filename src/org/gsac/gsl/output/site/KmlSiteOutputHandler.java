@@ -165,7 +165,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                 }
             }
 
-            String  url          = getIconUrl(site);
+            String  url          = getIconUrl(request, site);
             Element styleElement = iconMap.get(url);
             String  styleId;
             if (styleElement == null) {

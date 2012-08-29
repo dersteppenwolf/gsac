@@ -1383,7 +1383,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @return _more_
      */
-    public String getIconUrl(GsacResource resource) {
+    public String getIconUrl(GsacRequest request, GsacResource resource) {
         for (IconMetadata iconMetadata :
                 IconMetadata.getIconMetadata(resource.getMetadata())) {
             return iconMetadata.getUrl();
@@ -1392,7 +1392,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if ((rep != null) && (rep.getIcon() != null)) {
             return rep.getIcon();
         }
-        return getRepository().getAbsoluteUrl(iconUrl("/site.png"));
+        return getRepository().getAbsoluteUrl(request, iconUrl("/site.png"));
     }
 
     /**
@@ -1961,7 +1961,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             mapInfo = mapInfo.replace("\n", " ");
             mapInfo = mapInfo.replace("\"", "\\\"");
             mapInfo = mapInfo.replace("/script", "\\/script");
-            String url = getIconUrl(resource);
+            String url = getIconUrl(request, resource);
             js.append("var resourceInfo = \"" + mapInfo + "\";\n");
             String entryId = resource.getId();
             entryId = cleanIdForJS(entryId);
@@ -2772,7 +2772,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 catSB.append("...<br>");
                 break;
             }
-            String iconUrl     = getIconUrl(resource);
+            String iconUrl     = getIconUrl(request, resource);
             String resourceUrl = makeResourceViewUrl(resource);
             catSB.append(HtmlUtil.href(resourceUrl,
                                        HtmlUtil.img(iconUrl,
