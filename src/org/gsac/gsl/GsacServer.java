@@ -74,8 +74,11 @@ public class GsacServer {
                 port = new Integer(args[i + 1]).intValue();
                 i++;
             } else if (args[i].endsWith(".properties")) {
-                properties.load(new FileInputStream(args[i]));
-                //                System.err.println ("Loading properties:" + properties);
+                if(new  File(args[i]).exists()) {
+                    properties.load(new FileInputStream(args[i]));
+                } else {
+                    System.err.println ("GSAC: property file not found:" + args[i]);
+                }
             } else if (args[i].startsWith("-D")) {
                 //Look for -Dproperty=value arguments
                 String[] toks = args[i].substring(2).split("=");

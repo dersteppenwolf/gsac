@@ -75,7 +75,7 @@ There is some configuration that goes on under the tomcat conf and log dirs to
 tell the gsac instance where to write its log files.
 
 The core GsacRepository looks for a properties file:
-<tomcat home>/conf/<gsac.baseurl>
+<tomcat home>/conf/<gsac.baseurl>.properties
 where gsac.baseurl is defined in the resources/gsac.properties here as gsacws
 
 So, on wes we have:
@@ -87,10 +87,10 @@ So, on wes we have:
 These just have one property  - the gsac.directory property:
 gsac.directory=/usr/local/apachetomcatdev/logs/gsac/gsacws
 gsac.directory=/usr/local/apachetomcatdev/logs/gsac/gsacfederated
-gsac.directory=/usr/local/apachetomcat/logs/gsac/gsacws
-gsac.directory=/usr/local/apachetomcat/logs/gsac/gsacfederated
 
 This tells the GSAC where it can write log files, etc.
+
+One can also set other properties in here as well.
 
 
 
