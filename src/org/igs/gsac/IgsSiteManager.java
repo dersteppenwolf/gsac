@@ -4,6 +4,8 @@
 
 package org.igs.gsac;
 
+import org.igs.gsac.database.*;
+
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
