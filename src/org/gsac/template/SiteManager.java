@@ -28,11 +28,12 @@ import java.util.List;
 
 /**
  * Handles all of the site related repository requests
- * The main entry point is the  {@link #handleRequest} method.
+ * The main entry point is the {@link #doGetQueryCapabilities} 
+ * and   {@link #handleRequest} methods.
  * Look for the CHANGEME comments
  * 
  *
- * @author         Jeff McWhirter
+ * @author   GSAC Development Team
  */
 public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
@@ -71,13 +72,21 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
     /** 
         This is the main entry point for handling queries
-        If you don't implement this method then the base SiteManager
-        class will 
      **/
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         //CHANGEME 
-        super.handleRequest(request, response);
+
+        /*
+          if you call the base class handleRequest method it will make a database query
+          from columns and clauses that you can specify in later methods
+         */
+        //        super.handleRequest(request, response);
+
+        //Or you can handle the request directly here
+
+
+        StringBuffer msgBuff = new StringBuffer();
 
         /**
            Here's how to access the arguments
@@ -87,9 +96,11 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
            ARG_SOUTH,ARG_EAST, ARG_WEST
         */
 
-        StringBuffer msgBuff = new StringBuffer();
+        //Create new GsacSite objects and call response.addResource
         //        GsacSite site = new GsacSite(....);
         //response.addResource(site);
+
+        //This just sets the message shown to the user
         setSearchCriteriaMessage(response, msgBuff);
     }
 
@@ -163,14 +174,25 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
 
     /*************************************************************************************************
-     * The code below here inherits some of .....
+     * The code below here is used to provide database query information to the base GsacResourceManager class
     *************************************************************************************************/
 
 
-    /** CHANGEME Default query order. 
-        Set this to what you want to sort on */
-    private static final String SITE_ORDER =
-        " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
+
+    /**
+     * Get a comma separated list of the columns that are selected on a search
+     *
+     * @param request the request
+     *
+     * @return comma delimited fully qualified column names to select on
+     */
+    public String getResourceSelectColumns() {
+        return  SqlUtil.comma(new String[] {
+                    "YourSiteTable.column1",
+                    "YourSiteTable.column2",
+                    "etc"
+                });
+    }
 
 
     /**
@@ -259,20 +281,6 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
 
 
-    /**
-     * Get the columns that are to be searched on
-     *
-     * @param request the request
-     *
-     * @return comma delimited fully qualified column names to select on
-     */
-    public String getResourceSelectColumns() {
-        return  SqlUtil.comma(new String[] {
-                    "YourSiteTable.column1",
-                    "YourSiteTable.column2",
-                    "etc"
-                });
-    }
 
 
     /**
@@ -283,12 +291,15 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      * @return order by clause
      */
     public String getResourceOrder(GsacRequest request) {
-        return SITE_ORDER;
+        //e.g.:
+        //        return  " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
+        return null;
     }
+
 
     /**
      * CHANGEME
-     * Create a single site
+     * Create a single site from the DB results
      *
      * @param results db results
      *

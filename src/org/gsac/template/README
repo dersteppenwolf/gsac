@@ -19,7 +19,8 @@ The file resources/gsac.properties has a number of properties you can set
 ########################################################################
 Code changes 
 ########################################################################
-The @MACRO.PREFIX@Repository is the main entry point. It 
+The @MACRO.PREFIX@Repository is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
+and/or @MACRO.PREFIX@FileManager objects.
 
 
 The @MACRO.PREFIX@SiteManager and @MACRO.PREFIX@FileManager classes will need to be changed
