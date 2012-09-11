@@ -38,9 +38,6 @@ Database
 ########################################################################
 Change dbresources/gsacdb_test.properties and dbresources/gsacdb_production.properties
 to point to your database.
-The default is Oracle. 
-If you aren't using oracle change the getDriverClassName() method in @MACRO.PREFIX@DatabaseManager
-
 
 
 ########################################################################
@@ -64,10 +61,15 @@ resources/gsacserver.properties
 You should put the hostname and port of the servers in the gsacserver_(test,production).properties
 files.
 
+If you have some database authentication you need to use (or any other properties) 
+but don't want to check in to the properties files here you can create a @MACRO.BASENAME@.properties 
+file. The ant runserver provides this property file as a command line argument.
 The ant target  builds a .zip of a stand-alone gsac server and a gsacws.war
 
 To run the server:
 ant runserver
+
+
 
 
 ########################################################################

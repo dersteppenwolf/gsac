@@ -63,6 +63,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
           String[]values = {"banana","apple","orange"};
           Arrays.sort(values);
           capabilities.add(new Capability("fruit", "Fruit Label", values, true));
+          See org.gsac.gsl.GsacSiteManager for how the default capabilities are created
         */
         return capabilities;
     }
@@ -87,12 +88,8 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
         */
 
         StringBuffer msgBuff = new StringBuffer();
-        List<GsacSite> sites = new ArrayList<GsacSite>();
-        //Create the sites ...
-        //sites.add(new GsacSite(...));
-        for (GsacSite site : sites) {
-            response.addResource(site);
-        }
+        //        GsacSite site = new GsacSite(....);
+        //response.addResource(site);
         setSearchCriteriaMessage(response, msgBuff);
     }
 
@@ -122,7 +119,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
                 results.close();
                 return null;
             }
-            GsacSite site = makeSite(results);
+            GsacSite site = (GsacSite) makeResource(results);
             results.close();
             return site;
         } finally {
@@ -133,6 +130,47 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
     }
 
 
+
+
+    /**
+     * get all of the metadata for the given site
+     *
+     * @param gsacResource resource
+     *
+     * @throws Exception On badness
+     */
+    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
+        //The Unavco repository adds in GnssEquipment metadata and other things
+    }
+
+
+    /**
+     * Get the site group list. This is used by the addDefaultSiteCapabilities 
+     *
+     * @return resource group list
+     */
+    public List<ResourceGroup> doGetResourceGroups() {
+        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
+        /**
+           CHANGEME
+        groups.add(new ResourceGroup("group1","Group 1"));
+        groups.add(new ResourceGroup("group2", "Group 2"));
+        groups.add(new ResourceGroup("group3","Group 3"));
+        Collections.sort((List) groups);
+        */
+        return groups;
+    }
+
+
+    /*************************************************************************************************
+     * The code below here inherits some of .....
+    *************************************************************************************************/
+
+
+    /** CHANGEME Default query order. 
+        Set this to what you want to sort on */
+    private static final String SITE_ORDER =
+        " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
 
 
     /**
@@ -179,95 +217,46 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
 
 
         List   args         = null;
-        if (request.defined(ARG_SITE_ID)) {
-            //Here we use makeIntClauses for the site id
-            /*            clauses.add(
-                Clause.or(
-                    Clause.makeIntClauses(
-                        Tables.MV_DAI_PRO.COL_MON_ID,
-                        args = (List<String>) request.getList(
-                            ARG_SITE_ID))));
-            */
-            addSearchCriteria(msgBuff, "Site ID", args);
-        }
-
         //Add in the site type, status, etc
         /*
-        String[][] enumArgs = {
-            { GsacArgs.ARG_SITE_TYPE, "e.g. Tables.MV_DAI_PRO.COL_SITE_TYPE",
-              "Site Type" },
-            { GsacArgs.ARG_SITE_STATUS, "e.g. Tables.MV_DAI_PRO.COL_OPERATIONAL",
-              "Site Status" }
-        };
-
-        for (String[] argValues : enumArgs) {
-            if (request.defined(argValues[0])) {
-                //There might be more than one argument and also it can be comma separated
-                args = (List<String>) request.getDelimiterSeparatedList(
-                        argValues[0]);
-                clauses.add(Clause.or(Clause.makeStringClauses(argValues[1],
-                        args)));
-                addSearchCriteria(msgBuff, argValues[2], args);
-            }
-        }
+        if (request.defined(GsacArgs.ARG_SITE_TYPE)) {
+            args = (List<String>) request.getDelimiterSeparatedList(
+                                                                    GsacArgs.ARG_SITE_TYPE);
+            clauses.add(Clause.or(Clause.makeStringClauses("TODO: fully qualified db column name",
+                                                           args)));
+            addSearchCriteria(msgBuff, argValues[2], args);
+          }
         */
+
 
         //Add in the site code and site name queries
         /*
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
                         msgBuff, "Site Code",
-                        "e.g. Tables.MV_DAI_PRO.COL_MON_SITE_CODE", clauses);
+                        "TODO: fully qualified db column name", clauses);
         addStringSearch(request, ARG_SITENAME, ARG_SITENAME_SEARCHTYPE,
                         msgBuff, "Site Name",
                         Tables.SITE_INFORMATION.COL_SITE_NAME, clauses);
 
+        */
+
+
+        /*
+        //other search arguments
         if (request.defined(ARG_SITE_GROUP)) {
             //...
         }
+        if (request.defined(ARG_SITE_ID)) {
+            //....
+            //args = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_ID);
+            //...
+        }
         */
+
         return clauses;
     }
 
 
-    /**
-     * get all of the metadata for the given site
-     *
-     * @param gsacResource resource
-     *
-     * @throws Exception On badness
-     */
-    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
-        //The Unavco repository adds in GnssEquipment metadata and other things
-    }
-
-
-    /**
-     * Get the site group list. This is used by the addDefaultSiteCapabilities 
-     *
-     * @return resource group list
-     */
-    public List<ResourceGroup> doGetResourceGroups() {
-        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
-        /**
-           CHANGEME
-        groups.add(new ResourceGroup("group1","Group 1"));
-        groups.add(new ResourceGroup("group2", "Group 2"));
-        groups.add(new ResourceGroup("group3","Group 3"));
-        Collections.sort((List) groups);
-        */
-        return groups;
-    }
-
-
-    /*************************************************************************************************
-     * The code below here inherits some of .....
-    *************************************************************************************************/
-
-
-    /** CHANGEME Default query order. 
-        Set this to what you want to sort on */
-    private static final String SITE_ORDER =
-        " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
 
 
     /**
@@ -278,8 +267,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      * @return comma delimited fully qualified column names to select on
      */
     public String getResourceSelectColumns() {
-        return " distinct "
-            + SqlUtil.comma(new String[] {
+        return  SqlUtil.comma(new String[] {
                     "YourSiteTable.column1",
                     "YourSiteTable.column2",
                     "etc"
@@ -295,30 +283,6 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      * @return order by clause
      */
     public String getResourceOrder(GsacRequest request) {
-        if(request  == null || !request.defined(ARG_SITE_SORT_VALUE)) {
-            return SITE_ORDER;
-        } 
-        boolean ascending = request.getSiteAscending();
-        StringBuffer cols = new StringBuffer();
-        //CHANGEME: set this to use your column names for sorting
-        for(String sort: request.getDelimiterSeparatedList(ARG_SITE_SORT_VALUE)) {
-            String col = null;
-            if(sort.equals(SORT_SITE_CODE)) {
-                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_CODE;
-            } else if(sort.equals(SORT_SITE_NAME)) {
-                //                col = Tables.MV_DAI_PRO.COL_MON_SITE_NAME;
-            } else  if(sort.equals(SORT_SITE_TYPE)) {
-                //                col = Tables.MV_DAI_PRO.COL_SITE_TYPE;
-            } 
-            if(col!=null) {
-                if(cols.length()!=0) cols.append(",");
-                //Oracle has a UPPER operator. We use this to sort on upper case
-                cols.append("UPPER(" +col+")");
-            }
-        }
-        if(cols.length()>0) {
-            return orderBy(cols.toString(), ascending);
-        }
         return SITE_ORDER;
     }
 
@@ -332,7 +296,7 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacSite makeSite(ResultSet results) throws Exception {
+    public GsacResource makeResource(ResultSet results) throws Exception {
         return null;
         /** e.g.:
         int    colCnt     = 1;

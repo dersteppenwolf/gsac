@@ -2,7 +2,7 @@
 # Run the stand-alone GsacServer
 #
 
-java -Xmx512m -jar @JARFILE@ -port 8080
+java -Xmx512m -jar @JARFILE@ -port 8080 $*
 
 #Access this server at:
 #http://localhost:8080/gsacws/site/form
