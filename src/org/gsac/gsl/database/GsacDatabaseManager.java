@@ -322,20 +322,25 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
     }
 
     /**
-     * Get the class name of the jdbc driver. By default this uses an Oracle driver.
-     * Can be overwritten by derived classes.
+     * Get the class name of the jdbc driver.  Can be overwritten by derived classes.
+     * This looks for the PROP_GSAC_DB_DRIVERCLASS property. If not found then it looks at the jdbc url
+     * to figure out the appropriate driver class
      *
      * @return jdbc driver classname
      */
     public String getDriverClassName() {
-        System.err.println ("properties:" + properties);
-
-
         String driver =
             (String) getDatabaseProperty(PROP_GSAC_DB_DRIVERCLASS);
-        return (driver == null)
-               ? DB_DRIVER_CLASSNAME
-               : driver;
+        if(driver!=null) return driver;
+        String jdbcUrl  = getDatabaseProperty(PROP_GSAC_DB_JDBCURL);
+        if(jdbcUrl==null) return null;
+        if(jdbcUrl.indexOf("mysql")>=0) 
+            return "com.mysql.jdbc.Driver";
+        if(jdbcUrl.indexOf("oracle")>=0) 
+            return "oracle.jdbc.driver.OracleDriver";
+        if(jdbcUrl.indexOf("postgres")>=0) 
+            return "org.postgresql.Driver";
+        return null;
     }
 
 
