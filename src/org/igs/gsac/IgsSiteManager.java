@@ -19,6 +19,7 @@ import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
+import java.util.Arrays;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -56,20 +57,40 @@ public class IgsSiteManager extends SiteManager {
      * @return site search capabilities
      */
     public List<Capability> doGetQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
+        try {
+            List<Capability> capabilities = new ArrayList<Capability>();
 
-        String              help = HtmlOutputHandler.stringSearchHelp;
-        Capability          siteCode = initCapability(new Capability(ARG_SITE_CODE,
-                                                                     "Site Code",
-                                                                     Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
-                                                      "Short name of the site",
-                                                      "Short name of the site. " + help);
-        siteCode.setBrowse(true);
-        capabilities.add(siteCode);
-        capabilities.add(initCapability(new Capability(ARG_BBOX, "Bounds",
-                                      Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
-                                        "Spatial bounds within which the site lies"));
-        return capabilities;
+            String              help = HtmlOutputHandler.stringSearchHelp;
+            Capability          siteCode = initCapability(new Capability(ARG_SITE_CODE,
+                                                                         "Site Code",
+                                                                         Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                                                          "Short name of the site",
+                                                          "Short name of the site. " + help);
+            siteCode.setBrowse(true);
+            capabilities.add(siteCode);
+            capabilities.add(initCapability(new Capability(ARG_BBOX, "Bounds",
+                                                           Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
+                                            "Spatial bounds within which the site lies"));
+            String[]  values;
+
+            values = getDatabaseManager().readDistinctValues(
+                                                             Tables.SITELOG_LOCATION.NAME,
+                                                             Tables.SITELOG_LOCATION.COL_COUNTRY);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Country", values, true,
+                                            CAPABILITY_GROUP_ADVANCED));
+
+            values = getDatabaseManager().readDistinctValues(
+                                                             Tables.SITELOG_LOCATION.NAME,
+                                                             Tables.SITELOG_LOCATION.COL_TECTONIC);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_TECTONICPLATE, "Tectonic Plate", values, true,
+                                            CAPABILITY_GROUP_ADVANCED));
+
+            return capabilities;
+        } catch(Exception exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
 
@@ -173,6 +194,20 @@ public class IgsSiteManager extends SiteManager {
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
                         msgBuff, "Site Code",
                         Tables.SITELOG_LOCATION.COL_FOURID, clauses);
+
+        if(request.defined(GsacExtArgs.ARG_COUNTRY)) {
+            List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacExtArgs.ARG_COUNTRY);
+            clauses.add(Clause.or(Clause.makeStringClauses(Tables.SITELOG_LOCATION.COL_COUNTRY,
+                                                           values)));
+
+        }
+
+        if(request.defined(GsacExtArgs.ARG_TECTONICPLATE)) {
+            List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacExtArgs.ARG_TECTONICPLATE);
+            clauses.add(Clause.or(Clause.makeStringClauses(Tables.SITELOG_LOCATION.COL_TECTONIC,
+                                                           values)));
+
+        }
 
         return clauses;
     }
