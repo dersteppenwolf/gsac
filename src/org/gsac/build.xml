@@ -11,8 +11,21 @@
     </target>
 
     <target name="makerepository" depends="init">
-      <mkdir dir="${srcdir}/${target.dir}"/>
-      <copy  overwrite="true" todir="${srcdir}/${target.dir}">
+<!-- First convert the target.package into the target.dir and target.dots properties -->
+      <script language="javascript">
+          var before = project.getProperty("target.package");
+          var dir = before.replaceAll("\\.", "/");
+          project.setProperty("target_dir", dir);
+          var dots = dir.replaceAll("[^/]+", "..")+"/..";
+          project.setProperty("target_dots", dots);
+      </script>
+    <property name="target.dir" value="${target_dir}"/>
+    <property name="target.dots" value="${target_dots}"/>
+     <echo message="dir = ${target.dir}"/>
+     <echo message="dots = ${target.dots}"/>
+
+     <mkdir dir="${srcdir}/${target.dir}"/>
+     <copy  overwrite="true" todir="${srcdir}/${target.dir}">
           <fileset dir="${gsacdir}/template">
              <exclude name="*.java"/>
              <exclude name="*macros.properties"/>
@@ -28,22 +41,22 @@
           </filterset>
         </copy>
 
-      <antcall target="copyjava" inheritAll="false">
+      <antcall target="copyjava" inheritAll="true">
          <param name="file" value="DatabaseManager.java"/>
       </antcall>
-      <antcall target="copyjava" inheritAll="false">
+      <antcall target="copyjava" inheritAll="true">
         <param name="file" value="Repository.java"/>
       </antcall>
-      <antcall target="copyjava" inheritAll="false">
+      <antcall target="copyjava" inheritAll="true">
         <param name="file" value="Test.java"/>
       </antcall>
-      <antcall target="copyjava" inheritAll="false">
+      <antcall target="copyjava" inheritAll="true">
         <param name="file" value="FileManager.java"/>
       </antcall>
-      <antcall target="copyjava" inheritAll="false">
+      <antcall target="copyjava" inheritAll="true">
         <param name="file" value="Server.java"/>
       </antcall>
-      <antcall target="copyjava" inheritAll="false">
+      <antcall target="copyjava" inheritAll="true">
         <param name="file" value="SiteManager.java"/>
       </antcall>
        <echo message="Repository source package has been created"/>

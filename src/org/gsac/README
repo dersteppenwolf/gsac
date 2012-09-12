@@ -21,9 +21,11 @@ This is the implemention of the federated repository
 Generating your initial repository package
 ################################################################################
 The template directory holds a template of an initial GSAC repository package 
-implementation. What you need to do is define a set of macro values
-that are used to take the code in the template package and make an initial
-Java package 
+implementation. This allows you to generate a package with all of the boilerplate
+Java code and build scripts.
+
+What you need to do is define a set of macro values that are used to take the code in the 
+template package and make an initial Java package 
 
 Copy the example template/macros.properties file to your own file, e.g.:
    cp template/macros.properties    yourmacros.properties
