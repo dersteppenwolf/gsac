@@ -14,10 +14,6 @@ This is the federated GSAC repository implementation. The build results in a gsa
 package: src/org/gsac/client
 The GSAC client package. Build results in a gsacclient.zip for release.
 
-package: src/org/gsac/template
-This is a Java source template that can be built to start a GSAC repository package.
-Look at src/org/gsac/README for instructions
-
 
 package: src/org/gsac/ramadda
 This is the GSAC RAMADDA plugin. Build results in a gsacplugin.jar which needs to be
@@ -27,3 +23,14 @@ NtipHarvester for harvesting ntrip source tables for real time feeds.
 
 package: src/gov/nasa/cddis/gsac
 The CDDIS GSAC repository. Build results in a gsacws.war. 
+
+
+
+
+######################################################################
+GSAC Template 
+######################################################################
+
+package: src/org/gsac/template
+This is a Java source template that can be built to start a GSAC repository package.
+Look at src/org/gsac/README for instructions
