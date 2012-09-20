@@ -320,10 +320,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
             StringBuffer tabs = new StringBuffer();
             makeTabs(tabs, tabTitles, tabContents);
-
-
-            sb.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
-                    tabs.toString(), false));
+            List<GsacFile> files = response.getFiles();
+            boolean openSection  = (files.size() == 0);
+            sb.append(HtmlUtil.makeShowHideBlock(msg("Search Information"),
+                    tabs.toString(), openSection));
 
 
             Hashtable<String, String> override = new Hashtable<String,
@@ -333,8 +333,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             long size = 0;
             int  cnt  = 0;
 
-
-            for (GsacFile resource : response.getFiles()) {
+            for (GsacFile resource : files) {
                 List<GsacResource> relatedResources =
                     resource.getRelatedResources();
                 String relatedLabel = "";

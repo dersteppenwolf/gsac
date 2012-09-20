@@ -58,7 +58,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
 
 
     /** Seconds to wait for all requests to finish */
-    public static final int SECONDS_TO_WAIT = 30;
+    public static final int SECONDS_TO_WAIT = 60;
 
     /** Max number of open requests per repository */
     public static final int MAX_OPEN_REQUESTS = 10;
