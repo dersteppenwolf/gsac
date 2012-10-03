@@ -1,24 +1,176 @@
 
+########################################################################
+README from template package (src/org/gsac/template/)
+########################################################################
 
-###########################################
-README from template package
-###########################################
+This README is found in your new GSAC package.  This file has the second part of the instructions 
+to build a GSAC server for your data repository 
 
-So hopefully you've managed to generated the repository source package.
+You should have already followed the instructions in src/org/gsac/README.  
+Hopefully you've managed to generated the initial repository source package.
 
-There are a number of things you need to do.
+Now, change the working directory to org/@MACRO.PREFIX@/gsac/.
 
+Do ant there:
 
+ant 
+
+This ant command builds an initial new GSAC server for your repository.  (It also creates a new Tomcat war file, 
+something like gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war, which may be used, eventually, for your public web site.)  
+
+Now try:
+
+ant runserver
+
+This command runs the new '@MACRO.PREFIX@' GSAC repository server, on your local system.  
+Screen output of the ant command includes a line like
+
+GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: 
+GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
+
+In a browser look at that URL, http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
+You should see a new web page with minimal content, with a line of links like
+Search Sites | Search Files | Browse | Infomation | Help
+
+This shows that the GSAC code runs on your system.  This uses Jetty  (see http://www.eclipse.org/jetty/), 
+a Java HTTP server and Java servlet container.   The Jetty servlet is for local testing, 
+which saves the trouble of a full Tomcat implementation, and avoids restarting Tomcat 
+for every test of the new GSAC.  Public operational systems often run with Tomcat in place of Jetty.
+
+Stop the ant runserver process with CTRL-c.   You've generated the GSAC repository source package 
+and an initial new GSAC server.
+
+So far you have been bootstrapping a operational GSAC server which has complete core GSAC code 
+but which lacks many specific details about your repository.
+
+Now you need to specify important details about your particular repository, such as what 
+fields in your database users may search on, and what metadata from your database is provided 
+as results from queries of your GSAC services.
+
+Adding Your Repository's Details
 
 ########################################################################
 Configuration 
 ########################################################################
-The file resources/gsac.properties has a number of properties you can set
+
+The file resources/gsac.properties has a number of properties you can set,
+for example, the base url which will be part of the full URL of the website about your GSAC repository.
+such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form:
+
+gsac.baseurl = /gsac@MACRO.PREFIX@
+or
+gsac.baseurl = /gsacws
+
+('gsacapi' is always part of gsac.)
+
+Provide a name for your repository:
+gsac.repository.name=@MACRO.PREFIX@ GSAC Repository 
+
+and a description 
+gsac.repository.description=@MACRO.PREFIX@ geodesy and GNSS Seamless Archive Center Repository
+
+and a maximum size when zipping up files, e.g. 100 MB, in bytes:    
+#file.zip.maxsize=100000000 
+
+???   And there may be more, such as    OBSOLETE? 
+gsac.server.hostname=gnssrepo.@MACRO.PREFIX@.org
+gsac.port.display=80
+
+
+########################################################################
+Database Connection Information
+########################################################################
+
+In org/@MACRO.PREFIX@/gsac/dbresources/, change the database properties file  gsacdb_test.properties 
+(and for final release, also change the file gsacdb_production.properties)
+to specify: 
+gsac.db.username=db-acct-user-name
+gsac.db.password=db-acct-pswd
+
+and set for, example, this value 
+gsac.db.jdbcurl=jdbc:mysql://myrepo.program.org:3306/myrepo_prod
+Note that Oracle and Postgres have different syntax for this line.
+
+And to name your database driver
+gsac.db.driverclass=com.mysql.jdbc.Driver 
+Other choices for this line are  possible, such as
+gsac.db.driverclass=oracle.jdbc.driver.OracleDriver 
+
+Both these gsacdb_(test,production).properties files may be exactly the same.
+
+
+########################################################################
+Server Connection Information
+########################################################################
+
+You should put the hostname and port of your web servers in the gsacserver_(test,production).properties
+files:
+# Server info
+#gsac.server.hostname=
+#gsac.server.port=9090   
+
+
+########################################################################
+Reading Your Database: Making Tables.java
+########################################################################
+
+GSAC has to be able to identify the tables and columns (fields) in your database,
+which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
+There is a nice utility to generate a Java class (Tables) that holds all of your
+database table names and columns (fields) in the tables.  This allows you to not have String table and column
+names permeate your code.
+
+To generate the Tables.java source code file, after you have a connection set up to the database, in org/@MACRO.PREFIX@/gsac/, 
+run
+
+ant tables   
+
+Screen output from a successful run should include lines like these, showing names of tables in your database:
+
+tables:
+     [java] processing AGENCY
+     [java] processing COUNTRIES
+     [java] processing EQUIPMENT
+     ...
+
+This process will read your database and make a new file org/@MACRO.PREFIX@/gsac/database/Tables.java. 
+The Java code defines classes with methods, such as the next code block for a table about GPS recievers, 
+with methods getName() which gives the table name, and getColumns() which returns names for fields 
+in that table about GPS receivers, and which defines new String variables.
+
+     public static class STATION_IDENTIFICATION extends Tables {
+        public static final String NAME = "Station_Identification";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_MARKERNAME =  NAME + ".MarkerName";
+        public static final String ORA_MARKERNAME =  "MarkerName";
+        public static final String COL_MARKERNUMBER = NAME + ".MarkerNumber";
+        public static final String ORA_MARKERNUMBER = "MarkerNumber";
+        public static final String COL_LATITUDE =  NAME + ".Latitude";
+        public static final String ORA_LATITUDE =  "Latitude";
+        public static final String COL_LONGITUDE =  NAME + ".Longitude";
+        public static final String ORA_LONGITUDE =  "Longitude";
+        public static final String COL_CITY =  NAME + ".City";
+        public static final String ORA_CITY =  "City";
+        public static final String COL_COUNTRY =  NAME + ".Country";
+        public static final String ORA_COUNTRY =  "Country";
+        public static final String[] ARRAY = new String[] {
+            COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY,COL_PROPOSITIONDATE,COL_COMMITMENTLETTER,COL_CONSISTENT_RINEX_FILES,COL_INDIVIDUALCALIBRATION,COL_DATAQUALITY,COL_DENSIFICATIONSITE,COL_COLLOCATEDINSTRUMENT,COL_INTERESTEDANALYSISCENTRES,COL_HOURLY_DATA,COL_ECGN_DATA,COL_MAINDATACENTRE,COL_TIDEGAUGE,COL_REMARK
+        };
+        public static final String COLUMNS = SqlUtil.comma(ARRAY);
+        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
+    public static final STATION_IDENTIFICATION table  = new  		STATION_IDENTIFICATION();
+    };
+
+The ant table command builds the corresponding class files in org/@MACRO.PREFIX@/gsac/database/.
 
 
 ########################################################################
 Code changes 
+Extending Java Classes
 ########################################################################
+
+orig:
 The @MACRO.PREFIX@Repository is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
 and/or @MACRO.PREFIX@FileManager objects.
 
@@ -27,60 +179,124 @@ The @MACRO.PREFIX@SiteManager and @MACRO.PREFIX@FileManager classes will need to
 to implement the queries. See those classes for more details
 See the CHANGEME in the comments to see what needs to be changed. 
 
+new:
+
+Files in org/igs/gsac/ have the Java code for your repository.   The Java file  NewreposRepository.java is the main entry point, where you add much of the code for the new repository.   Also the files NewreposSiteManager.java and NewreposFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
+
+from org/igs/README: "If you aren't using oracle change the getDriverClassName() method in org/igs/gsac/ IgsDatabaseManager.java"   HUN? - doesnt it get this from org/igs/gsac/resources/gsacdb_test.properties ?
+
+And in the same file the last three lines are
+ //Change this package to be your package
+
+        String packageName = dbm.getClass().getPackage().getName();
+
+        dbm.writeTables(packageName);
+
+
+The Java files to extend are:
+
+IgsRepository.java 
+
+Above the import lines, add the new Java package name, in this form:
+package org.newrepos.gsac; 
+
+In the method initResourceManagers(),  uncomment 
+     super.initResourceManagers();
+
+to search on both sites and data files in the database.  (See other code in that method if you need to only search on only sites or only files: getResourceManager(GsacSite.CLASS_SITE) and getResourceManager(GsacFile.CLASS_FILE).)
+
+IgsFileManager.java 
+
+This class has 3 'changeme' sections:
+
+doGetQueryCapabilities()
+
+handleRequest(
+
+getResource(
+
+IgsSiteManager.java  
+
+This class has 5 'changeme' sections...
+
+doGetQueryCapabilities() - defines things to search on
+
+handleRequest(
+
+getResource(
+
+Default query order"
+
+makeResource(    how does this work?
+
+and also a change in getResourceSelectColumns()
+
+
+IgsServer.java 
+
+	changes?
+
+IgsDatabaseManager.java  
+
+	changes?
+
+IgsTest.java
+
+	changes?
 
 ########################################################################
-HTML 
+Web Site Design and Images (HTML)
 ########################################################################
-Change the resources/header.html & resources/footer.html to the html you want to use for the header and footer
+
+The files footer.html and header.html  in the directory org/@MACRO.PREFIX@/gsac/resources/
+specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
+
+ header.html:
+	<html>
+	<head>
+	<title>New Repos GSAC Repository</title>
+	</head>
+	<body>
+
+or fully developed, such as using css.  Image files used on the web site can be put in the new directory, 
+org/@MACRO.PREFIX@/gsac/htdocs/, [ ? How to href to files in org/newrepos/gsac/htdocs/]
+or they may be retrieved from another web server, for example, with
+
+   <img src="http://cddis.nasa.gov/images/spacer.gif">.
+
+Change the resources/header.html & resources/footer.html to the html you want to use for the header and footer.
 
 
 ########################################################################
-Database
-########################################################################
-Change dbresources/gsacdb_test.properties and dbresources/gsacdb_production.properties
-to point to your database.
-
-
-########################################################################
-Building 
+Building and Running the GSAC server
 ########################################################################
 
-To build run a test release run:
+
+Once you have made needed additions to the Java code, to build a test version server in org/@MACRO.PREFIX@/gsac, run
 ant (or ant test_build)
 
-To build run a production release run:
+To build run a production release, run:
 ant production_build
 
-The ant build targets will copy one of the (test or production) db properties files to:
-resources/gsacsb.properties
+The build.xml file used by ant is org/@MACRO.PREFIX@/gsac/build.xml. The ant build targets will copy one 
+of the gsac db (_test or _production) properties files to resources/gsacsb.properties
 
-It will also copy one of the files:
+It will also copy one of the files
 resources/gsacserver_test.properties or resources/gsacserver_production.properties
 to:
 resources/gsacserver.properties
 
-You should put the hostname and port of the servers in the gsacserver_(test,production).properties
-files.
-
 If you have some database authentication you need to use (or any other properties) 
 but don't want to check in to the properties files here you can create a @MACRO.BASENAME@.properties 
-file. The ant runserver provides this property file as a command line argument.
-The ant target  builds a .zip of a stand-alone gsac server and a gsacws.war
+file. The ant runserver command implicitely uses this property file as a command line argument.
+
+The ant target  builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
+and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
 
 To run the server:
 ant runserver
 
-
-
+For the test server, the screen output from this command shows a URL to use in your local browser to use the test server web services.
 
 ########################################################################
-Database Tables.java 
 ########################################################################
-There is a nice utility to generate a Java class (Tables.java) that holds all of your
-database table names and columns.  This allows you to not have String table and column
-names permeate your code. This follows my motto of "make meaningful things meaningful"
-
-To generate the Tables.java code run:
-ant tables
-
-
