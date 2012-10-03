@@ -11,6 +11,7 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.util.*;
 
 
@@ -20,6 +21,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -213,16 +215,6 @@ public class IgsSiteManager extends SiteManager {
     }
 
 
-    /**
-     * get all of the metadata for the given site
-     *
-     * @param gsacResource resource
-     *
-     * @throws Exception On badness
-     */
-    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
-        //The Unavco repository adds in GnssEquipment metadata and other things
-    }
 
 
     /*************************************************************************************************
@@ -327,6 +319,160 @@ public class IgsSiteManager extends SiteManager {
     }
 
 
+
+
+
+
+    /**
+     * get all of the metadata for the given site
+     *
+     * @param gsacResource resource
+     *
+     * @throws Exception On badness
+     */
+    @Override
+    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
+        readIdentificationMetadata(gsacResource);
+        readEquipmentMetadata(gsacResource);
+    }
+
+
+    private  void readEquipmentMetadata(GsacResource gsacResource) throws Exception {
+        Hashtable<Date,GnssEquipment> visits  = new Hashtable<Date,GnssEquipment>();
+        List<GnssEquipment> equipmentList  = new ArrayList<GnssEquipment>();
+        Statement statement;
+        ResultSet  results;
+
+        statement =
+            getDatabaseManager().select(Tables.SITELOG_ANTENNA.COLUMNS,
+                                        Tables.SITELOG_ANTENNA.NAME,
+                                        Clause.eq(Tables.SITELOG_ANTENNA.COL_FOURID, gsacResource.getId()),
+                                        " order by " + Tables.SITELOG_ANTENNA.COL_DATEINSTALLEDANTENNA, -1);
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            while ((results = iter.getNext()) != null) {
+                Date[] dateRange =
+                    new Date[] {
+                    readDate(results, Tables.SITELOG_ANTENNA.COL_DATEINSTALLEDANTENNA),
+                    readDate(results, Tables.SITELOG_ANTENNA.COL_DATEREMOVEDANTENNA)};
+                GnssEquipment equipment = 
+                    new GnssEquipment(dateRange,
+                                      results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNATYPE),
+                                      results.getString(Tables.SITELOG_ANTENNA.COL_SERIALNUMBERANTENNA),
+                                      results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
+                                      results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
+                                      "", "", "",results.getDouble(Tables.SITELOG_ANTENNA.COL_MARKERUP));
+
+                
+                equipmentList.add(equipment);
+                visits.put(dateRange[0], equipment); 
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+        statement =
+            getDatabaseManager().select(Tables.SITELOG_RECEIVER.COLUMNS,
+                                        Tables.SITELOG_RECEIVER.NAME,
+                                        Clause.eq(Tables.SITELOG_RECEIVER.COL_FOURID, gsacResource.getId()),
+                                        " order by " + Tables.SITELOG_RECEIVER.COL_DATEINSTALLEDRECEIVER, -1);
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            while ((results = iter.getNext()) != null) {
+                Date[] dateRange =
+                    new Date[] {
+                    readDate(results, Tables.SITELOG_RECEIVER.COL_DATEINSTALLEDRECEIVER),
+                    readDate(results, Tables.SITELOG_RECEIVER.COL_DATEREMOVEDRECEIVER)};
+                GnssEquipment equipment = visits.get(dateRange[0]);
+                if(equipment!=null) {
+                    if(!equipment.getToDate().equals(dateRange[1])) {
+                        equipment = null;
+                    }
+                }
+
+                if(equipment == null) {
+                    //                    System.err.println ("Could not find corresponding antenna for equipment date:" + dateRange[0]);
+                    equipment =  new GnssEquipment(dateRange,
+                                                   "","","","","","","",Double.NaN);
+                    equipmentList.add(equipment);
+                }
+                equipment.setReceiver(results.getString(Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
+                equipment.setReceiverSerial(results.getString(Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+
+        equipmentList = GnssEquipment.sort(equipmentList);
+        GnssEquipmentGroup equipmentGroup = null;
+        for(GnssEquipment equipment: equipmentList) {
+            if (equipmentGroup == null) {
+                gsacResource.addMetadata(equipmentGroup =
+                                         new GnssEquipmentGroup());
+            }
+            equipmentGroup.add(equipment);
+        }
+
+
+    }
+
+
+
+
+    private  void readIdentificationMetadata(GsacResource gsacResource) throws Exception {
+        Statement statement =
+            getDatabaseManager().select(Tables.SITELOG_IDENTIFICATION.COLUMNS,
+                                        Tables.SITELOG_IDENTIFICATION.NAME,
+                                        Clause.eq(Tables.SITELOG_IDENTIFICATION.COL_FOURID, gsacResource.getId()),(String)null,-1);
+
+        ResultSet  results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            while ((results = iter.getNext()) != null) {
+                gsacResource.setLongName(results.getString(Tables.SITELOG_IDENTIFICATION.COL_SITENAME));
+                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
+                                    "Monument Inscription",
+                                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_MONUMENTINSCRI));
+
+                addPropertyMetadata(gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, 
+                                    "IER Domes",
+                                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
+
+                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
+                                    "CDP Number",
+                                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
+                //Only read the first row
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+    }
+
+
+
+    private void addPropertyMetadata(GsacResource gsacResource, String id, String label, String value) {
+        if(value!=null && value.length()>0) {
+            gsacResource.addMetadata(new PropertyMetadata(id, value, label));
+        }
+    }
+
+
+    private Date readDate(ResultSet results, String column) {
+        try {
+            return results.getDate(column);
+        } catch(Exception exc) {
+            return new Date();
+        }
+    }
 
 
 }

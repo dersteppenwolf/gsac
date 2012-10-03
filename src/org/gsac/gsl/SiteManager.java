@@ -163,7 +163,7 @@ public abstract class SiteManager extends GsacResourceManager {
         new AtomSiteOutputHandler(getRepository(), getResourceClass());
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-        new SiteLogOutputHandler(getRepository(), getResourceClass());
+        //        new SiteLogOutputHandler(getRepository(), getResourceClass());
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
     }
 

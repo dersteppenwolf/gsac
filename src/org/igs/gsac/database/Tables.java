@@ -16,9 +16,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_AGENCYID =  NAME + ".AgencyID";
-        public static final String ORA_AGENCYID =  "AgencyID";
         public static final String COL_AGENCYNAME =  NAME + ".AgencyName";
-        public static final String ORA_AGENCYNAME =  "AgencyName";
 
         public static final String[] ARRAY = new String[] {
             COL_AGENCYID,COL_AGENCYNAME
@@ -36,23 +34,14 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_AGENCYUSERID =  NAME + ".AgencyUserID";
-        public static final String ORA_AGENCYUSERID =  "AgencyUserID";
         public static final String COL_AGENCYID =  NAME + ".AgencyID";
-        public static final String ORA_AGENCYID =  "AgencyID";
         public static final String COL_LOGINID =  NAME + ".LoginID";
-        public static final String ORA_LOGINID =  "LoginID";
         public static final String COL_PASSWORD =  NAME + ".Password";
-        public static final String ORA_PASSWORD =  "Password";
         public static final String COL_EMAIL =  NAME + ".Email";
-        public static final String ORA_EMAIL =  "Email";
         public static final String COL_FIRSTNAME =  NAME + ".FirstName";
-        public static final String ORA_FIRSTNAME =  "FirstName";
         public static final String COL_LASTNAME =  NAME + ".LastName";
-        public static final String ORA_LASTNAME =  "LastName";
         public static final String COL_SYSADMIN =  NAME + ".Sysadmin";
-        public static final String ORA_SYSADMIN =  "Sysadmin";
         public static final String COL_ACTIVE =  NAME + ".Active";
-        public static final String ORA_ACTIVE =  "Active";
 
         public static final String[] ARRAY = new String[] {
             COL_AGENCYUSERID,COL_AGENCYID,COL_LOGINID,COL_PASSWORD,COL_EMAIL,COL_FIRSTNAME,COL_LASTNAME,COL_SYSADMIN,COL_ACTIVE
@@ -70,9 +59,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_AGENCYUSERID =  NAME + ".AgencyUserID";
-        public static final String ORA_AGENCYUSERID =  "AgencyUserID";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
 
         public static final String[] ARRAY = new String[] {
             COL_AGENCYUSERID,COL_FOURID
@@ -90,63 +77,34 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_INSTITUTION_NAME =  NAME + ".institution_name";
-        public static final String ORA_INSTITUTION_NAME =  "institution_name";
         public static final String COL_ACRONYM =  NAME + ".acronym";
-        public static final String ORA_ACRONYM =  "acronym";
         public static final String COL_INTERNAL_ABBREVATION =  NAME + ".internal_abbrevation";
-        public static final String ORA_INTERNAL_ABBREVATION =  "internal_abbrevation";
         public static final String COL_NETWORK =  NAME + ".network";
-        public static final String ORA_NETWORK =  "network";
         public static final String COL_AREA =  NAME + ".area";
-        public static final String ORA_AREA =  "area";
         public static final String COL_DAILY_DATA =  NAME + ".daily_data";
-        public static final String ORA_DAILY_DATA =  "daily_data";
         public static final String COL_HOURLY_DATA =  NAME + ".hourly_data";
-        public static final String ORA_HOURLY_DATA =  "hourly_data";
         public static final String COL_COUNTRY =  NAME + ".country";
-        public static final String ORA_COUNTRY =  "country";
         public static final String COL_FTP_ADDRESS =  NAME + ".ftp_address";
-        public static final String ORA_FTP_ADDRESS =  "ftp_address";
         public static final String COL_FTP_USERID =  NAME + ".ftp_userid";
-        public static final String ORA_FTP_USERID =  "ftp_userid";
         public static final String COL_FTP_PASSWORD =  NAME + ".ftp_password";
-        public static final String ORA_FTP_PASSWORD =  "ftp_password";
         public static final String COL_DAILY_DATA_HOLDING_FILENAME_AT_DC =  NAME + ".daily_data_holding_filename_at_dc";
-        public static final String ORA_DAILY_DATA_HOLDING_FILENAME_AT_DC =  "daily_data_holding_filename_at_dc";
         public static final String COL_DAILY_DATA_HOLDING_FILENAME_AT_EPNCB =  NAME + ".daily_data_holding_filename_at_epncb";
-        public static final String ORA_DAILY_DATA_HOLDING_FILENAME_AT_EPNCB =  "daily_data_holding_filename_at_epncb";
         public static final String COL_DAILY_DATA_HOLDING_PATH_AT_DC =  NAME + ".daily_data_holding_path_at_dc";
-        public static final String ORA_DAILY_DATA_HOLDING_PATH_AT_DC =  "daily_data_holding_path_at_dc";
         public static final String COL_HOURLY_DATA_HOLDING_FILENAME_AT_DC =  NAME + ".hourly_data_holding_filename_at_dc";
-        public static final String ORA_HOURLY_DATA_HOLDING_FILENAME_AT_DC =  "hourly_data_holding_filename_at_dc";
         public static final String COL_HOURLY_DATA_HOLDING_FILENAME_AT_EPNCB =  NAME + ".hourly_data_holding_filename_at_epncb";
-        public static final String ORA_HOURLY_DATA_HOLDING_FILENAME_AT_EPNCB =  "hourly_data_holding_filename_at_epncb";
         public static final String COL_HOURLY_DATA_HOLDING_PATH_AT_DC =  NAME + ".hourly_data_holding_path_at_dc";
-        public static final String ORA_HOURLY_DATA_HOLDING_PATH_AT_DC =  "hourly_data_holding_path_at_dc";
         public static final String COL_DAILY_DATA_MAIN_DIRECTORY =  NAME + ".daily_data_main_directory";
-        public static final String ORA_DAILY_DATA_MAIN_DIRECTORY =  "daily_data_main_directory";
         public static final String COL_DAILY_DATA_SUB_DIRECTORY =  NAME + ".daily_data_sub_directory";
-        public static final String ORA_DAILY_DATA_SUB_DIRECTORY =  "daily_data_sub_directory";
         public static final String COL_HOURLY_DATA_ROOT_DIRECTORY =  NAME + ".hourly_data_root_directory";
-        public static final String ORA_HOURLY_DATA_ROOT_DIRECTORY =  "hourly_data_root_directory";
         public static final String COL_HOURLY_DATA_SUB_DIRECTORY =  NAME + ".hourly_data_sub_directory";
-        public static final String ORA_HOURLY_DATA_SUB_DIRECTORY =  "hourly_data_sub_directory";
         public static final String COL_DAILY_DATA_ROOT_DIRECTORY =  NAME + ".daily_data_root_directory";
-        public static final String ORA_DAILY_DATA_ROOT_DIRECTORY =  "daily_data_root_directory";
         public static final String COL_DAILY_DATA_PATH_DIRECTORY =  NAME + ".daily_data_path_directory";
-        public static final String ORA_DAILY_DATA_PATH_DIRECTORY =  "daily_data_path_directory";
         public static final String COL_DAILY_DATA_FILENAME_CASE =  NAME + ".daily_data_filename_case";
-        public static final String ORA_DAILY_DATA_FILENAME_CASE =  "daily_data_filename_case";
         public static final String COL_PLACEOFCOLUMNSIZE_4_LS_ON_FTP =  NAME + ".placeofcolumnsize_4_ls_on_ftp";
-        public static final String ORA_PLACEOFCOLUMNSIZE_4_LS_ON_FTP =  "placeofcolumnsize_4_ls_on_ftp";
         public static final String COL_PLACEOFCOLUMNFILENAME_4_LS_ON_FTP =  NAME + ".placeofcolumnfilename_4_ls_on_ftp";
-        public static final String ORA_PLACEOFCOLUMNFILENAME_4_LS_ON_FTP =  "placeofcolumnfilename_4_ls_on_ftp";
         public static final String COL_HOURLY_DATA_SESSION_CASE =  NAME + ".hourly_data_session_case";
-        public static final String ORA_HOURLY_DATA_SESSION_CASE =  "hourly_data_session_case";
         public static final String COL_DESCRIPTION =  NAME + ".Description";
-        public static final String ORA_DESCRIPTION =  "Description";
         public static final String COL_STATUS =  NAME + ".status";
-        public static final String ORA_STATUS =  "status";
 
         public static final String[] ARRAY = new String[] {
             COL_INSTITUTION_NAME,COL_ACRONYM,COL_INTERNAL_ABBREVATION,COL_NETWORK,COL_AREA,COL_DAILY_DATA,COL_HOURLY_DATA,COL_COUNTRY,COL_FTP_ADDRESS,COL_FTP_USERID,COL_FTP_PASSWORD,COL_DAILY_DATA_HOLDING_FILENAME_AT_DC,COL_DAILY_DATA_HOLDING_FILENAME_AT_EPNCB,COL_DAILY_DATA_HOLDING_PATH_AT_DC,COL_HOURLY_DATA_HOLDING_FILENAME_AT_DC,COL_HOURLY_DATA_HOLDING_FILENAME_AT_EPNCB,COL_HOURLY_DATA_HOLDING_PATH_AT_DC,COL_DAILY_DATA_MAIN_DIRECTORY,COL_DAILY_DATA_SUB_DIRECTORY,COL_HOURLY_DATA_ROOT_DIRECTORY,COL_HOURLY_DATA_SUB_DIRECTORY,COL_DAILY_DATA_ROOT_DIRECTORY,COL_DAILY_DATA_PATH_DIRECTORY,COL_DAILY_DATA_FILENAME_CASE,COL_PLACEOFCOLUMNSIZE_4_LS_ON_FTP,COL_PLACEOFCOLUMNFILENAME_4_LS_ON_FTP,COL_HOURLY_DATA_SESSION_CASE,COL_DESCRIPTION,COL_STATUS
@@ -164,11 +122,8 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_NUMBER =  NAME + ".number";
-        public static final String ORA_NUMBER =  "number";
         public static final String COL_ACRONYM =  NAME + ".acronym";
-        public static final String ORA_ACRONYM =  "acronym";
         public static final String COL_PASSWORD =  NAME + ".password";
-        public static final String ORA_PASSWORD =  "password";
 
         public static final String[] ARRAY = new String[] {
             COL_NUMBER,COL_ACRONYM,COL_PASSWORD
@@ -186,11 +141,8 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_NAME =  NAME + ".Name";
-        public static final String ORA_NAME =  "Name";
         public static final String COL_ACRONYM =  NAME + ".Acronym";
-        public static final String ORA_ACRONYM =  "Acronym";
         public static final String COL_NETWORK =  NAME + ".Network";
-        public static final String ORA_NETWORK =  "Network";
 
         public static final String[] ARRAY = new String[] {
             COL_NAME,COL_ACRONYM,COL_NETWORK
@@ -208,7 +160,6 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_DEFAULTVALUE =  NAME + ".DefaultValue";
-        public static final String ORA_DEFAULTVALUE =  "DefaultValue";
 
         public static final String[] ARRAY = new String[] {
             COL_DEFAULTVALUE
@@ -226,17 +177,11 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_EQUIPMENTID =  NAME + ".EquipmentID";
-        public static final String ORA_EQUIPMENTID =  "EquipmentID";
         public static final String COL_EQUIPMENTTYPEID =  NAME + ".EquipmentTypeID";
-        public static final String ORA_EQUIPMENTTYPEID =  "EquipmentTypeID";
         public static final String COL_MODEL =  NAME + ".Model";
-        public static final String ORA_MODEL =  "Model";
         public static final String COL_DESCRIPTION =  NAME + ".Description";
-        public static final String ORA_DESCRIPTION =  "Description";
         public static final String COL_EQUIPMENTSTATEID =  NAME + ".EquipmentStateID";
-        public static final String ORA_EQUIPMENTSTATEID =  "EquipmentStateID";
         public static final String COL_EQUIPMANID =  NAME + ".EquipManID";
-        public static final String ORA_EQUIPMANID =  "EquipManID";
 
         public static final String[] ARRAY = new String[] {
             COL_EQUIPMENTID,COL_EQUIPMENTTYPEID,COL_MODEL,COL_DESCRIPTION,COL_EQUIPMENTSTATEID,COL_EQUIPMANID
@@ -254,9 +199,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_EQUIPMANID =  NAME + ".EquipManID";
-        public static final String ORA_EQUIPMANID =  "EquipManID";
         public static final String COL_EQUIPMANNAME =  NAME + ".EquipManName";
-        public static final String ORA_EQUIPMANNAME =  "EquipManName";
 
         public static final String[] ARRAY = new String[] {
             COL_EQUIPMANID,COL_EQUIPMANNAME
@@ -274,9 +217,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_EQUIPMENTSTATEID =  NAME + ".EquipmentStateID";
-        public static final String ORA_EQUIPMENTSTATEID =  "EquipmentStateID";
         public static final String COL_EQUIPMENTSTATE =  NAME + ".EquipmentState";
-        public static final String ORA_EQUIPMENTSTATE =  "EquipmentState";
 
         public static final String[] ARRAY = new String[] {
             COL_EQUIPMENTSTATEID,COL_EQUIPMENTSTATE
@@ -294,9 +235,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_EQUIPMENTTYPEID =  NAME + ".EquipmentTypeID";
-        public static final String ORA_EQUIPMENTTYPEID =  "EquipmentTypeID";
         public static final String COL_EQUIPMENTTYPE =  NAME + ".EquipmentType";
-        public static final String ORA_EQUIPMENTTYPE =  "EquipmentType";
 
         public static final String[] ARRAY = new String[] {
             COL_EQUIPMENTTYPEID,COL_EQUIPMENTTYPE
@@ -314,19 +253,12 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_TABLENAME =  NAME + ".TableName";
-        public static final String ORA_TABLENAME =  "TableName";
         public static final String COL_NEWFORMHEADER =  NAME + ".NewFormHeader";
-        public static final String ORA_NEWFORMHEADER =  "NewFormHeader";
         public static final String COL_NEWFORMFOOTER =  NAME + ".NewFormFooter";
-        public static final String ORA_NEWFORMFOOTER =  "NewFormFooter";
         public static final String COL_EDITFORMHEADER =  NAME + ".EditFormHeader";
-        public static final String ORA_EDITFORMHEADER =  "EditFormHeader";
         public static final String COL_EDITFORMFOOTER =  NAME + ".EditFormFooter";
-        public static final String ORA_EDITFORMFOOTER =  "EditFormFooter";
         public static final String COL_AUDITLOGLISTHEADER =  NAME + ".AuditLogListHeader";
-        public static final String ORA_AUDITLOGLISTHEADER =  "AuditLogListHeader";
         public static final String COL_HISTORYLISTHEADER =  NAME + ".HistoryListHeader";
-        public static final String ORA_HISTORYLISTHEADER =  "HistoryListHeader";
 
         public static final String[] ARRAY = new String[] {
             COL_TABLENAME,COL_NEWFORMHEADER,COL_NEWFORMFOOTER,COL_EDITFORMHEADER,COL_EDITFORMFOOTER,COL_AUDITLOGLISTHEADER,COL_HISTORYLISTHEADER
@@ -344,25 +276,15 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_TABLENAME =  NAME + ".TableName";
-        public static final String ORA_TABLENAME =  "TableName";
         public static final String COL_FORMFIELDLABEL =  NAME + ".FormFieldLabel";
-        public static final String ORA_FORMFIELDLABEL =  "FormFieldLabel";
         public static final String COL_FORMFIELDATTRIBUTES =  NAME + ".FormFieldAttributes";
-        public static final String ORA_FORMFIELDATTRIBUTES =  "FormFieldAttributes";
         public static final String COL_DBFIELDNAME =  NAME + ".DBFieldName";
-        public static final String ORA_DBFIELDNAME =  "DBFieldName";
         public static final String COL_FORMFIELDDEFAULTVALUE =  NAME + ".FormFieldDefaultValue";
-        public static final String ORA_FORMFIELDDEFAULTVALUE =  "FormFieldDefaultValue";
         public static final String COL_FORMPOSITIONORDER =  NAME + ".FormPositionOrder";
-        public static final String ORA_FORMPOSITIONORDER =  "FormPositionOrder";
         public static final String COL_FORMFIELDTYPE =  NAME + ".FormFieldType";
-        public static final String ORA_FORMFIELDTYPE =  "FormFieldType";
         public static final String COL_FORMLOOKUPSQL =  NAME + ".FormLookupSQL";
-        public static final String ORA_FORMLOOKUPSQL =  "FormLookupSQL";
         public static final String COL_FORMFIELDTOOLTIP =  NAME + ".FormFieldToolTip";
-        public static final String ORA_FORMFIELDTOOLTIP =  "FormFieldToolTip";
         public static final String COL_FORMFIELDATTRIBUTES_SAVE =  NAME + ".FormFieldAttributes_save";
-        public static final String ORA_FORMFIELDATTRIBUTES_SAVE =  "FormFieldAttributes_save";
 
         public static final String[] ARRAY = new String[] {
             COL_TABLENAME,COL_FORMFIELDLABEL,COL_FORMFIELDATTRIBUTES,COL_DBFIELDNAME,COL_FORMFIELDDEFAULTVALUE,COL_FORMPOSITIONORDER,COL_FORMFIELDTYPE,COL_FORMLOOKUPSQL,COL_FORMFIELDTOOLTIP,COL_FORMFIELDATTRIBUTES_SAVE
@@ -380,7 +302,6 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_INSTRUTYPE =  NAME + ".InstruType";
-        public static final String ORA_INSTRUTYPE =  "InstruType";
 
         public static final String[] ARRAY = new String[] {
             COL_INSTRUTYPE
@@ -398,9 +319,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_TYPE =  NAME + ".Type";
-        public static final String ORA_TYPE =  "Type";
         public static final String COL_SATELLITESYSTEM =  NAME + ".SatelliteSystem";
-        public static final String ORA_SATELLITESYSTEM =  "SatelliteSystem";
 
         public static final String[] ARRAY = new String[] {
             COL_TYPE,COL_SATELLITESYSTEM
@@ -418,37 +337,21 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_ANTENNATYPE =  NAME + ".AntennaType";
-        public static final String ORA_ANTENNATYPE =  "AntennaType";
         public static final String COL_SERIALNUMBERANTENNA =  NAME + ".SerialNumberAntenna";
-        public static final String ORA_SERIALNUMBERANTENNA =  "SerialNumberAntenna";
         public static final String COL_ANTENNAREFPOINT =  NAME + ".AntennaRefPoint";
-        public static final String ORA_ANTENNAREFPOINT =  "AntennaRefPoint";
         public static final String COL_MARKERUP =  NAME + ".MarkerUp";
-        public static final String ORA_MARKERUP =  "MarkerUp";
         public static final String COL_MARKERNORTH =  NAME + ".MarkerNorth";
-        public static final String ORA_MARKERNORTH =  "MarkerNorth";
         public static final String COL_MARKEREST =  NAME + ".MarkerEst";
-        public static final String ORA_MARKEREST =  "MarkerEst";
         public static final String COL_ALIGNEMENT =  NAME + ".Alignement";
-        public static final String ORA_ALIGNEMENT =  "Alignement";
         public static final String COL_ANTENNARADOMETYPE =  NAME + ".AntennaRadomeType";
-        public static final String ORA_ANTENNARADOMETYPE =  "AntennaRadomeType";
         public static final String COL_RADOMESERIALNUMBER =  NAME + ".RadomeSerialNumber";
-        public static final String ORA_RADOMESERIALNUMBER =  "RadomeSerialNumber";
         public static final String COL_ANTENNACABLETYPE =  NAME + ".AntennaCableType";
-        public static final String ORA_ANTENNACABLETYPE =  "AntennaCableType";
         public static final String COL_ANTENNACABLELENGTH =  NAME + ".AntennaCableLength";
-        public static final String ORA_ANTENNACABLELENGTH =  "AntennaCableLength";
         public static final String COL_DATEINSTALLEDANTENNA =  NAME + ".DateInstalledAntenna";
-        public static final String ORA_DATEINSTALLEDANTENNA =  "DateInstalledAntenna";
         public static final String COL_DATEREMOVEDANTENNA =  NAME + ".DateRemovedAntenna";
-        public static final String ORA_DATEREMOVEDANTENNA =  "DateRemovedAntenna";
         public static final String COL_ADDINFOANTENNA =  NAME + ".AddInfoAntenna";
-        public static final String ORA_ADDINFOANTENNA =  "AddInfoAntenna";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_ANTENNATYPE,COL_SERIALNUMBERANTENNA,COL_ANTENNAREFPOINT,COL_MARKERUP,COL_MARKERNORTH,COL_MARKEREST,COL_ALIGNEMENT,COL_ANTENNARADOMETYPE,COL_RADOMESERIALNUMBER,COL_ANTENNACABLETYPE,COL_ANTENNACABLELENGTH,COL_DATEINSTALLEDANTENNA,COL_DATEREMOVEDANTENNA,COL_ADDINFOANTENNA,COL_FOURID
@@ -466,9 +369,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_ANTENNAGRAPH =  NAME + ".AntennaGraph";
-        public static final String ORA_ANTENNAGRAPH =  "AntennaGraph";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_ANTENNAGRAPH
@@ -486,19 +387,12 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_PREPAREDBY =  NAME + ".PreparedBy";
-        public static final String ORA_PREPAREDBY =  "PreparedBy";
         public static final String COL_DATEPREPARED =  NAME + ".DatePrepared";
-        public static final String ORA_DATEPREPARED =  "DatePrepared";
         public static final String COL_REPORTTYPE =  NAME + ".ReportType";
-        public static final String ORA_REPORTTYPE =  "ReportType";
         public static final String COL_CURRENTLOGFILENAME =  NAME + ".CurrentLogFileName";
-        public static final String ORA_CURRENTLOGFILENAME =  "CurrentLogFileName";
         public static final String COL_PREVIOUSLOG =  NAME + ".PreviousLog";
-        public static final String ORA_PREVIOUSLOG =  "PreviousLog";
         public static final String COL_MODIFIEDSECTION =  NAME + ".ModifiedSection";
-        public static final String ORA_MODIFIEDSECTION =  "ModifiedSection";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_PREPAREDBY,COL_DATEPREPARED,COL_REPORTTYPE,COL_CURRENTLOGFILENAME,COL_PREVIOUSLOG,COL_MODIFIEDSECTION
@@ -516,15 +410,10 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_STATIONMARKERNAME =  NAME + ".stationmarkername";
-        public static final String ORA_STATIONMARKERNAME =  "stationmarkername";
         public static final String COL_ANTENNATYPE =  NAME + ".antennatype";
-        public static final String ORA_ANTENNATYPE =  "antennatype";
         public static final String COL_SN =  NAME + ".SN";
-        public static final String ORA_SN =  "SN";
         public static final String COL_SUBSECTION =  NAME + ".subsection";
-        public static final String ORA_SUBSECTION =  "subsection";
         public static final String COL_COMMENT =  NAME + ".comment";
-        public static final String ORA_COMMENT =  "comment";
 
         public static final String[] ARRAY = new String[] {
             COL_STATIONMARKERNAME,COL_ANTENNATYPE,COL_SN,COL_SUBSECTION,COL_COMMENT
@@ -542,23 +431,14 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_INSTRUTYPE =  NAME + ".InstruType";
-        public static final String ORA_INSTRUTYPE =  "InstruType";
         public static final String COL_STATUS =  NAME + ".Status";
-        public static final String ORA_STATUS =  "Status";
         public static final String COL_EFFDATECOLLOCATION =  NAME + ".EffDateCollocation";
-        public static final String ORA_EFFDATECOLLOCATION =  "EffDateCollocation";
         public static final String COL_ADDINFOCOLLOCATION =  NAME + ".AddInfoCollocation";
-        public static final String ORA_ADDINFOCOLLOCATION =  "AddInfoCollocation";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATECOLLOCATION =  NAME + ".EffStartDateCollocation";
-        public static final String ORA_EFFSTARTDATECOLLOCATION =  "EffStartDateCollocation";
         public static final String COL_EFFENDDATECOLLOCATION =  NAME + ".EffEndDateCollocation";
-        public static final String ORA_EFFENDDATECOLLOCATION =  "EffEndDateCollocation";
         public static final String COL_EFFTEMPDATECOLLOCATION =  NAME + ".EffTempDateCollocation";
-        public static final String ORA_EFFTEMPDATECOLLOCATION =  "EffTempDateCollocation";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_INSTRUTYPE,COL_STATUS,COL_EFFDATECOLLOCATION,COL_ADDINFOCOLLOCATION,COL_FOURID,COL_EFFSTARTDATECOLLOCATION,COL_EFFENDDATECOLLOCATION,COL_EFFTEMPDATECOLLOCATION
@@ -576,25 +456,15 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_PRIMARYDATACENTER =  NAME + ".PrimaryDataCenter";
-        public static final String ORA_PRIMARYDATACENTER =  "PrimaryDataCenter";
         public static final String COL_SECONDARYDATACENTER =  NAME + ".SecondaryDataCenter";
-        public static final String ORA_SECONDARYDATACENTER =  "SecondaryDataCenter";
         public static final String COL_URLMOREINFO =  NAME + ".URLMoreInfo";
-        public static final String ORA_URLMOREINFO =  "URLMoreInfo";
         public static final String COL_SITEMAP =  NAME + ".SiteMap";
-        public static final String ORA_SITEMAP =  "SiteMap";
         public static final String COL_SITEDIAGRAM =  NAME + ".SiteDiagram";
-        public static final String ORA_SITEDIAGRAM =  "SiteDiagram";
         public static final String COL_HORIZONMASK =  NAME + ".horizonMask";
-        public static final String ORA_HORIZONMASK =  "horizonMask";
         public static final String COL_MONUMENTDESCRIPTION =  NAME + ".MonumentDescription";
-        public static final String ORA_MONUMENTDESCRIPTION =  "MonumentDescription";
         public static final String COL_SITEPICTURE =  NAME + ".SitePicture";
-        public static final String ORA_SITEPICTURE =  "SitePicture";
         public static final String COL_ADDINFO13 =  NAME + ".AddInfo13";
-        public static final String ORA_ADDINFO13 =  "AddInfo13";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_PRIMARYDATACENTER,COL_SECONDARYDATACENTER,COL_URLMOREINFO,COL_SITEMAP,COL_SITEDIAGRAM,COL_HORIZONMASK,COL_MONUMENTDESCRIPTION,COL_SITEPICTURE,COL_ADDINFO13
@@ -612,17 +482,11 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".Id";
-        public static final String ORA_ID =  "Id";
         public static final String COL_DATE =  NAME + ".Date";
-        public static final String ORA_DATE =  "Date";
         public static final String COL_BUTTON =  NAME + ".Button";
-        public static final String ORA_BUTTON =  "Button";
         public static final String COL_OC =  NAME + ".OC";
-        public static final String ORA_OC =  "OC";
         public static final String COL_STATION =  NAME + ".Station";
-        public static final String ORA_STATION =  "Station";
         public static final String COL_COMMENT =  NAME + ".Comment";
-        public static final String ORA_COMMENT =  "Comment";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_DATE,COL_BUTTON,COL_OC,COL_STATION,COL_COMMENT
@@ -640,23 +504,14 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_STANDARDTYPE =  NAME + ".StandardType";
-        public static final String ORA_STANDARDTYPE =  "StandardType";
         public static final String COL_INPUTFREQUENCY =  NAME + ".InputFrequency";
-        public static final String ORA_INPUTFREQUENCY =  "InputFrequency";
         public static final String COL_EFFDATEFREQUENCY =  NAME + ".EffdateFrequency";
-        public static final String ORA_EFFDATEFREQUENCY =  "EffdateFrequency";
         public static final String COL_ADDINFOFREQUENCY =  NAME + ".AddInfoFrequency";
-        public static final String ORA_ADDINFOFREQUENCY =  "AddInfoFrequency";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATEFREQUENCY =  NAME + ".EffStartDateFrequency";
-        public static final String ORA_EFFSTARTDATEFREQUENCY =  "EffStartDateFrequency";
         public static final String COL_EFFENDDATEFREQUENCY =  NAME + ".EffEndDateFrequency";
-        public static final String ORA_EFFENDDATEFREQUENCY =  "EffEndDateFrequency";
         public static final String COL_EFFTEMPDATEFREQUENCY =  NAME + ".EffTempDateFrequency";
-        public static final String ORA_EFFTEMPDATEFREQUENCY =  "EffTempDateFrequency";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_STANDARDTYPE,COL_INPUTFREQUENCY,COL_EFFDATEFREQUENCY,COL_ADDINFOFREQUENCY,COL_FOURID,COL_EFFSTARTDATEFREQUENCY,COL_EFFENDDATEFREQUENCY,COL_EFFTEMPDATEFREQUENCY
@@ -674,35 +529,20 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_HUMIDITYSENSOR =  NAME + ".HumiditySensor";
-        public static final String ORA_HUMIDITYSENSOR =  "HumiditySensor";
         public static final String COL_MANUFACTURER =  NAME + ".Manufacturer";
-        public static final String ORA_MANUFACTURER =  "Manufacturer";
         public static final String COL_SERIALNUMBERSENSOR =  NAME + ".SerialNumberSensor";
-        public static final String ORA_SERIALNUMBERSENSOR =  "SerialNumberSensor";
         public static final String COL_DATASAMPLINGSENSOR =  NAME + ".DataSamplingSensor";
-        public static final String ORA_DATASAMPLINGSENSOR =  "DataSamplingSensor";
         public static final String COL_ACCURACY =  NAME + ".Accuracy";
-        public static final String ORA_ACCURACY =  "Accuracy";
         public static final String COL_ASPIRATION =  NAME + ".Aspiration";
-        public static final String ORA_ASPIRATION =  "Aspiration";
         public static final String COL_HEIGHTDIFFSENSOR =  NAME + ".HeightDiffSensor";
-        public static final String ORA_HEIGHTDIFFSENSOR =  "HeightDiffSensor";
         public static final String COL_CALIDATE =  NAME + ".Calidate";
-        public static final String ORA_CALIDATE =  "Calidate";
         public static final String COL_EFFDATEHUM =  NAME + ".EffDateHum";
-        public static final String ORA_EFFDATEHUM =  "EffDateHum";
         public static final String COL_ADDINFOHUMIDITY =  NAME + ".AddInfoHumidity";
-        public static final String ORA_ADDINFOHUMIDITY =  "AddInfoHumidity";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATEHUM =  NAME + ".EffStartDateHum";
-        public static final String ORA_EFFSTARTDATEHUM =  "EffStartDateHum";
         public static final String COL_EFFENDDATEHUM =  NAME + ".EffEndDateHum";
-        public static final String ORA_EFFENDDATEHUM =  "EffEndDateHum";
         public static final String COL_EFFTEMPDATEHUM =  NAME + ".EffTempDateHum";
-        public static final String ORA_EFFTEMPDATEHUM =  "EffTempDateHum";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_HUMIDITYSENSOR,COL_MANUFACTURER,COL_SERIALNUMBERSENSOR,COL_DATASAMPLINGSENSOR,COL_ACCURACY,COL_ASPIRATION,COL_HEIGHTDIFFSENSOR,COL_CALIDATE,COL_EFFDATEHUM,COL_ADDINFOHUMIDITY,COL_FOURID,COL_EFFSTARTDATEHUM,COL_EFFENDDATEHUM,COL_EFFTEMPDATEHUM
@@ -720,19 +560,12 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_SITENAME =  NAME + ".SiteName";
-        public static final String ORA_SITENAME =  "SiteName";
         public static final String COL_FOUR_CHARACTER_ID =  NAME + ".Four_character_id";
-        public static final String ORA_FOUR_CHARACTER_ID =  "Four_character_id";
         public static final String COL_MONUMENTINSCRI =  NAME + ".MonumentInscri";
-        public static final String ORA_MONUMENTINSCRI =  "MonumentInscri";
         public static final String COL_IERDOMES =  NAME + ".IERDOMES";
-        public static final String ORA_IERDOMES =  "IERDOMES";
         public static final String COL_CDPNUM =  NAME + ".CDPNum";
-        public static final String ORA_CDPNUM =  "CDPNum";
         public static final String COL_DATEINSTALLED =  NAME + ".DateInstalled";
-        public static final String ORA_DATEINSTALLED =  "DateInstalled";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_SITENAME,COL_FOUR_CHARACTER_ID,COL_MONUMENTINSCRI,COL_IERDOMES,COL_CDPNUM,COL_DATEINSTALLED
@@ -750,21 +583,13 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_GEOLOGICCHAR =  NAME + ".GeologicChar";
-        public static final String ORA_GEOLOGICCHAR =  "GeologicChar";
         public static final String COL_BEDROCKTYPE =  NAME + ".BedrockType";
-        public static final String ORA_BEDROCKTYPE =  "BedrockType";
         public static final String COL_BEDROCKCOND =  NAME + ".BedrockCond";
-        public static final String ORA_BEDROCKCOND =  "BedrockCond";
         public static final String COL_FRACTURESPACING =  NAME + ".FractureSpacing";
-        public static final String ORA_FRACTURESPACING =  "FractureSpacing";
         public static final String COL_FAULTZONES =  NAME + ".FaultZones";
-        public static final String ORA_FAULTZONES =  "FaultZones";
         public static final String COL_DISTANCE =  NAME + ".Distance";
-        public static final String ORA_DISTANCE =  "Distance";
         public static final String COL_ADDINFO1 =  NAME + ".AddInfo1";
-        public static final String ORA_ADDINFO1 =  "AddInfo1";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_GEOLOGICCHAR,COL_BEDROCKTYPE,COL_BEDROCKCOND,COL_FRACTURESPACING,COL_FAULTZONES,COL_DISTANCE,COL_ADDINFO1
@@ -782,17 +607,11 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_MONUMENTDESCRIPT =  NAME + ".MonumentDescript";
-        public static final String ORA_MONUMENTDESCRIPT =  "MonumentDescript";
         public static final String COL_MARKERDESCRIPT =  NAME + ".MarkerDescript";
-        public static final String ORA_MARKERDESCRIPT =  "MarkerDescript";
         public static final String COL_HEIGHTMONU =  NAME + ".HeightMonu";
-        public static final String ORA_HEIGHTMONU =  "HeightMonu";
         public static final String COL_MONUFOUND =  NAME + ".MonuFound";
-        public static final String ORA_MONUFOUND =  "MonuFound";
         public static final String COL_FOUNDDEPTH =  NAME + ".FoundDepth";
-        public static final String ORA_FOUNDDEPTH =  "FoundDepth";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_MONUMENTDESCRIPT,COL_MARKERDESCRIPT,COL_HEIGHTMONU,COL_MONUFOUND,COL_FOUNDDEPTH
@@ -810,19 +629,12 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_DATEEVENT =  NAME + ".DateEvent";
-        public static final String ORA_DATEEVENT =  "DateEvent";
         public static final String COL_EVENT =  NAME + ".Event";
-        public static final String ORA_EVENT =  "Event";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATEEVENT =  NAME + ".EffStartDateEvent";
-        public static final String ORA_EFFSTARTDATEEVENT =  "EffStartDateEvent";
         public static final String COL_EFFENDDATEEVENT =  NAME + ".EffEndDateEvent";
-        public static final String ORA_EFFENDDATEEVENT =  "EffEndDateEvent";
         public static final String COL_EFFTEMPDATEEVENT =  NAME + ".EffTempDateEvent";
-        public static final String ORA_EFFTEMPDATEEVENT =  "EffTempDateEvent";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_DATEEVENT,COL_EVENT,COL_FOURID,COL_EFFSTARTDATEEVENT,COL_EFFENDDATEEVENT,COL_EFFTEMPDATEEVENT
@@ -840,29 +652,17 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_CITY =  NAME + ".City";
-        public static final String ORA_CITY =  "City";
         public static final String COL_STATE =  NAME + ".State";
-        public static final String ORA_STATE =  "State";
         public static final String COL_COUNTRY =  NAME + ".Country";
-        public static final String ORA_COUNTRY =  "Country";
         public static final String COL_TECTONIC =  NAME + ".Tectonic";
-        public static final String ORA_TECTONIC =  "Tectonic";
         public static final String COL_XCOOR =  NAME + ".XCoor";
-        public static final String ORA_XCOOR =  "XCoor";
         public static final String COL_YCOOR =  NAME + ".YCoor";
-        public static final String ORA_YCOOR =  "YCoor";
         public static final String COL_ZCOOR =  NAME + ".ZCoor";
-        public static final String ORA_ZCOOR =  "ZCoor";
         public static final String COL_LATITUDENORTH =  NAME + ".LatitudeNorth";
-        public static final String ORA_LATITUDENORTH =  "LatitudeNorth";
         public static final String COL_LONGITUDEEAST =  NAME + ".LongitudeEast";
-        public static final String ORA_LONGITUDEEAST =  "LongitudeEast";
         public static final String COL_ELEVATION =  NAME + ".Elevation";
-        public static final String ORA_ELEVATION =  "Elevation";
         public static final String COL_ADDINFO2 =  NAME + ".AddInfo2";
-        public static final String ORA_ADDINFO2 =  "AddInfo2";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_CITY,COL_STATE,COL_COUNTRY,COL_TECTONIC,COL_XCOOR,COL_YCOOR,COL_ZCOOR,COL_LATITUDENORTH,COL_LONGITUDEEAST,COL_ELEVATION,COL_ADDINFO2
@@ -880,9 +680,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_STATUSID =  NAME + ".StatusID";
-        public static final String ORA_STATUSID =  "StatusID";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_STATUSID
@@ -900,9 +698,7 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_STATUSID =  NAME + ".StatusID";
-        public static final String ORA_STATUSID =  "StatusID";
         public static final String COL_STATUS =  NAME + ".Status";
-        public static final String ORA_STATUS =  "Status";
 
         public static final String[] ARRAY = new String[] {
             COL_STATUSID,COL_STATUS
@@ -920,21 +716,13 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_SOURCES =  NAME + ".Sources";
-        public static final String ORA_SOURCES =  "Sources";
         public static final String COL_EFFDATEMULTI =  NAME + ".EffDateMulti";
-        public static final String ORA_EFFDATEMULTI =  "EffDateMulti";
         public static final String COL_ADDINFOMULTI =  NAME + ".AddinfoMulti";
-        public static final String ORA_ADDINFOMULTI =  "AddinfoMulti";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATEMULTI =  NAME + ".EffStartDateMulti";
-        public static final String ORA_EFFSTARTDATEMULTI =  "EffStartDateMulti";
         public static final String COL_EFFENDDATEMULTI =  NAME + ".EffEndDateMulti";
-        public static final String ORA_EFFENDDATEMULTI =  "EffEndDateMulti";
         public static final String COL_EFFTEMPDATEMULTI =  NAME + ".EffTempDateMulti";
-        public static final String ORA_EFFTEMPDATEMULTI =  "EffTempDateMulti";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_SOURCES,COL_EFFDATEMULTI,COL_ADDINFOMULTI,COL_FOURID,COL_EFFSTARTDATEMULTI,COL_EFFENDDATEMULTI,COL_EFFTEMPDATEMULTI
@@ -952,35 +740,20 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_NAMEAGENCY =  NAME + ".NameAgency";
-        public static final String ORA_NAMEAGENCY =  "NameAgency";
         public static final String COL_PREABBR =  NAME + ".PreAbbr";
-        public static final String ORA_PREABBR =  "PreAbbr";
         public static final String COL_MAILINGADD =  NAME + ".MailingAdd";
-        public static final String ORA_MAILINGADD =  "MailingAdd";
         public static final String COL_NAME1 =  NAME + ".Name1";
-        public static final String ORA_NAME1 =  "Name1";
         public static final String COL_TEL1 =  NAME + ".Tel1";
-        public static final String ORA_TEL1 =  "Tel1";
         public static final String COL_SECTEL1 =  NAME + ".Sectel1";
-        public static final String ORA_SECTEL1 =  "Sectel1";
         public static final String COL_FAX1 =  NAME + ".Fax1";
-        public static final String ORA_FAX1 =  "Fax1";
         public static final String COL_EMAIL1 =  NAME + ".Email1";
-        public static final String ORA_EMAIL1 =  "Email1";
         public static final String COL_NAME2 =  NAME + ".Name2";
-        public static final String ORA_NAME2 =  "Name2";
         public static final String COL_TEL2 =  NAME + ".Tel2";
-        public static final String ORA_TEL2 =  "Tel2";
         public static final String COL_SECTEL2 =  NAME + ".Sectel2";
-        public static final String ORA_SECTEL2 =  "Sectel2";
         public static final String COL_FAX2 =  NAME + ".Fax2";
-        public static final String ORA_FAX2 =  "Fax2";
         public static final String COL_EMAIL2 =  NAME + ".Email2";
-        public static final String ORA_EMAIL2 =  "Email2";
         public static final String COL_ADDINFO11 =  NAME + ".AddInfo11";
-        public static final String ORA_ADDINFO11 =  "AddInfo11";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_NAMEAGENCY,COL_PREABBR,COL_MAILINGADD,COL_NAME1,COL_TEL1,COL_SECTEL1,COL_FAX1,COL_EMAIL1,COL_NAME2,COL_TEL2,COL_SECTEL2,COL_FAX2,COL_EMAIL2,COL_ADDINFO11
@@ -998,11 +771,8 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_INSTRUMENTATION =  NAME + ".Instrumentation";
-        public static final String ORA_INSTRUMENTATION =  "Instrumentation";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_INSTRUMENTATION,COL_FOURID
@@ -1020,33 +790,19 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_PRESSSENSOR =  NAME + ".PressSensor";
-        public static final String ORA_PRESSSENSOR =  "PressSensor";
         public static final String COL_MANUFACTUR =  NAME + ".ManuFactur";
-        public static final String ORA_MANUFACTUR =  "ManuFactur";
         public static final String COL_SERIALNUMBERPRESSURE =  NAME + ".SerialNumberPressure";
-        public static final String ORA_SERIALNUMBERPRESSURE =  "SerialNumberPressure";
         public static final String COL_DATASAMPLINGINTER =  NAME + ".DataSamplingInter";
-        public static final String ORA_DATASAMPLINGINTER =  "DataSamplingInter";
         public static final String COL_ACCURACYHPA =  NAME + ".AccuracyhPa";
-        public static final String ORA_ACCURACYHPA =  "AccuracyhPa";
         public static final String COL_HEIGHTDIFFANTENNA =  NAME + ".HeightDiffAntenna";
-        public static final String ORA_HEIGHTDIFFANTENNA =  "HeightDiffAntenna";
         public static final String COL_CALIBRATIONDATE =  NAME + ".CalibrationDate";
-        public static final String ORA_CALIBRATIONDATE =  "CalibrationDate";
         public static final String COL_EFFDATEPRESSURE =  NAME + ".EffDatePressure";
-        public static final String ORA_EFFDATEPRESSURE =  "EffDatePressure";
         public static final String COL_ADDINFOPRESSURE =  NAME + ".AddInfoPressure";
-        public static final String ORA_ADDINFOPRESSURE =  "AddInfoPressure";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATEPRESSURE =  NAME + ".EffStartDatePressure";
-        public static final String ORA_EFFSTARTDATEPRESSURE =  "EffStartDatePressure";
         public static final String COL_EFFENDDATEPRESSURE =  NAME + ".EffEndDatePressure";
-        public static final String ORA_EFFENDDATEPRESSURE =  "EffEndDatePressure";
         public static final String COL_EFFTEMPDATEPRESSURE =  NAME + ".EffTempDatePressure";
-        public static final String ORA_EFFTEMPDATEPRESSURE =  "EffTempDatePressure";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_PRESSSENSOR,COL_MANUFACTUR,COL_SERIALNUMBERPRESSURE,COL_DATASAMPLINGINTER,COL_ACCURACYHPA,COL_HEIGHTDIFFANTENNA,COL_CALIBRATIONDATE,COL_EFFDATEPRESSURE,COL_ADDINFOPRESSURE,COL_FOURID,COL_EFFSTARTDATEPRESSURE,COL_EFFENDDATEPRESSURE,COL_EFFTEMPDATEPRESSURE
@@ -1064,23 +820,14 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_INTERFERENCES =  NAME + ".Interferences";
-        public static final String ORA_INTERFERENCES =  "Interferences";
         public static final String COL_OBSERVEDDEGRA =  NAME + ".ObservedDegra";
-        public static final String ORA_OBSERVEDDEGRA =  "ObservedDegra";
         public static final String COL_EFFDATERADIO =  NAME + ".EffDateRadio";
-        public static final String ORA_EFFDATERADIO =  "EffDateRadio";
         public static final String COL_ADDINFORADIO =  NAME + ".AddInfoRadio";
-        public static final String ORA_ADDINFORADIO =  "AddInfoRadio";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATERADIO =  NAME + ".EffStartDateRadio";
-        public static final String ORA_EFFSTARTDATERADIO =  "EffStartDateRadio";
         public static final String COL_EFFENDDATERADIO =  NAME + ".EffEndDateRadio";
-        public static final String ORA_EFFENDDATERADIO =  "EffEndDateRadio";
         public static final String COL_EFFTEMPDATERADIO =  NAME + ".EffTempDateRadio";
-        public static final String ORA_EFFTEMPDATERADIO =  "EffTempDateRadio";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_INTERFERENCES,COL_OBSERVEDDEGRA,COL_EFFDATERADIO,COL_ADDINFORADIO,COL_FOURID,COL_EFFSTARTDATERADIO,COL_EFFENDDATERADIO,COL_EFFTEMPDATERADIO
@@ -1098,27 +845,16 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_RECEIVERTYPE =  NAME + ".ReceiverType";
-        public static final String ORA_RECEIVERTYPE =  "ReceiverType";
         public static final String COL_SATELLITESYSTEM =  NAME + ".SatelliteSystem";
-        public static final String ORA_SATELLITESYSTEM =  "SatelliteSystem";
         public static final String COL_SERIALNUMBERRECEIVER =  NAME + ".SerialNumberReceiver";
-        public static final String ORA_SERIALNUMBERRECEIVER =  "SerialNumberReceiver";
         public static final String COL_FIRMWAREV =  NAME + ".FirmWareV";
-        public static final String ORA_FIRMWAREV =  "FirmWareV";
         public static final String COL_ELEVCUTTSETT =  NAME + ".ElevCuttSett";
-        public static final String ORA_ELEVCUTTSETT =  "ElevCuttSett";
         public static final String COL_DATEINSTALLEDRECEIVER =  NAME + ".DateInstalledReceiver";
-        public static final String ORA_DATEINSTALLEDRECEIVER =  "DateInstalledReceiver";
         public static final String COL_DATEREMOVEDRECEIVER =  NAME + ".DateRemovedReceiver";
-        public static final String ORA_DATEREMOVEDRECEIVER =  "DateRemovedReceiver";
         public static final String COL_TEMPERATURESTAB =  NAME + ".TemperatureStab";
-        public static final String ORA_TEMPERATURESTAB =  "TemperatureStab";
         public static final String COL_ADDINFORECEIVER =  NAME + ".AddInfoReceiver";
-        public static final String ORA_ADDINFORECEIVER =  "AddInfoReceiver";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_RECEIVERTYPE,COL_SATELLITESYSTEM,COL_SERIALNUMBERRECEIVER,COL_FIRMWAREV,COL_ELEVCUTTSETT,COL_DATEINSTALLEDRECEIVER,COL_DATEREMOVEDRECEIVER,COL_TEMPERATURESTAB,COL_ADDINFORECEIVER,COL_FOURID
@@ -1136,35 +872,20 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_AGENCYRESPONSIBLE =  NAME + ".AgencyResponsible";
-        public static final String ORA_AGENCYRESPONSIBLE =  "AgencyResponsible";
         public static final String COL_PREABBRESPONSIBLE =  NAME + ".PreAbbResponsible";
-        public static final String ORA_PREABBRESPONSIBLE =  "PreAbbResponsible";
         public static final String COL_MAILINADDRESPONSIBLE =  NAME + ".MailinAddResponsible";
-        public static final String ORA_MAILINADDRESPONSIBLE =  "MailinAddResponsible";
         public static final String COL_CONTACTNAMERESPONSIBLE =  NAME + ".ContactNameResponsible";
-        public static final String ORA_CONTACTNAMERESPONSIBLE =  "ContactNameResponsible";
         public static final String COL_TEL1RESPONSIBLE =  NAME + ".Tel1responsible";
-        public static final String ORA_TEL1RESPONSIBLE =  "Tel1responsible";
         public static final String COL_TEL2RESPONSIBLE =  NAME + ".Tel2Responsible";
-        public static final String ORA_TEL2RESPONSIBLE =  "Tel2Responsible";
         public static final String COL_FAXRESPONSIBLE =  NAME + ".FaxResponsible";
-        public static final String ORA_FAXRESPONSIBLE =  "FaxResponsible";
         public static final String COL_EMAILRESPONSIBLE =  NAME + ".EmailResponsible";
-        public static final String ORA_EMAILRESPONSIBLE =  "EmailResponsible";
         public static final String COL_CONTACT2RESPONSIBLE =  NAME + ".Contact2Responsible";
-        public static final String ORA_CONTACT2RESPONSIBLE =  "Contact2Responsible";
         public static final String COL_TELCONTACT1RESPONSIBLE =  NAME + ".TelContact1Responsible";
-        public static final String ORA_TELCONTACT1RESPONSIBLE =  "TelContact1Responsible";
         public static final String COL_TELCONTACT2RESPONSIBLE =  NAME + ".TelContact2Responsible";
-        public static final String ORA_TELCONTACT2RESPONSIBLE =  "TelContact2Responsible";
         public static final String COL_FAX2RESPONSIBLE =  NAME + ".Fax2Responsible";
-        public static final String ORA_FAX2RESPONSIBLE =  "Fax2Responsible";
         public static final String COL_EMAIL2RESPONSIBLE =  NAME + ".Email2Responsible";
-        public static final String ORA_EMAIL2RESPONSIBLE =  "Email2Responsible";
         public static final String COL_ADDINFO12 =  NAME + ".AddInfo12";
-        public static final String ORA_ADDINFO12 =  "AddInfo12";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_AGENCYRESPONSIBLE,COL_PREABBRESPONSIBLE,COL_MAILINADDRESPONSIBLE,COL_CONTACTNAMERESPONSIBLE,COL_TEL1RESPONSIBLE,COL_TEL2RESPONSIBLE,COL_FAXRESPONSIBLE,COL_EMAILRESPONSIBLE,COL_CONTACT2RESPONSIBLE,COL_TELCONTACT1RESPONSIBLE,COL_TELCONTACT2RESPONSIBLE,COL_FAX2RESPONSIBLE,COL_EMAIL2RESPONSIBLE,COL_ADDINFO12
@@ -1182,21 +903,13 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_OBSTRUCTIONS =  NAME + ".Obstructions";
-        public static final String ORA_OBSTRUCTIONS =  "Obstructions";
         public static final String COL_EFFDATESIGNAL =  NAME + ".EffDateSignal";
-        public static final String ORA_EFFDATESIGNAL =  "EffDateSignal";
         public static final String COL_ADDINFOSIGNAL =  NAME + ".AddInfoSignal";
-        public static final String ORA_ADDINFOSIGNAL =  "AddInfoSignal";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATESIGNAL =  NAME + ".EffStartDateSignal";
-        public static final String ORA_EFFSTARTDATESIGNAL =  "EffStartDateSignal";
         public static final String COL_EFFENDDATESIGNAL =  NAME + ".EffEndDateSignal";
-        public static final String ORA_EFFENDDATESIGNAL =  "EffEndDateSignal";
         public static final String COL_EFFTEMPDATESIGNAL =  NAME + ".EffTempDateSignal";
-        public static final String ORA_EFFTEMPDATESIGNAL =  "EffTempDateSignal";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_OBSTRUCTIONS,COL_EFFDATESIGNAL,COL_ADDINFOSIGNAL,COL_FOURID,COL_EFFSTARTDATESIGNAL,COL_EFFENDDATESIGNAL,COL_EFFTEMPDATESIGNAL
@@ -1214,31 +927,18 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_TIEDNAME =  NAME + ".TiedName";
-        public static final String ORA_TIEDNAME =  "TiedName";
         public static final String COL_TIEDUSAGE =  NAME + ".TiedUsage";
-        public static final String ORA_TIEDUSAGE =  "TiedUsage";
         public static final String COL_TIEDCDP =  NAME + ".TiedCDP";
-        public static final String ORA_TIEDCDP =  "TiedCDP";
         public static final String COL_TIEDDOMES =  NAME + ".TiedDOMES";
-        public static final String ORA_TIEDDOMES =  "TiedDOMES";
         public static final String COL_DX =  NAME + ".Dx";
-        public static final String ORA_DX =  "Dx";
         public static final String COL_DY =  NAME + ".Dy";
-        public static final String ORA_DY =  "Dy";
         public static final String COL_DZ =  NAME + ".Dz";
-        public static final String ORA_DZ =  "Dz";
         public static final String COL_ACCURACYM =  NAME + ".Accuracym";
-        public static final String ORA_ACCURACYM =  "Accuracym";
         public static final String COL_SURVEYMETHOD =  NAME + ".SurveyMethod";
-        public static final String ORA_SURVEYMETHOD =  "SurveyMethod";
         public static final String COL_DATEMEASURED =  NAME + ".DateMeasured";
-        public static final String ORA_DATEMEASURED =  "DateMeasured";
         public static final String COL_ADDINFOSURVEYED =  NAME + ".AddInfoSurveyed";
-        public static final String ORA_ADDINFOSURVEYED =  "AddInfoSurveyed";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_TIEDNAME,COL_TIEDUSAGE,COL_TIEDCDP,COL_TIEDDOMES,COL_DX,COL_DY,COL_DZ,COL_ACCURACYM,COL_SURVEYMETHOD,COL_DATEMEASURED,COL_ADDINFOSURVEYED,COL_FOURID
@@ -1256,35 +956,20 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_TEMPSENSORMODEL =  NAME + ".TempSensorModel";
-        public static final String ORA_TEMPSENSORMODEL =  "TempSensorModel";
         public static final String COL_MANUFACT =  NAME + ".ManuFact";
-        public static final String ORA_MANUFACT =  "ManuFact";
         public static final String COL_SERIALNUMBERTEMP =  NAME + ".SerialNumberTemp";
-        public static final String ORA_SERIALNUMBERTEMP =  "SerialNumberTemp";
         public static final String COL_DATASAMPLINGINTERVAL =  NAME + ".DataSamplingInterval";
-        public static final String ORA_DATASAMPLINGINTERVAL =  "DataSamplingInterval";
         public static final String COL_ACCURACYDEGREES =  NAME + ".AccuracyDegrees";
-        public static final String ORA_ACCURACYDEGREES =  "AccuracyDegrees";
         public static final String COL_ASPI =  NAME + ".Aspi";
-        public static final String ORA_ASPI =  "Aspi";
         public static final String COL_HEIGHTDIFFAN =  NAME + ".HeightDiffAn";
-        public static final String ORA_HEIGHTDIFFAN =  "HeightDiffAn";
         public static final String COL_CALI =  NAME + ".Cali";
-        public static final String ORA_CALI =  "Cali";
         public static final String COL_EFFDATETEMP =  NAME + ".EffDateTemp";
-        public static final String ORA_EFFDATETEMP =  "EffDateTemp";
         public static final String COL_ADDINFOTEMP =  NAME + ".AddInfoTemp";
-        public static final String ORA_ADDINFOTEMP =  "AddInfoTemp";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATETEMP =  NAME + ".EffStartDateTemp";
-        public static final String ORA_EFFSTARTDATETEMP =  "EffStartDateTemp";
         public static final String COL_EFFENDDATETEMP =  NAME + ".EffEndDateTemp";
-        public static final String ORA_EFFENDDATETEMP =  "EffEndDateTemp";
         public static final String COL_EFFTEMPDATETEMP =  NAME + ".EffTempDateTemp";
-        public static final String ORA_EFFTEMPDATETEMP =  "EffTempDateTemp";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_TEMPSENSORMODEL,COL_MANUFACT,COL_SERIALNUMBERTEMP,COL_DATASAMPLINGINTERVAL,COL_ACCURACYDEGREES,COL_ASPI,COL_HEIGHTDIFFAN,COL_CALI,COL_EFFDATETEMP,COL_ADDINFOTEMP,COL_FOURID,COL_EFFSTARTDATETEMP,COL_EFFENDDATETEMP,COL_EFFTEMPDATETEMP
@@ -1302,31 +987,18 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_ID =  NAME + ".ID";
-        public static final String ORA_ID =  "ID";
         public static final String COL_WATERVAPOR =  NAME + ".WaterVapor";
-        public static final String ORA_WATERVAPOR =  "WaterVapor";
         public static final String COL_MANU =  NAME + ".Manu";
-        public static final String ORA_MANU =  "Manu";
         public static final String COL_SERIALNUMBERWATER =  NAME + ".SerialNumberWater";
-        public static final String ORA_SERIALNUMBERWATER =  "SerialNumberWater";
         public static final String COL_DISTANCETOANT =  NAME + ".DistanceToAnt";
-        public static final String ORA_DISTANCETOANT =  "DistanceToAnt";
         public static final String COL_HEIGHT =  NAME + ".Height";
-        public static final String ORA_HEIGHT =  "Height";
         public static final String COL_CALIB =  NAME + ".Calib";
-        public static final String ORA_CALIB =  "Calib";
         public static final String COL_EFFDATEWATER =  NAME + ".EffDateWater";
-        public static final String ORA_EFFDATEWATER =  "EffDateWater";
         public static final String COL_ADDINFOWATER =  NAME + ".AddInfoWater";
-        public static final String ORA_ADDINFOWATER =  "AddInfoWater";
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_EFFSTARTDATEWATER =  NAME + ".EffStartDateWater";
-        public static final String ORA_EFFSTARTDATEWATER =  "EffStartDateWater";
         public static final String COL_EFFENDDATEWATER =  NAME + ".EffEndDateWater";
-        public static final String ORA_EFFENDDATEWATER =  "EffEndDateWater";
         public static final String COL_EFFTEMPDATEWATER =  NAME + ".EffTempDateWater";
-        public static final String ORA_EFFTEMPDATEWATER =  "EffTempDateWater";
 
         public static final String[] ARRAY = new String[] {
             COL_ID,COL_WATERVAPOR,COL_MANU,COL_SERIALNUMBERWATER,COL_DISTANCETOANT,COL_HEIGHT,COL_CALIB,COL_EFFDATEWATER,COL_ADDINFOWATER,COL_FOURID,COL_EFFSTARTDATEWATER,COL_EFFENDDATEWATER,COL_EFFTEMPDATEWATER
@@ -1344,43 +1016,24 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_MARKERNAME =  NAME + ".MarkerName";
-        public static final String ORA_MARKERNAME =  "MarkerName";
         public static final String COL_MARKERNUMBER =  NAME + ".MarkerNumber";
-        public static final String ORA_MARKERNUMBER =  "MarkerNumber";
         public static final String COL_LATITUDE =  NAME + ".Latitude";
-        public static final String ORA_LATITUDE =  "Latitude";
         public static final String COL_LONGITUDE =  NAME + ".Longitude";
-        public static final String ORA_LONGITUDE =  "Longitude";
         public static final String COL_CITY =  NAME + ".City";
-        public static final String ORA_CITY =  "City";
         public static final String COL_COUNTRY =  NAME + ".Country";
-        public static final String ORA_COUNTRY =  "Country";
         public static final String COL_PROPOSITIONDATE =  NAME + ".PropositionDate";
-        public static final String ORA_PROPOSITIONDATE =  "PropositionDate";
         public static final String COL_COMMITMENTLETTER =  NAME + ".CommitmentLetter";
-        public static final String ORA_COMMITMENTLETTER =  "CommitmentLetter";
         public static final String COL_CONSISTENT_RINEX_FILES =  NAME + ".Consistent_RINEX_files";
-        public static final String ORA_CONSISTENT_RINEX_FILES =  "Consistent_RINEX_files";
         public static final String COL_INDIVIDUALCALIBRATION =  NAME + ".IndividualCalibration";
-        public static final String ORA_INDIVIDUALCALIBRATION =  "IndividualCalibration";
         public static final String COL_DATAQUALITY =  NAME + ".DataQuality";
-        public static final String ORA_DATAQUALITY =  "DataQuality";
         public static final String COL_DENSIFICATIONSITE =  NAME + ".DensificationSite";
-        public static final String ORA_DENSIFICATIONSITE =  "DensificationSite";
         public static final String COL_COLLOCATEDINSTRUMENT =  NAME + ".CollocatedInstrument";
-        public static final String ORA_COLLOCATEDINSTRUMENT =  "CollocatedInstrument";
         public static final String COL_INTERESTEDANALYSISCENTRES =  NAME + ".InterestedAnalysisCentres";
-        public static final String ORA_INTERESTEDANALYSISCENTRES =  "InterestedAnalysisCentres";
         public static final String COL_HOURLY_DATA =  NAME + ".Hourly_data";
-        public static final String ORA_HOURLY_DATA =  "Hourly_data";
         public static final String COL_ECGN_DATA =  NAME + ".ECGN_data";
-        public static final String ORA_ECGN_DATA =  "ECGN_data";
         public static final String COL_MAINDATACENTRE =  NAME + ".MainDatacentre";
-        public static final String ORA_MAINDATACENTRE =  "MainDatacentre";
         public static final String COL_TIDEGAUGE =  NAME + ".Tidegauge";
-        public static final String ORA_TIDEGAUGE =  "Tidegauge";
         public static final String COL_REMARK =  NAME + ".Remark";
-        public static final String ORA_REMARK =  "Remark";
 
         public static final String[] ARRAY = new String[] {
             COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY,COL_PROPOSITIONDATE,COL_COMMITMENTLETTER,COL_CONSISTENT_RINEX_FILES,COL_INDIVIDUALCALIBRATION,COL_DATAQUALITY,COL_DENSIFICATIONSITE,COL_COLLOCATEDINSTRUMENT,COL_INTERESTEDANALYSISCENTRES,COL_HOURLY_DATA,COL_ECGN_DATA,COL_MAINDATACENTRE,COL_TIDEGAUGE,COL_REMARK
@@ -1398,13 +1051,9 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_MARKERNAME =  NAME + ".MarkerName";
-        public static final String ORA_MARKERNAME =  "MarkerName";
         public static final String COL_STATUS =  NAME + ".Status";
-        public static final String ORA_STATUS =  "Status";
         public static final String COL_BEGIN =  NAME + ".Begin";
-        public static final String ORA_BEGIN =  "Begin";
         public static final String COL_END =  NAME + ".End";
-        public static final String ORA_END =  "End";
 
         public static final String[] ARRAY = new String[] {
             COL_MARKERNAME,COL_STATUS,COL_BEGIN,COL_END
@@ -1422,7 +1071,6 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_NAME =  NAME + ".Name";
-        public static final String ORA_NAME =  "Name";
 
         public static final String[] ARRAY = new String[] {
             COL_NAME
@@ -1440,37 +1088,21 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String ORA_FOURID =  "FourID";
         public static final String COL_FILE_NAME =  NAME + ".file_name";
-        public static final String ORA_FILE_NAME =  "file_name";
         public static final String COL_FILE_SIZE =  NAME + ".file_size";
-        public static final String ORA_FILE_SIZE =  "file_size";
         public static final String COL_START_TIME =  NAME + ".start_time";
-        public static final String ORA_START_TIME =  "start_time";
         public static final String COL_FILE_TYPE =  NAME + ".file_type";
-        public static final String ORA_FILE_TYPE =  "file_type";
         public static final String COL_FILE_ID =  NAME + ".file_id";
-        public static final String ORA_FILE_ID =  "file_id";
         public static final String COL_POSSIBLE_OBS_GT_CUTOFF =  NAME + ".possible_obs_gt_cutoff";
-        public static final String ORA_POSSIBLE_OBS_GT_CUTOFF =  "possible_obs_gt_cutoff";
         public static final String COL_COMPLETE_OBS_GT_CUTOFF =  NAME + ".complete_obs_gt_cutoff";
-        public static final String ORA_COMPLETE_OBS_GT_CUTOFF =  "complete_obs_gt_cutoff";
         public static final String COL_MP1_RMS =  NAME + ".mp1_rms";
-        public static final String ORA_MP1_RMS =  "mp1_rms";
         public static final String COL_MP2_RMS =  NAME + ".mp2_rms";
-        public static final String ORA_MP2_RMS =  "mp2_rms";
         public static final String COL_IOD_OR_MP_SLIPS =  NAME + ".iod_or_mp_slips";
-        public static final String ORA_IOD_OR_MP_SLIPS =  "iod_or_mp_slips";
         public static final String COL_POSSIBLE_OBS_EPOCHS =  NAME + ".possible_obs_epochs";
-        public static final String ORA_POSSIBLE_OBS_EPOCHS =  "possible_obs_epochs";
         public static final String COL_EPOCHS_W_OBS =  NAME + ".epochs_w_obs";
-        public static final String ORA_EPOCHS_W_OBS =  "epochs_w_obs";
         public static final String COL_STATION_ID =  NAME + ".station_id";
-        public static final String ORA_STATION_ID =  "station_id";
         public static final String COL_MONUMENT_ID =  NAME + ".monument_id";
-        public static final String ORA_MONUMENT_ID =  "monument_id";
         public static final String COL_START_DAY =  NAME + ".start_day";
-        public static final String ORA_START_DAY =  "start_day";
 
         public static final String[] ARRAY = new String[] {
             COL_FOURID,COL_FILE_NAME,COL_FILE_SIZE,COL_START_TIME,COL_FILE_TYPE,COL_FILE_ID,COL_POSSIBLE_OBS_GT_CUTOFF,COL_COMPLETE_OBS_GT_CUTOFF,COL_MP1_RMS,COL_MP2_RMS,COL_IOD_OR_MP_SLIPS,COL_POSSIBLE_OBS_EPOCHS,COL_EPOCHS_W_OBS,COL_STATION_ID,COL_MONUMENT_ID,COL_START_DAY
@@ -1488,21 +1120,13 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_TABLENAME =  NAME + ".tableName";
-        public static final String ORA_TABLENAME =  "tableName";
         public static final String COL_ROWPK1 =  NAME + ".rowPK1";
-        public static final String ORA_ROWPK1 =  "rowPK1";
         public static final String COL_ROWPK2 =  NAME + ".rowPK2";
-        public static final String ORA_ROWPK2 =  "rowPK2";
         public static final String COL_FIELDNAME =  NAME + ".fieldName";
-        public static final String ORA_FIELDNAME =  "fieldName";
         public static final String COL_OLD_VALUE =  NAME + ".old_value";
-        public static final String ORA_OLD_VALUE =  "old_value";
         public static final String COL_NEW_VALUE =  NAME + ".new_value";
-        public static final String ORA_NEW_VALUE =  "new_value";
         public static final String COL_TS =  NAME + ".ts";
-        public static final String ORA_TS =  "ts";
         public static final String COL_ACTIVITY =  NAME + ".activity";
-        public static final String ORA_ACTIVITY =  "activity";
 
         public static final String[] ARRAY = new String[] {
             COL_TABLENAME,COL_ROWPK1,COL_ROWPK2,COL_FIELDNAME,COL_OLD_VALUE,COL_NEW_VALUE,COL_TS,COL_ACTIVITY
@@ -1520,23 +1144,14 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_TABLENAME =  NAME + ".tableName";
-        public static final String ORA_TABLENAME =  "tableName";
         public static final String COL_ROWPK1 =  NAME + ".rowPK1";
-        public static final String ORA_ROWPK1 =  "rowPK1";
         public static final String COL_ROWPK2 =  NAME + ".rowPK2";
-        public static final String ORA_ROWPK2 =  "rowPK2";
         public static final String COL_FIELDNAME =  NAME + ".fieldName";
-        public static final String ORA_FIELDNAME =  "fieldName";
         public static final String COL_OLD_VALUE =  NAME + ".old_value";
-        public static final String ORA_OLD_VALUE =  "old_value";
         public static final String COL_NEW_VALUE =  NAME + ".new_value";
-        public static final String ORA_NEW_VALUE =  "new_value";
         public static final String COL_TS =  NAME + ".ts";
-        public static final String ORA_TS =  "ts";
         public static final String COL_ACTIVITY =  NAME + ".activity";
-        public static final String ORA_ACTIVITY =  "activity";
         public static final String COL_FORMFIELDLABEL =  NAME + ".FormFieldLabel";
-        public static final String ORA_FORMFIELDLABEL =  "FormFieldLabel";
 
         public static final String[] ARRAY = new String[] {
             COL_TABLENAME,COL_ROWPK1,COL_ROWPK2,COL_FIELDNAME,COL_OLD_VALUE,COL_NEW_VALUE,COL_TS,COL_ACTIVITY,COL_FORMFIELDLABEL

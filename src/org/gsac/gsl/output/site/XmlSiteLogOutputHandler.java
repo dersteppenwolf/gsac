@@ -323,61 +323,63 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
-            pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSRECEIVER));
+            if(equipment.hasReceiver()) {
+                pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSRECEIVER));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RECEIVERTYPE, "",
+                                  equipment.getReceiver()));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
+                                  equipment.getReceiverSerial()));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
+                                  equipment.getReceiverFirmware()));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
+                                  sdf2.format(equipment.getFromDate())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
+                                  sdf2.format(equipment.getToDate())));
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RECEIVERTYPE, "",
-                              equipment.getReceiver()));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
-                              equipment.getReceiverSerial()));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
-                              equipment.getReceiverFirmware()));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
-                              sdf2.format(equipment.getFromDate())));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
-                              sdf2.format(equipment.getToDate())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "",
+                                  "GPS"));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ELEVATIONCUTOFFSETTING,
+                                  "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION,
+                                  "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_NOTES, "", ""));
+                pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSRECEIVER));
+            }
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "",
-                              "GPS"));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ELEVATIONCUTOFFSETTING,
-                              "", ""));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION,
-                              "", ""));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_NOTES, "", ""));
-            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSRECEIVER));
+            if(equipment.hasAntenna()) {
+                pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSANTENNA));
 
-            pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSANTENNA));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNATYPE, "",
+                                  getNonNullString(equipment.getAntenna())));
+                pw.append(
+                          makeTag(
+                                  XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
+                                  getNonNullString(equipment.getAntennaSerial())));
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNATYPE, "",
-                              getNonNullString(equipment.getAntenna())));
-            pw.append(
-                makeTag(
-                    XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
-                    getNonNullString(equipment.getAntennaSerial())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC, "",
+                                  ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
+                                  ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH,
+                                  "", ""));
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", ""));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC, "",
-                              ""));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
-                              ""));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH,
-                              "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "",
+                                  getNonNullString(equipment.getDome())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
+                                  getNonNullString(equipment.getDomeSerial())));
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "",
-                              getNonNullString(equipment.getDome())));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
-                              getNonNullString(equipment.getDomeSerial())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH, "",
+                                  ""));
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "", ""));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH, "",
-                              ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
+                                  sdf2.format(equipment.getFromDate())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
+                                  sdf2.format(equipment.getToDate())));
+                pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSANTENNA));
 
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
-                              sdf2.format(equipment.getFromDate())));
-            pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
-                              sdf2.format(equipment.getToDate())));
-            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSANTENNA));
-
-
+            }
 
 
         }

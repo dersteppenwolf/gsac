@@ -25,6 +25,9 @@ import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.*;
 
 import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -95,6 +98,23 @@ public class GnssEquipment extends GsacMetadata {
              receiverSerial, receiverFirmware, new double[] { 0,
                 0, zOffset });
     }
+
+    public static final List<GnssEquipment> sort(List<GnssEquipment> equipment) {
+        List<GnssEquipment> sorted = new ArrayList<GnssEquipment>(equipment);
+        Comparator comp = new Comparator() {
+                public int compare(Object o1,Object o2 ) {
+                    GnssEquipment equip1 = (GnssEquipment)o1;
+                    GnssEquipment equip2 = (GnssEquipment)o2;
+                    if(equip1.getFromDate().equals(equip2.getFromDate())) {
+                        return equip1.getToDate().compareTo(equip2.getToDate());
+                    }
+                    return equip1.getFromDate().compareTo(equip2.getFromDate());
+                }
+            };
+        Collections.sort(sorted, comp);
+        return sorted;
+    }
+
 
     /**
      * _more_
@@ -181,6 +201,17 @@ public class GnssEquipment extends GsacMetadata {
     public Date getToDate() {
         return toDate;
     }
+    
+
+    public boolean hasAntenna() {
+        return antenna!=null && antenna.length()>0;
+    }
+
+    public boolean hasReceiver() {
+        return receiver!=null && receiver.length()>0;
+    }
+
+
 
     /**
      *  Set the Antenna property.
