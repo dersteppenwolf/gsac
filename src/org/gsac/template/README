@@ -3,9 +3,9 @@
 README from template package (src/org/gsac/template/)
 ########################################################################
 
-This README is found in your new GSAC package.  This file has the second part of the instructions 
-to build a GSAC server for your data repository 
+This README is found in your new GSAC package.  
 
+This file has the second part of the instructions to build a GSAC server for your data repository 
 You should have already followed the instructions in src/org/gsac/README.  
 Hopefully you've managed to generated the initial repository source package.
 
@@ -223,7 +223,7 @@ and also a change in getResourceSelectColumns()
 Web Site Design and Images (HTML)
 ########################################################################
 
-The files footer.html and header.html  in the directory org/@MACRO.PREFIX@/gsac/resources/
+The files footer.html and header.html in the directory org/@MACRO.PREFIX@/gsac/resources/
 specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
 
  header.html:
@@ -239,7 +239,7 @@ or they may be retrieved from another web server, for example, with
 
    <img src="http://cddis.nasa.gov/images/spacer.gif">.
 
-Change the resources/header.html & resources/footer.html to the html you want to use for the header and footer.
+Change the resources/header.html & resources/footer.html to the you HTML want to use for the header and footer.
 
 
 ########################################################################
@@ -273,5 +273,20 @@ ant runserver
 
 For the test server, the screen output from this command shows a URL to use in your local browser to use the test server web services.
 
+
 ########################################################################
+Running a Web Site with Tomcat
 ########################################################################
+
+
+########################################################################
+Adding Data File Downloads from a GSAC Repository with FTP
+########################################################################
+
+
+########################################################################
+Running a Stand-Alone GSAC Web Site
+########################################################################
+
+
+SKW Oct 3 2012
