@@ -288,6 +288,8 @@ public class IgsSiteManager extends SiteManager {
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "",
                                      latitude, longitude, elevation);
+        //Add the name, etc
+        readIdentificationMetadata(site);
         site.setType(new ResourceType("gnss.site.continuous"));
         return site;
         
@@ -332,7 +334,6 @@ public class IgsSiteManager extends SiteManager {
      */
     @Override
     public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
-        readIdentificationMetadata(gsacResource);
         readEquipmentMetadata(gsacResource);
     }
 
