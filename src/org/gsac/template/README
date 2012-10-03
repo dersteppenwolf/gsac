@@ -81,7 +81,7 @@ gsac.port.display=80
 Database Connection Information
 ########################################################################
 
-In org/@MACRO.PREFIX@/gsac/dbresources/, change the database properties file  gsacdb_test.properties 
+In org/@MACRO.PREFIX@/gsac/dbresources/, for development change the database properties file gsacdb_test.properties 
 (and for final release, also change the file gsacdb_production.properties)
 to specify: 
 gsac.db.username=db-acct-user-name
@@ -166,44 +166,30 @@ The ant table command builds the corresponding class files in org/@MACRO.PREFIX@
 
 
 ########################################################################
-Code changes 
-Extending Java Classes
+Extending Java Classes  (was Code changes)
 ########################################################################
 
-orig:
 The @MACRO.PREFIX@Repository is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
 and/or @MACRO.PREFIX@FileManager objects.
 
+Files in org/@MACRO.PREFIX@/gsac/ have the Java code for your repository.   The Java file @MACRO.PREFIX@Repository.java is the main entry point, where you add much of the code for the new repository.   Also the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
 
-The @MACRO.PREFIX@SiteManager and @MACRO.PREFIX@FileManager classes will need to be changed
-to implement the queries. See those classes for more details
-See the CHANGEME in the comments to see what needs to be changed. 
+For a more detailed description of adding to the GSAC Java files, see the GSAC-WS brocheur available at
+http://facility.unavco.org/data/gsacws/gsacws.html, in the Extending Java Classes section.  You may also review code in other 
+GSAC implementations checked into SourceForge, such as the file org/igs/gsac/IgsSiteManager.java.
 
-new:
-
-Files in org/igs/gsac/ have the Java code for your repository.   The Java file  NewreposRepository.java is the main entry point, where you add much of the code for the new repository.   Also the files NewreposSiteManager.java and NewreposFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
-
-from org/igs/README: "If you aren't using oracle change the getDriverClassName() method in org/igs/gsac/ IgsDatabaseManager.java"   HUN? - doesnt it get this from org/igs/gsac/resources/gsacdb_test.properties ?
-
-And in the same file the last three lines are
- //Change this package to be your package
-
-        String packageName = dbm.getClass().getPackage().getName();
-
-        dbm.writeTables(packageName);
-
-
-The Java files to extend are:
+Add to these files:
 
 IgsRepository.java 
 
 Above the import lines, add the new Java package name, in this form:
-package org.newrepos.gsac; 
+package org.@MACRO.PREFIX@.gsac; 
 
 In the method initResourceManagers(),  uncomment 
      super.initResourceManagers();
 
 to search on both sites and data files in the database.  (See other code in that method if you need to only search on only sites or only files: getResourceManager(GsacSite.CLASS_SITE) and getResourceManager(GsacFile.CLASS_FILE).)
+
 
 IgsFileManager.java 
 
@@ -215,34 +201,23 @@ handleRequest(
 
 getResource(
 
+
 IgsSiteManager.java  
 
 This class has 5 'changeme' sections...
 
 doGetQueryCapabilities() - defines things to search on
 
-handleRequest(
+handleRequest
 
-getResource(
+getResource
 
 Default query order"
 
-makeResource(    how does this work?
+makeResource
 
 and also a change in getResourceSelectColumns()
 
-
-IgsServer.java 
-
-	changes?
-
-IgsDatabaseManager.java  
-
-	changes?
-
-IgsTest.java
-
-	changes?
 
 ########################################################################
 Web Site Design and Images (HTML)
