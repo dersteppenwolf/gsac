@@ -9,7 +9,11 @@ This file has the second part of the instructions to build a GSAC server for you
 You should have already followed the instructions in src/org/gsac/README.  
 Hopefully you've managed to generated the initial repository source package.
 
-Now, change the working directory to org/@MACRO.PREFIX@/gsac/.
+Some file names in this README such as gsac@MACRO.PREFIX@.properties may have one or more upper case letters. The actual files 
+lack upper case. Do not change filenames to conform with similar names in the README files.
+
+
+Now, change the working directory to @MACRO.SRCDIR@
 
 Do ant there:
 
@@ -22,7 +26,7 @@ Now try:
 
 ant runserver
 
-This command runs the new '@MACRO.PREFIX@' GSAC repository server, on your local system.  
+This command runs the new '@MACRO.SRCDIR@' GSAC repository server, on your local system.  
 Screen output of the ant command includes a line like
 
 GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: 
@@ -61,7 +65,7 @@ gsac.baseurl = /gsac@MACRO.PREFIX@
 or
 gsac.baseurl = /gsacws
 
-('gsacapi' is always part of gsac.)
+'gsacapi/' and 'site/form' are always part of a GSAC URL.
 
 Provide a name for your repository:
 gsac.repository.name=@MACRO.PREFIX@ GSAC Repository 
@@ -72,43 +76,62 @@ gsac.repository.description=@MACRO.PREFIX@ geodesy and GNSS Seamless Archive Cen
 and a maximum size when zipping up files, e.g. 100 MB, in bytes:    
 #file.zip.maxsize=100000000 
 
-???   And there may be more, such as    OBSOLETE? 
+??? FIX this which is not so:
+and the hostname and port for your web server:
 gsac.server.hostname=gnssrepo.@MACRO.PREFIX@.org
 gsac.port.display=80
+endFIX
 
 
 ########################################################################
 Database Connection Information
 ########################################################################
 
-In org/@MACRO.PREFIX@/gsac/dbresources/, for development change the database properties file gsacdb_test.properties 
+In @MACRO.SRCDIR@/dbresources/, for development change the database properties file gsacdb_test.properties 
 (and for final release, also change the file gsacdb_production.properties)
 to specify: 
 gsac.db.username=db-acct-user-name
 gsac.db.password=db-acct-pswd
 
-and set for, example, this value 
+When the GSL assembles the JDBC URL it also looks up the user name and password to use  to connect to the database.
+For the Unavco GSAC package we have the db auth information in SVN and it gets included in the .war file 
+
+Also set this value 
 gsac.db.jdbcurl=jdbc:mysql://myrepo.program.org:3306/myrepo_prod
-Note that Oracle and Postgres have different syntax for this line.
+
+Note that Oracle and Postgres have different syntax for this line.  
+For postgres the form is jdbc:postgresql://<hostname>:<port>/<database> 
+
+One Oracle JDBC URL is of the form:
+jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, e.g:
+jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
+
 
 And to name your database driver
-gsac.db.driverclass=com.mysql.jdbc.Driver 
-Other choices for this line are  possible, such as
-gsac.db.driverclass=oracle.jdbc.driver.OracleDriver 
+gsac.db.driverclass=com.mysql.jdbc.Driver  
 
-Both these gsacdb_(test,production).properties files may be exactly the same.
+Other possible choices for this line are 
+gsac.db.driverclass=oracle.jdbc.driver.OracleDriver  
+(see http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html) 
+and a Postgres driver (see http://jdbc.postgresql.org/).
+
+
+Both the gsacdb_(test,production).properties files may be exactly the same, or may differ 
+if you use different databases for development and production.
 
 
 ########################################################################
 Server Connection Information
 ########################################################################
 
-You should put the hostname and port of your web servers in the gsacserver_(test,production).properties
+You may put the hostname and port of your web server in the gsacserver_(test,production).properties
 files:
 # Server info
 #gsac.server.hostname=
 #gsac.server.port=9090   
 
+The hostname is optional.  The port defaults to port 8080 for when running stand-alone,
+or you can define it in this properties file.
 
 ########################################################################
 Reading Your Database: Making Tables.java
@@ -120,7 +143,7 @@ There is a nice utility to generate a Java class (Tables) that holds all of your
 database table names and columns (fields) in the tables.  This allows you to not have String table and column
 names permeate your code.
 
-To generate the Tables.java source code file, after you have a connection set up to the database, in org/@MACRO.PREFIX@/gsac/, 
+To generate the Tables.java source code file, after you have a connection set up to the database, in @MACRO.SRCDIR@, 
 run
 
 ant tables   
@@ -133,7 +156,7 @@ tables:
      [java] processing EQUIPMENT
      ...
 
-This process will read your database and make a new file org/@MACRO.PREFIX@/gsac/database/Tables.java. 
+This process will read your database and make a new file @MACRO.SRCDIR@/database/Tables.java. 
 The Java code defines classes with methods, such as the next code block for a table about GPS recievers, 
 with methods getName() which gives the table name, and getColumns() which returns names for fields 
 in that table about GPS receivers, and which defines new String variables.
@@ -162,7 +185,7 @@ in that table about GPS receivers, and which defines new String variables.
     public static final STATION_IDENTIFICATION table  = new  		STATION_IDENTIFICATION();
     };
 
-The ant table command builds the corresponding class files in org/@MACRO.PREFIX@/gsac/database/.
+The ant table command builds the corresponding Table* class files in @MACRO.SRCDIR@/database/.
 
 
 ########################################################################
@@ -172,7 +195,7 @@ Extending Java Classes  (was Code changes)
 The @MACRO.PREFIX@Repository is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
 and/or @MACRO.PREFIX@FileManager objects.
 
-Files in org/@MACRO.PREFIX@/gsac/ have the Java code for your repository.   The Java file @MACRO.PREFIX@Repository.java is the main entry point, where you add much of the code for the new repository.   Also the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
+Files in @MACRO.SRCDIR@ have the Java code for your repository.   The Java file @MACRO.PREFIX@Repository.java is the main entry point, where you add much of the code for the new repository.   Also the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
 
 For a more detailed description of adding to the GSAC Java files, see the GSAC-WS brocheur available at
 http://facility.unavco.org/data/gsacws/gsacws.html, in the Extending Java Classes section.  You may also review code in other 
@@ -223,7 +246,7 @@ and also a change in getResourceSelectColumns()
 Web Site Design and Images (HTML)
 ########################################################################
 
-The files footer.html and header.html in the directory org/@MACRO.PREFIX@/gsac/resources/
+The files footer.html and header.html in the directory @MACRO.SRCDIR@/resources/
 specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
 
  header.html:
@@ -234,8 +257,7 @@ specify web page layout and decoration surrounding the GSAC forms and results. T
 	<body>
 
 or fully developed, such as using css.  Image files used on the web site can be put in the new directory, 
-org/@MACRO.PREFIX@/gsac/htdocs/, [ ? How to href to files in org/newrepos/gsac/htdocs/]
-or they may be retrieved from another web server, for example, with
+@MACRO.SRCDIR@/htdocs/, or they may be retrieved from another web server, for example, with
 
    <img src="http://cddis.nasa.gov/images/spacer.gif">.
 
@@ -247,23 +269,16 @@ Building and Running the GSAC server
 ########################################################################
 
 
-Once you have made needed additions to the Java code, to build a test version server in org/@MACRO.PREFIX@/gsac, run
-ant (or ant test_build)
+Once you have made needed additions to the Java code, to build a test version server in @MACRO.SRCDIR@, run
+ant (or ant test_build). To build run a production release, run ant production_build.
 
-To build run a production release, run:
-ant production_build
-
-The build.xml file used by ant is org/@MACRO.PREFIX@/gsac/build.xml. The ant build targets will copy one 
-of the gsac db (_test or _production) properties files to resources/gsacsb.properties
+The build.xml file used by ant is @MACRO.SRCDIR@/build.xml. The ant build targets will copy one 
+of the gsacdb (_test or _production) properties files to resources/gsacsb.properties
 
 It will also copy one of the files
-resources/gsacserver_test.properties or resources/gsacserver_production.properties
-to:
-resources/gsacserver.properties
-
-If you have some database authentication you need to use (or any other properties) 
-but don't want to check in to the properties files here you can create a @MACRO.BASENAME@.properties 
-file. The ant runserver command implicitely uses this property file as a command line argument.
+   resources/gsacserver_test.properties or 
+   resources/gsacserver_production.properties
+to resources/gsacserver.properties
 
 The ant target  builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
 and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
@@ -271,13 +286,39 @@ and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
 To run the server:
 ant runserver
 
-For the test server, the screen output from this command shows a URL to use in your local browser to use the test server web services.
+For the test server, the screen output from this command shows a URL to use in your local browser 
+to see and try the test server web services.
+
+
+
+########################################################################
+Hiding DB account info
+########################################################################
+
+If you have some database authentication you need to use (or any other properties), 
+but don't want to check in with the properties files (into SourceForge or other svn), 
+you can create a org/@MACRO.PREFIX@/@MACRO.BASENAME@.properties file. The contents are two lines:
+gsac.db.username=your-db-account-name
+gsac.db.password=your-db-account-password
+
+The ant runserver command implicitely uses this property file as a command line argument.
+When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
+So, for example, for a 'gsacmyrepo' server,  it looks for a gsacmyrepo.properties file. 
+Put the authentication information in that properties file so it's not checked into any svn.
+
+For the Unavco GSAC package we have the db auth information in SVN and it gets included in the .war file 
 
 
 ########################################################################
 Running a Web Site with Tomcat
 ########################################################################
 
+Tomcat is a Java servlet container. Tomcat powers web applications. See http://tomcat.apache.org/.
+
+Building GSAC with ant or ant production makes a Tomcat .war file, 
+ ~/gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war.  Copy this file to 
+the Tomcat webapps folder.  The GSAC server web presence should be immediately available, especially if you are
+using HotDeploy, without a hup of Tomcat.
 
 ########################################################################
 Adding Data File Downloads from a GSAC Repository with FTP
