@@ -5,6 +5,7 @@ README from  gsac/trunk/src/org/gsac/
 
 Information about GSAC-WS is at http://facility.unavco.org/data/gsacws/gsacws.html.
 
+The GSAC-WS manual is online at ... UNAVCO_GSAC_User_Guide.pdf
 
 ################################################################################
 
@@ -27,33 +28,27 @@ Do the initial build with ant:
 ant 
 
 This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  
-
-From gsac/trunk/, cd src/org/gsac/
+ant uses the build.xml in the directory where ant is run.
 
 ################################################################################
 
+From gsac/trunk/, cd src/org/gsac/
+
 What's in trunk/src/org/gsac/:
  
-build.xml:
-used by ant 
+build.xml: used by ant 
 
-gsl/:
-This is the core GSAC Service Layer implementation
+gsl/: This is the core GSAC Service Layer implementation
 
-client/:
-Java based client for accessing a GSAC repository
+client/: Java based client for accessing a GSAC repository
 
-ramadda/:
-The RAMADDA GSAC plugin
+ramadda/: The RAMADDA GSAC plugin, for the RAMADDA content management system (see )
 
-federated/:
-This is the implemention of the federated repository
+federated/: This is the implemention of the federated repository
 
 package.html:
 
-
-template/:  
-see next:
+template/:  see next:
 
 ################################################################################
 Generating your initial GSAC-WS repository package
@@ -64,11 +59,12 @@ implementation. This allows you to generate a package with all of the boilerplat
 Java code and build scripts.
 
 What you need to do is define a set of macro values that are used to take the code in the 
-template package and make an initial Java package .
+template package and make an initial Java package.
 
 Copy the example template/macros.properties file to your own file, e.g.:
-   cp template/macros.properties   myrepomacros.properties
 
+cd template/
+cp macros.properties   myrepomacros.properties
 
 Edit the myrepomacros.properties file to define the target package name, directory, etc. 
 For example, you edit the contents to look like the following lines.  'myrepo' is 
@@ -103,6 +99,7 @@ to org/myrepo/gsac/, and it has the next set of instructions.  Note that the myr
 is only used this one time.
 
 Now, the hard part.  You need to actually implement all the details for your repository. 
+
 See the README file in the generated package, such as org/myrepo/gsac/.
 
 ################################################################################
