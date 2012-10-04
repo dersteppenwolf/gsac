@@ -15,6 +15,8 @@ import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.util.*;
 
 
+import ucar.unidata.util.Misc;
+
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.Misc;
@@ -389,7 +391,7 @@ public class IgsSiteManager extends SiteManager {
                     readDate(results, Tables.SITELOG_RECEIVER.COL_DATEREMOVEDRECEIVER)};
                 GnssEquipment equipment = visits.get(dateRange[0]);
                 if(equipment!=null) {
-                    if(!equipment.getToDate().equals(dateRange[1])) {
+                    if(!Misc.equals(equipment.getToDate(),dateRange[1])) {
                         equipment = null;
                     }
                 }

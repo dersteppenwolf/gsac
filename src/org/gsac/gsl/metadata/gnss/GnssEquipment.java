@@ -20,6 +20,7 @@
 
 package org.gsac.gsl.metadata.gnss;
 
+import ucar.unidata.util.Misc;
 
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.*;
@@ -105,10 +106,15 @@ public class GnssEquipment extends GsacMetadata {
                 public int compare(Object o1,Object o2 ) {
                     GnssEquipment equip1 = (GnssEquipment)o1;
                     GnssEquipment equip2 = (GnssEquipment)o2;
-                    if(equip1.getFromDate().equals(equip2.getFromDate())) {
-                        return equip1.getToDate().compareTo(equip2.getToDate());
+                    if(Misc.equals(equip1.getFromDate(), equip2.getFromDate())) {
+                        return compare(equip1.getToDate(), equip2.getToDate());
                     }
-                    return equip1.getFromDate().compareTo(equip2.getFromDate());
+                    return compare(equip1.getFromDate(), equip2.getFromDate());
+                }
+                private int compare(Date d1, Date d2) {
+                    if(d1 == null) return (d2==null?0:1);
+                    if(d2==null) return -1;
+                    return d1.compareTo(d2);
                 }
             };
         Collections.sort(sorted, comp);
