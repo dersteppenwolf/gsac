@@ -294,6 +294,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String formatDate(Date date) {
+        return formatDate(date,null);
+    }
+
+
+    public String formatDate(Date date, String dflt) {
+        if(date == null) return dflt;
         synchronized (dateSdf) {
             return dateSdf.format(date);
         }
@@ -320,6 +326,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String formatDateTime(Date date) {
+        return formatDateTime(date, null);
+    }
+
+
+    public String formatDateTime(Date date, String dflt) {
+        if(date == null) return dflt;
         synchronized (dateTimeSdf) {
             return dateTimeSdf.format(date);
         }

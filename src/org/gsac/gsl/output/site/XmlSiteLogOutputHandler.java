@@ -334,7 +334,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
                                   sdf2.format(equipment.getFromDate())));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
-                                  sdf2.format(equipment.getToDate())));
+                                  sdf2.format(equipment.getToDate()==null?new Date():equipment.getToDate())));
 
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "",
                                   "GPS"));
@@ -376,7 +376,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
                                   sdf2.format(equipment.getFromDate())));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
-                                  sdf2.format(equipment.getToDate())));
+                                  sdf2.format(equipment.getToDate()==null?new Date():equipment.getToDate())));
                 pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSANTENNA));
 
             }

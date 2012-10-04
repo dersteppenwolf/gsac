@@ -152,7 +152,10 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             }
             arg = outputs.get(0).getId();
         }
-        return getOutput(arg).getOutputHandler();
+        
+        GsacOutput output =  getOutput(arg);
+        if(output==null) throw new IllegalArgumentException("Unknown output type: " + arg);
+        return output.getOutputHandler();
     }
 
 

@@ -106,7 +106,7 @@ public class GnssEquipmentGroup extends MetadataGroup {
             buff.append("<td>&nbsp;");
             String dateString =
                 outputHandler.formatDateTime(equipment.getFromDate()) + " - "
-                + outputHandler.formatDateTime(equipment.getToDate());
+                + outputHandler.formatDateTime(equipment.getToDate(),"Current");
             //Add link to search for sites
             if (gsacResource instanceof GsacSite) {
                 GsacSite site = (GsacSite) gsacResource;
@@ -118,7 +118,7 @@ public class GnssEquipmentGroup extends MetadataGroup {
                     ARG_FILE_DATADATE_FROM,
                     outputHandler.formatDateTime(equipment.getFromDate()),
                     ARG_FILE_DATADATE_TO,
-                    outputHandler.formatDateTime(equipment.getToDate())
+                    outputHandler.formatDateTime(equipment.getToDate(), "Current")
                 }), dateString);
             }
 

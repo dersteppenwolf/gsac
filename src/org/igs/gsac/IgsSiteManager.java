@@ -471,7 +471,8 @@ public class IgsSiteManager extends SiteManager {
         try {
             return results.getDate(column);
         } catch(Exception exc) {
-            return new Date();
+            //if the date is undefined we get an error so we just return null to signify the current time
+            return null;
         }
     }
 
