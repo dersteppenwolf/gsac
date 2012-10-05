@@ -14,7 +14,7 @@ import org.gsac.gsl.util.*;
 /**
  * Main entry point into the IGS GSAC Repository repository
  *
- * See the CHANGEME 
+ * See the CHANGEME  
  */
 public class IgsRepository extends GsacRepository implements GsacConstants {
 
@@ -30,11 +30,14 @@ public class IgsRepository extends GsacRepository implements GsacConstants {
         Override this to make your own set of resource managers
     */
     public void initResourceManagers() {
-        //If you only want sites or files then don't call this:
-        //super.initResourceManagers();
+        // remove this line If you only want sites or files then don't call this:
+        // FIX use this better comment: "uncomment this line to search on BOTH sites and data files in the metadata "
+        super.initResourceManagers();
 
-        //But do call one of these:
-        getResourceManager(GsacSite.CLASS_SITE);
+        // remove But do call one of these:
+        //FIX move it here:
+        // you only want either sites or files but not both, uncomment one of these
+        //        getResourceManager(GsacSite.CLASS_SITE);
         //        getResourceManager(GsacFile.CLASS_FILE);
     }
 

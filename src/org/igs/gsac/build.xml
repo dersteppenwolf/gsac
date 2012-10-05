@@ -181,7 +181,7 @@
           <arg value="-port"/>
           <arg value="8080"/>
           <arg value="-Dgsac.repository.class=${repositoryclass}"/>
-          <arg value="${basename}.properties"/>
+          <arg value="${basename.properties}"/>
           <classpath>
              <pathelement path="${classpath}"/>
              <pathelement location=""/>

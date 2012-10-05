@@ -441,6 +441,8 @@ public class IgsSiteManager extends SiteManager {
                 }
                 equipment.setReceiver(results.getString(Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
                 equipment.setReceiverSerial(results.getString(Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
+                equipment.setSatelliteSystem(results.getString(Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
+                equipment.setSatelliteSystem(results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
