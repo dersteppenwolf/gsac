@@ -1,17 +1,31 @@
 
 ########################################################################
-README from template package (src/org/gsac/template/)
+
+Part 2.
+
+How to create a new implementation of the UNAVCO GSAC-WS Web Services suite
+to provide web service access to site-located data in a geoscience data repository.
+
+The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories,"
+http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf,
+lists software tools needed for building GSAC.  
+The UNAVCO GSAC WS home page is http://facility.unavco.org/data/gsacws/gsacws.html
+
+This README was generated from the template package (src/org/gsac/template/README)
+during the initial package build, from Part 1.
+
+(Some file names in this README file, such as gsac@MACRO.PREFIX@.properties,
+ may have one or more upper case letters. The actual files lack upper case. 
+ Do not change actual filenames to match the uppercase letter, if any, in the README files.)
+
 ########################################################################
 
 This README is found in your new GSAC package.  
 
 This file has the second part of the instructions to build a GSAC server for your data repository 
-You should have already followed the instructions in src/org/gsac/README.  
+You should have already followed the Part 1 instructions in src/org/gsac/README.  
+
 Hopefully you've managed to generated the initial repository source package.
-
-Some file names in this README such as gsac@MACRO.PREFIX@.properties may have one or more upper case letters. The actual files 
-lack upper case. Do not change filenames to conform with similar names in the README files.
-
 
 Now, change the working directory to @MACRO.SRCDIR@
 
@@ -310,16 +324,29 @@ For the Unavco GSAC package we have the db auth information in SVN and it gets i
 
 
 ########################################################################
-Running a Web Site with Tomcat
+Running the new GSAC web site with Tomcat
 ########################################################################
 
-Tomcat is a Java servlet container. Tomcat powers web applications. See http://tomcat.apache.org/.
+Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
 
-Building GSAC with ant or ant production makes a Tomcat .war file, 
- ~/gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war.  Copy this file to 
-the Tomcat webapps folder.  The GSAC server web presence should be immediately available, especially if you are
-using HotDeploy, without a hup of Tomcat.
+Building GSAC (in the src/org/@MACRO.PREFIX@/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
+ ~/gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war.  
+ 
+Copy this file to the Tomcat apachetomcatdev/webapps/ folder on your web server host.  
+The GSAC server web presence should be immediately available, especially if you are
+using "hot deploy," without a restart of Tomcat.
 
+You can see the output by doing for example, tail -f /usr/local/apachetomcatdev/logs/catalina.out
+
+If for some reason tomcat is misbehaving you can do:
+sudo /etc/init.d/tomcatdev stop
+sudo /etc/init.d/tomcatdev start
+to restart tomcat 
+
+The servlet reads the properties file:
+/usr/local/apachetomcatdev/conf/gsacigs.properties
+which contains the database authentication info, if you chose not to include that in the --- file.
+ 
 ########################################################################
 Adding Data File Downloads from a GSAC Repository with FTP
 ########################################################################

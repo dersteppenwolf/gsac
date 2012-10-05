@@ -1,17 +1,25 @@
 
 ################################################################################
-README from  gsac/trunk/src/org/gsac/
+
+How to create a new implementation of the UNAVCO GSAC-WS Web Services suite
+to provide web service access to site-located data in a geoscience data repository.
+
+Part 1.
+
+The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories,"
+http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf,
+lists software tools needed for building GSAC.  
+
+The UNAVCO GSAC WS home page is http://facility.unavco.org/data/gsacws/gsacws.html
+
+This is the README file from  gsac/trunk/src/org/gsac/ and is the first of two
+README files detailing GSAC installation.
+
 ################################################################################
 
-Information about GSAC is at http://facility.unavco.org/data/gsacws/gsacws.html.
+Building a GSAC server for your data repository.
 
-The GSAC manual is online at ... UNAVCO_GSAC_User_Guide.pdf
-
-################################################################################
-
-Building a GSAC server for your data repository:
-
-Your have done the following:
+You should have done the following already:
 
 Make a working area, for example:
 mkdir ~/gsac/sourceforge/
@@ -29,7 +37,8 @@ ant uses the build.xml in the directory where ant is run.
 
 ################################################################################
 
-From gsac/trunk/, cd src/org/gsac/
+From gsac/trunk/: 
+cd src/org/gsac/
 
 What's in trunk/src/org/gsac/:
  
@@ -97,6 +106,6 @@ is only used this one time.
 
 Now, the hard part.  You need to actually implement all the details for your repository. 
 
-See the README file in the generated package, such as org/myrepo/gsac/.
+See the second and final README file in the generated package, such as org/myrepo/gsac/README.
 
 ################################################################################
