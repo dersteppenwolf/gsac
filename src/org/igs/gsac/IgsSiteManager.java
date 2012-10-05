@@ -328,6 +328,7 @@ public class IgsSiteManager extends SiteManager {
         //Add the name, etc
         readIdentificationMetadata(site);
         readIdentificationMonumentMetadata(site);
+        site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         site.setType(new ResourceType("gnss.site.continuous"));
         return site;
         
