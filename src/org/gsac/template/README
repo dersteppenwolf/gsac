@@ -71,17 +71,17 @@ Adding Your Repository's Details
 Configuration 
 ########################################################################
 
-The file resources/gsac.properties has a number of properties you can set,
-for example, the base url which will be part of the full URL of the website about your GSAC repository.
+The file resources/gsac.properties has a number of properties to specify, for example, 
+the base url which will be part of the full URL of the website about your GSAC repository.
 such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form:
 
-gsac.baseurl = /gsac@MACRO.PREFIX@
-or
+(examples)
 gsac.baseurl = /gsacws
+gsac.baseurl = /gsac@MACRO.PREFIX@
 
-'gsacapi/' and 'site/form' are always part of a GSAC URL.
+The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL.
 
-Provide a name for your repository:
+Provide a name for your repository such as:
 gsac.repository.name=@MACRO.PREFIX@ GSAC Repository 
 
 and a description 
@@ -90,11 +90,13 @@ gsac.repository.description=@MACRO.PREFIX@ geodesy and GNSS Seamless Archive Cen
 and a maximum size when zipping up files, e.g. 100 MB, in bytes:    
 #file.zip.maxsize=100000000 
 
-??? FIX this which is not so:
-and the hostname and port for your web server:
-gsac.server.hostname=gnssrepo.@MACRO.PREFIX@.org
-gsac.port.display=80
-endFIX
+and the  account details to permnit the GSAC web server process to read from the geodesy database:
+gsac.db.username=db-gsac-username
+gsac.db.password=db-gsac-password
+
+NOTE: if you check this code into a software repository, such as with svn, this db account information may be made public.
+To advoid that see " Hiding DB account info " below in this README file.  Alternately, you can try to remember to
+remove the username and password from this file resources/gsac.properties each time you do a check in.
 
 
 ########################################################################
