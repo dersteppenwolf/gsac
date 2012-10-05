@@ -346,6 +346,14 @@ public class IgsSiteManager extends SiteManager {
         return result;
     }
 
+    private String readValue(ResultSet results, String column) throws Exception {
+        String s  = results.getString(column);
+        if(s==null) return "";
+        if(s.startsWith("(") && s.endsWith(")")) return "";
+        return s;
+    }
+
+
     public static double convertFromStupidFormat(double stupidFormat) {
         //505216.68 -1141736.6
         int intValue = (int) stupidFormat;
@@ -441,8 +449,9 @@ public class IgsSiteManager extends SiteManager {
                 }
                 equipment.setReceiver(results.getString(Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
                 equipment.setReceiverSerial(results.getString(Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
+                equipment.setReceiverFirmware(results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
                 equipment.setSatelliteSystem(results.getString(Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
-                equipment.setSatelliteSystem(results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
+                System.err.println(dateRange[0] + " " +  equipment.getReceiver());
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
@@ -479,7 +488,7 @@ public class IgsSiteManager extends SiteManager {
                     
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_IDENTIFICATIONMONUMENT, 
+                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, 
                                     "Monument Description",                        
                                     results.getString(Tables.SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT));
                 break;

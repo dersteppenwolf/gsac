@@ -78,6 +78,7 @@ public class GnssEquipmentGroup extends MetadataGroup {
         List<GnssEquipment> equipmentList =  GnssEquipment.getMetadata(getMetadata());
 
 
+        /*
         //fill in the default values
         for(int i=equipmentList.size()-1;i>=0;i--) {
             GnssEquipment equipment  = equipmentList.get(i);
@@ -87,7 +88,7 @@ public class GnssEquipmentGroup extends MetadataGroup {
             getValue(equipment.getDomeSerial(), values, 3);
             getValue(equipment.getReceiver(), values, 4);
             getValue(equipment.getReceiverSerial(), values,5);
-        }
+            }*/
 
 
 
@@ -96,9 +97,11 @@ public class GnssEquipmentGroup extends MetadataGroup {
             if (cnt == 0) {
                 buff.append(outputHandler.tableHeader(new String[] {
                     outputHandler.msg("Date"),
-                    outputHandler.msg("Antenna"), outputHandler.msg("Dome"),
+                    outputHandler.msg("Antenna"), 
+                    outputHandler.msg("Dome"),
+                    outputHandler.msg("Antenna Height"),
                     outputHandler.msg("Receiver"),
-                    outputHandler.msg("Antenna Height") }));
+                    outputHandler.msg("Firmware"), }));
             }
             cnt++;
 
@@ -128,8 +131,6 @@ public class GnssEquipmentGroup extends MetadataGroup {
                          getValue(equipment.getAntennaSerial(), values,1));
             equipmentRow(buff, getValue(equipment.getDome(), values,2),
                          getValue(equipment.getDomeSerial(), values, 3));
-            equipmentRow(buff, getValue(equipment.getReceiver(), values, 4),
-                         getValue(equipment.getReceiverSerial(), values,5));
             buff.append("<td>&nbsp;");
             //                buff.append(equipment.getXyzOffset()[0] + "/"
             //                            + equipment.getXyzOffset()[1] + "/"
@@ -141,7 +142,12 @@ public class GnssEquipmentGroup extends MetadataGroup {
             } 
             buff.append("" + height);
             lastHeight = height;
+
             buff.append("&nbsp;</td>");
+            equipmentRow(buff, getValue(equipment.getReceiver(), values, 4),
+                         getValue(equipment.getReceiverSerial(), values,5));
+            equipmentRow(buff, getValue(equipment.getReceiverFirmware(), values, 4),"");
+
             buff.append("</tr>");
         }
         if (cnt > 0) {
@@ -158,7 +164,8 @@ public class GnssEquipmentGroup extends MetadataGroup {
 
     private String getValue(String value, String[]tuple,int index) {
         if(value==null || value.length()==0) {
-            return tuple[index];
+            return "";
+//            return tuple[index];
         }
         tuple[index] = value;
         return value;
@@ -177,11 +184,11 @@ public class GnssEquipmentGroup extends MetadataGroup {
     private void equipmentRow(Appendable buff, String name, String serial)
             throws IOException {
         buff.append("<td>&nbsp;");
-        if (name != null) {
-            buff.append(name);
-            if (serial != null&& serial.length()>0) {
-                buff.append("<br><i>#" + serial + "</i>");
-            }
+        if(name == null) name = "-";
+        else if(name.length() == 0) name =  "-";
+        buff.append(name);
+        if (serial != null&& serial.length()>0) {
+            buff.append("<br><i>#" + serial + "</i>");
         }
         buff.append("&nbsp;</td>");
 

@@ -38,6 +38,8 @@ import java.io.*;
 
 import java.net.URL;
 
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
@@ -60,11 +62,16 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     public static final String OUTPUT_SITE_XMLLOG = "site.xmllog";
 
     /** date formatter */
-    private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /** date formatter */
-    private SimpleDateFormat sdf2 =
+    private SimpleDateFormat dateTimeFormat =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+
+    private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
+    private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
+    private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
+
 
     /**
      * ctor
@@ -151,7 +158,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                     XmlSiteLog.TAG_MI_PREPAREDBY, "",
                     getRepository().getRepositoryName()) + XmlUtil.tag(
                         XmlSiteLog.TAG_MI_DATEPREPARED, "",
-                        sdf1.format(new Date())) + XmlUtil.tag(
+                        myFormatDate(new Date())) + XmlUtil.tag(
                             XmlSiteLog.TAG_MI_REPORTTYPE, "", "DYNAMIC")));
     }
 
@@ -196,12 +203,12 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         Date date = site.getFromDate();
         if (date != null) {
             pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_DATEINSTALLED, "",
-                                  sdf2.format(date)));
+                                  myFormatDateTime(date)));
         }
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTINSCRIPTION, "", ""));
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_IERSDOMESNUMBER, "", ""));
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_CDPNUMBER, "", ""));
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTDESCRIPTION, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_IERSDOMESNUMBER, "", getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "")));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_CDPNUMBER, "", getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "")));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTDESCRIPTION, "", getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "")));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_HEIGHTOFTHEMONUMENT, "", ""));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTFOUNDATION, "", ""));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FOUNDATIONDEPTH, "", ""));
@@ -217,6 +224,18 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
     }
 
+
+    private String getProperty(GsacResource site, String propertyId, String dflt) {
+        List<GsacMetadata> propertyMetadata = (List<GsacMetadata>)
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(
+                                                     PropertyMetadata.class));
+        for(int i=0;i<propertyMetadata.size();i++) {
+            PropertyMetadata metadata= (PropertyMetadata) propertyMetadata.get(i);
+            if(metadata.getName().equals(propertyId)) return metadata.getValue();
+        }
+        return  "";
+    }
 
     /**
      * _more_
@@ -283,17 +302,24 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         }
 
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_LATITUDE_NORTH, "",
-                              el.getLatitude() + ""));
+                              formatLocation(el.getLatitude())));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_LONGITUDE_EAST, "",
-                              el.getLongitude() + ""));
+                              formatLocation(el.getLongitude())));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ELEVATION_M_ELLIPS, "",
-                              el.getElevation() + ""));
+                              elevationFormat.format(el.getElevation())));
 
         pw.append(
             XmlUtil.closeTag(XmlSiteLog.TAG_MI_APPROXIMATEPOSITIONITRF));
 
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITELOCATION));
     }
+
+    private String formatLocation(double v) {
+        v = (double)Math.round(v * 10000) / 10000;
+        String s  =  latLonFormat.format(v);
+        return s;
+    }
+
 
     /**
      * _more_
@@ -332,12 +358,13 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
                                   equipment.getReceiverFirmware()));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
-                                  sdf2.format(equipment.getFromDate())));
+                                  myFormatDateTime(equipment.getFromDate())));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
-                                  sdf2.format(equipment.getToDate()==null?new Date():equipment.getToDate())));
-
+                                  myFormatDateTime(equipment.getToDate())));
+                String satelliteSystem =  equipment.getSatelliteSystem();
+                if(satelliteSystem.length()==0) satelliteSystem = "GPS";
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "",
-                                  "GPS"));
+                                  satelliteSystem));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ELEVATIONCUTOFFSETTING,
                                   "", ""));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION,
@@ -356,11 +383,12 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                                   XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
                                   getNonNullString(equipment.getAntennaSerial())));
 
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", ""));
+                double[] xyz = equipment.getXyzOffset();
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", offsetFormat.format(xyz[2])));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC, "",
-                                  ""));
+                                  offsetFormat.format(xyz[1])));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
-                                  ""));
+                                  offsetFormat.format(xyz[0])));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH,
                                   "", ""));
 
@@ -374,9 +402,9 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                                   ""));
 
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
-                                  sdf2.format(equipment.getFromDate())));
+                                  myFormatDateTime(equipment.getFromDate())));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
-                                  sdf2.format(equipment.getToDate()==null?new Date():equipment.getToDate())));
+                                  myFormatDateTime(equipment.getToDate())));
                 pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSANTENNA));
 
             }
@@ -387,6 +415,19 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     }
 
 
+    private String myFormatDateTime(Date date) {
+        if(date==null) return "";
+        synchronized(dateTimeFormat) {
+            return dateTimeFormat.format(date);
+        }
+    }
+
+    private String myFormatDate(Date date) {
+        if(date==null) return "";
+        synchronized(dateFormat) {
+            return dateFormat.format(date);
+        }
+    }
 
     /**
      * _more_
