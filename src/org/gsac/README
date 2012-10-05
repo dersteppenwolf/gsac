@@ -101,11 +101,12 @@ ant -propertyfile myrepomacros.properties makerepository
 This will copy all of the source and resource files templates, replacing the macros with
 the values you defined in myrepomacros.properties and place them in the specified new target directory,
 such as org/myrepo/.  The template file org/gsac/template/README is copied to your new package, for example, 
-to org/myrepo/gsac/, and it has the next set of instructions.  Note that the myrepomacros.properties file 
+to org/myrepo/gsac/README, and it has the next set of instructions.  Note that the myrepomacros.properties file 
 is only used this one time.
 
 Now, the hard part.  You need to actually implement all the details for your repository. 
 
-See the second and final README file in the generated package, such as org/myrepo/gsac/README.
+See Part 2 of GSAC implementation, the second and final README file, in the newly generated package, 
+such as org/myrepo/gsac/README.
 
 ################################################################################
