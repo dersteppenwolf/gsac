@@ -73,9 +73,9 @@ public interface GsacExtArgs {
     public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX
                                                    + "tectonicplate";
 
-
-
     public static final String SITE_METADATA_MONUMENTINSCRIPTION = "site.metadata.monumentinscription";
+    public static final String SITE_METADATA_IDENTIFICATIONMONUMENT = "site.metadata.identificationmonument";
+    public static final String SITE_METADATA_MONUMENTDESCRIPTION = "site.metadata.monumentdescription";
     public static final String SITE_METADATA_IERDOMES = "site.metadata.ierdomes";
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
 
