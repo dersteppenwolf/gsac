@@ -64,32 +64,68 @@ public class IgsSiteManager extends SiteManager {
         try {
             List<Capability> capabilities = new ArrayList<Capability>();
 
-            String              help = HtmlOutputHandler.stringSearchHelp;
+			/*  args in newCapability() include:
+				1. ARG_SITE_CODE, ARG_BBOX, GsacExtArgs.ARG_COUNTRY, GsacExtArgs.ARG_TECTONICPLATE (from gsac/gsl/GsacExtArgs.java)
+				2. "Site Code",  "Bounding Box", "Country", "Tectonic Plate",  etc which are labels on the web site form 
+				3. Capability.TYPE_STRING, Capability.TYPE_SPATIAL_BOUNDS, values list (Tables.SITELOG_LOCATION.NAME,
+                                                             Tables.SITELOG_LOCATION.COL_COUNTRY) (from Tables.java) 
+				4. true (optional) 
+				5.  CAPABILITY_GROUP_ADVANCED ? optional
+
+				why is initCapability( )  not used in some cases  (the non advanced ones? ) 
+			*/
+
+            String              help = HtmlOutputHandler.stringSearchHelp;   /* where from ? */
+
             Capability          siteCode = initCapability(new Capability(ARG_SITE_CODE,
                                                                          "Site Code",
-                                                                         Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
-                                                          "Short name of the site",
+                                                                         Capability.TYPE_STRING), 
+												CAPABILITY_GROUP_SITE_QUERY, "Short name of the site",
                                                           "Short name of the site. " + help);
-            siteCode.setBrowse(true);
+
+            siteCode.setBrowse(true); /* which does ? */
             capabilities.add(siteCode);
-            capabilities.add(initCapability(new Capability(ARG_BBOX, "Bounds",
-                                                           Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
-                                            "Spatial bounds within which the site lies"));
+
+            capabilities.add(initCapability(              new Capability(ARG_BBOX, 
+																		"Lat-Lon Bounding Box",
+                                                           Capability.TYPE_SPATIAL_BOUNDS), 
+											CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
+
             String[]  values;
 
-            values = getDatabaseManager().readDistinctValues(
-                                                             Tables.SITELOG_LOCATION.NAME,
+            // neww
+            /* not wanted for query
+            values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
+                                                             Tables.SITELOG_LOCATION.COL_CITY);
+            Arrays.sort(values); 
+            capabilities.add(                            new Capability(GsacExtArgs.ARG_CITY, 
+																	"City",       
+																	values, true, CAPABILITY_GROUP_ADVANCED));
+            */
+
+            // neww
+            values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
+                                                             Tables.SITELOG_LOCATION.COL_STATE);
+            Arrays.sort(values); 
+            capabilities.add(                            new Capability(GsacExtArgs.ARG_STATE, 
+																	"State",       
+																	values, true, CAPABILITY_GROUP_ADVANCED));
+
+            values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
                                                              Tables.SITELOG_LOCATION.COL_COUNTRY);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Country", values, true,
-                                            CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(                            new Capability(GsacExtArgs.ARG_COUNTRY, 
+																	"Country",       
+																	values, true, CAPABILITY_GROUP_ADVANCED));
 
-            values = getDatabaseManager().readDistinctValues(
-                                                             Tables.SITELOG_LOCATION.NAME,
+            /* not wanted for query
+            values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
                                                              Tables.SITELOG_LOCATION.COL_TECTONIC);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_TECTONICPLATE, "Tectonic Plate", values, true,
-                                            CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(                         new Capability(GsacExtArgs.ARG_TECTONICPLATE, 
+																	"Tectonic Plate", 
+																	values, true, CAPABILITY_GROUP_ADVANCED));
+            */
 
             return capabilities;
         } catch(Exception exc) {
@@ -193,17 +229,16 @@ public class IgsSiteManager extends SiteManager {
                         Tables.SITELOG_LOCATION.COL_FOURID, clauses);
         }
 
-
-        //Add in the site code 
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
                         msgBuff, "Site Code",
                         Tables.SITELOG_LOCATION.COL_FOURID, clauses);
+
+
 
         if(request.defined(GsacExtArgs.ARG_COUNTRY)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacExtArgs.ARG_COUNTRY);
             clauses.add(Clause.or(Clause.makeStringClauses(Tables.SITELOG_LOCATION.COL_COUNTRY,
                                                            values)));
-
         }
 
         if(request.defined(GsacExtArgs.ARG_TECTONICPLATE)) {
@@ -267,7 +302,7 @@ public class IgsSiteManager extends SiteManager {
     @Override
     public GsacSite makeResource(ResultSet results) throws Exception {
         int    colCnt     = 1;
-        /* order must match coulmn order in e.g. SITELOG_LOCATION.COLUMNS */
+        /* order must match column order in e.g. SITELOG_LOCATION.COLUMNS */
         String fourCharId = results.getString(colCnt++);
         String city= results.getString(colCnt++);
         String state= results.getString(colCnt++);
@@ -292,6 +327,7 @@ public class IgsSiteManager extends SiteManager {
                                      latitude, longitude, elevation);
         //Add the name, etc
         readIdentificationMetadata(site);
+        readIdentificationMonumentMetadata(site);
         site.setType(new ResourceType("gnss.site.continuous"));
         return site;
         
@@ -426,6 +462,32 @@ public class IgsSiteManager extends SiteManager {
 
 
 
+    // neww
+    private  void readIdentificationMonumentMetadata(GsacResource gsacResource) throws Exception {
+        Statement statement =
+            getDatabaseManager().select(Tables.SITELOG_IDENTIFICATIONMONUMENT.COLUMNS,
+                                        Tables.SITELOG_IDENTIFICATIONMONUMENT.NAME,
+                                        Clause.eq(Tables.SITELOG_IDENTIFICATIONMONUMENT.COL_FOURID, gsacResource.getId()),
+                                        (String)null,-1);
+        ResultSet  results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+                    
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_IDENTIFICATIONMONUMENT, 
+                                    "Monument Description",                        
+                                    results.getString(Tables.SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT));
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
+
+
+
 
     private  void readIdentificationMetadata(GsacResource gsacResource) throws Exception {
         Statement statement =
@@ -437,19 +499,30 @@ public class IgsSiteManager extends SiteManager {
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
+                    
+            // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
                 gsacResource.setLongName(results.getString(Tables.SITELOG_IDENTIFICATION.COL_SITENAME));
-                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
-                                    "Monument Inscription",
-                                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_MONUMENTINSCRI));
+
+                // not wanted Oct 5
+                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
+                //                    "Monument Inscription",
+                //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_MONUMENTINSCRI));
+
+                // args to addPropertyMetadata() are:
+                // the resource you are adding it to;
+                // the
+                // the label on the web page or results
+                // the db column name 
 
                 addPropertyMetadata(gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, 
-                                    "IER Domes",
+                                    "IERS DOMES",
                                     results.getString(Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
 
-                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
-                                    "CDP Number",
-                                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
+                // CDP number is not wanted currently as per FB Oct 5 2012
+                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
+                //                    "CDP Number",
+                //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
                 //Only read the first row
                 break;
             }
