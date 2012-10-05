@@ -68,6 +68,10 @@ public class GnssEquipment extends GsacMetadata {
     /** _more_ */
     private String receiverFirmware;
 
+    private String firmwareVersion;
+
+    private String satelliteSystem;
+
     /** _more_ */
     private double[] xyzOffset = { 0, 0, 0 };
 
@@ -366,6 +370,42 @@ public class GnssEquipment extends GsacMetadata {
 
 
 
+
+    /**
+       Set the FirmwareVersion property.
+
+       @param value The new value for FirmwareVersion
+    **/
+    public void setFirmwareVersion (String value) {
+	firmwareVersion = value;
+    }
+
+    /**
+       Get the FirmwareVersion property.
+
+       @return The FirmwareVersion
+    **/
+    public String getFirmwareVersion () {
+	return firmwareVersion;
+    }
+
+    /**
+       Set the SatelliteSystem property.
+
+       @param value The new value for SatelliteSystem
+    **/
+    public void setSatelliteSystem (String value) {
+	satelliteSystem = value;
+    }
+
+    /**
+       Get the SatelliteSystem property.
+
+       @return The SatelliteSystem
+    **/
+    public String getSatelliteSystem () {
+	return satelliteSystem;
+    }
 
 
 
