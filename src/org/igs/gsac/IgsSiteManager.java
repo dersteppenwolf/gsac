@@ -1,5 +1,20 @@
 /*
  *
+ * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
  */
 
 package org.igs.gsac;
@@ -328,6 +343,7 @@ public class IgsSiteManager extends SiteManager {
         //Add the name, etc
         readIdentificationMetadata(site);
         readIdentificationMonumentMetadata(site);
+        readResponsibleAgencyMetadata(site);
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         site.setType(new ResourceType("gnss.site.continuous"));
         return site;
@@ -346,16 +362,9 @@ public class IgsSiteManager extends SiteManager {
         return result;
     }
 
-    private String readValue(ResultSet results, String column) throws Exception {
-        String s  = results.getString(column);
-        if(s==null) return "";
-        if(s.startsWith("(") && s.endsWith(")")) return "";
-        return s;
-    }
-
-
     public static double convertFromStupidFormat(double stupidFormat) {
-        //505216.68 -1141736.6
+        // Convert from the igs site log databse values such as 505216.68 or -1141736.6 to double values of latitude and longitude.
+        // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
         int intValue = (int) stupidFormat;
         double decimalValue = stupidFormat-intValue;
         double seconds = (intValue%100)+decimalValue;
@@ -367,7 +376,12 @@ public class IgsSiteManager extends SiteManager {
         return degrees+minutes/60.0+seconds/360.0;
     }
 
-
+    private String readValue(ResultSet results, String column) throws Exception {
+        String s  = results.getString(column);
+        if(s==null) return "";
+        if(s.startsWith("(") && s.endsWith(")")) return "";
+        return s;
+    }
 
 
 
@@ -391,6 +405,7 @@ public class IgsSiteManager extends SiteManager {
         Statement statement;
         ResultSet  results;
 
+        /* get from SITELOG_ANTENNA table */
         statement =
             getDatabaseManager().select(Tables.SITELOG_ANTENNA.COLUMNS,
                                         Tables.SITELOG_ANTENNA.NAME,
@@ -421,6 +436,7 @@ public class IgsSiteManager extends SiteManager {
         }
 
 
+        /* get from SITELOG_RECEIVER table */
         statement =
             getDatabaseManager().select(Tables.SITELOG_RECEIVER.COLUMNS,
                                         Tables.SITELOG_RECEIVER.NAME,
@@ -442,9 +458,8 @@ public class IgsSiteManager extends SiteManager {
                 }
 
                 if(equipment == null) {
-                    //                    System.err.println ("Could not find corresponding antenna for equipment date:" + dateRange[0]);
-                    equipment =  new GnssEquipment(dateRange,
-                                                   "","","","","","","",Double.NaN);
+                    //System.err.println ("Could not find corresponding antenna for equipment date:" + dateRange[0]);
+                    equipment =  new GnssEquipment(dateRange, "","","","","","","",Double.NaN);
                     equipmentList.add(equipment);
                 }
                 equipment.setReceiver(results.getString(Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
@@ -458,9 +473,9 @@ public class IgsSiteManager extends SiteManager {
         }
 
 
-
         equipmentList = GnssEquipment.sort(equipmentList);
         GnssEquipmentGroup equipmentGroup = null;
+        /* for every item 'equipment' in the local equipmentList, add it to the equipmentGroup */
         for(GnssEquipment equipment: equipmentList) {
             if (equipmentGroup == null) {
                 gsacResource.addMetadata(equipmentGroup =
@@ -469,10 +484,32 @@ public class IgsSiteManager extends SiteManager {
             equipmentGroup.add(equipment);
         }
 
-
     }
 
 
+    // neww
+    /* get from SITELOG_RESPONSIBLEAGENCY table */
+    private  void readResponsibleAgencyMetadata(GsacResource gsacResource) throws Exception {
+        Statement statement =
+            getDatabaseManager().select(Tables.SITELOG_RESPONSIBLEAGENCY.COLUMNS,
+                                        Tables.SITELOG_RESPONSIBLEAGENCY.NAME,
+                                        Clause.eq(Tables.SITELOG_RESPONSIBLEAGENCY.COL_FOURID, gsacResource.getId()),
+                                        (String)null,-1);
+        ResultSet  results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_RESPONSIBLEAGENCY, 
+                                    "Agency",                        
+                                    results.getString(Tables.SITELOG_RESPONSIBLEAGENCY.COL_AGENCYRESPONSIBLE));
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
 
     // neww
     private  void readIdentificationMonumentMetadata(GsacResource gsacResource) throws Exception {

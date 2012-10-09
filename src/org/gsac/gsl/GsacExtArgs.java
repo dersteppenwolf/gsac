@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -78,6 +78,7 @@ public interface GsacExtArgs {
     public static final String SITE_METADATA_MONUMENTDESCRIPTION = "site.metadata.monumentdescription";
     public static final String SITE_METADATA_IERDOMES = "site.metadata.ierdomes";
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
+    public static final String SITE_METADATA_RESPONSIBLEAGENCY = "site.metadata.responsibleagency";
 
 
 }
