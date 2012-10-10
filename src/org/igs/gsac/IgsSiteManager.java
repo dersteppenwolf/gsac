@@ -108,8 +108,7 @@ public class IgsSiteManager extends SiteManager {
 
             String[]  values;
 
-            // neww
-            /* not wanted for query
+            /* not wanted now for query
             values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
                                                              Tables.SITELOG_LOCATION.COL_CITY);
             Arrays.sort(values); 
@@ -133,7 +132,7 @@ public class IgsSiteManager extends SiteManager {
 																	"Country",       
 																	values, true, CAPABILITY_GROUP_ADVANCED));
 
-            /* not wanted for query
+            /* not wanted now for query
             values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
                                                              Tables.SITELOG_LOCATION.COL_TECTONIC);
             Arrays.sort(values);
@@ -340,15 +339,21 @@ public class IgsSiteManager extends SiteManager {
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "",
                                      latitude, longitude, elevation);
-        //Add the name, etc
+
+        // Add  items to show in the HTML web page.
+        // Note, this sets the order of items on the page.
         readIdentificationMetadata(site);
         readIdentificationMonumentMetadata(site);
         readResponsibleAgencyMetadata(site);
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
+        readFrequencyStandardMetadata(site); 
+
+        // site.addMetadata(new GnssEquipment(satelliteSystem));
+
         site.setType(new ResourceType("gnss.site.continuous"));
         return site;
-        
     }
+
 
 
     public static double convertToStupidFormat(double decimalDegrees) {
@@ -488,7 +493,31 @@ public class IgsSiteManager extends SiteManager {
 
 
     // neww
-    /* get from SITELOG_RESPONSIBLEAGENCY table */
+    // get  from db table represented as class SITELOG_FREQUENCYSTANDARD the value of String COL_STANDARDTYPE 
+    private  void readFrequencyStandardMetadata(GsacResource gsacResource) throws Exception {
+        // compose db query statement; 'order by' phrase is null.
+        Statement statement = getDatabaseManager().select(Tables.SITELOG_FREQUENCYSTANDARD.COLUMNS,
+                                        Tables.SITELOG_FREQUENCYSTANDARD.NAME,
+                                        Clause.eq(Tables.SITELOG_FREQUENCYSTANDARD.COL_FOURID, gsacResource.getId()),
+                                        (String)null, -1);
+        ResultSet  results;
+        try {
+            // do db query
+            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+            // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java.
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(gsacResource,GsacExtArgs.METADATA_FREQUENCYSTANDARD, "Clock", 
+                                    results.getString(Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
+
+
+    // neww
+    /* get from SITELOG_RESPONSIBLEAGENCY table, value of AGENCYRESPONSIBLE */
     private  void readResponsibleAgencyMetadata(GsacResource gsacResource) throws Exception {
         Statement statement =
             getDatabaseManager().select(Tables.SITELOG_RESPONSIBLEAGENCY.COLUMNS,
@@ -511,7 +540,9 @@ public class IgsSiteManager extends SiteManager {
         }
     }
 
+
     // neww
+    // get  SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT
     private  void readIdentificationMonumentMetadata(GsacResource gsacResource) throws Exception {
         Statement statement =
             getDatabaseManager().select(Tables.SITELOG_IDENTIFICATIONMONUMENT.COLUMNS,
@@ -534,8 +565,6 @@ public class IgsSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
     }
-
-
 
 
     private  void readIdentificationMetadata(GsacResource gsacResource) throws Exception {
