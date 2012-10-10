@@ -77,9 +77,10 @@ public interface GsacExtArgs {
     public static final String SITE_METADATA_IDENTIFICATIONMONUMENT = "site.metadata.identificationmonument";
     public static final String SITE_METADATA_MONUMENTDESCRIPTION = "site.metadata.monumentdescription";
     public static final String SITE_METADATA_IERDOMES = "site.metadata.ierdomes";
+    public static final String SITE_METADATA_INDIVIDUALCALIBRATION = "site.metadata.calibration";
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
     public static final String SITE_METADATA_RESPONSIBLEAGENCY = "site.metadata.responsibleagency";
     public static final String METADATA_FREQUENCYSTANDARD = "metadata.frequencystandard";
-
+    /* public static final String STATION_INDIVIDUALCALIBRATION= "stationid.frequencystandard"; */
 
 }

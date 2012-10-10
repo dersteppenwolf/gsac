@@ -214,25 +214,25 @@ public class IgsSiteManager extends SiteManager {
         String lonCol =  Tables.SITELOG_LOCATION.COL_LONGITUDEEAST;
         if (request.defined(ARG_NORTH)) {
             clauses.add(Clause.le(latCol,
-                                  convertToStupidFormat(request.get(ARG_NORTH, 0.0))));
+                                  convertToISGSiteLogLatLongFormat(request.get(ARG_NORTH, 0.0))));
             appendSearchCriteria(msgBuff, "north&lt;=",
                                  "" + request.get(ARG_NORTH, 0.0));
         }
         if (request.defined(ARG_SOUTH)) {
             clauses.add(Clause.ge(latCol,
-                                  convertToStupidFormat(request.get(ARG_SOUTH, 0.0))));
+                                  convertToISGSiteLogLatLongFormat(request.get(ARG_SOUTH, 0.0))));
             appendSearchCriteria(msgBuff, "south&gt;=",
                                  "" + request.get(ARG_SOUTH, 0.0));
         }
         if (request.defined(ARG_EAST)) {
             clauses.add(Clause.le(lonCol,
-                                  convertToStupidFormat(request.get(ARG_EAST, 0.0))));
+                                  convertToISGSiteLogLatLongFormat(request.get(ARG_EAST, 0.0))));
             appendSearchCriteria(msgBuff, "east&lt;=",
                                  "" + request.get(ARG_EAST, 0.0));
         }
         if (request.defined(ARG_WEST)) {
             clauses.add(Clause.ge(lonCol,
-                                  convertToStupidFormat(request.get(ARG_WEST, 0.0))));
+                                  convertToISGSiteLogLatLongFormat(request.get(ARG_WEST, 0.0))));
             appendSearchCriteria(msgBuff, "west&gt;=",
                                  "" + request.get(ARG_WEST, 0.0));
         }
@@ -329,8 +329,8 @@ public class IgsSiteManager extends SiteManager {
 
         String latString = results.getString(colCnt++);
         String lonString = results.getString(colCnt++);
-        double latitude   = convertFromStupidFormat(Double.parseDouble(latString.trim()));
-        double longitude   = convertFromStupidFormat(Double.parseDouble(lonString.trim()));
+        double latitude   = convertFromISGSiteLogLatLongFormat(Double.parseDouble(latString.trim()));
+        double longitude   = convertFromISGSiteLogLatLongFormat(Double.parseDouble(lonString.trim()));
 
         String elevationString = results.getString(colCnt++);
         elevationString = StringUtil.findPattern(elevationString,"([\\d\\.-]+)");
@@ -342,10 +342,11 @@ public class IgsSiteManager extends SiteManager {
 
         // Add  items to show in the HTML web page.
         // Note, this sets the order of items on the page.
-        readIdentificationMetadata(site);
+        readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
+        site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         readIdentificationMonumentMetadata(site);
         readResponsibleAgencyMetadata(site);
-        site.addMetadata(new PoliticalLocationMetadata(country, state, city));
+        // to be fixed readCalibrationMetadata(site);
         readFrequencyStandardMetadata(site); 
 
         // site.addMetadata(new GnssEquipment(satelliteSystem));
@@ -356,29 +357,43 @@ public class IgsSiteManager extends SiteManager {
 
 
 
-    public static double convertToStupidFormat(double decimalDegrees) {
+    public static double convertToISGSiteLogLatLongFormat(double decimalDegrees) {
         String msg  = "" + decimalDegrees;
         int degrees = (int)decimalDegrees;
         decimalDegrees = decimalDegrees-degrees;
         int  minutes = (int)(decimalDegrees/60);
         double seconds = decimalDegrees-(minutes*60);
         double result = degrees*10000+minutes*1000 + seconds;
-        System.err.println("decimal:" + msg +" stupid format:" +  result + " " + degrees +" " + minutes +" " + seconds);
+        System.err.println("convertToISGSiteLogLatLongFormat :" + msg +"  to igs site log format:" +  result + " " + degrees +" " + minutes +" " + seconds);
         return result;
     }
 
-    public static double convertFromStupidFormat(double stupidFormat) {
+    public static double convertFromISGSiteLogLatLongFormat(double stupidFormat) {
         // Convert from the igs site log databse values such as 505216.68 or -1141736.6 to double values of latitude and longitude.
         // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
+        // eg dddmmss.ff  where dd or ddd or -ddd is degress, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff
+        // note the sign in front applies to the final result, not only the degrees.
         int intValue = (int) stupidFormat;
-        double decimalValue = stupidFormat-intValue;
-        double seconds = (intValue%100)+decimalValue;
-        intValue = intValue/100;
-        double minutes = (double)(intValue%100);
-        intValue = intValue/100;
-        double degrees = (double) intValue;
-        //        System.err.println("convert:" + stupidFormat + " to:" + degrees +" " + minutes +" " + seconds);
-        return degrees+minutes/60.0+seconds/360.0;
+        String ddmmss = String.valueOf(intValue);
+        String secs = ddmmss.substring( ddmmss.length( ) - 2, ddmmss.length( )  );
+        String mins = ddmmss.substring( ddmmss.length( ) - 4, ddmmss.length( )-2);
+        String degs = ddmmss.substring(                    0, ddmmss.length( )-4);
+        //System.err.println("convert:" + stupidFormat + " to:" + degs +" " + mins +" " + secs );
+        //  convert:-661700.24 to:-66 17 00       convert:1103110.92 to:110 31 10
+        int di = Integer.parseInt(degs);
+        int mi = Integer.parseInt(mins);
+        int si = Integer.parseInt(secs);
+        double decimalofsecs = stupidFormat-intValue;
+        double dv=0.0;  // the result decimal value
+        if (di >= 0) {
+            dv = di + (mi/60.0) + ((si + decimalofsecs)/3600.0);
+        }
+        if (di <  0) {
+            dv = (-1.0* di) + (mi/60.0) + ((si + decimalofsecs)/3600.0);
+            dv *= -1.0;
+        }
+        //System.err.println("convert:" + stupidFormat + " to:" + dv );
+        return dv;
     }
 
     private String readValue(ResultSet results, String column) throws Exception {
@@ -515,6 +530,32 @@ public class IgsSiteManager extends SiteManager {
         }
     }
 
+
+    // neww
+    /* get from STATION_IDENTIFICATION table, value of COL_INDIVIDUALCALIBRATION */ 
+    /*
+    private  void readCalibrationMetadata(GsacResource gsacResource) throws Exception {
+        Statement statement =
+            getDatabaseManager().select(Tables.STATION_IDENTIFICATION.COLUMNS,
+                                        Tables.STATION_IDENTIFICATION.NAME,
+                                        Clause.eq(Tables.STATION_IDENTIFICATION.COL_ ??? , gsacResource.getId()),
+                                        (String)null,-1);
+        ResultSet  results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(gsacResource,GsacExtArgs.STATION_INDIVIDUALCALIBRATION, 
+                                    "Calibration",                        
+                                    results.getString(Tables.STATION_IDENTIFICATION.COL_INDIVIDUALCALIBRATION));
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
+    */
 
     // neww
     /* get from SITELOG_RESPONSIBLEAGENCY table, value of AGENCYRESPONSIBLE */
