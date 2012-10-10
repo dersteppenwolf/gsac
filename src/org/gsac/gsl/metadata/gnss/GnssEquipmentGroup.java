@@ -101,7 +101,9 @@ public class GnssEquipmentGroup extends MetadataGroup {
                     outputHandler.msg("Dome"),
                     outputHandler.msg("Antenna Height"),
                     outputHandler.msg("Receiver"),
-                    outputHandler.msg("Firmware"), }));
+                    outputHandler.msg("Firmware"), 
+                    outputHandler.msg("Satellites"), 
+                    }));
             }
             cnt++;
 
@@ -147,6 +149,7 @@ public class GnssEquipmentGroup extends MetadataGroup {
             equipmentRow(buff, getValue(equipment.getReceiver(), values, 4),
                          getValue(equipment.getReceiverSerial(), values,5));
             equipmentRow(buff, getValue(equipment.getReceiverFirmware(), values, 4),"");
+            equipmentRow(buff, getValue(equipment.getSatelliteSystem (), values, 4),"");
 
             buff.append("</tr>");
         }
