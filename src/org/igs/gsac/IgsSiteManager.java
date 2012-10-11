@@ -117,7 +117,6 @@ public class IgsSiteManager extends SiteManager {
 																	values, true, CAPABILITY_GROUP_ADVANCED));
             */
 
-            // neww
             values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
                                                              Tables.SITELOG_LOCATION.COL_STATE);
             Arrays.sort(values); 
@@ -329,8 +328,8 @@ public class IgsSiteManager extends SiteManager {
 
         String latString = results.getString(colCnt++);
         String lonString = results.getString(colCnt++);
-        double latitude   = convertFromISGSiteLogLatLongFormat(Double.parseDouble(latString.trim()));
-        double longitude   = convertFromISGSiteLogLatLongFormat(Double.parseDouble(lonString.trim()));
+        double latitude  = convertFromISGSiteLogLatLongFormat(Double.parseDouble(latString.trim()));
+        double longitude = convertFromISGSiteLogLatLongFormat(Double.parseDouble(lonString.trim()));
 
         String elevationString = results.getString(colCnt++);
         elevationString = StringUtil.findPattern(elevationString,"([\\d\\.-]+)");
@@ -345,7 +344,7 @@ public class IgsSiteManager extends SiteManager {
         readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         readIdentificationMonumentMetadata(site);
-        readResponsibleAgencyMetadata(site);
+        readAgencyMetadata(site);
         // to be fixed readCalibrationMetadata(site);
         readFrequencyStandardMetadata(site); 
 
@@ -356,22 +355,37 @@ public class IgsSiteManager extends SiteManager {
     }
 
 
-
     public static double convertToISGSiteLogLatLongFormat(double decimalDegrees) {
+        // Convert TO the IGS site log database lat/longi style
+        // such as 505216.68 or -1141736.6, from double degrees values of latitude and longitude.
+        // input like -50.253, to give -501510.8
         String msg  = "" + decimalDegrees;
-        int degrees = (int)decimalDegrees;
-        decimalDegrees = decimalDegrees-degrees;
-        int  minutes = (int)(decimalDegrees/60);
-        double seconds = decimalDegrees-(minutes*60);
-        double result = degrees*10000+minutes*1000 + seconds;
-        System.err.println("convertToISGSiteLogLatLongFormat :" + msg +"  to igs site log format:" +  result + " " + degrees +" " + minutes +" " + seconds);
+        int degrees = (int)decimalDegrees; // + or minus , like -50
+        decimalDegrees = decimalDegrees-degrees; // like 0.253
+        int  minutes = (int)(decimalDegrees*60);  // like 15
+        double seconds = (decimalDegrees-(minutes/60)) * 3600.0; // like .003 (degrees) * 3600 = 10.8
+        double result;
+        if (degrees >= 0.0) { 
+            result = degrees*10000+minutes*100 + seconds;
+        }
+        else {
+            result = (-1.0*degrees*10000) +minutes*100 + seconds;
+            result *= -1.0;
+        }
+        // original
+        //int  minutes = (int)(decimalDegrees/60);
+        //double seconds = decimalDegrees-(minutes*60);
+        //double result = degrees*10000+minutes*1000 + seconds; // oops 100 not 1000
+        // end orig
+        //System.err.println("convertToISGSiteLogLatLongFormat :" + msg +"  to igs site log format:" +  result + " " + degrees +" " + minutes +" " + seconds);
         return result;
     }
+
 
     public static double convertFromISGSiteLogLatLongFormat(double stupidFormat) {
         // Convert from the igs site log databse values such as 505216.68 or -1141736.6 to double values of latitude and longitude.
         // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
-        // eg dddmmss.ff  where dd or ddd or -ddd is degress, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff
+        // eg dddmmss.ff  where dd or ddd or ddd is + or - degrees, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff.
         // note the sign in front applies to the final result, not only the degrees.
         int intValue = (int) stupidFormat;
         String ddmmss = String.valueOf(intValue);
@@ -388,7 +402,7 @@ public class IgsSiteManager extends SiteManager {
         if (di >= 0) {
             dv = di + (mi/60.0) + ((si + decimalofsecs)/3600.0);
         }
-        if (di <  0) {
+        else if (di <  0) {
             dv = (-1.0* di) + (mi/60.0) + ((si + decimalofsecs)/3600.0);
             dv *= -1.0;
         }
@@ -486,7 +500,7 @@ public class IgsSiteManager extends SiteManager {
                 equipment.setReceiverSerial(results.getString(Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
                 equipment.setReceiverFirmware(results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
                 equipment.setSatelliteSystem(results.getString(Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
-                System.err.println(dateRange[0] + " " +  equipment.getReceiver());
+                //System.err.println(dateRange[0] + " " +  equipment.getReceiver());
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
@@ -532,13 +546,13 @@ public class IgsSiteManager extends SiteManager {
 
 
     // neww
-    /* get from STATION_IDENTIFICATION table, value of COL_INDIVIDUALCALIBRATION */ 
-    /*
-    private  void readCalibrationMetadata(GsacResource gsacResource) throws Exception {
+    /* old: get from SITELOG_RESPONSIBLEAGENCY table, value of AGENCYRESPONSIBLE, which ain't the normal thing so change to use: */
+    /*      get from SITELOG_OPERATIONALCONTACT table, value of NAMEAGENCY */
+    private  void readAgencyMetadata(GsacResource gsacResource) throws Exception {
         Statement statement =
-            getDatabaseManager().select(Tables.STATION_IDENTIFICATION.COLUMNS,
-                                        Tables.STATION_IDENTIFICATION.NAME,
-                                        Clause.eq(Tables.STATION_IDENTIFICATION.COL_ ??? , gsacResource.getId()),
+            getDatabaseManager().select(Tables.SITELOG_OPERATIONALCONTACT.COLUMNS,
+                                        Tables.SITELOG_OPERATIONALCONTACT.NAME,
+                                        Clause.eq(Tables.SITELOG_OPERATIONALCONTACT.COL_FOURID, gsacResource.getId()),
                                         (String)null,-1);
         ResultSet  results;
         try {
@@ -546,34 +560,9 @@ public class IgsSiteManager extends SiteManager {
                 getDatabaseManager().getIterator(statement);
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(gsacResource,GsacExtArgs.STATION_INDIVIDUALCALIBRATION, 
-                                    "Calibration",                        
-                                    results.getString(Tables.STATION_IDENTIFICATION.COL_INDIVIDUALCALIBRATION));
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-    }
-    */
-
-    // neww
-    /* get from SITELOG_RESPONSIBLEAGENCY table, value of AGENCYRESPONSIBLE */
-    private  void readResponsibleAgencyMetadata(GsacResource gsacResource) throws Exception {
-        Statement statement =
-            getDatabaseManager().select(Tables.SITELOG_RESPONSIBLEAGENCY.COLUMNS,
-                                        Tables.SITELOG_RESPONSIBLEAGENCY.NAME,
-                                        Clause.eq(Tables.SITELOG_RESPONSIBLEAGENCY.COL_FOURID, gsacResource.getId()),
-                                        (String)null,-1);
-        ResultSet  results;
-        try {
-            SqlUtil.Iterator iter =
-                getDatabaseManager().getIterator(statement);
-            // process each line in results of db query  
-            while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_RESPONSIBLEAGENCY, 
+                addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_NAMEAGENCY, 
                                     "Agency",                        
-                                    results.getString(Tables.SITELOG_RESPONSIBLEAGENCY.COL_AGENCYRESPONSIBLE));
+                                    results.getString(Tables.SITELOG_OPERATIONALCONTACT.COL_NAMEAGENCY));
                 break;
             }
         } finally {
