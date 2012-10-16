@@ -84,6 +84,7 @@ public class ResourceGroup extends IdLabel {
         for (IdLabel id : ids) {
             results.add(new ResourceGroup(id));
         }
+
         return results;
     }
 

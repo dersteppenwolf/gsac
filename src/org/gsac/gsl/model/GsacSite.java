@@ -116,6 +116,7 @@ public class GsacSite extends GsacResource implements Comparable {
                     + object.getClass().getName());
         }
         GsacSite that = (GsacSite) object;
+
         return this.getShortName().compareTo(that.getShortName());
     }
 

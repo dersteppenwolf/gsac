@@ -211,6 +211,7 @@ public class FileDownloader {
         if (bytes < 1000000000) {
             return sizeFormat.format(bytes / 1000000.0) + " MB";
         }
+
         return sizeFormat.format(bytes / 1000000000.0) + " GB";
     }
 
@@ -252,6 +253,7 @@ public class FileDownloader {
             downloadBtn.setText("Stopping");
             downloading = false;
             downloadTimeStamp++;
+
             return;
         }
         downloadBtn.setText("  Stop  ");

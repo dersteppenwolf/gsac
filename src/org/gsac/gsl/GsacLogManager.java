@@ -114,6 +114,7 @@ public class GsacLogManager extends GsacManager {
                 System.err.println("GSAC: failed to created log directory:"
                                    + logDirectory);
                 System.err.println("GSAC: are permissions OK?");
+
                 return;
             }
         }
@@ -141,13 +142,14 @@ public class GsacLogManager extends GsacManager {
      *
      * @param request the request
      * @param what _more_
+     * @param count _more_
      */
     public void logAccess(GsacRequest request, String what, int count) {
         String ip        = request.getOriginatingIP();
         String uri       = request.getRequestURI();
         String method    = request.getMethod();
         String userAgent = request.getUserAgent("none");
-        String time = GsacOutputHandler.makeDateFormat(
+        String time      = GsacOutputHandler.makeDateFormat(
                           "dd/MMM/yyyy:HH:mm:ss Z").format(new Date());
         int response = 200;  // always set to this in GsacResponse.startResponse()
         String requestPath = method + " " + uri + " "
@@ -169,9 +171,9 @@ public class GsacLogManager extends GsacManager {
         message = message.replace(LOG_MACRO_USERAGENT, userAgent);
         message = message.replace(LOG_MACRO_REFERER, referer);
         message = message.replace(LOG_MACRO_USER, "-");
-        message = message+" " + what;
-        if(count>=0) {
-            message = message+" " + count;
+        message = message + " " + what;
+        if (count >= 0) {
+            message = message + " " + count;
         }
 
         if (logDirectory != null) {
@@ -254,6 +256,7 @@ public class GsacLogManager extends GsacManager {
         if (LOG == null) {
             LOG = Logger.getLogger("org.gsac.gsl");
         }
+
         return LOG;
     }
 
@@ -266,6 +269,7 @@ public class GsacLogManager extends GsacManager {
         if (ACCESSLOG == null) {
             ACCESSLOG = Logger.getLogger("org.gsac.gsl.access");
         }
+
         return ACCESSLOG;
     }
 

@@ -110,6 +110,7 @@ public class FlexigridSiteOutputHandler extends HtmlOutputHandler {
         Element cell = XmlUtil.create(TAG_CELL, row);
         cell.appendChild(XmlUtil.makeCDataNode(row.getOwnerDocument(),
                 content, false));
+
         return cell;
     }
 

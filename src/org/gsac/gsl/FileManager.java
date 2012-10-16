@@ -149,6 +149,7 @@ public abstract class FileManager extends GsacResourceManager {
             response.addResource(makeFile(iter.getResults()));
             if ( !iter.countOK()) {
                 response.setExceededLimit();
+
                 break;
             }
         }
@@ -156,6 +157,7 @@ public abstract class FileManager extends GsacResourceManager {
         //      System.err.println("Time:" + (t2-t1));
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
+
         return iter.getCount();
     }
 
@@ -210,7 +212,7 @@ public abstract class FileManager extends GsacResourceManager {
      * @param capabilities _more_
      */
     public void addDefaultCapabilities(List<Capability> capabilities) {
-        Capability cap;
+        Capability   cap;
         Capability[] dflt = { initCapability(
                                 new Capability(
                                     ARG_FILE_TYPE, "File Type",

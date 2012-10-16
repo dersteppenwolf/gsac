@@ -68,8 +68,13 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     private SimpleDateFormat dateTimeFormat =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
 
+    /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
+
+    /** _more_          */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
+
+    /** _more_          */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
 
 
@@ -206,9 +211,20 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                                   myFormatDateTime(date)));
         }
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTINSCRIPTION, "", ""));
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_IERSDOMESNUMBER, "", getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "")));
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_CDPNUMBER, "", getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "")));
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTDESCRIPTION, "", getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "")));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_IERSDOMESNUMBER, "",
+                              getProperty(site,
+                                          GsacExtArgs.SITE_METADATA_IERDOMES,
+                                          "")));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_CDPNUMBER, "",
+                              getProperty(site,
+                                          GsacExtArgs.SITE_METADATA_CDPNUM,
+                                          "")));
+        pw.append(
+            XmlUtil.tag(
+                XmlSiteLog.TAG_MI_MONUMENTDESCRIPTION, "",
+                getProperty(
+                    site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION,
+                    "")));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_HEIGHTOFTHEMONUMENT, "", ""));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTFOUNDATION, "", ""));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FOUNDATIONDEPTH, "", ""));
@@ -225,16 +241,29 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     }
 
 
-    private String getProperty(GsacResource site, String propertyId, String dflt) {
-        List<GsacMetadata> propertyMetadata = (List<GsacMetadata>)
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(
-                                                     PropertyMetadata.class));
-        for(int i=0;i<propertyMetadata.size();i++) {
-            PropertyMetadata metadata= (PropertyMetadata) propertyMetadata.get(i);
-            if(metadata.getName().equals(propertyId)) return metadata.getValue();
+    /**
+     * _more_
+     *
+     * @param site _more_
+     * @param propertyId _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
+    private String getProperty(GsacResource site, String propertyId,
+                               String dflt) {
+        List<GsacMetadata> propertyMetadata =
+            (List<GsacMetadata>) site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(PropertyMetadata.class));
+        for (int i = 0; i < propertyMetadata.size(); i++) {
+            PropertyMetadata metadata =
+                (PropertyMetadata) propertyMetadata.get(i);
+            if (metadata.getName().equals(propertyId)) {
+                return metadata.getValue();
+            }
         }
-        return  "";
+
+        return "";
     }
 
     /**
@@ -314,9 +343,17 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITELOCATION));
     }
 
+    /**
+     * _more_
+     *
+     * @param v _more_
+     *
+     * @return _more_
+     */
     private String formatLocation(double v) {
-        v = (double)Math.round(v * 10000) / 10000;
-        String s  =  latLonFormat.format(v);
+        v = (double) Math.round(v * 10000) / 10000;
+        String s = latLonFormat.format(v);
+
         return s;
     }
 
@@ -349,7 +386,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
-            if(equipment.hasReceiver()) {
+            if (equipment.hasReceiver()) {
                 pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSRECEIVER));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RECEIVERTYPE, "",
                                   equipment.getReceiver()));
@@ -361,45 +398,55 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                                   myFormatDateTime(equipment.getFromDate())));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
                                   myFormatDateTime(equipment.getToDate())));
-                String satelliteSystem =  equipment.getSatelliteSystem();
-                if(satelliteSystem.length()==0) satelliteSystem = "GPS";
+                String satelliteSystem = equipment.getSatelliteSystem();
+                if (satelliteSystem.length() == 0) {
+                    satelliteSystem = "GPS";
+                }
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "",
                                   satelliteSystem));
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ELEVATIONCUTOFFSETTING,
-                                  "", ""));
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION,
-                                  "", ""));
+                pw.append(
+                    makeTag(
+                        XmlSiteLog.TAG_EQUIP_ELEVATIONCUTOFFSETTING, "", ""));
+                pw.append(
+                    makeTag(
+                        XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION, "",
+                        ""));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_NOTES, "", ""));
                 pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSRECEIVER));
             }
 
-            if(equipment.hasAntenna()) {
+            if (equipment.hasAntenna()) {
                 pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSANTENNA));
 
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNATYPE, "",
                                   getNonNullString(equipment.getAntenna())));
                 pw.append(
-                          makeTag(
-                                  XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
-                                  getNonNullString(equipment.getAntennaSerial())));
+                    makeTag(
+                        XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
+                        getNonNullString(equipment.getAntennaSerial())));
 
                 double[] xyz = equipment.getXyzOffset();
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", offsetFormat.format(xyz[2])));
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC, "",
-                                  offsetFormat.format(xyz[1])));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "",
+                                  offsetFormat.format(xyz[2])));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC,
+                                  "", offsetFormat.format(xyz[1])));
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
                                   offsetFormat.format(xyz[0])));
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH,
-                                  "", ""));
+                pw.append(
+                    makeTag(
+                        XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH, "", ""));
 
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "",
                                   getNonNullString(equipment.getDome())));
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
-                                  getNonNullString(equipment.getDomeSerial())));
+                pw.append(
+                    makeTag(
+                        XmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
+                        getNonNullString(equipment.getDomeSerial())));
 
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "", ""));
-                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH, "",
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "",
                                   ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH,
+                                  "", ""));
 
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
                                   myFormatDateTime(equipment.getFromDate())));
@@ -415,16 +462,34 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
     private String myFormatDateTime(Date date) {
-        if(date==null) return "";
-        synchronized(dateTimeFormat) {
+        if (date == null) {
+            return "";
+        }
+        synchronized (dateTimeFormat) {
             return dateTimeFormat.format(date);
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
     private String myFormatDate(Date date) {
-        if(date==null) return "";
-        synchronized(dateFormat) {
+        if (date == null) {
+            return "";
+        }
+        synchronized (dateFormat) {
             return dateFormat.format(date);
         }
     }
@@ -442,6 +507,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         if (contents.length() == 0) {
             return XmlUtil.tag(tag, attrs, contents);
         }
+
         return XmlUtil.tag(tag, attrs, XmlUtil.getCdata(contents));
     }
 
@@ -528,6 +594,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         if (s == null) {
             return "";
         }
+
         return s;
     }
 

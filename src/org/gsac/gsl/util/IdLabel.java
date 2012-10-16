@@ -105,6 +105,7 @@ public class IdLabel implements Comparable, NamedThing {
             return false;
         }
         IdLabel that = (IdLabel) o;
+
         return this.id.equals(that.id);
     }
 
@@ -122,6 +123,7 @@ public class IdLabel implements Comparable, NamedThing {
                     + o.getClass().getName());
         }
         IdLabel that = (IdLabel) o;
+
         return this.label.toLowerCase().compareTo(that.label.toLowerCase());
     }
 
@@ -140,6 +142,7 @@ public class IdLabel implements Comparable, NamedThing {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -159,6 +162,7 @@ public class IdLabel implements Comparable, NamedThing {
             }
             list.add(new IdLabel(name, name));
         }
+
         return list;
     }
 
@@ -175,6 +179,7 @@ public class IdLabel implements Comparable, NamedThing {
         for (Object object : values) {
             list.add((IdLabel) object);
         }
+
         return list;
     }
 
@@ -196,6 +201,7 @@ public class IdLabel implements Comparable, NamedThing {
                                             ? tuple[1]
                                             : tuple[0])));
         }
+
         return list;
     }
 
@@ -214,6 +220,7 @@ public class IdLabel implements Comparable, NamedThing {
         for (IdLabel id : ids) {
             map.put(id.getId(), id.getName());
         }
+
         return map;
     }
 
@@ -229,6 +236,7 @@ public class IdLabel implements Comparable, NamedThing {
         for (IdLabel id : ids) {
             map.add(id.getId());
         }
+
         return map;
     }
 

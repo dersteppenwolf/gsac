@@ -199,6 +199,7 @@ public class GsacRequest implements GsacConstants {
         if (defined(ARG_REQUEST_IP)) {
             return get(ARG_REQUEST_IP, "");
         }
+
         return getRequestIP();
     }
 
@@ -274,6 +275,7 @@ public class GsacRequest implements GsacConstants {
             return false;
         }
         userAgent = userAgent.toLowerCase();
+
         return ((userAgent.indexOf("googlebot") >= 0)
                 || (userAgent.indexOf("slurp") >= 0)
                 || (userAgent.indexOf("spider") >= 0)
@@ -294,8 +296,10 @@ public class GsacRequest implements GsacConstants {
         String value = getHeaderArg("User-Agent");
         if (value == null) {
             System.err.println("no user agent");
+
             return dflt;
         }
+
         return value;
     }
 
@@ -315,6 +319,7 @@ public class GsacRequest implements GsacConstants {
         if (arg == null) {
             arg = (String) httpHeader.get(name.toLowerCase());
         }
+
         return arg;
     }
 
@@ -395,6 +400,7 @@ public class GsacRequest implements GsacConstants {
                 gsacUrlPath = uri.substring(index);
             }
         }
+
         return gsacUrlPath;
     }
 
@@ -428,6 +434,7 @@ public class GsacRequest implements GsacConstants {
     public String getUrlArgs(String nameOverride, String valueOverride) {
         Hashtable<String, String> override = new Hashtable<String, String>();
         override.put(nameOverride, valueOverride);
+
         return getUrlArgs(override);
     }
 
@@ -535,6 +542,7 @@ public class GsacRequest implements GsacConstants {
                         }
                         sb.append(arg + "=" + svalue);
                     }
+
                     continue;
                 }
                 String svalue = value.toString();
@@ -551,6 +559,7 @@ public class GsacRequest implements GsacConstants {
                 sb.append(arg + "=" + svalue);
             }
         }
+
         return sb.toString();
     }
 
@@ -585,6 +594,7 @@ public class GsacRequest implements GsacConstants {
                 if (tmpResult.size() == 1) {
                     return tmpResult.get(0);
                 }
+
                 return tmpResult;
             }
         }
@@ -617,6 +627,7 @@ public class GsacRequest implements GsacConstants {
         if (sresult.length() == 0) {
             return false;
         }
+
         return true;
     }
 
@@ -647,6 +658,7 @@ public class GsacRequest implements GsacConstants {
         if ((result == null) || (result.length() == 0)) {
             return dflt;
         }
+
         return result;
     }
 
@@ -679,6 +691,7 @@ public class GsacRequest implements GsacConstants {
                 }
             }
         }
+
         return gsacRepository.convertToInternal(key, result);
     }
 
@@ -708,6 +721,7 @@ public class GsacRequest implements GsacConstants {
                 }
             }
         }
+
         return result;
     }
 
@@ -743,6 +757,7 @@ public class GsacRequest implements GsacConstants {
             throw new IllegalArgumentException("Bad argument value:" + result
                     + " for arg:" + key);
         }
+
         return v;
     }
 
@@ -765,6 +780,7 @@ public class GsacRequest implements GsacConstants {
             multiplier = 1000;
             result     = result.substring(0, result.length() - 1).trim();
         }
+
         return new Double(result).doubleValue() * multiplier;
     }
 
@@ -782,6 +798,7 @@ public class GsacRequest implements GsacConstants {
         if ((result == null) || (result.trim().length() == 0)) {
             return dflt;
         }
+
         return result.equals("true");
     }
 
@@ -810,6 +827,7 @@ public class GsacRequest implements GsacConstants {
             multiplier = 1000 * 1000 * 1000;
             result     = result.substring(0, result.length() - 2).trim();
         }
+
         return new Integer(result).intValue() * multiplier;
     }
 
@@ -831,6 +849,7 @@ public class GsacRequest implements GsacConstants {
         }
         List l = new ArrayList();
         l.add(o);
+
         return l;
     }
 
@@ -901,6 +920,7 @@ public class GsacRequest implements GsacConstants {
      */
     public int getLimit() {
         int limit = get(ARG_LIMIT, DEFAULT_LIMIT);
+
         return Math.min(limit, MAX_LIMIT);
     }
 
@@ -911,6 +931,7 @@ public class GsacRequest implements GsacConstants {
      */
     public int getOffset() {
         int offset = get(ARG_OFFSET, 0);
+
         return offset;
     }
 
@@ -953,6 +974,7 @@ public class GsacRequest implements GsacConstants {
             return dflt;
         }
         String dateString = (String) getDateSelect(from, "").trim();
+
         return parseDate(dateString);
     }
 
@@ -995,6 +1017,7 @@ public class GsacRequest implements GsacConstants {
             dflt = new Date();
         }
         Date[] range = DateUtil.getDateRange(fromDate, toDate, dflt);
+
         //        System.err.println("dateRange:" + fromDate + " date:" + range[0]);
         return range;
     }

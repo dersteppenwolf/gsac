@@ -73,6 +73,7 @@ public class FederatedTest implements Runnable {
                     IOUtil.readContents(url, FederatedTest.class);
                 } catch (Exception exc) {
                     System.err.println("Error:" + exc);
+
                     return;
                 }
                 cnt++;

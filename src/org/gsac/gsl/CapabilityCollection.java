@@ -141,6 +141,7 @@ public class CapabilityCollection {
         if (used == null) {
             used = getUsedSet(capabilities);
         }
+
         return used.contains(capability.getId());
     }
 
@@ -159,6 +160,7 @@ public class CapabilityCollection {
         for (Capability capability : capabilities) {
             used.add(capability.getId());
         }
+
         return used;
     }
 
@@ -223,6 +225,7 @@ public class CapabilityCollection {
      */
     public String getRelativeUrl() throws Exception {
         URL tmp = new URL(url);
+
         return tmp.getPath();
     }
 

@@ -277,6 +277,7 @@ public class GsacResponse {
             }
             printWriter = new PrintWriter(os);
         }
+
         return printWriter;
     }
 
@@ -319,13 +320,18 @@ public class GsacResponse {
      */
     public final synchronized void addResource(GsacResource resource) {
         handleNewResource(resource);
-        if(resourceCount==-1) {
+        if (resourceCount == -1) {
             resourceCount = 0;
         }
         resourceCount++;
     }
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public int getNumResources() {
         return resourceCount;
     }
@@ -359,6 +365,7 @@ public class GsacResponse {
         for (GsacResource resource : resources) {
             sites.add((GsacSite) resource);
         }
+
         return sites;
     }
 
@@ -373,6 +380,7 @@ public class GsacResponse {
         for (GsacResource resource : resources) {
             files.add((GsacFile) resource);
         }
+
         return files;
     }
 

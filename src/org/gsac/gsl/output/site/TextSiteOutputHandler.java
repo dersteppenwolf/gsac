@@ -86,8 +86,8 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
 
         List<String> params      = ((paramString == null)
                                     ? new ArrayList<String>()
-                                    : StringUtil.split(paramString, ",",
-                                        true, true));
+                                    : StringUtil.split(paramString, ",", true,
+                                        true));
         if (params.size() == 0) {
             params.add(ARG_SITE_ID);
             params.add(ARG_SITE_CODE);
@@ -125,9 +125,10 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                         pw.print(cleanString(site.getLongName(), delimiter));
                     } else if (param.equals(ARG_SITE_ID)) {
                         String id = site.getId();
-                        if(getRepository().isRemoteResource(site)) {
-                            String[] pair = getRepository().decodeRemoteId(id);
-                            id = pair[0]+":" + pair[1];
+                        if (getRepository().isRemoteResource(site)) {
+                            String[] pair =
+                                getRepository().decodeRemoteId(id);
+                            id = pair[0] + ":" + pair[1];
                         }
                         pw.print(cleanString(id, delimiter));
                     } else if (param.equals(ARG_SITE_LATITUDE)) {
@@ -168,6 +169,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     private String cleanString(String s, String delimiter) {
         s = s.replaceAll(",", "_COMMA_");
         s = s.replaceAll(delimiter, "\\" + delimiter);
+
         return s;
     }
 

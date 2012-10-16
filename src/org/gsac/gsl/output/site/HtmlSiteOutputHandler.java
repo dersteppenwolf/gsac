@@ -250,6 +250,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             pw.append(
                 getRepository().makeInformationDialog(msg("No sites found")));
             pw.append(formBuffer);
+
             return;
         }
 

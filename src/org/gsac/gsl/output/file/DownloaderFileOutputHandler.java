@@ -91,6 +91,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
                                  + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
             response.endResponse();
+
             return;
         }
 

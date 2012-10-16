@@ -154,6 +154,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         String[] values =
             SqlUtil.readString(getIterator(select(distinct(columnName),
                 tableName)), 1);
+
         return values;
     }
 
@@ -192,8 +193,12 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
     }
 
-    private  boolean loadedProperties = false;
+    /** _more_          */
+    private boolean loadedProperties = false;
 
+    /**
+     * _more_
+     */
     private void loadDatabaseProperties() {
         if (loadedProperties) {
             return;
@@ -201,18 +206,17 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
         String propertiesFile = getPropertiesFile();
         if (propertiesFile == null) {
-            throw new IllegalArgumentException(
-                                               "No database properties file");
+            throw new IllegalArgumentException("No database properties file");
         }
         try {
-            InputStream propertiesIS =
-                IOUtil.getInputStream(propertiesFile, getClass());
+            InputStream propertiesIS = IOUtil.getInputStream(propertiesFile,
+                                           getClass());
             properties.load(propertiesIS);
             //                System.err.println("properties:" + properties);
             loadedProperties = true;
         } catch (Exception exc) {
-            throw new IllegalArgumentException(
-                                               "Could not load properties:" + propertiesFile);
+            throw new IllegalArgumentException("Could not load properties:"
+                    + propertiesFile);
         }
     }
 
@@ -309,6 +313,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             //            System.err.println("\tmy props:" + fromProperties);
             return fromProperties.trim();
         }
+
         return null;
     }
 
@@ -331,15 +336,23 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
     public String getDriverClassName() {
         String driver =
             (String) getDatabaseProperty(PROP_GSAC_DB_DRIVERCLASS);
-        if(driver!=null) return driver;
-        String jdbcUrl  = getDatabaseProperty(PROP_GSAC_DB_JDBCURL);
-        if(jdbcUrl==null) return null;
-        if(jdbcUrl.indexOf("mysql")>=0) 
+        if (driver != null) {
+            return driver;
+        }
+        String jdbcUrl = getDatabaseProperty(PROP_GSAC_DB_JDBCURL);
+        if (jdbcUrl == null) {
+            return null;
+        }
+        if (jdbcUrl.indexOf("mysql") >= 0) {
             return "com.mysql.jdbc.Driver";
-        if(jdbcUrl.indexOf("oracle")>=0) 
+        }
+        if (jdbcUrl.indexOf("oracle") >= 0) {
             return "oracle.jdbc.driver.OracleDriver";
-        if(jdbcUrl.indexOf("postgres")>=0) 
+        }
+        if (jdbcUrl.indexOf("postgres") >= 0) {
             return "org.postgresql.Driver";
+        }
+
         return null;
     }
 
@@ -383,6 +396,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         connection = DriverManager.getConnection(jdbcUrl, connectionProps);
         //        connection = dataSource.getConnection();
         incrConnectionCount();
+
         //        System.err.println ("open:" + connectionCnt);
         return connection;
     }
@@ -482,6 +496,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         if (not) {
             return Clause.neq(column, value);
         }
+
         return Clause.eq(column, value);
     }
 
@@ -656,9 +671,11 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             Statement statement = SqlUtil.select(connection, what, tables,
                                       clause, sqlBetweenFromAndWhere,
                                       suffixSql, max, TIMEOUT);
+
             return statement;
         } catch (Exception exc) {
             closeConnection(connection);
+
             throw exc;
         }
     }
@@ -709,6 +726,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
     private void writeTables(PrintWriter pw, String packageName,
                              String[] what)
             throws Exception {
+
         String sp1 = "    ";
         String sp2 = sp1 + sp1;
         String sp3 = sp1 + sp1 + sp1;
@@ -809,6 +827,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
 
         pw.append("\n\n}\n");
+
     }
 
 

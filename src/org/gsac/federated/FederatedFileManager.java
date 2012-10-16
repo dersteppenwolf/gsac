@@ -83,6 +83,7 @@ public class FederatedFileManager extends FileManager {
                 response.addResource(getRepository().getResource(request,
                         GsacFile.CLASS_FILE, id));
             }
+
             return;
         }
 
@@ -113,9 +114,9 @@ public class FederatedFileManager extends FileManager {
      * @throws Exception _more_
      */
     public GsacResource getResource(String resourceId) throws Exception {
-        List<String> pair = StringUtil.splitUpTo(resourceId, ":", 2);
-        String       id   = pair.get(1);
-        String       baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
+        List<String>   pair      = StringUtil.splitUpTo(resourceId, ":", 2);
+        String         id        = pair.get(1);
+        String         baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
         List<GsacFile> resources =
             (List<GsacFile>) getRepository().getRemoteObject(
                 new GsacRepositoryInfo(baseUrl), URL_FILE_VIEW,
@@ -134,6 +135,7 @@ public class FederatedFileManager extends FileManager {
         resource.setRepositoryInfo(
             getFederatedRepository().makeRepositoryInfo(info));
         resource.setId(getRepository().getRemoteId(info, resource.getId()));
+
         return resource;
     }
 

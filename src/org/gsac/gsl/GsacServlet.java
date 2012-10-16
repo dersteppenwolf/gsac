@@ -153,6 +153,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
             initServlet();
         } catch (Exception exc) {
             System.err.println("GsacServlet.init: error " + exc);
+
             throw new RuntimeException(exc);
         }
     }
@@ -167,6 +168,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         if (port >= 0) {
             return port;
         }
+
         return gsacRepository.getPort();
     }
 
@@ -187,8 +189,8 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
             ServletContext context = null;
             try {
                 context = getServletContext();
-            } catch(Exception exc) {
-                System.err.println ("GSAC: Could not access servlet config");
+            } catch (Exception exc) {
+                System.err.println("GSAC: Could not access servlet config");
             }
 
             if (context != null) {
@@ -202,7 +204,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
                 //Load properties from the web.xml
                 for (Enumeration params = context.getInitParameterNames();
                         params.hasMoreElements(); ) {
-                    String paramName = (String) params.nextElement();
+                    String paramName  = (String) params.nextElement();
                     String paramValue =
                         getServletContext().getInitParameter(paramName);
                     properties.put(paramName, paramValue);
@@ -257,6 +259,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         Class c = Class.forName(className);
         this.gsacRepository = (GsacRepository) c.newInstance();
         gsacRepository.initServlet(this);
+
         return gsacRepository;
     }
 
@@ -284,6 +287,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
                 throw new RuntimeException(exc);
             }
         }
+
         return gsacRepository;
     }
 
@@ -341,6 +345,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
                 throw new RuntimeException(exc);
             }
         }
+
         return localHostname;
     }
 
@@ -414,6 +419,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
                 } catch (Exception exc) {}
             }
         }
+
         return inputStream;
     }
 
@@ -432,6 +438,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         if (value == null) {
             //            System.out.println("#" +name +"=");
         }
+
         return value;
     }
 
@@ -450,6 +457,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         if (prop != null) {
             return new Boolean(prop).booleanValue();
         }
+
         return dflt;
     }
 
@@ -466,6 +474,7 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         if (prop != null) {
             return new Long(prop).longValue();
         }
+
         return dflt;
     }
 

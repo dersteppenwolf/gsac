@@ -131,6 +131,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             { SEARCHTYPE_BEGINSWITH, "Begins with" },
             { SEARCHTYPE_CONTAINS, "Contains" }
         }), request.get(arg, ARG_UNDEFINED_VALUE));
+
         return select;
     }
 
@@ -232,7 +233,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             { SORT_SITE_NAME, msg("Name") }, { SORT_SITE_TYPE, msg("Type") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
-        String valueWidget = HtmlUtil.select(ARG_SITE_SORT_VALUE, tfos,
+        String valueWidget        = HtmlUtil.select(ARG_SITE_SORT_VALUE, tfos,
                                              request.get(ARG_SITE_SORT_VALUE,
                                                  ARG_UNDEFINED_VALUE), "");
 
@@ -362,7 +363,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             { SORT_FILE_PUBLISHDATE, msg("Publish Date") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
-        String valueWidget = HtmlUtil.select(ARG_FILE_SORT_VALUE, tfos,
+        String valueWidget        = HtmlUtil.select(ARG_FILE_SORT_VALUE, tfos,
                                              request.get(ARG_FILE_SORT_VALUE,
                                                  ARG_UNDEFINED_VALUE), "");
 
@@ -445,6 +446,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 sb.append(tfo.getLabel());
                 sb.append(" ");
             }
+
             return sb.toString();
         } else {
             return HtmlUtil.select(arg, tfos, selected,
@@ -499,7 +501,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         List<Capability> capabilities = collection.getCapabilities();
         request = new GsacRequest(request);
         request.setUseVocabulary(false);
-        String capabilityGroup;
+        String                          capabilityGroup;
         List<String> capabilityGroups = new ArrayList<String>();
         Hashtable<String, StringBuffer> capabilityGroupMap =
             new Hashtable<String, StringBuffer>();
@@ -553,9 +555,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             } else if (capability.getType().equals(
                     Capability.TYPE_DATERANGE)) {
-                Date   fromDate = null;
-                Date   toDate   = null;
-                String img      = HtmlUtil.img(iconUrl("/range.gif"));
+                Date   fromDate   = null;
+                Date   toDate     = null;
+                String img        = HtmlUtil.img(iconUrl("/range.gif"));
                 String dateInput1 = makeDateInput(request, arg + ".from",
                                         "searchform", fromDate, null, false);
                 String dateInput2 = makeDateInput(request, arg + ".to",
@@ -716,6 +718,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         for (IdLabel nv : values) {
             tfos.add(new TwoFacedObject(nv.getLabel(), nv.getId()));
         }
+
         return tfos;
     }
 
@@ -745,8 +748,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
             String[] labels = { "Browse", "Information", "Help" };
-            String[] urls = { URL_BROWSE_BASE, URL_REPOSITORY_VIEW,
-                              URL_HELP + "/index.html" };
+            String[] urls   = { URL_BROWSE_BASE, URL_REPOSITORY_VIEW,
+                                URL_HELP + "/index.html" };
             String[] keys = { HEADER_BROWSE, HEADER_INFO, HEADER_HELP };
             for (int i = 0; i < labels.length; i++) {
                 if (getRepository().isCapable(keys[i])) {
@@ -841,6 +844,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         GsacResourceManager resourceManager =
             getResourceManager(resourceClass);
+
         return getSearchLink(group, resourceManager.makeSearchUrl(),
                              resourceManager.makeUrlArg(ARG_SUFFIX_GROUP));
     }
@@ -923,6 +927,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             response.startResponse(GsacResponse.MIME_XML);
             sb.append("<contents>");
             sb.append("<![CDATA[");
+
             return true;
         }
 
@@ -998,8 +1003,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if ( !getRepository().checkRequest(request, response, sb)) {
             finishHtml(request, response, sb);
+
             return false;
         }
+
         return true;
     }
 
@@ -1153,8 +1160,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                   String extraLeft, String extraTop,
                                   String[] snew, double[][] markerLatLons) {
         StringBuffer sb = new StringBuffer();
-        String msg      =
-            HtmlUtil.italics(msg("Shift-drag to select region"));
+        String msg      = HtmlUtil.italics(msg("Shift-drag to select region"));
         sb.append(msg);
         sb.append(HtmlUtil.br());
         String widget;
@@ -1189,7 +1195,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         String mapVarName = "mapselector" + HtmlUtil.blockCnt++;
         String rightSide  = null;
-        String clearLink = HtmlUtil.mouseClickHref(mapVarName
+        String clearLink  = HtmlUtil.mouseClickHref(mapVarName
                                + ".selectionClear();", msg("Clear"));
         String initParams = HtmlUtil.squote(arg) + "," + (popup
                 ? "1"
@@ -1253,7 +1259,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String  compId    = "menu_" + HtmlUtil.blockCnt++;
         String  linkId    = "menulink_" + HtmlUtil.blockCnt++;
         String  contents  = makeStickyPopupDiv(innerContents, compId);
-        String onClick =
+        String  onClick   =
             HtmlUtil.onMouseClick(HtmlUtil.call("showStickyPopup",
                 HtmlUtil.comma(new String[] { "event",
                 HtmlUtil.squote(linkId), HtmlUtil.squote(compId), (alignLeft
@@ -1261,6 +1267,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 : "0") })) + initCall);
         String href = HtmlUtil.href("javascript:noop();", link,
                                     onClick + HtmlUtil.id(linkId));
+
         return href + contents;
     }
 
@@ -1275,8 +1282,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     public String makeStickyPopupDiv(String contents, String compId) {
-        StringBuffer menu = new StringBuffer();
-        String cLink = HtmlUtil.jsLink(
+        StringBuffer menu  = new StringBuffer();
+        String       cLink = HtmlUtil.jsLink(
                            HtmlUtil.onMouseClick(
                                HtmlUtil.call(
                                    "hideElementById",
@@ -1287,6 +1294,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         menu.append(HtmlUtil.div(contents,
                                  HtmlUtil.id(compId)
                                  + HtmlUtil.cssClass("popup")));
+
         return menu.toString();
     }
 
@@ -1337,6 +1345,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
         }
         sb.append("</tr>");
+
         return sb.toString();
     }
 
@@ -1379,6 +1388,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
+     *
+     * @param request _more_
      * @param resource _more_
      *
      * @return _more_
@@ -1392,6 +1403,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if ((rep != null) && (rep.getIcon() != null)) {
             return rep.getIcon();
         }
+
         return getRepository().getAbsoluteUrl(request, iconUrl("/site.png"));
     }
 
@@ -1459,6 +1471,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             pw.append(
                 getRepository().makeErrorDialog(
                     msg("Could not find resource")));
+
             return;
         }
 
@@ -1474,9 +1487,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             throw new RuntimeException(exc);
         }
         pw.append(HtmlUtil.formTable());
-        String label = (includeLink
-                        ? makeResourceViewHref(resource)
-                        : resource.getLabel());
+        String              label           = (includeLink
+                ? makeResourceViewHref(resource)
+                : resource.getLabel());
         GsacResourceManager resourceManager =
             getResourceManager(resource.getResourceClass());
         pw.append(
@@ -1637,6 +1650,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     processMetadata(request, pw, gsacObject, childMetadata,
                                     fullMetadata, state);
                 }
+
                 return;
             }
 
@@ -1683,6 +1697,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 pw.append(formEntryTop(request, group.getLabel(),
                                        HtmlUtil.makeShowHideBlock("",
                                            tabHtml.toString(), true)));
+
                 return;
             }
 
@@ -1709,6 +1724,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                            HtmlUtil.makeShowHideBlock("",
                                                buffer.toString(), true)));
                 }
+
                 return;
             }
 
@@ -1718,13 +1734,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (metadata instanceof ImageMetadata) {
             ImageMetadata imageMetadata = (ImageMetadata) metadata;
-            String img =
+            String        img           =
                 HtmlUtil.img(imageMetadata.getUrl(), "",
                              HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0")
                              + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "400"));
             img = HtmlUtil.href(imageMetadata.getUrl(), img,
                                 " rel=\"lightbox\" ");
             pw.append(img);
+
             return;
 
         }
@@ -1734,6 +1751,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             LinkMetadata mtd = (LinkMetadata) metadata;
             pw.append(formEntry(request, msgLabel("Link"),
                                 HtmlUtil.href(mtd.getUrl(), mtd.getLabel())));
+
             return;
         }
 
@@ -1756,6 +1774,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             pw.append(formEntryTop(request, mtd.getLabel() + ":",
                                    HtmlUtil.makeShowHideBlock("",
                                        sb.toString(), false)));
+
             return;
         }
 
@@ -1771,6 +1790,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             } else {
                 pw.append(formEntry(request, mtd.getLabel() + ":", value));
             }
+
             return;
         }
 
@@ -1842,6 +1862,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (lon > 180) {
             lon = 180;
         }
+
         return "new OpenLayers.LonLat(" + lon + "," + lat + ")";
 
     }
@@ -1873,6 +1894,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return createEarth(request, resources, pw, width, height,
                                addToggle, showList);
         }
+
         return createFlatMap(request, resources, pw, width, height,
                              addToggle, showList);
     }
@@ -1907,6 +1929,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         } else {
             pw.append(mapSB.toString());
         }
+
         return "";
     }
 
@@ -1973,6 +1996,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                         resource.getLongitude())) + "," + "\"" + url + "\""
                             + "," + "resourceInfo);\n");
         }
+
         return js.toString();
     }
 
@@ -2040,6 +2064,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 tfos.add(new TwoFacedObject(pair[1], pair[0]));
             }
         }
+
         return tfos;
     }
 
@@ -2079,6 +2104,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 tfos.add(new TwoFacedObject(obj.toString()));
             }
         }
+
         return tfos;
     }
 
@@ -2120,7 +2146,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         String inputId = "dateinput" + (HtmlUtil.blockCnt++);
 
-        String js =
+        String js      =
             "<script>jQuery(function() {jQuery( "
             + HtmlUtil.squote("#" + inputId)
             + " ).datepicker({ dateFormat: 'yy-mm-dd',changeMonth: true, changeYear: true,constrainInput:false });});</script>";
@@ -2171,13 +2197,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public String getCalendarSelector(String formName, String fieldName) {
         String anchorName = "anchor." + fieldName;
         String divName    = "div." + fieldName;
-        String call = HtmlUtil.call("selectDate",
+        String call       = HtmlUtil.call("selectDate",
                                     HtmlUtil.comma(HtmlUtil.squote(divName),
         //                              "document.forms['"  + formName + "']." + fieldName, 
         "findFormElement('" + formName + "','" + fieldName
                             + "')", HtmlUtil.squote(anchorName),
                                     HtmlUtil.squote(
                                         "yyyy-MM-dd"))) + "return false;";
+
         return HtmlUtil
             .href("#", HtmlUtil
                 .img(getRepository()
@@ -2231,7 +2258,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
-            String remoteHref =
+            String       remoteHref =
                 getRepository().getRemoteHref(resources.get(0));
             labels.add(msg("Site Code").replace(" ", "&nbsp;"));
             sortValues.add(SORT_SITE_CODE);
@@ -2350,14 +2377,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     public void openEntryRow(Appendable sb, String resourceId,
                              String baseUrl, String urlArg) {
         try {
-            String   domId  = cleanIdForJS(resourceId);
-            String   rowId  = "row_" + domId;
-            String   divId  = "div_" + domId;
-            String   imgId  = "img_" + domId;
-            String[] events = getEntryEventJS(resourceId, baseUrl, urlArg);
-            String   event1 = events[0];
-            String   event2 = events[1];
-            String dartImg =
+            String   domId   = cleanIdForJS(resourceId);
+            String   rowId   = "row_" + domId;
+            String   divId   = "div_" + domId;
+            String   imgId   = "img_" + domId;
+            String[] events  = getEntryEventJS(resourceId, baseUrl, urlArg);
+            String   event1  = events[0];
+            String   event2  = events[1];
+            String   dartImg =
                 HtmlUtil.img(iconUrl("/blank.gif"), "",
                              event2
                              + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "10")
@@ -2388,6 +2415,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         s = s.replaceAll("'", "_");
         s = s.replaceAll(":", "_");
         s = s.replaceAll("=", "_");
+
         return s;
     }
 
@@ -2419,6 +2447,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String event2 = HtmlUtil.onMouseClick(HtmlUtil.call("gsacRowClick",
                             "event," + HtmlUtil.squote(entryId) + ","
                             + HtmlUtil.squote(xmlUrl)));
+
         return new String[] { event1, event2 };
     }
 
@@ -2454,6 +2483,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("<td " + extra + "  nowrap>");
             if ( !sortCapable || (sortValues[i].length() == 0)) {
                 sb.append(labels[i]);
+
                 continue;
             }
             Hashtable<String, String> sortMap = new Hashtable<String,
@@ -2551,9 +2581,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 String redirectUrl = gom.makeFormUrl() + "?" + args;
                 response.sendRedirect(redirectUrl);
                 response.endResponse();
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -2568,14 +2600,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      */
     public StringBuffer makeOutputLinks(GsacRequest request,
                                         ResourceClass resourceClass) {
-        StringBuffer searchLinks = new StringBuffer();
+        StringBuffer        searchLinks     = new StringBuffer();
         GsacResourceManager resourceManager =
             getRepository().getResourceManager(resourceClass);
         for (GsacOutput output : getRepository().getOutputs(resourceClass)) {
             Hashtable<String, String> outputMap = new Hashtable<String,
                                                       String>();
             outputMap.put(ARG_OUTPUT, output.getId());
-            String suffix = output.getFileSuffix();
+            String suffix    = output.getFileSuffix();
             String searchUrl = resourceManager.makeSearchUrl()
                                + ((suffix != null)
                                   ? suffix
@@ -2583,6 +2615,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             searchLinks.append(HtmlUtil.href(searchUrl, output.getLabel()));
             searchLinks.append(HtmlUtil.br());
         }
+
         return searchLinks;
     }
 
@@ -2602,6 +2635,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (userAgent.indexOf("linux") >= 0) {
             return false;
         }
+
         //        System.err.println("user agent: " + userAgent);
         return getGoogleMapsKey(request) != null;
     }
@@ -2653,6 +2687,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 }
             }
         }
+
         return null;
     }
 
@@ -2679,6 +2714,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String[] keyAndOther = getGoogleMapsKey(request);
         if (keyAndOther == null) {
             sb.append("Google Earth is not enabled");
+
             return null;
         }
 
@@ -2727,6 +2763,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                   + ((url == null)
                                      ? "null"
                                      : HtmlUtil.squote(url)) + ");\n"));
+
         return id;
     }
 
@@ -2749,11 +2786,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             throws IOException {
 
 
-        StringBuffer mapSB      = new StringBuffer();
+        StringBuffer                    mapSB      = new StringBuffer();
         String id = getGoogleEarthPlugin(request, mapSB, width, height, null);
-        StringBuffer js         = new StringBuffer();
-        List<String> categories = new ArrayList<String>();
-        Hashtable<String, StringBuffer> catMap = new Hashtable<String,
+        StringBuffer                    js         = new StringBuffer();
+        List<String>                    categories = new ArrayList<String>();
+        Hashtable<String, StringBuffer> catMap     = new Hashtable<String,
                                                      StringBuffer>();
         int cnt = 0;
         for (GsacResource resource : entries) {
@@ -2770,6 +2807,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             catSB.append("&nbsp;&nbsp;");
             if (cnt++ > 200) {
                 catSB.append("...<br>");
+
                 break;
             }
             String iconUrl     = getIconUrl(request, resource);
@@ -2782,8 +2820,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             double lon =
                 EarthLocation.normalizeLongitude(resource.getLongitude());
 
-            String idUrlArg = resourceManager.getIdUrlArg();
-            String href     = resourceManager.makeViewUrl();
+            String idUrlArg   = resourceManager.getIdUrlArg();
+            String href       = resourceManager.makeViewUrl();
             String detailsUrl = HtmlUtil.url(href, new String[] { idUrlArg,
                     resource.getId(), ARG_WRAPXML, "true", });
             String entryId = cleanIdForJS(resource.getId());

@@ -44,7 +44,7 @@ import java.util.concurrent.*;
 
 
 /**
- * This is the core implementation of the gsac federated repository. It provides the base 
+ * This is the core implementation of the gsac federated repository. It provides the base
  * GsacRepository class a list of remote servers in the doMakeServerInfoList.
  * The set of remote repositories is defined in resources/gsacserver_test.properties  and
  * resources/gsacserver_production.properties. These get copied to resources/gsacserver.properties
@@ -136,6 +136,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                 if (url == null) {
                     logError("No URL property defined for:"
                              + "gsac.federated." + server + ".url", null);
+
                     continue;
                 }
                 logInfo("Loading remote server:" + url);
@@ -198,6 +199,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                     if (collection.getResourceClass().equals(resourceClass)
                             && collection.isCapabilityUsed(capability)) {
                         hasCapability = true;
+
                         break;
                     }
                 }
@@ -209,6 +211,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                 }
             }
         }
+
         return serversToUse;
     }
 
@@ -275,8 +278,10 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             throws Exception {
         if (getServers().size() == 0) {
             sb.append(makeErrorDialog("No remote servers are available"));
+
             return false;
         }
+
         return true;
     }
 
@@ -304,7 +309,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                 : getFileServers(request);
 
         String                   remoteArgs = getRemoteUrlArgs(request);
-        final String urlArgs = remoteArgs + "&"
+        final String             urlArgs    = remoteArgs + "&"
                                + HtmlUtil.arg(ARG_REQUEST_IP,
                                    request.getRequestIP());
         final StringBuffer msgBuff = new StringBuffer();
@@ -318,6 +323,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             if (info.getOpenRequestsCount() > MAX_OPEN_REQUESTS) {
                 msgBuff.append("<li> " + info.getName()
                                + ": Skipping due to too many open requests");
+
                 continue;
             }
 
@@ -353,11 +359,13 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                             msgBuff.append("<li> " + repository.getName()
                                            + ": An error occurred " + exc);
                         }
+
                         return Boolean.FALSE;
                     } finally {
                         requestRunning = false;
                         repository.decrementOpenRequestsCount();
                     }
+
                     return Boolean.TRUE;
                 }
             };
@@ -404,6 +412,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         if (sites == null) {
             System.err.println("Bad request: "
                                + callable.repository.getUrl());
+
             return 0;
         }
         for (GsacSite site : sites) {
@@ -413,6 +422,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             site.setRepositoryInfo(callable.repository);
             response.addResource(site);
         }
+
         return sites.size();
     }
 
@@ -451,6 +461,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         if (resources == null) {
             System.err.println("Bad request: "
                                + callable.repository.getUrl());
+
             return 0;
         }
 
@@ -465,6 +476,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                 if (callable.checkAndAddSeen(tail)) {
                     System.err.println("duplicate:"
                                        + resource.getFileInfo().getUrl());
+
                     continue;
                 }
             }
@@ -473,6 +485,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
             resource.setRepositoryInfo(callable.repository);
             response.addResource(resource);
         }
+
         return resources.size();
     }
 
@@ -493,6 +506,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         if (executor == null) {
             executor = Executors.newFixedThreadPool(MAX_THREADS);
         }
+
         return executor;
         //        return  Executors.newFixedThreadPool(callables.size());
     }
@@ -560,6 +574,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         if (resourceClass.equals(GsacFile.CLASS_FILE)) {
             return new FederatedFileManager(this);
         }
+
         return null;
     }
 
@@ -621,6 +636,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                     return true;
                 }
                 seen.add(fileTailOrOtherId);
+
                 return false;
             }
         }
@@ -671,6 +687,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                 }
             }
         }
+
         return capabilities;
     }
 

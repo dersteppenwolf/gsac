@@ -20,72 +20,108 @@
 
 package org.igs.gsac;
 
+
 import ucar.unidata.util.IOUtil;
 
-import java.util.concurrent.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import java.util.concurrent.*;
+
 
 /**
  * Tester
  */
 public class IgsTest implements Runnable {
+
     //Change these to point to your server sites
 
-    static String[]urls = {
-        "http://${server}/gsacws/site/search/sites.kml?output=site.kml&limit=1000&site.code=p12*",
-        "http://${server}/gsacws/site/search/sites.csv?output=site.csv&limit=1000&site.code=p12*",
-        "http://${server}/gsacws/site/search?limit=1000&site.code=p*"};
+    /** _more_          */
+    static String[] urls = { "http://${server}/gsacws/site/search/sites.kml?output=site.kml&limit=1000&site.code=p12*",
+                             "http://${server}/gsacws/site/search/sites.csv?output=site.csv&limit=1000&site.code=p12*",
+                             "http://${server}/gsacws/site/search?limit=1000&site.code=p*" };
 
-    static int  cnt = 0;
+    /** _more_          */
+    static int cnt = 0;
 
+    /** _more_          */
     static int NUM_THREADS = 10;
 
+    /** _more_          */
     private String server;
 
+    /** _more_          */
     private static long startTime;
 
+    /**
+     * _more_
+     *
+     * @param server _more_
+     */
     public IgsTest(String server) {
         this.server = server;
     }
 
+    /**
+     * _more_
+     */
     public void run() {
-        for(int i=0;i<1000;i++) {
-            for(String url: urls) {
+        for (int i = 0; i < 1000; i++) {
+            for (String url : urls) {
                 try {
                     url = url.replace("${server}", server);
                     IOUtil.readContents(url, IgsTest.class);
-                } catch(Exception exc) {
-                    System.err.println ("Error:" + exc);
+                } catch (Exception exc) {
+                    System.err.println("Error:" + exc);
+
                     return;
                 }
                 cnt++;
-                if((cnt%10) == 0) {
+                if ((cnt % 10) == 0) {
                     long now = System.currentTimeMillis();
-                    System.err.println ("cnt:" + cnt +" time:" + (now-startTime)/1000 + "s");
+                    System.err.println("cnt:" + cnt + " time:"
+                                       + (now - startTime) / 1000 + "s");
                 }
             }
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param msg _more_
+     */
     private static void usage(String msg) {
         System.err.println("Error:" + msg);
-        System.err.println("Usage: java UnavcoTest -server servername -threads number_of_threads" + msg);
+        System.err.println(
+            "Usage: java UnavcoTest -server servername -threads number_of_threads"
+            + msg);
         System.exit(1);
     }
 
 
+    /**
+     * _more_
+     *
+     * @param args _more_
+     *
+     * @throws Exception _more_
+     */
     public static void main(String[] args) throws Exception {
         startTime = System.currentTimeMillis();
-        String server = "localhost:8080";
+        String server     = "localhost:8080";
 
-        int numThreads = NUM_THREADS;
-        for(int i=0;i<args.length;i++) {
-            if(args[i].equals("-server")) {
-                if(i>=args.length-1) usage("Missing -server argument");
+        int    numThreads = NUM_THREADS;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-server")) {
+                if (i >= args.length - 1) {
+                    usage("Missing -server argument");
+                }
                 server = args[++i];
-            } else if(args[i].equals("-threads")) {
-                if(i>=args.length-1) usage("Missing -threads argument");
+            } else if (args[i].equals("-threads")) {
+                if (i >= args.length - 1) {
+                    usage("Missing -threads argument");
+                }
                 numThreads = Integer.parseInt(args[++i]);
             } else {
                 usage("Unknown argument: " + args[i]);
@@ -94,11 +130,12 @@ public class IgsTest implements Runnable {
 
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
-        for(int i=0;i<NUM_THREADS;i++) {
+        for (int i = 0; i < NUM_THREADS; i++) {
             executor.submit(new IgsTest(server));
         }
         executor.awaitTermination(1000000, TimeUnit.SECONDS);
-        System.err.println ("Done");
+        System.err.println("Done");
     }
+
 
 }

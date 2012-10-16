@@ -101,7 +101,7 @@ public abstract class DummyRepository extends GsacRepository {
         }
 
         for (int i = 0; i < 10; i++) {
-            String id = "siteid" + i;
+            String   id   = "siteid" + i;
             GsacSite site = new GsacSite(id, "stn" + i, "Test site " + i,
                                          20 + i * 5, -107, 1000);
 
@@ -259,6 +259,7 @@ public abstract class DummyRepository extends GsacRepository {
         List<ResourceType> types = new ArrayList<ResourceType>();
         types.add(new ResourceType("gnss", "GNSS Site"));
         types.add(new ResourceType("other", "Other Site"));
+
         return types;
     }
 

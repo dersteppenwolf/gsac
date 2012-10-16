@@ -168,6 +168,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
         for (GsacMetadata child : metadata) {
             child.findMetadata(result, finder);
         }
+
         return result;
     }
 
@@ -462,6 +463,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
                 }
             }
         }
+
         return location;
     }
 

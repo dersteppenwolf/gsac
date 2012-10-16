@@ -141,6 +141,7 @@ public class FileInfo {
             return new FileInputStream(localFile);
         }
         URLConnection connection = new URL(url).openConnection();
+
         return connection.getInputStream();
     }
 

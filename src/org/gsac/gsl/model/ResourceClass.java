@@ -100,6 +100,7 @@ public class ResourceClass {
             return false;
         }
         ResourceClass that = (ResourceClass) o;
+
         return name.equals(that.name);
     }
 

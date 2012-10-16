@@ -94,7 +94,7 @@ public class Capability {
     /** type */
     public static final String TYPE_STRING = "string";
 
-    /** _more_          */
+    /** _more_ */
     public static final String TYPE_STRING_BUTTONS = "stringbuttons";
 
     /** type */
@@ -375,6 +375,7 @@ public class Capability {
         if (isEnumeration()) {
             return getEnums().size() > 0;
         }
+
         return true;
     }
 
@@ -442,6 +443,7 @@ public class Capability {
         for (Capability capability : capabilities) {
             results.add(mergeCapability(capability, used));
         }
+
         return results;
     }
 
@@ -467,9 +469,11 @@ public class Capability {
                 //                System.err.println("Merging " + existingCapability.getId());
                 existingCapability.mergeEnums(capability.getEnums());
             }
+
             return existingCapability;
         }
         used.put(capability.getId(), capability);
+
         return capability;
     }
 

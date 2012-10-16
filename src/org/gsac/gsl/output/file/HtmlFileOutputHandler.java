@@ -167,6 +167,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             throws Exception {
         if (resource == null) {
             sb.append("Could not find resource");
+
             return;
         }
         sb.append(HtmlUtil.formTable());
@@ -320,8 +321,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
             StringBuffer tabs = new StringBuffer();
             makeTabs(tabs, tabTitles, tabContents);
-            List<GsacFile> files = response.getFiles();
-            boolean openSection  = (files.size() == 0);
+            List<GsacFile> files       = response.getFiles();
+            boolean        openSection = (files.size() == 0);
             sb.append(HtmlUtil.makeShowHideBlock(msg("Search Information"),
                     tabs.toString(), openSection));
 
@@ -351,9 +352,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
                     boolean includeExtraCol =
-
                         getRepository().getRemoteHref(resource).length() > 0;
-                    includeExtraCol =false;
+                    includeExtraCol = false;
 
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");

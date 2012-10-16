@@ -92,7 +92,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
 
         //Check the size
         long totalSize = 0;
-        long maxSize = getRepository().getProperty(PROP_MAXSIZE,
+        long maxSize   = getRepository().getProperty(PROP_MAXSIZE,
                            SIZE_THRESHOLD);
         for (GsacFile resource : response.getFiles()) {
             if (resource.getFileInfo().getType() != FileInfo.CLASS_FILE) {
@@ -106,6 +106,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
                     getRepository().makeErrorDialog(
                         "Requested # bytes &gt; " + SIZE_THRESHOLD));
                 finishHtml(request, response, sb);
+
                 return;
             }
         }

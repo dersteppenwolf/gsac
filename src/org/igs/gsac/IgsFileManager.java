@@ -1,5 +1,24 @@
 /*
+ * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
+ */
+/*
+ *
  */
 
 package org.igs.gsac;
@@ -8,10 +27,11 @@ package org.igs.gsac;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
-
-import ucar.unidata.util.StringUtil;
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
+
+
+import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -41,8 +61,14 @@ public class IgsFileManager extends FileManager {
 
 
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
+
         //CHANGEME
         /*
           you can use the default file capabilities:
@@ -67,8 +93,7 @@ public class IgsFileManager extends FileManager {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request,
-                              GsacResponse response)
+    public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         //Some example code
 
@@ -87,9 +112,9 @@ public class IgsFileManager extends FileManager {
         }
 
         if (request.defined(ARG_FILE_TYPE)) {
-            List<String> types = (List<String>) request.getList(ARG_FILE_TYPE);
-            addSearchCriteria(msgBuff, "Resource Type", types,
-                              ARG_FILE_TYPE);
+            List<String> types =
+                (List<String>) request.getList(ARG_FILE_TYPE);
+            addSearchCriteria(msgBuff, "Resource Type", types, ARG_FILE_TYPE);
         }
 
         Date[] publishDateRange =
@@ -108,8 +133,7 @@ public class IgsFileManager extends FileManager {
 
 
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
-                                                    ARG_FILE_DATADATE_TO, null,
-                                                    null);
+                                   ARG_FILE_DATADATE_TO, null, null);
 
         if (dataDateRange[0] != null) {
             appendSearchCriteria(msgBuff, "Publish date&gt;=",
@@ -122,22 +146,23 @@ public class IgsFileManager extends FileManager {
         }
 
         //find and create the files
-        /** 
-            e.g.:
-        GsacResource site = theSiteForThisFile; may be null
-        String type = someType;
-        GsacFile resource = new GsacFile(resourceId,
-                                    new FileInfo(filePath, fileSize, md5),
-                                    site,
-                                    publishTime, fromTime, toTime,
-                                    toResourceType(type));
 
-                                    response.addResource(resource);
-        **/
+        /**
+         *   e.g.:
+         * GsacResource site = theSiteForThisFile; may be null
+         * String type = someType;
+         * GsacFile resource = new GsacFile(resourceId,
+         *                           new FileInfo(filePath, fileSize, md5),
+         *                           site,
+         *                           publishTime, fromTime, toTime,
+         *                           toResourceType(type));
+         *
+         *                           response.addResource(resource);
+         */
         setSearchCriteriaMessage(response, msgBuff);
     }
 
-    
+
 
     /**
      * CHANGEME
@@ -164,8 +189,9 @@ public class IgsFileManager extends FileManager {
      */
     public List<ResourceType> doGetResourceTypes() {
         List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
-        resourceTypes.add(new ResourceType("rinex","RINEX Files"));
-        resourceTypes.add(new ResourceType("qc","QC Files"));
+        resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
+        resourceTypes.add(new ResourceType("qc", "QC Files"));
+
         return resourceTypes;
     }
 
@@ -178,7 +204,8 @@ public class IgsFileManager extends FileManager {
      * @return sitemanager
      */
     public IgsSiteManager getSiteManager() {
-        return (IgsSiteManager) getRepository().getResourceManager(GsacSite.CLASS_SITE);
+        return (IgsSiteManager) getRepository().getResourceManager(
+            GsacSite.CLASS_SITE);
     }
 
 

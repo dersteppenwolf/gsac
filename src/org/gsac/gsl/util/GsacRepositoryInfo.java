@@ -270,6 +270,7 @@ public class GsacRepositoryInfo {
             return false;
         }
         GsacRepositoryInfo that = (GsacRepositoryInfo) object;
+
         return this.url.equals(that.url);
     }
 
@@ -291,6 +292,7 @@ public class GsacRepositoryInfo {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -329,6 +331,7 @@ public class GsacRepositoryInfo {
                 }
             }
         }
+
         return null;
     }
 
@@ -346,6 +349,7 @@ public class GsacRepositoryInfo {
                 return collection;
             }
         }
+
         return null;
     }
 
@@ -366,6 +370,7 @@ public class GsacRepositoryInfo {
         if (collection == null) {
             return false;
         }
+
         return collection.isCapabilityUsed(capability);
     }
 

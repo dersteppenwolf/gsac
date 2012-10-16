@@ -84,7 +84,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                ResourceClass resourceClass) {
         super(repository);
         this.resourceClass = resourceClass;
-        urlPrefix = getRepository().getUrlBase() + URL_BASE + "/"
+        urlPrefix          = getRepository().getUrlBase() + URL_BASE + "/"
                     + getResourceClass().getName();
 
     }
@@ -140,6 +140,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         for (GsacOutput output : outputs) {
             if (request.defined(output.getId())) {
                 arg = output.getId();
+
                 break;
             }
         }
@@ -152,9 +153,12 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             }
             arg = outputs.get(0).getId();
         }
-        
-        GsacOutput output =  getOutput(arg);
-        if(output==null) throw new IllegalArgumentException("Unknown output type: " + arg);
+
+        GsacOutput output = getOutput(arg);
+        if (output == null) {
+            throw new IllegalArgumentException("Unknown output type: " + arg);
+        }
+
         return output.getOutputHandler();
     }
 
@@ -384,6 +388,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                 doGetQueryCapabilities());
 
         }
+
         return capabilityCollection;
     }
 
@@ -421,6 +426,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         if (this.resourceClass != null) {
             return this.resourceClass.getName().equals(type);
         }
+
         return false;
     }
 
@@ -475,8 +481,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         }
         long         t1         = System.currentTimeMillis();
         List<String> tableNames = new ArrayList<String>();
-        Clause       clause     = getResourceClause(request, response,
-                                      tableNames);
+        Clause       clause = getResourceClause(request, response, tableNames);
         //        System.err.println("Resource clauses:" + clause);
         Statement statement = getDatabaseManager().select(columns,
                                   clause.getTableNames(tableNames), clause,
@@ -516,12 +521,14 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             response.addResource(resource);
             if ( !iter.countOK()) {
                 response.setExceededLimit();
+
                 break;
             }
         }
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
         long t2 = System.currentTimeMillis();
+
         //        System.err.println("read " + iter.getCount() + " resources in "
         //                           + (t2 - t1) + "ms");
         return iter.getCount();
@@ -538,12 +545,14 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      * @return resource query clause
      */
-    public Clause getResourceClause(GsacRequest request, GsacResponse response,
-                                List<String> tableNames) {
+    public Clause getResourceClause(GsacRequest request,
+                                    GsacResponse response,
+                                    List<String> tableNames) {
         StringBuffer msgBuff = new StringBuffer();
-        List<Clause> clauses = getResourceClauses(request, response, tableNames,
-                                   msgBuff);
+        List<Clause> clauses = getResourceClauses(request, response,
+                                   tableNames, msgBuff);
         setSearchCriteriaMessage(response, msgBuff);
+
         return Clause.and(clauses);
     }
 
@@ -556,6 +565,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      */
     public String getResourceSelectColumns() {
         notImplemented("getResourceSelectColumns needs to be implemented");
+
         return "";
     }
 
@@ -595,10 +605,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return resource query clauses
      */
     public List<Clause> getResourceClauses(GsacRequest request,
-                                       GsacResponse response,
-                                       List<String> tableNames,
-                                       StringBuffer msgBuff) {
+                                           GsacResponse response,
+                                           List<String> tableNames,
+                                           StringBuffer msgBuff) {
         notImplemented("getResourceClauses needs to be implemented");
+
         return null;
     }
 
@@ -631,6 +642,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      */
     public GsacResource makeResource(ResultSet results) throws Exception {
         notImplemented("makeResource needs to be implemented");
+
         return null;
     }
 

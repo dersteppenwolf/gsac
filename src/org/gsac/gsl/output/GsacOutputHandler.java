@@ -93,7 +93,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @param gsacRepository the repository
      */
     public GsacOutputHandler(GsacRepository gsacRepository) {
-        this.gsacRepository = gsacRepository;
+        this.gsacRepository   = gsacRepository;
         doResourcePublishDate =
             getRepository().isCapable(ARG_FILE_PUBLISHDATE);
         doResourceFileSize = getRepository().isCapable(ARG_FILE_SIZE);
@@ -182,10 +182,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @param type _more_
      * @param gsacRequest The request
      *
+     *
+     * @return _more_
      * @throws Exception On badness
      */
     public final GsacResponse handleRequest(ResourceClass type,
-                                    GsacRequest gsacRequest)
+                                            GsacRequest gsacRequest)
             throws Exception {
         GsacResponse response = doMakeResponse(gsacRequest);
         handleRequest(type, gsacRequest, response);
@@ -225,10 +227,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @param gsacRequest The request
      * @param gsacResponse _more_
      *
+     *
+     * @return _more_
      * @throws Exception On badness
      */
     public ResourceClass handleRequestBrowse(GsacRequest gsacRequest,
-                                    GsacResponse gsacResponse)
+                                             GsacResponse gsacResponse)
             throws Exception {
         throw new IllegalArgumentException("not implemented");
     }
@@ -260,6 +264,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         SimpleDateFormat dateFormat = new SimpleDateFormat();
         dateFormat.setTimeZone(TIMEZONE_DEFAULT);
         dateFormat.applyPattern(formatString);
+
         return dateFormat;
     }
 
@@ -294,12 +299,22 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * @return _more_
      */
     public String formatDate(Date date) {
-        return formatDate(date,null);
+        return formatDate(date, null);
     }
 
 
+    /**
+     * _more_
+     *
+     * @param date _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
     public String formatDate(Date date, String dflt) {
-        if(date == null) return dflt;
+        if (date == null) {
+            return dflt;
+        }
         synchronized (dateSdf) {
             return dateSdf.format(date);
         }
@@ -330,8 +345,18 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
 
+    /**
+     * _more_
+     *
+     * @param date _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
     public String formatDateTime(Date date, String dflt) {
-        if(date == null) return dflt;
+        if (date == null) {
+            return dflt;
+        }
         synchronized (dateTimeSdf) {
             return dateTimeSdf.format(date);
         }
@@ -420,6 +445,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         if (bytes < 1000000000) {
             return sizeFormat.format(bytes / 1000000.0) + "&nbsp;MB";
         }
+
         return sizeFormat.format(bytes / 1000000000.0) + "&nbsp;GB";
     }
 
@@ -476,6 +502,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public String makeResourceViewHref(GsacResource resource) {
         String resourceUrl = makeResourceViewUrl(resource);
+
         return HtmlUtil.href(resourceUrl, resource.getLabel());
     }
 
@@ -505,6 +532,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         if (shouldUrlsBeAbsolute()) {
             url = getRepository().getAbsoluteUrl(request, url);
         }
+
         return url;
     }
 

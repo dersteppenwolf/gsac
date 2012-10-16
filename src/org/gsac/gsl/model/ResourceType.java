@@ -89,6 +89,7 @@ public class ResourceType extends IdLabel {
         for (IdLabel id : ids) {
             results.add(new ResourceType(id));
         }
+
         return results;
     }
 

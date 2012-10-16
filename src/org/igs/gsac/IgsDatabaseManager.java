@@ -1,8 +1,28 @@
 /*
+ * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
+ */
+/*
+ *
  */
 
 package org.igs.gsac;
+
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.database.*;
@@ -19,17 +39,17 @@ import org.gsac.gsl.database.*;
  * The jdbcurl is a template with the username and password macros replaced with the given username/password
  *
  * If you implement this then if you run:<pre>
- java your.databasemanager.package.path.YourGsacDatabaseManager
-</pre>
- * Then it will generate a Tables.java file 
+ * java your.databasemanager.package.path.YourGsacDatabaseManager
+ * </pre>
+ * Then it will generate a Tables.java file
  *
  * @author     Jeff McWhirter mcwhirter@unavco.org
  */
 public class IgsDatabaseManager extends GsacDatabaseManager {
 
-    /** 
-        This needs to be the path to your database properties file. 
-    */
+    /**
+     *   This needs to be the path to your database properties file.
+     */
 
     public static final String DB_PROPERTIES =
         "/org/igs/gsac/resources/gsacdb.properties";
@@ -41,8 +61,7 @@ public class IgsDatabaseManager extends GsacDatabaseManager {
      *
      * @throws Exception On badness
      */
-    public IgsDatabaseManager(IgsRepository repository)
-            throws Exception {
+    public IgsDatabaseManager(IgsRepository repository) throws Exception {
         super(repository);
     }
 
@@ -55,6 +74,11 @@ public class IgsDatabaseManager extends GsacDatabaseManager {
         return DB_PROPERTIES;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
     public String getDriverClassName() {
         return super.getDriverClassName();
     }

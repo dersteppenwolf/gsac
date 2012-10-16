@@ -137,6 +137,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
             if (dateRange[1] != null) {
                 clauses.add(Clause.le(column2, dateRange[1]));
             }
+
             return;
         }
 
@@ -254,6 +255,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         if (value == null) {
             return key;
         }
+
         return value;
     }
 
@@ -285,9 +287,12 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         //Check for the opensearch bbox argument
         if (request.defined(ARG_BBOX)) {
 
-            List<String> wsen = StringUtil.split(request.get(ARG_BBOX,""),",");
-            if(wsen.size()!=4) {
-                throw new IllegalArgumentException("Incorrect number of coordinates:" + request.get(ARG_BBOX,""));
+            List<String> wsen = StringUtil.split(request.get(ARG_BBOX, ""),
+                                    ",");
+            if (wsen.size() != 4) {
+                throw new IllegalArgumentException(
+                    "Incorrect number of coordinates:"
+                    + request.get(ARG_BBOX, ""));
             }
             request.put(ARG_WEST, wsen.get(0));
             request.put(ARG_SOUTH, wsen.get(1));
@@ -445,8 +450,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         if ( !request.defined(arg)) {
             return;
         }
-        String       searchType = request.get(searchTypeArg,
-                                      SEARCHTYPE_EXACT);
+        String       searchType = request.get(searchTypeArg, SEARCHTYPE_EXACT);
         List<Clause> valueClauses = new ArrayList<Clause>();
         List<String> values       = (List<String>) (doUpperLowerCase
                 ? request.getUpperAndLowerCaseDelimiterSeparatedList(arg)
@@ -548,6 +552,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         for (int i = 0; i < values.length; i++) {
             tuples[i] = new String[] { values[i] };
         }
+
         return tuples;
     }
 
@@ -618,6 +623,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         if (vocabulary != null) {
             capability.setVocabulary(vocabulary);
         }
+
         return capability;
     }
 
@@ -662,6 +668,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      */
     public Capability setGroup(Capability cap, String group) {
         cap.setGroup(group);
+
         return cap;
     }
 
@@ -675,6 +682,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      */
     public Capability setGroup(String group, Capability cap) {
         cap.setGroup(group);
+
         return cap;
     }
 
@@ -689,6 +697,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      */
     public Capability setTooltip(String tooltip, Capability cap) {
         cap.setTooltip(tooltip);
+
         return cap;
     }
 
@@ -725,6 +734,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         if (info.getGroup() != null) {
             capability.setGroup(info.getGroup());
         }
+
         return capability;
 
     }
@@ -741,6 +751,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         if (idx >= 0) {
             return column.substring(0, idx);
         }
+
         return column;
     }
 
@@ -757,6 +768,7 @@ public abstract class GsacRepositoryManager implements GsacConstants {
      */
     public String[] sort(String[] values) {
         Arrays.sort(values);
+
         return values;
     }
 
@@ -842,9 +854,12 @@ public abstract class GsacRepositoryManager implements GsacConstants {
         //Check for the opensearch bbox argument
         if (request.defined(ARG_BBOX)) {
 
-            List<String> wsen = StringUtil.split(request.get(ARG_BBOX,""),",");
-            if(wsen.size()!=4) {
-                throw new IllegalArgumentException("Incorrect number of coordinates:" + request.get(ARG_BBOX,""));
+            List<String> wsen = StringUtil.split(request.get(ARG_BBOX, ""),
+                                    ",");
+            if (wsen.size() != 4) {
+                throw new IllegalArgumentException(
+                    "Incorrect number of coordinates:"
+                    + request.get(ARG_BBOX, ""));
             }
             request.put(ARG_WEST, wsen.get(0));
             request.put(ARG_SOUTH, wsen.get(1));

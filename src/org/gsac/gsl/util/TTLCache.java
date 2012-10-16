@@ -144,11 +144,13 @@ public class TTLCache<KEY, VALUE> {
         long timeDiff = now.getTime() - cacheEntry.time;
         if (timeDiff > timeThreshold) {
             cache.remove(key);
+
             return null;
         }
         if (updateTimeOnGet) {
             cacheEntry.resetTime();
         }
+
         return (VALUE) cacheEntry.object;
     }
 

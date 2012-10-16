@@ -163,6 +163,7 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
                                     Class c) {
         List<GsacMetadata> result = new ArrayList<GsacMetadata>();
         findMetadata(metadataList, c, result);
+
         return result;
     }
 
@@ -180,6 +181,7 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
             if (metadata instanceof MetadataGroup) {
                 MetadataGroup group = (MetadataGroup) metadata;
                 group.findMetadata(group.getMetadata(), c, result);
+
                 continue;
             }
 
@@ -197,7 +199,7 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
         }
     }
 
-    /** _more_          */
+    /** _more_ */
     public static boolean debug = false;
 
     /**
@@ -216,6 +218,7 @@ public class GsacMetadata implements GsacConstants, GsacArgs {
                 result.add(metadata);
             }
         }
+
         return result;
     }
 

@@ -59,6 +59,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
             if (f == null) {
                 return null;
             }
+
             return "" + f.get(this);
         } catch (IllegalAccessException iae) {
             return null;
@@ -86,6 +87,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
             throw new IllegalArgumentException("Unknown argument name:"
                     + arg);
         }
+
         return v;
     }
 
@@ -147,6 +149,7 @@ public class GsacDocs implements GsacArgs, GsacExtArgs {
             List<String> toks = StringUtil.split(line, ";", true, true);
             if (toks.get(0).equals("HEADER")) {
                 System.out.println("<h2>" + toks.get(1) + "</h2>");
+
                 continue;
             }
 

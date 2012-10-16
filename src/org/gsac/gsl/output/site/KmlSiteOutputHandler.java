@@ -120,6 +120,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             String redirectUrl = path + "?" + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
             response.endResponse();
+
             return;
         }
 
@@ -129,6 +130,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             String redirectUrl = path + "?" + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
             response.endResponse();
+
             return;
         }
 

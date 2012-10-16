@@ -82,13 +82,13 @@ public class DateRangeCollection extends GsacMetadata {
             return true;
         }
         StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
-        long min = dateRanges.get(0)[0];
-        long max = dateRanges.get(0)[1];
+        long         min  = dateRanges.get(0)[0];
+        long         max  = dateRanges.get(0)[1];
         for (long[] tuple : dateRanges) {
             min = Math.min(min, tuple[0]);
             max = Math.max(max, tuple[1]);
         }
-        
+
         System.err.println("# date ranges:" + dateRanges.size());
         int rowWidth = 1000;
 
@@ -96,36 +96,38 @@ public class DateRangeCollection extends GsacMetadata {
         //            HtmlUtil.b("From"),
         //            HtmlUtil.b("To") })));
         buff.append("<table border=1 cellspacing=0 cellpadding=0><tr>");
-        long lastTime  = 0;
-        for (int i=0;i<dateRanges.size();i++) {
-            long[] tuple =  dateRanges.get(i);
+        long lastTime = 0;
+        for (int i = 0; i < dateRanges.size(); i++) {
+            long[] tuple              = dateRanges.get(i);
             String from = outputHandler.formatDate(new Date(tuple[0]));
-            String to   = outputHandler.formatDate(new Date(tuple[1]));
-            double timeDelta = (double)(tuple[1]-tuple[0]);
-            double percentOfTimeRange = timeDelta/(max-min);
-            int width = (int)(rowWidth*percentOfTimeRange);
+            String to = outputHandler.formatDate(new Date(tuple[1]));
+            double timeDelta          = (double) (tuple[1] - tuple[0]);
+            double percentOfTimeRange = timeDelta / (max - min);
+            int    width              = (int) (rowWidth * percentOfTimeRange);
 
-            if(i>0) {
-                double percentOfTimeRange2 = (tuple[0]-lastTime)/(double)(max-min);
-                int width2 = (int)(rowWidth*percentOfTimeRange2);
+            if (i > 0) {
+                double percentOfTimeRange2 = (tuple[0] - lastTime)
+                                             / (double) (max - min);
+                int width2 = (int) (rowWidth * percentOfTimeRange2);
                 buff.append("<td>");
-                buff.append(HtmlUtil.img(repository.iconUrl("/blank.gif"),
-                                         "",
-                                         HtmlUtil.attr(HtmlUtil.ATTR_WIDTH,""+width2) +
-                                         HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT,"10")
-                                         ));
-                
+                buff.append(
+                    HtmlUtil.img(
+                        repository.iconUrl("/blank.gif"), "",
+                        HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "" + width2)
+                        + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")));
+
                 buff.append("</td>");
             }
             lastTime = tuple[1];
-            System.err.println(from + " " + to + " width:" + width +" %:" + percentOfTimeRange);
+            System.err.println(from + " " + to + " width:" + width + " %:"
+                               + percentOfTimeRange);
             buff.append("<td bgcolor=red>");
-            buff.append(HtmlUtil.img(repository.iconUrl("/blank.gif"),
-                                     "",
-                                     HtmlUtil.attr(HtmlUtil.ATTR_WIDTH,""+width) +
-                                     HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT,"10")
-));
-            
+            buff.append(
+                HtmlUtil.img(
+                    repository.iconUrl("/blank.gif"), "",
+                    HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "" + width)
+                    + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")));
+
             buff.append("</td>");
             //            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] { from,
             //                    to })));
@@ -136,6 +138,7 @@ public class DateRangeCollection extends GsacMetadata {
             outputHandler.formEntryTop(
                 request, outputHandler.msgLabel("Data Availability"),
                 HtmlUtil.makeShowHideBlock("", buff.toString(), false)));
+
         return true;
     }
 

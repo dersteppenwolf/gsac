@@ -353,6 +353,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
         if (s == null) {
             return "";
         }
+
         return s;
     }
 

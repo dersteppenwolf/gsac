@@ -169,20 +169,26 @@ public abstract class SiteManager extends GsacResourceManager {
 
 
 
-    /** 
+    /**
      * For backwards compatability with sopac
      *
-    public String getSiteSelectSuffix(GsacRequest request) {
-        return getResourceSelectSuffix(request);
-    }
-
-    /** 
+     * public String getSiteSelectSuffix(GsacRequest request) {
+     *   return getResourceSelectSuffix(request);
+     * }
+     *
+     *
      * For backwards compatability with sopac
      *
+     *
+     * @param request _more_
+     * @param response _more_
+     * @param tableNames _more_
+     *
+     * @return _more_
      */
     public Clause getSiteClause(GsacRequest request, GsacResponse response,
                                 List<String> tableNames) {
-        return  getResourceClause(request, response, tableNames);
+        return getResourceClause(request, response, tableNames);
     }
 
 

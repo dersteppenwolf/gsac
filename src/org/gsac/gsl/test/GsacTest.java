@@ -94,6 +94,7 @@ public class GsacTest implements Runnable {
                 } catch (Exception exc) {
                     System.err.println("Error:" + exc);
                     exc.printStackTrace();
+
                     return;
                 }
                 cnt++;

@@ -87,9 +87,9 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
 
             }
             String id = file.getId();
-            if(getRepository().isRemoteResource(file)) {
+            if (getRepository().isRemoteResource(file)) {
                 String[] pair = getRepository().decodeRemoteId(id);
-                id = pair[0]+":" + pair[1];
+                id = pair[0] + ":" + pair[1];
             }
             pw.print(id + ",");
             pw.print(file.getType().getLabel() + ",");

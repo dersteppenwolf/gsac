@@ -102,6 +102,7 @@ public class FederatedSiteManager extends SiteManager {
                 response.addResource(getRepository().getResource(request,
                         GsacSite.CLASS_SITE, id));
             }
+
             return;
         }
 
@@ -120,10 +121,10 @@ public class FederatedSiteManager extends SiteManager {
      * @throws Exception on badness
      */
     public GsacResource getResource(String siteId) throws Exception {
-        List<String> pair    = StringUtil.splitUpTo(siteId, ":", 2);
-        String       id      = pair.get(1);
-        String       baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
-        List<GsacSite> sites =
+        List<String>   pair    = StringUtil.splitUpTo(siteId, ":", 2);
+        String         id      = pair.get(1);
+        String         baseUrl = new String(XmlUtil.decodeBase64(pair.get(0)));
+        List<GsacSite> sites   =
             (List<GsacSite>) getRepository().getRemoteObject(
                 new GsacRepositoryInfo(baseUrl), URL_SITE_VIEW,
                 HtmlUtil.args(new String[] { ARG_SITE_ID,
@@ -142,6 +143,7 @@ public class FederatedSiteManager extends SiteManager {
         site.setRepositoryInfo(
             getFederatedRepository().makeRepositoryInfo(info));
         site.setId(getRepository().getRemoteId(info, site.getId()));
+
         return site;
     }
 

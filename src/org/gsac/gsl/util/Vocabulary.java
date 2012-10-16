@@ -129,6 +129,7 @@ public class Vocabulary {
 
         if ( !wildcardEnd && !wildcardBegin) {
             result.add(s);
+
             return result;
         }
 
@@ -173,6 +174,7 @@ public class Vocabulary {
         if (idLabel != null) {
             return idLabel;
         }
+
         return new IdLabel(id);
     }
 
@@ -188,8 +190,10 @@ public class Vocabulary {
         if (value == null) {
             List<String> list = new ArrayList<String>();
             list.add(external);
+
             return list;
         }
+
         return value;
     }
 
@@ -205,6 +209,7 @@ public class Vocabulary {
         if (value == null) {
             return internal;
         }
+
         return value;
     }
 

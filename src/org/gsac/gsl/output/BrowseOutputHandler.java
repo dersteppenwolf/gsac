@@ -137,11 +137,13 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
      * @param response the response
      *
      *
+     *
+     * @return _more_
      * @throws Exception on badness
      */
     @Override
     public ResourceClass handleRequestBrowse(GsacRequest request,
-                                    GsacResponse response)
+                                             GsacResponse response)
             throws Exception {
         List   things    = null;
         String what      = request.get(ARG_BROWSE_WHAT, "");
@@ -154,6 +156,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
                 } else {
                     handleStringRequest(request, response, capability);
                 }
+
                 return capability.getResourceClass();
             }
         }
@@ -162,6 +165,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         initHtml(request, response, html, msg("Browse"));
         html.append(getHeader(request, null));
         finishHtml(request, response, html);
+
         return null;
     }
 
@@ -270,6 +274,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         String navHeader = HtmlUtil.tag(HtmlUtil.TAG_CENTER,
                                         HtmlUtil.cssClass("gsac-header2"),
                                         StringUtil.join(sep, links));
+
         return navHeader;
     }
 
@@ -294,8 +299,7 @@ public class BrowseOutputHandler extends HtmlOutputHandler {
         StringBuffer sb          = new StringBuffer();
         String       firstLetter = null;
         List<String> header      = new ArrayList<String>();
-        String       url         =
-            capability.getCollection().getRelativeUrl();
+        String       url         = capability.getCollection().getRelativeUrl();
         String       id          = capability.getId();
 
         sb.append(HtmlUtil.form(url, HtmlUtil.attr("name", "searchform")));;
