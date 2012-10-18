@@ -45,19 +45,16 @@ public class IgsRepository extends GsacRepository implements GsacConstants {
 
     /**
      * CHANGEME
-     *   Create the resource managers
+     *   Create the resource managers; ie search on sites, files, or both.
      *   Override this to make your own set of resource managers
      */
     public void initResourceManagers() {
-        // remove this line If you only want sites or files then don't call this:
-        // FIX use this better comment: "uncomment this line to search on BOTH sites and data files in the metadata "
-        super.initResourceManagers();
+        // Use this line to search on BOTH sites and data files in the metadata.
+        //super.initResourceManagers();
 
-        // remove But do call one of these:
-        //FIX move it here:
-        // you only want either sites or files but not both, uncomment one of these
-        //        getResourceManager(GsacSite.CLASS_SITE);
-        //        getResourceManager(GsacFile.CLASS_FILE);
+        // If you only want either sites or files but not both, uncomment one of these
+        getResourceManager(GsacSite.CLASS_SITE);
+        //  getResourceManager(GsacFile.CLASS_FILE);
     }
 
 

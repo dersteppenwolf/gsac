@@ -74,6 +74,7 @@ public class IgsSiteManager extends SiteManager {
     /**
      * CHANGEME
      * Get the extra site search capabilities.
+     *  Here is where you implement what items appear in site queries for this database.
      *
      * @return site search capabilities
      */
@@ -88,8 +89,6 @@ public class IgsSiteManager extends SiteManager {
                                                  Tables.SITELOG_LOCATION.COL_COUNTRY) (from Tables.java)
                     4. true (optional)
                     5.  CAPABILITY_GROUP_ADVANCED ? optional
-
-                    why is initCapability( )  not used in some cases  (the non advanced ones? )
             */
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* where from ? */
@@ -113,14 +112,13 @@ public class IgsSiteManager extends SiteManager {
 
             String[] values;
 
-            /* not wanted now for query
-            values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
-                                                             Tables.SITELOG_LOCATION.COL_CITY);
+            values = getDatabaseManager().readDistinctValues(
+                Tables.SITELOG_LOCATION.NAME,  // for a db table name
+                Tables.SITELOG_LOCATION.COL_CITY);  // for the db table's field name
             Arrays.sort(values);
-            capabilities.add(                            new Capability(GsacExtArgs.ARG_CITY,
-                                                                                                                                        "City",
-                                                                                                                                        values, true, CAPABILITY_GROUP_ADVANCED));
-            */
+            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "City",
+                                            values, true,
+                                            CAPABILITY_GROUP_ADVANCED));
 
             values = getDatabaseManager().readDistinctValues(
                 Tables.SITELOG_LOCATION.NAME,
@@ -140,11 +138,11 @@ public class IgsSiteManager extends SiteManager {
 
             /* not wanted now for query
             values = getDatabaseManager().readDistinctValues( Tables.SITELOG_LOCATION.NAME,
-                                                             Tables.SITELOG_LOCATION.COL_TECTONIC);
+            Tables.SITELOG_LOCATION.COL_TECTONIC);
             Arrays.sort(values);
             capabilities.add(                         new Capability(GsacExtArgs.ARG_TECTONICPLATE,
-                                                                                                                                        "Tectonic Plate",
-                                                                                                                                        values, true, CAPABILITY_GROUP_ADVANCED));
+            "Tectonic Plate",
+            values, true, CAPABILITY_GROUP_ADVANCED));
             */
 
             return capabilities;
