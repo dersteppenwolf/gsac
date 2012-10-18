@@ -205,7 +205,7 @@ The ant table command builds the corresponding Table* class files in @MACRO.SRCD
 
 
 ########################################################################
-Extending Java Classes  (was Code changes)
+Extending Java Classes (Java Code changes)
 ########################################################################
 
 The @MACRO.PREFIX@Repository is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
@@ -213,8 +213,7 @@ and/or @MACRO.PREFIX@FileManager objects.
 
 Files in @MACRO.SRCDIR@ have the Java code for your repository.   The Java file @MACRO.PREFIX@Repository.java is the main entry point, where you add much of the code for the new repository.   Also the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
 
-For a more detailed description of adding to the GSAC Java files, see the GSAC-WS brocheur available at
-http://facility.unavco.org/data/gsacws/gsacws.html, in the Extending Java Classes section.  You may also review code in other 
+For a more detailed description of adding to the GSAC Java files, you may review code in other 
 GSAC implementations checked into SourceForge, such as the file org/igs/gsac/IgsSiteManager.java.
 
 Add to these files:
@@ -255,7 +254,166 @@ Default query order"
 
 makeResource
 
-and also a change in getResourceSelectColumns()
+and also a change in getResourceSelectColumns().
+
+
+More examples about extending Java.
+
+GSAC core code provides a few common data values, such as latitude of a site.  For your GSAC you probably need to use additional values from your database for data searches or results.
+
+These examples are from code for the IGS Site Log Manager implementation of GSAC.  Since you have downloaded the GSAC code from SourceForge, you already have these files to look at.  The ISG GSAC code was checked into SourceForge as part of the GSAC.
+
+GSAC uses a consistent capitalization style to identify classes in Tables.java (from the database table names) and field names, in in other Java files, Java variables and Java methods.  We strongly urge you to follow this convention to aid code readability and maintenance.
+
+To demonstrate how to add a new field's value from your database to the HTML (web page) results, here is the code for a database value called frequency standard, which in this database indicates the kind of clock used by a GNSS receiver.  
+
+The database used by this GSCA implementation is represented in Java by the file org/igs/gsac/database/Tables.java.  In that file there is a Java class for a db table called SITELOG_FREQUENCYSTANDARD, with a db field variable String COL_STANDARDTYPE.  You use these Java variables to write the new code.  Do not modify Tables.java; it was created when the IGS GSAC template was built.  You do need to look in  Tables.java to find the Java names for items you want ot use from your database.
+
+In the file org/gsac/gsl/GsacExtArgs.java one new line was added to template code by the person who implemented the IGS Site Log Manager GSAC:
+    public static final String METADATA_FREQUENCYSTANDARD = "metadata.frequencystandard"; 
+This declares a new Java variable to hold the value extracted from the database, for one GPS receiver station or site.
+
+In the Java file org/igs/gsac/IgsSiteManager.java is a new method, added to template code by the person who implemented the IGS Site Log Manager GSAC:
+
+private  void readFrequencyStandardMetadata(GsacResource gsacResource) throws Exception { 
+  // get  from db table represented as class SITELOG_FREQUENCYSTANDARD the value of String COL_STANDARDTYPE 
+        // compose db query statement; 'order by' phrase is null. 
+        Statement statement = getDatabaseManager().select(Tables.SITELOG_FREQUENCYSTANDARD.COLUMNS, 
+                                        Tables.SITELOG_FREQUENCYSTANDARD.NAME, 
+                                        Clause.eq(Tables.SITELOG_FREQUENCYSTANDARD.COL_FOURID, gsacResource.getId()), 
+                                        (String)null, -1); 
+        ResultSet  results; 
+        try { 
+            // do db query 
+            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement); 
+            // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java. 
+            while ((results = iter.getNext()) != null) { 
+                addPropertyMetadata(gsacResource,GsacExtArgs.METADATA_FREQUENCYSTANDARD, "Clock", 
+                                    results.getString(Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE)); 
+                break; 
+            } 
+        } finally { 
+            getDatabaseManager().closeAndReleaseConnection(statement); 
+        } 
+    } 
+
+This reads the frequency standard value from the database.  The term "Clock" is a label for search results in the HTML web page of results.
+
+Then in the same Java file, add to the method 
+    public GsacSite makeResource(ResultSet results)
+the call to the new method:
+  readFrequencyStandardMetadata(site); 
+This method makeResource() makes the HTML output (web page) for the results from one site.
+
+Build the new GSAC, in this case with "ant" in org/igs/gsac/.  Then test your changes with "ant runserver."
+
+This finds the frequency standard value at a site, and adds it to the HTML result for a web page of results.
+
+To add the value to other GSAC site result formats, see these files:
+for  SOPAC XML Site log format, org/gsac/gsl/output/site/XmlSiteOutputHandler.java
+for  csv result format,         org/gsac/gsl/output/site/TextSiteOutputHandler.java 
+for  JSON result format,        org/gsac/gsl/output/site/JsonSiteOutputHandler.java 
+
+Data items which pertain to equipment (such as GNSS receivers and related instruments) have a special Java class
+    org/gsac/gsl/metadata/gnss/GnssEquipmentGroup.java.  
+Let's see how to add an equipment value to GSAC output.  We will again refer to core GSAC code, and code in the  IGS Site Log Manager GSAC.  Use this code as a template for writing new code about your equipment metadata.
+
+In  org/igs/gsac/database/Tables.java there is a Java class, representing a database table, called SITELOG_RECEIVER, with a variable String COL__FIRMWAREV, for the database's field holding the firmware version. You use these Java variables to write new code.  (Do not modify Tables.java) 
+
+In the method  
+    private void readEquipmentMetadata(GsacResource gsacResource) in org/igs/gsac/IgsSiteManager.java
+is one line:
+    equipment.setReceiverFirmware(results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
+in the location in the method which you can see in  IgsSiteManager.java.  
+
+In 
+    org/gsac/gsl/metadata/gnss/GnssEquipment.java is a new variable declaration
+    private String receiverFirmware = "";
+and two new methods:
+    public void setReceiverFirmware(String value) 
+and
+    public String getReceiverFirmware(String value)
+which have one very simple executable line in each method.
+
+The Java file GnssEquipmentGroup.java has two lines for the firmware version:
+   outputHandler.msg("Firmware"), 
+
+   equipmentRow(buff, getValue(equipment.getReceiverFirmware(), values, 4),"");
+Add similar lines to this same core GSAC Java file for your equipment metadata value.
+
+Equipment parameters may change with every site visit.  The IGS Site Log Manager GSAC which we are using as a template has code to show equipment metadata values for each visit ,in the results in HTML (web page).  This requires a few more lines of code in this method  gsl/metadata/gnss/GnssEquipment.java:   
+     String receiverSerial, String receiverFirmware,
+          receiverSerial, receiverFirmware, new double[] { 0,
+                        String receiverSerial, String receiverFirmware,
+        this.receiverFirmware = receiverFirmware;
+Look at the class file to see where and how these lines are used.  You add corresponding lines for your equipment.
+
+To add the equipment metadata firmware version to the XML Site Log output format, are these lines in these files:
+    org/gsac/gsl/util/XmlSiteLog.java:    
+        public static final String TAG_EQUIP_FIRMWAREVERSION =
+
+    org/gsac/gsl/output/site/SiteLogOutputHandler.java:           
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
+           equipment.getReceiverFirmware()));
+
+   org/gsac/gsl/output/site/XmlSiteLogOutputHandler.java:                
+        pw.append(makeTag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
+           equipment.getReceiverFirmware()));
+
+In short, use the IGS IGS Site Log Manager GSAC code to look for every instance of use of the GSAC variable  "COL_FIRMWAREV" and the related code files with "FIRMWAREVERSION" and "Firmware."  
+
+So far we have shown how to get database values about a discovered site, and how to output the value in the results from GSAC.  Here are examples how to include a new metadata parameter, such as for the city name, in the GSAC site query form.  You can duplicate this code for some new kind of field in your database, to allow remote users to query on that field.
+
+For example, in org/igs/gsac/database/Tables.java you need to verify that your database Java representation has the field value you wan to use, such as for IGS the value COL_CITY. and its associated database table class name; in the example there are two tables with this field value, and you need to use SITELOG_LOCATION.
+
+You need new lines like these in the core GSAC code (not IGS site log code):
+
+org/gsac/gsl/GsacExtArgs.java:  
+    public static final String ARG_CITY = GsacArgs.ARG_SITE_PREFIX + "city";
+
+In org/gsl/GsacRepository.java, in addToSearchForm() 
+add lines like
+                buffer.append(HtmlUtil.formEntry("City:",
+                  HtmlUtil.input(ARG_CITY,
+                  request.get(ARG_CITY, (String) null)));
+
+In org/gsac/gsl/metadata/PoliticalLocationMetadata.java there are several lines  to be duplicated:
+   private String city;
+   outputHandler.msgLabel("City"), city));
+
+and in addHtml(...) add
+     if (city != null) {
+            pw.append(outputHandler.formEntry(request,
+                    outputHandler.msgLabel("City"), city));
+        }
+
+and in this constructor add a new line
+    public PoliticalLocationMetadata(String country, String state,
+                                     String city) {
+        ...
+        this.city    = city;
+
+and create two new methods like these:
+    public void setCity(String value) {
+...
+    public String getCity() {... 
+which have very simple executable  contents (city = value; and return city;).
+
+In the example IGS code, there are lines to implement a query capability for, and  reading the city name:
+   org/igs/gsac/IgsSiteManager.java:   
+    values = getDatabaseManager().readDistinctValues
+    ( Tables.SITELOG_LOCATION.NAME, Tables.SITELOG_LOCATION.COL_CITY);
+
+    capabilities.add(new Capability(GsacExtArgs.ARG_CITY,    
+            "City", values, true, CAPABILITY_GROUP_ADVANCED));
+
+    org/igs/gsac/IgsSiteManager.java   
+       String city= results.getString(colCnt++);
+    org/igs/gsac/IgsSiteManager.java   
+       site.addMetadata(new PoliticalLocationMetadata(country, state, city));
+
+
+
 
 
 ########################################################################
