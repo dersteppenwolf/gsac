@@ -1,36 +1,76 @@
 <table width=100%><tr><td><a href="install.html">Previous</a></td>
 <td align=right><a href="siteresults.html">Next</a></td></tr></table>
 
-<h2>GSAC Site Search</h2>
+<h2>Search Sites </h2>
 
 
-The Site search form may contain different fields depending on 
-which GSAC repository you are viewing but they typically look like
-this:
-<br>
-<center class="gsac-helpimg"><img src="images/sites.jpg"></center>
+The Search Sites form  lets you search for sites with instruments, using several parameters.
+You can search for sites by name, in a latitude-longitude bounding box, dates, and with many other choices.  The items to query on are chosen when a new GSAC is implemented, from among fields (columns) in the database which the GSAC reads.
+</p>
+
+<p>
+Here is part of a typical GSAC  Search Sites form. 
+
+<p>
+<img src="images/sites-search-form.png">
+</p>
 
 
-<h3>Free Text Search</h3>
-The free form text search fields (e.g., &quot;4 Char ID&quot;,  &quot;Site Name&quot;) support wildcarding with &quot;*&quot;. So, for example, in the above image the search will result in any sites that begin with &quot;P12&quot;.
+<p>
+The free form text search fields (e.g., &quot;4 Char ID&quot;,  &quot;Site Name&quot;) support wildcarding with &quot;*&quot;. So, for example, in the above image the search will result in any sites that begin with &quot;P&quot;.
+You can of course search for a single site, by name.
+</p>
+
+<p>
+You can search with other search criteria, including typically date ranges and  geographic bounds. The bounds are specified with a north latitude / west longitude / east longitude / south latitude. West Longitude may be negative, or may be simply a smaller positive longitude than the east latitude.
+</p>
+
+<p>
+You can easily switch to the Search Files form. Click on the "File Search Form" icon. All site search criteria
+specified to Search Sites will be  included in the  Search Files form.
 
 
-<h3>Spatial Search</h3>
+<p>
+<h3>Advanced Site Query (Search)</h3>
+The Advanced Site Query or search options can be opened to select other search criteria.
+Here are some (not all) from the UNAVCO GSAC:
 
-You can select other search criteria including spatial bounds. The spatial bounds are specified with a north/west/east/south or you can select them in a map view.
-
-<h3>Advanced Search</h3>
-The Advanced Site Query can be opened to select other search criteria.
+<p>
+<img src="images/sites-search-advanced-bits-form.png">
+</p>
 
 
 <h3>Result Format</h3>
-As described <a href="output.html">here</a> the GSAC repository
-can return site search results in a number of formats, e.g., HTML (the default), Google Earth KML, CSV, etc.
+<p>
+There are several output formats for the results of the search.  Click open the
+<p>
+<b>Results
+<br> &nbsp; &nbsp; Output:</b>
+<P>
+option box, located below the <b>Advanced Site Query</b> area. The choices are
 
+<br>
+<img src="images/site-output-types.png">
+<br>
+By default the results are a web page  ("Site HTML") with a table of sites' information.
+"XML Site Log" is an XML file conforming to the SOPAC XML site log format.  You can also get results in 
+a csv file or as JSON.  The agency providing the GSAC respositroy must have implemented these choices.
+</p>
 
-<h3>File Search</h3> 
-You can easily switch to the File Search form. Any site search criteria
-specified in the form will be used in the File Search form.
+<p>
+The table of site search results on a web page looks like:
+</p>
+<p>
+<img src="images/search-results-sites.png">
+
+<p>
+Clicking on an item in the  <b>4 Char ID</b> column brings up a web page about that site.
+<br>
+Here is a site page from the UNAVCO GSAC respository:
+
+<p>
+<img src="images/search-results-site-details1.png">
+<img src="images/search-results-site-details2.png">
 
 
 
