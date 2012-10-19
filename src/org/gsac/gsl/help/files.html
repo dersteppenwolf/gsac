@@ -7,27 +7,83 @@ The file search form  lets you search for instrument data files
 using several parameters.  
 <br>You can also select on sites which have the files you want.
 
-<center class="gsac-helpimg"><img src="images/file-query-1.png"></center>
+
+<p>
+Here is part of a typical GSAC Files Search form. In this example the 
+<b>Data Date</b> range is for the first day in October 2012, and the <b>Site Query</b> option is 
+used to search for files from a station named PALM.
+Most search choices are optional; use the ones which suit your needs.
+</p>
+
+<p>
+<img src="images/file-query-1.png">
+</p>
 
 <p>
 There are several output formats for the results of the search.  Click open the 
 <p>
 <b>Results
-<br> Output:</b>
-<br>
-option box. The choices are 
+<br> &nbsp; &nbsp; Output:</b>
+<P>
+option box, located below the <b>Site Query</b> area. The choices are 
 
 <br>
-<center class="gsac-helpimg"><img src="images/file-output-types.png"></center>
+<img src="images/file-output-types.png">
+<br>
+By default the results are a web page ("File HTML"). 
+</p>
 
 <p>
-By default the results of a search  for files are shown as a web page ("File HTML"). 
+A web page of file search results looks like:
+</p>
+
+<img src="images/file-results-2.png">
 
 <p>
-A sample web page of results is:
-<p>
-<center class="gsac-helpimg"><img src="images/file-results-2.png"></center>
+Clicking on an item in the <b>File</b> column gives a new page like this,
+with some information about one file:
+<ul>
+<img src="images/file-results-3.png">
 
+<p>
+Clicking on the <b>Site:</b> name brings up the normal page of information about this site from GSAC.
+</p>
+
+<p>
+Clicking on the <b>URL:</b> does the normal response to clicking on a URL in your browser; it may show a page of text or may
+prompt for a file download from the URL.
+
+<p>
+Note that you must have FTP server running on your web site with complete information about the file location in
+your database for GSAC and FTP access.
+</ul>
+</p>
+
+<p>
+Back on the main file results table, clicking on a name in the <b>Site</b> column brings up the normal page of information about this site from GSAC.
+</p>
+
+<p>
+On the main file results table, clicking on 
+<b>Wget Script</b> gives you a shell file "gascwget.sh" which has one or more lines, each line a wget command to download 
+the files in the results table you are looking at.  Such as
+<br>
+wget ftp://data-out.unavco.org/pub/rinex/qc/2012/274/palm2740.12S
+<br>
+wget ftp://data-out.unavco.org/pub/rinex/obs/2012/274/palm2740.12d.Z
+<br>
+wget ftp://data-out.unavco.org/pub/rinex/nav/2012/274/palm2740.12n.Z
+</p>
+
+<p>
+Note this wget script file will download <i>all</i> the files in the output page, which for some searches is hundreds of files.
+One line from the wget script file will download one file.
+</p>
+
+
+<p>
+On the main file results table, clicking on 
+<b>Download files</b> gives you a  file "files.jnlp" to download all the files using Java Webstart.
 
 <table width=100%><tr><td><a href="sites.html">Previous</a></td>
 <td align=right><a href="downloader.html">Next</a></td></tr></table>

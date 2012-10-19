@@ -8,21 +8,27 @@ To implement a new GSAC-WS web services interface to your data repository, you d
 </p>
 
 <p>
-GASC-WS code uses your existing database (Oracle, Postgres, or MySQL), file system, and FTP server.  GSAC-WS does not copy or hold any of your data. GSAC-WS is middleware between an existing data repository (a database and related instruments' data files) and remote users.  GSAC expects that the database has sufficient metadata about the instrumented sites and about equipment at the sites.
+GASC-WS code uses your existing database (Oracle, Postgres, or MySQL), file system, and FTP server.  GSAC-WS does not copy or hold any of your data. GSAC-WS is middleware between an existing data repository (a database and related instruments' data files) and remote users.  GSAC expects that the database has sufficient metadata about the instrumented sites, about equipment at the sites, and about data files from the instruments.  GSAC is typically used for geodesy 
+observations, such as GNSS, but can be used for any site-based observations.
 </p>
 
 <p>
 You need Java 1.6 or higher, and 'ant' installed, a Java tool to build and run Java applications; see 
-<a href="http://ant.apache.org/">Ant</a>.  You will need to have the 'subversion' code management tool, also called 'svn,' installed on your computer.   Java, ant, and svn are widely used tools of software engineers.  Search online for how to download and install ant and svn if your system does not already have them.  Debian, Redhat, and Ubuntu generally have a one-line command to install ant and svn, such as apt-get install subversion.  The new Mac OS does not come with svn.  A write up on how to install svn on the Mac is online at 
-<a href="http://www.wikihow.com/Install-Subversion-on-Mac-OS-X">Subversion for Mac</a>.   
+<a href="http://ant.apache.org/" target=second>Ant</a>.  You will need to have the 'subversion' code management tool, also called 'svn,' installed on your computer.   Java, ant, and svn are widely used tools of software engineers.  Search online for how to download and install ant and svn if your system does not already have them.  Debian, Redhat, and Ubuntu generally have a one-line command to install ant and svn, such as apt-get install subversion.  The new Mac OS does not come with svn.  A write up on how to install svn on the Mac is online at 
+<a href="http://www.wikihow.com/Install-Subversion-on-Mac-OS-X" target=second>Subversion for Mac</a>.   
 </p>
 
 <p>
 Any competent Linux programmer should be able to install new GSAC web services for your repository in a few days, with only limited Java experience.  The time savings of using and installing GSAC-WS far exceed the resources demanded to create an equivalent set of archive services from scratch.  
-Core GSAC-WS code has for example, at the moment, 31000 lines in Java files.  
-It is much easier to use GSAC-WS, and write perhaps 200 lines of Java, than to begin with nothing. 
-Much of the coding needed for GSAC can follow examples in working GSAC code.
-And with a GSAC-enabled repository you will be able to interconnect with other GSAC-WS enabled data repositories with no extra coding.
+The core GSAC-WS code has, for example, more than 31000 lines of  Java.  Web services for archives are more complex than first expected. 
+It is much easier to use GSAC-WS, and write perhaps 200 lines of Java, than to begin with nothing.  Installation of GSAC is partly automated; for example,
+ GSAC reads your database schema and constructs Java classes and variables to work with the database and its field values.
+Most of the small amount of the remaining code needed for GSAC simply follows examples in working GSAC code.
+</p>
+
+<p>
+GSAC provides a complete, proven, ready to use, suite of web services for geophysics data repositories.
+And with a GSAC-enabled repository you will be able to interconnect with other GSAC data repositories with no extra coding.
 </p>
 
 <p>
@@ -30,6 +36,7 @@ And with a GSAC-enabled repository you will be able to interconnect with other G
 </p>
 
 <p>
+The instructions here use Linux, with the bash shell.
 Make a working area, for example:
 </p>
 
@@ -56,54 +63,113 @@ cd gsac/trunk/
 
 <p>
 Do the initial build with ant:
-
 </p>
 
 <p>
 ant 
-
 </p>
 
 <p>
-This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  Run ant in a directory with a build.xml file.
+(You always run ant in a directory with a build.xml file.)
+This ant command builds most of the GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  
 
+<!--
 </p>
 
 <p>
-The build will create these items in trunk/ :
-
+The build will create these items in trunk/:
 </p>
 
 <p>
-build.xml <br>  dist/ <br>  examples/ <br>  lib/ <br>   README  src/
-
+build.xml <br>  dist/ <br>  examples/ <br>  lib/ <br>   README <br> src/
 </p>
 
 <p>
-If you investigate you will find dozens of new files and directories.  Next cd to org/gsac/.  Follow the instructions in the  org/gsac/README file (this is README Part 1 of two README files).  You will need an account for GSAC to query your database.  
+-->
+
+If you investigate, you will find dozens of new files and directories.  
 </p>
 
 <p>
+<b>README (1)</b>
+</p>
 
+<p>
+Next cd to trunk/src/org/gsac/.  
+<br>Follow the instructions in the  org/gsac/README file (this is README Part 1 of two README files).  You will need an account for GSAC to query your database,
+and the path to the database location.  
+</p>
+
+<p>
 This completes an initial operational server which you may query from a local URL.  It lacks specific details about your data repository.
 </p>
-<p>
 
-<b>Completing the GSAC Web Services for Your Data Repository</b>
+<p>
+<b>Completing the GSAC Web Services for Your Data Repository (README 2)</b>
 </p>
+
 <p>
 
 Change the working directory to  org/myrepo/gsac/,  where 'myrepo' is whatever target package name you specified in the new myrepomacros.properties file which you created.  
 </p>
-<p>
 
+<p>
 Follow the instructions in the  org/myrepo/gsac/README file (this is README Part 2).  You need to know the tables and fields (columns) in your database which will be used in web services queries and results. The  README section "Extending Java Classes" has examples of code needed by GSAC to use particular fields in your database.  Work through the examples carefully to implement your code.
+</p>
+
+
+<p>
+<b>Running the new GSAC web site with Tomcat</b>
+</p>
+
+<p>
+The ant process  builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/,
+and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
+
+<p>
+Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
+</p>
+
+<p>
+Building GSAC makes a Tomcat .war file in the trunk/dist/ directory:
+ ~/gsac/sourceforge/gsac/trunk/dist/gsac[mygsac].war.
+</p>
+
+<p>
+Copy this file to the Tomcat apachetomcatdev/webapps/ directory on your web server host.
+The GSAC server web should become immediately available
+ without a restart of Tomcat, especially if you are using "hot deploy," .
+</p>
+
+<p>
+You can see the output of the Tomcat process by doing for example, tail -f /usr/local/apachetomcatdev/logs/catalina.out
+This should show it reading the GSAC war file.
+</p>
+
+<p>
+If for some reason Tomcat is misbehaving you can do:
+</p>
+
+<p>
+sudo /etc/init.d/tomcatdev stop
+<br>sudo /etc/init.d/tomcatdev start
+<br>
+to restart tomcat
 
 </p>
+
+<p>
+The servlet reads the properties file:
+<br>
+/usr/local/apachetomcatdev/conf/gsacigs.properties
+<br>
+which contains the database authentication info, if you chose not to include that in the --- file.
+
+</p>
+
 <p>
 The style, decoration and layout of the GSAC web pages can match other pages on your web site; see the GSAC installation README files for help about the header.html and footer.html files used by GSAC.
 This completes the GSAC-WS web services interface to your data repository.  
-
 </p>
 <p>
 You will have a web site, query forms giving results in several formats from your repository, data file downloads where desired, and the ability to access the web services with an API.  The GSAC web server client provides programmatic access to your repository.  Your GSAC-enabled repository can be part of a larger federated GSAC repository with no further effort by you.
