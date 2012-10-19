@@ -1,16 +1,72 @@
-<table width=100%><tr><td><a href="index.html">Previous</a></td>
-<td align=right><a href="sites.html">Next</a></td></tr></table>
+<table width=100%><tr><td><a href="browse.html">Previous</a></td>
+<td align=right><a href="client.html">Next</a></td></tr></table>
 
-<h2>GSAC Information </h2>
+<h2>GSAC Information</h2>
 
-<p>The top menu item Information in nay GSAC repository shows a page with ...
+<p>
+The GSAC  Information page has links for information needed to access a repository via the GSAC server.  In a way this is a collection of capabilities for this particular server.  These are something like a WSDL (Web Services Description Language) document, an XML format file for describing network services, but not a true WSDL.  The specific items listed here are shared across all GSACs and all them to inter-operate when needed.
+</p>
+
+<p>
+The <b>Repository information XML</b> link shows something like:
+</p>
+
+<p>
+<img src="images/repository-info-readout.png">
+</p>
+
+
+<p>
+This is a list in XML format of all  the items in the database underlying a particular GSAC, which that GSAC has implemented for searches.  
+</p>
+
+<p>
+
+In a row like
+</p>
+
+<p>
+<capability id="site.state" type="enumeration" label="State" group="Advanced Site Query" columns="30" allowMultiples="true">
+</p>
+
+<p>
+The 'id-s' in the "Repository information xml" are GSAC's internal names for parameters and these names are common to all GSAC repositories.  These are also listed as the "URL argument" in the Information pages sections  <b>Site Query, File Query, Misc Arguments, Output Types, and Vocabularies</p>.  
+</p>
+
+<p>
+The XML also shows all allowed values for enumerated types of data in the database, such as the Site Group values (names) in the XML file fragment shown above.
+</p>
+
+<p>
+The "Repository information XML"  is used by federated GSAC repositories to find how to interact with other GSAC respositories.
+</p>
+
+<p>
+You can see a complete "Repository information XML" at 
+http://facility.unavco.org/gsacws/gsacapi/repository/view?output=XML.
+</p>
+
+<p>
+The  <b>Base URL</b> is the first part of a URL for this particular GSAC-enabled repository; For example the UNAVCO GSAC repository has base URL  http://facility.unavco.org/gsacws.  The remainder of the URL is the same for all GSAC repositories.   See the Help: API section for examples.
+</p>
+
+<p>
+The information available under <b>Site Query</b> shows all the parameter names (GSAC 'URL arguments'), data types ('Type') and meaning of the data parameters ('Values') you can query on in a GSAC implementation, for example, this partial list from the UNAVCO GSAC:
+</p>
+
+<p>
+<img src="images/site-query-types.png">
+</p>
+
+<p>
+Similarly, the information in the links <b>File Query, Misc Arguments, Output Types, and Vocabularies</b> is used in the GSAC API.  See the  Help: API section .
 
 
 
 
 <p>
-<table width=100%><tr><td><a href="index.html">Previous</a></td>
-<td align=right><a href="sites.html">Next</a></td></tr></table>
+<table width=100%><tr><td><a href="browse.html">Previous</a></td>
+<td align=right><a href="client.html">Next</a></td></tr></table>
 
 
 
