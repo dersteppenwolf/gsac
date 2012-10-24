@@ -333,6 +333,7 @@ public class GsacClient implements GsacConstants {
 
     /** _more_ */
     public static final String OUTPUT_FILE_URL = "file.url";
+    public static final String OUTPUT_SITE_LOG_XML = "site.xmllog";
 
 
     /**
@@ -707,37 +708,41 @@ public class GsacClient implements GsacConstants {
         System.err.println("Usage: GsacClient");
 
         System.err.println("\t-properties <properties file to load>");
-        System.err.println(
-            "\t-url <url to fetch> <optional filename to write to> act like wget");
+
         System.err.println(
             "\t-" + ARG_SERVER
-            + "  http://examplegsacrepository.edu/someprefixpath");
-        System.err.println("\te.g.: http://facdev.unavco.org/gsacws");
+            + "  http://examplegsacrepository.edu/someprefixpath, e.g. http://facility.unavco.org/gsacws");
+        /* System.err.println(" e.g. http://facility.unavco.org/gsacws"); */
         System.err.println(
-            "\t-info  fetch and print to stdout the repository information includings available arguments");
+            "\t-info  fetch and print to stdout the remote GSAC repository's information, including available arguments");
         System.err.println(
             "\t-" + ARG_DOWNLOAD
             + " <destination directory> Do a file search and download the files to the given directory");
 
         System.err.println(
             "\t-" + ARG_KEEP_PATHS
-            + " <true|false> When doing the download do we maintain the directory structure of the ftp urls. Default is true");
+            + " <true|false> When doing the download, do we maintain the directory structure of the ftp urls?  Default is true");
 
+        /* System.err.println("\t-" + ARG_QUERY + " site|file or: -" + QUERY_FILE + "|-" + QUERY_SITE); */
+        System.err.println("\t-" + ARG_QUERY + " site  or -" + QUERY_SITE + " means do a site query (and add other arguments)." );
+        System.err.println("\t-" + ARG_QUERY + " file  or -" + QUERY_FILE + " means do a file query (and add other arguments)." );
 
-
-        System.err.println("\t-" + ARG_QUERY + " site|file or: -"
-                           + QUERY_FILE + "|-" + QUERY_SITE);
         System.err.println(
             "\t-" + ARG_OUT
             + " <outputfile>  Write the output to the specified file");
-        System.err.println("\tany number of query arguments, e.g.:");
-        System.err.println("\t-site.code \"P12*\"");
-        System.err.println("\t-" + ARG_BBOX + " west south east north");
+
+        System.err.println("\t-output  specify the format of the query results (such as "+OUTPUT_SITE_LOG_XML+" or "+OUTPUT_FILE_URL+ ")");
+
+        System.err.println( "\t-url <url to fetch> <optional filename to write to> act like wget");
+
+        System.err.println("\t After above gsaclient arguments you can add any number of query arguments, e.g.:");
+        System.err.println("\t-site.code P12* ");
+        System.err.println("\t-" + ARG_BBOX + " west-longi south-lati east-longi north-lati, such as -bbox -130.0 30.5 -125.0 33.0");
         System.err.println(
-            "\tnote: for any of the arguments you can specify a file that contains the argument values, e.g.:");
-        System.err.println("\t\t-site.code " + FILE_PREFIX + "sites.txt");
+            "\tNote: for any of the arguments you can specify a file that contains extra arguments, e.g.:");
+        System.err.println("\t\t-site.code " + FILE_PREFIX + "site_queries.txt");
         System.err.println(
-            "\tWhere sites.txt contains site codes, one per line");
+            "\twhere sites_queries.txt contains site query codes and values, one per line.");
         System.exit(1);
     }
 

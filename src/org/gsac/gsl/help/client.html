@@ -6,129 +6,241 @@
 pre {
    margin-top:10px;
    margin-bottom:10px;
-   margin-left:30px;
-   font-style:italic;     
+   margin-left:20px;
 }
 </style>
 
+<font face="verdana">
+
 <h3>GSAC Command Line Client</h3>
-There is a Java-based command line tool that allows you to do programmatic searches of a GSAC repository
-and download files.
-To run the GSAC client you need Java 1.6 or higher.
 
+<font size="-2">
 
-<h3>Dowload and Installation</h3>
-The GSAC command line client is available for download at the GSAC SourceForge site:
-<a href="http://sourceforge.net/projects/gsac/">http://sourceforge.net/projects/gsac</a>.
-Once downloaded simply unzip the file. This will create a directory called <i>gsacclient</i>.
-
-
-
-<h3>Running</h3>
-
-You can run the GsacClient either through the given gsacclient.sh (change permissions on it):
-<pre>gsacclient.sh.jar &lt;arguments&gt;</pre>
-
-or directly using java:
-<pre>java -jar lib/gsacclient.jar &lt;arguments&gt;</pre>
-
-To see the command line arguments:
-<pre>gsacclient.sh -help</pre>
-
-You can specify any number of arguments that will always be used when running the client.
-Just edit the gsac.properties file in the release directory. e.g., uncomment the line:
-<pre>server=http://facility.unavco.org/gsacws</pre>
-
-You can also specify a properties file of the same format on the command line:
-<pre>gsacclient.sh -properties &lt;some properties file&gt;</pre>
-
-If you don't have a server defined in the gsac.properties file specify it with -server.
-You just use the url path leading up to the gsacapi, e.g.:
-<pre>-server http://facility.unavco.org/gsacws</pre>
-
-<h3>Listing Repository Information</h3>
-
-List out the repository information from UNAVCO:
-<pre>gsacclient.sh -server http://facility.unavco.org/gsacws -info</pre>
-
-List out the repository information from SOPAC:
-<pre>gsacclient.sh -server http://geoappdev02.ucsd.edu/gsacws -info</pre>
-
-
-For the following examples we'll assume we're hitting the server defined in gsac.properties (Unavco by default).
-<p>
-
-Now you can either do searchs for sites or searches for files. You specify this with:
-<pre>-site</pre>
-or:
-<pre>-file</pre>
-
-<h3>Site searches</h3>
-
-Wild card site code:
-<pre>gsacclient.sh  -site -site.code "p12*"</pre>
-
-Bounding box search: 
 <pre>
-gsacclient.sh  -site -bbox -115 30 -100 40
-(note: bbox is west south east north)
+SAC provides a client program to make site and file queries of any GSAC repository, and get the results 
+returned in a variety of formats.  The client uses the GSAC RESTful web API (application interface).  
+You can do program-matic searches of a GSAC repository, and download files. 
+To run the GSAC client you need Java 1.6 or higher.  If needed, install Java on your machine.  
+To install  Java on Mac, see the instructions above under "Installing GSAC."
+</pre><h3>
+Download
+</h3><pre>
+The GSAC command line client is available for download as part of the GSAC package at SourceForge.  
+
+Download the GSAC client code from SourceForge. On http://sourceforge.net/projects/gsac/
+click "Download  gsacclient.zip."  The file is 4 MB.
+Once downloaded, simply unzip the file gsacclient.zip (Linux):
+
+unzip gsacclient.zip
+
+This will create a directory (folder) called gsacclient, which includes, among other items, the file 
+gsacclient.sh and the file gsacclient/lib/gsacclient.jar.
+</pre><h3>
+
+
+
+Running
+</h3><pre>
+The client program is the Java archive file gsacclient/lib/gsacclient.jar. You can run the GSAC client 
+on LINUX or Mac with either the shell file, gsacclient.sh:
+
+cd gsacclient/
+
+gsacclient.sh <arguments> 
+
+or directly using Java and the jar file:
+
+java -jar gsacclient/lib/gsacclient.jar <arguments>
+
+You first may need to  change file permissions; for example, by:
+
+chmod 744 gsacclient/gsacclient.sh
+
+The examples shown here below should work if you try them in your terminal.
+
+On Windows, since the gsacclient is a command line tool, it must be run from a terminal.  In Windows, 
+the terminal is the Command Prompt application.  Click on Start, and then Run, and in the Run window 
+type cmd, and click on OK to bring up a DOS emulation window where you can enter command lines.
+
+The client uses its own arguments and the GSAC API arguments.  To see the client's  command line arguments do:
+
+gsacclient.sh -help
+
+which shows
+    -properties <properties file to load>
+    -server  http://examplegsacrepository.edu/someprefixpath, e.g.  http://facility.unavco.org/gsacws
+    -info  fetch and print to stdout the remote GSAC repository's information, including available arguments
+    -download <destination directory> Do a file search and download the files to the given directory
+    -keep_paths <true|false> When doing the download, do we maintain the directory structure of the ftp urls?  Default is true
+    -query site  or -site means do a site query (and add other arguments).
+    -query file  or -file means do a file query (and add other arguments).
+    -out <outputfile>  Write the output to the specified file
+    -output  specify the format of the query results (such as 'site.xmllog' or 'file.url' )
+    -url <url to fetch> <optional filename to write to> act like wget
+
+     After above gsaclient arguments you can add any number of query arguments, 
+     e.g.:
+
+    -site.code P12*
+    -bbox west-longi south-lati east-longi north-lati, such as bbox -120.0 30.5 -117.0 33.0
+
+    Note: for any of the arguments you can specify a file that contains extra arguments, e.g.:
+
+        -site.code file:site_queries.txt
+
+    where sites_queries.txt contains site query codes and values, one per line.
+
+The  -server  argument is essential to query a remote GSAC-enabled repository.  
+Use the Base URL shown in the GSAC'S site Information page.   
+</pre><h3>
+
+
+
+Site searches
+</h3><pre>
+A sample query for one GPS site is:
+
+gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE1
+
+Spaces separate arguments in the gsacclient command line.
+The results are sent to your terminal, from the remore GSAC web services, in csv format:
+
+#site.id,site.code,site.name,site.latitude,site.longitude,site.elevation
+
+23478_ADE1_5650,ADE1,Australia NGA collocated,-34.729,138.6473,38.1548
+
+The results on screen begin with the URL API, which is equivalent to the gsacclient query, in this case (one line):
+
+    http://facility.unavco.org/gsacws/gsacapi/site/search   site.code=ADE1&output=site.csv
+
+You can try this API query request in a browser. Note that "&" is the glue to connect different 
+arguments in the URL query.  This is typical use of  "&" in web services.
+
+You can get results in other formats using the argument "-output,", such has much more information 
+in SOPAC XML Site Log format:
+
+gsacclient.sh -server http://facility.unavco.org/gsacws -site.code "ADE1" -output site.xmllog
+
+Results of this query are not shown here since they are too long. 
+
+This command 
+
+gsacclient/gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE*
+
+finds three sites, all beginning with "ADE" (a wild card search).
+That command, plus  -output site.xmllog will send three SOPAC XML Site Logs.  
+
+You can direct results, such as all those site logs in XML, to a file:
+
+gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE* -output site.xmllog -out ADE_site_logs.xml
+
+The argument for a latitude-longitude bounding box search is
+-site -bbox -120.0 30.5 -117.0 33.0
+The bbox values are longitudes and latitudes: west, south, east, and north. bbox is preceeded by -site.
+</pre><h3>
+
+
+
+GSAC Client Properties File
+</h3><pre>
+You can specify one or more gsacclient arguments to use when running the client. 
+Just edit the gsac.properties file in the gsacclient/ directory. For example, uncomment the line: 
+
+server=http://facility.unavco.org/gsacws
+
+to query the UNAVCO GSAC with every gsacclient call.  To make every command a site query, add the line
+
+query=site
+
+You can also create and use several different properties files of the same format. For example:
+
+gsacclient.sh -properties  gsac_client_3.properties.
+
+Any gsacclient arguments may be entered in a properties file. For example, if you want to get 
+more than the default 1000 results,  add -limit <count>, e.g.: 
+
+gsacclient.sh  -site -limit 1500
+</pre><h3>
+File searches
+</h3><pre>
+Site code search that gets files for site P123 (caution, this returns 1001 file names).
+
+gsacclient.sh  -file -site.code p123
+
+Results in this case are a list of information about all files available from site P123, 
+like this, not data files' contents:
+
+3233505,GNSS RINEX Observation (Hatanaka, Unix Compressed),739030c019ab4169acc66a317daead0a,638221,2007-03-06,ftp://data-out.unavco.org/pub/rinex/obs/2007/064/p1230640.07d.Z
+
+3258729,GNSS Navigation,74787c121b5fb8344240ee05c3927a33,32805,2007-02-15,ftp://data-out.unavco.org/pub/rinex/nav/2006/279/p1232790.06n.Z
+
+Other example gsacclient queries:
+
+Absolute time range file search for p123 
+
+gsacclient.sh  -file site.code p123 -file.datadate.from 2010-09-01  -file.datadate.to 2010-09-15
+
+which gets back 46 files.
+
+Absolute time range file search for p123, and return FTP URLs for data files:
+
+gsacclient.sh  -file site.code p123 -file.datadate.from 2010-09-01 -file.datadate.to 2010-09-15     -output file.url
+
+Time relative file search for p123 
+
+gsacclient.sh  -file site.code p123 -file.datadate.from "-1 month" -file.datadate.to now
+
+Both the 'from' and 'to' arguments must be used together.  You can also use -file.datadate.to "-1 month".
+
+Search on file type, for example,  just get RINEX and HATANAKA files 
+
+gsacclient.sh -file -output url site.code p123 -file.datadate.from 2010-09-01 -file.datadate.to 2010-09-15 -file.type 4 -file.type 5
+
+Type "4" is the RINEX obs file type at UNAVCO, and  "5" is Hatanaka compressed obs files.   met files are    and nav files are . 
+</pre><h3>
+File searches with downloads
+</h3><pre>
+This query  will do a file query, retrieve the file FTP URLs and download the files into the 
+destination_directory. There is a limit of 10 download files. 
+
+gsacclient.sh  -download destination_directory  -site.code p123  -limit 10
+
+This command maintains the original directory FTP file paths, on the remote GSAC server.  
+For example if your local destination directory is data-dir/, you may see the data files 
+in a path such as data-dir/pub/rinex/obs/.  To have all of the files put into a single directory, 
+set the the -keep_paths argument to false: 
+
+gsacclient.sh  -download destination_directory  -site.code p123  -limit 10   -keep_paths false 
+</pre><h3>
+Listing Repository Information
+</h3><pre>
+You can get information (including gsacclient arguments) about a GSAC repository with for example
+
+gsacclient.sh -server http://facility.unavco.org/gsacws -info
+
+Similar and more complete information is on the GSAC repository's Information page; click on 
+Repository information xml.  That list will also show allowed values for enumerated fields in the GSAC database.
+
+</pre><h3>
+Using Linux
+</h3><pre>
+You can use gsac client calls as part of Linux commands, such as 
+
+gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE* -output site.xmllog | grep receiverType
+
+lists the reciver types for sites beginning with ADE.
 </pre>
+<gnssReceiver><equip:receiverType><![CDATA[ASHTECH Z-XII3]]></equip:receiverType>
 
+<gnssReceiver><equip:receiverType><![CDATA[ASHTECH Z-XII3]]></equip:receiverType>
 
-
-
-<p>
-If you want to get more then the default 1000 results add -limit &lt;count&gt;, e.g.:
-<pre>gsacclient.sh  -site -limit 1500</pre>
-
-<h3>File searches</h3>
-
-Site code search that gets files
-<pre>gsacclient.sh  -file -site.code p123</pre>
-
-
-Absolute time range file search for p123
+<gnssReceiver><equip:receiverType><![CDATA[TRIMBLE 5700]]></equip:receiverType>
 <pre>
-gsacclient.sh  -file site.code p123 
-               -file.datadate.from 2010-09-01 
-               -file.datadate.to 2010-09-15
-</pre>
 
+Then  write results in a new file ADE_receiver_list: 
 
-Absolute time range file search for p123 return the ftp urls (the -output url)
+gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE* -output site.xmllog | grep receiverType >> ADE_receiver_list
 
-<pre>
-gsacclient.sh  -file -output url site.code p123 
-               -file.datadate.from 2010-09-01 
-               -file.datadate.to 2010-09-15</pre>
-
-Time relative file search for p123
-<pre>
-gsacclient.sh  -file site.code p123 
-               -file.datadate.from "-1 month" 
-               -file.datadate.to now
-</pre>
-
-Search on file type. .e.g. just get RINEX and HATANAKA files ("4" is the rinex type at unavco. "5" is hatanaka. We will be changing this)
-
-<pre>
-gsacclient.sh -file -output url site.code p123 
-              -file.datadate.from 2010-09-01 
-              -file.datadate.to 2010-09-15 
-              -file.type 4 -file.type 5</pre>
-
-
-<h3>File searches with downloads</h3>
-You can also have the client  download the files with the -download argument, e.g.:
-<pre>gsacclient.sh  -download destination_directory  -site.code p123  -limit 10</pre>
-
-The above will do a file query, retrieve the file FTP urls and download the files into the destination_directory.
-It will maintain the original directory structure of the FTP file paths. To have all of the files put into a single directory
-use the -keep_paths argument:
-<pre>
-gsacclient.sh  -download destination_directory  
-               -keep_paths false 
-               -site.code p123  -limit 10
 </pre>
 
 
