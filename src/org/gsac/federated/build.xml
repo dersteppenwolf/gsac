@@ -56,7 +56,9 @@
 
 
 
-        <property name="classpath" value="${srcdir}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
+        <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
+        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
+        <property name="classpath" value="${srcdir}:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
 
 
         <property name="build.sysclasspath"    value="ignore" />
