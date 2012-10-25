@@ -91,7 +91,7 @@ public class GsacClient implements GsacConstants {
 
     /** These are the command line arguments that are just for the client and do not get passed along on the request */
     public static final String[] clientArgs = { ARG_SERVER, ARG_QUERY,
-            ARG_DOWNLOAD, ARG_KEEP_PATHS };
+                                                ARG_DOWNLOAD, ARG_KEEP_PATHS, ARG_OUT };
 
 
 
