@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- 
-     This build script assumes the source tree is structured as:
-     base_directory/
-             src
-             lib
-             dist (this gets created by the build)
-    The basedir (below) needs to be set to the base_directory relative to this build.xml
-    The localinit target defines the properties for the build. These properties need to be changed.
-    
-    The default build target is test_build. This copies the dbresources/gsacdb_test.properties file 
-    to resources/gsacdb.properties and makes a .zip and .war in the dist dir
 
-    Once run you can run the server with:
-    ant runserver
--->
-
-<project basedir="../../../.." default="test_build" name="GSAC Build">
+<project basedir="../../../.." default="igs_test_build" name="GSAC Build">
 
     <target name="localinit">
 <!-- base name for build products -->
@@ -31,7 +16,6 @@
 
 <!-- The root of the Tomcat URL -->
         <property name="urlroot" value="/${basename}"/>
-
     </target>
 
 
@@ -39,7 +23,6 @@
         <property name="build" value="test"/>
         <property name="version" value="1.0"/>
         <property name="package" value="${basename}${build}${version}"/>
-
         <property name="distdir" value="${basedir}/dist"/>
         <mkdir dir="${distdir}"/>
         <property name="jardir" value="${distdir}"/>
@@ -73,7 +56,23 @@
     </target>
 
 
-    <target name="test_build">
+
+
+    <target name="ea_test_build">
+        <property name="basename" value="gsacea"/>
+        <property name="build" value="test"/>
+        <antcall target="build"/>
+    </target>
+
+    <target name="ea_production_build">
+        <property name="basename" value="gsacea"/>
+        <property name="build" value="production"/>
+        <antcall target="build"/>
+    </target>
+
+
+
+    <target name="igs_test_build">
         <property name="build" value="test"/>
         <antcall target="build"/>
         <echo message="********************************"/>
@@ -82,7 +81,7 @@
         <echo message="********************************"/>
     </target>
 
-    <target name="production_build">
+    <target name="igs_production_build">
         <property name="build" value="production"/>
         <antcall target="build"/>
     </target>
@@ -90,17 +89,19 @@
 
     <target name="build" depends="init,clean">
         <echo message="Creating ${build} build"/>
-
-<!-- Uncomment this line if you want to build the gsacws.jar everytime 
-        <ant antfile="${srcdir}/org/gsac/gsl/build.xml" target="gsacjar"/>
--->
-
         <property name="db.properties" value="${repositorydir}/dbresources/gsacdb_${build}.properties"/>
         <copy overwrite="true"    file="${db.properties}"  
                  tofile="${repositorydir}/resources/gsacdb.properties" />
+
         <property name="server.properties" value="${repositorydir}/resources/gsacserver_${build}.properties"/>
         <copy overwrite="true"    file="${server.properties}"  
                  tofile="${repositorydir}/resources/gsacserver.properties" />
+
+        <copy overwrite="true"    file="${repositorydir}/resources/${basename}.properties"  
+              tofile="${repositorydir}/resources/gsac.properties" />
+
+        <copy overwrite="true"    file="${repositorydir}/htdocs/${basename}_index.html"  
+              tofile="${repositorydir}/htdocs/index.html" />
         <antcall target="release"/>
         <antcall target="war"/>
     </target>
