@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<project basedir="../../../.." default="igs_build" name="GSAC Build">
+<project basedir="../../../.." default="gsacigs" name="GSAC Build">
 
     <target name="localinit">
 <!-- base name for build products -->
@@ -56,14 +56,13 @@
 
 
 
-
-    <target name="ea_build">
+    <target name="gsacea">
         <property name="basename" value="gsacea"/>
         <antcall target="build"/>
     </target>
 
 
-    <target name="igs_build">
+    <target name="gsacigs">
         <antcall target="build"/>
         <echo message="********************************"/>
         <echo message="To run the server run:"/>
