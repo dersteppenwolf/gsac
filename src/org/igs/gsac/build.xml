@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<project basedir="../../../.." default="igs_test_build" name="GSAC Build">
+<project basedir="../../../.." default="igs_build" name="GSAC Build">
 
     <target name="localinit">
 <!-- base name for build products -->
@@ -20,9 +20,8 @@
 
 
     <target name="init" depends="localinit">
-        <property name="build" value="test"/>
         <property name="version" value="1.0"/>
-        <property name="package" value="${basename}${build}${version}"/>
+        <property name="package" value="${basename}${version}"/>
         <property name="distdir" value="${basedir}/dist"/>
         <mkdir dir="${distdir}"/>
         <property name="jardir" value="${distdir}"/>
@@ -58,22 +57,13 @@
 
 
 
-    <target name="ea_test_build">
+    <target name="ea_build">
         <property name="basename" value="gsacea"/>
-        <property name="build" value="test"/>
-        <antcall target="build"/>
-    </target>
-
-    <target name="ea_production_build">
-        <property name="basename" value="gsacea"/>
-        <property name="build" value="production"/>
         <antcall target="build"/>
     </target>
 
 
-
-    <target name="igs_test_build">
-        <property name="build" value="test"/>
+    <target name="igs_build">
         <antcall target="build"/>
         <echo message="********************************"/>
         <echo message="To run the server run:"/>
@@ -81,18 +71,10 @@
         <echo message="********************************"/>
     </target>
 
-    <target name="igs_production_build">
-        <property name="build" value="production"/>
-        <antcall target="build"/>
-    </target>
 
 
     <target name="build" depends="init,clean">
-        <echo message="Creating ${build} build"/>
-        <property name="server.properties" value="${repositorydir}/resources/gsacserver_${build}.properties"/>
-        <copy overwrite="true"    file="${server.properties}"  
-                 tofile="${repositorydir}/resources/gsacserver.properties" />
-
+        <echo message="Creating ${basename} build"/>
         <copy overwrite="true"    file="${repositorydir}/resources/${basename}.properties"  
               tofile="${repositorydir}/resources/gsac.properties" />
 
@@ -178,7 +160,7 @@
           <arg value="-port"/>
           <arg value="8080"/>
           <arg value="-Dgsac.repository.class=${repositoryclass}"/>
-          <arg value="${basename.properties}"/>
+          <arg value="gsacigs.properties"/>
           <classpath>
              <pathelement path="${classpath}"/>
              <pathelement location=""/>

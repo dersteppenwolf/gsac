@@ -65,23 +65,6 @@ public class IgsDatabaseManager extends GsacDatabaseManager {
         super(repository);
     }
 
-    /**
-     * return the class path to the properties file.
-     *
-     * @return properties file
-     */
-    public String getPropertiesFile() {
-        return DB_PROPERTIES;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public String getDriverClassName() {
-        return super.getDriverClassName();
-    }
 
     /**
      * The main writes out to a file, Tables.java, the Java based definition
