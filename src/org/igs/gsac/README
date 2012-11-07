@@ -4,11 +4,14 @@ Building
 ########################################################################
 
 To build run:
-ant (or ant test_build)
+ant
 
-The ant build targets will copy one of the (test or production) db 
-properties files to:
-resources/gsacsb.properties
+To build the igs and the ea releases:
+ant gsacigs
+ant gsacea
+
+The build copies either resources/gsacigs.properties or resources/gsacea.properties to:
+resources/gsac.properties
 
 
 To run the server:
