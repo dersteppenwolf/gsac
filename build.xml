@@ -103,6 +103,8 @@ used by the javadoc target
     <target name="igs" depends="init">
       <echo message="Building GSAC IGS"/>
       <ant antfile="${srcdir}/org/igs/gsac/build.xml" inheritAll="false"/>
+      <echo message="Building GSAC EA"/>
+      <ant antfile="${srcdir}/org/igs/gsac/build.xml" inheritAll="false" target="gsacea"/>
     </target>
 
     <target name="federated" depends="init">
