@@ -206,7 +206,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
         String propertiesFile = getPropertiesFile();
         if (propertiesFile == null) {
-            throw new IllegalArgumentException("No database properties file");
+            return;
         }
         try {
             InputStream propertiesIS = IOUtil.getInputStream(propertiesFile,
@@ -340,6 +340,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             return driver;
         }
         String jdbcUrl = getDatabaseProperty(PROP_GSAC_DB_JDBCURL);
+        System.err.println("JDBC:" + jdbcUrl);
         if (jdbcUrl == null) {
             return null;
         }
