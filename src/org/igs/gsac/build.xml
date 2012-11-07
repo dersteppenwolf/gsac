@@ -89,10 +89,6 @@
 
     <target name="build" depends="init,clean">
         <echo message="Creating ${build} build"/>
-        <property name="db.properties" value="${repositorydir}/dbresources/gsacdb_${build}.properties"/>
-        <copy overwrite="true"    file="${db.properties}"  
-                 tofile="${repositorydir}/resources/gsacdb.properties" />
-
         <property name="server.properties" value="${repositorydir}/resources/gsacserver_${build}.properties"/>
         <copy overwrite="true"    file="${server.properties}"  
                  tofile="${repositorydir}/resources/gsacserver.properties" />
@@ -191,6 +187,20 @@
    </target>
 
 
+    <target name="runserverea" depends="init">
+      <java classname="org.gsac.gsl.GsacServer" maxmemory="512mb">
+          <arg value="-port"/>
+          <arg value="8080"/>
+          <arg value="-Dgsac.repository.class=${repositoryclass}"/>
+          <arg value="gsacea.properties"/>
+          <classpath>
+             <pathelement path="${classpath}"/>
+             <pathelement location=""/>
+         </classpath>
+     </java>
+   </target>
+
+
 
     <target name="tables" depends="init">
       <java classname="${repositorypackage}.IgsDatabaseManager" maxmemory="512mb">
@@ -228,25 +238,6 @@
    <target name="purge" depends="init,clean" >
         <delete dir="${distdir}"/>
    </target>
-
-
-    <target name="srcrelease" depends="init,clean">
-        <echo message="Making src jar ${jardir}/${srcjarfile}"/>
-        <delete file="${repositorydir}/resources/gsacdb.properties"/>
-        <jar 
-            basedir="${srcdir}"
-            update="false"
-            compress="true"
-            jarfile="${jardir}/${srcjarfile}">
-
-            <include name="${repository_relative_dir}/**/*"/>
-<!-- don't include the production properties file since this has real passwords -->
-            <exclude name="${repository_relative_dir}/dbresources/gsacdb_production.properties"/>
-
-            <include name="org/unavco/database/**/*.java"/>
-        </jar>
-    </target>
-
 
 
 </project>
