@@ -150,21 +150,34 @@ public abstract class SiteManager extends GsacResourceManager {
 
 
     /**
-     * Create the default output handlers for this resource
-     *
+     * Create the output handlers for this resource, which handles (formats) the query results.
+     * 
+     * Comment out lines for handlers (for formats of results sent to remote user) NOT to be offered by your GSAC-WS repository. 
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
+
+        // for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());
-        new TextSiteOutputHandler(getRepository(), getResourceClass());
-        new RssSiteOutputHandler(getRepository(), getResourceClass());
-        new AtomSiteOutputHandler(getRepository(), getResourceClass());
-        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+
+        // for SOPAC XMP site log format 
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-        //        new SiteLogOutputHandler(getRepository(), getResourceClass());
-        new XmlSiteOutputHandler(getRepository(), getResourceClass());
+
+        // for SINEX format  not yet fully implemented   
+        new SinexSiteOutputHandler(getRepository(), getResourceClass());
+
+        // for GAMIT's station.info format  not yet fully implemented   
+        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
+
+        // the follwoing only show a few parameters in results; more code needs to be written:
+        //new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
+        //new XmlSiteOutputHandler(getRepository(), getResourceClass());
+        //new SiteLogOutputHandler(getRepository(), getResourceClass());
+        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        //new RssSiteOutputHandler(getRepository(), getResourceClass());
+        //new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        //new JsonSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 
