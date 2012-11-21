@@ -446,8 +446,8 @@ public class IgsSiteManager extends SiteManager {
         // Note the sign in front applies to the final result, not only the degrees.
         if (Double.isNaN(stupidFormat)) {
             System.err.println(" bad supposed number (lat or longitude):" + stupidFormat );
-            // input value is not a number,  such as "" from some slm database field values.  CHECK LOOK: do we handle a NaN object?
-            return 0.0;
+            // input value is not a number,  such as "" from some slm database field values.  CHECK: so return an impossible value, 9999, used for similar purpose in GAMIT station.info format. 
+            return 9999;
         }
         int    intValue = (int) stupidFormat;
         String ddmmss   = String.valueOf(intValue);
