@@ -213,20 +213,21 @@ The ant table command builds the corresponding Table* class files in @MACRO.SRCD
 "GSAC Standard Geodesy Parameters" and  "Conforming GSAC Geodesy Repositories".
 ########################################################################
 
-A key concept to enable GSAC geodesy repositories to operate in a consistent and expected way, to be
-part of GSAC federations, and to be installed without requiring writing new software source code,
-is the "Conforming GSAC Geodesy Implementation."
+A key concept to enable GSAC geodesy repositories to operate in a consistent and expected way, to be part of GSAC federations, and to be install GSAC without requiring writing new Java source code, is the Conforming GSAC Geodesy Implementation.   We strongly encourage you to implement a conforming GSAC repository. 
 
-We strongly encourage you to implement a conforming GSAC repository if you use GSAC for geodesy data.  
-If you are using GSAC for other data, review this sections for suggestions of good practices which may
-apply to your use as well.
+GSAC may be used for data repositories for any data source with metadata for instruments at fixed locations (but nor aircraft or buoys, for example), and optionally to download data files from the instruments.  For geodesy data from instruments at monuments, GSAC software includes a way to provide standard paramerers and to simplify installing a repository which provides values for those parameters.
 
-What makes a GSAC implementation "Conforming" is that it supports the GSAC "standard geodesy parameters" list, which are 
-fields in the underlying database, which are used in GSAC queries, and whose values may appear
-in results of GSAC queries.  All standard parameters are required for a "Conforming GSAC Geodesy Implementation."
+What makes a GSAC geodesy implementation conforming is that it supports the GSAC standard geodesy parameters list, which are fields in your underlying database.  These parameters are used in GSAC queries and / or their values may appear in results of GSAC queries.  All standard parameters are required for a "Conforming GSAC Implementation." 
 
-The "GSAC Standard parameters" list is in a file in your GSAC package, ... 
+The GSAC standard parameters are ... 
 
+You identify which fields in your database correspond to the standard GSAC parameters, with a one to one match of Tables.java items to standard parameter names.  You do this by editing the file standard_parameters.properties.   Each line begins with GSAC's internal name for a standard parameter, such as site.latitude, followed by a comma. You complete the line with a table and field name from the Tables.java file (which represents your database contents, such as    
+
+site.latitude,SITELOG_LOCATION.COL_LATITUDENORTH
+
+If your system fails to provide a standard parameter, leave that line empty after the first comma.  GSAC will still function but its actions can not be guaranteed since we can not code GSAC to provide in advance for every possible combination of missing data.
+
+If you wish to present more parameters in addition to the standard parameters, you can write new Java code in GSAC to implement in them queries, or to go to output results.  
 You must identify which fields in your database correspond to the parameters in the list...
 [new properties or config file with one to one match of Tables.java items to standard parm names]
 
@@ -234,6 +235,7 @@ FIX MORE here
 
 MORE also need 
 new code to implement in queries (some  parms to go to output result files)
+
 
 
 
