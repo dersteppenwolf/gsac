@@ -95,6 +95,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         try {
             handleRequestInner(request, response, sb);
         } catch (IllegalArgumentException iae) {
+            getRepository().getLogManager().logError("Error handling site request", iae);
             sb.append(
                 getRepository().makeErrorDialog(
                     "An error has occurred:<br>" + iae.getMessage()));
