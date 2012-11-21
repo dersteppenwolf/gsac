@@ -432,7 +432,8 @@ public class IgsSiteManager extends SiteManager {
 
 
     /**
-     * _more_
+     * Convert the totally weird igs site log database values for lats & longs,  such as 505216.68 or -1141736.6 
+     * to double values of latitude and longitude.
      *
      * @param stupidFormat _more_
      *
@@ -440,10 +441,14 @@ public class IgsSiteManager extends SiteManager {
      */
     public static double convertFromISGSiteLogLatLongFormat(
             double stupidFormat) {
-        // Convert from the igs site log databse values such as 505216.68 or -1141736.6 to double values of latitude and longitude.
         // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
         // eg dddmmss.ff  where dd or ddd or ddd is + or - degrees, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff.
-        // note the sign in front applies to the final result, not only the degrees.
+        // Note the sign in front applies to the final result, not only the degrees.
+        if (Double.isNaN(stupidFormat)) {
+            System.err.println(" bad supposed number (lat or longitude):" + stupidFormat );
+            // input value is not a number,  such as "" from some slm database field values.  CHECK LOOK: do we handle a NaN object?
+            return 0.0;
+        }
         int    intValue = (int) stupidFormat;
         String ddmmss   = String.valueOf(intValue);
         String secs = ddmmss.substring(ddmmss.length() - 2, ddmmss.length());
@@ -463,6 +468,8 @@ public class IgsSiteManager extends SiteManager {
             dv = (-1.0 * di) + (mi / 60.0) + ((si + decimalofsecs) / 3600.0);
             dv *= -1.0;
         }
+
+        // CHECK LOOK: check for out of range latitude and longitude? 
 
         //System.err.println("convert:" + stupidFormat + " to:" + dv );
         return dv;
