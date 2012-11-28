@@ -132,10 +132,10 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append(  "   GSAC-WS Repository Site information. \n");
+        pw.append(  "   GSAC-WS Repository Site information in plain text. \n");
         pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDate(new Date()) + "\n"); 
-        pw.append(  "   Plain text format for a quick visual check of what is available. Not intended for computer processing.  \n");
-        pw.append(  "   Unknown values are empty.  Empty 'equipment removed' dates (may) mean 'not yet removed.' \n"); 
+        pw.append(  "   Unknown values are empty, but empty 'equipment removed' dates often mean 'not yet removed.' \n"); 
+        pw.append(  "   This format is only for a quick visual check of what is available. Not for computer processing.  \n");
     }
 
     /**
@@ -219,13 +219,13 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         pw.append(    " site longitude:               "+ formatLocation(el.getLongitude()) + "" + "\n");
         pw.append(    " site ellipsoidal height:      "+ elevationFormat.format(el.getElevation()) + "" + "\n");
         if (el.hasXYZ()) {
-            pw.append(" site X coord:                 "+ el.getX() + "" + "\n");
-            pw.append(" site Y coord:                 "+ el.getY() + "" + "\n");
-            pw.append(" site Z coord:                 "+ el.getZ() + "" + "\n");
+            pw.append(" site X coordinate:            "+ el.getX() + "" + "\n");
+            pw.append(" site Y coordinate:            "+ el.getY() + "" + "\n");
+            pw.append(" site Z coordinate:            "+ el.getZ() + "" + "\n");
         } else {
-            pw.append(" site X (ITRF) coord:               " + "\n");
-            pw.append(" site Y (ITRF) coord:               " + "\n");
-            pw.append(" site Z (ITRF) coord:               " + "\n");
+            pw.append(" site X coordinate:            " + "\n");
+            pw.append(" site Y coordinate:            " + "\n");
+            pw.append(" site Z coordinate:            " + "\n");
         }
     }
 
@@ -244,7 +244,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * print results of site equipment ( and 'sessions') for this format style
+     * print results of site equipment ('sessions') for this format style
      *
      * @param pw _more_
      * @param site _more_
@@ -259,9 +259,8 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
-            pw.append("    new equipment (session):   \n");
             if (equipment.hasReceiver()) {
-                pw.append("      receiver session: \n");
+                pw.append("    new equipment session (receiver):   \n");
                 pw.append("      receiver type:          "+ equipment.getReceiver() + "\n");
                 pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
                 pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
@@ -270,16 +269,15 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             }
 
             if (equipment.hasAntenna()) {
-                pw.append("      antenna session: \n");
+                pw.append("    new equipment session (antenna):   \n");
                 pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
                 pw.append("      antenna SN:             "+ getNonNullString(equipment.getAntennaSerial()) + "\n");
-
                 double[] xyz = equipment.getXyzOffset();
                 pw.append("      antenna offset Ht or UP:"+ offsetFormat.format(xyz[2]) + "\n");
                 pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
                 pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
                 pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      antenna removed: (?)    "+ myFormatDateTime(equipment.getToDate()) + "\n");
+                pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
                 //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
                 //pw.append(EQUIP_ANTENNACABLETYPE, "",
                 //pw.append(EQUIP_ANTENNACABLELENGTH,
