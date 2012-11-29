@@ -48,7 +48,7 @@ import javax.servlet.http.*;
 public class SinexSiteOutputHandler extends GsacOutputHandler {
 
     /** output id */
-    public static final String OUTPUT_SITE_STATIONINFO = "site.sinex";
+    public static final String OUTPUT_SITE_SINEX = "site.sinex";
 
 
     /**
@@ -61,7 +61,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_STATIONINFO,
+                                  new GsacOutput(this, OUTPUT_SITE_SINEX,
                                       "SINEX", "/sites.sinex", true));
                                     // "SINEX" is a label for the Results choice box in site search form on web page.
                                     // the sites.sinex is used for names of files of results.   
