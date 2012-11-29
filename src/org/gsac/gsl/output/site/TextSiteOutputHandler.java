@@ -25,11 +25,9 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 
-
 import ucar.unidata.util.StringUtil;
 
 import java.io.*;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +37,11 @@ import javax.servlet.http.*;
 
 
 /**
- * Class description
+ * Class description: formats query results to write a csv file format
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version        29 Nov 2012 SKW;
+ * @author         JM, SKW;
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
 
@@ -62,7 +60,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_CSV,
-                                      "Site CSV", "/sites.csv", true));
+                                      "Site CSV file", "/sites.csv", true));
     }
 
 
@@ -114,15 +112,21 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
             for (GsacSite site : response.getSites()) {
                 siteCnt++;
                 colCnt = 0;
+                int parmCnt = 0;
+                // for each parm in the List
                 for (String param : params) {
                     if (colCnt > 0) {
                         pw.print(delimiter);
                     }
                     colCnt++;
+                    //System.out.println(" parm #"+ parmCnt +  "   \n");
+                    parmCnt++;
                     if (param.equals(ARG_SITE_CODE)) {
                         pw.print(cleanString(site.getShortName(), delimiter));
+                        //System.out.println("  1 " + site.getShortName() + "\n");
                     } else if (param.equals(ARG_SITE_NAME)) {
                         pw.print(cleanString(site.getLongName(), delimiter));
+                        //System.out.println("  2 " + site.getLongName() + "\n");
                     } else if (param.equals(ARG_SITE_ID)) {
                         String id = site.getId();
                         if (getRepository().isRemoteResource(site)) {
@@ -131,21 +135,30 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                             id = pair[0] + ":" + pair[1];
                         }
                         pw.print(cleanString(id, delimiter));
+                        //System.out.println("  3 " + id + "\n");
                     } else if (param.equals(ARG_SITE_LATITUDE)) {
                         pw.print(site.getLatitude());
+                        //System.out.println("  4 " + site.getLatitude() + "\n");
                     } else if (param.equals(ARG_SITE_LONGITUDE)) {
                         pw.print(site.getLongitude());
+                        //System.out.println("  5 " + site.getLongitude() + "\n");
                     } else if (param.equals(ARG_SITE_ELEVATION)) {
                         pw.print(site.getElevation());
+                        //System.out.println("  6 " + site.getElevation() + "\n");
                     } else if (param.equals(ARG_SITE_LOCATION)) {
                         pw.print(site.getLatitude());
                         pw.print(delimiter);
+                        //System.out.println("  4b " + site.getLatitude() + "\n");
                         pw.print(site.getLongitude());
                         pw.print(delimiter);
+                        //System.out.println("  5b " + site.getLongitude() + "\n");
                         pw.print(site.getElevation());
+                        //System.out.println("  6b " + site.getElevation() + "\n");
                     } else if (param.equals(ARG_SITE_TYPE)) {
                         pw.print(site.getType().getId());
+                        //System.out.println("  7 " + site.getType().getId() + "\n");
                     } else {
+                        //System.out.println("  8 unknown  \n");
                         throw new IllegalArgumentException(
                             "Unknown parameter:" + param);
                     }
