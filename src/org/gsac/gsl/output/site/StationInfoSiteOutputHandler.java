@@ -31,6 +31,7 @@ import org.gsac.gsl.util.*;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
+//import ucar.unidata.util.StringUtil;
 
 import java.io.*;
 
@@ -38,6 +39,10 @@ import java.net.URL;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,27 +58,31 @@ import javax.servlet.http.*;
 
 /**
  * 
- *
+ *  original SKW Nov 29, 2012.
  */
 public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
     /*  this is a column counting format!! */
 
-    String id ="";
-    String name ="";
-    String starttime ="";
-    String stoptime ="";
-    String antht ="";
-    String htcod ="     ";
-    String antn ="";
-    String ante ="";
-    String rectype ="";
-    String firmvers ="";
-    String swvers ="     ";
-    String recsn ="";
-    String anttype ="";
-    String dome ="";
-    String antsn ="";
+    String id ="----";
+    String name ="--------------------";
+    String starttime ="-----------------";
+    String stoptime ="-----------------";
+    String antht ="-------";
+    String htcod ="-----";
+    String antn ="0";
+    String ante ="0";
+    String rectype ="--------------------";
+    String firmvers ="--------------------";
+    String swvers ="-----";
+    String recsn ="--------------------";
+    String anttype ="--------------------";
+    String dome ="-----";
+    String antsn ="--------------------";
+
+    //Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT")); 
+    //Calendar calendar = Calendar.getInstance("GMT"); 
+    Calendar calendar = Calendar.getInstance();  // default is "GMT" 
 
     /** output id */
     public static final String OUTPUT_SITE_STATIONINFO= "site.station.info";
@@ -101,27 +110,25 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
      * @param gsacRepository the repository
      * @param resourceClass _more_
      */
-    public StationInfoSiteOutputHandler (GsacRepository gsacRepository,
-                                   ResourceClass resourceClass) {
+    public StationInfoSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_STATIONINFO,
-                                      "GAMIT station.info", "/site.station.info", true));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_STATIONINFO,
+            "GAMIT station.info", "/site.station.info", true));
     }
 
 
 
     /**
-     * handle the request: format sites' information in format of GAMIT station.info files
+     * handle the request: format the sites' information in GAMIT station.info files format
      *
      * @param request the request
      * @param response the response to write to
-     *
      *
      * @throws Exception on badness
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+        //This sets output mime type (how browser handles it)
         response.startResponse("text");
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
@@ -134,7 +141,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             getRepository().doGetFullMetadata(-1, site);
             //Add the various content areas
             addSiteIdentification(pw, site);
-            // not used in GAMIT station.info files    addSiteLocation(pw, site);
+            //         not used in GAMIT station.info files:    addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
             addSiteStream(pw, site);
         }
@@ -156,6 +163,8 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
  PALM  Palmer Station,   1998 189 00 00 00  2008 068 00 00 00   0.0794  DHPAB   0.0000   0.0000  ASHTECH Z-XII3        1E95                   8.25  RS00178               ASH700936D_M     SCIS   CR14107             
  PALM  Palmer Station,   2008 068 00 00 00  2009 090 16 30 00   0.0794  DHPAB   0.0000   0.0000  ASHTECH UZ-12         CQ00                  -----  ZR520021801           ASH700936D_M     SCIS   CR14107             
  PALM  Palmer Station,   2009 090 16 30 00  9999 999 00 00 00   0.0794  DHPAB   0.0000   0.0000  ASHTECH UZ-12         CQ00                  -----  UC2200436003          ASH700936D_M     SCIS   CR14107     
+number chars in fields:
+  4       16             17                    17               7       5         7        7        20                     20                 5        20                   16              4          20
 */
 
     /**
@@ -184,19 +193,12 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         id = site.getShortName();
         name = site.getLongName();
-        // not in gamit iersdomes = getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "");
         /*
-        pw.append(    " site:\n");
-        pw.append(    " site 4 char ID:       "+ site.getShortName() + "\n");
-        pw.append(    " site long name:       "+ site.getLongName() + "\n");
+        // not in gamit: 
         pw.append(    " site IERSDOMES        "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
         Date date = site.getFromDate();
-        if (date != null) {
-            pw.append(" site installed date: "+ myFormatDateTime(date) + "\n");
-        }
-        else {
-            pw.append(" site installed date: \n");
-        }
+        if (date != null) { pw.append(" site installed date: "+ myFormatDateTime(date) + "\n"); }
+        else { pw.append(" site installed date: \n"); }
         pw.append(    " site monum. descript. "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
         pw.append(    " site cdp number       "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
         */
@@ -204,7 +206,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     *  from the ipnput GSAC 'site' object, extract the value of the named field or API argument.
+     *  from the input GSAC 'site' object, extract the value of the named field or API argument.
      *
      * @param site _more_
      * @param propertyId _more_
@@ -246,54 +248,91 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
             if (equipment.hasReceiver()) {
-                starttime=myFormatDateTime(equipment.getFromDate());
-                stoptime =myFormatDateTime(equipment.getToDate());
+                starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
+/*
+                stoptime =  getNonNullGamitString(myFormatDateTime(equipment.getToDate()));
+                System.err.println(" rec start - stop times _"+starttime + "_   _"+stoptime+"_  \n");
+                if (starttime.equals("") || starttime.equals("--------------------") ) {
+                    starttime="--------------------";
+                } else {
+                calendar.setTime( equipment.getFromDate() );
+                YYYY = calendar.get(calendar.YEAR) +""; 
+                DDD  = "" + calendar.get(calendar.DAY_OF_YEAR); 
+                if (DDD.length() == 1) { DDD=" "+DDD; }
+                if (DDD.length() == 2) { DDD=" "+DDD; }
+                HHMMSS=myFormatDateTime(equipment.getFromDate()); // such as 2009-03-30T00:00:00 -0600
+                HHMMSS=HHMMSS.substring(11,19);
+                starttime= YYYY+" "+DDD+" "+HHMMSS;
+                }
+*/
+
+                stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
+/*
+                if (stoptime.equals("") || stoptime.equals("--------------------") ) {
+                    stoptime="--------------------";
+                } else {
+                calendar.setTime(equipment.getToDate());
+                YYYY = calendar.get(calendar.YEAR) +""; 
+                DDD  = "" + calendar.get(calendar.DAY_OF_YEAR); 
+                HHMMSS=myFormatDateTime(equipment.getToDate());
+                HHMMSS=HHMMSS.substring(11,19);
+                stoptime= YYYY+" "+DDD+" "+HHMMSS;
+                }
+                System.err.println(" GAMIT format receiver start - stop times "+starttime + "   "+stoptime);
+*/
+
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
                 firmvers=equipment.getReceiverFirmware();
-                /* for reference:
-                pw.append("    new equipment session (receiver):   \n");
-                pw.append("      receiver type:          "+ equipment.getReceiver() + "\n");
-                pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
-                pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
-                pw.append("      receiver installed date:"+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      receiver removed:       "+ myFormatDateTime(equipment.getToDate()) + "\n");
-                */
             }
 
             if (equipment.hasAntenna()) {
                 double[] xyz = equipment.getXyzOffset();
                 antht = offsetFormat.format(xyz[2]);
+                if (antht.equals("0")) { antht = "0.0000"; }
                 antn = offsetFormat.format(xyz[1]);
+                if (antn.equals("0")) { antn = "0.0000"; }
                 ante = offsetFormat.format(xyz[0]);
-                anttype=getNonNullString(equipment.getAntenna());
-                antsn  =getNonNullString(equipment.getAntennaSerial());
-                dome = getNonNullString(equipment.getDome());
-                starttime=myFormatDateTime(equipment.getFromDate());
-                stoptime =myFormatDateTime(equipment.getToDate());
-                /* for reference:
-                pw.append("    new equipment session (antenna):   \n");
-                pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
-                pw.append("      antenna SN:             "+ getNonNullString(equipment.getAntennaSerial()) + "\n");
-                double[] xyz = equipment.getXyzOffset();
-                pw.append("      antenna offset Ht or UP:"+ offsetFormat.format(xyz[2]) + "\n");
-                pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
-                pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
-                pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
+                if (ante.equals("0")) { ante = "0.0000"; }
+                anttype=getNonNullGamitString(equipment.getAntenna());
+                antsn  =getNonNullGamitString(equipment.getAntennaSerial());
+                dome = getNonNullGamitString(equipment.getDome());
+
+                starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
+
+                stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
+                /* not in gamit station.info files:
                 //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
                 //pw.append(EQUIP_ANTENNACABLETYPE, "",
                 //pw.append(EQUIP_ANTENNACABLELENGTH,
-                pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
-                pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
+                pw.append("      Dome SN:                "+ getNonNullGamitString(equipment.getDomeSerial()) + "\n");
                 */
             }
 
-            // construct the gamit station.info file line for a session at a site:
-            pw.append(" "+ id +"  "+name+"  "+starttime+"  "+stoptime+"  "+antht+"  "+htcod+"  "+antn+"  "+ante+"  "+rectype+"  "+firmvers+"  "+swvers+"  "+recsn+"  "+anttype+"  "+dome+"  "+antsn+"\n");
+            // construct the gamit station.info file line for this session at a site:
+            pw.append(" " +setStringLength(id,4)+"  " +setStringLength(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+                +setStringLength(antht,7)+"  "
+                +setStringLength(htcod,5)+"  "
+                +setStringLength(antn,7)+"  "
+                +setStringLength(ante,7)+"  "
+                +setStringLengthRight(rectype,20)+"  "
+                +setStringLengthRight(firmvers,20)+"  "
+                +setStringLength(swvers,5)+"  "
+                +setStringLengthRight(recsn,20)+"  "
+                +setStringLengthRight(anttype,15)+"  "
+                +setStringLengthRight(dome,5)+"  "
+                +setStringLengthRight(antsn,20)+"\n");
 
         } // end for loop on sessions
     }
+
+//number chars in fields:
+//*SITE  Station Name      Session Start      Session Stop       Ant Ht   HtCod  Ant N    Ant E    Receiver Type         Vers                  SwVer  Receiver SN           Antenna Type     Dome   Antenna SN          
+//  4       16             17                    17               7       5         7        7        20                     20                 5        20                   16              4          20
 
 
     /**
@@ -347,7 +386,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 ; //pw.append( XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
             }
             cnt++;
-            stream.encode(pw, this, "site.station.info.log");
+            stream.encode(pw, this, "station.info");
         }
         if (cnt > 0) {
             ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
@@ -355,17 +394,80 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     }
 
     /**
-     * _more_
+     *  if 's' is null return "--------------------" the GAMIT 'nothing' value; else return 's'.
      *
-     * @param s _more_
+     * @param s  input String object
      *
-     * @return _more_
+     * @return  a string
      */
-    private String getNonNullString(String s) {
+    private String getNonNullGamitString(String s) {
         if (s == null) {
-            return "";
+            return "--------------------";
         }
         return s;
+    }
+
+  /**
+   *  make string of desired length by padding left with " " if 's' is short, or truncate if 's' is too long.
+   *
+   * @param s               String input to fix 
+   * @param desiredLength   ending length
+   * @return                String of desiredLength
+   */
+  public static String setStringLength(String s, int desiredLength) {
+    String padString = " ";
+    if (s.length() > desiredLength) {
+        s =  s.substring(0,desiredLength);
+    }
+    else if (s.length() == desiredLength) {
+        return s;
+    }
+    else {
+        while (s.length() < desiredLength) {
+            s = padString + s;
+        }
+    }
+    return s;
+  }
+
+  /**
+   *  make string of desired length by padding RIGHT with " " if 's' is short, or truncate if 's' is too long.
+   *
+   * @param s               String input to fix 
+   * @param desiredLength   ending length
+   * @return                String of desiredLength
+   */
+  public static String setStringLengthRight(String s, int desiredLength) {
+    String padString = " ";
+    if (s.length() > desiredLength) {
+        s =  s.substring(0,desiredLength);
+    }
+    else if (s.length() == desiredLength) {
+        return s;
+    }
+    else {
+        while (s.length() < desiredLength) {
+            s = s + padString;
+        }
+    }
+    return s;
+  }
+
+  public String  getGamitTimeFormat(String starttime, java.util.Date gd) {
+      if (starttime.equals("") || starttime.equals("--------------------") ) {
+          starttime="--------------------";
+          // the GAMIT station.info 'no data' format
+      } else {
+          calendar.setTime( gd );
+          String yyyy = calendar.get(calendar.YEAR) +""; 
+          String ddd  = "" + calendar.get(calendar.DAY_OF_YEAR); 
+          if (ddd.length() == 1) { ddd=" "+ddd; }
+          if (ddd.length() == 2) { ddd=" "+ddd; }
+          String time =myFormatDateTime( gd ); // such as 2009-03-30T00:00:00 -0600
+          time=time.substring(11,19);
+          starttime= yyyy+" "+ddd+" "+time;
+          }
+    return starttime;
     }
 
 }
