@@ -49,7 +49,7 @@ import javax.servlet.http.*;
 
 
 /**
- *
+ * Writes GSAC query site results in IGS site log format.   LOOK FIX needs to be implemented.
  */
 public class SiteLogOutputHandler extends GsacOutputHandler {
 
@@ -76,7 +76,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
 
 
     /** output id */
-    public static final String OUTPUT_SITE_LOG = "site.log";
+    public static final String OUTPUT_SITE_IGSLOG = "site.log";
 
     /** date formatter */
     private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -95,7 +95,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
                                 ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_LOG,
+                                  new GsacOutput(this, OUTPUT_SITE_IGSLOG,
                                       "IGS Site Log", "/site.log", true));
     }
 
