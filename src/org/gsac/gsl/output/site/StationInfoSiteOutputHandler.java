@@ -282,7 +282,7 @@ number chars in fields:
             }
 
             // construct the gamit station.info file line for this session at a site:
-            pw.append(" " +setStringLength(id,4)+"  " +setStringLength(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+            pw.append(" " +setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                 +setStringLength(antht,7)+"  "
                 +setStringLength(htcod,5)+"  "
                 +setStringLength(antn,7)+"  "
