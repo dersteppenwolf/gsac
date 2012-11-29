@@ -151,8 +151,10 @@ public abstract class SiteManager extends GsacResourceManager {
 
     /**
      * Create the output handlers for this resource, which handles (formats) the query results.
-     * 
      * Comment out lines for handlers (for formats of results sent to remote user) NOT to be offered by your GSAC-WS repository. 
+     *
+     * Note. is this right? -- whichever is first in order below gets called when the web site search page is first called for 
+     *   -- before any query is made, which can cause a failure and error to browser and no site search page shown. HTML seems to always work OK.
      */
     @Override
     public void initOutputHandlers() {
@@ -165,19 +167,24 @@ public abstract class SiteManager extends GsacResourceManager {
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
         // for SINEX format  not yet fully implemented   
-        new SinexSiteOutputHandler(getRepository(), getResourceClass());
+        //new SinexSiteOutputHandler(getRepository(), getResourceClass());
+
+        // for IGS site log; LOOK FIX gives empty file
+        //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
 
         // for GAMIT's station.info format  not yet fully implemented   
         new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
-        // the follwoing only show a few parameters in results; more code needs to be written:
-        //new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
-        //new XmlSiteOutputHandler(getRepository(), getResourceClass());
-        //new SiteLogOutputHandler(getRepository(), getResourceClass());
-        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
-        //new RssSiteOutputHandler(getRepository(), getResourceClass());
-        //new AtomSiteOutputHandler(getRepository(), getResourceClass());
-        //new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        // very simple text to show what is available for sites' info. 
+        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+
+        // the following 6 formats only show a few parameters in results; more code needs to be written:
+        new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        new RssSiteOutputHandler(getRepository(), getResourceClass());
+        new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        //how is this different from the above XmlSiteLogOutputHandler:  XmlSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 
