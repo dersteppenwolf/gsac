@@ -80,8 +80,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     String dome ="-----";
     String antsn ="--------------------";
 
-    //Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT")); 
-    //Calendar calendar = Calendar.getInstance("GMT"); 
     Calendar calendar = Calendar.getInstance();  // default is "GMT" 
 
     /** output id */
@@ -168,7 +166,7 @@ number chars in fields:
 */
 
     /**
-     * label top of results; a header.
+     * label top of results; a GAMIT station.info file header for this case.
      *
      * @param pw _more_
      */
@@ -250,38 +248,9 @@ number chars in fields:
             if (equipment.hasReceiver()) {
                 starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
-/*
-                stoptime =  getNonNullGamitString(myFormatDateTime(equipment.getToDate()));
-                System.err.println(" rec start - stop times _"+starttime + "_   _"+stoptime+"_  \n");
-                if (starttime.equals("") || starttime.equals("--------------------") ) {
-                    starttime="--------------------";
-                } else {
-                calendar.setTime( equipment.getFromDate() );
-                YYYY = calendar.get(calendar.YEAR) +""; 
-                DDD  = "" + calendar.get(calendar.DAY_OF_YEAR); 
-                if (DDD.length() == 1) { DDD=" "+DDD; }
-                if (DDD.length() == 2) { DDD=" "+DDD; }
-                HHMMSS=myFormatDateTime(equipment.getFromDate()); // such as 2009-03-30T00:00:00 -0600
-                HHMMSS=HHMMSS.substring(11,19);
-                starttime= YYYY+" "+DDD+" "+HHMMSS;
-                }
-*/
 
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
-/*
-                if (stoptime.equals("") || stoptime.equals("--------------------") ) {
-                    stoptime="--------------------";
-                } else {
-                calendar.setTime(equipment.getToDate());
-                YYYY = calendar.get(calendar.YEAR) +""; 
-                DDD  = "" + calendar.get(calendar.DAY_OF_YEAR); 
-                HHMMSS=myFormatDateTime(equipment.getToDate());
-                HHMMSS=HHMMSS.substring(11,19);
-                stoptime= YYYY+" "+DDD+" "+HHMMSS;
-                }
-                System.err.println(" GAMIT format receiver start - stop times "+starttime + "   "+stoptime);
-*/
 
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
@@ -309,7 +278,6 @@ number chars in fields:
                 //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
                 //pw.append(EQUIP_ANTENNACABLETYPE, "",
                 //pw.append(EQUIP_ANTENNACABLELENGTH,
-                pw.append("      Dome SN:                "+ getNonNullGamitString(equipment.getDomeSerial()) + "\n");
                 */
             }
 
@@ -328,7 +296,8 @@ number chars in fields:
                 +setStringLengthRight(antsn,20)+"\n");
 
         } // end for loop on sessions
-    }
+    }     // end addSiteEquipment
+
 
 //number chars in fields:
 //*SITE  Station Name      Session Start      Session Stop       Ant Ht   HtCod  Ant N    Ant E    Receiver Type         Vers                  SwVer  Receiver SN           Antenna Type     Dome   Antenna SN          
@@ -352,20 +321,6 @@ number chars in fields:
     /**
      * _more_
      *
-     * @param date _more_
-     *
-     * @return _more_
-     */
-    private String myFormatDate(Date date) {
-        if (date == null) { return ""; }
-        synchronized (dateFormat) {
-            return dateFormat.format(date);
-        }
-    }
-
-    /**
-     * _more_
-     *
      * @param pw _more_
      * @param site _more_
      *
@@ -374,7 +329,7 @@ number chars in fields:
     private void addSiteStream(PrintWriter pw, GsacSite site)
             throws Exception {
         GsacMetadata.debug = true;
-        System.err.println(" error: StationInfoSiteOutputHandler.addSiteStream ():  Finding metadata");
+        //System.err.println("  StationInfoSiteOutputHandler.addSiteStream ():  Finding metadata");
         List<GsacMetadata> streamMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
