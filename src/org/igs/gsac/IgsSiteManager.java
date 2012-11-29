@@ -338,7 +338,6 @@ public class IgsSiteManager extends SiteManager {
     }
 
     /**
-     * CHANGEME
      * Create a single site
      *
      * @param results db results
@@ -363,17 +362,15 @@ public class IgsSiteManager extends SiteManager {
 
         String latString = results.getString(colCnt++);
         String lonString = results.getString(colCnt++);
-        double latitude  = convertFromISGSiteLogLatLongFormat(
-                              Double.parseDouble(latString.trim()));
-        double longitude = convertFromISGSiteLogLatLongFormat(
-                               Double.parseDouble(lonString.trim()));
+        //double latitude  = ( Double.parseDouble(latString.trim()));
+        //double longitude = ( Double.parseDouble(lonString.trim()));
+        double latitude  = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim()));
+        double longitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(lonString.trim()));
 
         String elevationString = results.getString(colCnt++);
         elevationString = StringUtil.findPattern(elevationString,
                 "([\\d\\.-]+)");
-        double elevation = (elevationString != null)
-                           ? Double.parseDouble(elevationString)
-                           : 0.0;
+        double elevation = (elevationString != null) ? Double.parseDouble(elevationString) : 0.0; 
         //        System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "", latitude,
@@ -445,17 +442,18 @@ public class IgsSiteManager extends SiteManager {
         // eg dddmmss.ff  where dd or ddd or ddd is + or - degrees, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff.
         // Note the sign in front applies to the final result, not only the degrees.
         if (Double.isNaN(stupidFormat)) {
-            System.err.println(" bad supposed number (lat or longitude):" + stupidFormat );
+            System.err.println(" IgsSiteManager:convertFromISGSiteLogLatLongFormat() has bad or NaN 'number' input (lat or longitude):" + stupidFormat );
             // input value is not a number,  such as "" from some slm database field values.  CHECK: so return an impossible value, 9999, used for similar purpose in GAMIT station.info format. 
             return 9999;
         }
+        //System.err.println("convert:=" + stupidFormat +"=" );
         int    intValue = (int) stupidFormat;
         String ddmmss   = String.valueOf(intValue);
         String secs = ddmmss.substring(ddmmss.length() - 2, ddmmss.length());
         String mins     = ddmmss.substring(ddmmss.length() - 4,
                                        ddmmss.length() - 2);
         String degs = ddmmss.substring(0, ddmmss.length() - 4);
-        //System.err.println("convert:" + stupidFormat + " to:" + degs +" " + mins +" " + secs );
+        //System.err.println(" IgsSiteManager:convertFromISGSiteLogLatLongFormat() converted:" + stupidFormat + " to:" + degs +" " + mins +" " + secs );
         //  convert:-661700.24 to:-66 17 00       convert:1103110.92 to:110 31 10
         int    di            = Integer.parseInt(degs);
         int    mi            = Integer.parseInt(mins);
@@ -471,7 +469,6 @@ public class IgsSiteManager extends SiteManager {
 
         // CHECK LOOK: check for out of range latitude and longitude? 
 
-        //System.err.println("convert:" + stupidFormat + " to:" + dv );
         return dv;
     }
 
@@ -601,7 +598,6 @@ public class IgsSiteManager extends SiteManager {
                 }
 
                 if (equipment == null) {
-                    //System.err.println ("Could not find corresponding antenna for equipment date:" + dateRange[0]);
                     equipment = new GnssEquipment(dateRange, "", "", "", "",
                             "", "", "", Double.NaN);
                     equipmentList.add(equipment);
