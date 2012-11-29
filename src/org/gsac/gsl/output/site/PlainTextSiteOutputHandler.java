@@ -327,7 +327,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     private void addSiteStream(PrintWriter pw, GsacSite site)
             throws Exception {
         GsacMetadata.debug = true;
-        System.err.println(" error: PlainTextSiteOutputHandler.addSiteStream ():  Finding metadata");
+        //System.err.println("  PlainTextSiteOutputHandler.addSiteStream ():  Finding metadata");
         List<GsacMetadata> streamMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
