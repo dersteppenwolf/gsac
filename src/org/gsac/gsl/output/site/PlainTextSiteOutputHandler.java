@@ -55,7 +55,7 @@ import javax.servlet.http.*;
  *      Output handler for results for users' site queries, formatted in plain text.
  *      GSAC-WS Repository Site information in plain text.  This format was created by UNAVCO solely for GSAC use. 
  *      This format is only for a quick visual check of what is available. Not for computer processing. 
- *      Unknown values are empty (no characters), but empty 'equipment removed' dates may mean 'not yet removed' in some data centers.
+ *      Empty times (no characters) may mean 'not removed' or 'no change;' for some other empty values see previous or next session at the site.
  *      initial version Nov 27-30, 2012, SKW UNAVCO.
  */
 public class PlainTextSiteOutputHandler extends GsacOutputHandler {
@@ -137,7 +137,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         pw.append(  "   GSAC Repository site information in plain text. \n");
         pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDate(new Date()) + "\n"); 
         pw.append(  "   This format is only for a quick visual check of what is available. Not for computer processing.  \n");
-        pw.append(  "   Unknown values are empty (no characters), but empty 'equipment removed' dates may mean 'not yet removed' in some data centers. \n"); 
+        pw.append(  "   Empty times (no characters) may mean 'not removed' or 'no change;' for some other empty values see previous or next session at the site. ");
     }
 
     /**
