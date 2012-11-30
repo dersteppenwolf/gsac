@@ -38,7 +38,6 @@ import java.io.*;
 
 import java.net.URL;
 
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -53,8 +52,11 @@ import javax.servlet.http.*;
 
 
 /**
- * 
- *
+ *      Output handler for results for users' site queries, formatted in plain text.
+ *      GSAC-WS Repository Site information in plain text.  This format was created by UNAVCO solely for GSAC use. 
+ *      This format is only for a quick visual check of what is available. Not for computer processing. 
+ *      Unknown values are empty (no characters), but empty 'equipment removed' dates may mean 'not yet removed' in some data centers.
+ *      initial version Nov 27-30, 2012, SKW UNAVCO.
  */
 public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
@@ -65,16 +67,15 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /** date formatter */
-    private SimpleDateFormat dateTimeFormat =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
 
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
 
-    /** _more_          */
+    /**  to format ellipsoidal height values sometimes called elevation in GSAC code.  */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
 
-    /** _more_          */
+    /** for antenna offset values from instrument reference point.  */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
 
 
@@ -95,7 +96,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * handle the request: format sites' information in plain text so you can easily see what is avaibable for these sites in this repository.
+     * handle the request: format sites' information in plain text so you can easily see what is available for these sites in this repository.
      *
      * @param request the request
      * @param response the response to write to
@@ -105,6 +106,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+        // set mime type for browser's display actions:
         response.startResponse("text");
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
@@ -132,10 +134,10 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append(  "   GSAC-WS Repository Site information in plain text. \n");
+        pw.append(  "   GSAC Repository site information in plain text. \n");
         pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDate(new Date()) + "\n"); 
-        pw.append(  "   Unknown values are empty, but empty 'equipment removed' dates often mean 'not yet removed.' \n"); 
         pw.append(  "   This format is only for a quick visual check of what is available. Not for computer processing.  \n");
+        pw.append(  "   Unknown values are empty (no characters), but empty 'equipment removed' dates may mean 'not yet removed' in some data centers. \n"); 
     }
 
     /**
