@@ -78,9 +78,10 @@ number chars in fields:
 */
 
 /**
- *  UNAVCO GSAC-WS output handler (inlucding formating of site query results) 
- *  for the GAMIT station.info file format.
- *  original SKW Nov 29, 2012.
+ *  UNAVCO GSAC-WS output handler (formating of site query results) for the GAMIT station.info file format.
+ *  Note, use of term 'station.info.txt' below, so that it can show up in a browser window.
+ *  May wish to use only station.info for file naming properly.
+ *  original SKW Nov. 29, 2012. mods Dec. 3; 
  */
 public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
@@ -125,7 +126,8 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     public StationInfoSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_STATIONINFO,
-            "GAMIT station.info", "/site.station.info", true));
+            "GAMIT station.info", "/site.station.info.txt", true));
+            // may wish to use only station.info for file naming properly.  LOOK
     }
 
     /**
