@@ -56,7 +56,20 @@ import javax.servlet.http.*;
 
 
 /* 
- * Class description: formats query results to write a csv file format
+ * Class description: formats query results to write a csv file format.
+ * csv format has:
+ * Fields are separated with commas.
+ * example John,Doe,120 any st.,Anytown state,08123
+ * Leading and trailing space-characters adjacent to comma field separators are ignored.
+ * So   John  ,   Doe  ,... resolves to "John" and "Doe", etc. 
+ * NO commas are allowed here in a field; this usually effects only site descriptions in geodesy data. Any commas in such a field are replaces with "".
+ * The first record in a CSV file may be a header record containing column (field) names; and is so in this case.
+ * There is no mechanism for automatically discerning if the first record is a header row, in the general case. The header row is encoded just like any other CSV record
+ * 
+ * You may revise this class to adapt GSAC yo the needs of your repository.  Please do not submit revised version of this class to GSAC in SourceForge.
+ *
+ * For bug reports and suggested improvments please contact UNAVCO.
+ *
  * version all new version Nov 30, 2012. SKW
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
@@ -91,9 +104,10 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     /** output id */
     public static final String OUTPUT_SITE_CSV = "site.csv";
 
-    /** date formatter */
-    private SimpleDateFormat dateTimeFormat =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+    /** date formatter  note NO "T", and we do not know if it is UTC time or what.*/
+    /* somehow the Z here results in a value like "2001-07-11 00:00:00 -0600" with no Z */
+    private SimpleDateFormat dateTimeFormatnoT =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     /** formatter for GNSS antenna value of offset of phase center from instrument center */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
@@ -127,7 +141,8 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_CSV,
-                                      "Site CSV file", "/sites.csv", true)); // these two strings set label in site query Results [+] entry box, and file name of results.
+                                      //"Site CSV file", "/sites.csv", true)); // these two strings set label in site query Results [+] entry box, and file name  extension of results.
+                                      "Site CSV file", "/sites.txt", true)); //  use .txt to allow seeing the result in the brower window.
     }
 
     /**
@@ -141,6 +156,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         //This sets output mime type (how browser handles it; text lets user see query results in a browser, and can also get form the gsac client with file name sites.csv)
+        // BUT  in this case where file extesion is ".csv" (set just above) the browser probably will ignore this 'text' value and try to load the file in some doc processor like Excel.
         response.startResponse("text");
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
@@ -165,8 +181,8 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append("#ID,station name,latitude,longitude,ellipsoidal height,mon descrip,IERSDOMES,session start,session stop,Antenna Type,Dome type,Antenna SN,Ant dz, Ant dn, Ant de, Receiver Type, firmware vers,Receiver SN\n");
-        pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
+        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,session start,session stop,antenna type,dome type,antenna SN,Ant dz,ant dn,ant de,receiver type, firmware version,receiver SN\n");
+        //pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
     }
 
     /**
@@ -319,8 +335,8 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      */
     private String myFormatDateTime(Date date) {
         if (date == null) { return ""; }
-        synchronized (dateTimeFormat) {
-            return dateTimeFormat.format(date);
+        synchronized (dateTimeFormatnoT) {
+            return dateTimeFormatnoT.format(date);
         }
     }
 
