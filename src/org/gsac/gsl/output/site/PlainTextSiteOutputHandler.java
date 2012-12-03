@@ -57,6 +57,11 @@ import javax.servlet.http.*;
  *      This format is only for a quick visual check of what is available. Not for computer processing. 
  *      Empty times (no characters) may mean 'not removed' or 'no change;' for some other empty values see previous or next session at the site.
  *      initial version Nov 27-30, 2012, SKW UNAVCO.
+ * 
+ * You may revise this class to adapt GSAC yo the needs of your repository.  Please do not submit a revised version of this class to GSAC in SourceForge.
+ *
+ * For bug reports and suggested improvments please contact UNAVCO.
+ *
  */
 public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
@@ -66,8 +71,9 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     /** date formatter */
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    /** date formatter */
-    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+    /** date formatter without the "T" found in other GSAC code */
+    /* somehow the Z here results in a value like "2001-07-11 00:00:00 -0600" with no Z */
+    private SimpleDateFormat dateTimeFormatnoT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
@@ -129,7 +135,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * label top of results; a header.
+     * label top of file of results; a header.
      *
      * @param pw _more_
      */
@@ -137,7 +143,8 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         pw.append(  "   GSAC Repository site information in plain text. \n");
         pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDate(new Date()) + "\n"); 
         pw.append(  "   This format is only for a quick visual check of what is available. Not for computer processing.  \n");
-        pw.append(  "   Empty times (no characters) may mean 'not removed' or 'no change;' for some other empty values see previous or next session at the site. ");
+        pw.append(  "   Empty times (no characters) may mean 'not removed' or 'no change.'  \n");
+        pw.append(  "   For some empty equipment values, see previous or next session at the site. ");
     }
 
     /**
@@ -219,7 +226,9 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         EarthLocation el = site.getEarthLocation();
         pw.append(    " site latitude:                "+ formatLocation(el.getLatitude())  + "" + "\n");
         pw.append(    " site longitude:               "+ formatLocation(el.getLongitude()) + "" + "\n");
-        pw.append(    " site ellipsoidal height:      "+ elevationFormat.format(el.getElevation()) + "" + "\n");
+        pw.append(    " site TRF or Datum name        \n");  // LOOK need GSAC parameter for this item
+        pw.append(    " site ellipsoidal height:      " + elevationFormat.format(el.getElevation()) + "" + "\n");
+        pw.append(    " site ellipsoid name           \n");  // LOOK need GSAC parameter for this item
         if (el.hasXYZ()) {
             pw.append(" site X coordinate:            "+ el.getX() + "" + "\n");
             pw.append(" site Y coordinate:            "+ el.getY() + "" + "\n");
@@ -229,6 +238,8 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             pw.append(" site Y coordinate:            " + "\n");
             pw.append(" site Z coordinate:            " + "\n");
         }
+        pw.append(    " site elevation                \n");  // LOOK need GSAC parameter for this item 
+        pw.append(    " site geoid model for elevation\n");  // LOOK need GSAC parameter for this item
     }
 
     /**
@@ -299,8 +310,8 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      */
     private String myFormatDateTime(Date date) {
         if (date == null) { return ""; }
-        synchronized (dateTimeFormat) {
-            return dateTimeFormat.format(date);
+        synchronized (dateTimeFormatnoT) {
+            return dateTimeFormatnoT.format(date);
         }
     }
 
