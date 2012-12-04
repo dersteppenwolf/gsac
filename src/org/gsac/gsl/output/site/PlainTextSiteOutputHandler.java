@@ -58,7 +58,7 @@ import javax.servlet.http.*;
  *      Empty times (no characters) may mean 'not removed' or 'no change;' for some other empty values see previous or next session at the site.
  *      initial version Nov 27-30, 2012, SKW UNAVCO.
  * 
- * You may revise this class to adapt GSAC yo the needs of your repository.  Please do not submit a revised version of this class to GSAC in SourceForge.
+ * You may revise this class to adapt GSAC to the needs of your repository.  Please do not submit a revised version of this class to GSAC in SourceForge.
  *
  * For bug reports and suggested improvments please contact UNAVCO.
  *
@@ -103,6 +103,13 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
     /**
      * handle the request: format sites' information in plain text so you can easily see what is available for these sites in this repository.
+     *
+     * LOOK add these:
+        SITELOG_OPERATIONALCONTACT extends Tables {
+        public static final String NAME = "SiteLog_OperationalContact";
+        public static final String COL_NAMEAGENCY =  NAME + ".NameAgency";
+        public static final String COL_FAX1 =  NAME + ".Fax1";
+     *
      *
      * @param request the request
      * @param response the response to write to
