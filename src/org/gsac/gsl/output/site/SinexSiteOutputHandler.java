@@ -57,10 +57,10 @@ import java.util.GregorianCalendar;
 
 
 /**
- *      Output handler for results for users' site queries, formatted in SINEX.
+ * Output handler for results for users' site queries, formatted in SINEX.
  * See SINEX specs from http://www.iers.org/nn_324882/IERS/EN/Organization/AnalysisCoordinator/SinexFormat/sinex.html?__nnn=true
  * especially sinex_v201_appendix1.pdf and sinex_v201_introduction.pdf or more recent version of those files.
- * and get recent SINEX files from http://sopac.ucsd.edu/processing/sinex/.
+ * and get recent examples of SINEX files from http://sopac.ucsd.edu/processing/sinex/.
  *
  * @version     initial Nov 21, 2012; revised Nov 30 - Dec 4, 2012  
  * @author      SKW UNAVCO
@@ -186,7 +186,10 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append(  "%=SNX 2.01 " + getRepository().getRepositoryName() + " "+ myFormatDate(new Date()) + "\n"); 
+        String now;
+        now = getNonNullString(myFormatDateTime( new Date()));
+        now = getSinexTimeFormat(now, new Date());
+        pw.append(  "%=SNX 2.01 " + getRepository().getRepositoryName() + " "+ now + "\n"); 
         pw.append(  "*-------------------------------------------------------------------------------\n");
     }
 
@@ -472,7 +475,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
 
   /**
-   *  make string of desired length by padding left end with " " if 's' is short, or truncate if 's' is too long.
+   *  make string of desired length by padding LEFT end with " " if 's' is short, or truncate if 's' is too long.
    *
    * @param s               String input to fix 
    * @param desiredLength   ending length
@@ -518,8 +521,13 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
   }
 
   /**
-   *  make string of  input date and time, in the  SINEX format
-   * day of year must be exactly 3 chars.
+   *  make string of  input date and time, in the  SINEX  time format:
+| Time                                 | YY:DDD:SSSSS. "UTC" | I2.2, |
+| | YY = last 2 digits of the year,    | 1H:,I3.3, |
+| | if YY <= 50 implies 21-st century, | 1H:,I5.5 |
+| | if YY > 50 implies 20-th century,  | |
+| | DDD = 3-digit day in year,         | |
+| | SSSSS = 5-digit seconds in day.    | |
    *
    * @param 
    * @param 
@@ -531,17 +539,29 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
           // the n data format
       } else {
           calendar.setTime( gd );
-          String yyyy = calendar.get(calendar.YEAR) +"";
+          String yy = calendar.get(calendar.YEAR) +"";  // like 1999
+          yy =   yy.substring(2,4); // like 99
           String ddd  = "" + calendar.get(calendar.DAY_OF_YEAR);
-          if (ddd.length() == 1) { ddd=" "+ddd; }
-          if (ddd.length() == 2) { ddd=" "+ddd; }
-          // next get HHMMSS
+          if (ddd.length() == 1) { ddd="0"+ddd; }
+          if (ddd.length() == 2) { ddd="0"+ddd; }
           String time =myFormatDateTime( gd ); // such as 2009-03-30T00:00:00 -0600
-          time=time.substring(11,19); // next remove the ":"
+          time=time.substring(11,19); 
+          // for HHMMSS 
           time = time.replaceAll(":","");
-          starttime= yyyy+" "+ddd+" "+time;
+          // next get  seconds in day
+          int hh =  Integer.parseInt(   time.substring(0,2));
+          int mm =  Integer.parseInt(   time.substring(2,4));
+          int ss =  Integer.parseInt(   time.substring(4,6));
+          int secs= hh*3600 + mm*60 +ss;
+          String sssss = "" + secs; 
+          // LOOK replace next and ddd business above with new method to pad with 0s on left to get a givne length
+          if (sssss.length() == 1) { sssss="0"+ddd; }
+          if (sssss.length() == 2) { sssss="0"+ddd; }
+          if (sssss.length() == 3) { sssss="0"+ddd; }
+          if (sssss.length() == 4) { sssss="0"+ddd; }
+          starttime= yy+":"+ddd+":"+sssss;
           }
-    starttime= setStringLength(starttime,12);// should make no change!
+    starttime= setStringLengthRight(starttime,12);// should make no change!
     return starttime;
     }
 
