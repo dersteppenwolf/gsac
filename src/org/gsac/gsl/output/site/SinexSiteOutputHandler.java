@@ -132,10 +132,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
-            //Add the various content areas
             addSiteIdentification(pw, site);
             //addSiteLocation(pw, site);
-            //addSiteEquipment(pw, site);
             //addSiteStream(pw, site);
         }
         pw.append("-SITE/ID\n");
@@ -168,6 +166,12 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         pw.append("+SITE/ECCENTRICITY\n");
         pw.append("*                                             UP______ NORTH___ EAST____\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ AXE ARP->BENCHMARK(M)_________\n");
+        for (GsacSite site : sites) {
+            //Call this to ensure that all of the metadata is added to the site
+            getRepository().doGetFullMetadata(-1, site);
+            addSiteEquipmentAntennaSinexEccentricity(pw, site);
+            //addSiteStream(pw, site);
+        }
         pw.append("-SITE/ECCENTRICITY\n");
 
         //pw.append("*-------------------------------------------------------------------------------\n");
@@ -324,47 +328,28 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
-
             if (equipment.hasReceiver()) {
-                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    0 P ");
-
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
-
                 pw.append( setStringLengthRight( equipment.getReceiver(),20) +" ");
                 pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
                 pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
                 pw.append("\n");
             } 
-/*
-            if (equipment.hasAntenna()) {
-                pw.append("    new equipment session (antenna):   \n");
-                pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
-                pw.append("      antenna SN:             "+ getNonNullString(equipment.getAntennaSerial()) + "\n");
-                double[] xyz = equipment.getXyzOffset();
-                pw.append("      antenna offset Ht or UP:"+ offsetFormat.format(xyz[2]) + "\n");
-                pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
-                pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
-                pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
-                //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
-                //pw.append(EQUIP_ANTENNACABLETYPE, "",
-                //pw.append(EQUIP_ANTENNACABLELENGTH,
-                pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
-                pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
-            }
-*/
-
         }
     }
 
 
     /**
      * print site antenna block  for all sites
+*-------------------------------------------------------------------------------
++SITE/ANTENNA
+*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__
      *
      * @param pw _more_
      * @param site _more_
@@ -378,42 +363,81 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
-/*
-*-------------------------------------------------------------------------------
-+SITE/ANTENNA
-*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__
-
-*/
             if (equipment.hasAntenna()) {
-                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    0 P ");
-
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
-
                 pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
                 pw.append( setStringLength( equipment.getAntennaSerial(),5) +" ");
                 pw.append("\n");
             }
 
-/* keep for future use
+        }
+    }
+
+    /**
+     * print site antenna ECCENTRICITY block  for all sites
+*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__
+*-------------------------------------------------------------------------------
++SITE/ECCENTRICITY
+*                                             UP______ NORTH___ EAST____
+*SITE PT SOLN T DATA_START__ DATA_END____ AXE ARP->BENCHMARK(M)_________
+ ABMF  A    1 P 12:217:00000 12:225:86370 UNE   0.0000   0.0000   0.0000
+ ABPO  A    1 P 12:217:00000 12:225:86370 UNE   0.0083   0.0000   0.0000
+ ADIS  A    1 P 12:217:00000 12:225:86370 UNE   0.0010   0.0000   0.0000
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteEquipmentAntennaSinexEccentricity(PrintWriter pw, GsacSite site)
+            throws Exception {
+        List<GsacMetadata> equipmentMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+        for (GsacMetadata metadata : equipmentMetadata) {
+            GnssEquipment equipment = (GnssEquipment) metadata;
+            if (equipment.hasAntenna()) {
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
+                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                pw.append( starttime+ " ");
+                pw.append( stoptime+ " ");
+                pw.append( "UNE ");  // the axes order in coord offsets following is up(z or vertical), north , east 
+                // the offsets in the GSAC equipment object is the next xyz double array in array order east, norht, up.
+
                 double[] xyz = equipment.getXyzOffset();
-                pw.append("      antenna offset Ht or UP:"+ offsetFormat.format(xyz[2]) + "\n");
-                pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
-                pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
-                pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
+                String zo = offsetFormat.format(xyz[2]);
+                if (zo.equals("0")) { zo= "  0.0000"; }
+                pw.append( setStringLength(zo,8) + " ");
+
+                String yo = offsetFormat.format(xyz[1]);
+                if (yo.equals("0")) { yo= "  0.0000"; }
+                pw.append( setStringLength(yo,8) + " ");
+
+                String xo = offsetFormat.format(xyz[0]);
+                if (xo.equals("0")) { xo= "  0.0000"; }
+                pw.append( setStringLength(xo,8) + " ");
+
+                pw.append("\n");
+            }
+            /* keep for future use
                 //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
                 //pw.append(EQUIP_ANTENNACABLETYPE, "",
                 //pw.append(EQUIP_ANTENNACABLELENGTH,
                 pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
                 pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
-*/
+            */
         }
     }
+
 
     /**
      * _more_
