@@ -69,6 +69,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
     String starttime ="------------";
     String stoptime = "------------";
+    String prevAntStartTime = "------------";
+    String prevAntStopTime = "------------";
 
     /** output id */
     public static final String OUTPUT_SITE_SINEX = "site.snx";
@@ -403,11 +405,19 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
             if (equipment.hasAntenna()) {
-                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+
+                if (starttime.equals(prevAntStartTime) ) {
+                    ; //  why two antenna sessions with same times?
+                    // don't reprint the same line
+                }
+                else {
+                prevAntStartTime = starttime;
+                prevAntStopTime = stoptime;
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
                 pw.append( "UNE ");  // the axes order in coord offsets following is up(z or vertical), north , east 
@@ -427,6 +437,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 pw.append( setStringLength(xo,8) + " ");
 
                 pw.append("\n");
+                }
             }
             /* keep for future use
                 //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
@@ -553,7 +564,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 | | DDD = 3-digit day in year,         | |
 | | SSSSS = 5-digit seconds in day.    | |
    *
-   * @param 
+   * @param  input String starttime; time to be formatted
    * @param 
    * @return                String  of exactly 12 chars
    */
@@ -579,10 +590,10 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
           int secs= hh*3600 + mm*60 +ss;
           String sssss = "" + secs; 
           // LOOK replace next and ddd business above with new method to pad with 0s on left to get a givne length
-          if (sssss.length() == 1) { sssss="0"+ddd; }
-          if (sssss.length() == 2) { sssss="0"+ddd; }
-          if (sssss.length() == 3) { sssss="0"+ddd; }
-          if (sssss.length() == 4) { sssss="0"+ddd; }
+          if (sssss.length() == 1) { sssss="0"+sssss; }
+          if (sssss.length() == 2) { sssss="0"+sssss; }
+          if (sssss.length() == 3) { sssss="0"+sssss; }
+          if (sssss.length() == 4) { sssss="0"+sssss; }
           starttime= yy+":"+ddd+":"+sssss;
           }
     starttime= setStringLengthRight(starttime,12);// should make no change!
