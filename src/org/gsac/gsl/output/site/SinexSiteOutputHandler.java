@@ -71,6 +71,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     String stoptime = "------------";
     String prevAntStartTime = "------------";
     String prevAntStopTime = "------------";
+    String prevRecStartTime = "------------";
+    String prevRecStopTime = "------------";
 
     /** output id */
     public static final String OUTPUT_SITE_SINEX = "site.snx";
@@ -366,16 +368,24 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
             if (equipment.hasAntenna()) {
-                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                if (starttime.equals(prevAntStartTime) ) {
+                    ; //  why two antenna sessions with same times?
+                    // don't reprint the same line
+                }
+                else {
+                prevAntStartTime = starttime;
+                prevAntStopTime = stoptime;
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
                 pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
-                pw.append( setStringLength( equipment.getAntennaSerial(),5) +" ");
+                pw.append( setStringLength( equipment.getAntennaSerial(),5) );
                 pw.append("\n");
+                }
             }
 
         }
@@ -422,19 +432,20 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 pw.append( stoptime+ " ");
                 pw.append( "UNE ");  // the axes order in coord offsets following is up(z or vertical), north , east 
                 // the offsets in the GSAC equipment object is the next xyz double array in array order east, norht, up.
+                // sinex likes these values in 6 characters in an 8 character field
 
                 double[] xyz = equipment.getXyzOffset();
                 String zo = offsetFormat.format(xyz[2]);
-                if (zo.equals("0")) { zo= "  0.0000"; }
-                pw.append( setStringLength(zo,8) + " ");
+                if (zo.equals("0")) { zo= "0.0000"; }
+                pw.append( "  "+ setStringLengthZeros(zo,6) + " ");
 
                 String yo = offsetFormat.format(xyz[1]);
-                if (yo.equals("0")) { yo= "  0.0000"; }
-                pw.append( setStringLength(yo,8) + " ");
+                if (yo.equals("0")) { yo= "0.0000"; }
+                pw.append( "  "+ setStringLengthZeros(yo,6) + " ");
 
                 String xo = offsetFormat.format(xyz[0]);
-                if (xo.equals("0")) { xo= "  0.0000"; }
-                pw.append( setStringLength(xo,8) + " ");
+                if (xo.equals("0")) { xo= "0.0000"; }
+                pw.append( "  "+ setStringLengthZeros(xo,6) );
 
                 pw.append("\n");
                 }
@@ -541,6 +552,29 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
    */
   public static String setStringLengthRight(String s, int desiredLength) {
     String padString = " ";
+    if (s.length() > desiredLength) {
+        s =  s.substring(0,desiredLength);
+    }
+    else if (s.length() == desiredLength) {
+        return s;
+    }
+    else {
+        while (s.length() < desiredLength) {
+            s = s + padString;
+        }
+    }
+    return s;
+  }
+
+  /**
+   *  make string of desired length by padding RIGHT with "0" if 's' is short, or truncate if 's' is too long.
+   *
+   * @param s               String input to fix 
+   * @param desiredLength   ending length
+   * @return                String of desiredLength
+   */
+  public static String setStringLengthZeros(String s, int desiredLength) {
+    String padString = "0";
     if (s.length() > desiredLength) {
         s =  s.substring(0,desiredLength);
     }
