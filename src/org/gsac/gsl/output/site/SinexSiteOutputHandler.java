@@ -50,6 +50,11 @@ import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+
 
 /**
  *      Output handler for results for users' site queries, formatted in SINEX.
@@ -57,10 +62,13 @@ import javax.servlet.http.*;
  * especially sinex_v201_appendix1.pdf and sinex_v201_introduction.pdf or more recent version of those files.
  * and get recent SINEX files from http://sopac.ucsd.edu/processing/sinex/.
  *
- * @version     Nov 21- Nov 30 - , 2012  
- * @author      SKW
+ * @version     initial Nov 21, 2012; revised Nov 30 - Dec 4, 2012  
+ * @author      SKW UNAVCO
  */
 public class SinexSiteOutputHandler extends GsacOutputHandler {
+
+    String starttime ="------------";
+    String stoptime = "------------";
 
     /** output id */
     public static final String OUTPUT_SITE_SINEX = "site.snx";
@@ -79,6 +87,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
     /** for antenna offset values from instrument reference point.  */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
+
+    Calendar calendar = Calendar.getInstance();  // default is "GMT" 
 
 
     /**
@@ -116,7 +126,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         //We can have any number of sites here. 
         List<GsacSite> sites = response.getSites();
 
-        // do ID block with all the sites:
+        // do SITE/ID block with all the sites:
         pw.append("+SITE/ID\n");
         pw.append("*CODE PT __DOMES__ T _STATION DESCRIPTION__ APPROX_LON_ APPROX_LAT_ _APP_H_\n");
         for (GsacSite site : sites) {
@@ -130,39 +140,39 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
         pw.append("-SITE/ID\n");
 
-/*
-*-------------------------------------------------------------------------------
-+SITE/RECEIVER
-*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___
- ABMF  A    1 P 12:217:00000 12:225:86370 TRIMBLE NETR9        ----- -----------
- ABPO  A    1 P 12:217:00000 12:225:86370 ASHTECH UZ-12        ----- -----------
- ADIS  A    1 P 12:217:00000 12:225:86370 JPS LEGACY           ----- -----------
-        */
+        // do SITE/RECEIVER with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/RECEIVER\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___\n");
+        for (GsacSite site : sites) {
+            //Call this to ensure that all of the metadata is added to the site
+            getRepository().doGetFullMetadata(-1, site);
+            addSiteEquipmentReceiver(pw, site);
+            //addSiteStream(pw, site);
+        }
         pw.append("-SITE/RECEIVER\n");
 
-/*
-*-------------------------------------------------------------------------------
-+SITE/RECEIVER
-*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___
- ABMF  A    1 P 12:217:00000 12:225:86370 TRIMBLE NETR9        ----- -----------
- ABPO  A    1 P 12:217:00000 12:225:86370 ASHTECH UZ-12        ----- -----------
- ADIS  A    1 P 12:217:00000 12:225:86370 JPS LEGACY           ----- -----------
-        */
+        // do SITE/ANTENNA with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/ANTENNA\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__\n");
+        for (GsacSite site : sites) {
+            //Call this to ensure that all of the metadata is added to the site
+            getRepository().doGetFullMetadata(-1, site);
+            addSiteEquipmentAntenna(pw, site);
+            //addSiteStream(pw, site);
+        }
         pw.append("-SITE/ANTENNA\n");
 
         pw.append("*-------------------------------------------------------------------------------\n");
-        pw.append("+SITE/GPS_PHASE_CENTER\n");
-        pw.append("-SITE/GPS_PHASE_CENTER\n");
+        pw.append("+SITE/ECCENTRICITY\n");
+        pw.append("*                                             UP______ NORTH___ EAST____\n");
+        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ AXE ARP->BENCHMARK(M)_________\n");
+        pw.append("-SITE/ECCENTRICITY\n");
 
-        pw.append("*-------------------------------------------------------------------------------\n");
-        pw.append("+SITE/ECC...\n");
-        pw.append("-SITE/ECC...\n");
+        //pw.append("*-------------------------------------------------------------------------------\n");
+        //pw.append("+SITE/GPS_PHASE_CENTER\n");
+        //pw.append("-SITE/GPS_PHASE_CENTER\n");
 
         pw.append("%ENDSNX\n");
 
@@ -291,15 +301,20 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     }
 
 
+
     /**
-     * print results of site equipment ('sessions') for this format style
+     * print site receiver block  for all sites
+*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___
+ ABMF  A    1 P 12:217:00000 12:225:86370 TRIMBLE NETR9        ----- -----------
+ ABPO  A    1 P 12:217:00000 12:225:86370 ASHTECH UZ-12        ----- -----------
+ ADIS  A    1 P 12:217:00000 12:225:86370 JPS LEGACY           ----- -----------
      *
      * @param pw _more_
      * @param site _more_
      *
      * @throws Exception _more_
      */
-    private void addSiteEquipment(PrintWriter pw, GsacSite site)
+    private void addSiteEquipmentReceiver(PrintWriter pw, GsacSite site)
             throws Exception {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
@@ -308,14 +323,21 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
             if (equipment.hasReceiver()) {
-                pw.append("    new equipment session (receiver):   \n");
-                pw.append("      receiver type:          "+ equipment.getReceiver() + "\n");
-                pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
-                pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
-                pw.append("      receiver installed date:"+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      receiver removed:       "+ myFormatDateTime(equipment.getToDate()) + "\n");
-            }
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    0 P ");
 
+                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                pw.append( starttime+ " ");
+                pw.append( stoptime+ " ");
+
+                pw.append( setStringLengthRight( equipment.getReceiver(),20) +" ");
+                pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
+                pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
+                pw.append("\n");
+            } 
+/*
             if (equipment.hasAntenna()) {
                 pw.append("    new equipment session (antenna):   \n");
                 pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
@@ -332,9 +354,63 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
                 pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
             }
+*/
+
         }
     }
 
+
+    /**
+     * print site antenna block  for all sites
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteEquipmentAntenna(PrintWriter pw, GsacSite site)
+            throws Exception {
+        List<GsacMetadata> equipmentMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+        for (GsacMetadata metadata : equipmentMetadata) {
+            GnssEquipment equipment = (GnssEquipment) metadata;
+/*
+*-------------------------------------------------------------------------------
++SITE/ANTENNA
+*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__
+
+*/
+            if (equipment.hasAntenna()) {
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    0 P ");
+
+                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                pw.append( starttime+ " ");
+                pw.append( stoptime+ " ");
+
+                pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
+                pw.append( setStringLength( equipment.getAntennaSerial(),5) +" ");
+                pw.append("\n");
+            }
+
+/* keep for future use
+                double[] xyz = equipment.getXyzOffset();
+                pw.append("      antenna offset Ht or UP:"+ offsetFormat.format(xyz[2]) + "\n");
+                pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
+                pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
+                pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
+                pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
+                //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
+                //pw.append(EQUIP_ANTENNACABLETYPE, "",
+                //pw.append(EQUIP_ANTENNACABLELENGTH,
+                pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
+                pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
+*/
+        }
+    }
 
     /**
      * _more_
@@ -394,19 +470,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
     }
 
-    /**
-     * _more_
-     *
-     * @param s _more_
-     *
-     * @return _more_
-     */
-    private String getNonNullString(String s) {
-        if (s == null) {
-            return "";
-        }
-        return s;
-    }
 
   /**
    *  make string of desired length by padding left end with " " if 's' is short, or truncate if 's' is too long.
@@ -453,6 +516,49 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     }
     return s;
   }
+
+  /**
+   *  make string of  input date and time, in the  SINEX format
+   * day of year must be exactly 3 chars.
+   *
+   * @param 
+   * @param 
+   * @return                String  of exactly 12 chars
+   */
+  public String  getSinexTimeFormat(String starttime, java.util.Date gd) {
+      if (starttime.equals("") || starttime.equals("------------") ) {
+          starttime="-----------";
+          // the n data format
+      } else {
+          calendar.setTime( gd );
+          String yyyy = calendar.get(calendar.YEAR) +"";
+          String ddd  = "" + calendar.get(calendar.DAY_OF_YEAR);
+          if (ddd.length() == 1) { ddd=" "+ddd; }
+          if (ddd.length() == 2) { ddd=" "+ddd; }
+          // next get HHMMSS
+          String time =myFormatDateTime( gd ); // such as 2009-03-30T00:00:00 -0600
+          time=time.substring(11,19); // next remove the ":"
+          time = time.replaceAll(":","");
+          starttime= yyyy+" "+ddd+" "+time;
+          }
+    starttime= setStringLength(starttime,12);// should make no change!
+    return starttime;
+    }
+
+    /**
+     *  if 's' is null return "---------------" the 'nothing' time value; else return 's'.
+     *
+     * @param s  input String object
+     *
+     * @return  a string
+     */
+    private String getNonNullString(String s) {
+        if (s == null) {
+            return "------------";
+        }
+        return s;
+    }
+
 
 
 
