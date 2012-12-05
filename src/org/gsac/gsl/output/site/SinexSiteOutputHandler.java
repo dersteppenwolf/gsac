@@ -143,27 +143,24 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         pw.append("-SITE/ID\n");
 
 /*
-        // do SITE/RECEIVER with all the sites:
+        // do SITE/antenna with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/ANTENNA\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__\n");
         for (GsacSite site : sites) {
-            //Call this to ensure that all of the metadata is added to the site
-            getRepository().doGetFullMetadata(-1, site);
-            addSiteEquipmentReceiver(pw, site);
-            //addSiteStream(pw, site);
+            addSiteEquipmentAntenna(pw, site);
         }
-        pw.append("-SITE/RECEIVER\n");
+        pw.append("-SITE/ANTENNA\n");
 */
 
-        // do SITE/RECEIVERwith all the sites:
+        // do SITE/RECEIVER with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/RECEIVER\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___\n");
         for (GsacSite site : sites) {
             // when testing only  
             //pw.append("  CALL addSiteEquipmentAntenna -------------------------------------------------------------------------------------------- for site \n");
-            addSiteEquipmentAntenna(pw, site);
+            addSiteEquipmentReceiver(pw, site);
         }
         pw.append("-SITE/RECEIVER\n");
 
@@ -317,6 +314,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
+OLD version
      * print site receiver block  for all sites
 *SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___
  ABMF  A    1 P 12:217:00000 12:225:86370 TRIMBLE NETR9        ----- -----------
@@ -327,8 +325,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      * @param site _more_
      *
      * @throws Exception _more_
-     */
-    private void addSiteEquipmentReceiver(PrintWriter pw, GsacSite site)
+    private void addSiteEquipment OLD Receiver(PrintWriter pw, GsacSite site)
             throws Exception {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
@@ -354,20 +351,18 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             } 
         }
     }
+     */
 
 
     /**
-     * print site antenna block  for all sites
-*-------------------------------------------------------------------------------
-+SITE/ANTENNA
-*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__
+     * print site receiver block  for all sites
      *
      * @param pw _more_
      * @param site _more_
      *
      * @throws Exception _more_
      */
-    private void addSiteEquipmentAntenna(PrintWriter pw, GsacSite site)
+    private void addSiteEquipmentReceiver(PrintWriter pw, GsacSite site)
             throws Exception {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
