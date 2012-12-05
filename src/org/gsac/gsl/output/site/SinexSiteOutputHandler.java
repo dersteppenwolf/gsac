@@ -142,17 +142,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
         pw.append("-SITE/ID\n");
 
-/*
-        // do SITE/antenna with all the sites:
-        pw.append("*-------------------------------------------------------------------------------\n");
-        pw.append("+SITE/ANTENNA\n");
-        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__\n");
-        for (GsacSite site : sites) {
-            addSiteEquipmentAntenna(pw, site);
-        }
-        pw.append("-SITE/ANTENNA\n");
-*/
-
         // do SITE/RECEIVER with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/RECEIVER\n");
@@ -163,6 +152,15 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             addSiteEquipmentReceiver(pw, site);
         }
         pw.append("-SITE/RECEIVER\n");
+
+        // do SITE/antenna with all the sites:
+        pw.append("*-------------------------------------------------------------------------------\n");
+        pw.append("+SITE/ANTENNA\n");
+        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__\n");
+        for (GsacSite site : sites) {
+            addSiteEquipmentAntenna(pw, site);
+        }
+        pw.append("-SITE/ANTENNA\n");
 
 /*
         pw.append("*-------------------------------------------------------------------------------\n");
@@ -413,6 +411,72 @@ OLD version
 */
         }
     }
+
+
+    /**
+     * print site antenna block  for all sites
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteEquipmentAntenna(PrintWriter pw, GsacSite site)
+            throws Exception {
+        List<GsacMetadata> equipmentMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
+        int sescount=0;
+
+        for (GsacMetadata metadata : equipmentMetadata) {
+            GnssEquipment equipment = (GnssEquipment) metadata;
+            sescount +=1;
+
+/*
+            if (equipment.hasReceiver()) {
+                // for testing ONLY: 
+                //pw.append("         REC SESSION "+sescount+  "\n ");
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
+                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                pw.append( starttime+ " ");
+                pw.append( stoptime+ " ");
+                pw.append( setStringLengthRight( equipment.getReceiver(),20) +" ");
+                pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
+                pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
+                pw.append("\n");
+            }
+*/
+
+            if (equipment.hasAntenna()) {
+                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                if (starttime.equals(prevAntStartTime) ) {
+                    ; //  why two antenna sessions with same times?
+                    // don't reprint the same line
+                }
+                else {
+                    prevAntStartTime = starttime;
+                    prevAntStopTime = stoptime;
+                    // for testing ONLY: 
+                    //pw.append("         ANT SESSION "+sescount+  "\n ");
+                    pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
+                    pw.append( starttime+ " ");
+                    pw.append( stoptime+ " ");
+                    pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
+                    pw.append( setStringLength( equipment.getAntennaSerial(),5) );
+                    pw.append("\n");
+                }
+            }
+
+        }
+    }
+
 
     /**
      * print site antenna ECCENTRICITY block  for all sites
