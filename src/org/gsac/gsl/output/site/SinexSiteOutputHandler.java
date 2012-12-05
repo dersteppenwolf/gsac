@@ -70,9 +70,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     String starttime ="------------";
     String stoptime = "------------";
     String prevAntStartTime = "------------";
-    String prevAntStopTime = "------------";
+    String prevAntStopTime =  "------------";
     String prevRecStartTime = "------------";
-    String prevRecStopTime = "------------";
+    String prevRecStopTime =  "------------";
 
     /** output id */
     public static final String OUTPUT_SITE_SINEX = "site.snx";
@@ -162,7 +162,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
         pw.append("-SITE/ANTENNA\n");
 
-/*
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/ECCENTRICITY\n");
         pw.append("*                                             UP______ NORTH___ EAST____\n");
@@ -174,7 +173,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             //addSiteStream(pw, site);
         }
         pw.append("-SITE/ECCENTRICITY\n");
-*/
 
         //pw.append("*-------------------------------------------------------------------------------\n");
         //pw.append("+SITE/GPS_PHASE_CENTER\n");
@@ -499,6 +497,7 @@ OLD version
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
             if (equipment.hasAntenna()) {
@@ -506,10 +505,8 @@ OLD version
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
-
                 if (starttime.equals(prevAntStartTime) ) {
-                    ; //  why two antenna sessions with same times?
-                    // don't reprint the same line
+                    ; //  why two antenna sessions with same times?  // don't reprint the same line
                 }
                 else {
                 prevAntStartTime = starttime;
@@ -691,8 +688,7 @@ OLD version
    */
   public String  getSinexTimeFormat(String starttime, java.util.Date gd) {
       if (starttime.equals("") || starttime.equals("------------") ) {
-          starttime="-----------";
-          // the n data format
+          starttime="------------"; // the no data available format
       } else {
           calendar.setTime( gd );
           String yy = calendar.get(calendar.YEAR) +"";  // like 1999
