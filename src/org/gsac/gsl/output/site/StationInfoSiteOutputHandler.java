@@ -56,9 +56,10 @@ import javax.servlet.http.*;
 /* 
       For the Gamit station.info file format, see http://www-gpsg.mit.edu/~simon/gtgk/ and the docs on http://www-gpsg.mit.edu/~simon/gtgk/docs.htm, and 
       http://sopac.ucsd.edu/input/processing/gamit/setup/station.info, http://sopac.ucsd.edu/processing/gamit/,  http://geoapp02.ucsd.edu:8080/scignDataPortal/gpsProcXmlSummary.jsp,
-      http://www.geologie.ens.fr/~vigny/site-desc/chili/station.info_cGPS
+      http://www.geologie.ens.fr/~vigny/site-desc/chili/station.info_cGPS,  http://geoweb.mit.edu/~simon/gtgk/tutorial/Lecture_3.pdf
+      http://csrc.ucsd.edu/input/processing/gamit/setup/station.info
 
-      This is a column counting format!  desired results sample:
+      This is a column counting format!    Desired results sample:
 
 *          Gamit station.info
 *
@@ -75,31 +76,43 @@ import javax.servlet.http.*;
  PALM  Palmer Station,   2009 090 16 30 00  9999 999 00 00 00   0.0794  DHPAB   0.0000   0.0000  ASHTECH UZ-12         CQ00                  -----  UC2200436003          ASH700936D_M     SCIS   CR14107     
 number chars in fields:
   4       16             17                    17               7       5         7        7        20                     20                 5        20                   16             5(not 4)  20
+
+    " HtCod – Defines geometry of AntHt measurement – DHPAB is RINEX standaard is vertical height to antenna reference point (ARP)"
+
+    "the receiver type and firmware/software version (SwVer)"
+
+     Note use of "9999 999 00 00 00" for "time unknown".
 */
 
 /**
  *  UNAVCO GSAC-WS output handler (formating of site query results) for the GAMIT station.info file format.
- *  Note, use of term 'station.info.txt' below, so that it can show up in a browser window.
- *  May wish to use only station.info for file naming properly.
- *  original SKW Nov. 29, 2012. mods Dec. 3; 
+ *  Note, use of 
+ "GAMIT station.info", "/site.station.info.txt", true));
+ below, so that it can show up in a browser window.
+ *  May wish to use only site.station.info for file naming properly.
+ *  original SKW Nov. 29, 2012. mods Dec. 3; Dec. 5; 
  */
 public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
     String id ="----";
     String name ="--------------------";
-    String starttime ="-----------------";
-    String stoptime ="-----------------";
-    String antht ="-------";
-    String htcod ="-----";
+    String starttime ="9999 999 00 00 00";
+    String stoptime = "9999 999 00 00 00";
+
+    String rectype ="--------------------";
+    String recsn ="--------------------";
+    String firmvers ="--------------------";
+
+    String swvers ="-----";
+
+    String anttype ="--------------------";
+    String antsn ="--------------------";
     String antn ="0";
     String ante ="0";
-    String rectype ="--------------------";
-    String firmvers ="--------------------";
-    String swvers ="-----";
-    String recsn ="--------------------";
-    String anttype ="--------------------";
+    String antht ="-------";
+    String htcod ="DHPAB";
+
     String dome ="-----";
-    String antsn ="--------------------";
 
     Calendar calendar = Calendar.getInstance();  // default is "GMT" 
 
@@ -107,7 +120,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     public static final String OUTPUT_SITE_STATIONINFO= "site.station.info";
 
     /** date formatter */
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    //private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /** date formatter */
     private SimpleDateFormat dateTimeFormat =
@@ -126,12 +139,12 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     public StationInfoSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_STATIONINFO,
-            "GAMIT station.info", "/site.station.info.txt", true));
-            // may wish to use only station.info for file naming properly.  LOOK
+            //  use  station.info for file naming properly
+            "GAMIT station.info", "/site.station.info", true));
     }
 
     /**
-     * handle the request: format the sites' information in GAMIT station.info files format
+     * handle the request: format the sites' information in GAMIT station.info files' format
      *
      * @param request the request
      * @param response the response to write to
@@ -152,7 +165,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             getRepository().doGetFullMetadata(-1, site);
             addSiteIdentification(pw, site);
             addSiteEquipment(pw, site);
-            addSiteStream(pw, site);
+            //addSiteStream(pw, site);
         }
         response.endResponse();
     }
@@ -166,14 +179,14 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     private void addHeader (PrintWriter pw) {
         pw.append("*          Gamit station.info\n");
         pw.append("*          \n");
-        pw.append("*          Generated by the "+ getRepository().getRepositoryName()  + " on "+ myFormatDateTime(new Date()) + " (offset from UTC) \n");
+        pw.append("*          Generated by the "+ getRepository().getRepositoryName()  + " on "+ myFormatDateTime(new Date()) + " \n");
         pw.append("*          \n");
         pw.append("*SITE  Station Name      Session Start      Session Stop       Ant Ht   HtCod  Ant N    Ant E    Receiver Type         Vers                  SwVer  Receiver SN           Antenna Type     Dome   Antenna SN\n");
     }
 
 
     /**
-     * get site id details for this format style
+     * get site id details for GAMI station.info format style
      *
      * @param pw _more_
      * @param site _more_
@@ -184,15 +197,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         id = site.getShortName();
         name = site.getLongName();
-        /*
-        // not in gamit: 
-        pw.append(    " site IERSDOMES        "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
-        Date date = site.getFromDate();
-        if (date != null) { pw.append(" site installed date: "+ myFormatDateTime(date) + "\n"); }
-        else { pw.append(" site installed date: \n"); }
-        pw.append(    " site monum. descript. "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
-        pw.append(    " site cdp number       "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
-        */
     }
 
 
@@ -235,22 +239,23 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
             if (equipment.hasReceiver()) {
-                starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
-                starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
-
-                stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
-                stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
-
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
                 firmvers=equipment.getReceiverFirmware();
+                starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
             }
-
-            if (equipment.hasAntenna()) {
+            else if (equipment.hasAntenna()) {
+                anttype=getNonNullGamitString(equipment.getAntenna());
+                antsn  =getNonNullGamitString(equipment.getAntennaSerial());
+                dome = getNonNullGamitString(equipment.getDome());
                 double[] xyz = equipment.getXyzOffset();
                 antht = offsetFormat.format(xyz[2]);
                 if (antht.equals("0")) { antht = "0.0000"; }
@@ -258,20 +263,10 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 if (antn.equals("0")) { antn = "0.0000"; }
                 ante = offsetFormat.format(xyz[0]);
                 if (ante.equals("0")) { ante = "0.0000"; }
-                anttype=getNonNullGamitString(equipment.getAntenna());
-                antsn  =getNonNullGamitString(equipment.getAntennaSerial());
-                dome = getNonNullGamitString(equipment.getDome());
-
                 starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
-
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
-                /* not in gamit station.info files:
-                //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
-                //pw.append(EQUIP_ANTENNACABLETYPE, "",
-                //pw.append(EQUIP_ANTENNACABLELENGTH,
-                */
             }
 
             // construct the gamit station.info file line for this session at a site:
@@ -286,9 +281,9 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 +setStringLengthRight(recsn,20)+"  "
                 +setStringLengthRight(anttype,15)+"  "
                 +setStringLengthRight(dome,5)+"  "
-                +setStringLengthRight(antsn,20)+"\n");
+                +setStringLengthRight(antsn,20)                      +"\n");
 
-        } // end for loop on sessions
+        } // end for loop on equipment items = sessions
     }     // end addSiteEquipment
 
 
@@ -311,35 +306,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         }
     }
 
-    /**
-     * _more_
-     *
-     * @param pw _more_
-     * @param site _more_
-     *
-     * @throws Exception _more_
-     */
-    private void addSiteStream(PrintWriter pw, GsacSite site)
-            throws Exception {
-        GsacMetadata.debug = true;
-        //System.err.println("  StationInfoSiteOutputHandler.addSiteStream ():  Finding metadata");
-        List<GsacMetadata> streamMetadata =
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
-        GsacMetadata.debug = false;
-        int cnt = 0;
-        for (GsacMetadata metadata : streamMetadata) {
-            StreamMetadata stream = (StreamMetadata) metadata;
-            if (cnt == 0) {
-                ; //pw.append( XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-            }
-            cnt++;
-            stream.encode(pw, this, "station.info");
-        }
-        if (cnt > 0) {
-            ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-        }
-    }
 
     /**
      *  if 's' is null return "--------------------" the GAMIT 'nothing' value; else return 's'.
@@ -411,7 +377,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
    */
   public String  getGamitTimeFormat(String starttime, java.util.Date gd) {
       if (starttime.equals("") || starttime.equals("--------------------") ) {
-          starttime="--------------------";
+          starttime="9999 999 00 00 00";
           // the GAMIT station.info 'no data' format
       } else {
           calendar.setTime( gd );
