@@ -55,7 +55,7 @@ import javax.servlet.http.*;
  *      Output handler for results for users' site queries, formatted in plain text.
  *      GSAC-WS Repository Site information in plain text.  This format was created by UNAVCO solely for GSAC use. 
  *      This format is only for a quick visual check of what is available. Not for computer processing. 
- *      Empty times (no characters) may mean 'not removed' or 'no change;' for some other empty values see previous or next session at the site.
+ *      Empty times (no characters) may mean 'not removed' or 'no change;' 
  *      initial version Nov 27-30, 2012, SKW UNAVCO.
  * 
  * You may revise this class to adapt GSAC to the needs of your repository.  Please do not submit a revised version of this class to GSAC in SourceForge.
@@ -135,7 +135,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             addSiteIdentification(pw, site);
             addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
-            addSiteStream(pw, site);
+            //addSiteStream(pw, site);
         }
         response.endResponse();
     }
@@ -147,11 +147,11 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append(  "   GSAC Repository site information in plain text. \n");
-        pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDate(new Date()) + "\n"); 
-        pw.append(  "   This format is only for a quick visual check of what is available. Not for computer processing.  \n");
+        pw.append(  "   Site information in plain text. \n");
+        pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDateTime(new Date()) + "\n"); 
+        pw.append(  "   This format is only for a quick visual check of what is available; not for computer processing.  \n");
         pw.append(  "   Empty times (no characters) may mean 'not removed' or 'no change.'  \n");
-        pw.append(  "   For some empty equipment values, see previous or next session at the site. ");
+        pw.append(  "   \n");
     }
 
     /**
@@ -165,18 +165,18 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
         pw.append(    " site:\n");
-        pw.append(    " site 4 char ID:       "+ site.getShortName() + "\n");
-        pw.append(    " site long name:       "+ site.getLongName() + "\n");
-        pw.append(    " site IERSDOMES        "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
+        pw.append(    " site 4 char ID:           "+ site.getShortName() + "\n");
+        pw.append(    " site long name:           "+ site.getLongName() + "\n");
+        pw.append(    " site IERSDOMES            "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
         Date date = site.getFromDate();
         if (date != null) {
-            pw.append(" site installed date: "+ myFormatDateTime(date) + "\n");
+            pw.append(" site installed date:      "+ myFormatDateTime(date) + "\n");
         }
         else {
             pw.append(" site installed date: \n");
         }
-        pw.append(    " site monum. descript. "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
-        pw.append(    " site cdp number       "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
+        pw.append(    " site monument description "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
+        pw.append(    " site cdp number           "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
     }
 
 
@@ -227,26 +227,26 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         if (plm == null) {
             plm = new PoliticalLocationMetadata();
         }
-        pw.append(    " site country:                 "+ getNonNullString(plm.getCountry())  + "\n");
-        pw.append(    " site state or province:       "+ getNonNullString(plm.getState()  ) + "\n");
-        pw.append(    " site city:                    "+ getNonNullString(plm.getCity()) + "\n");
+        pw.append(    " site country:                "+ getNonNullString(plm.getCountry())  + "\n");
+        pw.append(    " site state or province:      "+ getNonNullString(plm.getState()  ) + "\n");
+        pw.append(    " site city:                   "+ getNonNullString(plm.getCity()) + "\n");
         EarthLocation el = site.getEarthLocation();
-        pw.append(    " site latitude:                "+ formatLocation(el.getLatitude())  + "" + "\n");
-        pw.append(    " site longitude:               "+ formatLocation(el.getLongitude()) + "" + "\n");
+        pw.append(    " site latitude:               "+ formatLocation(el.getLatitude())  + "" + "\n");
+        pw.append(    " site longitude:              "+ formatLocation(el.getLongitude()) + "" + "\n");
         pw.append(    " site TRF or Datum name        \n");  // LOOK need GSAC parameter for this item
-        pw.append(    " site ellipsoidal height:      " + elevationFormat.format(el.getElevation()) + "" + "\n");
+        pw.append(    " site ellipsoidal height:     " + elevationFormat.format(el.getElevation()) + "" + "\n");
         pw.append(    " site ellipsoid name           \n");  // LOOK need GSAC parameter for this item
         if (el.hasXYZ()) {
-            pw.append(" site X coordinate:            "+ el.getX() + "" + "\n");
-            pw.append(" site Y coordinate:            "+ el.getY() + "" + "\n");
-            pw.append(" site Z coordinate:            "+ el.getZ() + "" + "\n");
+            pw.append(" site X coordinate:           "+ el.getX() + "" + "\n");
+            pw.append(" site Y coordinate:           "+ el.getY() + "" + "\n");
+            pw.append(" site Z coordinate:           "+ el.getZ() + "" + "\n");
         } else {
-            pw.append(" site X coordinate:            " + "\n");
-            pw.append(" site Y coordinate:            " + "\n");
-            pw.append(" site Z coordinate:            " + "\n");
+            pw.append(" site X coordinate:           " + "\n");
+            pw.append(" site Y coordinate:           " + "\n");
+            pw.append(" site Z coordinate:           " + "\n");
         }
-        pw.append(    " site elevation                \n");  // LOOK need GSAC parameter for this item 
-        pw.append(    " site geoid model for elevation\n");  // LOOK need GSAC parameter for this item
+        pw.append(    " site elevation               \n");  // LOOK need GSAC parameter for this item 
+        pw.append(    " geoid model for elevation    \n");  // LOOK need GSAC parameter for this item
     }
 
     /**
@@ -273,14 +273,20 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteEquipment(PrintWriter pw, GsacSite site)
             throws Exception {
+        // get list of all equiprment sessions at this one site:
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
+        int sescount=0;
+
+        // for each session:
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
+            sescount += 1;
 
             if (equipment.hasReceiver()) {
-                pw.append("    new equipment session (receiver):   \n");
+                pw.append("    Receiver info; equipment session "+sescount+"   \n");
                 pw.append("      receiver type:          "+ equipment.getReceiver() + "\n");
                 pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
                 pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
@@ -289,7 +295,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             }
 
             if (equipment.hasAntenna()) {
-                pw.append("    new equipment session (antenna):   \n");
+                pw.append("    Antenna info; equipment session "+sescount+"   \n");
                 pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
                 pw.append("      antenna SN:             "+ getNonNullString(equipment.getAntennaSerial()) + "\n");
                 double[] xyz = equipment.getXyzOffset();
@@ -322,19 +328,6 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         }
     }
 
-    /**
-     * _more_
-     *
-     * @param date _more_
-     *
-     * @return _more_
-     */
-    private String myFormatDate(Date date) {
-        if (date == null) { return ""; }
-        synchronized (dateFormat) {
-            return dateFormat.format(date);
-        }
-    }
 
     /**
      * _more_
@@ -343,7 +336,6 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      * @param site _more_
      *
      * @throws Exception _more_
-     */
     private void addSiteStream(PrintWriter pw, GsacSite site)
             throws Exception {
         GsacMetadata.debug = true;
@@ -365,6 +357,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
         }
     }
+     */
 
     /**
      * _more_
