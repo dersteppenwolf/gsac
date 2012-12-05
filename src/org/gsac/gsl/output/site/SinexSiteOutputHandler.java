@@ -142,10 +142,11 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
         pw.append("-SITE/ID\n");
 
+/*
         // do SITE/RECEIVER with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
-        pw.append("+SITE/RECEIVER\n");
-        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___\n");
+        pw.append("+SITE/ANTENNA\n");
+        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__\n");
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
@@ -153,30 +154,32 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             //addSiteStream(pw, site);
         }
         pw.append("-SITE/RECEIVER\n");
+*/
 
-        // do SITE/ANTENNA with all the sites:
+        // do SITE/RECEIVERwith all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
-        pw.append("+SITE/ANTENNA\n");
-        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__\n");
+        pw.append("+SITE/RECEIVER\n");
+        pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___\n");
         for (GsacSite site : sites) {
-            //Call this to ensure that all of the metadata is added to the site
-            getRepository().doGetFullMetadata(-1, site);
+            // when testing only  
+            //pw.append("  CALL addSiteEquipmentAntenna -------------------------------------------------------------------------------------------- for site \n");
             addSiteEquipmentAntenna(pw, site);
-            //addSiteStream(pw, site);
         }
-        pw.append("-SITE/ANTENNA\n");
+        pw.append("-SITE/RECEIVER\n");
 
+/*
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/ECCENTRICITY\n");
         pw.append("*                                             UP______ NORTH___ EAST____\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ AXE ARP->BENCHMARK(M)_________\n");
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
-            getRepository().doGetFullMetadata(-1, site);
-            addSiteEquipmentAntennaSinexEccentricity(pw, site);
+            //getRepository().doGetFullMetadata(-1, site);
+            addSiteEquipmentAntSinexEccentricity(pw, site);
             //addSiteStream(pw, site);
         }
         pw.append("-SITE/ECCENTRICITY\n");
+*/
 
         //pw.append("*-------------------------------------------------------------------------------\n");
         //pw.append("+SITE/GPS_PHASE_CENTER\n");
@@ -330,9 +333,13 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+        int sescount=0;
+
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
             if (equipment.hasReceiver()) {
+                sescount +=1;
+                // for testing ONLY: pw.append("         REC SESSION "+sescount+  "\n ");
                 pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
@@ -365,9 +372,28 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+        int sescount=0;
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
-            if (equipment.hasAntenna()) {
+            sescount +=1;
+
+            if (equipment.hasReceiver()) {
+                // for testing ONLY: 
+                //pw.append("         REC SESSION "+sescount+  "\n ");
+                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
+                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+                pw.append( starttime+ " ");
+                pw.append( stoptime+ " ");
+                pw.append( setStringLengthRight( equipment.getReceiver(),20) +" ");
+                pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
+                pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
+                pw.append("\n");
+            }
+/*
+            else if (equipment.hasAntenna()) {
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
@@ -377,17 +403,19 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                     // don't reprint the same line
                 }
                 else {
-                prevAntStartTime = starttime;
-                prevAntStopTime = stoptime;
-                pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
-                pw.append( starttime+ " ");
-                pw.append( stoptime+ " ");
-                pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
-                pw.append( setStringLength( equipment.getAntennaSerial(),5) );
-                pw.append("\n");
+                    prevAntStartTime = starttime;
+                    prevAntStopTime = stoptime;
+                    // for testing ONLY: 
+                    //pw.append("         ANT SESSION "+sescount+  "\n ");
+                    pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
+                    pw.append( starttime+ " ");
+                    pw.append( stoptime+ " ");
+                    pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
+                    pw.append( setStringLength( equipment.getAntennaSerial(),5) );
+                    pw.append("\n");
                 }
             }
-
+*/
         }
     }
 
@@ -407,7 +435,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception _more_
      */
-    private void addSiteEquipmentAntennaSinexEccentricity(PrintWriter pw, GsacSite site)
+    private void addSiteEquipmentAntSinexEccentricity(PrintWriter pw, GsacSite site)
             throws Exception {
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
@@ -496,7 +524,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      * @param site _more_
      *
      * @throws Exception _more_
-     */
     private void addSiteStream(PrintWriter pw, GsacSite site)
             throws Exception {
         GsacMetadata.debug = true;
@@ -518,6 +545,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
         }
     }
+     */
 
 
   /**
