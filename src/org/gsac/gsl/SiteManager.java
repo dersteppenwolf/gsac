@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -160,30 +160,31 @@ public abstract class SiteManager extends GsacResourceManager {
     public void initOutputHandlers() {
         super.initOutputHandlers();
 
-        // for web pages and other HTML uses:
+        // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SOPAC XMP site log format 
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
-        // for SINEX format  not yet fully implemented   
-        //new SinexSiteOutputHandler(getRepository(), getResourceClass());
+        // for SINEX format  
+        new SinexSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for IGS site log; LOOK FIX gives empty file
-        //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
-
-        // for GAMIT's station.info format  not yet fully implemented   
+        // for GAMIT's station.info format  
         new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
-        // very simple text to show what is available for sites' info. 
+        // to make results as a IGS site log; LOOK FIX gives empty file
+        //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
+
+        new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
+
+        // a plain text format to visually check what is available for sites' info.  Not for computer processing. Originally for GSAC developers. 
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
-        // the following 6 formats only show a few parameters in results; more code needs to be written:
-        new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
-        new JsonSiteOutputHandler(getRepository(), getResourceClass());
-        new RssSiteOutputHandler(getRepository(), getResourceClass());
-        new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        // the following formats only show a few parameters in results; more code needs to be written:
+        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        //new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        //new RssSiteOutputHandler(getRepository(), getResourceClass());
+        //new AtomSiteOutputHandler(getRepository(), getResourceClass());
         //how is this different from the above XmlSiteLogOutputHandler:  XmlSiteOutputHandler(getRepository(), getResourceClass());
     }
 
