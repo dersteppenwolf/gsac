@@ -549,7 +549,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
           </realtime:publishedStream>
         */
         GsacMetadata.debug = true;
-        System.err.println("Finding metadata");
+        //System.err.println("XmlSiteLogOutputHandler: Finding metadata");
         List<GsacMetadata> streamMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
