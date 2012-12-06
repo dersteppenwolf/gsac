@@ -62,6 +62,9 @@ import java.util.GregorianCalendar;
  * especially sinex_v201_appendix1.pdf and sinex_v201_introduction.pdf or more recent version of those files.
  * and get recent examples of SINEX files from http://sopac.ucsd.edu/processing/sinex/.
  *
+ * Note unknown fields are filled with - characters. No field is left blank.
+ * Firmware version characters are left justified.  So are all "DESCRIPTION" items.
+ *
  * @version     initial Nov 21, 2012; revised Nov 30 - Dec 4, 2012  
  * @author      SKW UNAVCO
  */
@@ -142,6 +145,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
         pw.append("-SITE/ID\n");
 
+
         // do SITE/RECEIVER with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/RECEIVER\n");
@@ -153,6 +157,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         }
         pw.append("-SITE/RECEIVER\n");
 
+
         // do SITE/antenna with all the sites:
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/ANTENNA\n");
@@ -161,6 +166,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             addSiteEquipmentAntenna(pw, site);
         }
         pw.append("-SITE/ANTENNA\n");
+
 
         pw.append("*-------------------------------------------------------------------------------\n");
         pw.append("+SITE/ECCENTRICITY\n");
