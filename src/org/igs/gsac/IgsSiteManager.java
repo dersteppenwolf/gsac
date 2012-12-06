@@ -455,6 +455,11 @@ public class IgsSiteManager extends SiteManager {
         String degs = ddmmss.substring(0, ddmmss.length() - 4);
         //System.err.println(" IgsSiteManager:convertFromISGSiteLogLatLongFormat() converted:" + stupidFormat + " to:" + degs +" " + mins +" " + secs );
         //  convert:-661700.24 to:-66 17 00       convert:1103110.92 to:110 31 10
+        if (degs.equals("")) { degs="0"; }
+        int nq = 1; // flag for a negative value when the degs part has no numbers, just the '-' sign
+        if (degs.equals("-")) { degs="0"; nq=-1;}
+        if (secs.equals("")) { secs="0"; }
+        if (mins.equals("")) { mins="0"; }
         int    di            = Integer.parseInt(degs);
         int    mi            = Integer.parseInt(mins);
         int    si            = Integer.parseInt(secs);
@@ -462,8 +467,10 @@ public class IgsSiteManager extends SiteManager {
         double dv            = 0.0;  // the result decimal value
         if (di >= 0) {
             dv = di + (mi / 60.0) + ((si + decimalofsecs) / 3600.0);
-        } else if (di < 0) {
+        } else if (di < 0 || nq==-1) {
+            //add all the pieces as positive numbers to get full value;
             dv = (-1.0 * di) + (mi / 60.0) + ((si + decimalofsecs) / 3600.0);
+            // and make  negative of the sum
             dv *= -1.0;
         }
 
