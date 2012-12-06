@@ -551,15 +551,23 @@ public class IgsSiteManager extends SiteManager {
                         readDate(
                             results,
                             Tables.SITELOG_ANTENNA.COL_DATEREMOVEDANTENNA) };
+
+
+                double deltahgt = 0.0;
+                if (checkDouble(results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP))) 
+                    { deltahgt = Double.parseDouble(results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP)); }
+                else { 
+                    System.err.println("    IgsSiteManager: Bad numerical value for Tables.SITELOG_ANTENNA.COL_MARKERUP=" + results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP));
+                }
+
                 GnssEquipment equipment =
                     new GnssEquipment(dateRange,
                         results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNATYPE),
                         results.getString(Tables.SITELOG_ANTENNA.COL_SERIALNUMBERANTENNA),
                         results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
                         results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
-                        "", "", "",
-                        results.getDouble(Tables.SITELOG_ANTENNA.COL_MARKERUP));
-
+                        "", "", "", deltahgt);
+                        // last value was was results.getDouble(Tables.SITELOG_ANTENNA.COL_MARKERUP));
 
                 equipmentList.add(equipment);
                 visits.put(dateRange[0], equipment);
@@ -634,6 +642,18 @@ public class IgsSiteManager extends SiteManager {
 
     }
 
+    public boolean checkDouble( String input )  
+    {  
+       try  
+       {  
+          Double.parseDouble( input );  
+          return true;  
+       }  
+       catch( Exception e)  
+       {  
+         return false;  
+       }  
+    }  
 
     // neww
     // get  from db table represented as class SITELOG_FREQUENCYSTANDARD the value of String COL_STANDARDTYPE 
