@@ -553,11 +553,21 @@ public class IgsSiteManager extends SiteManager {
                             Tables.SITELOG_ANTENNA.COL_DATEREMOVEDANTENNA) };
 
 
+                // trap and fix bad non-numerical value in db: Tables.SITELOG_ANTENNA.COL_MARKERUP
                 double deltahgt = 0.0;
-                if (checkDouble(results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP))) 
-                    { deltahgt = Double.parseDouble(results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP)); }
+                String sord = results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP);
+                if (checkDouble(sord)) 
+                    { deltahgt = Double.parseDouble(sord); }
                 else { 
-                    System.err.println("    IgsSiteManager: Bad numerical value for Tables.SITELOG_ANTENNA.COL_MARKERUP=" + results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP));
+                    // do iterate along the string and use String.charAt(i).isDigit(); to extract whatever number may be there, if there is one...
+                    String snum = "";
+                    for (int is = 0; is< sord.length(); is++){
+                        char c = sord.charAt(is);        
+                        if (Character.isDigit(c) || c=='.' ) { snum =  snum+c; } 
+                    }
+                    if (snum.length()==0) { deltahgt = 0.0; }
+                    else { deltahgt = Double.parseDouble(snum); }
+                    System.err.println("    IgsSiteManager: bad value from the db for Tables.SITELOG_ANTENNA.COL_MARKERUP=" + sord+";  will use double="+snum);
                 }
 
                 GnssEquipment equipment =
