@@ -141,7 +141,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             getRepository().doGetFullMetadata(-1, site);
             addSiteIdentification(pw, site);
             //addSiteLocation(pw, site);
-            //addSiteStream(pw, site);
         }
         pw.append("-SITE/ID\n");
 
@@ -176,7 +175,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             //Call this to ensure that all of the metadata is added to the site
             //getRepository().doGetFullMetadata(-1, site);
             addSiteEquipmentAntSinexEccentricity(pw, site);
-            //addSiteStream(pw, site);
         }
         pw.append("-SITE/ECCENTRICITY\n");
 
@@ -578,36 +576,6 @@ OLD version
             return dateFormat.format(date);
         }
     }
-
-    /**
-     * _more_
-     *
-     * @param pw _more_
-     * @param site _more_
-     *
-     * @throws Exception _more_
-    private void addSiteStream(PrintWriter pw, GsacSite site)
-            throws Exception {
-        GsacMetadata.debug = true;
-        //System.err.println("  SinexSiteOutputHandler.addSiteStream ():  Finding metadata");
-        List<GsacMetadata> streamMetadata =
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
-        GsacMetadata.debug = false;
-        int cnt = 0;
-        for (GsacMetadata metadata : streamMetadata) {
-            StreamMetadata stream = (StreamMetadata) metadata;
-            if (cnt == 0) {
-                ; //pw.append( XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-            }
-            cnt++;
-            stream.encode(pw, this, "plainsitelog");
-        }
-        if (cnt > 0) {
-            ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-        }
-    }
-     */
 
 
   /**
