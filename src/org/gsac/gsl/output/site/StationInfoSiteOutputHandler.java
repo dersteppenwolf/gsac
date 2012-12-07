@@ -165,7 +165,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             getRepository().doGetFullMetadata(-1, site);
             addSiteIdentification(pw, site);
             addSiteEquipment(pw, site);
-            //addSiteStream(pw, site);
         }
         response.endResponse();
     }
