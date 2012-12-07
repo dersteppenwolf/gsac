@@ -181,7 +181,22 @@ public abstract class SiteManager extends GsacResourceManager {
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
         // the following formats only show a few parameters in results; more code needs to be written:
-        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        // FIX this fails new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        /* with
+    javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+    at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
+    at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
+    at ucar.unidata.xml.XmlUtil.makeDocument(XmlUtil.java:1487)
+    at ucar.unidata.data.gis.KmlUtil.kml(KmlUtil.java:175)
+    at org.gsac.gsl.output.site.KmlSiteOutputHandler.handleRequest(KmlSiteOutputHandler.java:145)
+    at org.gsac.gsl.output.GsacOutputHandler.handleRequest(GsacOutputHandler.java:193)
+    at org.gsac.gsl.GsacRepository.handleRequest(GsacRepository.java:567)
+    at org.gsac.gsl.GsacServlet.doGet(GsacServlet.java:310)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:735)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+    at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:511)
+        */
+
         //new JsonSiteOutputHandler(getRepository(), getResourceClass());
         //new RssSiteOutputHandler(getRepository(), getResourceClass());
         //new AtomSiteOutputHandler(getRepository(), getResourceClass());
