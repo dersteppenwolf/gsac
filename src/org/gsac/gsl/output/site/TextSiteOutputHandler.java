@@ -57,20 +57,21 @@ import javax.servlet.http.*;
 
 /* 
  * Class description: formats query results to write a csv file format.
- * csv format has:
- * Fields are separated with commas.
- * example John,Doe,120 any st.,Anytown state,08123
+ *
+ * This GSAC csv format has:
+ * fields separated with commas;  for example    John,Doe,120 Nny st.,Anytown state,08123
  * Leading and trailing space-characters adjacent to comma field separators are ignored.
  * So   John  ,   Doe  ,... resolves to "John" and "Doe", etc. 
- * NO commas are allowed here in a field; this usually effects only site descriptions in geodesy data. Any commas in such a field are replaces with "".
+ * NO commas are allowed here in a field; this usually effects only site descriptions in geodesy data. Any commas in such a field are replaced with " ".
  * The first record in a CSV file may be a header record containing column (field) names; and is so in this case.
- * There is no mechanism for automatically discerning if the first record is a header row, in the general case. The header row is encoded just like any other CSV record
+ * There is no mechanism for automatically discerning if the first record is a header row, in the general case. The header row is encoded just like any other CSV record.
  * 
- * You may revise this class to adapt GSAC yo the needs of your repository.  Please do not submit revised version of this class to GSAC in SourceForge.
+ * You may revise this class to adapt GSAC to the needs of your repository.  Please do not submit revised version of this class to GSAC in SourceForge.
  *
  * For bug reports and suggested improvments please contact UNAVCO.
  *
  * version all new version Nov 30, 2012. SKW
+ * revised Dec 7, 2012 SKW.
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
 
@@ -100,14 +101,14 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     String anttype ="";
     String dome ="";
     String antsn ="";
+    int sitecount=0;
 
     /** output id */
     public static final String OUTPUT_SITE_CSV = "site.csv";
 
     /** date formatter  note NO "T", and we do not know if it is UTC time or what.*/
     /* somehow the Z here results in a value like "2001-07-11 00:00:00 -0600" with no Z */
-    private SimpleDateFormat dateTimeFormatnoT =
-        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    private SimpleDateFormat dateTimeFormatnoT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     /** formatter for GNSS antenna value of offset of phase center from instrument center */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
@@ -160,16 +161,17 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         response.startResponse("text");
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
-        //Get all the sites in the results from the GSAC site query by the user: 
+        //Get all the sites in the results (response) from the GSAC site query made by the user: 
         List<GsacSite> sites = response.getSites();
+        sitecount=0;
         //For each site:
         for (GsacSite site : sites) {
+            sitecount++;
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
             addSiteIdentification(pw, site);
             addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
-            addSiteStream(pw, site);
         }
         response.endResponse();
     }
@@ -181,7 +183,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,session start,session stop,antenna type,dome type,antenna SN,Ant dz,ant dn,ant de,receiver type, firmware version,receiver SN\n");
+        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,session start,session stop,antenna type,dome type,antenna SN,Ant dz,ant dn,ant de,receiver type, firmware version,receiver SN,site count\n");
         //pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
     }
 
@@ -320,7 +322,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
 
             // construct the csv file line for this session at a site:
             pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   // these often lacking: cdpnum+","+indate+","+ 
-                starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+"\n");
+                starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sitecount+"\n");
 
         } // end for loop on sessions
     }     // end addSiteEquipment
@@ -337,36 +339,6 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         if (date == null) { return ""; }
         synchronized (dateTimeFormatnoT) {
             return dateTimeFormatnoT.format(date);
-        }
-    }
-
-    /**
-     * _more_
-     *
-     * @param pw _more_
-     * @param site _more_
-     *
-     * @throws Exception _more_
-     */
-    private void addSiteStream(PrintWriter pw, GsacSite site)
-            throws Exception {
-        GsacMetadata.debug = true;
-        //System.err.println("  TextSiteOutputHandler.addSiteStream ():  Finding metadata");
-        List<GsacMetadata> streamMetadata =
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
-        GsacMetadata.debug = false;
-        int cnt = 0;
-        for (GsacMetadata metadata : streamMetadata) {
-            StreamMetadata stream = (StreamMetadata) metadata;
-            if (cnt == 0) {
-                ; //pw.append( XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-            }
-            cnt++;
-            stream.encode(pw, this, "station.info");
-        }
-        if (cnt > 0) {
-            ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
         }
     }
 
