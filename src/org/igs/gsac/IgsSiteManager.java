@@ -560,21 +560,22 @@ public class IgsSiteManager extends SiteManager {
                             Tables.SITELOG_ANTENNA.COL_DATEREMOVEDANTENNA) };
 
 
-                // trap and fix bad non-numerical value in db: Tables.SITELOG_ANTENNA.COL_MARKERUP
+                // trap and fix bad non-numerical value got from the db: Tables.SITELOG_ANTENNA.COL_MARKERUP
                 double deltahgt = 0.0;
                 String sord = results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP);
                 if (checkDouble(sord)) 
                     { deltahgt = Double.parseDouble(sord); }
                 else { 
-                    // do iterate along the string and use String.charAt(i).isDigit(); to extract whatever number may be there, if there is one...
+                    // do iterate along the number-as-string and use String.charAt(i).isDigit(); to extract whatever decimal number may be there, if there is one...
                     String snum = "";
                     for (int is = 0; is< sord.length(); is++){
                         char c = sord.charAt(is);        
                         if (Character.isDigit(c) || c=='.' ) { snum =  snum+c; } 
                     }
+                    // if that constructed a string representing a number:
                     if (snum.length()==0) { deltahgt = 0.0; }
                     else { deltahgt = Double.parseDouble(snum); }
-                    System.err.println("    IgsSiteManager: bad value from the db for Tables.SITELOG_ANTENNA.COL_MARKERUP=" + sord+";  will use double="+snum);
+                    System.err.println("    IgsSiteManager: bad 'double' from the db for SITELOG_ANTENNA.COL_MARKERUP=" + sord+";  will use double="+snum);
                 }
 
                 GnssEquipment equipment =
@@ -830,7 +831,6 @@ public class IgsSiteManager extends SiteManager {
 
                 // args to addPropertyMetadata() are:
                 // the resource you are adding it to;
-                // the
                 // the label on the web page or results
                 // the db column name 
 
