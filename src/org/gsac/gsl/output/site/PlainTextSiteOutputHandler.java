@@ -53,10 +53,13 @@ import javax.servlet.http.*;
 
 /**
  *      Output handler for results for users' site queries, formatted in plain text.
+ *
  *      GSAC-WS Repository Site information in plain text.  This format was created by UNAVCO solely for GSAC use. 
  *      This format is only for a quick visual check of what is available. Not for computer processing. 
  *      Empty times (no characters) may mean 'not removed' or 'no change;' 
+ *
  *      initial version Nov 27-30, 2012, SKW UNAVCO.
+ *      revised Dec 4,5,6,7 2012; SKW.   
  * 
  * You may revise this class to adapt GSAC to the needs of your repository.  Please do not submit a revised version of this class to GSAC in SourceForge.
  *
@@ -84,6 +87,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     /** for antenna offset values from instrument reference point.  */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
 
+    int sitecount=0;
 
     /**
      * ctor
@@ -126,6 +130,8 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
         //We can have any number of sites here. 
         List<GsacSite> sites = response.getSites();
+        sitecount=0;
+
         //  for each site:
         for (GsacSite site : sites) {
             pw.append(    " \n");
@@ -135,48 +141,46 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             addSiteIdentification(pw, site);
             addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
-            //addSiteStream(pw, site);
         }
         response.endResponse();
     }
 
-
     /**
      * label top of file of results; a header.
      *
-     * @param pw _more_
+     * @param pw the PrintWriter
      */
     private void addHeader (PrintWriter pw) {
         pw.append(  "   Site information in plain text. \n");
-        pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDateTime(new Date()) + "\n"); 
+        pw.append(  "   From the "+ getRepository().getRepositoryName()  + " on "+ myFormatDateTime(new Date()) + " from UTC \n"); 
         pw.append(  "   This format is only for a quick visual check of what is available; not for computer processing.  \n");
-        pw.append(  "   Empty times (no characters) may mean 'not removed' or 'no change.'  \n");
-        pw.append(  "   \n");
+        pw.append(  "   Empty times (no characters) may mean 'not removed' or 'no change.' This format may change without notice. \n");
     }
 
     /**
      * print results of site id details for this format style
      *
-     * @param pw _more_
+     * @param pw  the PrintWriter 
      * @param site _more_
      *
      * @throws Exception _more_
      */
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
-        pw.append(    " site:\n");
-        pw.append(    " site 4 char ID:           "+ site.getShortName() + "\n");
-        pw.append(    " site long name:           "+ site.getLongName() + "\n");
-        pw.append(    " site IERSDOMES            "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
+        sitecount++;
+        pw.append(    " site ("+sitecount+" in this list):\n");
+        pw.append(    " site 4 char ID:              "+ site.getShortName() + "\n");
+        pw.append(    " site long name:              "+ site.getLongName() + "\n");
+        pw.append(    " site IERSDOMES               "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
         Date date = site.getFromDate();
         if (date != null) {
-            pw.append(" site installed date:      "+ myFormatDateTime(date) + "\n");
+            pw.append(" site installed date:         "+ myFormatDateTime(date) + "\n");
         }
         else {
             pw.append(" site installed date: \n");
         }
-        pw.append(    " site monument description "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
-        pw.append(    " site cdp number           "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
+        pw.append(    " site monument description    "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
+        pw.append(    " site cdp number              "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
     }
 
 
@@ -299,16 +303,16 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
                 pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
                 pw.append("      antenna SN:             "+ getNonNullString(equipment.getAntennaSerial()) + "\n");
                 double[] xyz = equipment.getXyzOffset();
-                pw.append("      antenna offset Ht or UP:"+ offsetFormat.format(xyz[2]) + "\n");
+                pw.append("      antenna offset Ht (up): "+ offsetFormat.format(xyz[2]) + "\n");
                 pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
                 pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
+                pw.append("      alignment from true N:  \n"); //                      _ALIGNMENTFROMTRUENORTH, "", ""));
                 pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
                 pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
-                //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
-                //pw.append(EQUIP_ANTENNACABLETYPE, "",
-                //pw.append(EQUIP_ANTENNACABLELENGTH,
                 pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
                 pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
+                //pw.append(EQUIP_ANTENNACABLETYPE, "",
+                //pw.append(EQUIP_ANTENNACABLELENGTH,
             }
         }
     }
@@ -327,37 +331,6 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             return dateTimeFormatnoT.format(date);
         }
     }
-
-
-    /**
-     * _more_
-     *
-     * @param pw _more_
-     * @param site _more_
-     *
-     * @throws Exception _more_
-    private void addSiteStream(PrintWriter pw, GsacSite site)
-            throws Exception {
-        GsacMetadata.debug = true;
-        //System.err.println("  PlainTextSiteOutputHandler.addSiteStream ():  Finding metadata");
-        List<GsacMetadata> streamMetadata =
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
-        GsacMetadata.debug = false;
-        int cnt = 0;
-        for (GsacMetadata metadata : streamMetadata) {
-            StreamMetadata stream = (StreamMetadata) metadata;
-            if (cnt == 0) {
-                ; //pw.append( XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-            }
-            cnt++;
-            stream.encode(pw, this, "plainsitelog");
-        }
-        if (cnt > 0) {
-            ; //pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
-        }
-    }
-     */
 
     /**
      * _more_
