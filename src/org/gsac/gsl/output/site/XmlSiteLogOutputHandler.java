@@ -202,9 +202,10 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
 
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_SITENAME, "",
-                              site.getLongName()));
+                              // site.getLongName())); can fail if name has a "&"
+                              removeAndSymbol(site.getLongName ()) )   );
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FOURCHARACTERID, "",
-                              site.getShortName()));
+                              removeAndSymbol(site.getShortName()) )   );
         Date date = site.getFromDate();
         if (date != null) {
             pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_DATEINSTALLED, "",
@@ -239,6 +240,19 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_NOTES, "", ""));
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
     }
+
+    /**
+     * replace any  "&" in the input string 's' with "and" to prevent contamination of the XML
+     *
+     * @param s  string to remove & from
+     *
+     * @return the fixed string 
+     */
+    private String removeAndSymbol(String s) {
+        s = s.replaceAll("&", "and");
+        return s;
+    }
+
 
 
     /**
@@ -311,7 +325,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_COUNTRY, "",
                               getNonNullString(plm.getCountry())));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_STATE, "",
-                              getNonNullString(plm.getState())));
+                              removeAndSymbol(getNonNullString(plm.getState()))  ));
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_CITY, "",
                               getNonNullString(plm.getCity())));
 
@@ -515,7 +529,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * _more_
+     * This adds xml for the real time stream metadata. Only the Unavco GSAC creates that kind of metadata. This comes from the PBO real time stream info._
      *
      * @param pw _more_
      * @param site _more_
@@ -549,7 +563,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
           </realtime:publishedStream>
         */
         GsacMetadata.debug = true;
-        //System.err.println("XmlSiteLogOutputHandler: Finding metadata");
+        //System.err.println("XmlSiteLogOutputHandler:addSiteStream() ... Finding metadata");
         List<GsacMetadata> streamMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
