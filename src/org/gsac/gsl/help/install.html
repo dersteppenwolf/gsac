@@ -14,7 +14,7 @@ observations, such as GNSS, but can be used for any site-based observations.
 
 <p>
 You need Java 1.6 or higher, and 'ant' installed, a Java tool to build and run Java applications; see 
-<a href="http://ant.apache.org/" target=second>Ant</a>.  You will need to have the 'subversion' code management tool, also called 'svn,' installed on your computer.   Java, ant, and svn are widely used tools of software engineers.  Search online for how to download and install ant and svn if your system does not already have them.  Debian, Redhat, and Ubuntu generally have a one-line command to install ant and svn, such as apt-get install subversion.  The new Mac OS does not come with svn.  A write up on how to install svn on the Mac is online at 
+<a href="http://ant.apache.org/" target=second>Ant</a>.  You will need to have the 'subversion' code management tool, also called 'svn,' installed on your computer.   Java, ant, and svn are widely used tools of software engineers.  Search online for how to download and install ant and svn if your system does not already have them.  Debian, Redhat, and Ubuntu generally have a one-line command to install ant and svn, such as "apt-get install subversion."  The new Mac OS does not come with svn.  A write up on how to install svn on the Mac is online at 
 <a href="http://www.wikihow.com/Install-Subversion-on-Mac-OS-X" target=second>Subversion for Mac</a>.   
 </p>
 
@@ -70,8 +70,8 @@ ant
 </p>
 
 <p>
-(You always run ant in a directory with a build.xml file.)
 This ant command builds most of the GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  
+You always run ant in a directory with a build.xml file.
 
 <!--
 </p>
@@ -132,18 +132,18 @@ Apache Tomcat is a Java servlet container to power web applications. See http://
 
 <p>
 Building GSAC makes a Tomcat .war file in the trunk/dist/ directory:
- ~/gsac/sourceforge/gsac/trunk/dist/gsac[mygsac].war.
+ trunk/dist/gsac[mygsac].war.
 </p>
 
 <p>
-Copy this file to the Tomcat apachetomcatdev/webapps/ directory on your web server host.
+Copy this file to the Tomcat directory "apachetomcatdev/webapps/" on your web server host.
 The GSAC server web should become immediately available
- without a restart of Tomcat, especially if you are using "hot deploy," .
+ without a restart of Tomcat, especially if you are using "hot deploy."
 </p>
 
 <p>
-You can see the output of the Tomcat process by doing for example, tail -f /usr/local/apachetomcatdev/logs/catalina.out
-This should show it reading the GSAC war file.
+You can see the output of the Tomcat process by doing, for example, tail -f /usr/local/apachetomcatdev/logs/catalina.out.
+This should show Tomcat "undeploying" any previous GSAC of this name in use, and "deploying" the new GSAC war file.
 </p>
 
 <p>
@@ -159,12 +159,9 @@ to restart tomcat
 </p>
 
 <p>
-The servlet reads the properties file:
-<br>
-/usr/local/apachetomcatdev/conf/gsacigs.properties
-<br>
-which contains the database authentication info, if you chose not to include that in the --- file.
-
+The servlet reads the properties file
+/usr/local/apachetomcatdev/conf/gsacigs.properties, 
+which contains the database authentication info, if you chose not to include that in the <!-- LOOK FIX what file " --> file.
 </p>
 
 <p>
