@@ -1,6 +1,40 @@
 <table width=100%><tr><td><a href="files.html">Previous</a></td>
 <td align=right><a href="browse.html">Next</a></td></tr></table>
 
+
+
+<h2>File Downloads from a GSAC Repository</h2>
+
+<p>
+One of the key services of a GSAC-enabled data repository is providing downloads of files of instrumental observation data files.  GSAC relies on the agency running GSAC to provide the IT infrastructure (FTP) to serve file downloads, and to provide GSAC with the information about how to download files, typically a URL for each FTP file download.
+</p>
+<p>
+A common case is, if you search a GSAC-enabled data repository for files (using the web page UI, the API, or the GSAC client) and specify result output format of  "file.url," you will get a list of one or more URLs like this:
+
+</p>
+<p>
+ftp://data-out.unavco.org/pub/rinex/obs/2012/158/palm1580.12d.Z
+
+</p>
+<p>
+This is of course a URL which can be used to download a file with FTP from the given server.  In the simplest case, the GSAC gets this complete URL as one field from the database.   (In more complex cases, the information in the database is insufficient but the complete URL can be constructed from known information by GSAC.  Such a case will require new Java coding to tell GSAC how to assemble disparate values into the appropriate URL for a file.
+</p>
+<p>
+
+If you use output of  "file.wget" the result is a file called "gsacwget.sh," a script file, with lines such as
+</p>
+<p>
+
+wget ftp://data-out.unavco.org/pub/rinex/obs/2012/158/palm1580.12d.Z 
+</p>
+<p>
+
+Each line is a  wget command to download one file with "wget"  from the given server.  GSAC constructs the wget lines using the FTP URLs.
+</p>
+<p>
+
+
+<!--
 <h2>GSAC File Downloader</h2>
 <p>
 See also the File search results section, the <a href="files.html">previous</a> Help page.
@@ -14,9 +48,6 @@ specified Destination Directory.
 
 <center class="gsac-helpimg"><img src="images/downloader.jpg"></center>
 
-
-
-
 <h3>Make local directories</h3>
 Checking the Make local directories checkbox
 results in the downloader making subdirectories
@@ -27,6 +58,7 @@ correspond to the directory paths in the FTP URLs.
 Normally, if a file already exists on your computer then
 the downloader will not fetch a new one. You
 can control this behavior with the Overwrite files option.
+-->
 
 <p>
 <table width=100%><tr><td><a href="files.html">Previous</a></td>
