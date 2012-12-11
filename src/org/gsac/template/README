@@ -1,7 +1,6 @@
-
 ########################################################################
 
-Part 2.
+GSAC_WS Installation     README, Part 2.
 
 This file describes how to complete your new '@MACRO.SRCDIR@' GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -14,9 +13,9 @@ on the UNAVCO GSAC WS home page, http://facility.unavco.org/data/gsacws/gsacws.h
 
 This README was generated from the template package during your initial package build, as described in README Part 1.
 
-Some file names in ***this README file***, such as gsac@MACRO.PREFIX@.properties,
-may have one or more upper case letters. The ccoresponfing actual GSAC files lack upper case in their names. 
-Do not change actual filenames to match uppercase letters, if any, in the README files.
+Some file names in this README file, such as gsac@MACRO.PREFIX@.properties,
+may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
+Do not change actual filenames to match uppercase letters if any in the README files.
 
 ########################################################################
 
@@ -27,14 +26,14 @@ You should have already followed the Part 1 instructions in src/org/gsac/README.
 
 Hopefully you've managed to generated the initial repository source package.
 
-Now, change the working directory to @MACRO.SRCDIR@
+Now, change the working directory to @MACRO.SRCDIR@ such as trunk/src/org/mygsacname/gsac/
 
 Do ant there:
 
 ant 
 
 This ant command builds an initial new GSAC server for your repository.  (It also creates a new Tomcat war file, 
-something like gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war, which will be used, eventually, for your public web site,
+something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
 if you use Tomcat.)  
 
 Now try:
@@ -48,19 +47,19 @@ GSAC INFO: Tue Aug 28 14:33:59 EDT 2012:
 GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
 
 In a browser, look at that URL, http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
-You should see a new web page with minimal content, with a line of links like
+You should see a new web page with minimal content, with a line of links something like
 Search Sites | Search Files | Browse | Infomation | Help
 
-This shows that the GSAC code runs on your system.  This web 'site' uses Jetty  (see http://www.eclipse.org/jetty/), 
+This shows that the GSAC code runs on your system.  This 'web site' uses Jetty  (see http://www.eclipse.org/jetty/), 
 a Java HTTP server and Java servlet container.   The Jetty servlet is for local testing, 
 which saves the trouble of a full Tomcat implementation, and avoids (possibly) restarting Tomcat 
 for every test of the new GSAC.  Public operational systems often run with Tomcat in place of Jetty.
 
-Stop the ant runserver process with CTRL-c.  You've generated the GSAC repository source package 
+Stop the 'ant runserver' process with CTRL-c.  You've generated the GSAC repository source package 
 and an initial new GSAC server.
 
 So far you have been bootstrapping a operational GSAC server which has complete core GSAC code 
-but which lacks many specific details about your repository.
+but which lacks specific details about your repository.
 
 Now you need to specify important details about your particular repository, such as what 
 fields in your database users may search on, and what metadata from your database is provided 
@@ -81,9 +80,9 @@ Configuration  : Your GSAC Properties Files
 The file resources/gsac.properties has a number of properties to specify, for example, 
 the base url which will be part of the full URL of the website about your GSAC repository.
 such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-(The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL.)
+(The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL and you do not enter them anywhere.)
 
-    An example, the file igs/gsac/resources/gsacigs.properties in the UNAVCO "IGS GSAC":
+    An example, the file igs/gsac/resources/gsac.properties in the "IGS GSAC":
     #
     #This gets read by the base GsacRepository class for defining properties
     #This allows you to override the default properties defined in
@@ -101,27 +100,44 @@ The items repository.name gind sac.repository.description are used as labels on 
 You can also set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
     file.zip.maxsize=100000000 
 
-Hiding DB account information
+########################################################################
+Setting and Hiding DB account information
+########################################################################
 
-You create a *second* properties file to give the account details to permit the GSAC web server process to read from the geodesy database.
+You create another gsac properties file to give the database account details to permit the GSAC web server process to read from the geodesy database.
 Usually this file is in your GSAC's 'gsac/' directory, such as trunk/src/org/igs/gsac/gsacigs.properties, with contents like:
 
     gsac.db.username=db-gsac-username
     gsac.db.password=db-gsac-password
     gsac.db.jdbcurl=jdbc:mysql://igsdev.unavco.org:3080/igsgsdb
 
-When the GSL assembles the JDBC URL it also looks up the user name and password to use  to connect to the database.
+When the GSL assembles the JDBC URL it looks up the user name and password from here, to read from database.
 
 Note that Oracle and Postgres have different syntax for the last line above.  
-For postgres the form is jdbc:postgresql://<hostname>:<port>/<database>.  One Oracle JDBC URL is of the form:
-jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
+For postgres the form is 
+=jdbc:postgresql://<hostname>:<port>/<database>.  
+One Oracle JDBC URL is of the form:
+=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
 e.g:
-jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
+=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-NOTE if you check this code into a software repository, such as with svn, this db account information may be made public.
-Do not 'add' or 'commit' a gile with private db account info.
+Note, if you check this code into a software repository, such as with svn, this db account information may be made public.
 
-Then add to build.xml, in your location corresponding to trunk/src/org/igs/gsac/, to add a new section like the one
+Do not do svn 'add' or 'commit' a file with private db account info.
+
+
+
+Add to the file build.xml, in your location like  trunk/src/org/myrepo/gsac/, 
+to add a new build target like the one
+
+    <target name="gsacigs">
+        <antcall target="build"/>
+        <echo message="********************************"/>
+        <echo message="To run the server run:"/>
+        <echo message="ant runserver"/>
+        <echo message="********************************"/>
+    </target>
+
 
 
 ########################################################################
@@ -130,14 +146,17 @@ Database Driver and Server Connection Information
 
 In @MACRO.SRCDIR@/dbresources/, for development change the database properties file gsacdb_test.properties 
 (and for final release, also change the file gsacdb_production.properties)
-to specify: 
-Add to name your database driver
+
+name your database driver
+
 gsac.db.driverclass=com.mysql.jdbc.Driver  
 
 Other possible choices for this line are 
+
 gsac.db.driverclass=oracle.jdbc.driver.OracleDriver  
 (see http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html) 
-and a Postgres driver (see http://jdbc.postgresql.org/).
+
+or for a Postgres driver see http://jdbc.postgresql.org/.
 
 Both the gsacdb_(test,production).properties files may be exactly the same, or may differ 
 if you use different databases for development and production.
@@ -161,10 +180,10 @@ GSAC has to be able to identify the tables and columns (fields) in your database
 which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
 There is a nice utility to generate a Java class (Tables) that holds all of your
 database table names and columns (fields) in the tables.  This allows you to not have String table and column
-names permeate your code.
+names permeating your code; go do not type your specific database field names in GSAC code.
 
 To generate the Tables.java source code file, after you have a connection set up to the database, in @MACRO.SRCDIR@, 
-run
+such as trunk/src/org/myrepo/gsac/, run
 
 ant tables   
 
@@ -176,8 +195,8 @@ tables:
      [java] processing EQUIPMENT
      ...
 
-This process will read your database and make a new file @MACRO.SRCDIR@/database/Tables.java. 
-The Java code defines classes with methods, such as the next code block for a table about GPS recievers, 
+This process will read your database and make a new file @MACRO.SRCDIR@/gsac/database/Tables.java, like trunk/src/org/myrepo/gsac/database/Tables.java. 
+The Java code defines classes with methods, such as the next code block for a table about GPS receivers, 
 with methods getName() which gives the table name, and getColumns() which returns names for fields 
 in that table about GPS receivers, and which defines new String variables.
 
@@ -205,7 +224,11 @@ in that table about GPS receivers, and which defines new String variables.
     public static final STATION_IDENTIFICATION table  = new  		STATION_IDENTIFICATION();
     };
 
-The ant table command builds the corresponding Table* class files in @MACRO.SRCDIR@/database/.
+The ant table command builds several corresponding Table "class" files in @MACRO.SRCDIR@/database/.
+
+
+You can see the correspondence between your db's specific table names, such as Station Identification, and your field names, such as latitude,
+with the names GSAC uses internally, such as STATION_IDENTIFICATION.COL_LATITUDE.  
 
 
 
@@ -219,7 +242,23 @@ GSAC may be used for data repositories for any data source with metadata for ins
 
 What makes a GSAC geodesy implementation conforming is that it supports the GSAC standard geodesy parameters list, which are fields in your underlying database.  These parameters are used in GSAC queries and / or their values may appear in results of GSAC queries.  All standard parameters are required for a "Conforming GSAC Implementation." 
 
-The GSAC standard parameters are ... 
+The GSAC standard parameters are  
+parameter type                              sample value
+four character ID                           ABF3
+site name (long name)                       Aberdeen, Fairbanks,
+latitude, north +, in decimal degrees:       64.7749
+longitude, east    +, in decimal degrees:   -141.9234
+receiver type                               ASHTECH UZ-12
+receiver firmware version                   CQ00
+receiver SN                                 UC 220
+receiver date time installed                1997-04-27  00:00:00
+receiver date time removed                  1997-04-29  00:00:00
+antenna type                                LEIAT504GG  LEIS
+antenna serial number                       20045
+antenna date installed                      1997-04-27  00:00:00
+antenna date removed                        1997-04-29  00:00:00 
+
+NOT YET IMPLEMENTED (dec 11 2012):
 
 You identify which fields in your database correspond to the standard GSAC parameters, with a one to one match of Tables.java items to standard parameter names.  You do this by editing the file standard_parameters.properties.   Each line begins with GSAC's internal name for a standard parameter, such as site.latitude, followed by a comma. You complete the line with a table and field name from the Tables.java file (which represents your database contents, such as    
 
@@ -233,11 +272,7 @@ You must identify which fields in your database correspond to the parameters in 
 
 FIX MORE here
 
-MORE also need 
-new code to implement in queries (some  parms to go to output result files)
-
-
-
+MORE also need new code to implement in queries (some  parms to go to output result files)
 
 
 ########################################################################
@@ -249,49 +284,55 @@ under Site or File Search, open the [+] options list under Results, to see some 
 
 The default code for GSAC offers the four formats: HTML (chiefly for the web pages), the SOPAC XML site log, 
 SINEX, and GAMIT's station.info format.  Note that these are all standard formats in 
-geodesy.  GSAC does not create, or endorse, file formats.  If there is a widely used format which GSAC should 
+geodesy.  There are also Google Earth KML and KMZ files to map site locations.
+
+GSAC also offers a basic csv file (comma separated value) format with geodesy values, and a 
+a plain text format for quick visual inspection of the values returned, not for computer processing.
+
+GSAC does not endorse file formats.  If there is a widely used format which GSAC should 
 offer, you can contact UNAVCO to add it to GSAC code, or you can add a new "OutputHandler" Java class yourself
 (in trunk/src/org/gsac/gsl/output/sites/).
 
 The choices of what to show in GSAC are set in the file trunk/src/org/gsac/gsl/SiteManager.java,
-in the method initOutputHandlers().  Here is the default code to set which formats to
+in the method initOutputHandlers().  Here is the default GSAC method to set which formats to
 offer as choices, which GSAC comes with:
 
  public void initOutputHandlers() {
         super.initOutputHandlers();
-        // for web pages and other HTML uses:
+        // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
         // for SOPAC XMP site log format 
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
         // for GAMIT's station.info format  
-        new StationInfoOutputHandler(getRepository(), getResourceClass());
-
-        // new XmlSiteOutputHandler(getRepository(), getResourceClass());
-        // new SiteLogOutputHandler(getRepository(), getResourceClass());
-        // new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
-        // new TextSiteOutputHandler(getRepository(), getResourceClass());
-        // new RssSiteOutputHandler(getRepository(), getResourceClass());
-        // new AtomSiteOutputHandler(getRepository(), getResourceClass());
-        // new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
+        // to make results as a IGS site log; LOOK FIX gives empty file
+        //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
+        new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
+        // a plain text format to visually check what is available for sites' info.  Not for computer processing. Originally for GSAC developers. 
+        new PlainTextSiteOutputHandler(getRepository(), getResourceClass());
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        //new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        //new RssSiteOutputHandler(getRepository(), getResourceClass());
+        //new AtomSiteOutputHandler(getRepository(), getResourceClass());
     }
 
-The output handler code for the four default formats, HTML, SOPAC XML site log format,
-SINEX, and GAMIT's station.info format, handle (or will handle) the "standard parameters" in a 
+The output handler code for the default formats, HTML, SOPAC XML site log format,
+SINEX, GAMIT's station.info format, GSAC site csv format, Google Earth, and the GSAC plain text format, will handle (to do done...) the "standard parameters" in a 
 "conforming GSAC geodesy implementation."
 
-If you are satisfied with your GSAC repository offering these four formats, 
-you need do nothing more about output format choices. Go to the next topic.
+If you are satisfied with your GSAC repository offering these formats, 
+you need do nothing about output format choices. Go to the next topic.
 
-To change which formats you want to offer at your GSAC repository, edit the file
+To change which formats you  offer at your GSAC repository, edit the file
 trunk/src/org/gsac/gsl/SiteManager.java.  Go to the  method initOutputHandlers().
-Comment out (with //) the lines for formats you do not wish to offer, or remove the '//' before any hidden output handlers you wish to see,
-and rebuild GSAC with ant. 
+Comment out (with //) the lines for formats you do not wish to offer, 
+or remove the '//' before any hidden output handlers you wish to see, and rebuild GSAC with ant in the same directory. 
+Please do *not* check in any modified SiteManager.java file into SourceForge.
 
-Note that only the four default formats present all the  "standard parameters" in results.
-The others are not all complete.  You of course may add to incomplete output handlers (in trunk/src/org/gsac/gsl/output/sites/).
-Please do *not* check in this modified SiteManager.java file into SourceForge.
+Note that only the default formats present all the  "standard parameters" in results.
+The others, IT formats such as JSON, are not complete.  You of course may add to incomplete output handlers (in trunk/src/org/gsac/gsl/output/sites/).
 
 You may create a new kind of format by writing a new Java class, similar to 
 any of the above output handlers, such as HtmlSiteOutputHandler.  The Java source files are
@@ -514,7 +555,7 @@ In the example IGS code, there are lines to implement a query capability for, an
 
 
 ########################################################################
-Web Site Design and Images (HTML)
+Web Site Design, Contents, and Images (HTML)
 ########################################################################
 
 The files footer.html and header.html in the directory @MACRO.SRCDIR@/resources/
@@ -532,13 +573,18 @@ or fully developed, such as using css.  Image files used on the web site can be 
 
    <img src="http://cddis.nasa.gov/images/spacer.gif">.
 
-Change the resources/header.html & resources/footer.html to the you HTML want to use for the header and footer.
+Change the files resources/header.html and resources/footer.html to give the HTML  for the header and footer.
+
+
+The home page of a GSAC repository web site is detailed in a file such as
+trunk/src/org/myrepo/gsac/htdocs/gsacmyrepo_index.html
+Installing GSAC will create a short version of this pagwe which says "Welcome to GSAC." You can add more to this
+file for a larger page.
 
 
 ########################################################################
 Building and Running the GSAC server
 ########################################################################
-
 
 Once you have made needed additions to the Java code, to build a test version server in @MACRO.SRCDIR@, run
 ant (or ant test_build). To build run a production release, run ant production_build.
