@@ -525,7 +525,6 @@ public class GsacRepository implements GsacConstants {
             uri = uri.substring(0, uri.length() - 1);
         }
 
-
         //Check for bots
         if (repelRobots()) {
             if (request.isSpider()) {
@@ -603,7 +602,7 @@ public class GsacRepository implements GsacConstants {
             }
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
-                //                System.out.println(request.toString());
+                System.out.println("   query is "+request.toString());
                 int resourceCnt = -1;
                 if (response != null) {
                     resourceCnt = response.getNumResources();
