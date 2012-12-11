@@ -83,7 +83,7 @@ the base url which will be part of the full URL of the website about your GSAC r
 such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
 (The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL; you do not set them anywhere.)
 
-    An example, the file igs/gsac/resources/gsacigs.properties in the UNAVCO "IGS GSAC":
+    An example, the file igs/gsac/resources/gsac.properties in the UNAVCO "IGS GSAC":
     #
     #This gets read by the base GsacRepository class for defining properties
     #This allows you to override the default properties defined in
@@ -101,7 +101,9 @@ The items gsac.repository.name and gsac.repository.description are used as label
 You can also set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
     file.zip.maxsize=100000000 
 
-Hiding DB account information
+########################################################################
+Setting and Hiding DB account information
+########################################################################
 
 You create a *second* properties file to give the account details to permit the GSAC web server process to read from the geodesy database.
 Usually this file is in your GSAC's 'gsac/' directory, such as trunk/src/org/igs/gsac/gsacigs.properties, with contents like:
@@ -119,7 +121,7 @@ e.g:
 jdbc:oracle:thin:${username}/${password}db1.ap.int.program.org:1521:gpsdb
 
 NOTE if you check this code into a software repository, such as with svn, this db account information may be made public.
-Do not 'add' or 'commit' a gile with private db account info.
+Do not 'add' or 'commit' a file with private db account info.
 
 Then add to build.xml, in your location corresponding to trunk/src/org/igs/gsac/, to add a new section like the one
 
