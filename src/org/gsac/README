@@ -1,10 +1,9 @@
 
 ################################################################################
 
-How to create a new implementation of the UNAVCO GSAC-WS Web Services suite
-to provide web service access to site-located data in a geoscience data repository.
+GSAC README, Part 1.
 
-Part 1.
+How to create a new implementation of the UNAVCO GSAC-WS Web Services suite to provide web service access to site-located data in a geoscience data repository.
 
 The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories,"
 http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf,
@@ -12,8 +11,7 @@ lists software tools needed for building GSAC.
 
 The UNAVCO GSAC WS home page is http://facility.unavco.org/data/gsacws/gsacws.html
 
-This is the README file from  gsac/trunk/src/org/gsac/ and is the first of two
-README files detailing GSAC installation.
+This is the README file from  gsac/trunk/src/org/gsac/ and is the first of two README files detailing GSAC installation.
 
 ################################################################################
 
