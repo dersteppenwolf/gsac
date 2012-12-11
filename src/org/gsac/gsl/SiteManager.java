@@ -20,19 +20,15 @@
 
 package org.gsac.gsl;
 
-
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 
-
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
-
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
-
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -181,7 +177,8 @@ public abstract class SiteManager extends GsacResourceManager {
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
         // the following formats only show a few parameters in results; more code needs to be written:
-        // FIX this fails new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        // FIX this fails 
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
         /* with
     javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
