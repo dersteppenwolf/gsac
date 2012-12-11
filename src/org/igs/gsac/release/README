@@ -1,40 +1,40 @@
 
 ########################################################################
 
-Part 2.
+GSAC README Part 2.
 
 This file describes how to complete your new 'UNAVCO IGS' GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
 You should have first read and followed the Part 1 README file in trunk/src/org/gsac/.  
 
-If you are confused, can't find the Part 1 README, or did not do the instructions in it,
+If you are confused, or can't find the Part 1 README, or did not do the instructions in it,
 please refer to the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" 
 on the UNAVCO GSAC WS home page, http://facility.unavco.org/data/gsacws/gsacws.html
 
 This README was generated from the template package during your initial package build, as described in README Part 1.
 
-Some file names in ***this README file***, such as gsacigs.properties,
-may have one or more upper case letters. The ccoresponfing actual GSAC files lack upper case in their names. 
-Do not change actual filenames to match uppercase letters, if any, in the README files.
+Some file names in this README file, such as gsacigs.properties,
+may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
+Do not change actual filenames to match uppercase letters in the README files.
 
 ########################################################################
 
 This README is found in your new GSAC package.  
 
 This file is the second part of the instructions to build a GSAC server for your data repository.
-You should have already followed the Part 1 instructions in src/org/gsac/README.  
+You should have already followed the Part 1 instructions in trunk/src/org/gsac/README.  
 
 Hopefully you've managed to generated the initial repository source package.
 
-Now, change the working directory to UNAVCO IGS
+Now, change the working directory to UNAVCO IGS, trunk/src/org/igs/gsac/.
 
 Do ant there:
 
 ant 
 
 This ant command builds an initial new GSAC server for your repository.  (It also creates a new Tomcat war file, 
-something like gsac/sourceforge/gsac/trunk/dist/gsacigs.war, which will be used, eventually, for your public web site,
+something like the path and file sourceforge/gsac/trunk/dist/gsacigs.war, which will be used, eventually, for your public web site,
 if you use Tomcat.)  
 
 Now try:
@@ -48,19 +48,19 @@ GSAC INFO: Tue Aug 28 14:33:59 EDT 2012:
 GsacServlet: url:http://mycpuname:8080/gsacigs/gsacapi
 
 In a browser, look at that URL, http://mycpuname:8080/gsacigs/gsacapi.  
-You should see a new web page with minimal content, with a line of links like
+You should see a new web page with minimal content, with a line of links something like
 Search Sites | Search Files | Browse | Infomation | Help
 
-This shows that the GSAC code runs on your system.  This web 'site' uses Jetty  (see http://www.eclipse.org/jetty/), 
+This shows that the GSAC code runs on your system.  This 'web site' uses Jetty  (see http://www.eclipse.org/jetty/), 
 a Java HTTP server and Java servlet container.   The Jetty servlet is for local testing, 
 which saves the trouble of a full Tomcat implementation, and avoids (possibly) restarting Tomcat 
-for every test of the new GSAC.  Public operational systems often run with Tomcat in place of Jetty.
+for every test of the new GSAC.  Public operational web servers often run with Tomcat in place of Jetty.
 
-Stop the ant runserver process with CTRL-c.  You've generated the GSAC repository source package 
+Stop the 'ant runserver' process with CTRL-c.  You've generated the GSAC repository source package 
 and an initial new GSAC server.
 
 So far you have been bootstrapping a operational GSAC server which has complete core GSAC code 
-but which lacks many specific details about your repository.
+but which lacks specific details about your repository.
 
 Now you need to specify important details about your particular repository, such as what 
 fields in your database users may search on, and what metadata from your database is provided 
@@ -81,7 +81,7 @@ Configuration  : Your GSAC Properties Files
 The file resources/gsac.properties has a number of properties to specify, for example, 
 the base url which will be part of the full URL of the website about your GSAC repository.
 such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-(The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL.)
+(The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL; you do not set them anywhere.)
 
     An example, the file igs/gsac/resources/gsacigs.properties in the UNAVCO "IGS GSAC":
     #
@@ -96,7 +96,7 @@ such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/
     #Your repository description
     gsac.repository.description=The IGS GSAC Repository, a UNAVCO Site Log Manager in GSAC-WS
 
-The items repository.name gind sac.repository.description are used as labels on the web site.
+The items gsac.repository.name and gsac.repository.description are used as labels on the web site.
 
 You can also set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
     file.zip.maxsize=100000000 
