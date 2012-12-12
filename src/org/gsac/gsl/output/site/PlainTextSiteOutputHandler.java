@@ -108,11 +108,10 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     /**
      * handle the request: format sites' information in plain text so you can easily see what is available for these sites in this repository.
      *
-     * LOOK add these:
-        SITELOG_OPERATIONALCONTACT extends Tables {
-        public static final String NAME = "SiteLog_OperationalContact";
-        public static final String COL_NAMEAGENCY =  NAME + ".NameAgency";
-        public static final String COL_FAX1 =  NAME + ".Fax1";
+     * LOOK might add these:
+        from for example db table SITELOG_OPERATIONALCONTACT 
+        SITELOG_OPERATIONALCONTACT.COL_EMAIL1
+        SITELOG_OPERATIONALCONTACT.NAMEAGENCY public static final String COL_NAMEAGENCY =  NAME + ".NameAgency";
      *
      *
      * @param request the request
@@ -171,6 +170,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         pw.append(    " site ("+sitecount+" in this list):\n");
         pw.append(    " site 4 char ID:              "+ site.getShortName() + "\n");
         pw.append(    " site long name:              "+ site.getLongName() + "\n");
+        pw.append(    " site Agency                  "+ getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "") + "\n");
         pw.append(    " site IERSDOMES               "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
         Date date = site.getFromDate();
         if (date != null) {
@@ -180,6 +180,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             pw.append(" site installed date: \n");
         }
         pw.append(    " site monument description    "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
+        pw.append(    " site  frequency standard     "+ getProperty(site, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "") + "\n");
         pw.append(    " site cdp number              "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
     }
 
@@ -234,6 +235,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         pw.append(    " site country:                "+ getNonNullString(plm.getCountry())  + "\n");
         pw.append(    " site state or province:      "+ getNonNullString(plm.getState()  ) + "\n");
         pw.append(    " site city:                   "+ getNonNullString(plm.getCity()) + "\n");
+
         EarthLocation el = site.getEarthLocation();
         pw.append(    " site latitude:               "+ formatLocation(el.getLatitude())  + "" + "\n");
         pw.append(    " site longitude:              "+ formatLocation(el.getLongitude()) + "" + "\n");
