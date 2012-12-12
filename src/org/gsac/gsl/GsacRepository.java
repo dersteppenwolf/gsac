@@ -602,7 +602,7 @@ public class GsacRepository implements GsacConstants {
             }
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
-                System.out.println("   query is "+request.toString());
+                System.out.println("GSAC INCOMING REQUEST is: "+request.toString());
                 int resourceCnt = -1;
                 if (response != null) {
                     resourceCnt = response.getNumResources();
