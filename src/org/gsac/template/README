@@ -236,7 +236,9 @@ with the names GSAC uses internally, such as STATION_IDENTIFICATION.COL_LATITUDE
 "GSAC Standard Geodesy Parameters" and  "Conforming GSAC Geodesy Repositories".
 ########################################################################
 
-A key concept to enable GSAC geodesy repositories to operate in a consistent and expected way, to be part of GSAC federations, and to be install GSAC without requiring writing new Java source code, is the Conforming GSAC Geodesy Implementation.   We strongly encourage you to implement a conforming GSAC repository. 
+This material and code is in development and is not in use yet:
+
+A new (and key) concept to enable GSAC geodesy repositories to operate in a consistent and expected way, to be part of GSAC federations, and to be install GSAC without requiring writing new Java source code, is the Conforming GSAC Geodesy Implementation.   We strongly encourage you to implement a conforming GSAC repository. 
 
 GSAC may be used for data repositories for any data source with metadata for instruments at fixed locations (but nor aircraft or buoys, for example), and optionally to download data files from the instruments.  For geodesy data from instruments at monuments, GSAC software includes a way to provide standard paramerers and to simplify installing a repository which provides values for those parameters.
 
@@ -258,7 +260,7 @@ antenna serial number                       20045
 antenna date installed                      1997-04-27  00:00:00
 antenna date removed                        1997-04-29  00:00:00 
 
-NOT YET IMPLEMENTED (dec 11 2012):
+NOT YET IMPLEMENTED (Dec 11 2012):
 
 You identify which fields in your database correspond to the standard GSAC parameters, with a one to one match of Tables.java items to standard parameter names.  You do this by editing the file standard_parameters.properties.   Each line begins with GSAC's internal name for a standard parameter, such as site.latitude, followed by a comma. You complete the line with a table and field name from the Tables.java file (which represents your database contents, such as    
 
@@ -347,7 +349,8 @@ Extending Java Classes (Java Code changes)
 ########################################################################
 
 The @MACRO.PREFIX@Repository is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
-and/or @MACRO.PREFIX@FileManager objects.
+and/or @MACRO.PREFIX@FileManager objects (for example for the UNAVCO IGS GSAC, in  trunk/src/org/igs/gsac/, 
+the files IgsFileManager.java, IgsRepository.java, IgsServer.java, and IgsSiteManager.java).
 
 Files in @MACRO.SRCDIR@ have the Java code for your repository.   The Java file @MACRO.PREFIX@Repository.java is the main entry point, where you add much of the code for the new repository.   Also the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.javafiles will be changed to implement database queries used by your GSAC web form searches and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
 
@@ -363,8 +366,10 @@ package org.@MACRO.PREFIX@.gsac;
 
 In the method initResourceManagers(),  uncomment 
      super.initResourceManagers();
+to search on both sites and data files in the database.  
 
-to search on both sites and data files in the database.  (See other code in that method if you need to only search on only sites or only files: getResourceManager(GsacSite.CLASS_SITE) and getResourceManager(GsacFile.CLASS_FILE).)
+If you wish  to only search  only for sites or only for files, use either the calls getResourceManager(GsacSite.CLASS_SITE) 
+or getResourceManager(GsacFile.CLASS_FILE).
 
 
 IgsFileManager.java 
@@ -373,9 +378,9 @@ This class has 3 'changeme' sections:
 
 doGetQueryCapabilities()
 
-handleRequest(
+handleRequest()
 
-getResource(
+getResource()
 
 
 IgsSiteManager.java  
@@ -395,45 +400,96 @@ makeResource
 and also a change in getResourceSelectColumns().
 
 
+########################################################################
 More examples about extending Java.
+########################################################################
 
 GSAC core code provides a few common data values, such as latitude of a site.  For your GSAC you probably need to use additional values from your database for data searches or results.
 
 These examples are from code for the IGS Site Log Manager implementation of GSAC.  Since you have downloaded the GSAC code from SourceForge, you already have these files to look at.  The ISG GSAC code was checked into SourceForge as part of the GSAC.
 
-GSAC uses a consistent capitalization style to identify classes in Tables.java (from the database table names) and field names, in in other Java files, Java variables and Java methods.  We strongly urge you to follow this convention to aid code readability and maintenance.
+GSAC uses a consistent capitalization style to identify classes in Tables.java (from the database table names) and field names, in other Java files, Java variables and Java methods.  We strongly urge you to follow this convention to aid code readability and maintenance.
 
 To demonstrate how to add a new field's value from your database to the HTML (web page) results, here is the code for a database value called frequency standard, which in this database indicates the kind of clock used by a GNSS receiver.  
 
-The database used by this GSCA implementation is represented in Java by the file org/igs/gsac/database/Tables.java.  In that file there is a Java class for a db table called SITELOG_FREQUENCYSTANDARD, with a db field variable String COL_STANDARDTYPE.  You use these Java variables to write the new code.  Do not modify Tables.java; it was created when the IGS GSAC template was built.  You do need to look in  Tables.java to find the Java names for items you want ot use from your database.
+The database used by GSCA is represented in Java by the file org/igs/gsac/database/Tables.java.  In that file there is a Java class for a db table called SITELOG_FREQUENCYSTANDARD, with a db field variable String COL_STANDARDTYPE.  You use these Java variables to write the new code.  Do not modify the IGS GSAC file Tables.java; it was created when the IGS GSAC template was built.  
 
-In the file org/gsac/gsl/GsacExtArgs.java one new line was added to template code by the person who implemented the IGS Site Log Manager GSAC:
-    public static final String METADATA_FREQUENCYSTANDARD = "metadata.frequencystandard"; 
-This declares a new Java variable to hold the value extracted from the database, for one GPS receiver station or site.
+You look in your file  Tables.java to find the Java names for items you want to use from your database.
+In Tables.java, find the class in your db table, and the field in it you want to use, such as
+this representation of your db and its table which has a field for something called frequency standard:
 
-In the Java file org/igs/gsac/IgsSiteManager.java is a new method, added to template code by the person who implemented the IGS Site Log Manager GSAC:
+ public static class SITELOG_FREQUENCYSTANDARD extends Tables {
+        public static final String NAME = "SiteLog_FrequencyStandard";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_ID =  NAME + ".ID";
+        public static final String COL_STANDARDTYPE =  NAME + ".StandardType";
+        ....
 
-private  void readFrequencyStandardMetadata(GsacResource gsacResource) throws Exception { 
-  // get  from db table represented as class SITELOG_FREQUENCYSTANDARD the value of String COL_STANDARDTYPE 
-        // compose db query statement; 'order by' phrase is null. 
-        Statement statement = getDatabaseManager().select(Tables.SITELOG_FREQUENCYSTANDARD.COLUMNS, 
-                                        Tables.SITELOG_FREQUENCYSTANDARD.NAME, 
-                                        Clause.eq(Tables.SITELOG_FREQUENCYSTANDARD.COL_FOURID, gsacResource.getId()), 
-                                        (String)null, -1); 
-        ResultSet  results; 
-        try { 
-            // do db query 
-            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement); 
-            // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java. 
-            while ((results = iter.getNext()) != null) { 
-                addPropertyMetadata(gsacResource,GsacExtArgs.METADATA_FREQUENCYSTANDARD, "Clock", 
-                                    results.getString(Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE)); 
-                break; 
-            } 
-        } finally { 
-            getDatabaseManager().closeAndReleaseConnection(statement); 
-        } 
-    } 
+From this material, you can construct the full GSAC internal name for the value needed, such as Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE
+
+
+In the file trunk/org/gsac/gsl/GsacExtArgs.java, add a new line to declare the internal variable name GSAc will use, like
+    public static final String SITE_METADATA_FREQUENCYSTANDARD = "site.metadata.frequencystandard"; 
+This declares a new Java variable to hold the value extracted from the database for a GPS receiver station or site.
+DO this for each new type to value to handle.
+
+
+To the file  like MyRepoSiteManager.java in trunk/org/myrepo/gsac/, add a method like private void readFrequencyStandardMetadata(GsacResource gsacResource)
+which has in part
+ addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
+                    "Clock", results.getString( Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
+
+note this has:
+the GSAC variable GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
+a label ("Clock" in this case) for the HTML output page for a query, and
+a way (results.getString() ) to get the desired value from the db, using the full GSAC internal name for the Tables.java object.
+
+Example of the complete method (from the IGS GSAC file, IgsSiteManager.java):
+    /**
+     * from db table represented in Tables.java as class SITELOG_FREQUENCYSTANDARD,
+     * get the value of String COL_STANDARDTYPE and add it (with the label "clock") to the GsacResource object "gsacResource".
+     * in this case the site is recognized in the db with the getDatabaseManager().select() call.
+     *
+     * SITE_METADATA_FREQUENCYSTANDARD must be declared in  GsacExtArgs.java.
+     *
+     * @param gsacResource  the GSAC resource object to add the value to.
+     *
+     * @throws Exception _more_
+     */
+    private void readFrequencyStandardMetadata(GsacResource gsacResource)
+            throws Exception {
+        // compose db query statement; 'order by' phrase is null.
+        Statement statement =
+            getDatabaseManager().select(
+                Tables.SITELOG_FREQUENCYSTANDARD.COLUMNS,
+                Tables.SITELOG_FREQUENCYSTANDARD.NAME,
+                Clause.eq(
+                    Tables.SITELOG_FREQUENCYSTANDARD.COL_FOURID,
+                    gsacResource.getId()), (String) null, -1);
+        ResultSet results;
+        try {
+            // do db query
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java.
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
+                    "Clock",
+                    results.getString(Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+   }
+
+
+
+
+
+
 
 This reads the frequency standard value from the database.  The term "Clock" is a label for search results in the HTML web page of results.
 
@@ -441,20 +497,27 @@ Then in the same Java file, add to the method
     public GsacSite makeResource(ResultSet results)
 the call to the new method:
   readFrequencyStandardMetadata(site); 
-This method makeResource() makes the HTML output (web page) for the results from one site.
+before the return statement.
 
-Build the new GSAC, in this case with "ant" in org/igs/gsac/.  Then test your changes with "ant runserver."
+This method makeResource() loads  the results from a query.
 
-This finds the frequency standard value at a site, and adds it to the HTML result for a web page of results.
+Build the new GSAC, in this case with "ant" in trunk/org/myrepo/gsac/.  Then test your changes with "ant runserver."
 
-To add the value to other GSAC site result formats, see these files:
-for  SOPAC XML Site log format, org/gsac/gsl/output/site/XmlSiteOutputHandler.java
-for  csv result format,         org/gsac/gsl/output/site/TextSiteOutputHandler.java 
-for  JSON result format,        org/gsac/gsl/output/site/JsonSiteOutputHandler.java 
+This finds the frequency standard value at a site.
+
+To add the value to other GSAC output result formats, see the "...OutputHandler.java" files in trunk/org/gsac/gsl/output/site/.
+
+
+
+########################################################################
+Equipment data 
+########################################################################
 
 Data items which pertain to equipment (such as GNSS receivers and related instruments) have a special Java class
     org/gsac/gsl/metadata/gnss/GnssEquipmentGroup.java.  
-Let's see how to add an equipment value to GSAC output.  We will again refer to core GSAC code, and code in the  IGS Site Log Manager GSAC.  Use this code as a template for writing new code about your equipment metadata.
+Let's see how to add an equipment value to GSAC output.  
+
+We will again refer to core GSAC code, and examples of code in the IGS Site Log Manager GSAC.  Use this code as a template for writing new code about your equipment metadata.
 
 In  org/igs/gsac/database/Tables.java there is a Java class, representing a database table, called SITELOG_RECEIVER, with a variable String COL__FIRMWAREV, for the database's field holding the firmware version. You use these Java variables to write new code.  (Do not modify Tables.java) 
 
@@ -558,6 +621,15 @@ In the example IGS code, there are lines to implement a query capability for, an
 Web Site Design, Contents, and Images (HTML)
 ########################################################################
 
+The home page of a GSAC "myrepo" repository web site is detailed in a file such as
+trunk/src/org/myrepo/gsac/htdocs/gsacmyrepo_index.html
+
+Installing default GSAC will create a short version of this page which says only "Welcome to GSAC." 
+You can add more to this file for a larger page, using normal HTML.
+
+The GSAC qery web forms are complete and provided by GSAC installation.  Is it possible to modify them
+with extensive Java programming.
+
 The files footer.html and header.html in the directory @MACRO.SRCDIR@/resources/
 specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
 
@@ -576,35 +648,39 @@ or fully developed, such as using css.  Image files used on the web site can be 
 Change the files resources/header.html and resources/footer.html to give the HTML  for the header and footer.
 
 
-The home page of a GSAC repository web site is detailed in a file such as
-trunk/src/org/myrepo/gsac/htdocs/gsacmyrepo_index.html
-Installing GSAC will create a short version of this pagwe which says "Welcome to GSAC." You can add more to this
-file for a larger page.
-
-
 ########################################################################
 Building and Running the GSAC server
 ########################################################################
 
-Once you have made needed additions to the Java code, to build a test version server in @MACRO.SRCDIR@, run
-ant (or ant test_build). To build run a production release, run ant production_build.
+Once you have made needed additions to the Java code, to build your GSAC, in @MACRO.SRCDIR@, run
+simply:
+
+ ant 
 
 The build.xml file used by ant is @MACRO.SRCDIR@/build.xml. The ant build targets will copy one 
-of the gsacdb (_test or _production) properties files to resources/gsacsb.properties
+of the gsacdb  properties files to resources/gsacsb.properties
 
 It will also copy one of the files
    resources/gsacserver_test.properties or 
    resources/gsacserver_production.properties
 to resources/gsacserver.properties
 
-The ant target  builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
+The ant target builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
 and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
 
-To run the server:
-ant runserver
+To run the server, do:
 
-For the test server, the screen output from this command shows a URL to use in your local browser 
-to see and try the test server web services.
+ ant runserver
+
+This will run a test or demo version of your GSAC on your desktop, with Jetty doing the web page management.
+
+To see the new GSAC, in the runserver screen output are two lines like
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: running repository:org.igs.gsac.MyRepoRepository
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacmyrepo/gsacapi
+
+
+Enter the "http:/hostname:8080/gsacmyrepo/gsacapi" part in a browser URL address window on the same machine to
+see your new GSAC.
 
 
 
@@ -633,31 +709,37 @@ Running the new GSAC web site with Tomcat
 Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
 
 Building GSAC (in the src/org/@MACRO.PREFIX@/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
- ~/gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war.  
+ trunk/dist/gsac@MACRO.PREFIX@.war.  
  
 Copy this file to the Tomcat apachetomcatdev/webapps/ folder on your web server host.  
-The GSAC server web presence should be immediately available, especially if you are
-using "hot deploy," without a restart of Tomcat.
+For example, on the Tomcat server, do something like
+cp gsac@MACRO.PREFIX@.war /usr/local/apachetomcatdev/webapps
 
-You can see the output by doing for example, tail -f /usr/local/apachetomcatdev/logs/catalina.out
+The GSAC server web should be available in a few seconds, if you are using "hot deploy," without a restart of Tomcat.
 
-If for some reason tomcat is misbehaving you can do:
+You can see the log of Tomcat actions by doing for example,
+ tail -f /usr/local/apachetomcatdev/logs/catalina.out
+
+If for some reason Tomcat and hotdeploy is misbehaving, or to restart Tomcat, you can do:
 sudo /etc/init.d/tomcatdev stop
 sudo /etc/init.d/tomcatdev start
 to restart tomcat 
 
-The servlet reads the properties file:
+The Tomcat's servlet reads the properties file:
 /usr/local/apachetomcatdev/conf/gsacigs.properties
-which contains the database authentication info, if you chose not to include that in the --- file.
+which contains the database authentication info.
  
 ########################################################################
 Adding Data File Downloads from a GSAC Repository with FTP
 ########################################################################
 
+If you enable files searches, and your db has a complete URL specifying FTP for each data file,
+GSAC will return the FTP URLS, and a wget statement with the FTP URLs, as results from a file and site search.
 
-########################################################################
-Running a Stand-Alone GSAC Web Site
-########################################################################
+If your database does not have a field with the complete URL specifying FTP for each data file, you may bre able 
+to construct the complete URL specifying FTP for each data file, with extra Java coding, using parts of the URL
+such as data file name, which you can find in results from GSAC queries.
 
 
-SKW Oct 3 2012
+
+SKW Dec 12, 2012
