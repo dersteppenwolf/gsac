@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *   
  */
 
 package org.igs.gsac;
@@ -382,7 +382,7 @@ public class IgsSiteManager extends SiteManager {
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         readIdentificationMonumentMetadata(site);
         readAgencyMetadata(site);
-        // to be fixed readCalibrationMetadata(site);
+        // to FIX readCalibrationMetadata(site);
         readFrequencyStandardMetadata(site);
 
         // site.addMetadata(new GnssEquipment(satelliteSystem));
@@ -673,11 +673,13 @@ public class IgsSiteManager extends SiteManager {
        }  
     }  
 
-    // neww
-    // get  from db table represented as class SITELOG_FREQUENCYSTANDARD the value of String COL_STANDARDTYPE 
 
     /**
-     * _more_
+     * from db table represented in Tables.java as class SITELOG_FREQUENCYSTANDARD,
+     * get the value of String COL_STANDARDTYPE and add it (with the label "clock") to the GsacResource object "gsacResource".
+     * in this case the site is recognized in the db with the getDatabaseManager().select() call.
+     *
+     * SITE_METADATA_FREQUENCYSTANDARD must be declared in  GsacExtArgs.java.
      *
      * @param gsacResource _more_
      *
@@ -701,7 +703,7 @@ public class IgsSiteManager extends SiteManager {
             // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java.
             while ((results = iter.getNext()) != null) {
                 addPropertyMetadata(
-                    gsacResource, GsacExtArgs.METADATA_FREQUENCYSTANDARD,
+                    gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
                     "Clock",
                     results.getString(
                         Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
@@ -714,12 +716,8 @@ public class IgsSiteManager extends SiteManager {
     }
 
 
-    // neww
-    /* old: get from SITELOG_RESPONSIBLEAGENCY table, value of AGENCYRESPONSIBLE, which ain't the normal thing so change to use: */
-    /*      get from SITELOG_OPERATIONALCONTACT table, value of NAMEAGENCY */
-
     /**
-     * _more_
+     * get from SITELOG_OPERATIONALCONTACT table, value of NAMEAGENCY
      *
      * @param gsacResource _more_
      *
@@ -754,11 +752,8 @@ public class IgsSiteManager extends SiteManager {
     }
 
 
-    // neww
-    // get  SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT
-
     /**
-     * _more_
+     *  get  SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT
      *
      * @param gsacResource _more_
      *
@@ -840,7 +835,8 @@ public class IgsSiteManager extends SiteManager {
                     results.getString(
                         Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
 
-                // CDP number is not wanted currently as per FB Oct 5 2012
+                // CDP number is not wanted currently -- for the IGS site log gsac -- as per FB Oct 5 2012
+                // but will keep it for the plain text output.
                 //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
                 //                    "CDP Number",
                 //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
