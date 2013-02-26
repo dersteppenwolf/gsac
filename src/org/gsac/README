@@ -102,6 +102,8 @@ ant -propertyfile template/myrepomacros.properties makerepository
 This will copy all of the source and resource files templates to new directories and files, replacing the macros with
 the values you defined in myrepomacros.properties, and place them in the specified new target directory, such as src/org/myrepo/. 
 
+Note that the myrepomacros.properties file is only used this one time.
+
 For example, for a new implementation called test2013a, doing this list (from src/org/gsac/) gets:
 
 ls -l ../test2013a/gsac
@@ -124,8 +126,5 @@ drwxr-xr-x 2   4096 2013-02-13 11:38 resources
 The template file for the second README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
 to src/org/myrepo/gsac/README, and it has the next set of instructions (Part 2) for you to follow to complete your GSAC installation.  
 
-Note that the myrepomacros.properties file is only used this one time.
-
-See Part 2 of GSAC implementation, the second and final README file, in the newly generated package, such as src/org/myrepo/gsac/README.
 
 ################################################################################
