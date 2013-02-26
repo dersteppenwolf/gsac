@@ -84,12 +84,9 @@ Now you need to specify important details about your particular repository, such
 fields in your database users may search on, and what metadata from your database is provided 
 as results from queries of your GSAC services.
 
-
-####################
+#################### ####################
 
 Adding Your Repository's Details
-
-####################
 
 Configuration: Your GSAC Properties Files
 
@@ -111,9 +108,10 @@ such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/
     #Your repository description
     gsac.repository.description=The IGS GSAC Repository, a UNAVCO Site Log Manager in GSAC-WS
 
-The items repository.name gind sac.repository.description are used as labels on the web site.
+The items repository.name and gsac.repository.description in gsac.repository.description are used as labels on the web site.
 
 You can also set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
+
     file.zip.maxsize=100000000 
 
 ########################################################################
@@ -121,32 +119,29 @@ Setting and Hiding DB account information
 ########################################################################
 
 You create another gsac properties file to give the database account details to permit the GSAC web server process to read from the geodesy database.
-Usually this file is in your GSAC's 'gsac/' directory, such as trunk/src/org/igs/gsac/gsacigs.properties, with contents like:
+Usually this file is in your local 'gsac/' directory, such as src/org/myrepo/gsac/gsacmyrepo.properties, with contents like:
 
     gsac.db.username=db-gsac-username
     gsac.db.password=db-gsac-password
-    gsac.db.jdbcurl=jdbc:mysql://igsdev.unavco.org:3080/igsgsdb
+    gsac.db.jdbcurl=jdbc:mysql://myrepodev.unavco.org:3080/myrepodb
 
-When the GSL assembles the JDBC URL it looks up the user name and password from here, to read from database.
+When the GSL assembles the JDBC URL it looks up the user name and password from here, to read from the database.
 
-Note that Oracle and Postgres have different syntax for the last line above.  
-For postgres the form is 
+Note that Oracle and Postgres have different syntax for the last line above.  For postgres the form is 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
+
 One Oracle JDBC URL is of the form:
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
 e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-Note, if you check this code into a software repository, such as with svn, this db account information may be made public.
-
+Caution: if you check this code into a software repository, such as with svn, this db account information may be made public.
 Do not do svn 'add' or 'commit' a file with private db account info.
 
 
+Add to the file build.xml, in your location like src/org/myrepo/gsac/, a new build target like 
 
-Add to the file build.xml, in your location like  trunk/src/org/myrepo/gsac/, 
-to add a new build target like the one
-
-    <target name="gsacigs">
+    <target name="gsacmyrepo">
         <antcall target="build"/>
         <echo message="********************************"/>
         <echo message="To run the server run:"/>
