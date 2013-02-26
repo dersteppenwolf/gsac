@@ -40,7 +40,9 @@ import java.util.List;
 
 
 /**
- * Handles all of the site related repository requests. If you are using the GsacRepository/SiteManager
+ * Handles all of the site related repository requests. 
+ *
+ * CHANGEME. If you are using the GsacRepository/SiteManager
  * functionality then there are a minimum of 2 methods you need to overwrite:<br>
  * {@link #getSite} and {@link #handleSiteRequest}
  * This class has a default implementation of handleSiteRequest. To use this you need to
@@ -49,6 +51,7 @@ import java.util.List;
  *
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
+ * revised Feb. 25 2013
  */
 public abstract class SiteManager extends GsacResourceManager {
 
@@ -147,14 +150,17 @@ public abstract class SiteManager extends GsacResourceManager {
 
     /**
      * Create the output handlers for this resource, which handles (formats) the query results.
-     * Comment out lines for handlers (for formats of results sent to remote user) NOT to be offered by your GSAC-WS repository. 
      *
-     * Note. is this right? -- whichever is first in order below gets called when the web site search page is first called for 
-     *   -- before any query is made, which can cause a failure and error to browser and no site search page shown. HTML seems to always work OK.
+     * Note. is this right? -- whichever is first in order below gets called when the web site search page is first called for, 
+     *   *before* any query is made, which can cause a failure and error to browser and no site search page shown. HTML seems to always work OK.
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
+
+        /* CHANGEME: Comment out lines for handlers (which make output in files with particular formats of results to be sent to remote user) NOT wanted to be offered by your GSAC-WS repository.  */
+        /* for example if you do not want to provide the SOPAC XMP site log format, comment out (put "//" before) new XmlSiteLogOutputHandler(getRepository(), getResourceClass()); */
+        /* However you are encouraged to allow all these no commented out in GSAC code on sourceforge, to permit use of federated GSAC collections. */
 
         // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
@@ -168,18 +174,19 @@ public abstract class SiteManager extends GsacResourceManager {
         // for GAMIT's station.info format  
         new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
-        // to make results as a IGS site log; LOOK FIX gives empty file
+        // there is no call for this yet: to make results as a IGS site log; FIX SiteLogOutputHandler gives empty file
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
 
-        new TextSiteOutputHandler(getRepository(), getResourceClass());   // for csv formatted file
+        new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for long csv formatted file
 
         // a plain text format to visually check what is available for sites' info.  Not for computer processing. Originally for GSAC developers. 
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
+        new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for short csv formatted file of limited contents
+
         // the following formats only show a few parameters in results; more code needs to be written:
-        // FIX this fails 
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
-        /* with
+        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        /* FIX KmlSiteOutputHandler fails with
     javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
     at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
@@ -194,6 +201,7 @@ public abstract class SiteManager extends GsacResourceManager {
     at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:511)
         */
 
+        // the following are usually not used in geodesy data repositories at date of the last revision to this file.
         //new JsonSiteOutputHandler(getRepository(), getResourceClass());
         //new RssSiteOutputHandler(getRepository(), getResourceClass());
         //new AtomSiteOutputHandler(getRepository(), getResourceClass());
