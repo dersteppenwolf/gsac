@@ -5,11 +5,9 @@ GSAC_WS Installation     README, Part 2.
 This file describes how to complete your new '@MACRO.SRCDIR@' GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
-You should have first read and followed the Part 1 README file in trunk/src/org/gsac/.  
-
-If you are confused, can't find the Part 1 README, or did not do the instructions in it,
-please refer to the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" 
-on the UNAVCO GSAC WS home page, http://facility.unavco.org/data/gsacws/gsacws.html
+You should have first read and followed the installation instructions in
+ the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
+in http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf and in the Part 1 README file in trunk/src/org/gsac/.
 
 This README was generated from the template package during your initial package build, as described in README Part 1.
 
@@ -36,7 +34,28 @@ This ant command builds an initial new GSAC server for your repository.  (It als
 something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
 if you use Tomcat.)  
 
-Now try:
+If the ant commands succeeds you will see output to the screen including 
+compile:
+    [javac] Compiling 7 source files
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+gsacjar:
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0.jar
+and including
+war:
+     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs.war
+     [echo] ********************************
+     [echo] To run the server run:
+     [echo] ant runserver
+     [echo] ********************************
+BUILD SUCCESSFUL
+Total time: 8 seconds
+
+
+To run a test version of your new web server try:
 
 ant runserver
 
@@ -50,10 +69,10 @@ In a browser, look at that URL, http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
 You should see a new web page with minimal content, with a line of links something like
 Search Sites | Search Files | Browse | Infomation | Help
 
-This shows that the GSAC code runs on your system.  This 'web site' uses Jetty  (see http://www.eclipse.org/jetty/), 
-a Java HTTP server and Java servlet container.   The Jetty servlet is for local testing, 
-which saves the trouble of a full Tomcat implementation, and avoids (possibly) restarting Tomcat 
-for every test of the new GSAC.  Public operational systems often run with Tomcat in place of Jetty.
+This shows that the GSAC code runs on your system.  This 'web site' uses Jetty (see http://www.eclipse.org/jetty/), 
+a Java HTTP server and Java servlet container.  The Jetty servlet is for local testing, 
+which saves the trouble of deploying a .war file to a Tomcat implementation, and avoids (possibly) restarting Tomcat 
+for every test of the new GSAC.  Public web servers often run with Tomcat in place of Jetty.
 
 Stop the 'ant runserver' process with CTRL-c.  You've generated the GSAC repository source package 
 and an initial new GSAC server.
@@ -67,15 +86,12 @@ as results from queries of your GSAC services.
 
 
 ####################
-########################################################################
+
 Adding Your Repository's Details
-########################################################################
+
 ####################
 
-
-########################################################################
-Configuration  : Your GSAC Properties Files
-########################################################################
+Configuration: Your GSAC Properties Files
 
 The file resources/gsac.properties has a number of properties to specify, for example, 
 the base url which will be part of the full URL of the website about your GSAC repository.
