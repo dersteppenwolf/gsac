@@ -177,10 +177,10 @@ public abstract class SiteManager extends GsacResourceManager {
         // there is no call for this yet: to make results as a IGS site log; FIX SiteLogOutputHandler gives empty file
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
 
-        new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for long csv formatted file
-
         // a plain text format to visually check what is available for sites' info.  Not for computer processing. Originally for GSAC developers. 
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+
+        new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for full csv formatted file of site metadata
 
         new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for short csv formatted file of limited contents
 
