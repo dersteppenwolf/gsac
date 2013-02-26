@@ -24,16 +24,16 @@ package org.gsac.gsl.output.site;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
+import org.gsac.gsl.util.*;  // for EarthLocation
 
 import ucar.unidata.util.StringUtil;
 
 import java.io.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.text.DecimalFormat;
 
 
 /**
@@ -41,16 +41,31 @@ import javax.servlet.http.*;
  *
  * This produces a SHORT report with few values. FB wants to keep (restore) it.   Noted Feb 25 2013.
  *
+ * sample format:
+ * #site.id,site.code,site.name,site.latitude,site.longitude,site.elevation
+ * BADG,BADG,Badary,51.7697,102.235,811.4
+ * BAIE,BAIE,BAIE RACS-GSD,49.1868,-68.2628,27.5
+ *
  * @version        29 Nov 2012 SKW;
  * @author         JM, SKW;
+ * revision        26 Feb 2013.  Format lat longi height to avoid huge number of not-significant digits
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
+    String latitude ="";
+    String longitude ="";
+    String ellipsoidalheight ="";
 
-    /** output id */
+    /** used to format numerical lat longi values */
+    private DecimalFormat latLonFormat = new DecimalFormat("####0.#####");
+
+    /**  to format ellipsoidal height values sometimes called elevation in GSAC code.  */
+    private DecimalFormat elevationFormat = new DecimalFormat("####0.###");
+
+    /** GSAC output id */
     public static final String OUTPUT_SITE_CSV = "site.csv";
 
     /**
-     * ctor
+     * ctor; provides label in GSAC GUI "Output:" box, and output file name extension for this class.
      *
      * @param gsacRepository _more_
      * @param resourceClass _more_
@@ -60,12 +75,12 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_CSV,
-                                      "Site CSV file", "/sites.csv", true));
+                                      "Short Site CSV file", "/sites.csv", true));
     }
 
 
     /**
-     * _more_
+     * get and format the results to output 
      *
      * @param request The request
      * @param response The response
@@ -107,12 +122,17 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
             }
             pw.print("\n");
 
-            //            pw.print("#repositoryid, site code, name, latitude, longitude, elevation\n");
             int siteCnt = 0;
             for (GsacSite site : response.getSites()) {
                 siteCnt++;
                 colCnt = 0;
                 int parmCnt = 0;
+
+                EarthLocation el = site.getEarthLocation();
+                latitude =formatLocation(el.getLatitude())  ;
+                longitude =formatLocation(el.getLongitude()) ;
+                ellipsoidalheight =elevationFormat.format(el.getElevation()) ;
+
                 // for each parm in the List
                 for (String param : params) {
                     if (colCnt > 0) {
@@ -136,24 +156,27 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                         }
                         pw.print(cleanString(id, delimiter));
                         //System.out.println("  3 " + id + "\n");
+
                     } else if (param.equals(ARG_SITE_LATITUDE)) {
-                        pw.print(site.getLatitude());
+                        pw.print(latitude);
+                        //pw.print(site.getLatitude());
                         //System.out.println("  4 " + site.getLatitude() + "\n");
                     } else if (param.equals(ARG_SITE_LONGITUDE)) {
-                        pw.print(site.getLongitude());
+                        pw.print(longitude);
+                        //pw.print(site.getLongitude());
                         //System.out.println("  5 " + site.getLongitude() + "\n");
                     } else if (param.equals(ARG_SITE_ELEVATION)) {
                         pw.print(site.getElevation());
                         //System.out.println("  6 " + site.getElevation() + "\n");
                     } else if (param.equals(ARG_SITE_LOCATION)) {
-                        pw.print(site.getLatitude());
+                        pw.print(latitude);
+                        //pw.print(site.getLatitude());
                         pw.print(delimiter);
-                        //System.out.println("  4b " + site.getLatitude() + "\n");
-                        pw.print(site.getLongitude());
+                        pw.print(longitude);
+                        //pw.print(site.getLongitude());
                         pw.print(delimiter);
-                        //System.out.println("  5b " + site.getLongitude() + "\n");
-                        pw.print(site.getElevation());
-                        //System.out.println("  6b " + site.getElevation() + "\n");
+                        pw.print(ellipsoidalheight);
+                        //pw.print(site.getElevation());
                     } else if (param.equals(ARG_SITE_TYPE)) {
                         pw.print(site.getType().getId());
                         //System.out.println("  7 " + site.getType().getId() + "\n");
@@ -185,6 +208,20 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
 
         return s;
     }
+
+    /**
+     * format a double value (such as lat and longi) to 4 sig figs or as per latLonFormat definition.  0.0001 latitude res is about 1/100 of a km or 10 meters.
+     *
+     * @param v  a double number
+     *
+     * @return a String 
+     */
+    private String formatLocation(double v) {
+        v = (double) Math.round(v * 10000) / 10000;
+        String s = latLonFormat.format(v);
+        return s;
+    }
+
 
 
 }
