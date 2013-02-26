@@ -88,44 +88,45 @@ as results from queries of your GSAC services.
 
 Adding Your Repository's Details
 
-Configuration: Your GSAC Properties Files
+Configuration: The "GSAC Resources Properties" File.
 
-The file resources/gsac.properties has a number of properties to specify, for example, 
+The file resources/gsacmyrepo.properties has a number of properties to specify, for example, 
 the base url which will be part of the full URL of the website about your GSAC repository.
 such as 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
 (The terms 'gsacapi/' and 'site/form' are always part of a GSAC URL and you do not enter them anywhere.)
 
-    An example, the file igs/gsac/resources/gsac.properties in the "IGS GSAC":
+    An example, the file myrepo/gsac/resources/gsac.properties 
     #
     #This gets read by the base GsacRepository class for defining properties
     #This allows you to override the default properties defined in
     #org/gsac/gsl/resources/gsac.properties
     #
-    ##what is the base url used
-    gsac.baseurl = /gsacigs
+    ##what is the base url used in the GSAc server online?
+    gsac.baseurl = /gsacmyrepo
     #Your repository name
-    gsac.repository.name=IGS GSAC Repository
+    gsac.repository.name=My repo GSAC Repository
     #Your repository description
-    gsac.repository.description=The IGS GSAC Repository, a UNAVCO Site Log Manager in GSAC-WS
+    gsac.repository.description=The My repo GSAC Repository 
 
-The items repository.name and gsac.repository.description in gsac.repository.description are used as labels on the web site.
+The items repository.name and gsac.repository.description are used as labels on the web site.
 
 You can also set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
 
     file.zip.maxsize=100000000 
 
-########################################################################
-Setting and Hiding DB account information
-########################################################################
 
-You create another gsac properties file to give the database account details to permit the GSAC web server process to read from the geodesy database.
-Usually this file is in your local 'gsac/' directory, such as src/org/myrepo/gsac/gsacmyrepo.properties, with contents like:
+Setting and Hiding DB account information: the "GSAC DB Properties" File.
 
-    gsac.db.username=db-gsac-username
-    gsac.db.password=db-gsac-password
-    gsac.db.jdbcurl=jdbc:mysql://myrepodev.unavco.org:3080/myrepodb
+You create a different file, gsacmyrepo.properties, for the database account details to permit the GSAC web server process to read from the geodesy database.
+Usually this file is in your local gsac/ directory, such as src/org/myrepo/gsac/gsacmyrepo.properties, with contents like:
+
+gsac.db.username=db-gsac-username
+gsac.db.password=db-gsac-password
+gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
 
 When the GSL assembles the JDBC URL it looks up the user name and password from here, to read from the database.
+
+The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  The database must have such an account.
 
 Note that Oracle and Postgres have different syntax for the last line above.  For postgres the form is 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
@@ -138,8 +139,12 @@ e.g:
 Caution: if you check this code into a software repository, such as with svn, this db account information may be made public.
 Do not do svn 'add' or 'commit' a file with private db account info.
 
+Note that there are *two* "gsacmyrepo.properties" files, in src/org/myrepo/gsac/ and in src/org/myrepo/gsac/resources/. Sorry about the confusion.
 
-Add to the file build.xml, in your location like src/org/myrepo/gsac/, a new build target like 
+
+Your local build.xml file.
+
+In the file build.xml, in your location like src/org/myrepo/gsac/, add a new build target like 
 
     <target name="gsacmyrepo">
         <antcall target="build"/>
@@ -150,42 +155,9 @@ Add to the file build.xml, in your location like src/org/myrepo/gsac/, a new bui
     </target>
 
 
-
-########################################################################
-Database Driver and Server Connection Information
 ########################################################################
 
-In @MACRO.SRCDIR@/dbresources/, for development change the database properties file gsacdb_test.properties 
-(and for final release, also change the file gsacdb_production.properties)
-
-name your database driver
-
-gsac.db.driverclass=com.mysql.jdbc.Driver  
-
-Other possible choices for this line are 
-
-gsac.db.driverclass=oracle.jdbc.driver.OracleDriver  
-(see http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html) 
-
-or for a Postgres driver see http://jdbc.postgresql.org/.
-
-Both the gsacdb_(test,production).properties files may be exactly the same, or may differ 
-if you use different databases for development and production.
-
-You may put the hostname and port of your web server in the gsacserver_(test,production).properties
-files:
-# Server info
-#gsac.server.hostname=
-#gsac.server.port=9090   
-
-The hostname is optional.  The port defaults to port 8080 for when running stand-alone,
-or you can define it in this properties file.
-
-
-
-########################################################################
 Reading Your Database: Making Tables.java
-########################################################################
 
 GSAC has to be able to identify the tables and columns (fields) in your database,
 which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
