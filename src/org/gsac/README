@@ -1,7 +1,8 @@
 
 ################################################################################
 
-GSAC README, Part 1.
+GSAC README, Part 1. (file  org/gsac/README)
+
 Building a GSAC server for your data repository.
 
 How to create a new implementation of the UNAVCO GSAC-WS Web Services suite 
@@ -10,10 +11,11 @@ The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.ht
 
 The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories,"
 http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf,
-lists software tools needed for building GSAC, and details the first steps in installing GSAC, which must have been done already
+lists software tools needed for installing GSAC, and details the first steps in installing GSAC, which must have been done already
 if you are reading this in a GSAC installation.  
 
 This README files describes the next steps in GSAC installation.
+
 This is the README file from  gsac/trunk/src/org/gsac/ and is the first of two README files detailing GSAC installation.
 
 ################################################################################
@@ -44,7 +46,7 @@ What's in trunk/src/org/gsac/:
  
 build.xml: used by ant 
 
-gsl/: This has the core GSAC Service Layer implementation
+gsl/: This directory has the core GSAC Service Layer implementation files.
 
 client/: Java based client for accessing a GSAC repository
 
@@ -54,7 +56,7 @@ federated/: This is the implemention of the federated repository
 
 package.html:
 
-template/:  see next:
+template/:  see next.
 
 ################################################################################
 Generating Your Initial GSAC-WS repository package
@@ -71,28 +73,26 @@ Copy the example template/macros.properties file to your own similar file, e.g.:
 cd template/
 cp macros.properties   myrepomacros.properties
 
-'myrepo' is only a placeholder here, in these instructions.  Replace the 'myrepo' with your choice of name for your agency, project, or repository. 
+'myrepo' is only a placeholder here, in these instructions.  Replace the 'myrepo' with an approprite name for your agency, project, or repository. 
 
-Edit the  new properties file to define the target package name, directory, etc. 
-
-For example:
+Edit the new properties file to define the target package name, directory, etc.  For example:
 
 ##Name you want for the repository
 target.name=myrepo GSAC Repository
 
-##This is used to create the jar and war release file names
+##This is used to create the jar and Tomcat's ".war" release file names. Often begins with the 4 characters "gsac:"
 target.basename=gsacmyrepo
 
-##target package name; replace the 'myrepo' part only:
+##target Java package name; replace the 'myrepo' part only:
 target.package=org.myrepo.gsac
 
-##All of the java classes will have this prefix as the first part of their names
+##All of the java classes will have this prefix as the first part of their names. Capitalize first letter (a Java class name convention).
 target.prefix=Myrepo
 
-# What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file.)
+# What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file from Java for db access.)
 target.dbdriver=mysql.jar
 
-Other choices for the database driver file are postgres.jar and oracleDriver.jar.
+Other choices for the database driver jar file are postgres.jar and oracleDriver.jar.  Use the one for your database.
 
 
 Then cd ../ to src/org/gsac/, and run this ant command in src/org/gsac/, replacing the 'myrepomacros.properties' file name with your file name:
@@ -121,8 +121,8 @@ drwxr-xr-x 2   4096 2013-02-13 11:38 resources
 -rw-r--r-- 1   3440 2013-02-13 11:38 test2013aTest.java
 
 
-The template file org/gsac/template/README has been extended and copied to your new package, for example, 
-to src/org/myrepo/gsac/README, and it has the next set of instructions for you to follow to complete your GSAC installation.  
+The template file for the second README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
+to src/org/myrepo/gsac/README, and it has the next set of instructions (Part 2) for you to follow to complete your GSAC installation.  
 
 Note that the myrepomacros.properties file is only used this one time.
 
