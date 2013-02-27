@@ -1,18 +1,15 @@
 
 ################################################################################
 
-GSAC README, Part 1. (file  org/gsac/README)
+GSAC How to install README, Part 1. (file gsac/trunk/org/gsac/README)
 
-Building a GSAC server for your data repository.
-
-How to create a new implementation of the UNAVCO GSAC-WS Web Services suite 
-to provide web service access to a geoscience data repository.
+How to create a new implementation of the UNAVCO GSAC-WS Web Services suite.
+ 
+UNAVCO's GSAC provides web services for data discovery and data access in a geoscience data repository for remote users, through a web site GUI and an API.
 The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html
-
-The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories,"
-http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf,
-lists software tools needed for installing GSAC, and details the first steps in installing GSAC, which must have been done already
-if you are reading this in a GSAC installation.  
+The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
+introduces GSAC in details, lists requirements to run GSAC, and details the first steps in installing GSAC 
+(which must have been done already if you are reading this README file in a GSAC installation).  
 
 This README files describes the next steps in GSAC installation.
 
@@ -22,47 +19,65 @@ This is the README file from  gsac/trunk/src/org/gsac/ and is the first of two R
 
 You should have done the following already:
 
-Make a working area, for example:
-mkdir ~/gsac/sourceforge/
+Creating the Initial GSAC Server
 
-Check out the GSAC code from SourceForge, using subversion:
-cd ~/gsac/sourceforge/
+Make a working directory for GSAC_WS, and go there:
+mkdir ~/gsacws/sourceforge/
+cd    ~/gsacws/sourceforge/
+
+Or you can install GSAC code anywhere, starting with the subversion checkout.
+
+Next, check out the GSAC code from SourceForge, using subversion:
+
 svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac
 
-Do the initial build with ant:
-cd gsac/trunk/ 
-ant 
+This svn command creates the new subdirectory "gsac" and files under it. Go to the gsac/trunk/ subdirectory:
 
-This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  
-ant uses the build.xml in the directory where ant is run.
+cd gsac/trunk/
+
+Do the command "ant:"
+
+ant
+
+This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.
+The file trunk/build.xml is used by ant.
+
+The ant build will create these items in trunk/:
+build.xml   dist/   examples/   lib/    README  src/
+
+If you investigate you will find dozens of new files and directories below trunk/.
+
+Next do cd src/org/gsac/.  Follow the instructions in the src/org/gsac/README file.  This README file is called "Part 1."  It is the first of two README files.
+
+Further commands will be made in subdriectories of trunk/.  The preceeding path is omitted.
 
 ################################################################################
 
-Next, starting in ~/gsac/sourceforge/gsac/trunk/: 
+Next, 
 
 cd src/org/gsac/
 
-What's in trunk/src/org/gsac/:
+What's in src/org/gsac/:
  
 build.xml: used by ant 
 
 gsl/: This directory has the core GSAC Service Layer implementation files.
 
-client/: Java based client for accessing a GSAC repository
+client/: code for the Java-based client program for accessing a GSAC repository using its API (not the web site).
 
 ramadda/: The RAMADDA GSAC plugin, for the RAMADDA content management system.
 
 federated/: This is the implemention of the federated repository
 
-package.html:
+package.html: for the web pages
 
-template/:  see next.
+template/:  see below:
 
 ################################################################################
 Generating Your Initial GSAC-WS repository package
 ################################################################################
 
-The template directory (src/org/gsac/template/) holds the template for the initial GSAC repository package 
+The template directory (src/org/gsac/template/) holds template files for the initial GSAC repository package 
 implementation. This allows you to generate a package with all of the boilerplate Java code and build scripts.
 
 What you need to do is define a set of macro values that are used to take the code in the 
@@ -94,15 +109,13 @@ target.dbdriver=mysql.jar
 
 Other choices for the database driver jar file are postgres.jar and oracleDriver.jar.  Use the one for your database.
 
-
 Then cd ../ to src/org/gsac/, and run this ant command in src/org/gsac/, replacing the 'myrepomacros.properties' file name with your file name:
 
 ant -propertyfile template/myrepomacros.properties makerepository
 
 This will copy all of the source and resource files templates to new directories and files, replacing the macros with
 the values you defined in myrepomacros.properties, and place them in the specified new target directory, such as src/org/myrepo/. 
-
-Note that the myrepomacros.properties file is only used this one time.
+The myrepomacros.properties file is only used this one time.
 
 For example, for a new implementation called test2013a, doing this list (from src/org/gsac/) gets:
 
@@ -122,9 +135,14 @@ drwxr-xr-x 2   4096 2013-02-13 11:38 resources
 -rw-r--r-- 1  11231 2013-02-13 11:38 test2013aSiteManager.java
 -rw-r--r-- 1   3440 2013-02-13 11:38 test2013aTest.java
 
-
 The template file for the second README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
 to src/org/myrepo/gsac/README, and it has the next set of instructions (Part 2) for you to follow to complete your GSAC installation.  
 
+################################################################################
+
+end of README part1 for GSAC installation.
+
+Feb. 27, 2013.
+Copyright (c) UNAVCO.
 
 ################################################################################
