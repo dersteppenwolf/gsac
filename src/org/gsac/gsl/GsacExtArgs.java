@@ -32,35 +32,28 @@ package org.gsac.gsl;
 public interface GsacExtArgs {
 
     /** _more_ */
-    public static final String ARG_ANTENNA = GsacArgs.ARG_SITE_PREFIX
-                                             + "antenna";
+    public static final String ARG_ANTENNA = GsacArgs.ARG_SITE_PREFIX + "antenna";
 
     /** _more_ */
-    public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX
-                                            + "region";
+    public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
 
     /** _more_ */
     public static final String ARG_DOME = GsacArgs.ARG_SITE_PREFIX + "dome";
 
     /** _more_ */
-    public static final String ARG_RECEIVER = GsacArgs.ARG_SITE_PREFIX
-                                              + "receiver";
+    public static final String ARG_RECEIVER = GsacArgs.ARG_SITE_PREFIX + "receiver";
 
     /** _more_ */
-    public static final String ARG_MONUMENT = GsacArgs.ARG_SITE_PREFIX
-                                              + "monument";
+    public static final String ARG_MONUMENT = GsacArgs.ARG_SITE_PREFIX + "monument";
 
     /** _more_ */
-    public static final String ARG_SAMPLE_INTERVAL = GsacArgs.ARG_SITE_PREFIX
-                                                     + "sampleinterval";
+    public static final String ARG_SAMPLE_INTERVAL = GsacArgs.ARG_SITE_PREFIX + "sampleinterval";
 
     /** _more_ */
-    public static final String ARG_HAS_METPACK = GsacArgs.ARG_SITE_PREFIX
-                                                 + "hasmetpack";
+    public static final String ARG_HAS_METPACK = GsacArgs.ARG_SITE_PREFIX + "hasmetpack";
 
     /** _more_ */
-    public static final String ARG_COUNTRY = GsacArgs.ARG_SITE_PREFIX
-                                             + "country";
+    public static final String ARG_COUNTRY = GsacArgs.ARG_SITE_PREFIX + "country";
 
     /** _more_ */
     public static final String ARG_CITY = GsacArgs.ARG_SITE_PREFIX + "city";
@@ -70,8 +63,7 @@ public interface GsacExtArgs {
 
 
     /** _more_ */
-    public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX
-                                                   + "tectonicplate";
+    public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX + "tectonicplate";
 
     public static final String SITE_METADATA_MONUMENTINSCRIPTION = "site.metadata.monumentinscription";
     public static final String SITE_METADATA_IDENTIFICATIONMONUMENT = "site.metadata.identificationmonument";
