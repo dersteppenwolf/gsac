@@ -76,6 +76,11 @@ public class IgsDatabaseManager extends GsacDatabaseManager {
      */
     public static void main(String[] args) throws Exception {
         IgsDatabaseManager dbm = new IgsDatabaseManager(null);
+        for(String arg: args) {
+            if(arg.endsWith(".properties")) {
+                dbm.loadDatabaseProperties(arg);
+            }
+        }
         dbm.init();
         //Change this package to be your package
         String packageName = dbm.getClass().getPackage().getName();

@@ -306,8 +306,7 @@ public class GsacHarvester extends WebHarvester {
 
         //if we had existing entries then they have been updated and we need to update the DB
         if (oldEntries.size() > 0) {
-            getRepository().getEntryManager().insertEntries(oldEntries,
-                    false, true);
+            getRepository().getEntryManager().updateEntries(getRequest(), oldEntries);
         }
         if(entries.size()>0)
             status.append("Added " + entries.size() +" new sites<br>");

@@ -257,7 +257,7 @@ public class NtripHarvester extends WebHarvester {
             if (newSite) {
                 entries.add(siteEntry);
             } else if (siteChanged) {
-                getEntryManager().storeEntry(siteEntry);
+                getEntryManager().updateEntry(getRequest(), siteEntry);
             }
 
             Metadata ntripMetadata =

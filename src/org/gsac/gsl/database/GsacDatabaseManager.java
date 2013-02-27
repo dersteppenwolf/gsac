@@ -203,8 +203,12 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         if (loadedProperties) {
             return;
         }
-
         String propertiesFile = getPropertiesFile();
+        loadDatabaseProperties(propertiesFile);
+        loadedProperties = true;
+    }
+
+    public void loadDatabaseProperties(String propertiesFile) {
         if (propertiesFile == null) {
             return;
         }
@@ -213,7 +217,6 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
                                            getClass());
             properties.load(propertiesIS);
             //                System.err.println("properties:" + properties);
-            loadedProperties = true;
         } catch (Exception exc) {
             throw new IllegalArgumentException("Could not load properties:"
                     + propertiesFile);

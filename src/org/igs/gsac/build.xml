@@ -185,6 +185,7 @@
 
     <target name="tables" depends="init">
       <java classname="${repositorypackage}.IgsDatabaseManager" maxmemory="512mb">
+          <arg value="gsacigs.properties"/>
           <classpath>
              <pathelement path="${classpath}"/>
              <pathelement location=""/>
