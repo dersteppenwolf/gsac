@@ -1,33 +1,35 @@
 
 ################################################################################
 
-GSAC How to install README, Part 1. (file gsac/trunk/org/gsac/README)
+GSAC How to install README, Part 1. (file gsac/trunk/src/org/gsac/README)
 
-How to create a new implementation of the UNAVCO GSAC-WS Web Services suite.
+How to create a new implementation of the UNAVCO GSAC Web Services suite.
  
-UNAVCO's GSAC provides web services for data discovery and data access in a geoscience data repository for remote users, through a web site GUI and an API.
-The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html
-The User Guide, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
-introduces GSAC in details, lists requirements to run GSAC, and details the first steps in installing GSAC 
-(which must have been done already if you are reading this README file in a GSAC installation).  
+UNAVCO's GSAC-WS provides web services for data discovery and data access in a geoscience data repository for remote users, 
+through a web site GUI and an API.  The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.
 
-This README files describes the next steps in GSAC installation.
+The GSAC document "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
+introduces GSAC in detail, lists requirements to run GSAC, and describes the first steps in installing GSAC.  The User Guide 
+"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf) 
+is for persons using data repositories powered by GSAC.
 
-This is the README file from  gsac/trunk/src/org/gsac/ and is the first of two README files detailing GSAC installation.
+This README files describes the first steps in GSAC installation.
+
+This is the Part 1 README file from  gsac/trunk/src/org/gsac/, and is the first of two README files detailing GSAC installation.
 
 ################################################################################
 
-You should have done the following already:
+You should have done the following already, which is detailed in "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"
+(which was done already if you are reading this README file in a GSAC installation):  
 
-Creating the Initial GSAC Server
+Creating the initial GSAC Server
 
 Make a working directory for GSAC_WS, and go there:
 mkdir ~/gsacws/sourceforge/
 cd    ~/gsacws/sourceforge/
+Or you can install GSAC code anywhere, starting with the subversion checkout(next).
 
-Or you can install GSAC code anywhere, starting with the subversion checkout.
-
-Next, check out the GSAC code from SourceForge, using subversion:
+Check out the GSAC code from SourceForge, using subversion:
 
 svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac
 
@@ -35,43 +37,43 @@ This svn command creates the new subdirectory "gsac" and files under it. Go to t
 
 cd gsac/trunk/
 
-Do the command "ant:"
+Do the command "ant" which builds Java code:
 
 ant
 
 This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.
-The file trunk/build.xml is used by ant.
+The file build.xml is used by ant.
 
 The ant build will create these items in trunk/:
 build.xml   dist/   examples/   lib/    README  src/
-
 If you investigate you will find dozens of new files and directories below trunk/.
 
-Next do cd src/org/gsac/.  Follow the instructions in the src/org/gsac/README file.  This README file is called "Part 1."  It is the first of two README files.
+Next do 
+cd src/org/gsac/  
 
-Further commands will be made in subdriectories of trunk/.  The preceeding path is omitted.
+(The full path, such as ~/gsac/sourceforge/gsac/trunk/src/org/gsac, is not shown in commands here)
 
 ################################################################################
 
-Next, 
-
-cd src/org/gsac/
+Next, in working directory src/org/gsac/
 
 What's in src/org/gsac/:
  
-build.xml: used by ant 
+   build.xml  used by ant 
 
-gsl/: This directory has the core GSAC Service Layer implementation files.
+   client/  The code files for the Java-based client program for accessing a GSAC repository using its API (not the web site).
 
-client/: code for the Java-based client program for accessing a GSAC repository using its API (not the web site).
+   federated/ This is the implemention of the federated repository
 
-ramadda/: The RAMADDA GSAC plugin, for the RAMADDA content management system.
+   gsl/ This directory has the core GSAC Service Layer implementation files.
 
-federated/: This is the implemention of the federated repository
+   package.html for the web pages
 
-package.html: for the web pages
+   ramadda/ The files for the RAMADDA GSAC plugin, for the RAMADDA content management system.
 
-template/:  see below:
+   README   Part 1 for GSAC installation
+
+   template/  see below:
 
 ################################################################################
 Generating Your Initial GSAC-WS repository package
@@ -81,9 +83,9 @@ The template directory (src/org/gsac/template/) holds template files for the ini
 implementation. This allows you to generate a package with all of the boilerplate Java code and build scripts.
 
 What you need to do is define a set of macro values that are used to take the code in the 
-template package and make an initial Java package or GSAC.
+template/ package and make an initial GSAC.
 
-Copy the example template/macros.properties file to your own similar file, e.g.:
+Copy the example template/macros.properties file to your own file with a similar name, e.g.:
 
 cd template/
 cp macros.properties   myrepomacros.properties
@@ -101,7 +103,7 @@ target.basename=gsacmyrepo
 ##target Java package name; replace the 'myrepo' part only:
 target.package=org.myrepo.gsac
 
-##All of the java classes will have this prefix as the first part of their names. Capitalize first letter (a Java class name convention).
+##All of the java classes will have this prefix as the first part of their names. Capitalize first letter, a Java class naming convention.
 target.prefix=Myrepo
 
 # What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file from Java for db access.)
@@ -135,12 +137,12 @@ drwxr-xr-x 2   4096 2013-02-13 11:38 resources
 -rw-r--r-- 1  11231 2013-02-13 11:38 test2013aSiteManager.java
 -rw-r--r-- 1   3440 2013-02-13 11:38 test2013aTest.java
 
-The template file for the second README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
-to src/org/myrepo/gsac/README, and it has the next set of instructions (Part 2) for you to follow to complete your GSAC installation.  
+The template file for the second or Part 2 README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
+to src/org/myrepo/gsac/README, and it has the next set of instructions for you to follow to complete your GSAC installation.  
 
 ################################################################################
 
-end of README part1 for GSAC installation.
+end of README Part 1 for GSAC installation.
 
 Feb. 27, 2013.
 Copyright (c) UNAVCO.
