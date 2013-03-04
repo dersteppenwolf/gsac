@@ -183,7 +183,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,session start,session stop,antenna type,dome type,antenna SN,Ant dz,ant dn,ant de,receiver type, firmware version,receiver SN,site count\n");
+        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,session start,session stop,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
         //pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
     }
 
