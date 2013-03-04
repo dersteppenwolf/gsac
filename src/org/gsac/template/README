@@ -9,26 +9,112 @@ to provide web service access to site-located data in a geoscience data reposito
 
 You should have first read and followed the installation instructions in
 the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
-in http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf,
+(http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf),
 and in the README (Part 1) file in the main GSAC code area trunk/src/org/gsac/.
 
-This README was generated from the template package during your initial package build, 
+This README, Part 2, was generated from the template package during your initial package build, 
 as described in README Part 1.
 
 Some file names in this README file, such as gsac@MACRO.PREFIX@.properties,
 may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
-Do not change actual filenames to match uppercase letters if any in the README files.
+Do not change actual filenames to match uppercase letters if any such are shown in this README file.
 
 ########################################################################
 
-This README is found in your new GSAC package in @MACRO.SRCDIR@.
-
-This file is the second part of the instructions to build a GSAC server for your data repository.
-You should have already followed the Part 1 instructions,  in src/org/gsac/README.  
+This README is found in your new GSAC package in @MACRO.SRCDIR@/release/.
 
 Hopefully you've managed to generate the initial repository source package.
 
 Now, change the working directory to you local GSAC code area, at @MACRO.SRCDIR@ 
+
+
+   Adding Your Repository's Details
+
+   Base URL and Names or Titles: The "GSAC Resources Properties" File.
+
+The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties to specify, for example, 
+gsac.baseurl for the base url which will be part of the full URL of the website about your GSAC repository.
+
+    An example, a file myrepo/gsac/resources/gsac.properties might have: 
+
+    #
+    #This gets read by the base GsacRepository class for defining properties
+    #This allows you to override the default GSAC server properties defined in
+    #org/gsac/gsl/resources/gsac.properties
+    #
+    gsac.baseurl = /gsacws
+    #Your repository name
+    gsac.repository.name=My repo GSAC Repository
+    #Your repository description
+    gsac.repository.description=The My repo GSAC Repository 
+    # You can optionally set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
+    file.zip.maxsize=100000000 
+
+An example of gsac.baseurl is 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
+Note that this baseurl need not include any identification of your agency since othe material supplies that, such as the domain in the URL.
+(The terms 'gsacapi/site/form' are always part of a GSAC URL (in the site search) and you do not enter them anywhere.)
+Several GSAC repositories used gsacws for th e baseurl.
+
+The items repository.name and repository.description are used as labels on the web site.
+file.zip.maxsize limits the maximum size of science data file to be returned from a repository.
+
+
+Setting and Hiding DB account information: the "GSAC DB Properties" File.
+
+You create a different file, @MACRO.SRCDIR@/gsac/gsac.properties, for the database account details,
+to permit the GSAC web server process to read from the geodesy database.  The contents are like:
+
+gsac.db.username=db-gsac-username
+gsac.db.password=db-gsac-password
+gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
+
+When the GSL assembles the JDBC URL it finds the user name and password from here, to read from the database.
+
+The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  The database must have such an account.
+
+Note that Oracle and Postgres have different syntax for the last line in this file.  For postgres the form is 
+=jdbc:postgresql://<hostname>:<port>/<database>.  
+
+One Oracle JDBC URL is of the form:
+=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
+e.g:
+=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
+
+Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
+Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository.
+
+Note that there are *two* "gsac.properties" files, in src/org/myrepo/gsac/ and in src/org/myrepo/gsac/resources/. Sorry about the confusion.
+
+
+
+Extend the local build.xml file.
+
+In the file build.xml, in your location @MACRO.SRCDIR@, add a new build target like 
+
+    <target name="gsacmyrepo">
+        <property name="basename" value="gsacea"/>
+        <antcall target="build"/>
+        <echo message="********************************"/>
+        <echo message="To run the test server do the command:"/>
+        <echo message="ant runserver"/>
+        <echo message="********************************"/>
+    </target>
+
+This target will be used by ant to make your GSAC server.
+
+You have specified the basic information needed to run your full GSAC server.
+
+
+
+Database Details
+
+In @MACRO.SRCDIR@, run
+
+ant tables
+
+
+
+
 
 Do the command ant there:
 
@@ -57,6 +143,17 @@ war:
      [echo] ********************************
 BUILD SUCCESSFUL
 Total time: 8 seconds
+Myrepo
+The source Java (.java) files compiled are like these:
+src/org/Myrepo/gsac/
+-rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 MyrepoRepository.class
+-rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 MyrepoFileManager.class
+-rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 MyrepoServer.class
+-rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 MyrepoTest.class
+-rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
+-rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
+src/org/Myrepo/gsac/database/
+Tables.java
 
 To run a test version of your new web server try:
 
@@ -89,81 +186,6 @@ Now you need to specify important details about your particular repository, such
 how to read from your database.
 
 #################### ####################
-
-Adding Your Repository's Details
-
-Base URL and Naming: The "GSAC Resources Properties" File.
-
-The file myrepo/gsac/resources/gsac.properties has a number of properties to specify, for example, 
-gsac.baseurl for the base url which will be part of the full URL of the website about your GSAC repository.
-
-    An example, the file myrepo/gsac/resources/gsac.properties 
-
-    #
-    #This gets read by the base GsacRepository class for defining properties
-    #This allows you to override the default properties defined in
-    #org/gsac/gsl/resources/gsac.properties
-    #
-    gsac.baseurl = /gsacws
-    #Your repository name
-    gsac.repository.name=My repo GSAC Repository
-    #Your repository description
-    gsac.repository.description=The My repo GSAC Repository 
-    # You can optionally set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
-    file.zip.maxsize=100000000 
-
-An example of gsac.baseurl is 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-Note that this baseurl need not include any identification of your agency since othe material supplies that, such as the domain in the URL.
-
-The terms 'gsacapi/site/form' are always part of a GSAC URL (in the site search) and you do not enter them anywhere.
-
-The items repository.name and repository.description are used as labels on the web site.
-
-
-Setting and Hiding DB account information: the "GSAC DB Properties" File.
-
-You create a different file, myrepo/gsac/gsac.properties, for the database account details to permit the GSAC web server process to read from the geodesy database.
-The contents are like:
-
-gsac.db.username=db-gsac-username
-gsac.db.password=db-gsac-password
-gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
-
-When the GSL assembles the JDBC URL it looks up the user name and password from here, to read from the database.
-
-The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  The database must have such an account.
-
-Note that Oracle and Postgres have different syntax for the last line above.  For postgres the form is 
-=jdbc:postgresql://<hostname>:<port>/<database>.  
-
-One Oracle JDBC URL is of the form:
-=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
-e.g:
-=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
-
-Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
-Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository.
-
-Note that there are *two* "gsac.properties" files, in src/org/myrepo/gsac/ and in src/org/myrepo/gsac/resources/. Sorry about the confusion.
-
-#################### ####################
-
-
-Extent the local build.xml file.
-
-In the file build.xml, in your location like src/org/myrepo/gsac/, add a new build target like 
-
-    <target name="gsacmyrepo">
-        <property name="basename" value="gsacea"/>
-        <antcall target="build"/>
-        <echo message="********************************"/>
-        <echo message="To run the test server do the command:"/>
-        <echo message="ant runserver"/>
-        <echo message="********************************"/>
-    </target>
-
-This target will be used by ant to make your GSAC server.
-
 
 ########################################################################
 
