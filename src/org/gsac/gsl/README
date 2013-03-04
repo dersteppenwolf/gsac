@@ -4,6 +4,7 @@
 All of the generated jar and zip files get put into "<root>/dist" directory as a peer of the src directory
 
 To compile everything (assuming you have ant installed):
+
 ant
 
 This creates a stand-alone gsacserver and a gsacws.war file in dist.
