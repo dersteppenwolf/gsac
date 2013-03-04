@@ -111,15 +111,34 @@ target.dbdriver=mysql.jar
 
 Other choices for the database driver jar file are postgres.jar and oracleDriver.jar.  Use the one for your database.
 
-Then cd ../ to src/org/gsac/, and run this ant command in src/org/gsac/, replacing the 'myrepomacros.properties' file name with your file name:
+Then 
 
-ant -propertyfile template/myrepomacros.properties makerepository
+cd ../ 
 
-This will copy all of the source and resource files templates to new directories and files, replacing the macros with
-the values you defined in myrepomacros.properties, and place them in the specified new target directory, such as src/org/myrepo/. 
-The myrepomacros.properties file is only used this one time.
+to src/org/gsac/
 
-For example, for a new implementation called test2013a, doing this list (from src/org/gsac/) gets:
+and run this ant command in src/org/gsac/, 
+replacing the 'myrepomacros.properties' file name with your file name:
+
+ant -propertyfile template/myrepomacros.properties makerepository   
+
+The final lines output to screen should be like:
+
+init:
+
+copyjava:
+     [copy] Copying 1 file to ~/gsac/sourceforge/gsac/trunk/src/org/test1/gsac
+     [echo] Repository source package has been created
+
+BUILD SUCCESSFUL
+Total time: 1 second
+
+
+The ant process copies all of the source and resource file templates to new directories and files, replacing the macros with
+the values you defined in myrepomacros.properties, copying them into the specified new target directory, such as src/org/myrepo/. 
+The 'myrepomacros.properties' file is only used this one time.
+
+Now, for example, for a new implementation called test2013a, doing this list (from src/org/gsac/) gets:
 
 ls -l ../test2013a/gsac
 -rw-r--r-- 1   9851 2013-02-13 11:38 build.xml
