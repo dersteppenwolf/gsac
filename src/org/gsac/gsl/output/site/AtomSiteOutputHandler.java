@@ -72,7 +72,7 @@ public class AtomSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_ATOM,
-                                      "Site GSAC ATOM", "/sites.atom", true));
+                                      "GSAC Site ATOM", "/sites.atom", true));
     }
 
 

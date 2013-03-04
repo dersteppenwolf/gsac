@@ -75,7 +75,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_CSV,
-                                      "Short Site CSV file", "/sites.csv", true));
+                                      "GSAC Short Site CSV", "/sites.csv", true));
     }
 
 

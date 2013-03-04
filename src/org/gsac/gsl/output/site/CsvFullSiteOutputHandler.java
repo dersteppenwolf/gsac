@@ -142,7 +142,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_FULL_CSV,
-                                      "Full Site CSV file", "/sites.full.txt", true)); //  use .txt to allow seeing the result in the brower window.
+                                      "GSAC Full Site CSV", "/sites.full.txt", true)); //  use .txt to allow seeing the result in the brower window.
                                   /*  'name in browser menu" ,  result  "file name extension" */
     }
 

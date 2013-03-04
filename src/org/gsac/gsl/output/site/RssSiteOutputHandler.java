@@ -115,7 +115,7 @@ public class RssSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_RSS,
-                                      "Site GSAC RSS", "/sites.rss", true));
+                                      "GSAC Site RSS", "/sites.rss", true));
     }
 
 
