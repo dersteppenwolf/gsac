@@ -184,8 +184,12 @@ public abstract class SiteManager extends GsacResourceManager {
 
         new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for short csv formatted file of limited contents
 
+        new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        new RssSiteOutputHandler(getRepository(), getResourceClass());
+
         // the following formats only show a few parameters in results; more code needs to be written:
-        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
         /* FIX KmlSiteOutputHandler fails with
     javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
@@ -201,10 +205,6 @@ public abstract class SiteManager extends GsacResourceManager {
     at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:511)
         */
 
-        // the following are usually not used in geodesy data repositories at date of the last revision to this file.
-        //new JsonSiteOutputHandler(getRepository(), getResourceClass());
-        //new RssSiteOutputHandler(getRepository(), getResourceClass());
-        //new AtomSiteOutputHandler(getRepository(), getResourceClass());
         //how is this different from the above XmlSiteLogOutputHandler:  XmlSiteOutputHandler(getRepository(), getResourceClass());
     }
 
