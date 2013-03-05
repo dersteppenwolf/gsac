@@ -37,14 +37,30 @@ This svn command creates the new subdirectory "gsac" and files under it. Go to t
 
 cd gsac/trunk/
 
-Do the command "ant" which builds Java code:
+Do the command "ant" which builds  all the basic GSAC components:
 
 ant
 
 This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.
-The file build.xml is used by ant.
+The file build.xml is used by ant.  This may take two or three minutes. The screen output ends with something like this:
+localinit:
 
-The ant build will create these items in trunk/:
+init:
+
+war:
+     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacea1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacws.war
+     [echo] ********************************
+     [echo] To run the test     server do the command:
+     [echo] ant runserver
+     [echo] ********************************
+
+BUILD SUCCESSFUL
+Total time: 1 minute 25 seconds
+
+
+The ant build also will create these items in trunk/:
 build.xml   dist/   examples/   lib/    README  src/
 If you investigate you will find dozens of new files and directories below trunk/.
 
@@ -97,14 +113,14 @@ Edit the new properties file to define the target package name, directory, etc. 
 ##Name you want for the repository
 target.name=myrepo GSAC Repository
 
-##This is used to create the jar and Tomcat's ".war" release file names. Often begins with the 4 characters "gsac:"
+##This is used to create the jar and Tomcat's ".war" release file names. Often begins with the 4 characters "gsac," and ends with your acronym.
 target.basename=gsacmyrepo
 
-##target Java package name; replace the 'myrepo' part only:
+##target Java package name.  Replace the 'myrepo' part with your acronym, and retain the org. and .gsac parts:
 target.package=org.myrepo.gsac
 
-##All of the java classes will have this prefix as the first part of their names. Capitalize first letter, a Java class naming convention.
-target.prefix=Myrepo
+##All of the java classes will have this prefix as the first part of their names. Usually your acronym. Capitalize first letter, a Java class naming convention.
+target.prefix=Ring
 
 # What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file from Java for db access.)
 target.dbdriver=mysql.jar
@@ -117,30 +133,26 @@ cd ../
 
 to src/org/gsac/
 
-and run this ant command in src/org/gsac/, 
-replacing the 'myrepomacros.properties' file name with your file name:
+and run this ant command in src/org/gsac/, replacing the 'myrepomacros.properties' file name with your file name:
 
 ant -propertyfile template/myrepomacros.properties makerepository   
 
 The final lines output to screen should be like:
-
 init:
-
 copyjava:
-     [copy] Copying 1 file to ~/gsac/sourceforge/gsac/trunk/src/org/test1/gsac
+     [copy] Copying 1 file to ~/gsac/sourceforge/gsac/trunk/src/org/myrepo/gsac
      [echo] Repository source package has been created
-
 BUILD SUCCESSFUL
-Total time: 1 second
+Totaltest2013a time: 1 second
 
+
+The 'myrepomacros.properties' file is only used one time.
 
 The ant process copies all of the source and resource file templates to new directories and files, replacing the macros with
 the values you defined in myrepomacros.properties, copying them into the specified new target directory, such as src/org/myrepo/. 
-The 'myrepomacros.properties' file is only used this one time.
 
-Now, for example, for a new implementation called test2013a, doing this list (from src/org/gsac/) gets:
+Now, for example, for a new implementation called myrepo, has new files in ~/gsac/sourceforge/gsac/trunk/src/org/myrepo/gsac 
 
-ls -l ../test2013a/gsac
 -rw-r--r-- 1   9851 2013-02-13 11:38 build.xml
 drwxr-xr-x 2   4096 2013-02-13 11:38 dbresources
 -rw-r--r-- 1    520 2013-02-13 11:38 gsacrepository.bat
@@ -149,21 +161,23 @@ drwxr-xr-x 2   4096 2013-02-13 11:38 dbresources
 -rw-r--r-- 1  38199 2013-02-13 11:38 README
 drwxr-xr-x 2   4096 2013-02-13 11:38 release
 drwxr-xr-x 2   4096 2013-02-13 11:38 resources
--rw-r--r-- 1   2046 2013-02-13 11:38 test2013aDatabaseManager.java
--rw-r--r-- 1   5299 2013-02-13 11:38 test2013aFileManager.java
--rw-r--r-- 1   2443 2013-02-13 11:38 test2013aRepository.java
--rw-r--r-- 1   1666 2013-02-13 11:38 test2013aServer.java
--rw-r--r-- 1  11231 2013-02-13 11:38 test2013aSiteManager.java
--rw-r--r-- 1   3440 2013-02-13 11:38 test2013aTest.java
+-rw-r--r-- 1   2046 2013-02-13 11:38 MyrepoDatabaseManager.java
+-rw-r--r-- 1   5299 2013-02-13 11:38 MyrepoFileManager.java
+-rw-r--r-- 1   2443 2013-02-13 11:38 MyrepoRepository.java
+-rw-r--r-- 1   1666 2013-02-13 11:38 MyrepoServer.java
+-rw-r--r-- 1  11231 2013-02-13 11:38 MyrepoSiteManager.java
+-rw-r--r-- 1   3440 2013-02-13 11:38 MyrepoTest.java
 
-The template file for the second or Part 2 README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
+And, the template file for the second or Part 2 README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
 to src/org/myrepo/gsac/README, and it has the next set of instructions for you to follow to complete your GSAC installation.  
+
+Follow the instructions in src/org/myrepo/gsac/README.
 
 ################################################################################
 
 end of README Part 1 for GSAC installation.
 
-Feb. 27, 2013.
+March 5, 2013.
 Copyright (c) UNAVCO.
 
 ################################################################################
