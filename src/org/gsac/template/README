@@ -593,17 +593,16 @@ In the example IGS code, there are lines to implement a query capability for, an
 
 
 ########################################################################
-Web Site Design, Contents, and Images (HTML)
+Web Site Page Design, Contents, and Images 
 ########################################################################
 
-The home page of a GSAC "myrepo" repository web site is detailed in a file such as
+The home page of a GSAC repository web site is detailed in a file such as
 src/org/myrepo/gsac/htdocs/gsacmyrepo_index.html
 
-Installing default GSAC will create a short version of this page which says only "Welcome to GSAC." 
+Installing  GSAC initially creates a short version of this page which says only "Welcome to GSAC." 
 You can add more to this file for a larger page, using normal HTML.
-
-The GSAC qery web forms are complete and provided by GSAC installation.  Is it possible to modify them
-with extensive Java programming.
+Note that these pages do not have complete <html> header lines, since these pages
+are wrapped inside the hearder and footer HTML files, mentioned next.
 
 The files footer.html and header.html in the directory @MACRO.SRCDIR@/resources/
 specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
@@ -620,7 +619,13 @@ or fully developed, such as using css.  Image files used on the web site can be 
 
    <img src="http://cddis.nasa.gov/images/spacer.gif">.
 
-Change the files resources/header.html and resources/footer.html to give the HTML  for the header and footer.
+Change the files resources/header.html and resources/footer.html to give the HTML for the header and footer
+of all your web pages.  You may use these files to supply your standard agency's web site look
+to your GSAC repository web site.
+
+The GSAC query pages withe the search web forms, and pages with static GSCA information such as the help pages,
+are complete and provided by GSAC installation.  Is it possible to modify the search forms 
+with extensive Java programming. We urge you to write to UNAVCO if you see need for a change. 
 
 
 ########################################################################
