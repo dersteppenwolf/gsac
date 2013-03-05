@@ -1,4 +1,4 @@
-########################################################################
+####g###################################################################
 
 GSAC_WS Installation     
 
@@ -32,8 +32,10 @@ Now, change the working directory to you local GSAC code area, at @MACRO.SRCDIR@
 
    Base URL and Names or Titles: The "GSAC Resources Properties" File.
 
-The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties to specify, for example, 
+The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties about your GSAC, for example, 
 gsac.baseurl for the base url which will be part of the full URL of the website about your GSAC repository.
+
+Some values were created in the initial ant build you did already.
 
     An example, a file myrepo/gsac/resources/gsac.properties might have: 
 
@@ -42,26 +44,27 @@ gsac.baseurl for the base url which will be part of the full URL of the website 
     #This allows you to override the default GSAC server properties defined in
     #org/gsac/gsl/resources/gsac.properties
     #
-    gsac.baseurl = /gsacws
+    gsac.baseurl = /gsacmyrepo
     #Your repository name
     gsac.repository.name=My repo GSAC Repository
     #Your repository description
     gsac.repository.description=The My repo GSAC Repository 
-    # You can optionally set a maximum size when zipping up files, e.g. 100 MB, in bytes:    
-    file.zip.maxsize=100000000 
+
+You may optionally add a new line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
+
+    file.zip.maxsize=100000000
 
 An example of gsac.baseurl is 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-Note that this baseurl need not include any identification of your agency since othe material supplies that, such as the domain in the URL.
 (The terms 'gsacapi/site/form' are always part of a GSAC URL (in the site search) and you do not enter them anywhere.)
-Several GSAC repositories used gsacws for th e baseurl.
+Or this baseurl may include an acronym for identification of your agency.
 
 The items repository.name and repository.description are used as labels on the web site.
-file.zip.maxsize limits the maximum size of science data file to be returned from a repository.
+
 
 
 Setting and Hiding DB account information: the "GSAC DB Properties" File.
 
-You create a different file, @MACRO.SRCDIR@/gsac/gsac.properties, for the database account details,
+You create a new file, @MACRO.SRCDIR@/resources/gsacdb.properties,  for the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
 
 gsac.db.username=db-gsac-username
@@ -80,6 +83,8 @@ One Oracle JDBC URL is of the form:
 e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
+(Ignore the files dbresources/gsacdb_production.properties and dbresources/gsacdb_test.properties)
+
 Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
 Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository.
 
@@ -87,40 +92,24 @@ Note that there are *two* "gsac.properties" files, in src/org/myrepo/gsac/ and i
 
 
 
-Extend the local build.xml file.
+Your local build.xml file.
 
-In the file build.xml, in your location @MACRO.SRCDIR@, add a new build target like 
+The file build.xml, in your location @MACRO.SRCDIR@, should have these lines. Note the gsqc@MACRO.PREFIX@ : 
 
-    <target name="gsacmyrepo">
-        <property name="basename" value="gsacea"/>
-        <antcall target="build"/>
-        <echo message="********************************"/>
-        <echo message="To run the test server do the command:"/>
-        <echo message="ant runserver"/>
-        <echo message="********************************"/>
-    </target>
+    <target name="localinit">
+        <!-- base name for build products -->
+        <property name="basename" value="gsac@MACRO.PREFIX@"/>
 
-This target will be used by ant to make your GSAC server.
+This target will be used by ant build process to make your GSAC server.
 
 You have specified the basic information needed to run your full GSAC server.
 
 
-
-Database Details
-
-In @MACRO.SRCDIR@, run
-
-ant tables
-
-
-
-
-
-Do the command ant there:
+Do the command ant in @MACRO.SRCDIR@:
 
 ant 
 
-This ant command builds an initial new GSAC server for your repository.  (It also creates a new Tomcat war file, 
+This ant command begins to build the complete  GSAC server for your repository.  (It also creates a new Tomcat war file, 
 something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
 if you use Tomcat.)  
 
@@ -143,23 +132,52 @@ war:
      [echo] ********************************
 BUILD SUCCESSFUL
 Total time: 8 seconds
-Myrepo
+
 The source Java (.java) files compiled are like these:
-src/org/Myrepo/gsac/
+in @MACRO.SRCDIR@:
 -rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 MyrepoRepository.class
 -rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 MyrepoFileManager.class
 -rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 MyrepoServer.class
 -rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 MyrepoTest.class
 -rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
 -rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
-src/org/Myrepo/gsac/database/
-Tables.java
+
+
+Now run this command in @MACRO.SRCDIR@:
+
+ant tables
+
+
+Output from the ant tables includes lines like:
+init:
+tables:
+     [java] JVM args ignored when same JVM is used.
+...
+     [java] processing AGENCY
+     [java] processing EQUIPMENT
+     [java] processing INSTRUMENTATION
+     [java] processing RECEIVER
+
+each line  corresponding to the name of table in your database.
+
+This should make the file @MACRO.SRCDIR@/database/ Tables.java
+If the Tables.java files in in @MACRO.SRCDIR@/, not in @MACRO.SRCDIR@/database/, move it to @MACRO.SRCDIR@/database/.
+You may need to first make the database subdirectory with command 
+mkdir database
+
+The package name in Tables.java should be 
+package org.ring.gsac.database;
+not
+package org.ring.gsac;
+
+
+
 
 To run a test version of your new web server try:
 
 ant runserver
 
-This command runs the newo gsac@MACRO.PREFIX@ GSAC repository server, on your local system.  
+This command runs the new gsac@MACRO.PREFIX@ GSAC repository server, on your local system.  
 Screen output of this ant command includes a line like
 
 GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
