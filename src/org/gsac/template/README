@@ -252,71 +252,64 @@ Do a directory list of @MACRO.SRCDIR@/database/ to make sure that the .class fil
 
 
 ########################################################################
-Choosing Format Options for Query Results
+GSAC's Format Choices for Query Results
 ########################################################################
 
-GSAC services offer choices for formats of the results of queries.  For example, on any GSAC web site, 
-under Site or File Search, as in http://facility.unavco.org/gsacws/gsacapi/site/form,
-open the  Results ([+]), then Output:, to see some choices of formats.  
+GSAC offers several choices for formats of the results of queries.  For example, on any GSAC web site, 
+either open the Information page's Output types list - click on [+] - or in a Search form, open the Results [+] area
+and then the Output: menu.
 
-The default code for GSAC now (2013) offers the formats: 
-HTML (chiefly for the web pages), i
-the SOPAC XML site log, 
-SINEX, 
-GAMIT's station.info format.  
-Note that these are all standard formats in geodesy.  
+GSAC now offers results in these formats:
 
-GSAC also offers two kinds of  csv (comma separated value) file  formats (a short csv format with only 
-site name and location, and a full csv file with lots of geodesy site data), and a 
-a plain text format for quick visual inspection of the values site values available  (not intended for computer processing).
+HTML                    output=site.html (for the GSAC web pages of results)
+XML Site Log (SOPAC)    output=site.xmllog
+SINEX                   output=site.snx
+GAMIT station.info      output=site.station.info
+GSAC Plain text         output=site.plaintext
+GSAC Full Site CSV      output=site.csv.full
+GSAC Short Site CSV     output=site.csv
+GSAC Site ATOM          output=site.gsacatom
+GSAC Site JSON          output=site.json
+GSAC Site RSS           output=site.gsacrss
+Google Earth KML        output=site.kml
+Google Earth KMZ        output=site.kmz
+
+(The terms output=... are the result format arguments in GSAC API queries.)
+
+GSAC offers both a short csv (comma separated value) file formats with only 
+site name and location, and a full csv file with lots of geodesy site data.
+The GSAC plain text format is for quick visual inspection of the site values 
+available (not intended for computer processing).
 
 If you are satisfied with your GSAC repository offering these formats, 
 you need do nothing about output format choices. Go to the next topic.
 
-The choices of what to show in GSAC are set in the file trunk/src/org/gsac/gsl/SiteManager.java,
-in the method initOutputHandlers().  Here is the default GSAC method to set which formats to
-offer as choices (28 Feb. 2013):
+The choices of what to show in GSAC are set in the file trunk/src/org/gsac/gsl/SiteManager.java. 
 
-   public void initOutputHandlers() {
-        super.initOutputHandlers();
-        // results put in HTML, for web pages and other HTML uses:
-        new HtmlSiteOutputHandler(getRepository(), getResourceClass());
-        // for SOPAC XMP site log format 
-        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-        // for SINEX format  
-        new SinexSiteOutputHandler(getRepository(), getResourceClass());
-        // for GAMIT's station.info format  
-        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
-        // there is no call for this yet: to make results as a IGS site log; FIX SiteLogOutputHandler gives empty file
-        //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
-        // a plain text format to visually check what is available for sites' info.  Not for computer processing:
-        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); // for GSAC Plain Text format
-        new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for GSAC Full csv formatted file of site metadata
-        new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for GSAC Short csv formatted file of limited contents
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());       // for Google Earth KMZ and KML
-    }
+You may very easily NOT offer some formats.  Comment out lines for handlers NOT wanted your GSAC-WS repository.
+For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
+new TextSiteLogOutputHandler(getRepository(), getResourceClas())
+in the file trunk/src/org/gsac/gsl/SiteManager.java. 
+However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
+There is no harm in offering all the choices, even if you do not see much use in some format.
 
-The output handler code for the default formats, HTML, SOPAC XML site log format,
-SINEX, GAMIT's station.info format, GSAC site csv format, Google Earth, and the GSAC plain text format, 
+To conform with other GSAC repositories we ask you not to revise any GSAC-supplied format.  You are very welcome to make a new similar but altered 
+handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+
+For bug reports and suggested improvements about formats please contact UNAVCO.
+
+The output handler code for the GSAC format choices, HTML, SOPAC XML site log,
+SINEX, GAMIT station.info, GSAC FULL csv format, and the GSAC Plain Text format, 
 will handle the "standard parameters" in a "conforming GSAC geodesy implementation."
 
-To change which formats you  offer at your GSAC repository, edit the file
-trunk/src/org/gsac/gsl/SiteManager.java.  Go to the  method initOutputHandlers().
-Comment out (with //) the lines for formats you do not wish to offer, 
-or remove the '//' before any hidden output handlers you wish to see, and rebuild GSAC with ant in the same directory. 
-Please do *not* check in any modified SiteManager.java file into SourceForge.
+Please do *not*  do svn commit for any modified SiteManager.java file into SourceForge.
 
-Note that only the default formats present all the  "standard parameters" in results.
-The others, IT formats such as JSON, are not complete.  You of course may add to incomplete output handlers (in trunk/src/org/gsac/gsl/output/sites/).
-
-GSAC does not endorse file formats.  If there is a format which GSAC should 
-offer, you can contact UNAVCO to add it to GSAC code.  Even better, you can create and submit a new "OutputHandler" Java class yourself
-You create a new kind of format by writing a new Java class, similar to 
-any of the above output handlers, such as HtmlSiteOutputHandler.  The Java source files are
-in trunk/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
-guides to what is needed in a similar Java class.   For example, if you wished to provide an different 
-kind of HTML output, you could create a new Java class with a new file such as 
-trunk/src/org/gsac/gsl/output/site/ANewHtmlSiteOutputHandler.java, revising the native GSAC HTML handler. 
+GSAC does not endorse file formats.  If there is a format which you think GSAC should 
+offer, you can contact UNAVCO to add it to GSAC code.  Or you can create a new "OutputHandler" Java class yourself and submit it to UNAVCO to add to GSAC.
+You create a new kind of format by writing a new Java class, similar to any of the above output handlers, such as HtmlSiteOutputHandler.  
+The Java output handler source files are in trunk/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
+guides to what is needed in a similar Java class.  
 
 
 ########################################################################
