@@ -48,26 +48,23 @@ To implement GSAC web services for your data repository, you download GSAC-WS co
 </p>
 <p>
 GASC-WS code uses your existing database (Oracle, Postgres, or MySQL), file system, FTP server, and web site.  GSAC-WS does not copy or hold any of your data. GSAC-WS is middleware between an existing data repository (a database and related instruments' data files) and remote users.  GSAC expects that the database has sufficient metadata about the instrumented sites (monuments) and about equipment at the sites. (You may be able to work around the database need by writing special code.) 
-
 </p>
 <p>
-GSAC has a short list of "standard" parameters," database field types, which are needed in your database to provide basic GSAC services, such as a name for a GNSS monument and its geographic location.  If you provide file downloads, the full FTP URL (such as "ftp://...") needs to be in the database for each file. 
-
+GSAC needs site and geodesy parametes in your database to provide basic GSAC services, such as a name for a GNSS monument and its geographic location.  If you provide file downloads, the full FTP URL (such as "ftp://...") needs to be in the database for each file. 
 </p>
 <p>
 If your database lacks a database with the parameters and values (metadata about sites and data files)  you may still be able to implement a GSAC repository by writing some extra Java code for your site, to extract the required      metadata from non-database sources in your system.  Example of sources of metadata information could be parts of file names, special tables or files of information, and information in data file headers.  Naturally GSAC code in       SourceForge cannot provide for these cases since such resources are unknown to GSAC outside your program.  UNAVCO may not be able to aid GSAC installation or operations in such a case.  It may be simpler for you to put the metadata  required into a simple MySQL database for GSAC to read, than to write new Java code for GSAC to find and read the metadata from diverse sources. 
-
 </p>
 <p>
 Installing GSAC uses Linux or Mac.  You need Java 1.6 or higher installed, and 'ant' installed, a Java tool to build and run Java applications (see http://ant.apache.org/).  You will need to have the 'subversion' code management     tool, also called 'svn,' installed on your computer.   Java, ant, and svn are widely used tools of software engineering.  Search online for how to download and install ant and svn if your system does not already have them.  Debian,  Redhat, and Ubuntu versions of LINUX generally have a one-line command to install ant and svn, such as apt-get install subversion.  The new Mac OS does not have svn but can use svn.  Instructions about how to install svn on the Mac  is online (http://www.wikihow.com/Install-Subversion-on-Mac-OS-X). 
-
-</p>
 <p>
-The time savings achieved by using GSAC far exceeds the resources demanded to create an equivalent set of archive services from scratch.  GSAC code has, at the moment, 31000 lines in Java files.  With a GSAC-enabled repository you will be able to interconnect with other GSAC- WS enabled data repositories with no extra coding. 
-
+The time savings achieved by using GSAC far exceeds the resources demanded to create an equivalent set of archive services from scratch.  GSAC code has approximately
+31000 lines of Java.  With GSAC you get a full set of browser and API search and download servives, and with a 
+GSAC-enabled repository you will be able to interconnect with other GSAC- WS enabled data repositories with no extra coding. 
 </p>
+
 <p>
-For geodesy data repositories with complete "standard parameters" in a conventional database, UNAVCO plans to soon (spring 2013) provide some helper programs to eliminate writing Java. 
+For geodesy data repositories with the GSAC "standard parameters" in a conventional database, UNAVCO plans to soon (spring 2013) provide some helper programs to eliminate writing Java during installation. 
 
 <p><b>
 Creating the Initial GSAC Server
@@ -77,25 +74,23 @@ Creating the Initial GSAC Server
 Make a working directory for GSAC, and go there.  For example:
 </p>
 <p>
-mkdir ~/gsac/sourceforge/
-cd    ~/gsac/sourceforge/
-
+mkdir ~/GSAC/sourceforge/
+<br>
+cd    ~/GSAC/sourceforge/
+<br>
+or you can use any existing or new directory that you want.
 </p>
 <p>
 Check out the GSAC code from SourceForge, using subversion: 
-
 </p>
 <p>
 svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac 
-
 </p>
 <p>
 This svn command creates the new subdirectory "gsac" and files under it. Go to the trunk subdirectory: 
-
 </p>
 <p>
 cd gsac/trunk/ 
-
 </p>
 <p>
 The ant build will create these items in trunk/: 
@@ -114,20 +109,22 @@ src/
 
 </p>
 <p>
-Do the initial build with command ant.  The ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  The file trunk/build.xml  is used by ant. 
-
+Do the initial build with command:
+<br> ant  
+<p>
+The ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.  The file trunk/build.xml  is used by ant. 
 </p>
 <p>
 If you investigate you will find dozens of new files and directories below trunk/. 
-
 </p>
 <p>
-Next do   cd src/org/gsac/.   Follow the instructions in the org/gsac/README file.  This README file is called "Part 1."  It is the first of two README files.
-
+Next do   
+<br>cd src/org/gsac/
+<br>   Follow the instructions in the src/org/gsac/README file.  This README file is called "Part 1."  It is the first of two README files.
 </p>
 <p>
-Doing the instructions in org/gsac/README, Part 1, completes an initial operational GSAC web server, which you may query from a local file URL (not your public web server) as described in README Part 1.  This server doesn't do  much, and lacks the details about your data repository, but it shows that you have a basic working GSAC system. 
-
+Doing the instructions in org/gsac/README (README Part 1), completes an initial operational GSAC web server, which you may query from a local file URL (not your public web server) as described in README Part 1.  This server doesn't do  much, and lacks the details about your data repository, but it shows that you have a basic working GSAC system. 
+</p>
 
 <p><b>
 Completing the GSAC Web Services for Your Data Repository
