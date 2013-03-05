@@ -32,8 +32,8 @@ Now, change the working directory to you local GSAC code area, at @MACRO.SRCDIR@
 
    Base URL and Names or Titles: The "GSAC Resources Properties" File.
 
-The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties about your GSAC, for example, 
-gsac.baseurl for the base url which will be part of the full URL of the website about your GSAC repository.
+The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
+gsac.baseurl is the part of the URL, the full URL of the website for your GSAC repository.
 
 Some values were created in the initial ant build you did already.
 
@@ -50,7 +50,9 @@ Some values were created in the initial ant build you did already.
     #Your repository description
     gsac.repository.description=The My repo GSAC Repository 
 
-You may optionally add a new line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
+Change the items for your GSAC repository.
+
+You optionally may add another new line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
 
     file.zip.maxsize=100000000
 
@@ -64,16 +66,15 @@ The items repository.name and repository.description are used as labels on the w
 
 Setting and Hiding DB account information: the "GSAC DB Properties" File.
 
-You create a new file, @MACRO.SRCDIR@/resources/gsacdb.properties,  for the database account details,
+You fill the file, @MACRO.SRCDIR@/dbresources/gsacdb_test.properties, to hold the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
 
 gsac.db.username=db-gsac-username
 gsac.db.password=db-gsac-password
 gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
 
-When the GSL assembles the JDBC URL it finds the user name and password from here, to read from the database.
-
 The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  The database must have such an account.
+When the GSL assembles the JDBC URL it finds the user name and password from here, to read from the database.
 
 Note that Oracle and Postgres have different syntax for the last line in this file.  For postgres the form is 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
@@ -83,13 +84,14 @@ One Oracle JDBC URL is of the form:
 e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-(Ignore the files dbresources/gsacdb_production.properties and dbresources/gsacdb_test.properties)
+Also copy @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
 
+[For those with GSAC sourceForge write access:
 Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
-Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository.
+Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository!]
 
-Note that there are *two* "gsac.properties" files, in src/org/myrepo/gsac/ and in src/org/myrepo/gsac/resources/. Sorry about the confusion.
-
+When you next run "ant" (with no arguments) the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
+@MACRO.SRCDIR@/resources/gsacdb.properties. Can be confusing.
 
 
 Your local build.xml file.
@@ -109,11 +111,12 @@ Do the command ant in @MACRO.SRCDIR@:
 
 ant 
 
-This ant command begins to build the complete  GSAC server for your repository.  (It also creates a new Tomcat war file, 
+This ant command begins to build the complete GSAC server for your repository.  (It also creates a new Tomcat war file, 
 something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
 if you use Tomcat.)  
 
 If the ant commands succeeds you will see output to the screen including 
+
 compile:
     [javac] Compiling 7 source files
     [javac] Note: Some input files use unchecked or unsafe operations.
@@ -147,9 +150,8 @@ Now run this command in @MACRO.SRCDIR@:
 
 ant tables
 
+Output from the ant tables command includes lines like:
 
-Output from the ant tables includes lines like:
-init:
 tables:
      [java] JVM args ignored when same JVM is used.
 ...
@@ -160,20 +162,24 @@ tables:
 
 each line  corresponding to the name of table in your database.
 
-This should make the file @MACRO.SRCDIR@/database/ Tables.java
-If the Tables.java files in in @MACRO.SRCDIR@/, not in @MACRO.SRCDIR@/database/, move it to @MACRO.SRCDIR@/database/.
-You may need to first make the database subdirectory with command 
+This should make the file @MACRO.SRCDIR@/database/Tables.java
+
+If the Tables.java files is in @MACRO.SRCDIR@/ (not in @MACRO.SRCDIR@/database/) move it to @MACRO.SRCDIR@/database/.
+You may need to first make the @MACRO.SRCDIR@/database subdirectory with command 
+
 mkdir database
 
-The package name in Tables.java should be 
+The package name in Tables.java (at or near line 3) should be 
 package org.ring.gsac.database;
 not
 package org.ring.gsac;
-
+If this is not the case, edit the Tables.java file to fix it.
 
 Now run
+
 ant
-(yes, yes again).
+
+(yes, again).
 
 This time you should see 
 
@@ -186,30 +192,35 @@ BUILD SUCCESSFUL
 Total time: 5 seconds
  
 This time ant compiles the six java file in @MACRO.SRCDIR@/, and also compiles the new Tables.java in @MACRO.SRCDIR@/database/.
-Look for the new .class files in @MACRO.SRCDIR@/database/.
+Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.
 
 
-Now you can  run an initial and incomplete test  version of your new GSAC web server with:
+Now you can  run an initial (but incomplete) test version of your new GSAC web server with:
 
 ant runserver
 
-This command runs  an intial gsac@MACRO.PREFIX@ GSAC repository server, on your local system.  
+This command runs an intial gsac@MACRO.PREFIX@ GSAC repository server, on your local desktop where you are developing your GSAC.  
 Screen output of this ant command includes a line like
 
 GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
 
-In a browser, look at that URL, http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
-You should see a new web page with minimal content:
+In a browser on your desktop where you are developing your GSAC, look at that URL, 
+something like http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
+You should (!) see a new web page with minimal content:
 
       Welcome to the GSAC Repository
       Search Sites | Search Files | Browse | Infomation | Help
 
-This shows that the GSAC code runs on your system.  This new web site uses Jetty (see http://www.eclipse.org/jetty/), 
+This shows that the GSAC code runs on your system.  
+
+(This new web site uses Jetty (see http://www.eclipse.org/jetty/), 
 a Java HTTP server and Java servlet container.  The Jetty servlet is for local testing, 
 which saves the trouble of deploying a .war file to a Tomcat implementation, and avoids restarting Tomcat 
-for every test of the new GSAC.  Public web servers often run with Tomcat in place of Jetty.
+for every test of the new GSAC.  Public web servers often run with Tomcat in place of Jetty.)
 
-You've generated the GSAC repository source package and an initial new GSAC server.
+You've generated the core GSAC repository source package (code or software) and an initial new GSAC server.
+
+You can look at basic GSAC server web site pages, such as in the Information and Help links.
 
 Stop the 'ant runserver' process with CTRL-c.  
 
@@ -223,11 +234,11 @@ Now you need to specify important details about your particular repository.
 
 Using Your Database by means of the Tables.java
 
-GSAC has to be able to identify the tables and columns (fields) in your database,
+GSAC must identify the tables and columns (fields) in your database,
 which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
-The Java class (called Tables) holds all of the database table names and the tables' column (field) names.  
+The Java class (in the file called Tables.java) holds all of the database table names and the tables' column (field) names.  
 
-The Java class (see the Tables.java file) has methods, such as the next code block for a table about GPS receivers, 
+The Java class Tables has methods, such as the next code block for a table about GPS receivers, 
 with methods getName() which gives the table name, and getColumns() which returns names for fields 
 in that table about GPS receivers, and which defines new String variables.
 
@@ -255,8 +266,10 @@ in that table about GPS receivers, and which defines new String variables.
     public static final STATION_IDENTIFICATION table  = new  		STATION_IDENTIFICATION();
     };
 
-You will recognize the correspondence between your db's specific table names, such as Station Identification, and your field names, such as latitude,
-with the names GSAC uses internally, such as STATION_IDENTIFICATION.COL_LATITUDE.  
+You will recognize the correspondence between your database's specific table names, such as Station Identification, and your field names, such as latitude,
+with the names GSAC uses internally, in Tables.java, such as STATION_IDENTIFICATION.COL_LATITUDE.  
+
+DB table and filed (column) names from Tables.java will be used in new methods needed to implement your GSAC server, described below.
 
 
 ########################################################################
@@ -325,22 +338,22 @@ Extending Java Classes (Java Code changes)
 ########################################################################
 
 The @MACRO.PREFIX@Repository class is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
-and/or @MACRO.PREFIX@FileManager objects (for example for the UNAVCO IGS GSAC, in  trunk/src/org/igs/gsac/, 
+and other @MACRO.PREFIX@---Manager.java (for example for the UNAVCO IGS GSAC, in  src/org/igs/gsac/, 
 the files IgsFileManager.java, IgsRepository.java, IgsServer.java, and IgsSiteManager.java).
 
 Files in @MACRO.SRCDIR@/ have the Java code for your repository.   The Java file @MACRO.PREFIX@Repository.java is the main entry point, 
 where you add much of the code for the new repository.   Also the files @MACRO.PREFIX@SiteManager.java and 
-@MACRO.PREFIX@sFileManager.java t be extended to implement database queries used by your GSAC web form searches 
-and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
+@MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
+and by the GSAC API.  See the lines in those Java files marked with CHANGEME for what needs to be changed. 
 
 For a more detailed description of adding to the GSAC Java files, you may review code in other 
 GSAC implementations checked into SourceForge, such as the file org/igs/gsac/IgsSiteManager.java.
 
-Add to these files:
+Chnage or add to these files:
 
-########################################################################
+        ########################################################################
 
-IgsRepository.java 
+@MACRO.PREFIX@Repository.java 
 
 Above the import lines, add the new Java package name, in this form:
 package org.@MACRO.PREFIX@.gsac; 
@@ -353,9 +366,12 @@ If you wish  to only search  only for sites or only for files, use either the ca
 or getResourceManager(GsacFile.CLASS_FILE).
 
 
-########################################################################
+        ########################################################################
 
-IgsFileManager.java 
+@MACRO.PREFIX@FileManager.java 
+
+Above the import lines, add the new Java package name, in this form:
+package org.@MACRO.PREFIX@.gsac;
 
 This class has 3 'changeme' sections:
 
@@ -366,10 +382,12 @@ handleRequest()
 getResource()
 
 
+        ########################################################################
 
-########################################################################
+@MACRO.PREFIX@SiteManager.java  
 
-IgsSiteManager.java  
+Above the import lines, add the new Java package name, in this form:
+package org.@MACRO.PREFIX@.gsac;
 
 This class has 5 'changeme' sections...
 
@@ -387,8 +405,9 @@ and also a change in getResourceSelectColumns().
 
 
 ########################################################################
-More examples about extending Java.
-########################################################################
+
+Adding the GSAC local Java classes (.java files).
+
 
 GSAC core code provides a few common data values, such as latitude of a site.  For your GSAC you probably need to use additional values from your database for data searches or results.
 
@@ -489,8 +508,9 @@ To add the value to other GSAC output result formats, see the "...OutputHandler.
 
 
 ########################################################################
-Equipment data 
-########################################################################
+
+Implementing Equipment data 
+
 
 Data items which pertain to equipment (such as GNSS receivers and related instruments) have a special Java class
     org/gsac/gsl/metadata/gnss/GnssEquipmentGroup.java.  
@@ -498,7 +518,8 @@ Let's see how to add an equipment value to GSAC output.
 
 We will again refer to core GSAC code, and examples of code in the IGS Site Log Manager GSAC.  Use this code as a template for writing new code about your equipment metadata.
 
-In  org/igs/gsac/database/Tables.java there is a Java class, representing a database table, called SITELOG_RECEIVER, with a variable String COL__FIRMWAREV, for the database's field holding the firmware version. You use these Java variables to write new code.  (Do not modify Tables.java) 
+An example from the IGS GSAC:
+In org/igs/gsac/database/Tables.java there is a Java class, representing a database table, called SITELOG_RECEIVER, with a variable String COL__FIRMWAREV, for the database's field holding the firmware version. You use these Java variables to write new code.  (Do not modify Tables.java) 
 
 In the method  
     private void readEquipmentMetadata(GsacResource gsacResource) in org/igs/gsac/IgsSiteManager.java
@@ -633,17 +654,14 @@ with extensive Java programming. We urge you to write to UNAVCO if you see need 
 Building and Running the GSAC server
 ########################################################################
 
-Once you have made needed additions to the Java code, to build your GSAC, in @MACRO.SRCDIR@, run
+Once you have made the additions to the Java code, to build your GSAC, in @MACRO.SRCDIR@, run
 simply:
 
  ant 
 
-The build.xml file used by ant is @MACRO.SRCDIR@/build.xml. The ant build targets will copy one 
-of the gsacdb  properties files to resources/gsacsb.properties
-
 
 The ant target builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
-and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
+and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war.
 
 To run the server, do:
 
