@@ -49,16 +49,18 @@ import javax.servlet.http.*;
 
 
 /**
- * Writes GSAC query site results in IGS site log format.   LOOK FIX needs to be implemented.
+ * Writes GSAC query site results in IGS site log format   LOOK FIX needs to be implemented.
+ * 
+ * International GPS Service  Instructions at ftp://igscb.jpl.nasa.gov/pub/station/general/sitelog_instr.txt
+ *
+ *      To conform with SINEX and with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
+ *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+ *      For bug reports and suggested improvments please contact UNAVCO.
+ *
+ *  version  2012 JM 
  */
 public class SiteLogOutputHandler extends GsacOutputHandler {
-
-    /*
-     P123 Site Information Form (site log)
-     International GPS Service
-     See Instructions at:
-     ftp://igscb.jpl.nasa.gov/pub/station/general/sitelog_instr.txt
-*/
 
     /*
 0.   Form
@@ -70,10 +72,6 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
       Previous Site Log       : p123_20100719.log
       Modified/Added Sections : (n.n,n.n,...)
     */
-
-
-
-
 
     /** output id */
     public static final String OUTPUT_SITE_IGSLOG = "site.log";

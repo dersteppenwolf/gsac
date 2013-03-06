@@ -31,39 +31,36 @@ import org.gsac.gsl.util.*;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
-
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
-
 import java.net.URL;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 
-
 /**
- * Output handler for results for users' site queries, formatted in SINEX.
+ * Output handler for results for users' site queries, formatted in SINEX.  Conforms to SINEX specifications.
  * See SINEX specs from http://www.iers.org/nn_324882/IERS/EN/Organization/AnalysisCoordinator/SinexFormat/sinex.html?__nnn=true
  * especially sinex_v201_appendix1.pdf and sinex_v201_introduction.pdf or more recent version of those files.
  * and get recent examples of SINEX files from http://sopac.ucsd.edu/processing/sinex/.
  *
- * Note unknown fields are filled with - characters. No field is left blank.
+ * Note unknown fields in SINEX are filled with - characters. No field is left blank.
  * Firmware version characters are left justified.  So are all "DESCRIPTION" items.
+ * 
+ *      To conform with SINEX and with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
+ *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+ *      For bug reports and suggested improvments please contact UNAVCO.
  *
  * @version     initial Nov 21, 2012; revised Nov 30 - Dec 4, 2012  
  * @author      SKW UNAVCO

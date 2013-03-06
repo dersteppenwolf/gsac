@@ -51,7 +51,7 @@ import java.util.List;
  *
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
- * revised Feb. 25 2013
+ * revised Feb. 25 2013; Mar 4, 2013.  New choices and ordering of OutputHandlers; see method public void initOutputHandlers().
  */
 public abstract class SiteManager extends GsacResourceManager {
 
@@ -151,22 +151,24 @@ public abstract class SiteManager extends GsacResourceManager {
     /**
      * Create the output handlers for this resource, which handles (formats) the query results.
      *
-     * Note. is this right? -- whichever is first in order below gets called when the web site search page is first called for, 
-     *   *before* any query is made, which can cause a failure and error to browser and no site search page shown. HTML seems to always work OK.
+     * It seems that whichever is first in order below gets called when the web site search page (the from page, not a real search) is first called for, 
+     * BEFORE any query is made, which for some handlers can cause a failure and error to browser and no site search results shown. but the HTML handler seems to always work OK.
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
 
-        /* CHANGEME: Comment out lines for handlers (which make output in files with particular formats of results to be sent to remote user) NOT wanted to be offered by your GSAC-WS repository.  */
-        /* for example if you do not want to provide the SOPAC XMP site log format, comment out (put "//" before) new XmlSiteLogOutputHandler(getRepository(), getResourceClass()); */
-        /* However you are encouraged to allow all these no commented out in GSAC code on sourceforge, to permit use of federated GSAC collections. */
+        /* Comment out lines for handlers (which make output in files with particular formats of results to be sent to remote user) NOT wanted to be offered by your GSAC-WS repository.  */
+        /* For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) new TextSiteLogOutputHandler(getRepository(), getResourceClass()); */
+        /* However you are encouraged to allow all these, to to show consistent results from Federated GSAC collections. */
+        /* There is not harm in offering all the choices, evenif you do not see any value in one or more. */
 
         // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SOPAC XMP site log format 
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
+        //how is this different from the above:  XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
@@ -174,7 +176,7 @@ public abstract class SiteManager extends GsacResourceManager {
         // for GAMIT's station.info format  
         new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
-        // there is no call for this yet: to make results as a IGS site log; FIX SiteLogOutputHandler gives empty file
+        // not yet implemented: IGS site log; FIX SiteLogOutputHandler gives empty file
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
 
         // a plain text format to visually check what is available for sites' info.  Not for computer processing. Originally for GSAC developers. 
@@ -190,22 +192,6 @@ public abstract class SiteManager extends GsacResourceManager {
 
         // the following formats only show a few parameters in results; more code needs to be written:
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
-        /* FIX KmlSiteOutputHandler fails with
-    javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
-    at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
-    at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
-    at ucar.unidata.xml.XmlUtil.makeDocument(XmlUtil.java:1487)
-    at ucar.unidata.data.gis.KmlUtil.kml(KmlUtil.java:175)
-    at org.gsac.gsl.output.site.KmlSiteOutputHandler.handleRequest(KmlSiteOutputHandler.java:145)
-    at org.gsac.gsl.output.GsacOutputHandler.handleRequest(GsacOutputHandler.java:193)
-    at org.gsac.gsl.GsacRepository.handleRequest(GsacRepository.java:567)
-    at org.gsac.gsl.GsacServlet.doGet(GsacServlet.java:310)
-    at javax.servlet.http.HttpServlet.service(HttpServlet.java:735)
-    at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
-    at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:511)
-        */
-
-        //how is this different from the above XmlSiteLogOutputHandler:  XmlSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 

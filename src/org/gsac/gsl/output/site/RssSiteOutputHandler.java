@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -20,9 +20,6 @@
 
 package org.gsac.gsl.output.site;
 
-
-
-
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
@@ -33,21 +30,19 @@ import org.w3c.dom.*;
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
-
 import java.text.DateFormat;
-
 import java.text.SimpleDateFormat;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 
 /**
- * Class description
+ *  To format GSAC query results as RSS.
+ *  This is a bare implementation.  You may add to it.  For other geodesy parameters in GSAC and how to access and format them in Java,
+ *  see the other  ---OutputHandler.java files in /gsac/trunk/src/org/gsac/gsl/output/site/.
  *
- *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version        version 1 2012.
+ * @author         Jeff McW.
  */
 public class RssSiteOutputHandler extends GsacOutputHandler {
 

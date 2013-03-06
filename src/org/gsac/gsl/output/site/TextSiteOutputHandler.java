@@ -37,18 +37,23 @@ import java.text.DecimalFormat;
 
 
 /**
- * Class description: formats query results to write a csv file format
+ * Class description: formats query results to write a csv file format, with only name and location.
  *
- * This produces a SHORT report with few values. FB wants to keep (restore) it.   Noted Feb 25 2013.
+ * This produces a SHORT report with few values. FB wants to keep it (legacy issue).   Noted Feb 25 2013.
  *
- * sample format:
+ * sample of formatted results:
  * #site.id,site.code,site.name,site.latitude,site.longitude,site.elevation
  * BADG,BADG,Badary,51.7697,102.235,811.4
  * BAIE,BAIE,BAIE RACS-GSD,49.1868,-68.2628,27.5
+ * 
+ *      To conform with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
+ *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+ *      For bug reports and suggested improvments please contact UNAVCO.
  *
  * @version        29 Nov 2012 SKW;
  * @author         JM, SKW;
- * revision        26 Feb 2013.  Format lat longi height to avoid huge number of not-significant digits
+ * revision        26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
     String latitude ="";

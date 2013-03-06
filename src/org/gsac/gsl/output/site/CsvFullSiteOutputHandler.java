@@ -33,29 +33,23 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 
 import java.io.*;
-
 import java.net.URL;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.lang.Double;
-
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 
 /* 
- * Class description: formats query results to write a csv file format.
+ * Class description: formats GSAC query results to write a csv file format, with a long list of geodesy parameters.
  *
  * This GSAC csv format has:
  * id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+  
@@ -64,14 +58,14 @@ import javax.servlet.http.*;
  * NO commas are allowed here inside a field value; this usually pertains to only site descriptions in geodesy data. Any commas in such a field are replaced with " ".
  * The first record in a CSV file may be a header record containing column (field) names; and is so in this case.
  * 
- * You may revise this class to adapt GSAC to the needs of your repository.  
- * Please do not submit revised version of this class to GSAC in SourceForge.
+ *      To conform with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
+ *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+ *      For bug reports and suggested improvments please contact UNAVCO.
  *
- * For bug reports and suggested improvments please contact UNAVCO.
- *
- * version all new version Nov 30, 2012. SKW
+ * version Nov 30, 2012. SKW
  * revised Dec 7, 2012 SKW.
- * revised, new name to avoid conflict with another simialr class now reinstituted. Feb. 25 2013. SKW.
+ * revised, new name to avoid conflict with another similar class now reinstituted. Feb. 25 2013. SKW.
  */
 public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 

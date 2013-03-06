@@ -20,7 +20,6 @@
 
 package org.gsac.gsl.output.site;
 
-
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.metadata.gnss.*;
@@ -35,36 +34,31 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
-
 import java.net.URL;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 
 /**
- *      Output handler for results for users' site queries, formatted in plain text.
+ *      Formats GSAC query results in plain text.  Output handler for results for users' site queries, formatted in plain text.
  *
  *      GSAC-WS Repository Site information in plain text.  This format was created by UNAVCO solely for GSAC use. 
- *      This format is only for a quick visual check of what is available. Not for computer processing. 
- *      Empty times (no characters) may mean 'not removed' or 'no change;' 
+ *      This format is only for a quick human visual check of what is available. Not for computer processing or to completely show database contents. 
+ *      Empty times (no characters) may mean 'not removed' or 'no change.' 
  *
- *      initial version Nov 27-30, 2012, SKW UNAVCO.
+ *      To conform with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
+ *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+ *      For bug reports and suggested improvments please contact UNAVCO.
+ *
+ *      version Nov 27-30, 2012, SKW UNAVCO.
  *      revised Dec 4,5,6,7 2012; SKW.   
- * 
- * You may revise this class to adapt GSAC to the needs of your repository.  Please do not submit a revised version of this class to GSAC in SourceForge.
- *
- * For bug reports and suggested improvments please contact UNAVCO.
- *
  */
 public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 

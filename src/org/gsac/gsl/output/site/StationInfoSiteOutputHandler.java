@@ -34,26 +34,33 @@ import ucar.unidata.util.TwoFacedObject;
 //import ucar.unidata.util.StringUtil;
 
 import java.io.*;
-
 import java.net.URL;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-/* 
+/** 
+ *  UNAVCO GSAC-WS output handler (formating of site query results) for the GAMIT station.info file format.
+ *
+ *  See notes below.
+ * 
+ *      To conform with GAMIT,  and with other GSAC repositories, we ask you not to revise this format.  You can make a new similar but altered 
+ *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ *      GSAC code changes in this case into GSAC without consulting UNAVCO.
+ *      For bug reports and suggested improvments please contact UNAVCO.
+ *
+ *   version SKW Nov. 29, 2012. mods Dec. 3; Dec. 5; 
+*/
+
+/*  Notes
       For the Gamit station.info file format, see http://www-gpsg.mit.edu/~simon/gtgk/ and the docs on http://www-gpsg.mit.edu/~simon/gtgk/docs.htm, and 
       http://sopac.ucsd.edu/input/processing/gamit/setup/station.info, http://sopac.ucsd.edu/processing/gamit/,  http://geoapp02.ucsd.edu:8080/scignDataPortal/gpsProcXmlSummary.jsp,
       http://www.geologie.ens.fr/~vigny/site-desc/chili/station.info_cGPS,  http://geoweb.mit.edu/~simon/gtgk/tutorial/Lecture_3.pdf
@@ -82,16 +89,11 @@ number chars in fields:
     "the receiver type and firmware/software version (SwVer)"
 
      Note use of "9999 999 00 00 00" for "time unknown".
-*/
 
-/**
- *  UNAVCO GSAC-WS output handler (formating of site query results) for the GAMIT station.info file format.
- *  Note, use of 
- "GAMIT station.info", "/site.station.info.txt", true));
- below, so that it can show up in a browser window.
+ *  Note, use of "GAMIT station.info", "/site.station.info.txt", true)); below, so that it can show up in a browser window.
  *  May wish to use only site.station.info for file naming properly.
- *  original SKW Nov. 29, 2012. mods Dec. 3; Dec. 5; 
  */
+
 public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
     String id ="----";
