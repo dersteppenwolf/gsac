@@ -618,16 +618,28 @@ In the example IGS code, there are lines to implement a query capability for, an
 Web Site Page Design, Contents, and Images 
 ########################################################################
 
-The home page of a GSAC repository web site is detailed in a file such as
-src/org/myrepo/gsac/htdocs/gsacmyrepo_index.html
-
 Installing  GSAC initially creates a short version of this page which says only "Welcome to GSAC." 
 You can add more to this file for a larger page, using normal HTML.
-Note that these pages do not have complete <html> header lines, since these pages
-are wrapped inside the hearder and footer HTML files, mentioned next.
 
-The files footer.html and header.html in the directory @MACRO.SRCDIR@/resources/
-specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
+The home page of a GSAC repository web site is detailed in a file such as src/org/@MACRO.PREFIX@/htdocs/index.html
+In your GSAC code area, mkdir to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/htdocs/)
+In @MACRO.PREFIX@/gsac/htdocs make a new HTML file index.html. A very simple but working one has these three lines:
+
+<link rel="search" type="application/opensearchdescription+xml" href="htdocs/opensearch.xml" 
+title=" @MACRO.PREFIX@ GSAC Repository" />
+This is the @MACRO.PREFIX@ GPS Repository
+
+Put image files used on the web main page  in the new directory, @MACRO.SRCDIR@/htdocs/.
+In your index.html file, the image is added like <img src="gsacMyrepo/gsacapi/htdocs/Myimage.jpg">
+As usual in HTML, images  may be retrieved from another web server, for example, with
+<img src="http://cddis.nasa.gov/images/gps_satellite.gif">.
+
+Note that these pages do not have complete <html>  lines( inclusing <html> and more at the beginning, or the final </hmtl>), since these pages
+are wrapped inside the GSAC header and footer HTML files, mentioned next.
+
+The files footer.html and header.html, in the directory @MACRO.SRCDIR@/resources/, specify the top and bottom of the 
+GSAC web pages at your locations, and provide web page layout and decoration surrounding  the GSAC forms and results. 
+These files may be as simple as
 
  header.html:
 	<html>
@@ -636,18 +648,15 @@ specify web page layout and decoration surrounding the GSAC forms and results. T
 	</head>
 	<body>
 
-or fully developed, such as using css.  Image files used on the web site can be put in the new directory, 
-@MACRO.SRCDIR@/htdocs/, or they may be retrieved from another web server, for example, with
+or fully developed, such as using css.  
 
-   <img src="http://cddis.nasa.gov/images/spacer.gif">.
+Change the files resources/header.html and resources/footer.html to give the HTML appearance for the header and footer
+of all your web pages.  You may use these files to supply your standard agency's web site look to your GSAC repository web site.
 
-Change the files resources/header.html and resources/footer.html to give the HTML for the header and footer
-of all your web pages.  You may use these files to supply your standard agency's web site look
-to your GSAC repository web site.
-
-The GSAC query pages withe the search web forms, and pages with static GSCA information such as the help pages,
-are complete and provided by GSAC installation.  Is it possible to modify the search forms 
-with extensive Java programming. We urge you to write to UNAVCO if you see need for a change. 
+The GSAC query pages with the search web forms, and pages with static GSCA information such as the help pages,
+are complete and provided by GSAC installation, and use the same header and footer HTML files.  Is it possible to modify the search forms 
+with extensive Java programming, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
+other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
 
 
 ########################################################################
