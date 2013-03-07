@@ -65,13 +65,10 @@ build.xml   dist/   examples/   lib/    README  src/
 If you investigate you will find dozens of new files and directories below trunk/.
 
 Next do 
+
 cd src/org/gsac/  
 
-(The full path, such as ~/gsac/sourceforge/gsac/trunk/src/org/gsac, is not shown in commands here)
-
-################################################################################
-
-Next, in working directory src/org/gsac/
+The full path, such as ~/gsac/sourceforge/gsac/trunk/src/org/gsac, is not shown in commands here.
 
 What's in src/org/gsac/:
  
@@ -98,7 +95,7 @@ Generating Your Initial GSAC-WS repository package
 The template directory (src/org/gsac/template/) holds template files for the initial GSAC repository package 
 implementation. This allows you to generate a package with all of the boilerplate Java code and build scripts.
 
-What you need to do is define a set of macro values that are used to take the code in the 
+What you need to do next is define a set of macro values that are used to take the code in the 
 template/ package and make an initial GSAC.
 
 Copy the example template/macros.properties file to your own file with a similar name, e.g.:
@@ -108,7 +105,10 @@ cp macros.properties   myrepomacros.properties
 
 'myrepo' is only a placeholder here, in these instructions.  Replace the 'myrepo' with an approprite name for your agency, project, or repository. 
 
-Edit the new properties file to define the target package name, directory, etc.  For example:
+Edit the new properties file to define the target package name, directory, etc.  
+(Do not use a copy of an existing macros.properties file without the following edits.)
+
+For example:
 
 ##Name you want for the repository
 target.name=myrepo GSAC Repository
