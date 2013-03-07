@@ -10,7 +10,7 @@ to provide web service access to site-located data in a geoscience data reposito
 You should have first read and followed the installation instructions in
 the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
 (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf),
-and in the README (Part 1) file in the main GSAC code area trunk/src/org/gsac/.
+and in the README Part 1 file in the main GSAC code area, trunk/src/org/gsac/.
 
 This README, Part 2, was generated from the template package during your initial package build, 
 as described in README Part 1.
@@ -21,11 +21,12 @@ Do not change actual filenames to match uppercase letters if any such are shown 
 
 ########################################################################
 
-This README is found in your new GSAC package in @MACRO.SRCDIR@/release/.
+This README file is found in your new GSAC package in @MACRO.SRCDIR@/.
+(ignore the README file in  @MACRO.SRCDIR@/release.)
 
-Hopefully you've managed to generate the initial repository source package.
+Hopefully you've managed to generate the initial repository source package using README Part 1.
 
-Now, change the working directory to you local GSAC code area, at @MACRO.SRCDIR@ 
+Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ 
 
 
    Adding Your Repository's Details
