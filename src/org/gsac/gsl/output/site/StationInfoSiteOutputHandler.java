@@ -84,7 +84,7 @@ import javax.servlet.http.*;
 number chars in fields:
   4       16             17                    17               7       5         7        7        20                     20                 5        20                   16             5(not 4)  20
 
-    " HtCod – Defines geometry of AntHt measurement – DHPAB is RINEX standaard is vertical height to antenna reference point (ARP)"
+    " HtCod – Defines geometry of AntHt measurement – DHPAB is RINEX standard is vertical height to antenna reference point (ARP)"
 
     "the receiver type and firmware/software version (SwVer)"
 
@@ -112,7 +112,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     String antn ="0";
     String ante ="0";
     String antht ="-------";
-    String htcod ="DHPAB";
+    String htcod ="-----";
 
     String dome ="-----";
 
