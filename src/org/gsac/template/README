@@ -91,8 +91,9 @@ Also copy @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/db
 Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
 Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository!]
 
-When you next run "ant" (with no arguments) the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
-@MACRO.SRCDIR@/resources/gsacdb.properties. Can be confusing.
+Everytime you do "ant" to build your repository  the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
+@MACRO.SRCDIR@/resources/gsacdb.properties, and @MACRO.SRCDIR@/resources/gsacserver_test.properties
+is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. Can be confusing if you attempt to keep track of the several properties files.
 
 
 Your local build.xml file.
@@ -105,6 +106,7 @@ The file build.xml, in your location @MACRO.SRCDIR@, should have these lines. No
 
 This target will be used by ant build process to make your GSAC server.
 
+
 You have specified the basic information needed to run your full GSAC server.
 
 
@@ -112,7 +114,7 @@ Do the command ant in @MACRO.SRCDIR@:
 
 ant 
 
-This ant command begins to build the complete GSAC server for your repository.  (It also creates a new Tomcat war file, 
+This ant command builds the complete GSAC server for your repository.  (It also creates a new Tomcat war file, 
 something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
 if you use Tomcat.)  
 
