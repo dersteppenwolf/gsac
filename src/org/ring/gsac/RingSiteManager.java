@@ -185,13 +185,11 @@ public class RingSiteManager extends SiteManager {
         Clause clause = Clause.eq(Tables.SITELOG_LOCATION.COL_FOURID,
                                   resourceId);
         Statement statement =
-            getDatabaseManager().select(getResourceSelectColumns(),
-                                        clause.getTableNames(), clause);
+            getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
         try {
             ResultSet results = statement.getResultSet();
             if ( !results.next()) {
                 results.close();
-
                 return null;
             }
             GsacSite site = (GsacSite) makeResource(results);
@@ -384,6 +382,8 @@ public class RingSiteManager extends SiteManager {
         readFrequencyStandardMetadata(site);
         readAgencyMetadata(site);
         // to FIX readCalibrationMetadata(site);
+ 
+        readHtCod(site);
 
         // site.addMetadata(new GnssEquipment(satelliteSystem));
 
@@ -725,6 +725,23 @@ public class RingSiteManager extends SiteManager {
         }
     }
 
+    /**
+     * Set the 'site' or 'gsacResource'  a GAMIT "HtCod" string - IF  ALL  sites from this db have SAME value.
+     * If that is not the case, use "-----" a GAMIT specificaiton for "unknown".
+     *
+     * Extend this method if your database has site HtCod values; see for example the method readAgencyMetadata
+     *
+     * uses ARG_ANTENNA_HTCOD = GsacArgs.ARG_SITE_PREFIX + "antenna.htcod"
+     *
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+    */
+    private void readHtCod(GsacResource gsacResource)
+            throws Exception {
+              // set HtCod value in last argument here:; use "-----" unless ALL sites have in your database have the SAME HtCod
+              addPropertyMetadata(gsacResource, GsacExtArgs.ARG_ANTENNA_HTCOD, "HtCod", "-----");
+    }
 
     /**
      * get from SITELOG_OPERATIONALCONTACT table, value of NAMEAGENCY
