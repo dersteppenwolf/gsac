@@ -7,13 +7,11 @@ README, Part 2.
 This file describes how to complete your new gsac@MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
-You should have first read and followed the installation instructions in
-the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
-(http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf),
-and in the README Part 1 file in the main GSAC code area, trunk/src/org/gsac/.
+You should have first read and followed the installation instructions in the first
+README file ("Part 1"), used for your your initial package build, in the main GSAC code area, trunk/src/org/gsac/.
 
-This README, Part 2, was generated from the template package during your initial package build, 
-as described in README Part 1.
+You may have used the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
+(http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf),
 
 Some file names in this README file, such as gsac@MACRO.PREFIX@.properties,
 may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
@@ -21,8 +19,7 @@ Do not change actual filenames to match uppercase letters if any such are shown 
 
 ########################################################################
 
-This README file is found in your new GSAC package in @MACRO.SRCDIR@/.
-(ignore the README file in  @MACRO.SRCDIR@/release.)
+This README (Part 2) file is found in your new GSAC package in @MACRO.SRCDIR@/ (ignore the README file in @MACRO.SRCDIR@/release).
 
 Hopefully you've managed to generate the initial repository source package using README Part 1.
 
