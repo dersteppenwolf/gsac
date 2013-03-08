@@ -241,6 +241,8 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
 
+        htcod =getProperty(site, GsacExtArgs.ARG_ANTENNA_HTCOD, "");
+
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
@@ -309,7 +311,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     *  if 's' is null return "--------------------" the GAMIT 'nothing' value; else return 's'.
+     *  if 's' is null return "--------------------" the GAMIT 'nothing' value; else return  the input String's'.
      *
      * @param s  input String object
      *

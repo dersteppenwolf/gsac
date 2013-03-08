@@ -34,10 +34,13 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_ANTENNA = GsacArgs.ARG_SITE_PREFIX + "antenna";
 
+    /** HtCod is for GAMIT station.info format */
+    public static final String ARG_ANTENNA_HTCOD = GsacArgs.ARG_SITE_PREFIX + "antenna.htcod";
+
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
 
-    /** _more_ */
+    /** dome name ot type, not the iers domes number  */
     public static final String ARG_DOME = GsacArgs.ARG_SITE_PREFIX + "dome";
 
     /** _more_ */
