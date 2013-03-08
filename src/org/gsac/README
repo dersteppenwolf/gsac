@@ -1,30 +1,30 @@
 
 ################################################################################
 
-GSAC How to install README, Part 1. (file gsac/trunk/src/org/gsac/README)
+GSAC How to install README, Part 1. (the README file in the GSAC pacakge at gsac/trunk/src/org/gsac/README)
 
-How to create a new implementation of the UNAVCO GSAC Web Services suite.
+Installing the UNAVCO GSAC Web Services suite for your geodesy data repository (or similar data repository).
  
-UNAVCO's GSAC-WS provides web services for data discovery and data access in a geoscience data repository for remote users, 
-through a web site GUI and an API.  The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.
+UNAVCO's GSAC-WS provides web services for data discovery and data access (file downloads) in a geoscience data repository for remote users, 
+through a web site GUI and an API.  
 
-The GSAC Services document, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail and lists requirements to install and run GSACC.  
-
-The GSAC User Guide "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf) 
+The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Services document, 
+"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
+introduces GSAC in detail and lists requirements to install and run GSACC.  The GSAC User Guide 
+"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf) 
 is for persons using data repositories powered by GSAC.
 
-This README files describes the first steps in GSAC installation.
+This README file describes the first steps in GSAC installation.  This README file is in gsac/trunk/src/org/gsac/ in the GSAC package, 
+and is the first of two README files detailing GSAC installation.
 
-This README file is in  gsac/trunk/src/org/gsac/ in the GSAC package, and is the first of two README files detailing GSAC installation.
 
-To install GSAC, you need a Linux OS or Mac, Java 1.6, svn, ant, and bash.  You need a database with all the required geodesy parameters
-about sites (monuments) and the GNSS instruments (antennas and receivers) there.  You may also provide a download service for RINEX or
-other GNSS data files.
+To install GSAC, you need a Linux OS or Mac, Java 1.6, svn, ant, and bash in a command line window.  
+You need a database with all the required geodesy parameters about sites (monuments) and the GNSS instruments 
+(antennas and receivers) there.  You may also provide a download service for RINEX or other GNSS data files.
 
 ################################################################################
 
-You should have done the following already (such as if you are reading this README file in a GSAC installation):  
+You should have done the following already, if you are reading this README file in a GSAC installation:  
 
 Creating the initial GSAC Server
 
@@ -49,10 +49,9 @@ ant
 
 This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.
 The file build.xml is used by ant.  This may take two or three minutes. The screen output ends with something like this:
+
 localinit:
-
 init:
-
 war:
      [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
    [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacea1.0/servlet-api.jar
@@ -61,10 +60,8 @@ war:
      [echo] To run the test     server do the command:
      [echo] ant runserver
      [echo] ********************************
-
 BUILD SUCCESSFUL
 Total time: 1 minute 25 seconds
-
 
 The ant build also will create these items in trunk/:
 build.xml   dist/   examples/   lib/    README  src/
@@ -74,7 +71,7 @@ Next do
 
 cd src/org/gsac/  
 
-The full path, such as ~/gsac/sourceforge/gsac/trunk/src/org/gsac, is not shown in commands here.
+The full path to src/org/gsac/, such as ~/gsac/sourceforge/gsac/trunk/src/org/gsac, is not shown in commands here.
 
 What's in src/org/gsac/:
  
@@ -95,8 +92,9 @@ What's in src/org/gsac/:
    template/  see below:
 
 ################################################################################
+
 Generating Your Initial GSAC-WS repository package
-################################################################################
+
 
 The template directory (src/org/gsac/template/) holds template files for the initial GSAC repository package 
 implementation. This allows you to generate a package with all of the boilerplate Java code and build scripts.
@@ -151,8 +149,8 @@ copyjava:
 BUILD SUCCESSFUL
 Totaltest2013a time: 1 second
 
-
 The 'myrepomacros.properties' file is only used one time.
+
 
 The ant process copies all of the source and resource file templates to new directories and files, replacing the macros with
 the values you defined in myrepomacros.properties, copying them into the specified new target directory, such as src/org/myrepo/. 
@@ -177,7 +175,7 @@ drwxr-xr-x 2   4096 2013-02-13 11:38 resources
 And, the template file for the second or Part 2 README file, org/gsac/template/README, has been extended and copied to your new package, for example, 
 to src/org/myrepo/gsac/README, and it has the next set of instructions for you to follow to complete your GSAC installation.  
 
-Follow the instructions in src/org/myrepo/gsac/README.
+Follow the instructions in src/org/myrepo/gsac/README, the Part 2 README.
 
 ################################################################################
 
