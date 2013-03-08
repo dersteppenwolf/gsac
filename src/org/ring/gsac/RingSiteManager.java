@@ -560,23 +560,10 @@ public class RingSiteManager extends SiteManager {
                             Tables.SITELOG_ANTENNA.COL_DATEREMOVEDANTENNA) };
 
 
-                // trap and fix bad non-numerical value got from the db: Tables.SITELOG_ANTENNA.COL_MARKERUP
                 double deltahgt = 0.0;
                 String sord = results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP);
-                if (checkDouble(sord)) 
-                    { deltahgt = Double.parseDouble(sord); }
-                else { 
-                    // do iterate along the number-as-string and use String.charAt(i).isDigit(); to extract whatever decimal number may be there, if there is one...
-                    String snum = "";
-                    for (int is = 0; is< sord.length(); is++){
-                        char c = sord.charAt(is);        
-                        if (Character.isDigit(c) || c=='.' ) { snum =  snum+c; } 
-                    }
-                    // if that constructed a string representing a number:
-                    if (snum.length()==0) { deltahgt = 0.0; }
-                    else { deltahgt = Double.parseDouble(snum); }
-                    System.err.println("    RingSiteManager: bad 'double' from the db for SITELOG_ANTENNA.COL_MARKERUP=" + sord+";  will use double="+snum);
-                }
+                deltahgt = getDoubleFromString (sord);
+
 
                 GnssEquipment equipment =
                     new GnssEquipment(dateRange,
@@ -671,6 +658,30 @@ public class RingSiteManager extends SiteManager {
          return false;  
        }  
     }  
+
+    public double getDoubleFromString (String sord)  
+       {  
+       // input is suppoed to show a double;
+       // trap and fix bad non-numerical value given as a string
+       // Can give a bad value if the string is really not a number but has number characters in it, such as string "enter string here in A4 format"
+       
+       double deltahgt = 0.0;  // hold working value
+                if (checkDouble(sord)) 
+                    { deltahgt = Double.parseDouble(sord); }
+                else { 
+                    // do iterate along the number-as-string and use String.charAt(i).isDigit(); to extract whatever decimal number may be there, if there is one...
+                    String snum = "";
+                    for (int is = 0; is< sord.length(); is++){
+                        char c = sord.charAt(is);        
+                        if (Character.isDigit(c) || c=='.' ) { snum =  snum+c; } 
+                    }
+                    // if that constructed a string representing a number:
+                    if (snum.length()==0) { deltahgt = 0.0; }
+                    else { deltahgt = Double.parseDouble(snum); }
+                    System.err.println("ERROR in database value: (RingSiteManager) bad 'double' for SITELOG_ANTENNA.COL_MARKERUP, value in db is String '" + sord+"'  Will use double="+snum);
+                }
+       return deltahgt;
+       }  
 
 
     /**
