@@ -8,26 +8,32 @@ How to create a new implementation of the UNAVCO GSAC Web Services suite.
 UNAVCO's GSAC-WS provides web services for data discovery and data access in a geoscience data repository for remote users, 
 through a web site GUI and an API.  The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.
 
-The GSAC document "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail, lists requirements to run GSAC, and describes the first steps in installing GSAC.  The User Guide 
-"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf) 
+The GSAC Services document, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
+introduces GSAC in detail and lists requirements to install and run GSACC.  
+
+The GSAC User Guide "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf) 
 is for persons using data repositories powered by GSAC.
 
 This README files describes the first steps in GSAC installation.
 
-This is the Part 1 README file from  gsac/trunk/src/org/gsac/, and is the first of two README files detailing GSAC installation.
+This README file is in  gsac/trunk/src/org/gsac/ in the GSAC package, and is the first of two README files detailing GSAC installation.
+
+To install GSAC, you need a Linux OS or Mac, Java 1.6, svn, ant, and bash.  You need a database with all the required geodesy parameters
+about sites (monuments) and the GNSS instruments (antennas and receivers) there.  You may also provide a download service for RINEX or
+other GNSS data files.
 
 ################################################################################
 
-You should have done the following already, which is detailed in "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"
-(which was done already if you are reading this README file in a GSAC installation):  
+You should have done the following already (such as if you are reading this README file in a GSAC installation):  
 
 Creating the initial GSAC Server
 
-Make a working directory for GSAC_WS, and go there:
+Make a working directory for GSAC, and go there:
+
 mkdir ~/gsacws/sourceforge/
 cd    ~/gsacws/sourceforge/
-Or you can install GSAC code anywhere, starting with the subversion checkout(next).
+
+Or you can install GSAC code anywhere, starting with subversion checkout(next).
 
 Check out the GSAC code from SourceForge, using subversion:
 
