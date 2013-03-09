@@ -241,7 +241,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
 
-        htcod =getProperty(site, GsacExtArgs.ARG_ANTENNA_HTCOD, "");
+        // htcod =getProperty(site, GsacExtArgs.ARG_ANTENNA_HTCOD, "");
 
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
@@ -258,7 +258,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             else if (equipment.hasAntenna()) {
                 anttype=getNonNullGamitString(equipment.getAntenna());
                 antsn  =getNonNullGamitString(equipment.getAntennaSerial());
-                dome = getNonNullGamitString(equipment.getDome());
                 double[] xyz = equipment.getXyzOffset();
                 antht = offsetFormat.format(xyz[2]);
                 if (antht.equals("0")) { antht = "0.0000"; }
@@ -270,6 +269,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
+                dome = getNonNullGamitString(equipment.getDome());
             }
 
             // construct the gamit station.info file line for this session at a site:

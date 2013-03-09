@@ -161,7 +161,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
         sitecount++;
-        pw.append(    " site ("+sitecount+" in this list):\n");
+        pw.append(    " site "+sitecount+" (in this list):\n");
         pw.append(    " site 4 char ID:              "+ site.getShortName() + "\n");
         pw.append(    " site long name:              "+ site.getLongName() + "\n");
         pw.append(    " site Agency                  "+ getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "") + "\n");
