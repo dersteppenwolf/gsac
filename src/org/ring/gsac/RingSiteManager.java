@@ -1,44 +1,64 @@
 /*
+ * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * http://www.unavco.org
  *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *   
  */
 
 package org.ring.gsac;
 
 
 import org.gsac.gsl.*;
-import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.metadata.gnss.*;
+import org.gsac.gsl.model.*;
+import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.util.*;
 
-//import org.ring.gsac.database.*;
+/* CHANGEME - done in for INGV - include datahase package for the GSAC installation. */
+import org.ring.gsac.database.*;
 
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
+
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 
 /**
  * Handles all of the site related repository requests
- * The main entry point is the {@link #doGetQueryCapabilities} 
- * and   {@link #handleRequest} methods.
- * Look for the CHANGEME comments
- * 
+ * The main entry point is the  {@link #handleRequest} method.
  *
- * @author   GSAC Development Team
+ * @author         Jeff McWhirter
  */
 public class RingSiteManager extends SiteManager {
 
-    
+
     /**
      * ctor
      *
@@ -50,64 +70,79 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     CHANGEME
-     * Get the extra site search capabilities. 
+     * CHANGEME - done for INGV RING.   Get the site search capabilities, what to search with.
+     * Here is where you implement items to appear in site queries for this database.
      *
      * @return site search capabilities
      */
     public List<Capability> doGetQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
-        /*
-          you can use the default site capabilities:
-          addDefaultCapabilities(capabilities);
-          or add you own, e.g.:
-          Add in an example fruit enumerated query capability
-          String[]values = {"banana","apple","orange"};
-          Arrays.sort(values);
-          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
-          See org.gsac.gsl.GsacSiteManager for how the default capabilities are created
-        */
-        return capabilities;
-    }
+        try {
+            List<Capability> capabilities = new ArrayList<Capability>();
 
+            String help = HtmlOutputHandler.stringSearchHelp;  /* where from ? */
 
-    /** 
-        This is the main entry point for handling queries
-     **/
-    public void handleRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
-        //CHANGEME 
+            //  more 222  this looks on ID_SIOT not NOME_SITO which is needed
+            Capability siteCode =
+                initCapability(new Capability(ARG_SITE_CODE, "Nome Sito / Site Code",
+                    Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
+                     "Short name of the site", "Short name of the site. " + help);
 
-        /*
-          if you call the base class handleRequest method it will make a database query
-          from columns and clauses that you can specify in later methods
-         */
-        //        super.handleRequest(request, response);
+            siteCode.setBrowse(true);  /* which does ? */
+            capabilities.add(siteCode);
 
-        //Or you can handle the request directly here
+            // language:   latitudine longitudine
+            capabilities
+                .add(initCapability(new Capability(ARG_BBOX, "Posizione limiti/Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
+                    CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
+            String[] values;
 
-        StringBuffer msgBuff = new StringBuffer();
+            // language:  luogo
+            values = getDatabaseManager().readDistinctValues(
+                Tables.SITI.NAME,  // for a db table name
+                Tables.SITI.COL_LUOGO);  // for the db table and field name
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Luogo/city", values, true, CAPABILITY_GROUP_ADVANCED));
 
-        /**
-           Here's how to access the arguments
-           if (request.defined(ARG_NORTH)) {
-                request.get(ARG_NORTH, 0.0);
-           }
-           ARG_SOUTH,ARG_EAST, ARG_WEST
-        */
+            // language: regione 
+            values = getDatabaseManager().readDistinctValues(
+                Tables.SITI.NAME,
+                Tables.SITI.COL_REGIONE);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Regione/provincia/state", values, true, CAPABILITY_GROUP_ADVANCED));
 
-        //Create new GsacSite objects and call response.addResource
-        //        GsacSite site = new GsacSite(....);
-        //response.addResource(site);
+            // language: regione nazione
+            values = getDatabaseManager().readDistinctValues(
+                Tables.SITI.NAME,
+                Tables.SITI.COL_NAZIONE);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nazione/Country", values, true, CAPABILITY_GROUP_ADVANCED));
 
-        //This just sets the message shown to the user
-        setSearchCriteriaMessage(response, msgBuff);
+            return capabilities;
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
 
     /**
-     * CHANGEME
+     *   This is the main entry point for handling queries
+     *   If you don't implement this method then the base SiteManager class will
+     *
+     * @param request _more_
+     * @param response _more_
+     *
+     * @throws Exception _more_
+     */
+    public void handleRequest(GsacRequest request, GsacResponse response)
+            throws Exception {
+        //CHANGEME  -done for ingv / ring 
+        super.handleRequest(request, response);
+    }
+
+
+    /**
+     * CHANGEME - done for RING  whatsit
      * create and return the resource (site) identified by the given resource id
      *
      * @param resourceId resource id. This isn't the resource code but actually the monument id
@@ -117,91 +152,37 @@ public class RingSiteManager extends SiteManager {
      * @throws Exception on badness
      */
     public GsacResource getResource(String resourceId) throws Exception {
-        /* e.g.:
-        //Here is some example code from Unavco for making a query
 
-        Clause clause = Clause.eq(Tables.MV_DAI_PRO.COL_MON_ID,
-                                  new Integer(resourceId).intValue());
-        Statement statement = getDatabaseManager().select(
-                                                          getResourceSelectColumns(), 
-                                                          clause.getTableNames(), clause);
+        // the key linking the ingv RING db tables appears to be ID_SITO
+        Clause clause = Clause.eq(Tables.SITI.COL_ID_SITO, resourceId);
+        //Clause clause = Clause.eq(Tables.SITI.COL_NOME_SITO, resourceId);
+        Statement statement =
+            getDatabaseManager().select(getResourceSelectColumns(),
+                                        clause.getTableNames(), clause);
         try {
             ResultSet results = statement.getResultSet();
-            if (!results.next()) {
+            if ( !results.next()) {
                 results.close();
+
                 return null;
             }
             GsacSite site = (GsacSite) makeResource(results);
             results.close();
+
             return site;
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-        */
-        return  null;
     }
 
 
 
-
     /**
-     * get all of the metadata for the given site
-     *
-     * @param gsacResource resource
-     *
-     * @throws Exception On badness
-     */
-    public void doGetMetadata(int level, GsacResource gsacResource) throws Exception {
-        //The Unavco repository adds in GnssEquipment metadata and other things
-    }
-
-
-    /**
-     * Get the site group list. This is used by the addDefaultSiteCapabilities 
-     *
-     * @return resource group list
-     */
-    public List<ResourceGroup> doGetResourceGroups() {
-        List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
-        /**
-           CHANGEME
-        groups.add(new ResourceGroup("group1","Group 1"));
-        groups.add(new ResourceGroup("group2", "Group 2"));
-        groups.add(new ResourceGroup("group3","Group 3"));
-        Collections.sort((List) groups);
-        */
-        return groups;
-    }
-
-
-    /*************************************************************************************************
-     * The code below here is used to provide database query information to the base GsacResourceManager class
-    *************************************************************************************************/
-
-
-
-    /**
-     * Get a comma separated list of the columns that are selected on a search
-     *
-     * @param request the request
-     *
-     * @return comma delimited fully qualified column names to select on
-     */
-    public String getResourceSelectColumns() {
-        return  SqlUtil.comma(new String[] {
-                    "YourSiteTable.column1",
-                    "YourSiteTable.column2",
-                    "etc"
-                });
-    }
-
-
-    /**
-     * An example method that shows how to use the Clause class to assemble a set of database
-     * search clauses from the URL arguments
+     * How to use the Clause class to assemble a set of database search clauses from the URL [whatsit or html search form?] argument  
      *
      * @param request the resquest
      * @param response the response
+     * @param tableNames _more_
      * @param msgBuff buffer to append search criteria to
      *
      * @return list of clauses for selecting sites
@@ -210,71 +191,65 @@ public class RingSiteManager extends SiteManager {
                                            GsacResponse response,
                                            List<String> tableNames,
                                            StringBuffer msgBuff) {
+        tableNames.add(Tables.SITI.NAME);
         List<Clause> clauses = new ArrayList();
-        String latCol = "replace me with correct column name";
-        String lonCol = "replace me with correct column name";
+        String       latCol  = Tables.SITI.COL_LATITUDINE;
+        String       lonCol  = Tables.SITI.COL_LONGITUDINE;
         if (request.defined(ARG_NORTH)) {
-            clauses.add(Clause.le(latCol,
-                                  request.get(ARG_NORTH, 0.0)));
+            clauses.add(
+                Clause.le(
+                    latCol,
+                    convertToISGSiteLogLatLongFormat(
+                        request.get(ARG_NORTH, 0.0))));
             appendSearchCriteria(msgBuff, "north&lt;=",
                                  "" + request.get(ARG_NORTH, 0.0));
         }
         if (request.defined(ARG_SOUTH)) {
-            clauses.add(Clause.ge(latCol,
-                                  request.get(ARG_SOUTH, 0.0)));
+            clauses.add(
+                Clause.ge(
+                    latCol,
+                    convertToISGSiteLogLatLongFormat(
+                        request.get(ARG_SOUTH, 0.0))));
             appendSearchCriteria(msgBuff, "south&gt;=",
                                  "" + request.get(ARG_SOUTH, 0.0));
         }
         if (request.defined(ARG_EAST)) {
-            clauses.add(Clause.le(lonCol,
-                                  request.get(ARG_EAST, 0.0)));
+            clauses.add(
+                Clause.le(
+                    lonCol,
+                    convertToISGSiteLogLatLongFormat(
+                        request.get(ARG_EAST, 0.0))));
             appendSearchCriteria(msgBuff, "east&lt;=",
                                  "" + request.get(ARG_EAST, 0.0));
         }
         if (request.defined(ARG_WEST)) {
-            clauses.add(Clause.ge(lonCol,
-                                  request.get(ARG_WEST, 0.0)));
+            clauses.add(
+                Clause.ge(
+                    lonCol,
+                    convertToISGSiteLogLatLongFormat(
+                        request.get(ARG_WEST, 0.0))));
             appendSearchCriteria(msgBuff, "west&gt;=",
                                  "" + request.get(ARG_WEST, 0.0));
         }
 
-
-        List   args         = null;
-        //Add in the site type, status, etc
-        /*
-        if (request.defined(GsacArgs.ARG_SITE_TYPE)) {
-            args = (List<String>) request.getDelimiterSeparatedList(
-                                                                    GsacArgs.ARG_SITE_TYPE);
-            clauses.add(Clause.or(Clause.makeStringClauses("TODO: fully qualified db column name",
-                                                           args)));
-            addSearchCriteria(msgBuff, argValues[2], args);
-          }
-        */
-
-
-        //Add in the site code and site name queries
-        /*
-        addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
-                        msgBuff, "Site Code",
-                        "TODO: fully qualified db column name", clauses);
-        addStringSearch(request, ARG_SITENAME, ARG_SITENAME_SEARCHTYPE,
-                        msgBuff, "Site Name",
-                        Tables.SITE_INFORMATION.COL_SITE_NAME, clauses);
-
-        */
-
-
-        /*
-        //other search arguments
-        if (request.defined(ARG_SITE_GROUP)) {
-            //...
-        }
         if (request.defined(ARG_SITE_ID)) {
-            //....
-            //args = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_ID);
-            //...
+            addStringSearch(request, ARG_SITE_ID, " ", msgBuff, "Numero Sito / Site ID",
+                            Tables.SITI.COL_ID_SITO, clauses);
         }
-        */
+
+        addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
+                        msgBuff, "Numero Sito / Site Code",
+                        Tables.SITI.COL_ID_SITO, clauses);
+
+        if (request.defined(GsacExtArgs.ARG_COUNTRY)) {
+            List<String> values =
+                (List<String>) request.getDelimiterSeparatedList(
+                    GsacExtArgs.ARG_COUNTRY);
+            clauses.add(
+                Clause.or(
+                    Clause.makeStringClauses(
+                        Tables.SITI.COL_NAZIONE, values)));
+        }
 
         return clauses;
     }
@@ -283,24 +258,41 @@ public class RingSiteManager extends SiteManager {
 
 
 
+    /**
+     * CHANGEME Default query order. done for RING 
+     *   Set this to what you want to sort on                  whatsit   order for what?
+     */
+    private static final String SITE_ORDER =
+        " ORDER BY  " + Tables.SITI.COL_NOME_SITO + " ASC ";
+        // or by id number: " ORDER BY  " + Tables.SITI.COL_ID_SITO + " ??? see mysql order by syntax ";
+
 
     /**
-     * Get the order by clause
+     * Get the columns that are to be searched on                  whatsit for what?
+     *
+     * @param request the request
+     *
+     * @return comma delimited fully qualified column names to select on
+     */
+    public String getResourceSelectColumns() {
+        return Tables.SITI.COLUMNS;
+    }
+
+
+    /**
+     * Get the order by clause     whatsit for what?
      *
      * @param request the request
      *
      * @return order by clause
      */
     public String getResourceOrder(GsacRequest request) {
-        //e.g.:
-        //        return  " ORDER BY  " + "YourSiteTable.sitecode" + " ASC ";
+        // return SITE_ORDER;
         return null;
     }
 
-
     /**
-     * CHANGEME
-     * Create a single site from the DB results
+     * Create a single site: apparently, read all the values, and all these will later appear in the HTML output, in the order read here.
      *
      * @param results db results
      *
@@ -308,53 +300,593 @@ public class RingSiteManager extends SiteManager {
      *
      * @throws Exception on badness
      */
-    public GsacResource makeResource(ResultSet results) throws Exception {
-        return null;
-        /** e.g.:
-        int    colCnt     = 1;
-        int    monId      = results.getInt(colCnt++);
-        String fourCharId = results.getString(colCnt++);
-        String name       = results.getString(colCnt++);
-        double latitude   = results.getDouble(colCnt++);
-        double longitude  = results.getDouble(colCnt++);
-        double elevation  = results.getDouble(colCnt++);
-        String type       = results.getString(colCnt++);
-        if (type == null) {
-            type = "";
-        }
-        String  status = results.getString(colCnt++);
-        String  groups = results.getString(colCnt++);
-
-        GsacSite site = new GsacSite("" + monId, fourCharId, name,
-                                  latitude, longitude, elevation);
-        site.setType(new ResourceType(type));
-        if ((groups != null) && (groups.trim().length() > 0)) {
-            List<String> toks = new ArrayList<String>();
-            for (String tok : groups.split(",")) {
-                toks.add(tok.trim());
-            }
-            Collections.sort(toks);
-            for (String tok : (List<String>) toks) {
-                site.addResourceGroup(new ResourceGroup(tok));
-            }
-        }
-
-        //Add icons based on type
-        if (type.toLowerCase().equals(SITETYPE_CAMPAIGN)) {
-            site.addMetadata(
-            new IconMetadata(
-                    "http://facility.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
-        } else {
-            site.addMetadata(
-            new IconMetadata(
-                    "http://facility.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
-        }
-        return site;
+    @Override
+    public GsacSite makeResource(ResultSet results) throws Exception {
+        int colCnt = 1;
+        //              whatsit - hpw does this know which table?
+        /*   order must match column order in the table e.g. for the IGS site log db:
+        class SITELOG_LOCATION extends Tables {
+        public static final String NAME = "SiteLog_Location";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+         column 1: public static final String COL_FOURID =  NAME + ".FourID";
+        public static final String COL_CITY =  NAME + ".City";
+        public static final String COL_STATE =  NAME + ".State";
+        public static final String COL_COUNTRY =  NAME + ".Country";
+        public static final String COL_TECTONIC =  NAME + ".Tectonic";
+        public static final String COL_XCOOR =  NAME + ".XCoor";
+        public static final String COL_YCOOR =  NAME + ".YCoor";
+        public static final String COL_ZCOOR =  NAME + ".ZCoor";
+        public static final String COL_LATITUDENORTH =  NAME + ".LatitudeNorth";
+        public static final String COL_LONGITUDEEAST =  NAME + ".LongitudeEast";
+        public static final String COL_ELEVATION =  NAME + ".Elevation";
         */
+        /* for Ring ingv db:
+        public static class SITI extends Tables {
+        public static final String NAME = "siti";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+         column 1: public static final String COL_ID_SITO =  NAME + ".id_sito";
+        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
+        public static final String COL_ID_RETE =  NAME + ".id_rete";
+        public static final String COL_DATA_MATERIALIZZAZIONE =  NAME + ".data_materializzazione";
+        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
+        public static final String COL_GEOLOGIA =  NAME + ".geologia";
+        public static final String COL_LUOGO =  NAME + ".luogo";
+        public static final String COL_LATITUDINE =  NAME + ".latitudine";
+        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
+        public static final String COL_QUOTA =  NAME + ".quota";
+        public static final String COL_X =  NAME + ".x";
+        public static final String COL_Y =  NAME + ".y";
+        public static final String COL_Z =  NAME + ".z";
+        public static final String COL_X_UTMED50 =  NAME + ".x_utmed50";
+        public static final String COL_Y_UTMED50 =  NAME + ".y_utmed50";
+        public static final String COL_TIPO_MATERIALIZZAZIONE =  NAME + ".tipo_materializzazione";
+        public static final String COL_HEIGHT_OF_MONUMENT =  NAME + ".height_of_monument";
+        public static final String COL_MONUMENT_FOUNDATION =  NAME + ".monument_foundation";
+        public static final String COL_FOUNDATION_DEPTH =  NAME + ".foundation_depth";
+        public static final String COL_MONUMENT_INSCRIPTION =  NAME + ".monument_inscription";
+        public static final String COL_IERS_DOMES_NUMBER =  NAME + ".iers_domes_number";
+        public static final String COL_BEDROCK_TYPES =  NAME + ".bedrock_types";
+        public static final String COL_ID_ON_SITE_AGENCY =  NAME + ".id_on_site_agency";
+        public static final String COL_ID_RESPONSIBLE_AGENCY =  NAME + ".id_responsible_agency";
+        public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
+        public static final String COL_NAZIONE =  NAME + ".nazione";
+        public static final String COL_REGIONE =  NAME + ".regione";
+
+        */
+        colCnt += 1;  
+        String fourCharId = results.getString(colCnt++);
+        colCnt += 4;  
+        String city       = results.getString(colCnt++);
+        String latString = results.getString(colCnt++);
+        String lonString = results.getString(colCnt++);
+        colCnt += 11;  
+        String iersdomes = results.getString(colCnt++);  // see below    addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
+        colCnt += 3;  
+        String country    = results.getString(colCnt++);
+        String state      = results.getString(colCnt++);
+
+        double latitude  = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim()));
+        double longitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(lonString.trim()));
+        //String elevationString = results.getString(colCnt++);
+        //elevationString = StringUtil.findPattern(elevationString, "([\\d\\.-]+)");
+        //double elevation = (elevationString != null) ? Double.parseDouble(elevationString) : 0.0; 
+        //        System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
+
+        GsacSite site = new GsacSite(fourCharId, fourCharId, "", latitude, longitude, 0.0);
+
+        // Add  items to show in the HTML web page.
+        // Note, this sets the order of items on the page.
+        readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
+        site.addMetadata(new PoliticalLocationMetadata(country, state, city));
+
+        //readIdentificationMonumentMetadata(site);
+
+        //readFrequencyStandardMetadata(site);
+        //readAgencyMetadata(site);
+        // to FIX readCalibrationMetadata(site);
+        // site.addMetadata(new GnssEquipment(satelliteSystem));
+
+        site.setType(new ResourceType("gnss.site.continuous"));
+
+        return site;
+    }
+
+
+    /**
+     * convert input value in decimal arc degrees to special ISG Site Log Lat Longi Format
+     *
+     * @param decimalDegrees _more_
+     *
+     * @return _more_
+     */
+    public static double convertToISGSiteLogLatLongFormat(
+            double decimalDegrees) {
+        // Convert TO the IGS site log database lat/longi style
+        // such as 505216.68 or -1141736.6, from double degrees values of latitude and longitude.
+        // input like -50.253, to give -501510.8
+        String msg     = "" + decimalDegrees;
+        int    degrees = (int) decimalDegrees;  // + or minus , like -50
+        decimalDegrees = decimalDegrees - degrees;  // like 0.253
+        int minutes = (int) (decimalDegrees * 60);  // like 15
+        double seconds = (decimalDegrees - (minutes / 60)) * 3600.0;  // like .003 (degrees) * 3600 = 10.8
+        double result;
+        if (degrees >= 0.0) {
+            result = degrees * 10000 + minutes * 100 + seconds;
+        } else {
+            result = (-1.0 * degrees * 10000) + minutes * 100 + seconds;
+            result *= -1.0;
+        }
+        return result;
+    }
+
+
+    /**
+     * Convert the weird IGS site log database value format for latitude and longitude, such as 505216.68 or -1141736.6 
+     * to correct values of latitude and longitude.
+     *
+     * @param stupidFormat _more_
+     *
+     * @return _more_
+     */
+    public static double convertFromISGSiteLogLatLongFormat(double stupidFormat) {
+        // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
+        // eg dddmmss.ff  where dd or ddd or ddd is + or - degrees, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff.
+        // Note the sign in front applies to the final result, not only the degrees.
+        if (Double.isNaN(stupidFormat)) {
+            System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() has bad or NaN 'number' input (lat or longitude):" + stupidFormat );
+            // input value is not a number,  such as "" from some IGS SLM  values.  CHECK: perhaps should return an impossible value, 9999, used for similar purpose in GAMIT station.info format. 
+            return 9999;
+        }
+        //System.err.println("convert IGS SLM lat/long formated value: " + stupidFormat );
+        int    intValue = (int) stupidFormat;
+        String ddmmss   = String.valueOf(intValue);
+        String secs = ddmmss.substring(ddmmss.length() - 2, ddmmss.length());
+        String mins     = ddmmss.substring(ddmmss.length() - 4,
+                                       ddmmss.length() - 2);
+        String degs = ddmmss.substring(0, ddmmss.length() - 4);
+        //System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() converted:" + stupidFormat + " to:" + degs +" " + mins +" " + secs );
+        //  convert:-661700.24 to:-66 17 00       convert:1103110.92 to:110 31 10
+        if (degs.equals("")) { degs="0"; }
+        int nq = 1; // flag for a negative value when the degs part has no numbers, just the '-' sign
+        if (degs.equals("-")) { degs="0"; nq=-1;}
+        if (secs.equals("")) { secs="0"; }
+        if (mins.equals("")) { mins="0"; }
+        int    di            = Integer.parseInt(degs);
+        int    mi            = Integer.parseInt(mins);
+        int    si            = Integer.parseInt(secs);
+        double decimalofsecs = stupidFormat - intValue;
+        double dv            = 0.0;  // the result decimal value
+        if (di >= 0) {
+            dv = di + (mi / 60.0) + ((si + decimalofsecs) / 3600.0);
+        } else if (di < 0 || nq==-1) {
+            //add all the pieces as positive numbers to get full value;
+            dv = (-1.0 * di) + (mi / 60.0) + ((si + decimalofsecs) / 3600.0);
+            // and make  negative of the sum
+            dv *= -1.0;
+        }
+
+        // CHECK LOOK: new code: could check for out of range latitude and longitude 
+
+        return dv;
+    }
+
+    /**
+     * _more_
+     *
+     * @param results _more_
+     * @param column _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
+    private String readValue(ResultSet results, String column)
+            throws Exception {
+        String s = results.getString(column);
+        if (s == null) {
+            return "";
+        }
+        if (s.startsWith("(") && s.endsWith(")")) {
+            return "";
+        }
+
+        return s;
     }
 
 
 
+
+    /**
+     * get all of the metadata for the given site     whatsit  who calls this?
+     *
+     *
+     * @param level _more_
+     * @param gsacResource resource
+     *
+     * @throws Exception On badness
+     */
+    @Override
+    public void doGetMetadata(int level, GsacResource gsacResource)
+            throws Exception {
+        readEquipmentMetadata(gsacResource);
+    }
+
+
+    /**
+     * CHANGME 
+     *
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+     */
+    private void readEquipmentMetadata(GsacResource gsacResource)
+            throws Exception {
+
+        Hashtable<Date, GnssEquipment> visits = new Hashtable<Date,
+                                                    GnssEquipment>();
+        List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
+        Statement           statement;
+        ResultSet           results;
+
+        /* get from SITELOG_ANTENNA table */
+        statement =
+            getDatabaseManager()
+                .select(Tables.MANUTENZIONE_ANTENNA.COLUMNS, Tables.MANUTENZIONE_ANTENNA.NAME, 
+                      //Clause.eq(Tables.SITELOG_ANTENNA.COL_FOURID, gsacResource
+                      Clause.eq(Tables.MANUTENZIONE_ANTENNA.COL_ID_SITO, gsacResource
+                        .getId()), " order by " + Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED, -1);
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            while ((results = iter.getNext()) != null) {
+                Date[] dateRange =
+                    new Date[] {
+                        readDate( results, Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED),
+                        readDate( results, Tables.MANUTENZIONE_ANTENNA.COL_DATE_REMOVED)       };
+
+
+                // trap and fix bad non-numerical value got from the db: Tables.SITELOG_ANTENNA.COL_MARKERUP
+                double deltahgt = 0.0;
+                String sord = results.getString(Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP);
+                if (checkDouble(sord)) 
+                    { deltahgt = Double.parseDouble(sord); }
+                else { 
+                    // got a bad character string which was supposed to be a float double.
+                    // do iterate along the number-as-string and use String.charAt(i).isDigit(); to extract whatever decimal number may be there, if there is one...
+                    String snum = "";
+                    for (int is = 0; is< sord.length(); is++){
+                        char c = sord.charAt(is);        
+                        if (Character.isDigit(c) || c=='.' ) { snum =  snum+c; } 
+                    }
+                    // if that constructed a string representing a number:
+                    if (snum.length()==0) { deltahgt = 0.0; }
+                    else { deltahgt = Double.parseDouble(snum); }
+                    System.err.println("    RingSiteManager: bad 'double' char string from the db for MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP is " + sord+"';  will use double="+snum);
+                }
+
+                GnssEquipment equipment =
+                  /*222 more get these
+                    new GnssEquipment(dateRange,
+                        results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNATYPE),
+                        results.getString(Tables.SITELOG_ANTENNA.COL_SERIALNUMBERANTENNA),
+                        results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
+                        results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
+                        "", "", "", deltahgt);
+ from 
+STRUMENTI_ANTENNA extends Tables {
+        public static final String NAME = "strumenti_antenna";
+        public static final String COL_ID_ANTENNA =  NAME + ".id_antenna";
+        public static final String COL_ANTENNA_TYPE =  NAME + ".antenna_type";
+        public static final String COL_SERIAL_NUMBER =  NAME + ".serial_number";
+        public static final String COL_RADOME_TYPE =  NAME + ".radome_type";
+        public static final String COL_RADOME_SERIAL_NUMBER =  NAME + ".radome_serial_number";
+*/
+                    new GnssEquipment(dateRange,
+                        "", "", "", "", 
+                        "", "", "", deltahgt);
+
+                equipmentList.add(equipment);
+                visits.put(dateRange[0], equipment);
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+        /* get from  MANUTENZIONE_RICEVITORE table */
+        statement =
+            getDatabaseManager()
+                .select(Tables.MANUTENZIONE_RICEVITORE.COLUMNS, Tables.MANUTENZIONE_RICEVITORE.NAME, 
+                    Clause.eq(Tables.MANUTENZIONE_RICEVITORE.COL_ID_SITO, gsacResource
+                        .getId()), " order by "
+                                   + Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED, -1);
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            while ((results = iter.getNext()) != null) {
+                Date[] dateRange =
+                    new Date[] {
+                        readDate(results, Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED),
+                        readDate(results, Tables.MANUTENZIONE_RICEVITORE.COL_DATE_REMOVED)   };
+                GnssEquipment equipment = visits.get(dateRange[0]);
+                if (equipment != null) {
+                    if ( !Misc.equals(equipment.getToDate(), dateRange[1])) {
+                        equipment = null;
+                    }
+                }
+
+                if (equipment == null) {
+                    equipment = new GnssEquipment(dateRange, "", "", "", "",
+                            "", "", "", Double.NaN);
+                    equipmentList.add(equipment);
+                }
+                equipment.setReceiverFirmware(
+                    results.getString(Tables.MANUTENZIONE_RICEVITORE.COL_FIRMWARE_VERSION ));
+
+                 /*   more 222  these are in table strumenti_ricevitore
+          STRUMENTI_RICEVITORE extends Tables {
+        public static final String COL_ID_RICEVITORE =  NAME + ".id_ricevitore";
+        public static final String COL_RICEVITORE_TYPE =  NAME + ".ricevitore_type";
+        public static final String COL_SISTEMA_SATELLITE =  NAME + ".sistema_satellite";
+        public static final String COL_SERIAL_NUMBER =  NAME + ".serial_number";
+
+                equipment.setReceiver(
+                    results.getString( Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
+                equipment.setReceiverSerial(
+                    results.getString( Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
+                equipment.setSatelliteSystem(
+                    results.getString( Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
+                */
+                //System.err.println(dateRange[0] + " " +  equipment.getReceiver());
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+        equipmentList = GnssEquipment.sort(equipmentList);
+        GnssEquipmentGroup equipmentGroup = null;
+        /* for every item 'equipment' in the local equipmentList, add it to the equipmentGroup */
+        for (GnssEquipment equipment : equipmentList) {
+            if (equipmentGroup == null) {
+                gsacResource.addMetadata(equipmentGroup =
+                    new GnssEquipmentGroup());
+            }
+            equipmentGroup.add(equipment);
+        }
+
+    }
+
+    public boolean checkDouble( String input )  
+    {  
+       try  
+       {  
+          Double.parseDouble( input );  
+          return true;  
+       }  
+       catch( Exception e)  
+       {  
+         return false;  
+       }  
+    }  
+
+
+    /**
+     * from db table represented in Tables.java as class SITELOG_FREQUENCYSTANDARD,
+     * get the value of String COL_STANDARDTYPE and add it (with the label "clock") to the GsacResource object "gsacResource".
+     * in this case the site is recognized in the db with the getDatabaseManager().select() call.
+     *
+     * SITE_METADATA_FREQUENCYSTANDARD must be declared in  GsacExtArgs.java.
+     *
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+     *  /
+    private void readFrequencyStandardMetadata(GsacResource gsacResource)
+            throws Exception {
+        // compose db query statement; 'order by' phrase is null.
+        Statement statement =
+            getDatabaseManager().select(
+                Tables.SITELOG_FREQUENCYSTANDARD.COLUMNS,
+                Tables.SITELOG_FREQUENCYSTANDARD.NAME,
+                Clause.eq(
+                    Tables.SITELOG_FREQUENCYSTANDARD.COL_FOURID,
+                    gsacResource.getId()), (String) null, -1);
+        ResultSet results;
+        try {
+            // do db query
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java.
+                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
+                // the resource you are adding it to;
+                // the label on the web page or results
+                // the db column name 
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
+                    "Clock",
+                    results.getString(
+                        Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
+
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
+*/
+
+    /**
+     * get from SITELOG_OPERATIONALCONTACT table, value of NAMEAGENCY
+     *
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+     
+    private void readAgencyMetadata(GsacResource gsacResource)
+            throws Exception {
+        Statement statement =
+            getDatabaseManager().select(
+                Tables.SITELOG_OPERATIONALCONTACT.COLUMNS,
+                Tables.SITELOG_OPERATIONALCONTACT.NAME,
+                Clause.eq(
+                    Tables.SITELOG_OPERATIONALCONTACT.COL_FOURID,
+                    gsacResource.getId()), (String) null, -1);
+        ResultSet results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+            // process each line in results of db query  
+                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
+                // the resource you are adding it to;
+                // the label on the web page or results
+                // the db column name 
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY,
+                    "Agency",
+                    results.getString(
+                        Tables.SITELOG_OPERATIONALCONTACT.COL_NAMEAGENCY));
+
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
+*/
+
+
+    /**
+     *  get  SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT
+     *
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+    private void readIdentificationMonumentMetadata(GsacResource gsacResource)
+            throws Exception {
+        Statement statement =
+            getDatabaseManager().select(
+                Tables.SITELOG_IDENTIFICATIONMONUMENT.COLUMNS,
+                Tables.SITELOG_IDENTIFICATIONMONUMENT.NAME,
+                Clause.eq(
+                    Tables.SITELOG_IDENTIFICATIONMONUMENT.COL_FOURID,
+                    gsacResource.getId()), (String) null, -1);
+        ResultSet results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+
+            // process each line in results of db query  
+            // [see definition of addPropertyMetadata in this file below]
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(
+                    gsacResource,
+                    GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION,
+                    "Monument Description",
+                    results.getString(
+                        Tables.SITELOG_IDENTIFICATIONMONUMENT
+                            .COL_MONUMENTDESCRIPT));
+
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+    }
+
+     */
+
+    /**
+     *  whatsit?
+     *
+     * @param gsacResource _more_
+     *
+     * @throws Exception _more_
+     */
+    private void readIdentificationMetadata(GsacResource gsacResource)
+            throws Exception {
+        Statement statement =
+            getDatabaseManager().select(
+                Tables.SITI.COLUMNS,
+                Tables.SITI.NAME,
+                Clause.eq(
+                    Tables.SITI.COL_ID_SITO,
+                    gsacResource.getId()), (String) null, -1);
+
+        ResultSet results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+                gsacResource.setLongName( results.getString( Tables.SITI.COL_LUOGO));
+
+                //  optional; not required  monument INscription not DEscription
+                // addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
+                //                    "Monument Inscription",
+                //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_MONUMENTINSCRI));
+
+                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
+                // the resource you are adding it to;
+                // the label on the web page or results
+                // the db column name 
+
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
+                    results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER ));
+
+                // optional; not required  CDP number 
+                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
+                //                    "CDP Number",
+                //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
+                //Only read the first row
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param gsacResource _more_
+     * @param id _more_
+     * @param label _more_
+     * @param value _more_
+     */
+    private void addPropertyMetadata(GsacResource gsacResource, String id,
+                                     String label, String value) {
+        if ((value != null) && (value.length() > 0)) {
+            gsacResource.addMetadata(new PropertyMetadata(id, value, label));
+        }
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param results _more_
+     * @param column _more_
+     *
+     * @return _more_
+     */
+    private Date readDate(ResultSet results, String column) {
+        try {
+            return results.getDate(column);
+        } catch (Exception exc) {
+            //if the date is undefined we get an error so we just return null to signify the current time
+            return null;
+        }
+    }
 
 
 }
