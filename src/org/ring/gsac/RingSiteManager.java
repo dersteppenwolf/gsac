@@ -81,7 +81,7 @@ public class RingSiteManager extends SiteManager {
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* where from ? */
 
-            //  more 222  this looks on ID_SIOT not NOME_SITO which is needed
+            //  more 222  this looks on ID_SITO not NOME_SITO which is needed
             Capability siteCode =
                 initCapability(new Capability(ARG_SITE_CODE, "Nome Sito / Site Code",
                     Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
@@ -154,7 +154,7 @@ public class RingSiteManager extends SiteManager {
     public GsacResource getResource(String resourceId) throws Exception {
 
         // the key linking the ingv RING db tables appears to be ID_SITO
-        Clause clause = Clause.eq(Tables.SITI.COL_ID_SITO, resourceId);
+        Clause clause = Clause.eq(Tables.SITI.COL_NOME_SITO, resourceId);
         //Clause clause = Clause.eq(Tables.SITI.COL_NOME_SITO, resourceId);
         Statement statement =
             getDatabaseManager().select(getResourceSelectColumns(),
@@ -239,7 +239,7 @@ public class RingSiteManager extends SiteManager {
 
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
                         msgBuff, "Numero Sito / Site Code",
-                        Tables.SITI.COL_ID_SITO, clauses);
+                        Tables.SITI.COL_NOME_SITO, clauses);
 
         if (request.defined(GsacExtArgs.ARG_COUNTRY)) {
             List<String> values =
@@ -367,8 +367,10 @@ public class RingSiteManager extends SiteManager {
         String country    = results.getString(colCnt++);
         String state      = results.getString(colCnt++);
 
-        double latitude  = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim()));
-        double longitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(lonString.trim()));
+        double latitude  = 0.0;
+         if (latString != null) { latitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim())); }
+        double longitude  = 0.0;
+         if (lonString != null) { longitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(lonString.trim())); }
         //String elevationString = results.getString(colCnt++);
         //elevationString = StringUtil.findPattern(elevationString, "([\\d\\.-]+)");
         //double elevation = (elevationString != null) ? Double.parseDouble(elevationString) : 0.0; 
@@ -378,8 +380,10 @@ public class RingSiteManager extends SiteManager {
 
         // Add  items to show in the HTML web page.
         // Note, this sets the order of items on the page.
-        readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
+        //readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
+        if (iersdomes != null ) {
+           site.addMetadata(new PropertyMetadata("iersdomes", iersdomes, "IERS DOMES"));  } // 3rd arg is web page label
 
         //readIdentificationMonumentMetadata(site);
 
@@ -529,23 +533,41 @@ public class RingSiteManager extends SiteManager {
         List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
         Statement           statement;
         ResultSet           results;
+        List<Clause> clauses = new ArrayList<Clause>();
+        List<String> tables = new ArrayList<String>();
 
-        /* get from SITELOG_ANTENNA table */
+         
+
+        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId())); 
+        clauses.add(Clause.join(Tables.SITI.COL_ID_SITO, Tables.MANUTENZIONE_ANTENNA.COL_ID_SITO)); 
+        clauses.add(Clause.join(Tables.MANUTENZIONE_ANTENNA.COL_ID_ANTENNA, Tables.STRUMENTI_ANTENNA.COL_ID_ANTENNA)); 
+
+        String cols=SqlUtil.comma(new String[]{
+             Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED ,Tables.MANUTENZIONE_ANTENNA.COL_DATE_REMOVED , Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP ,
+             Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_NORTH , Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_EAST , Tables.MANUTENZIONE_ANTENNA.COL_ALIGNMENT ,
+             Tables.STRUMENTI_ANTENNA.COL_ANTENNA_TYPE , Tables.STRUMENTI_ANTENNA.COL_SERIAL_NUMBER  , Tables.STRUMENTI_ANTENNA.COL_RADOME_TYPE  , Tables.STRUMENTI_ANTENNA.COL_RADOME_SERIAL_NUMBER  
+               });
+
+
+        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.MANUTENZIONE_ANTENNA.NAME);
+        tables.add(Tables.STRUMENTI_ANTENNA.NAME);
+
         statement =
             getDatabaseManager()
-                .select(Tables.MANUTENZIONE_ANTENNA.COLUMNS, Tables.MANUTENZIONE_ANTENNA.NAME, 
-                      //Clause.eq(Tables.SITELOG_ANTENNA.COL_FOURID, gsacResource
-                      Clause.eq(Tables.MANUTENZIONE_ANTENNA.COL_ID_SITO, gsacResource
-                        .getId()), " order by " + Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED, -1);
+                .select(cols,  tables,
+                      Clause.and(clauses),
+                         " order by " + Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED, -1);
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
+                //    System.err.println(results.getString(Tables.STRUMENTI_ANTENNA.COL_ANTENNA_TYPE));
+
                 Date[] dateRange =
                     new Date[] {
                         readDate( results, Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED),
                         readDate( results, Tables.MANUTENZIONE_ANTENNA.COL_DATE_REMOVED)       };
-
 
                 // trap and fix bad non-numerical value got from the db: Tables.SITELOG_ANTENNA.COL_MARKERUP
                 double deltahgt = 0.0;
@@ -566,15 +588,7 @@ public class RingSiteManager extends SiteManager {
                     System.err.println("    RingSiteManager: bad 'double' char string from the db for MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP is " + sord+"';  will use double="+snum);
                 }
 
-                GnssEquipment equipment =
                   /*222 more get these
-                    new GnssEquipment(dateRange,
-                        results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNATYPE),
-                        results.getString(Tables.SITELOG_ANTENNA.COL_SERIALNUMBERANTENNA),
-                        results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
-                        results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
-                        "", "", "", deltahgt);
- from 
 STRUMENTI_ANTENNA extends Tables {
         public static final String NAME = "strumenti_antenna";
         public static final String COL_ID_ANTENNA =  NAME + ".id_antenna";
@@ -583,8 +597,24 @@ STRUMENTI_ANTENNA extends Tables {
         public static final String COL_RADOME_TYPE =  NAME + ".radome_type";
         public static final String COL_RADOME_SERIAL_NUMBER =  NAME + ".radome_serial_number";
 */
+
+                /* 
+GnssEquipment(Date[] dateRange, String antenna,
+                         String antennaSerial, String dome,
+                         String domeSerial, String receiver,
+                         String receiverSerial, String receiverFirmware,
+                        o  Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED ,Tables.MANUTENZIONE_ANTENNA.COL_DATE_REMOVED , Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP ,
+             Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_NORTH , Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_EAST , Tables.MANUTENZIONE_ANTENNA.COL_ALIGNMENT ,
+             Tables.STRUMENTI_ANTENNA.COL_ANTENNA_TYPE , Tables.STRUMENTI_ANTENNA.COL_SERIAL_NUMBER  , Tables.STRUMENTI_ANTENNA.COL_RADOME_TYPE  , Tables.STRUMENTI_ANTENNA.COL_RADOME_SERIAL_NUMBER
+               double zOffset) 
+*/
+
+                GnssEquipment equipment =
                     new GnssEquipment(dateRange,
-                        "", "", "", "", 
+                       results.getString(Tables.STRUMENTI_ANTENNA.COL_ANTENNA_TYPE),
+                       results.getString(Tables.STRUMENTI_ANTENNA.COL_SERIAL_NUMBER),
+                       results.getString(Tables.STRUMENTI_ANTENNA.COL_RADOME_TYPE),
+                       results.getString(Tables.STRUMENTI_ANTENNA.COL_RADOME_SERIAL_NUMBER),
                         "", "", "", deltahgt);
 
                 equipmentList.add(equipment);
@@ -595,13 +625,28 @@ STRUMENTI_ANTENNA extends Tables {
         }
 
 
-        /* get from  MANUTENZIONE_RICEVITORE table */
+        clauses = new ArrayList<Clause>();
+        tables = new ArrayList<String>();
+
+        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId())); 
+        clauses.add(Clause.join(Tables.SITI.COL_ID_SITO, Tables.MANUTENZIONE_RICEVITORE.COL_ID_SITO)); 
+        clauses.add(Clause.join(Tables.MANUTENZIONE_RICEVITORE.COL_ID_RICEVITORE, Tables.STRUMENTI_RICEVITORE.COL_ID_RICEVITORE)); 
+
+        cols=SqlUtil.comma(new String[]{
+             Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED ,Tables.MANUTENZIONE_RICEVITORE.COL_DATE_REMOVED , Tables.MANUTENZIONE_RICEVITORE.COL_FIRMWARE_VERSION,
+             Tables.STRUMENTI_RICEVITORE.COL_RICEVITORE_TYPE , Tables.STRUMENTI_RICEVITORE.COL_SISTEMA_SATELLITE , Tables.STRUMENTI_RICEVITORE.COL_SERIAL_NUMBER  
+               });
+
+
+        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.MANUTENZIONE_RICEVITORE.NAME);
+        tables.add(Tables.STRUMENTI_RICEVITORE.NAME);
+
         statement =
             getDatabaseManager()
-                .select(Tables.MANUTENZIONE_RICEVITORE.COLUMNS, Tables.MANUTENZIONE_RICEVITORE.NAME, 
-                    Clause.eq(Tables.MANUTENZIONE_RICEVITORE.COL_ID_SITO, gsacResource
-                        .getId()), " order by "
-                                   + Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED, -1);
+                .select(cols,  tables,
+                      Clause.and(clauses),
+                         " order by " + Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED, -1);
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
@@ -610,6 +655,11 @@ STRUMENTI_ANTENNA extends Tables {
                     new Date[] {
                         readDate(results, Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED),
                         readDate(results, Tables.MANUTENZIONE_RICEVITORE.COL_DATE_REMOVED)   };
+                if (dateRange [0]==null) {
+                     System.err.println( " null date start, end date is  "+dateRange[1]);
+                     continue;
+                   } 
+                System.err.println( " got date ");
                 GnssEquipment equipment = visits.get(dateRange[0]);
                 if (equipment != null) {
                     if ( !Misc.equals(equipment.getToDate(), dateRange[1])) {
@@ -625,26 +675,18 @@ STRUMENTI_ANTENNA extends Tables {
                 equipment.setReceiverFirmware(
                     results.getString(Tables.MANUTENZIONE_RICEVITORE.COL_FIRMWARE_VERSION ));
 
-                 /*   more 222  these are in table strumenti_ricevitore
-          STRUMENTI_RICEVITORE extends Tables {
-        public static final String COL_ID_RICEVITORE =  NAME + ".id_ricevitore";
-        public static final String COL_RICEVITORE_TYPE =  NAME + ".ricevitore_type";
-        public static final String COL_SISTEMA_SATELLITE =  NAME + ".sistema_satellite";
-        public static final String COL_SERIAL_NUMBER =  NAME + ".serial_number";
-
                 equipment.setReceiver(
-                    results.getString( Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
+                    results.getString( Tables.STRUMENTI_RICEVITORE.COL_RICEVITORE_TYPE));
                 equipment.setReceiverSerial(
-                    results.getString( Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
+                    results.getString( Tables.STRUMENTI_RICEVITORE.COL_SERIAL_NUMBER));
                 equipment.setSatelliteSystem(
-                    results.getString( Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
-                */
+                    results.getString( Tables.STRUMENTI_RICEVITORE.COL_SISTEMA_SATELLITE));
+                
                 //System.err.println(dateRange[0] + " " +  equipment.getReceiver());
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-
 
         equipmentList = GnssEquipment.sort(equipmentList);
         GnssEquipmentGroup equipmentGroup = null;
@@ -799,59 +841,6 @@ STRUMENTI_ANTENNA extends Tables {
     }
 
      */
-
-    /**
-     *  whatsit?
-     *
-     * @param gsacResource _more_
-     *
-     * @throws Exception _more_
-     */
-    private void readIdentificationMetadata(GsacResource gsacResource)
-            throws Exception {
-        Statement statement =
-            getDatabaseManager().select(
-                Tables.SITI.COLUMNS,
-                Tables.SITI.NAME,
-                Clause.eq(
-                    Tables.SITI.COL_ID_SITO,
-                    gsacResource.getId()), (String) null, -1);
-
-        ResultSet results;
-        try {
-            SqlUtil.Iterator iter =
-                getDatabaseManager().getIterator(statement);
-
-            // process each line in results of db query  
-            while ((results = iter.getNext()) != null) {
-                gsacResource.setLongName( results.getString( Tables.SITI.COL_LUOGO));
-
-                //  optional; not required  monument INscription not DEscription
-                // addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
-                //                    "Monument Inscription",
-                //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_MONUMENTINSCRI));
-
-                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
-                // the resource you are adding it to;
-                // the label on the web page or results
-                // the db column name 
-
-                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
-                    results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER ));
-
-                // optional; not required  CDP number 
-                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
-                //                    "CDP Number",
-                //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
-                //Only read the first row
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-
-
-    }
 
 
 
