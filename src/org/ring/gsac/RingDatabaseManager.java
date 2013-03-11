@@ -7,8 +7,6 @@ package org.ring.gsac;
 import org.gsac.gsl.*;
 import org.gsac.gsl.database.*;
 
-
-
 /**
  * All this really does is pass to the base class the location of
  * the database properties file. This needs to be of the form:<pre>
@@ -30,7 +28,6 @@ public class RingDatabaseManager extends GsacDatabaseManager {
     /** 
         This needs to be the path to your database properties file. 
     */
-
     public static final String DB_PROPERTIES =
         "/org/ring/gsac/resources/gsacdb.properties";
 
@@ -74,7 +71,5 @@ public class RingDatabaseManager extends GsacDatabaseManager {
         String packageName = dbm.getClass().getPackage().getName();
         dbm.writeTables(packageName);
     }
-
-
 
 }

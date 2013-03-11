@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,9 +17,6 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  */
-/*
- *
- */
 
 package org.ring.gsac;
 
@@ -29,8 +26,6 @@ import org.gsac.gsl.model.*;
 
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
-
-
 import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
@@ -42,8 +37,7 @@ import java.util.List;
 
 
 /**
- * Handles all of the resource related repository requests. The main
- * entry point is {@link #handleRequest}
+ * Handles all of the resource related repository requests. The main entry point is {@link #handleRequest}
  * Look for the CHANGEME comments
  *
  * @author  Jeff McWhirter
@@ -58,8 +52,6 @@ public class RingFileManager extends FileManager {
     public RingFileManager(RingRepository repository) {
         super(repository);
     }
-
-
 
     /**
      * _more_
@@ -81,8 +73,6 @@ public class RingFileManager extends FileManager {
         */
         return capabilities;
     }
-
-
 
     /**
      * CHANGEME
@@ -146,7 +136,6 @@ public class RingFileManager extends FileManager {
         }
 
         //find and create the files
-
         /**
          *   e.g.:
          * GsacResource site = theSiteForThisFile; may be null
@@ -159,10 +148,9 @@ public class RingFileManager extends FileManager {
          *
          *                           response.addResource(resource);
          */
+
         setSearchCriteriaMessage(response, msgBuff);
     }
-
-
 
     /**
      * CHANGEME
@@ -179,8 +167,6 @@ public class RingFileManager extends FileManager {
         return null;
     }
 
-
-
     /**
      * Create the list of resource types that are shown to the user. This is
      * called by the getDefaultCapabilities
@@ -196,8 +182,6 @@ public class RingFileManager extends FileManager {
     }
 
 
-
-
     /**
      * helper method
      *
@@ -207,6 +191,5 @@ public class RingFileManager extends FileManager {
         return (RingSiteManager) getRepository().getResourceManager(
             GsacSite.CLASS_SITE);
     }
-
 
 }

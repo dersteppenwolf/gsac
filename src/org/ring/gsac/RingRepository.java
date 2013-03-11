@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,56 +28,10 @@ import org.gsac.gsl.util.*;
 
 
 /*
-
-"Conforming GSAC Geodesy Repositories" and Standard GSAC Geodesy Parameters  for GPS/GNSS.
-
-Proposed Standard Parameters for GPS/GNSS (sites):
-SKW Dec. 5, 2012.
-
-four character ID               ABF3
-sitename (long name)                Aberdeen, Fairbanks, unit 3
-latitude, north +, in decimal degrees:      64.7749
-longitude, east +, in decimal degrees:      -141.9234
-receiver type                   ASHTECH UZ-12
-receiver firmware version           CQ00
-receiver SN                 UC 220 
-receiver date time installed            
-receiver date time removed
-antenna type                    LEIAT504GG  LEIS
-antenna serial number               20045
-antenna date installed      
-antenna date removed        
-
-Proposed Recommended Parameters (sites):
-
-ellipsoidal height, m           31.24 (not elevation above a geoid)
-date site installed         1997-04-27  00:00:00
-x Coordinate, m      1192672.04
-y Coordinate, m     -2450887.66
-z Coordinate, m         -5747096.03
-TRF or datum name           ITRFYY, WGS 84
-ellipsoid name          GRS 80,  WGS 84
-antenna offset up, m        0.0083
-antenna offset north, m     0.0000
-antenna offset east, m      0.0000
-iersDOMESNumber     33302M001
-Radome type         SCIS
-Radome serial number           
- (end of lists)
-
-What makes a GSAC geodesy implementation conforming is that it supports the standard GSAC geodesy parameters.  The database which GSAC reads as part of repository services needs to have fields corresponding to the standard parameters.  These parameters are used in GSAC queries, and / or their values appear in results of GSAC queries.  All standard parameters are required for a Conforming GSAC Repository.   
-
-To implement a conforming GSAC repository, you supply a list of the field names from your database for the standard parameters.  The GSAC standard parameters include, for example, 4-character ID, name, latitude, longitude, and for a geodesy data file for download, time range or span of the observations.
-
-GSAC will also automatically implement some or all of the recommended GSAC geodesy parameters, if you can supply data for them. Installation instructions will tell exactly how to tell GSAC code to read the standard and recommended parameters which are available in your database.
-*/
-
-/**
  * Main entry point into the IGS GSAC Repository repository
  *
- * versions: original october 2012, SKW.
+ * versions: original 11 Mar 2013 SKW.
  *
- * See the CHANGEME
  */
 public class RingRepository extends GsacRepository implements GsacConstants {
 
@@ -88,8 +42,9 @@ public class RingRepository extends GsacRepository implements GsacConstants {
 
 
     /**
-     * CHANGEME
+     * CHANGEME done for ring ingv
      *   Create the resource managers; ie search on sites, files, or both.
+     *
      *   Override this to make your own set of resource managers
      */
     public void initResourceManagers() {
@@ -97,8 +52,10 @@ public class RingRepository extends GsacRepository implements GsacConstants {
         //super.initResourceManagers();
 
         // If you only want a query for either sites or files but not both, uncomment one of these
+
         getResourceManager(GsacSite.CLASS_SITE);
-        //  getResourceManager(GsacFile.CLASS_FILE);
+
+        // getResourceManager(GsacFile.CLASS_FILE);
     }
 
 
@@ -121,7 +78,6 @@ public class RingRepository extends GsacRepository implements GsacConstants {
     /**
      * Factory method to create the resource manager that manages the given ResourceClass
      *
-     *
      * @param type _more_
      * @return resource manager
      */
@@ -132,7 +88,6 @@ public class RingRepository extends GsacRepository implements GsacConstants {
         if (type.equals(GsacFile.CLASS_FILE)) {
             return new RingFileManager(this);
         }
-
         return null;
     }
 
@@ -141,6 +96,7 @@ public class RingRepository extends GsacRepository implements GsacConstants {
      * get the html header. This just uses the base class' method which
      * will read the resources/header.html in this package. So, just edit that file
      * to define your own html header
+     * see resources/header.html file
      *
      * @param request the request
      *
@@ -155,6 +111,7 @@ public class RingRepository extends GsacRepository implements GsacConstants {
      * get the html footer. This just uses the base class' method which
      * will read the resources/footer.html in this package. So, just edit that file
      * to define your own html footer
+     * see resources/footer.html file
      *
      * @param request the request
      *

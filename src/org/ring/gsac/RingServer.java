@@ -15,7 +15,6 @@ import org.mortbay.jetty.NCSARequestLog;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 
-
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.handler.*;
 import org.mortbay.jetty.handler.AbstractHandler;
@@ -24,16 +23,11 @@ import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-
-
 import java.io.*;
 import java.util.Properties;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-
-
-
 
 /**
  *
@@ -64,7 +58,6 @@ public class RingServer extends GsacServer {
         return new GsacServlet(new RingRepository(), port, properties);
     }
 
-
     /**
      * _more_
      *
@@ -81,7 +74,5 @@ public class RingServer extends GsacServer {
             System.exit(1);
         }
     }
-
-
 
 }
