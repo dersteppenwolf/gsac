@@ -249,7 +249,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         List<GsacSite> sites = response.getSites();
         if (sites.size() == 0) {
             pw.append(
-                getRepository().makeInformationDialog(msg("No sites found")));
+                /* language  getRepository().makeInformationDialog(msg("No sites found / Nessun sito trovato"))); */
+                getRepository().makeInformationDialog(msg("No sites found / Nessun sito trovato")));
             pw.append(formBuffer);
 
             return;
