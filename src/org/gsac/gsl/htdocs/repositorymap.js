@@ -1,7 +1,6 @@
 /*
- * Copyright 2010 Jeff McWhirter & ramadda.org
+ * Copyright 2013 UNAVCO
  */
-
 
 var mapLayers = null;
 var map_google_terrain = "google.terrain";
@@ -15,10 +14,17 @@ var map_yahoo = "yahoo";
 var map_wms_topographic = "wms:Topo Maps,http://terraservice.net/ogcmap.ashx,DRG";
 var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vmap0,basic";
 
+
+/*  GSAC map viewpoint: */
+
+/*   center of US lower 48 states as  longitude, latitude */
 var defaultLocation = new OpenLayers.LonLat(-104, 40);
+
+/*   Italy for RING GSAC */
+/*var defaultLocation = new OpenLayers.LonLat(15, 41) */
+
+/* zoom level 3 is wider than western Europe; 4 is width of Italy and Greece and high as Italy */
 var defaultZoomLevel = 3;
-
-
 
 
 
