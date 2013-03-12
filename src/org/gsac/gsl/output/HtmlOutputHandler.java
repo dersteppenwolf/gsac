@@ -747,6 +747,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
 
+            /* language String[] labels = { "Browse / Sfogliare", "Information / Informazioni", "Help / Assistenza" }; */
             String[] labels = { "Browse", "Information", "Help" };
             String[] urls   = { URL_BROWSE_BASE, URL_REPOSITORY_VIEW,
                                 URL_HELP + "/index.html" };
