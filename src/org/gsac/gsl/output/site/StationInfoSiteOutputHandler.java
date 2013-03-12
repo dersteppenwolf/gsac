@@ -96,25 +96,6 @@ number chars in fields:
 
 public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
-    String id ="----";
-    String name ="--------------------";
-    String starttime ="9999 999 00 00 00";
-    String stoptime = "9999 999 00 00 00";
-
-    String rectype ="--------------------";
-    String recsn ="--------------------";
-    String firmvers ="--------------------";
-
-    String swvers ="-----";
-
-    String anttype ="--------------------";
-    String antsn ="--------------------";
-    String antn ="0";
-    String ante ="0";
-    String antht ="-------";
-    String htcod ="-----";
-
-    String dome ="-----";
 
     Calendar calendar = Calendar.getInstance();  // default is "GMT" 
 
@@ -165,7 +146,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
-            addSiteIdentification(pw, site);
             addSiteEquipment(pw, site);
         }
         response.endResponse();
@@ -196,8 +176,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
-        id = site.getShortName();
-        name = site.getLongName();
+
     }
 
 
@@ -237,6 +216,31 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteEquipment(PrintWriter pw, GsacSite site)
             throws Exception {
+    String id ="----";
+    String name ="--------------------";
+    id = site.getShortName();
+    name = site.getLongName();
+
+    String starttime ="9999 999 00 00 00";
+    String stoptime = "9999 999 00 00 00";
+
+    String rectype ="--------------------";
+    String recsn ="--------------------";
+    String firmvers ="--------------------";
+
+    String swvers ="-----";
+
+    String anttype ="--------------------";
+    String antsn ="--------------------";
+    String antn ="0";
+    String ante ="0";
+    String antht ="-------";
+    String htcod ="-----";
+
+    String dome ="-----";
+
+
+
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
@@ -246,6 +250,14 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
+            double[] xyz = equipment.getXyzOffset();
+            antht = offsetFormat.format(xyz[2]);
+            if (antht.equals("0")) { antht = "0.0000"; }
+            antn = offsetFormat.format(xyz[1]);
+            if (antn.equals("0")) { antn = "0.0000"; }
+            ante = offsetFormat.format(xyz[0]);
+            if (ante.equals("0")) { ante = "0.0000"; }
+
             if (equipment.hasReceiver()) {
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
@@ -254,17 +266,9 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
-            }
-            else if (equipment.hasAntenna()) {
+            } else if (equipment.hasAntenna()) {
                 anttype=getNonNullGamitString(equipment.getAntenna());
                 antsn  =getNonNullGamitString(equipment.getAntennaSerial());
-                double[] xyz = equipment.getXyzOffset();
-                antht = offsetFormat.format(xyz[2]);
-                if (antht.equals("0")) { antht = "0.0000"; }
-                antn = offsetFormat.format(xyz[1]);
-                if (antn.equals("0")) { antn = "0.0000"; }
-                ante = offsetFormat.format(xyz[0]);
-                if (ante.equals("0")) { ante = "0.0000"; }
                 starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
