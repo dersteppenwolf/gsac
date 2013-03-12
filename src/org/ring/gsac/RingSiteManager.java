@@ -81,7 +81,7 @@ public class RingSiteManager extends SiteManager {
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* where from ? */
 
-            //  more 222  this looks on ID_SITO not NOME_SITO which is needed
+            // language
             Capability siteCode =
                 initCapability(new Capability(ARG_SITE_CODE, "Nome Sito / Site Code",
                     Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
@@ -92,7 +92,7 @@ public class RingSiteManager extends SiteManager {
 
             // language:   latitudine longitudine
             capabilities
-                .add(initCapability(new Capability(ARG_BBOX, "Posizione limiti/Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
+                .add(initCapability(new Capability(ARG_BBOX, "Posizione Limiti / Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
             String[] values;
@@ -102,21 +102,21 @@ public class RingSiteManager extends SiteManager {
                 Tables.SITI.NAME,  // for a db table name
                 Tables.SITI.COL_LUOGO);  // for the db table and field name
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Luogo/city", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Luogo / Place", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // language: regione 
             values = getDatabaseManager().readDistinctValues(
                 Tables.SITI.NAME,
                 Tables.SITI.COL_REGIONE);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Regione/provincia/state", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Regione / Provincia / State", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // language: regione nazione
             values = getDatabaseManager().readDistinctValues(
                 Tables.SITI.NAME,
                 Tables.SITI.COL_NAZIONE);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nazione/Country", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nazione / Country", values, true, CAPABILITY_GROUP_ADVANCED));
 
             return capabilities;
         } catch (Exception exc) {
@@ -143,9 +143,9 @@ public class RingSiteManager extends SiteManager {
 
     /**
      * CHANGEME - done for RING  whatsit
-     * create and return the resource (site) identified by the given resource id
+     * create and return GSAC's internal "resource" (site object) [NOT a db object]  identified by the given resource id  in this case NOME_SITO
      *
-     * @param resourceId resource id. This isn't the resource code but actually the monument id
+     * @param resourceId resource id. 
      *
      * @return the resource or null if not found
      *
@@ -153,9 +153,8 @@ public class RingSiteManager extends SiteManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
 
-        // the key linking the ingv RING db tables appears to be ID_SITO
         Clause clause = Clause.eq(Tables.SITI.COL_NOME_SITO, resourceId);
-        //Clause clause = Clause.eq(Tables.SITI.COL_NOME_SITO, resourceId);
+
         Statement statement =
             getDatabaseManager().select(getResourceSelectColumns(),
                                         clause.getTableNames(), clause);
@@ -264,7 +263,9 @@ public class RingSiteManager extends SiteManager {
      */
     private static final String SITE_ORDER =
         " ORDER BY  " + Tables.SITI.COL_NOME_SITO + " ASC ";
-        // or by id number: " ORDER BY  " + Tables.SITI.COL_ID_SITO + " ??? see mysql order by syntax ";
+
+
+    // or by id number: " ORDER BY  " + Tables.SITI.COL_ID_SITO + " ??? see mysql order by syntax ";
 
 
     /**
@@ -292,7 +293,7 @@ public class RingSiteManager extends SiteManager {
     }
 
     /**
-     * Create a single site: apparently, read all the values, and all these will later appear in the HTML output, in the order read here.
+     * Create a single site: apparently, read all the values for the GSAC site internal site or 'resource' object
      *
      * @param results db results
      *
@@ -353,8 +354,8 @@ public class RingSiteManager extends SiteManager {
         public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
         public static final String COL_NAZIONE =  NAME + ".nazione";
         public static final String COL_REGIONE =  NAME + ".regione";
-
         */
+
         colCnt += 1;  
         String fourCharId = results.getString(colCnt++);
         colCnt += 4;  
@@ -363,9 +364,11 @@ public class RingSiteManager extends SiteManager {
         String lonString = results.getString(colCnt++);
         colCnt += 11;  
         String iersdomes = results.getString(colCnt++);  // see below    addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
-        colCnt += 3;  
+        colCnt += 4;  
         String country    = results.getString(colCnt++);
         String state      = results.getString(colCnt++);
+
+        int monid = results.getInt(Tables.SITI.COL_ID_MONUMENTO);
 
         double latitude  = 0.0;
          if (latString != null) { latitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim())); }
@@ -378,19 +381,14 @@ public class RingSiteManager extends SiteManager {
 
         GsacSite site = new GsacSite(fourCharId, fourCharId, "", latitude, longitude, 0.0);
 
-        // Add  items to show in the HTML web page.
-        // Note, this sets the order of items on the page.
-        //readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
+        // Add items to show in the HTML web page.
+        // does this set the order of items on the page.
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         if (iersdomes != null ) {
            site.addMetadata(new PropertyMetadata("iersdomes", iersdomes, "IERS DOMES"));  } // 3rd arg is web page label
 
-        //readIdentificationMonumentMetadata(site);
-
-        //readFrequencyStandardMetadata(site);
-        //readAgencyMetadata(site);
-        // to FIX readCalibrationMetadata(site);
-        // site.addMetadata(new GnssEquipment(satelliteSystem));
+        // readFrequencyStandardMetadata(site);
+        // readAgencyMetadata(site);
 
         site.setType(new ResourceType("gnss.site.continuous"));
 
@@ -438,6 +436,10 @@ public class RingSiteManager extends SiteManager {
         // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
         // eg dddmmss.ff  where dd or ddd or ddd is + or - degrees, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff.
         // Note the sign in front applies to the final result, not only the degrees.
+        
+        // check if the value actually is in range of -360 to +360,  so probably is a correct format:
+        if (stupidFormat >-361.0 && stupidFormat<361.0) { return stupidFormat; }
+
         if (Double.isNaN(stupidFormat)) {
             System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() has bad or NaN 'number' input (lat or longitude):" + stupidFormat );
             // input value is not a number,  such as "" from some IGS SLM  values.  CHECK: perhaps should return an impossible value, 9999, used for similar purpose in GAMIT station.info format. 
@@ -470,7 +472,6 @@ public class RingSiteManager extends SiteManager {
             // and make  negative of the sum
             dv *= -1.0;
         }
-
         // CHECK LOOK: new code: could check for out of range latitude and longitude 
 
         return dv;
@@ -515,6 +516,58 @@ public class RingSiteManager extends SiteManager {
     public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {
         readEquipmentMetadata(gsacResource);
+        readIdentificationMetadata(gsacResource);
+    }
+
+    /**
+     * get id metadata for the given site  
+     *
+     * @param gsacResource resource
+     *
+     * @throws Exception On badness
+     */
+   private void readIdentificationMetadata(GsacResource gsacResource)
+            throws Exception {
+        Statement statement =
+            getDatabaseManager().select(
+                Tables.SITI.COLUMNS,
+                Tables.SITI.NAME,
+                Clause.eq( Tables.SITI.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
+        ResultSet results;
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+                gsacResource.setLongName(
+                    results.getString(Tables.SITI.COL_NOME_SITO) +" "+ results.getString(Tables.SITI.COL_LUOGO));
+
+                // idn= results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER);
+
+                /* trap bad idn values */
+
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
+                    results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER));
+
+                /* addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES,
+                    "IERS DOMES",
+                    results.getString(
+                        Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
+                // CDP number is not wanted currently -  can show in sopac xml and in gsac plain text formats
+                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
+                //                    "CDP Number",
+                //                    results.getString(Tables.SIT ??? ));
+                 */
+
+                //Only read the first row of db query results returned
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
     }
 
 
@@ -588,26 +641,6 @@ public class RingSiteManager extends SiteManager {
                     System.err.println("    RingSiteManager: bad 'double' char string from the db for MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP is " + sord+"';  will use double="+snum);
                 }
 
-                  /*222 more get these
-STRUMENTI_ANTENNA extends Tables {
-        public static final String NAME = "strumenti_antenna";
-        public static final String COL_ID_ANTENNA =  NAME + ".id_antenna";
-        public static final String COL_ANTENNA_TYPE =  NAME + ".antenna_type";
-        public static final String COL_SERIAL_NUMBER =  NAME + ".serial_number";
-        public static final String COL_RADOME_TYPE =  NAME + ".radome_type";
-        public static final String COL_RADOME_SERIAL_NUMBER =  NAME + ".radome_serial_number";
-*/
-
-                /* 
-GnssEquipment(Date[] dateRange, String antenna,
-                         String antennaSerial, String dome,
-                         String domeSerial, String receiver,
-                         String receiverSerial, String receiverFirmware,
-                        o  Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED ,Tables.MANUTENZIONE_ANTENNA.COL_DATE_REMOVED , Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP ,
-             Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_NORTH , Tables.MANUTENZIONE_ANTENNA.COL_MARKER_ARP_EAST , Tables.MANUTENZIONE_ANTENNA.COL_ALIGNMENT ,
-             Tables.STRUMENTI_ANTENNA.COL_ANTENNA_TYPE , Tables.STRUMENTI_ANTENNA.COL_SERIAL_NUMBER  , Tables.STRUMENTI_ANTENNA.COL_RADOME_TYPE  , Tables.STRUMENTI_ANTENNA.COL_RADOME_SERIAL_NUMBER
-               double zOffset) 
-*/
 
                 GnssEquipment equipment =
                     new GnssEquipment(dateRange,
@@ -637,16 +670,14 @@ GnssEquipment(Date[] dateRange, String antenna,
              Tables.STRUMENTI_RICEVITORE.COL_RICEVITORE_TYPE , Tables.STRUMENTI_RICEVITORE.COL_SISTEMA_SATELLITE , Tables.STRUMENTI_RICEVITORE.COL_SERIAL_NUMBER  
                });
 
-
         tables.add(Tables.SITI.NAME);
         tables.add(Tables.MANUTENZIONE_RICEVITORE.NAME);
         tables.add(Tables.STRUMENTI_RICEVITORE.NAME);
 
         statement =
             getDatabaseManager()
-                .select(cols,  tables,
-                      Clause.and(clauses),
-                         " order by " + Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED, -1);
+                .select(cols,  tables, Clause.and(clauses),
+                        " order by " + Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED, -1);
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
@@ -656,10 +687,10 @@ GnssEquipment(Date[] dateRange, String antenna,
                         readDate(results, Tables.MANUTENZIONE_RICEVITORE.COL_DATE_INSTALLED),
                         readDate(results, Tables.MANUTENZIONE_RICEVITORE.COL_DATE_REMOVED)   };
                 if (dateRange [0]==null) {
-                     System.err.println( " null date start, end date is  "+dateRange[1]);
+                     //System.err.println( " null date start, end date is  "+dateRange[1]);
                      continue;
                    } 
-                System.err.println( " got date ");
+                //System.err.println( " got date ");
                 GnssEquipment equipment = visits.get(dateRange[0]);
                 if (equipment != null) {
                     if ( !Misc.equals(equipment.getToDate(), dateRange[1])) {
@@ -690,16 +721,17 @@ GnssEquipment(Date[] dateRange, String antenna,
 
         equipmentList = GnssEquipment.sort(equipmentList);
         GnssEquipmentGroup equipmentGroup = null;
+
         /* for every item 'equipment' in the local equipmentList, add it to the equipmentGroup */
         for (GnssEquipment equipment : equipmentList) {
             if (equipmentGroup == null) {
-                gsacResource.addMetadata(equipmentGroup =
-                    new GnssEquipmentGroup());
+                gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
             }
             equipmentGroup.add(equipment);
         }
-
     }
+
+
 
     public boolean checkDouble( String input )  
     {  
@@ -715,7 +747,7 @@ GnssEquipment(Date[] dateRange, String antenna,
     }  
 
 
-    /**
+    /* *
      * from db table represented in Tables.java as class SITELOG_FREQUENCYSTANDARD,
      * get the value of String COL_STANDARDTYPE and add it (with the label "clock") to the GsacResource object "gsacResource".
      * in this case the site is recognized in the db with the getDatabaseManager().select() call.
@@ -792,7 +824,6 @@ GnssEquipment(Date[] dateRange, String antenna,
                     "Agency",
                     results.getString(
                         Tables.SITELOG_OPERATIONALCONTACT.COL_NAMEAGENCY));
-
                 break;
             }
         } finally {
@@ -800,47 +831,6 @@ GnssEquipment(Date[] dateRange, String antenna,
         }
     }
 */
-
-
-    /**
-     *  get  SITELOG_IDENTIFICATIONMONUMENT.COL_MONUMENTDESCRIPT
-     *
-     * @param gsacResource _more_
-     *
-     * @throws Exception _more_
-    private void readIdentificationMonumentMetadata(GsacResource gsacResource)
-            throws Exception {
-        Statement statement =
-            getDatabaseManager().select(
-                Tables.SITELOG_IDENTIFICATIONMONUMENT.COLUMNS,
-                Tables.SITELOG_IDENTIFICATIONMONUMENT.NAME,
-                Clause.eq(
-                    Tables.SITELOG_IDENTIFICATIONMONUMENT.COL_FOURID,
-                    gsacResource.getId()), (String) null, -1);
-        ResultSet results;
-        try {
-            SqlUtil.Iterator iter =
-                getDatabaseManager().getIterator(statement);
-
-            // process each line in results of db query  
-            // [see definition of addPropertyMetadata in this file below]
-            while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(
-                    gsacResource,
-                    GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION,
-                    "Monument Description",
-                    results.getString(
-                        Tables.SITELOG_IDENTIFICATIONMONUMENT
-                            .COL_MONUMENTDESCRIPT));
-
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-    }
-
-     */
 
 
 
@@ -852,8 +842,7 @@ GnssEquipment(Date[] dateRange, String antenna,
      * @param label _more_
      * @param value _more_
      */
-    private void addPropertyMetadata(GsacResource gsacResource, String id,
-                                     String label, String value) {
+    private void addPropertyMetadata(GsacResource gsacResource, String id, String label, String value) {
         if ((value != null) && (value.length() > 0)) {
             gsacResource.addMetadata(new PropertyMetadata(id, value, label));
         }
@@ -872,7 +861,7 @@ GnssEquipment(Date[] dateRange, String antenna,
         try {
             return results.getDate(column);
         } catch (Exception exc) {
-            //if the date is undefined we get an error so we just return null to signify the current time
+            //if the date is undefined we get an error so we just return null 
             return null;
         }
     }
