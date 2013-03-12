@@ -77,6 +77,8 @@ function RepositoryMap (mapId, params) {
 
     this.addBaseLayers = function() {
         if(!this.mapLayers) {
+
+/* some of these layers are said not to work right:
             this.mapLayers = [
                          map_wms_openlayers,
                          map_yahoo,
@@ -89,10 +91,12 @@ function RepositoryMap (mapId, params) {
                          map_google_hybrid,
                          map_google_satellite
                          ];
+*/
+
+            /* it may be that first in this list is layer shown first */
             this.mapLayers = [
-                         map_wms_openlayers,
                          map_yahoo,
-                         //                         map_wms_topographic
+                         map_wms_openlayers,
                          ];
         }
 
