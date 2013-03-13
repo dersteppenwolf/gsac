@@ -84,17 +84,6 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
     String iersdomes ="";
     String cdpnum ="";
     String indate ="";
-    String starttime ="";
-    String stoptime ="";
-    String antht ="";
-    String antn ="";
-    String ante ="";
-    String rectype ="";
-    String firmvers ="";
-    String recsn ="";
-    String anttype ="";
-    String dome ="";
-    String antsn ="";
     int sitecount=0;
 
     /** output id */
@@ -280,6 +269,18 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteEquipment(PrintWriter pw, GsacSite site)
             throws Exception {
+    String starttime ="";
+    String stoptime ="";
+    String antht ="";
+    String antn ="";
+    String ante ="";
+    String anttype ="";
+    String dome ="";
+    String antsn ="";
+    String rectype ="";
+    String firmvers ="";
+    String recsn ="";
+
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
@@ -298,6 +299,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 double[] xyz = equipment.getXyzOffset();
                 antht = offsetFormat.format(xyz[2]);
                 if (antht.equals("0")) { antht = "0.0000"; }
+                if (antht == null) { antht = "0.0000"; }
                 antn = offsetFormat.format(xyz[1]);
                 if (antn.equals("0")) { antn = "0.0000"; }
                 ante = offsetFormat.format(xyz[0]);
@@ -315,7 +317,8 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
             }
 
             // construct the csv file line for this session at a site:
-            pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   // these often lacking: cdpnum+","+indate+","+ 
+            pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
+                          // these often lacking: cdpnum+","+indate+","+ 
                 starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sitecount+"\n");
 
         } // end for loop on sessions

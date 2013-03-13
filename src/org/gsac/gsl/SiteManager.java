@@ -153,28 +153,35 @@ public abstract class SiteManager extends GsacResourceManager {
      *
      * It seems that whichever is first in order below gets called when the web site search page (the from page, not a real search) is first called for, 
      * BEFORE any query is made, which for some handlers can cause a failure and error to browser and no site search results shown. but the HTML handler seems to always work OK.
+     *
+     * Order here is order in the GSAC search form's page Results Output[+] menu:
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
 
-        /* Comment out lines for handlers (which make output in files with particular formats of results to be sent to remote user) NOT wanted to be offered by your GSAC-WS repository.  */
+        /* "handlers" which make output in files with particular formats of results to be sent to remote user  */
+
+        /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  */
         /* For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) new TextSiteLogOutputHandler(getRepository(), getResourceClass()); */
-        /* However you are encouraged to allow all these, to to show consistent results from Federated GSAC collections. */
-        /* There is not harm in offering all the choices, evenif you do not see any value in one or more. */
+        /* However you are encouraged to allow all these, to show consistent results from Federated GSAC collections. */
+        /* There is no harm in offering all the choices, even if you do not see any value in one or more. */
 
         // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SOPAC XMP site log format 
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-        //how is this different from the above:  XmlSiteOutputHandler(getRepository(), getResourceClass());
+        // how is this different from XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
 
         // for GAMIT's station.info format  
-        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
+        // commented out March 13 2012 as per Fran Boler since the visits in the databases shown in results are not arranged like geodesy visits typical in this format
+        // allow back in when UNAVCO has fixed the code for StationInfoSiteOutputHandler
+
+        //new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
         // not yet implemented: IGS site log; FIX SiteLogOutputHandler gives empty file
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
@@ -184,13 +191,14 @@ public abstract class SiteManager extends GsacResourceManager {
 
         new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for full csv formatted file of site metadata
 
-        new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for short csv formatted file of limited contents
+        new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for short csv formatted file of limited contents, an old minor format kept only for backward compatibility in case anyone ever used it.
 
+
+        // IT formats. these only have skeleton code in case someone wants to build on them:
+        // the following formats only show a few parameters in results; more code needs to be written.
         new AtomSiteOutputHandler(getRepository(), getResourceClass());
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         new RssSiteOutputHandler(getRepository(), getResourceClass());
-
-        // the following formats only show a few parameters in results; more code needs to be written:
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2012-3 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -162,20 +162,20 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         sitecount++;
         pw.append(    " site "+sitecount+" (in this list):\n");
-        pw.append(    " site 4 char ID:              "+ site.getShortName() + "\n");
-        pw.append(    " site long name:              "+ site.getLongName() + "\n");
+        pw.append(    " site Four char ID:              "+ site.getShortName() + "\n");
+        pw.append(    " site Place name:              "+ site.getLongName() + "\n");
         pw.append(    " site Agency                  "+ getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "") + "\n");
         pw.append(    " site IERSDOMES               "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
         Date date = site.getFromDate();
         if (date != null) {
-            pw.append(" site installed date:         "+ myFormatDateTime(date) + "\n");
+            pw.append(" site Installed date:         "+ myFormatDateTime(date) + "\n");
         }
         else {
-            pw.append(" site installed date: \n");
+            pw.append(" site Installed date: \n");
         }
         pw.append(    " site monument description    "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
-        pw.append(    " site frequency standard      "+ getProperty(site, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "") + "\n");
-        // no one seems to use this
+        pw.append(    " site Frequency standard      "+ getProperty(site, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "") + "\n");
+        // no one seems to actually use this in geodesy site info sets
         //pw.append(    " site cdp number              "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
     }
 
@@ -292,7 +292,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
                 pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
                 pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
                 pw.append("      receiver installed date:"+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      receiver removed:       "+ myFormatDateTime(equipment.getToDate()) + "\n");
+                pw.append("      receiver removed date:  "+ myFormatDateTime(equipment.getToDate()) + "\n");
             }
 
             if (equipment.hasAntenna()) {
@@ -305,11 +305,9 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
                 pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
                 pw.append("      alignment from true N:  \n"); //                      _ALIGNMENTFROMTRUENORTH, "", ""));
                 pw.append("      antenna installed date: "+ myFormatDateTime(equipment.getFromDate()) + "\n");
-                pw.append("      antenna removed:        "+ myFormatDateTime(equipment.getToDate()) + "\n");
+                pw.append("      antenna removed date:   "+ myFormatDateTime(equipment.getToDate()) + "\n");
                 pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
                 pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
-                //pw.append(EQUIP_ANTENNACABLETYPE, "",
-                //pw.append(EQUIP_ANTENNACABLELENGTH,
             }
         }
     }

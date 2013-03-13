@@ -34,8 +34,15 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_ANTENNA = GsacArgs.ARG_SITE_PREFIX + "antenna";
 
+    /** _more_ */
+    public static final String ARG_ANTENNA_SN = GsacArgs.ARG_SITE_PREFIX + "antennaSN";
+
+    /** _more_ */
+    public static final String ARG_ANTENNA_HT = GsacArgs.ARG_SITE_PREFIX + "antenna.ht";
+
     /** HtCod is for GAMIT station.info format */
     public static final String ARG_ANTENNA_HTCOD = GsacArgs.ARG_SITE_PREFIX + "antenna.htcod";
+    
 
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";

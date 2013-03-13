@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it

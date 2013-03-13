@@ -251,9 +251,15 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
             double[] xyz = equipment.getXyzOffset();
+
             antht = offsetFormat.format(xyz[2]);
             if (antht.equals("0")) { antht = "0.0000"; }
-            antn = offsetFormat.format(xyz[1]);
+            //if (xyz[2] == null) { antht = "------"; }
+            //else {
+            //    }
+            //else if (antht.equals("0")) { antht = "0.0000"; }
+
+            antn = offsetFormat.format(xyz[1]); 
             if (antn.equals("0")) { antn = "0.0000"; }
             ante = offsetFormat.format(xyz[0]);
             if (ante.equals("0")) { ante = "0.0000"; }
