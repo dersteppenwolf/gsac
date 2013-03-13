@@ -269,7 +269,7 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     * Get the columns that are to be searched on                  whatsit for what?
+     * Get the columns that are to be searched on              
      *
      * @param request the request
      *
@@ -281,7 +281,7 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     * Get the order by clause     whatsit for what?
+     * Get the order by clause    
      *
      * @param request the request
      *
@@ -369,6 +369,7 @@ public class RingSiteManager extends SiteManager {
         String state      = results.getString(colCnt++);
 
         int monid = results.getInt(Tables.SITI.COL_ID_MONUMENTO);
+        int agencyid = results.getInt(Tables.SITI.COL_ID_RESPONSIBLE_AGENCY);
 
         double latitude  = 0.0;
          if (latString != null) { latitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim())); }
@@ -384,8 +385,9 @@ public class RingSiteManager extends SiteManager {
         // Add items to show in the HTML web page.
         // does this set the order of items on the page.
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
-        if (iersdomes != null ) {
-           site.addMetadata(new PropertyMetadata("iersdomes", iersdomes, "IERS DOMES"));  } // 3rd arg is web page label
+
+        //if (iersdomes != null ) {
+        //   site.addMetadata(new PropertyMetadata("iersdomes", iersdomes, "IERS DOMES"));  } // 3rd arg is web page label
 
         // readFrequencyStandardMetadata(site);
         // readAgencyMetadata(site);
@@ -528,39 +530,40 @@ public class RingSiteManager extends SiteManager {
      */
    private void readIdentificationMetadata(GsacResource gsacResource)
             throws Exception {
-        Statement statement =
-            getDatabaseManager().select(
-                Tables.SITI.COLUMNS,
-                Tables.SITI.NAME,
-                Clause.eq( Tables.SITI.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
+
         ResultSet results;
+
+        /* make a db query state to find the site corresponding to the current site or "gsacResource"; the NOME_SITO is stored as the resource's Id */
+        Statement statement =
+           getDatabaseManager().select( Tables.SITI.COLUMNS, Tables.SITI.NAME,
+                Clause.eq( Tables.SITI.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
+
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
 
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
+
+                /* for RING which does not have a site long name db value, combine the 4 character site ID with the place name 
+                   to make a kind of long name. */
                 gsacResource.setLongName(
                     results.getString(Tables.SITI.COL_NOME_SITO) +" "+ results.getString(Tables.SITI.COL_LUOGO));
 
-                // idn= results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER);
+                /* get and check IERS_DOMES. */
+                String idn= results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER);
+                /* trap bad value  "(A9)" and fix  */
+                if ( idn != null && idn.equals("(A9)") ) { idn = " " ; }
 
-                /* trap bad idn values */
+                /* argument 4 in this method's input is the value to save in the GSAC site object */
+                /* save the checked IERS DOMES value */
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
 
                 addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
-                    results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER));
+                    gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "Agency", "agency ");
 
-                /* addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES,
-                    "IERS DOMES",
-                    results.getString(
-                        Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
-                // CDP number is not wanted currently -  can show in sopac xml and in gsac plain text formats
-                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
-                //                    "CDP Number",
-                //                    results.getString(Tables.SIT ??? ));
-                 */
+                // CDP number is not in RING database?
 
                 //Only read the first row of db query results returned
                 break;
@@ -568,11 +571,52 @@ public class RingSiteManager extends SiteManager {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
+
+
+
+
+        List<Clause> clauses = new ArrayList<Clause>();
+
+        // db query part, to join the tables siti  and MONUMENTI_GPS for this site's ID_MONUMENTO
+        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId()));
+        clauses.add(Clause.join(Tables.SITI.COL_ID_MONUMENTO, Tables.MONUMENTI_GPS.COL_ID_MONUMENTO));
+        //clauses.add( Clause.eq( Tables.SITI.COL_NOME_SITO, gsacResource.getId()) );
+
+        String cols=SqlUtil.comma(new String[]{Tables.MONUMENTI_GPS.COL_DESCRIZIONE});
+
+        List<String> tables = new ArrayList<String>();
+
+        // the db query does "from" the  tables siti and MONUMENTI_GPS
+        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.MONUMENTI_GPS.NAME);
+
+        statement =
+            getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1); 
+        try {
+            SqlUtil.Iterator iter =
+                getDatabaseManager().getIterator(statement);
+
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "Monument description", 
+                     results.getString(Tables.MONUMENTI_GPS.COL_DESCRIZIONE) );
+
+                //Only read the first row of db query results returned
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+
+
     }
 
 
     /**
-     * CHANGME 
+     *  get equipment metadata from the tables siti , MANUTENZIONE_ANTENNA, and STRUMENTI_ANTENNA
      *
      * @param gsacResource _more_
      *
@@ -586,11 +630,10 @@ public class RingSiteManager extends SiteManager {
         List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
         Statement           statement;
         ResultSet           results;
+
         List<Clause> clauses = new ArrayList<Clause>();
-        List<String> tables = new ArrayList<String>();
 
-         
-
+        // db query part, to join the tables siti , MANUTENZIONE_ANTENNA, and STRUMENTI_ANTENNA
         clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId())); 
         clauses.add(Clause.join(Tables.SITI.COL_ID_SITO, Tables.MANUTENZIONE_ANTENNA.COL_ID_SITO)); 
         clauses.add(Clause.join(Tables.MANUTENZIONE_ANTENNA.COL_ID_ANTENNA, Tables.STRUMENTI_ANTENNA.COL_ID_ANTENNA)); 
@@ -601,15 +644,16 @@ public class RingSiteManager extends SiteManager {
              Tables.STRUMENTI_ANTENNA.COL_ANTENNA_TYPE , Tables.STRUMENTI_ANTENNA.COL_SERIAL_NUMBER  , Tables.STRUMENTI_ANTENNA.COL_RADOME_TYPE  , Tables.STRUMENTI_ANTENNA.COL_RADOME_SERIAL_NUMBER  
                });
 
+        List<String> tables = new ArrayList<String>();
 
+        // the db query does "from" the  tables siti , MANUTENZIONE_ANTENNA, and STRUMENTI_ANTENNA
         tables.add(Tables.SITI.NAME);
         tables.add(Tables.MANUTENZIONE_ANTENNA.NAME);
         tables.add(Tables.STRUMENTI_ANTENNA.NAME);
 
         statement =
             getDatabaseManager()
-                .select(cols,  tables,
-                      Clause.and(clauses),
+                .select(cols,  tables, Clause.and(clauses),
                          " order by " + Tables.MANUTENZIONE_ANTENNA.COL_DATE_INSTALLED, -1);
         try {
             SqlUtil.Iterator iter =
@@ -641,6 +685,14 @@ public class RingSiteManager extends SiteManager {
                     System.err.println("    RingSiteManager: bad 'double' char string from the db for MANUTENZIONE_ANTENNA.COL_MARKER_ARP_UP is " + sord+"';  will use double="+snum);
                 }
 
+
+                // see: src/org/gsac/gsl/metadata/gnss/GsacEquipment.java : 
+                /*  public GnssEquipment(Date[] dateRange, String antenna,
+                         String antennaSerial, String dome, String domeSerial, 
+
+                         String receiver, String receiverSerial, String receiverFirmware,
+
+                         double zOffset) { */
 
                 GnssEquipment equipment =
                     new GnssEquipment(dateRange,
@@ -713,7 +765,6 @@ public class RingSiteManager extends SiteManager {
                 equipment.setSatelliteSystem(
                     results.getString( Tables.STRUMENTI_RICEVITORE.COL_SISTEMA_SATELLITE));
                 
-                //System.err.println(dateRange[0] + " " +  equipment.getReceiver());
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
