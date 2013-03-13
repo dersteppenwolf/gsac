@@ -304,58 +304,6 @@ public class RingSiteManager extends SiteManager {
     @Override
     public GsacSite makeResource(ResultSet results) throws Exception {
         int colCnt = 1;
-        //              whatsit - hpw does this know which table?
-        /*   order must match column order in the table e.g. for the IGS site log db:
-        class SITELOG_LOCATION extends Tables {
-        public static final String NAME = "SiteLog_Location";
-        public String getName() {return NAME;}
-        public String getColumns() {return COLUMNS;}
-         column 1: public static final String COL_FOURID =  NAME + ".FourID";
-        public static final String COL_CITY =  NAME + ".City";
-        public static final String COL_STATE =  NAME + ".State";
-        public static final String COL_COUNTRY =  NAME + ".Country";
-        public static final String COL_TECTONIC =  NAME + ".Tectonic";
-        public static final String COL_XCOOR =  NAME + ".XCoor";
-        public static final String COL_YCOOR =  NAME + ".YCoor";
-        public static final String COL_ZCOOR =  NAME + ".ZCoor";
-        public static final String COL_LATITUDENORTH =  NAME + ".LatitudeNorth";
-        public static final String COL_LONGITUDEEAST =  NAME + ".LongitudeEast";
-        public static final String COL_ELEVATION =  NAME + ".Elevation";
-        */
-        /* for Ring ingv db:
-        public static class SITI extends Tables {
-        public static final String NAME = "siti";
-        public String getName() {return NAME;}
-        public String getColumns() {return COLUMNS;}
-         column 1: public static final String COL_ID_SITO =  NAME + ".id_sito";
-        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
-        public static final String COL_ID_RETE =  NAME + ".id_rete";
-        public static final String COL_DATA_MATERIALIZZAZIONE =  NAME + ".data_materializzazione";
-        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
-        public static final String COL_GEOLOGIA =  NAME + ".geologia";
-        public static final String COL_LUOGO =  NAME + ".luogo";
-        public static final String COL_LATITUDINE =  NAME + ".latitudine";
-        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
-        public static final String COL_QUOTA =  NAME + ".quota";
-        public static final String COL_X =  NAME + ".x";
-        public static final String COL_Y =  NAME + ".y";
-        public static final String COL_Z =  NAME + ".z";
-        public static final String COL_X_UTMED50 =  NAME + ".x_utmed50";
-        public static final String COL_Y_UTMED50 =  NAME + ".y_utmed50";
-        public static final String COL_TIPO_MATERIALIZZAZIONE =  NAME + ".tipo_materializzazione";
-        public static final String COL_HEIGHT_OF_MONUMENT =  NAME + ".height_of_monument";
-        public static final String COL_MONUMENT_FOUNDATION =  NAME + ".monument_foundation";
-        public static final String COL_FOUNDATION_DEPTH =  NAME + ".foundation_depth";
-        public static final String COL_MONUMENT_INSCRIPTION =  NAME + ".monument_inscription";
-        public static final String COL_IERS_DOMES_NUMBER =  NAME + ".iers_domes_number";
-        public static final String COL_BEDROCK_TYPES =  NAME + ".bedrock_types";
-        public static final String COL_ID_ON_SITE_AGENCY =  NAME + ".id_on_site_agency";
-        public static final String COL_ID_RESPONSIBLE_AGENCY =  NAME + ".id_responsible_agency";
-        public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
-        public static final String COL_NAZIONE =  NAME + ".nazione";
-        public static final String COL_REGIONE =  NAME + ".regione";
-        */
-
         colCnt += 1;  
         String fourCharId = results.getString(colCnt++);
         colCnt += 4;  
@@ -367,9 +315,6 @@ public class RingSiteManager extends SiteManager {
         colCnt += 4;  
         String country    = results.getString(colCnt++);
         String state      = results.getString(colCnt++);
-
-        int monid = results.getInt(Tables.SITI.COL_ID_MONUMENTO);
-        int agencyid = results.getInt(Tables.SITI.COL_ID_RESPONSIBLE_AGENCY);
 
         double latitude  = 0.0;
          if (latString != null) { latitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim())); }
@@ -385,9 +330,6 @@ public class RingSiteManager extends SiteManager {
         // Add items to show in the HTML web page.
         // does this set the order of items on the page.
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
-
-        //if (iersdomes != null ) {
-        //   site.addMetadata(new PropertyMetadata("iersdomes", iersdomes, "IERS DOMES"));  } // 3rd arg is web page label
 
         // readFrequencyStandardMetadata(site);
         // readAgencyMetadata(site);
@@ -560,9 +502,6 @@ public class RingSiteManager extends SiteManager {
                 addPropertyMetadata(
                     gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
 
-                addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "Agency", "agency ");
-
                 // CDP number is not in RING database?
 
                 //Only read the first row of db query results returned
@@ -573,14 +512,13 @@ public class RingSiteManager extends SiteManager {
         }
 
 
-
-
+        // db query part, to join the tables siti  and MONUMENTI_GPS for this site's ID_MONUMENTO
         List<Clause> clauses = new ArrayList<Clause>();
 
-        // db query part, to join the tables siti  and MONUMENTI_GPS for this site's ID_MONUMENTO
         clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId()));
+
+        // join the table with these 2 values:
         clauses.add(Clause.join(Tables.SITI.COL_ID_MONUMENTO, Tables.MONUMENTI_GPS.COL_ID_MONUMENTO));
-        //clauses.add( Clause.eq( Tables.SITI.COL_NOME_SITO, gsacResource.getId()) );
 
         String cols=SqlUtil.comma(new String[]{Tables.MONUMENTI_GPS.COL_DESCRIZIONE});
 
@@ -612,6 +550,33 @@ public class RingSiteManager extends SiteManager {
 
 
 
+        clauses = new ArrayList<Clause>();
+        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId()));
+        // join the table with these 2 values:
+        clauses.add(Clause.join(Tables.SITI.COL_ID_RESPONSIBLE_AGENCY, Tables.AGENZIE.COL_ID_AGENZIA));
+
+        cols=SqlUtil.comma(new String[]{Tables.AGENZIE.COL_AGENZIA});
+
+        tables = new ArrayList<String>();
+
+        // the db query does "from" the tables siti and AGENZIE
+        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.AGENZIE.NAME);
+
+        statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        try {
+            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+                addPropertyMetadata(
+                    gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "name of agency",
+                     results.getString(Tables.AGENZIE.COL_AGENZIA) );
+                //Only read the first row of db query results returned
+                break;
+            }
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
     }
 
 
@@ -836,45 +801,6 @@ public class RingSiteManager extends SiteManager {
                     results.getString(
                         Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
 
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-    }
-*/
-
-    /**
-     * get from SITELOG_OPERATIONALCONTACT table, value of NAMEAGENCY
-     *
-     * @param gsacResource _more_
-     *
-     * @throws Exception _more_
-     
-    private void readAgencyMetadata(GsacResource gsacResource)
-            throws Exception {
-        Statement statement =
-            getDatabaseManager().select(
-                Tables.SITELOG_OPERATIONALCONTACT.COLUMNS,
-                Tables.SITELOG_OPERATIONALCONTACT.NAME,
-                Clause.eq(
-                    Tables.SITELOG_OPERATIONALCONTACT.COL_FOURID,
-                    gsacResource.getId()), (String) null, -1);
-        ResultSet results;
-        try {
-            SqlUtil.Iterator iter =
-                getDatabaseManager().getIterator(statement);
-            // process each line in results of db query  
-                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
-                // the resource you are adding it to;
-                // the label on the web page or results
-                // the db column name 
-            while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY,
-                    "Agency",
-                    results.getString(
-                        Tables.SITELOG_OPERATIONALCONTACT.COL_NAMEAGENCY));
                 break;
             }
         } finally {
