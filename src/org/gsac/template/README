@@ -385,7 +385,7 @@ getResource()
 
 @MACRO.PREFIX@SiteManager.java  
 
-You will see a template file for @MACRO.PREFIX@SiteManager.java which ss initially created automatically by the
+You will see a template file for @MACRO.PREFIX@SiteManager.java which was initially created automatically by the
 GSAC build process.  @MACRO.PREFIX@SiteManager.java requires most of the new JAVA code for a new GSAC.
 
 A GSAC programmer needs to know Java and have an understanding of database concepts and queries.
@@ -401,25 +401,26 @@ Make sure you have a line like
 import org.@MACRO.PREFIX@.gsac.database.*;  (for example import org.igs.gsac.database.*;).
 
 
-(The ---SiteManager.java file has 5 'CHANGEME' notes in the template  @MACRO.PREFIX@SiteManager.java provided by GSAC builds.
+(The @MACRO.PREFIX@SiteManager.java file has 5 'CHANGEME' notes in the template @MACRO.PREFIX@SiteManager.java provided by GSAC builds.
 The Changme lines are only a few hints of some places where new code is needed.)
 
-As a practical matter look at the *SiteManager.java files in the IGS and RING GSAC packages, for how to create code to
+As a practical matter look at the ***SiteManager.java files in the IGS and RING GSAC packages, for how to create code to
 read from a database.  Every database is different so there is no way GSAC can provide this code in advance.
-You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract 
-values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.  
+You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
+values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
 
-RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the 
-GSAC build process the IgsSiteManager.java file has 550 more lines than its initial version.  
-These figures give you an idea how much coding is required to install GSAC.
+RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the
+GSAC build process the IgsSiteManager.java file has 550 more lines than its initial version.  These figures give you an idea
+how much coding is required to install GSAC.
 
 UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
-able to provide a way to autoamte some or all of the SiteManager.java code, but have not done so yet.  Even now, installing GSAC 
-is far simpler than creating a suite of geoscience web services ab inition, and GSAC provides complete and standard data repository
+able to provide a way to automate some or all of the SiteManager.java code, but have not done so yet.  Even so, installing GSAC
+is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
 services, which also permit federated collaborations.
 
-After you have written new java test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
-try your GSAC on your local development platform.
+After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. More details about this process below.
+
 
 ########################################################################
 Web Site Page Design, Contents, and Images 
