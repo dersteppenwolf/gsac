@@ -153,7 +153,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * a GAMIT station.info file header for this case.
+     * 'print' a GAMIT station.info file header for this case.
      *
      * @param pw _more_
      */
@@ -167,7 +167,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * get site id details for GAMI station.info format style
+     * ? needed only to define class. get site id details for GAMI station.info format style
      *
      * @param pw _more_
      * @param site _more_
@@ -176,7 +176,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
-
     }
 
 
@@ -189,8 +188,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
      *
      * @return _more_
      */
-    private String getProperty(GsacResource site, String propertyId,
-                               String dflt) {
+    private String getProperty(GsacResource site, String propertyId, String dflt) {
         List<GsacMetadata> propertyMetadata =
             (List<GsacMetadata>) site.findMetadata(
                 new GsacMetadata.ClassMetadataFinder(PropertyMetadata.class));
@@ -216,6 +214,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteEquipment(PrintWriter pw, GsacSite site)
             throws Exception {
+
     String id ="----";
     String name ="--------------------";
     id = site.getShortName();
@@ -239,51 +238,78 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
     String dome ="-----";
 
-
-
+        /* get a list of GsacMetadata objects for the result from the GSAC query */
         List<GsacMetadata> equipmentMetadata =
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+            site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
 
-        // htcod =getProperty(site, GsacExtArgs.ARG_ANTENNA_HTCOD, "");
-
+        /* for each one, get out its 'GnssEquipment' object and do ... */
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
 
             double[] xyz = equipment.getXyzOffset();
 
-            antht = offsetFormat.format(xyz[2]);
-            if (antht.equals("0")) { antht = "0.0000"; }
-            //if (xyz[2] == null) { antht = "------"; }
-            //else {
-            //    }
-            //else if (antht.equals("0")) { antht = "0.0000"; }
-
-            antn = offsetFormat.format(xyz[1]); 
-            if (antn.equals("0")) { antn = "0.0000"; }
-            ante = offsetFormat.format(xyz[0]);
-            if (ante.equals("0")) { ante = "0.0000"; }
+            // make string of antenna vertical offset double value, trapping bad values, and reformatting for gamit station.info format
+            if (xyz == null ) { antht = "------"; }
+            else  { 
+               antht = offsetFormat.format(xyz[2]); 
+               if (antht.equals("0")) { antht = "0.0000"; }
+               if (antht.equals("�")) { antht = "0.0000"; }
+               antn = offsetFormat.format(xyz[1]); 
+               if (antn.equals("0")) { antn = "0.0000"; }
+               ante = offsetFormat.format(xyz[0]);
+               if (ante.equals("0")) { ante = "0.0000"; }
+            }
+            Date startDate=null;
+            Date stopDate=null;
 
             if (equipment.hasReceiver()) {
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
                 firmvers=equipment.getReceiverFirmware();
+                startDate = equipment.getFromDate();
+                stopDate = equipment.getToDate();
                 starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
-            } else if (equipment.hasAntenna()) {
+            } 
+
+            else if (equipment.hasAntenna()) {
                 anttype=getNonNullGamitString(equipment.getAntenna());
                 antsn  =getNonNullGamitString(equipment.getAntennaSerial());
+                dome = getNonNullGamitString(equipment.getDome());
+                startDate = equipment.getFromDate();
+                stopDate = equipment.getToDate();
                 starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
-                dome = getNonNullGamitString(equipment.getDome());
             }
 
             // construct the gamit station.info file line for this session at a site:
-            pw.append(" " +setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+
+            // nMyVar == null ... null means that the object has a null pointer i.e. points to nothing.
+
+            // int compareTo(Date date) Compares the value of the invoking object with that of date. Returns 0 if the values are equal. 
+            //Returns a negative value if the invoking object is earlier than date. Returns a positive value if the invoking object is later than date.
+
+            // trap and log bad cases, or print good line if possible:
+            if ( startDate==null && stopDate==null) {  // start time equals stop time
+              pw.append("* Error in supplied information. In next line, start time and stop time are both undefined. \n");
+              pw.append("*");
+            }
+            else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) == 0) {  // start time equals stop time
+              pw.append("* Error in supplied information. In next line, start time equals stop time. zero duration session. \n");
+              pw.append("*");
+            }
+            else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) > 0) {  // start time is later than stop time
+              pw.append("* Error in supplied information. In next line, start time is after stop time \n");
+              pw.append("*");
+            }
+            else { // all OK, no "*" needed as first char in line
+              pw.append(" ");
+            }
+            pw.append(   setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                 +setStringLength(antht,7)+"  "
                 +setStringLength(htcod,5)+"  "
                 +setStringLength(antn,7)+"  "
@@ -299,11 +325,10 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         } // end for loop on equipment items = sessions
     }     // end addSiteEquipment
 
-
-//number chars in fields:
-//*SITE  Station Name      Session Start      Session Stop       Ant Ht   HtCod  Ant N    Ant E    Receiver Type         Vers                  SwVer  Receiver SN           Antenna Type     Dome   Antenna SN          
-//  4       16             17                    17               7       5         7        7        20                     20                 5        20                   16              4          20
-
+    //number chars in fields:
+    //*SITE  Station Name      Session Start      Session Stop       Ant Ht   HtCod  Ant N    Ant E    Receiver Type         Vers                  SwVer  Receiver SN           Antenna Type     Dome   Antenna SN          
+    //  4       16             17                    17               7       5         7        7        20                     20                 5        20                   16              4          20
+    
 
     /**
      * _more_
@@ -390,8 +415,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
    */
   public String  getGamitTimeFormat(String starttime, java.util.Date gd) {
       if (starttime.equals("") || starttime.equals("--------------------") ) {
-          starttime="9999 999 00 00 00";
-          // the GAMIT station.info 'no data' format
+          starttime="9999 999 00 00 00"; // the GAMIT station.info 'no date' format
       } else {
           calendar.setTime( gd );
           String yyyy = calendar.get(calendar.YEAR) +""; 
