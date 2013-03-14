@@ -1,18 +1,37 @@
-
 ################################################################################
 
-GSAC How to install README, Part 1. 
+GSAC_WS Installation
 
-This README file is in the GSAC package at gsac/trunk/src/org/gsac/README.
+README, Part 1.
+
+15 March 2013.
+
+What is UNAVCO's GSAC?
+
+UNAVCO's GSAC-WS is a complete software package to provide web services for data discovery about sites (monuments) and about the GNSS instruments
+(antennas and receivers) at the sites, and data access (file downloads) in a geoscience data repository
+for remote users, through a web site GUI, an APIi, and a GSAC client program using the API.
+GSAC is freely available from SourceForge, as described here.  GSAC was created and is maintained by UNAVCO (www.unaco.org).
+
+The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Services document,
+"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
+introduces GSAC in detail and lists requirements to install and run GSACC.  The GSAC User Guide
+"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
+is for persons using data repositories powered by GSAC.
+
+This README file describes the first steps in GSAC installation.  This README file is in gsac/trunk/src/org/gsac/ in the GSAC package,
+and is the first of two README files detailing GSAC installation.
+
 
 Installing the UNAVCO GSAC Web Services suite for your data repository.
- 
-To install GSAC you need a Linux OS or Mac, with Java 1.6, svn, ant, and bash.  
-You need a database (in MySQL, Postgres, or Oracle) with all complete geodesy parameters about sites (monuments) and about the GNSS instruments 
-(antennas and receivers) at the sites.  
 
-GSAC site searches  provide details about sites (monuments) and about the GNSS instruments    
+To install GSAC you need a Linux OS or Mac, with Java 1.6, svn, ant, and bash.
+
+GSAC site searches provide details about sites (monuments) and about the GNSS instruments
 (antennas and receivers) at the sites, in geodesy formats such as SOPAC XML, SINEX, GAMIT station.info, and others.
+
+You need a database (in MySQL, Postgres, or Oracle) with complete geodesy parameters about sites (monuments) 
+and about the GNSS instruments (antennas and receivers) at the sites.
 
 You may also provide a download service for RINEX or other GNSS data files.
 File download is very easy when you already have an FTP service, an FTP URL to each data file to download, and
@@ -20,26 +39,9 @@ database records associating file download FTP URLs with the instrument site inf
 start and end times of data in each file.
 
 
-What is UNAVCO's GSAC?
-
-UNAVCO's GSAC-WS is a complete software package to provide web services for data discovery about sites (monuments) and about the GNSS instruments    
-(antennas and receivers) at the sites, and data access (file downloads) in a geoscience data repository 
-for remote users, through a web site GUI, an APIi, and a GSAC client program using the API.  
-GSAC is freely available from SourceForge, as described here.  GSAC was created and is maintained by UNAVCO (www.unaco.org).  
-
-The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Services document, 
-"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail and lists requirements to install and run GSACC.  The GSAC User Guide 
-"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf) 
-is for persons using data repositories powered by GSAC.
-
-This README file describes the first steps in GSAC installation.  This README file is in gsac/trunk/src/org/gsac/ in the GSAC package, 
-and is the first of two README files detailing GSAC installation.
-
-
 ################################################################################
 
-You should have done the following already, if you are reading this README file in a GSAC installation:  
+You have done the following already, if you are reading this README file in a GSAC installation:  
 
 Creating the initial GSAC Server
 
@@ -60,7 +62,7 @@ This svn command creates the new subdirectory "gsac" and files under it.
 ################################################################################
 
 
-GSAC Site Map
+Center the GSAC Site Map
 
 Site search results from GSAC makes a map for the site location with OpenLayers. To center the map for your
 geodesy network:
@@ -81,9 +83,7 @@ For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers
 
 Build GSAC
 
-Next, go to the gsac/trunk/ subdirectory:
-
-cd gsac/trunk/
+Next, go to the trunk/src/gsac/trunk/ subdirectory.
 
 Do the command "ant" which builds all the basic GSAC components:
 
