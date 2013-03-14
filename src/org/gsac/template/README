@@ -337,17 +337,19 @@ The @MACRO.PREFIX@Repository class is the main entry point. It mostly creates th
 and other @MACRO.PREFIX@---Manager.java (for example for the UNAVCO IGS GSAC, in  src/org/igs/gsac/, 
 the files IgsFileManager.java, IgsRepository.java, IgsServer.java, and IgsSiteManager.java).
 
-Files in @MACRO.SRCDIR@/ have the Java code for your repository. 
+Files in @MACRO.SRCDIR@/ have the Java code especially for your repository. 
 
-The files @MACRO.PREFIX@SiteManager.java and 
-@MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
+The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
 and by the GSAC API.  See the lines in those Java files marked with CHANGEME for a small idea about what needs to be changed. 
 
 For a more detailed description of adding to the GSAC Java files, you may review code in other 
 GSAC implementations checked into SourceForge, such as the file org/igs/gsac/IgsSiteManager.java.
 
-Chnage or add to these files:
+After you have written new Java test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform.
 
+
+Modify or add new Java to these files:
 
 @MACRO.PREFIX@Repository.java 
 
@@ -355,20 +357,22 @@ Above the import lines, add the new Java package name, in this form:
 package org.@MACRO.PREFIX@.gsac; 
 
 In the method initResourceManagers(),  uncomment 
-     super.initResourceManagers();
-to search on both sites and data files in the database.  
 
-If you wish  to only search  only for sites or only for files, use either the calls getResourceManager(GsacSite.CLASS_SITE) 
-or getResourceManager(GsacFile.CLASS_FILE).
+     super.initResourceManagers();
+
+to search on both sites and data files in the database.  Or, if you wish  to only search only for sites or only for files, 
+use either one of the calls getResourceManager(GsacSite.CLASS_SITE) or getResourceManager(GsacFile.CLASS_FILE).
 
 
 
 @MACRO.PREFIX@FileManager.java 
 
+You need not bother with this file if you do not supply a data file download service.
+
 Above the import lines, add the new Java package name, in this form:
 package org.@MACRO.PREFIX@.gsac;
 
-This class has 3 'changeme' sections:
+This class has 3 'Changeme' sections:
 
 doGetQueryCapabilities()
 
@@ -377,34 +381,45 @@ handleRequest()
 getResource()
 
 
-        ########################################################################
+
 
 @MACRO.PREFIX@SiteManager.java  
 
-Above the import lines, add the new Java package name, in this form:
+You will see a template file for @MACRO.PREFIX@SiteManager.java which ss initially created automatically by the
+GSAC build process.  @MACRO.PREFIX@SiteManager.java requires most of the new JAVA code for a new GSAC.
+
+A GSAC programmer needs to know Java and have an understanding of database concepts and queries.
+
+First, above the "import" lines, add the new Java package name, in this form:
+
 package org.@MACRO.PREFIX@.gsac;
 
+such as package org.igs.gsac;  which is in the IgsSiteManager.java.
 
-@MACRO.PREFIX@SiteManager.java requires most of the new JAVA code for a new GSAC.
+Make sure you have a line like
 
-This class has 5 'Changeme' notes in the template provided by GSAC builds.
-The Changme lines are in the methods:
-doGetQueryCapabilities() - defines things to search on
-handleRequest
-getResource
-Default query order"
-makeResource
-getResourceSelectColumns().
+import org.@MACRO.PREFIX@.gsac.database.*;  (for example import org.igs.gsac.database.*;).
 
-As a practical matter look at the *SiteManager.java files in the cddis, igs, ring, and sopac 
-GSAC packages, especially the igs and ring GSACs for, how to create code to
+
+(The ---SiteManager.java file has 5 'CHANGEME' notes in the template  @MACRO.PREFIX@SiteManager.java provided by GSAC builds.
+The Changme lines are only a few hints of some places where new code is needed.)
+
+As a practical matter look at the *SiteManager.java files in the IGS and RING GSAC packages, for how to create code to
 read from a database.  Every database is different so there is no way GSAC can provide this code in advance.
 You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract 
-values from the database.  A programmer needs to know Java and have an understanding of database concepts and queries.
+values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.  
 
-In the case of the RingSiteManager.java, it has 490 lines more than the default RingSiteManager.java initially created by the 
-GSAC build process from template file; the IgsSiteManager.java file has 550 more lines than its initial version.  This gives you 
-an idea how much coding is required to install GSAC.
+RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the 
+GSAC build process the IgsSiteManager.java file has 550 more lines than its initial version.  
+These figures give you an idea how much coding is required to install GSAC.
+
+UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
+able to provide a way to autoamte some or all of the SiteManager.java code, but have not done so yet.  Even now, installing GSAC 
+is far simpler than creating a suite of geoscience web services ab inition, and GSAC provides complete and standard data repository
+services, which also permit federated collaborations.
+
+After you have written new java test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform.
 
 ########################################################################
 Web Site Page Design, Contents, and Images 
@@ -425,7 +440,7 @@ Put image files used on the web main page  in the new directory, htdocs.
 
 In your index.html file, the image is added like 
 
-<img  src="${htdocs}/RINGheader_r1_c1.jpg" >
+<img  src="${htdocs}/home-page-header_1.jpg" >
 
 As usual in HTML, images also may be retrieved from another web server, for example, with
 
@@ -478,8 +493,7 @@ To see the new GSAC, in the runserver screen output  is a line such as
 
      [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacmyrepo/gsacapi
 
-Enter the "http:/hostname:8080/gsacmyrepo/gsacapi" part in a browser URL address window on the same machine to
-see your new GSAC.
+Enter the "http:/hostname:8080/gsacmyrepo/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
 
 
 ########################################################################
@@ -539,5 +553,6 @@ to construct the complete URL specifying FTP for each data file, with extra Java
 such as data file name, which you can find in results from GSAC queries.
 
 
-28 Feb. 2013
+15 March 2013
 SKW 
+UNAVCO
