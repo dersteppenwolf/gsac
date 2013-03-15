@@ -250,7 +250,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         if (sites.size() == 0) {
             pw.append(
                 /* language  getRepository().makeInformationDialog(msg("No sites found / Nessun sito trovato"))); */
-                getRepository().makeInformationDialog(msg("No sites found / Nessun sito trovato")));
+                getRepository().makeInformationDialog(msg("No sites found")));
             pw.append(formBuffer);
 
             return;
