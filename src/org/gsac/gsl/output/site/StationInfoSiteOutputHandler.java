@@ -228,7 +228,6 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     String rectype ="--------------------";
     String recsn ="--------------------";
     String firmvers ="--------------------";
-    String swvers ="-----";
     String anttype ="--------------------";
     String antsn ="--------------------";
     String antn ="0";
@@ -236,6 +235,17 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     String antht ="-------";
     String htcod ="-----";
     String dome ="-----";
+    String swvers ="-----";
+
+    String vrectype ="--------------------";
+    String vrecsn ="--------------------";
+    String vfirmvers="--------------------";
+    String vanttype="--------------------";
+    String vantsn="--------------------";
+    String vantn="0";
+    String vante="0";
+    String vantht="-------";
+    String vdome="-----";
 
 
         /* get a list of GsacMetadata objects, ie  the results from the GSAC query */
@@ -296,6 +306,14 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
             }
 
+            // Testing ONLY: list all database records as you read them with no consolidation. Note T in first column
+            /*
+                   pw.append("T"+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+                      +setStringLength(antht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(antn,7)+"  " +setStringLength(ante,7)+"  "
+                      +setStringLengthRight(rectype,20)+"  " +setStringLengthRight(firmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(recsn,20)+"  "
+                      +setStringLengthRight(anttype,15)+"  " +setStringLengthRight(dome,5)+"  " +setStringLengthRight(antsn,20)        +"\n");
+            */
+
             // construct the gamit station.info file line for this session at a site:
 
             // int compareTo(Date date) Compares the value of the invoking object with that of date. Returns 0 if the values are equal. 
@@ -339,6 +357,15 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    block_startDate=startDate;
                    block_stopDate=stopDate;
                    session += 1;
+                   vrectype = rectype ;
+                   vrecsn =recsn;
+                   vfirmvers = firmvers;
+                   vanttype=anttype;
+                   vantsn = antsn;
+                   vdome = dome;
+                   vantn = antn ;
+                   vante = ante ;
+                   vantht = antht ;
                 }
 
                 if (0 ==startDate.compareTo( block_startDate))  // this equipment block same time as previous 
@@ -347,6 +374,16 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    if (stopDate != null && stopDate.compareTo( block_stopDate)>0) {
                      block_stopDate=stopDate;
                    }
+                   session += 1;
+                   vrectype = rectype ;
+                   vrecsn =recsn;
+                   vfirmvers = firmvers;
+                   vanttype=anttype;
+                   vantsn = antsn;
+                   vdome = dome;
+                   vantn = antn ;
+                   vante = ante ;
+                   vantht = antht ;
                  }
 
                 if (startDate.compareTo( block_startDate) > 0)  // this equipment block begins after the previous one; so beginning a new geodesy site 'visit'
@@ -359,13 +396,23 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    stoptime= getNonNullGamitString(myFormatDateTime(block_stopDate) );
                    stoptime = getGamitTimeFormat(stoptime,block_stopDate );
                    pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
-                      +setStringLength(antht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(antn,7)+"  " +setStringLength(ante,7)+"  "
-                      +setStringLengthRight(rectype,20)+"  " +setStringLengthRight(firmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(recsn,20)+"  "
-                      +setStringLengthRight(anttype,15)+"  " +setStringLengthRight(dome,5)+"  " +setStringLengthRight(antsn,20)        +"\n");
+                      +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
+                      +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+                      +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
 
                    // start values for new visit
                    block_startDate=startDate;
                    block_stopDate=stopDate;
+                   session += 1;
+                   vrectype = rectype ;
+                   vrecsn =recsn;
+                   vfirmvers = firmvers;
+                   vanttype=anttype;
+                   vantsn = antsn;
+                   vdome = dome;
+                   vantn = antn ;
+                   vante = ante ;
+                   vantht = antht ;
                    }
 
 

@@ -166,7 +166,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,session start,session stop,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
+        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
         //pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
     }
 
@@ -302,23 +302,25 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 if (antht == null) { antht = "0.0000"; }
                 antn = offsetFormat.format(xyz[1]);
                 if (antn.equals("0")) { antn = "0.0000"; }
+                if (antn == null) { antn = "0.0000"; }
                 ante = offsetFormat.format(xyz[0]);
                 if (ante.equals("0")) { ante = "0.0000"; }
+                if (ante == null) { ante = "0.0000"; }
                 anttype=getNonNullString(equipment.getAntenna());
                 antsn  =getNonNullString(equipment.getAntennaSerial());
                 dome = getNonNullString(equipment.getDome());
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 /* others possible
-                //pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
-                //pw.append(EQUIP_ANTENNACABLETYPE, "",
-                //pw.append(EQUIP_ANTENNACABLELENGTH,
+                pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
+                pw.append(EQUIP_ANTENNACABLETYPE, "",
+                pw.append(EQUIP_ANTENNACABLELENGTH,
                 */
             }
 
             // construct the csv file line for this session at a site:
+            // these often lacking: cdpnum+","+indate+","+ 
             pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
-                          // these often lacking: cdpnum+","+indate+","+ 
                 starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sitecount+"\n");
 
         } // end for loop on sessions
