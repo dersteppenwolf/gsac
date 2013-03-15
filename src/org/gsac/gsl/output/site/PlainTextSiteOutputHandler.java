@@ -81,8 +81,6 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     /** for antenna offset values from instrument reference point.  */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
 
-    int sitecount=0;
-
     /**
      * ctor
      *
@@ -123,15 +121,16 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
         //We can have any number of sites here. 
         List<GsacSite> sites = response.getSites();
-        sitecount=0;
+        int sitecount=0;
 
         //  for each site:
         for (GsacSite site : sites) {
+            sitecount++;
             pw.append(    " \n");
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
             //Add the various content areas
-            addSiteIdentification(pw, site);
+            addSiteIdentification(pw, site, sitecount);
             addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
         }
@@ -158,12 +157,11 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
      *
      * @throws Exception _more_
      */
-    private void addSiteIdentification(PrintWriter pw, GsacSite site)
+    private void addSiteIdentification(PrintWriter pw, GsacSite site, int sitecount)
             throws Exception {
-        sitecount++;
         pw.append(    " site "+sitecount+" (in this list):\n");
-        pw.append(    " site Four char ID:              "+ site.getShortName() + "\n");
-        pw.append(    " site Place name:              "+ site.getLongName() + "\n");
+        pw.append(    " site Four char ID:           "+ site.getShortName() + "\n");
+        pw.append(    " site Place name:             "+ site.getLongName() + "\n");
         pw.append(    " site Agency                  "+ getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "") + "\n");
         pw.append(    " site IERSDOMES               "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
         Date date = site.getFromDate();
