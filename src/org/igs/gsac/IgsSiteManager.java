@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,8 +18,8 @@
  *   
  */
 
+// CHANGEME  the correct package name is supplied for IGS:
 package org.igs.gsac;
-
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
@@ -28,11 +28,11 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.util.*;
 
+// CHANGEME - done for IGS - include datahase package for the GSAC installation. 
 import org.igs.gsac.database.*;
 
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
-
 
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Misc;
@@ -53,8 +53,6 @@ import java.util.List;
 /**
  * Handles all of the site related repository requests
  * The main entry point is the  {@link #handleRequest} method.
- * Look for the CHANGEME comments
- *
  *
  * @author         Jeff McWhirter
  */
@@ -72,7 +70,7 @@ public class IgsSiteManager extends SiteManager {
 
 
     /**
-     * CHANGEME
+     * CHANGEME - done for IGS
      * Get the extra site search capabilities.
      *  Here is where you implement what items appear in site queries for this database.
      *
@@ -164,14 +162,13 @@ public class IgsSiteManager extends SiteManager {
      */
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
-        //CHANGEME 
+        //CHANGEME  -done for IGS
         super.handleRequest(request, response);
-
     }
 
 
     /**
-     * CHANGEME
+     * CHANGEME - done for IGS
      * create and return the resource (site) identified by the given resource id
      *
      * @param resourceId resource id. This isn't the resource code but actually the monument id
@@ -205,10 +202,9 @@ public class IgsSiteManager extends SiteManager {
 
 
 
-
     /**
      * An example method that shows how to use the Clause class to assemble a set of database
-     * search clauses from the URL arguments
+     * search clauses from the URL argument    SITELOG_LOCATION LATCOL
      *
      * @param request the resquest
      * @param response the response
@@ -306,7 +302,7 @@ public class IgsSiteManager extends SiteManager {
 
 
     /**
-     * CHANGEME Default query order.
+     * CHANGEME Default query order. done for IGS
      *   Set this to what you want to sort on 
      */
     private static final String SITE_ORDER =
@@ -326,7 +322,7 @@ public class IgsSiteManager extends SiteManager {
 
 
     /**
-     * Get the order by clause
+     * Get the order by clause    check
      *
      * @param request the request
      *
@@ -338,7 +334,7 @@ public class IgsSiteManager extends SiteManager {
     }
 
     /**
-     * Create a single site
+     * Create a single site: apparently, read all the values, and all these will later appear in the HTML output, in the order read here.
      *
      * @param results db results
      *
@@ -349,7 +345,24 @@ public class IgsSiteManager extends SiteManager {
     @Override
     public GsacSite makeResource(ResultSet results) throws Exception {
         int colCnt = 1;
-        /* order must match column order in e.g. SITELOG_LOCATION.COLUMNS */
+        /*   order must match column order in the table e.g.
+        class SITELOG_LOCATION extends Tables {
+        public static final String NAME = "SiteLog_Location";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_FOURID =  NAME + ".FourID";
+        public static final String COL_CITY =  NAME + ".City";
+        public static final String COL_STATE =  NAME + ".State";
+        public static final String COL_COUNTRY =  NAME + ".Country";
+        public static final String COL_TECTONIC =  NAME + ".Tectonic";
+        public static final String COL_XCOOR =  NAME + ".XCoor";
+        public static final String COL_YCOOR =  NAME + ".YCoor";
+        public static final String COL_ZCOOR =  NAME + ".ZCoor";
+        public static final String COL_LATITUDENORTH =  NAME + ".LatitudeNorth";
+        public static final String COL_LONGITUDEEAST =  NAME + ".LongitudeEast";
+        public static final String COL_ELEVATION =  NAME + ".Elevation";
+        */
+
         String fourCharId = results.getString(colCnt++);
         String city       = results.getString(colCnt++);
         String state      = results.getString(colCnt++);
@@ -381,9 +394,10 @@ public class IgsSiteManager extends SiteManager {
         readIdentificationMetadata(site);  // name, type, lat, longi, DOMES number.
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));
         readIdentificationMonumentMetadata(site);
+
+        readFrequencyStandardMetadata(site);
         readAgencyMetadata(site);
         // to FIX readCalibrationMetadata(site);
-        readFrequencyStandardMetadata(site);
 
         // site.addMetadata(new GnssEquipment(satelliteSystem));
 
@@ -585,9 +599,9 @@ public class IgsSiteManager extends SiteManager {
                         results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
                         results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
                         "", "", "", deltahgt);
-                        // last value was was results.getDouble(Tables.SITELOG_ANTENNA.COL_MARKERUP));
 
                 equipmentList.add(equipment);
+
                 visits.put(dateRange[0], equipment);
             }
         } finally {
@@ -657,7 +671,6 @@ public class IgsSiteManager extends SiteManager {
             equipmentGroup.add(equipment);
         }
 
-
     }
 
     public boolean checkDouble( String input )  
@@ -701,6 +714,10 @@ public class IgsSiteManager extends SiteManager {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
             // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java.
+                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
+                // the resource you are adding it to;
+                // the label on the web page or results
+                // the db column name 
             while ((results = iter.getNext()) != null) {
                 addPropertyMetadata(
                     gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
@@ -737,6 +754,10 @@ public class IgsSiteManager extends SiteManager {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
             // process each line in results of db query  
+                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
+                // the resource you are adding it to;
+                // the label on the web page or results
+                // the db column name 
             while ((results = iter.getNext()) != null) {
                 addPropertyMetadata(
                     gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY,
@@ -774,6 +795,7 @@ public class IgsSiteManager extends SiteManager {
                 getDatabaseManager().getIterator(statement);
 
             // process each line in results of db query  
+            // [see definition of addPropertyMetadata in this file below]
             while ((results = iter.getNext()) != null) {
                 addPropertyMetadata(
                     gsacResource,
@@ -819,35 +841,32 @@ public class IgsSiteManager extends SiteManager {
                     results.getString(
                         Tables.SITELOG_IDENTIFICATION.COL_SITENAME));
 
-                // not wanted Oct 5
-                //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
+                //  optional; not required for UNAVCO IGS GSAC
+                // addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_MONUMENTINSCRIPTION, 
                 //                    "Monument Inscription",
                 //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_MONUMENTINSCRI));
 
-                // args to addPropertyMetadata() are:
+                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
                 // the resource you are adding it to;
                 // the label on the web page or results
                 // the db column name 
 
                 addPropertyMetadata(
                     gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES,
-                    "IERS DOMES",
-                    results.getString(
-                        Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
+                    "IERS DOMES", results.getString( Tables.SITELOG_IDENTIFICATION.COL_IERDOMES));
 
                 // CDP number is not wanted currently -- for the IGS site log gsac -- as per FB Oct 5 2012
                 // but will keep it for the plain text output.
                 //addPropertyMetadata(gsacResource,GsacExtArgs.SITE_METADATA_CDPNUM, 
                 //                    "CDP Number",
                 //                    results.getString(Tables.SITELOG_IDENTIFICATION.COL_CDPNUM));
+
                 //Only read the first row
                 break;
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-
-
     }
 
 
