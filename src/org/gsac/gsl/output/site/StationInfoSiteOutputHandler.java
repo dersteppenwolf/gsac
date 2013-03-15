@@ -205,7 +205,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * get  site equipment ('sessions') for this format style
+     * get  site equipment (gamit 'sessions') for this format style
      *
      * @param pw _more_
      * @param site _more_
@@ -215,32 +215,39 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     private void addSiteEquipment(PrintWriter pw, GsacSite site)
             throws Exception {
 
-    String id ="----";
-    String name ="--------------------";
-    id = site.getShortName();
-    name = site.getLongName();
+        // for this site (all sessions):
+        String id = site.getShortName();
+        String name = site.getLongName();
+        // LOOK should test here for bad values
+        //String id ="----";
+        // String name ="--------------------";
 
-    String starttime ="9999 999 00 00 00";
-    String stoptime = "9999 999 00 00 00";
+        String starttime ="9999 999 00 00 00";
+        String stoptime = "9999 999 00 00 00";
 
     String rectype ="--------------------";
     String recsn ="--------------------";
     String firmvers ="--------------------";
-
     String swvers ="-----";
-
     String anttype ="--------------------";
     String antsn ="--------------------";
     String antn ="0";
     String ante ="0";
     String antht ="-------";
     String htcod ="-----";
-
     String dome ="-----";
 
-        /* get a list of GsacMetadata objects for the result from the GSAC query */
+
+        /* get a list of GsacMetadata objects, ie  the results from the GSAC query */
         List<GsacMetadata> equipmentMetadata =
             site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
+        int goterror =0;
+        int session =0;
+        Date block_startDate=null;
+        Date block_stopDate=null;
+        //Date previous_block_startDate=null;
+        //Date previous_block_stopDate=null;
 
         /* for each one, get out its 'GnssEquipment' object and do ... */
         for (GsacMetadata metadata : equipmentMetadata) {
@@ -253,12 +260,15 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             else  { 
                antht = offsetFormat.format(xyz[2]); 
                if (antht.equals("0")) { antht = "0.0000"; }
-               if (antht.equals("�")) { antht = "0.0000"; }
+               if (antht.equals("�")) { antht = "0.0000"; }  // case of this 'character' in some db
                antn = offsetFormat.format(xyz[1]); 
                if (antn.equals("0")) { antn = "0.0000"; }
+               if (antn.equals("�")) { antn = "0.0000"; }
                ante = offsetFormat.format(xyz[0]);
                if (ante.equals("0")) { ante = "0.0000"; }
+               if (ante.equals("�")) { ante = "0.0000"; } 
             }
+            goterror =0;
             Date startDate=null;
             Date stopDate=null;
 
@@ -288,41 +298,80 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
             // construct the gamit station.info file line for this session at a site:
 
-            // nMyVar == null ... null means that the object has a null pointer i.e. points to nothing.
-
             // int compareTo(Date date) Compares the value of the invoking object with that of date. Returns 0 if the values are equal. 
-            //Returns a negative value if the invoking object is earlier than date. Returns a positive value if the invoking object is later than date.
+            // Returns a negative value if the invoking object is earlier than date. Returns a positive value if the invoking object is later than date.
+            // MyVar == null ... null means that the object has a null pointer i.e. points to nothing.
 
             // trap and log bad cases, or print good line if possible:
-            if ( startDate==null && stopDate==null) {  // start time equals stop time
-              pw.append("* Error in supplied information. In next line, start time and stop time are both undefined. \n");
+            if ( startDate==null && stopDate==null) { 
+              pw.append("* Error in supplied information. In next line, representing one database record, the start time and stop time are both undefined. \n");
               pw.append("*");
+              goterror =1;
+            }
+            else if ( startDate==null ) { 
+              pw.append("* Error in supplied information. In next line, representing one database record, the start time is undefined. \n");
+              pw.append("*");
+              goterror =1;
             }
             else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) == 0) {  // start time equals stop time
-              pw.append("* Error in supplied information. In next line, start time equals stop time. zero duration session. \n");
+              pw.append("* Error in supplied information. In next line, representing one database record, the start time equals stop time. Zero duration session. \n");
               pw.append("*");
+              goterror =1;
             }
             else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) > 0) {  // start time is later than stop time
-              pw.append("* Error in supplied information. In next line, start time is after stop time \n");
+              pw.append("* Error in supplied information. In next line, representing one database record, the start time is after stop time \n");
               pw.append("*");
+              goterror =1;
             }
-            else { // all OK, no "*" needed as first char in line
-              pw.append(" ");
+            if (1==goterror) {
+              pw.append(   setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+                +setStringLength(antht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(antn,7)+"  "
+                +setStringLength(ante,7)+"  " +setStringLengthRight(rectype,20)+"  " +setStringLengthRight(firmvers,20)+"  "
+                +setStringLength(swvers,5)+"  " +setStringLengthRight(recsn,20)+"  " +setStringLengthRight(anttype,15)+"  "
+                +setStringLengthRight(dome,5)+"  " +setStringLengthRight(antsn,20)        +"\n");
+                continue;  // bad times so jump to next equipment block
             }
-            pw.append(   setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
-                +setStringLength(antht,7)+"  "
-                +setStringLength(htcod,5)+"  "
-                +setStringLength(antn,7)+"  "
-                +setStringLength(ante,7)+"  "
-                +setStringLengthRight(rectype,20)+"  "
-                +setStringLengthRight(firmvers,20)+"  "
-                +setStringLength(swvers,5)+"  "
-                +setStringLengthRight(recsn,20)+"  "
-                +setStringLengthRight(anttype,15)+"  "
-                +setStringLengthRight(dome,5)+"  "
-                +setStringLengthRight(antsn,20)                      +"\n");
 
-        } // end for loop on equipment items = sessions
+            // all OK with dates,  note one date may be null
+                // sort gsac equip groups into gamit sessions
+
+                if (session == 0) {
+                   block_startDate=startDate;
+                   block_stopDate=stopDate;
+                   session += 1;
+                }
+
+                if (0 ==startDate.compareTo( block_startDate))  // this equipment block same time as previous 
+                   { // still in this session
+                   // see if the new stop time is later
+                   if (stopDate != null && stopDate.compareTo( block_stopDate)>0) {
+                     block_stopDate=stopDate;
+                   }
+                 }
+
+                if (startDate.compareTo( block_startDate) > 0)  // this equipment block begins after the previous one; so beginning a new geodesy site 'visit'
+                   { 
+                   // starting a new  geodesy visit session
+
+                   // first print out previous visit
+                   starttime= getNonNullGamitString(myFormatDateTime(block_startDate) );
+                   starttime = getGamitTimeFormat(starttime,block_startDate );
+                   stoptime= getNonNullGamitString(myFormatDateTime(block_stopDate) );
+                   stoptime = getGamitTimeFormat(stoptime,block_stopDate );
+                   pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+                      +setStringLength(antht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(antn,7)+"  " +setStringLength(ante,7)+"  "
+                      +setStringLengthRight(rectype,20)+"  " +setStringLengthRight(firmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(recsn,20)+"  "
+                      +setStringLengthRight(anttype,15)+"  " +setStringLengthRight(dome,5)+"  " +setStringLengthRight(antsn,20)        +"\n");
+
+                   // start values for new visit
+                   block_startDate=startDate;
+                   block_stopDate=stopDate;
+                   }
+
+
+        } // end for loop on GSAC equipment items , NOT gamit station.info sessions
+
+
     }     // end addSiteEquipment
 
     //number chars in fields:
