@@ -180,8 +180,7 @@ public abstract class SiteManager extends GsacResourceManager {
         // for GAMIT's station.info format  
         // commented out March 13 2012 as per Fran Boler since the visits in the databases shown in results are not arranged like geodesy visits typical in this format
         // allow back in when UNAVCO has fixed the code for StationInfoSiteOutputHandler
-
-        //new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
+        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
         // not yet implemented: IGS site log; FIX SiteLogOutputHandler gives empty file
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
