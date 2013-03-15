@@ -488,9 +488,14 @@ public class RingSiteManager extends SiteManager {
             while ((results = iter.getNext()) != null) {
 
                 /* for RING which does not have a site long name db value, combine the 4 character site ID with the place name 
-                   to make a kind of long name. */
+                   to make a kind of pseudo long name. */
+                String longName = results.getString(Tables.SITI.COL_NOME_SITO)+ " " + results.getString(Tables.SITI.COL_LUOGO);
+                gsacResource.setLongName( longName );
+                System.err.println("     long name is "+longName);
+
+                /* same code from wotking IgsSiteManager:
                 gsacResource.setLongName(
-                    results.getString(Tables.SITI.COL_NOME_SITO) +" "+ results.getString(Tables.SITI.COL_LUOGO));
+                    results.getString( Tables.SITELOG_IDENTIFICATION.COL_SITENAME));  */
 
                 /* get and check IERS_DOMES. */
                 String idn= results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER);
