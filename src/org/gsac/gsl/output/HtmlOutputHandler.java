@@ -1543,7 +1543,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if ( !request.get(ARG_WRAPXML, false)) {
                 js = createMap(request,
                                (List<GsacResource>) Misc.newList(resource),
-                               mapSB, 400, 200, true, false);
+                               mapSB, 600, 300, true, false);
+                               /* original map size map area map extent map pixels 
+                               mapSB, 400, 200, true, false); */
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
                                    formatLatLon(resource) + mapSB));
@@ -1738,7 +1740,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String        img           =
                 HtmlUtil.img(imageMetadata.getUrl(), "",
                              HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0")
-                             + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "400"));
+                             + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "600"));
             img = HtmlUtil.href(imageMetadata.getUrl(), img,
                                 " rel=\"lightbox\" ");
             pw.append(img);
