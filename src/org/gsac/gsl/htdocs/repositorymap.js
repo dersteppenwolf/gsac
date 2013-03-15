@@ -17,11 +17,11 @@ var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vm
 
 /*  GSAC map viewpoint: */
 
+/*  center in Italy for RING GSAC */
+//var defaultLocation = new OpenLayers.LonLat(15, 41) 
+
 /*   center of US lower 48 states as  longitude, latitude */
 var defaultLocation = new OpenLayers.LonLat(-104, 40);
-
-/*   Italy for RING GSAC */
-var defaultLocation = new OpenLayers.LonLat(15, 41) 
 
 /* zoom level 3 is wider than western Europe; 4 is width of Italy and Greece and high as Italy */
 var defaultZoomLevel = 3;
