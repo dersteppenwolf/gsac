@@ -1543,7 +1543,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if ( !request.get(ARG_WRAPXML, false)) {
                 js = createMap(request,
                                (List<GsacResource>) Misc.newList(resource),
-                               mapSB, 600, 300, true, false);
+                               mapSB, 600, 400, true, false);
                                /* original map size map area map extent map pixels 
                                mapSB, 400, 200, true, false); */
             }
