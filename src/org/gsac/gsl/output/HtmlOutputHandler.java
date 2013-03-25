@@ -2269,7 +2269,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add(SORT_SITE_NAME);
             labels.add(msg("Type"));
             sortValues.add(SORT_SITE_TYPE);
-            labels.add(msg("Location") + " (lat,lon,m)");
+            labels.add(msg("Location") + " (latitude, longitude, height)");
             sortValues.add("");
             if (doDateRange) {
                 labels.add(msg("Date Range"));
@@ -2334,13 +2334,24 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
             sb.append("<td " + clickEvent + ">");
+
+            // add latitude to row:
             sb.append(formatLatLon(resource.getLatitude()));
-            sb.append(",");
+
+            // comma separator may be confused with European comma for decimal point, so use space:
+            //sb.append(",");
+            sb.append("&nbsp; &nbsp;");
+
+            // add longitude to row:
             sb.append(
                 formatLatLon(
                     EarthLocation.normalizeLongitude(
                         resource.getLongitude())));
-            sb.append(",");
+
+            // comma separator may be confused with European comma for decimal point, so use space:
+            //sb.append(",");
+            sb.append("&nbsp; &nbsp;");
+
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
 
