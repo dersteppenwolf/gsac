@@ -4,93 +4,78 @@ GSAC_WS Installation
 
 README, Part 1.
 
-15 March 2013.
+25 March 2013.
 
-What is UNAVCO's GSAC?
+This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
+This README file is in gsac/trunk/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
-UNAVCO's GSAC-WS is a complete software package to provide web services for data discovery about sites (monuments) and about the GNSS instruments
-(antennas and receivers) at the sites, and data access (file downloads) in a geoscience data repository
-for remote users, through a web site GUI, an APIi, and a GSAC client program using the API.
-GSAC is freely available from SourceForge, as described here.  GSAC was created and is maintained by UNAVCO (www.unaco.org).
-
-The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Services document,
-"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail and lists requirements to install and run GSACC.  The GSAC User Guide
-"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
-is for persons using data repositories powered by GSAC.
-
-This README file describes the first steps in GSAC installation.  This README file is in gsac/trunk/src/org/gsac/ in the GSAC package,
-and is the first of two README files detailing GSAC installation.
+################################################################################
 
 
-Installing the UNAVCO GSAC Web Services suite for your data repository.
-
-To install GSAC you need a Linux OS or Mac, with Java 1.6, svn, ant, and bash.
+UNAVCO's GSAC-WS is a software package to provide a complete suite of web services at a geoscience data repository
+for data discovery about sites (monuments) and about the GNSS instruments
+(antennas and receivers) at the sites, and data access (file downloads).
+GSAC provides a web site GUI, an APIi, and a GSAC client program using the API.
+GSAC is freely available from SourceForge, as described here.  GSAC was created and is maintained by UNAVCO (www.unavco.org).
 
 GSAC site searches provide details about sites (monuments) and about the GNSS instruments
 (antennas and receivers) at the sites, in geodesy formats such as SOPAC XML, SINEX, GAMIT station.info, and others.
 
-You need a database (in MySQL, Postgres, or Oracle) with complete geodesy parameters about sites (monuments) 
-and about the GNSS instruments (antennas and receivers) at the sites.
-
 You may also provide a download service for RINEX or other GNSS data files.
-File download is very easy when you already have an FTP service, an FTP URL to each data file to download, and
+File download is easy when you already have an FTP service, an FTP URL for each data file to download, and
 database records associating file download FTP URLs with the instrument site information in the database and with the
 start and end times of data in each file.
 
+The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Services document,
+"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
+introduces GSAC in detail and lists requirements to install and run GSACC.  The GSAC User Guide
+"UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
+is for persons using data repositories powered by GSAC.
 
 ################################################################################
+
+
+Installing the UNAVCO GSAC Web Services suite for your data repository.
+
+To install GSAC you need a Linux OS or Mac, with Java 1.6 and the software engineering tools svn (SourceForge), ant, and bash.
+
+You need a database (in MySQL, Postgres, or Oracle) with complete geodesy parameters about sites (monuments) 
+and about the GNSS instruments (antennas and receivers) at the sites.
+
 
 You have done the following already, if you are reading this README file in a GSAC installation:  
 
 Creating the initial GSAC Server
 
-Make a working directory for GSAC, and go there:
+Make a top-level working directory for GSAC, and go there:
 
-mkdir ~/gsacws/sourceforge/
-cd    ~/gsacws/sourceforge/
+mkdir ~/GSAC/
+cd    ~/GSAC/
 
-Or you can install GSAC code anywhere, starting with subversion checkout(next).
+(You can install GSAC code anywhere, so need not make at the new directory GSAC/.)
 
-Check out the GSAC code from SourceForge, using subversion:
+In the directory where you will install GSAC, such as ~/GSAC/, check out the GSAC code from SourceForge, using this svn (subversion) command:
 
 svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac
 
 This svn command creates the new subdirectory "gsac" and files under it. 
 
+The download may take as long as 10 or 20 minutes, depending on your Internet conneciton speed.
 
 ################################################################################
 
 
-Center the GSAC Site Map
+Build core GSAC code:
 
-Site search results from GSAC makes a map for the site location with OpenLayers. To center the map for your
-geodesy network:
+Next, cd to the gsac/trunk/src/gsac/trunk/ subdirectory.
 
-Edit gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js
-
-Set the longitude, latitude, and zoom level for the center of your map in:
-/*   exmaple: center of US lower 48 states as  longitude, latitude */
-var defaultLocation = new OpenLayers.LonLat(-104, 40);
-/* zoom level 3 is wider than western Europe; 4 is width of Italy and Greece and high as Italy */
-var defaultZoomLevel = 3;
-
-For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers/wiki/SettingZoomLevels.
-
-
-################################################################################
-
-
-Build GSAC
-
-Next, go to the trunk/src/gsac/trunk/ subdirectory.
-
-Do the command "ant" which builds all the basic GSAC components:
+Do the command "ant" which builds all the core GSAC code:
 
 ant
 
-This ant command builds the basic GSAC code, including the GSL (the GSAC service layer), and a GSAC server.
-The file build.xml is used by ant.  This may take two or three minutes. The screen output ends with something like this:
+This ant command builds the core GSAC code, including the GSL (the GSAC service layer).
+The file gsac/trunk/src/gsac/trunk/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.  
+This may take two or three minutes. The screen output ends with something like this:
 
 localinit:
 init:
@@ -105,13 +90,45 @@ war:
 BUILD SUCCESSFUL
 Total time: 1 minute 25 seconds
 
-The ant build also will create these items in trunk/:
+The ant build also will create these items in gsac/trunk/:
 build.xml   dist/   examples/   lib/    README  src/
 If you investigate you will find dozens of new files and directories below trunk/.
 
+The core GSAC code is files in gsac/trunk/src/org/gsac/ and its subdirectories. 
+
+In general you modify files in the core GSAC code only rarely if ever.  If you do change a file there,
+rebuild the GSAC core code with ant in gsac/trunk/.
 
 ################################################################################
 
+Center the GSAC Site Map
+
+This is one case when you do modify the GSAC core code checked out from SourceForge.
+
+Site search results from GSAC include a map for the site location, made using OpenLayers. 
+To center the map in the latitude-longitude region for your geodesy network:
+
+Edit gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js
+
+Set the longitude, latitude, and zoom level for the center of your map in the lines:
+/*   center of GSAC map  or viewpoint: */
+
+/*   center of GSAC site map,  in US lower 48 states, with longitude, latitude */
+//var defaultLocation = new OpenLayers.LonLat(-104, 40);
+
+/*   default map center longitude, latitude: Royal Observatory, Greenwich, U.K. */
+var defaultLocation = new OpenLayers.LonLat(0.000, 51.4772);
+
+
+Set the zoom level in the lines:
+/*   GSAC map of sites; set zoom level; 3 is about 10 000 km wide; 4 is about 3900 km wide. */
+var defaultZoomLevel = 4;
+
+
+For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers/wiki/SettingZoomLevels.
+
+
+################################################################################
 
 Core GSAC code
 
