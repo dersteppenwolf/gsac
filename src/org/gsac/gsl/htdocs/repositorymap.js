@@ -15,16 +15,19 @@ var map_wms_topographic = "wms:Topo Maps,http://terraservice.net/ogcmap.ashx,DRG
 var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vmap0,basic";
 
 
-/*  GSAC map viewpoint: */
+/*   center of GSAC map  or viewpoint: */
 
-/*  center in Italy for RING GSAC */
+/*   center of GSAC site map, in Italy for RING GSAC */
 //var defaultLocation = new OpenLayers.LonLat(15, 41) 
 
-/*   center of US lower 48 states as  longitude, latitude */
-var defaultLocation = new OpenLayers.LonLat(-104, 40);
+/*   center of GSAC site map,  in US lower 48 states, with longitude, latitude */
+//var defaultLocation = new OpenLayers.LonLat(-104, 40);
 
-/* zoom level 3 is wider than western Europe; 4 is width of Italy and Greece and high as Italy */
-var defaultZoomLevel = 3;
+/*   default map center longitude, latitude: Royal Observatory, Greenwich, U.K. */
+var defaultLocation = new OpenLayers.LonLat(0.000, 51.4772);
+
+/*   GSAC map of sites; set zoom level; 3 is about 10 000 km wide; 4 is about 3900 km wide. */
+var defaultZoomLevel = 4;
 
 
 
@@ -148,7 +151,6 @@ function RepositoryMap (mapId, params) {
     this.getMap = function(){
         return this.map;
     }
-
 
     this.initMap = function(forSelection) {
         var theMap = this;
