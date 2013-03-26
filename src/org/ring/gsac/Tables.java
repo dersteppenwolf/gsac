@@ -91,6 +91,26 @@ public abstract class Tables {
 
 
 
+    public static class CLINIC_GSAC extends Tables {
+        public static final String NAME = "clinic_gsac";
+
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_SITO =  NAME + ".sito";
+        public static final String COL_FIRST_EPOCH =  NAME + ".first_epoch";
+        public static final String COL_LAST_EPOCH =  NAME + ".last_epoch";
+        public static final String COL_LINK =  NAME + ".link";
+
+        public static final String[] ARRAY = new String[] {
+            COL_SITO,COL_FIRST_EPOCH,COL_LAST_EPOCH,COL_LINK
+        };
+        public static final String COLUMNS = SqlUtil.comma(ARRAY);
+        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
+    public static final CLINIC_GSAC table  = new  CLINIC_GSAC();
+    }
+
+
+
     public static class DATA_CENTERS extends Tables {
         public static final String NAME = "data_centers";
 
@@ -293,6 +313,53 @@ public abstract class Tables {
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
     public static final SITI table  = new  SITI();
+    }
+
+
+
+    public static class SITI_GSAC extends Tables {
+        public static final String NAME = "siti_gsac";
+
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_ID_SITO =  NAME + ".id_sito";
+        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
+        public static final String COL_ID_RETE =  NAME + ".id_rete";
+        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
+        public static final String COL_GEOLOGIA =  NAME + ".geologia";
+        public static final String COL_LUOGO =  NAME + ".luogo";
+        public static final String COL_LATITUDINE =  NAME + ".latitudine";
+        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
+        public static final String COL_QUOTA =  NAME + ".quota";
+        public static final String COL_X =  NAME + ".x";
+        public static final String COL_Y =  NAME + ".y";
+        public static final String COL_Z =  NAME + ".z";
+        public static final String COL_X_UTMED50 =  NAME + ".x_utmed50";
+        public static final String COL_Y_UTMED50 =  NAME + ".y_utmed50";
+        public static final String COL_TIPO_MATERIALIZZAZIONE =  NAME + ".tipo_materializzazione";
+        public static final String COL_HEIGHT_OF_MONUMENT =  NAME + ".height_of_monument";
+        public static final String COL_MONUMENT_FOUNDATION =  NAME + ".monument_foundation";
+        public static final String COL_FOUNDATION_DEPTH =  NAME + ".foundation_depth";
+        public static final String COL_MONUMENT_INSCRIPTION =  NAME + ".monument_inscription";
+        public static final String COL_IERS_DOMES_NUMBER =  NAME + ".iers_domes_number";
+        public static final String COL_BEDROCK_TYPES =  NAME + ".bedrock_types";
+        public static final String COL_ID_ON_SITE_AGENCY =  NAME + ".id_on_site_agency";
+        public static final String COL_ID_RESPONSIBLE_AGENCY =  NAME + ".id_responsible_agency";
+        public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
+        public static final String COL_NAZIONE =  NAME + ".nazione";
+        public static final String COL_REGIONE =  NAME + ".regione";
+        public static final String COL_ATTIVO =  NAME + ".attivo";
+        public static final String COL_NOTE =  NAME + ".note";
+        public static final String COL_ID_DATA_CENTER =  NAME + ".id_data_center";
+        public static final String COL_MONUMENTAZIONE_ESTERNA =  NAME + ".monumentazione_esterna";
+        public static final String COL_AGENZIA =  NAME + ".agenzia";
+
+        public static final String[] ARRAY = new String[] {
+            COL_ID_SITO,COL_NOME_SITO,COL_ID_RETE,COL_DATA_DISMISSIONE,COL_GEOLOGIA,COL_LUOGO,COL_LATITUDINE,COL_LONGITUDINE,COL_QUOTA,COL_X,COL_Y,COL_Z,COL_X_UTMED50,COL_Y_UTMED50,COL_TIPO_MATERIALIZZAZIONE,COL_HEIGHT_OF_MONUMENT,COL_MONUMENT_FOUNDATION,COL_FOUNDATION_DEPTH,COL_MONUMENT_INSCRIPTION,COL_IERS_DOMES_NUMBER,COL_BEDROCK_TYPES,COL_ID_ON_SITE_AGENCY,COL_ID_RESPONSIBLE_AGENCY,COL_ID_MONUMENTO,COL_NAZIONE,COL_REGIONE,COL_ATTIVO,COL_NOTE,COL_ID_DATA_CENTER,COL_MONUMENTAZIONE_ESTERNA,COL_AGENZIA
+        };
+        public static final String COLUMNS = SqlUtil.comma(ARRAY);
+        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
+    public static final SITI_GSAC table  = new  SITI_GSAC();
     }
 
 
