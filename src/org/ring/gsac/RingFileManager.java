@@ -143,19 +143,6 @@ public static class SITI_GSAC extends Tables {
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
 
-        //CHANGEME
-        /*
-          you can use the default file capabilities:
-          addDefaultCapabilities(capabilities);
-
-          or add you own, e.g.:
-          Add in an example fruit enumerated query capability
-          String[]values = {"banana","apple","orange"};
-          Arrays.sort(values);
-          capabilities.add(new Capability("fruit", "Fruit Label", values, true));
-            what does this do?
-        */
-
         // look - which are?   what does this do?
         addDefaultCapabilities(capabilities);
 
@@ -276,7 +263,7 @@ public static class SITI_GSAC extends Tables {
     public List<ResourceType> doGetResourceTypes() {
         List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
 
-        resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
+        //resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
         //resourceTypes.add(new ResourceType("qc", "QC Files"));
 
         return resourceTypes;
