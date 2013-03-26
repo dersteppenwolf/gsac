@@ -128,7 +128,14 @@ public static class SITI_GSAC extends Tables {
      */
     public RingFileManager(RingRepository repository) {
         super(repository);
+
+        // next 4 lines from cddis code; look is needed for ring?
+        sdf         = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        yyyyMMDDSdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TIMEZONE_UTC);
+        yyyyMMDDSdf.setTimeZone(TIMEZONE_UTC);
     }
+
 
     /**
      * _more_
@@ -142,17 +149,19 @@ public static class SITI_GSAC extends Tables {
         /*
           you can use the default file capabilities:
           addDefaultCapabilities(capabilities);
+
           or add you own, e.g.:
           Add in an example fruit enumerated query capability
           String[]values = {"banana","apple","orange"};
           Arrays.sort(values);
           capabilities.add(new Capability("fruit", "Fruit Label", values, true));
+            what does this do?
         */
 
-        // look - which are?
+        // look - which are?   what does this do?
         addDefaultCapabilities(capabilities);
 
-        // from cddis: look
+        // from cddis: look  is needed for ring?   what does this do?
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
