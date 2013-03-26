@@ -160,10 +160,10 @@ The source Java (.java) files compiled are like these in @MACRO.SRCDIR@:
 -rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
 -rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
 
-This ant command builds  GSAC for your repository, using code in @MACRO.SRCDIR@.  
+This ant command builds GSAC for your repository, using code in @MACRO.SRCDIR@.  
 
-It uses core GSAC (GSL) code from the jar file  gsac/trunk/lib/gsacws.jar.  if you change core GSAC code,
-you must rebuild with ant in trunk/, and trhen rebuild your GSAC with ant in @MACRO.SRCDIR@.
+It uses core GSAC (GSL) code from the jar file  gsac/trunk/lib/gsacws.jar.  If you change core GSAC code,
+you must rebuild with ant in trunk/, and then rebuild your GSAC with ant in @MACRO.SRCDIR@.
 
 Your ant build also creates a new Tomcat war file, something like trunk/dist/gsacmyrepo.war, 
 which will be used late for your public web site, if you use Tomcat. 
