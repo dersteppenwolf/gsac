@@ -28,7 +28,7 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.util.*;
 
-/* CHANGEME - done in for INGV - include datahase package for the GSAC installation. */
+/* CHANGEME - done for INGV - include datahase package for the GSAC installation. */
 import org.ring.gsac.database.*;
 
 import ucar.unidata.sql.Clause;
