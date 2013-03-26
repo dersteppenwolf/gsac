@@ -9,6 +9,11 @@ README, Part 1.
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
 This README file is in gsac/trunk/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
+Installation of GSAC requires some Java coding, as described in the README Part 2 file.  It is not possible for GSAC core code to anticipate 
+the design of data repositories.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available 
+from UNAVCO at gsac-ws@unavco.org.  
+
 ################################################################################
 
 
@@ -60,7 +65,7 @@ svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac
 
 This svn command creates the new subdirectory "gsac" and files under it. 
 
-The download may take as long as 10 or 20 minutes, depending on your Internet conneciton speed.
+The download may take as long as 10 or 20 minutes, depending on your Internet connection speed.
 
 ################################################################################
 
@@ -202,9 +207,15 @@ target.prefix=Ring
 # What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file from Java for db access.)
 target.dbdriver=mysql.jar
 
-You may wish to choose a top-level package name other than "org."  For example, "it." for Italy.
+You may wish to choose a top-level package name other than "org."  For example, if you wish to have the top level be "de", 
+first make a new subdirectory gsac/trunk/src/de/.  Then in your  macros.properties file use 
 
-Other choices for the database driver jar file, mysql.jar,  are postgres.jar and oracleDriver.jar.  Use the one for your database.
+target.package=de.myrepo.gsac
+
+The target.package name is very important.  It determines the directories where your GSAC code is stored.  If there is an error in the target.package
+the files will be in the wrong place in the GSAC tree and your code will not compile or build corretly.
+
+Other choices for the database driver jar file, mysql.jar, are postgres.jar and oracleDriver.jar.  Use the one for your database.
 
 Then 
 
