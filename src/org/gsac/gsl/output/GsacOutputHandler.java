@@ -65,11 +65,15 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /** date format */
     protected SimpleDateFormat timeSdf = makeDateFormat("HH:mm:ss z");
 
+
+    /** http://stackoverflow.com/questions/5054132/how-to-change-the-decimal-separator-of-decimalformat-from-comma-to-dot-point **/
+    /** http://stackoverflow.com/questions/4738853/java-decimal-format-parse-to-return-double-value-with-specified-number-of-deci/4739381#4739381 */
+
     /** formats */
     private DecimalFormat sizeFormat = new DecimalFormat("####0.00");
 
     /** formats */
-    private DecimalFormat latLonFormat = new DecimalFormat("####0.###");
+    private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
 
     /** formats */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.0");
@@ -547,6 +551,21 @@ public abstract class GsacOutputHandler implements GsacConstants {
     public String formatLatLon(GsacResource resource) {
         return formatLatLon(resource.getLatitude()) + ","
                + formatLatLon(resource.getLongitude()) + ","
+               + resource.getElevation();
+    }
+
+    /**
+     * separate values of lat, long, and ellipsoid height with &nbsp; spaces for HTML output.
+     * to avoid confusion in Europe where latLonFormat appears to use commas for decimal points.
+     *
+     * so far, is used only in HTML site page
+     *
+     * @param resource _more_
+     * @return _more_
+     */
+    public String formatLatLonNoCommas(GsacResource resource) {
+        return "latitude "+formatLatLon(resource.getLatitude()) + "  &nbsp; &nbsp; longitude "
+               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
                + resource.getElevation();
     }
 

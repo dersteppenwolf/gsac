@@ -1548,7 +1548,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                mapSB, 400, 200, true, false); */
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
-                                   formatLatLon(resource) + mapSB));
+                                   formatLatLonNoCommas(resource) + mapSB));
         }
 
 
