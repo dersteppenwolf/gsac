@@ -4,7 +4,7 @@ GSAC_WS Installation
 
 README, Part 1.
 
-25 March 2013.
+26 March 2013.
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
 This README file is in gsac/trunk/src/org/gsac/ in the GSAC package available from SourceForge as described below.
@@ -47,8 +47,8 @@ To install GSAC you need a Linux OS or Mac, with Java 1.6 and the software engin
 You need a database (in MySQL, Postgres, or Oracle) with complete geodesy parameters about sites (monuments) 
 and about the GNSS instruments (antennas and receivers) at the sites.
 
-
 You have done the following already, if you are reading this README file in a GSAC installation:  
+
 
 Creating the initial GSAC Server
 
@@ -57,7 +57,7 @@ Make a top-level working directory for GSAC, and go there:
 mkdir ~/GSAC/
 cd    ~/GSAC/
 
-(You can install GSAC code anywhere, so need not make at the new directory GSAC/.)
+(You can install GSAC code anywhere, so need not make a new directory GSAC/.)
 
 In the directory where you will install GSAC, such as ~/GSAC/, check out the GSAC code from SourceForge, using this svn (subversion) command:
 
@@ -146,7 +146,7 @@ For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers
 
 Cd to gsac/trunk/src/org/gsac/  
 
-The full path such as /gsac/trunk/src/org/gsac/, is not shown in all commands below.
+The full path such as gsac/trunk/src/org/gsac/, is not shown in all commands below.
 In most cases the leading gsac/trunk/src/ is not shown.
 
 What's in org/gsac/:
@@ -184,8 +184,7 @@ in org/gsac/template/
 
 cp macros.properties   myrepomacros.properties
 
-'myrepo' is only a placeholder in this README file.  Replace the 'myrepo' with an approprite name for your agency, project, or repository. 
-Use lowercase letters.
+'myrepo' is only a placeholder in this README file.  You can replace the 'myrepo' with an approprite name for your agency, project, or repository. 
 
 Edit the new properties file to define the target package name, directory, etc.  
 (Do not use a copy of an existing macros.properties file without the following edits.)
@@ -201,27 +200,24 @@ target.basename=gsacmyrepo
 ##target Java package name.  Replace the 'myrepo' part with your acronym, and retain the org. and .gsac parts:
 target.package=org.myrepo.gsac
 
+   You may wish to choose a top-level package name other than "org."  For example, if you wish to have the top level be "de", 
+   first make a new subdirectory gsac/trunk/src/de/.  Then in your  macros.properties file use 
+   target.package=de.myrepo.gsac
+
+   The target.package name is very important.  It determines the directories where your GSAC code is stored.  If there is an error in the target.package
+   the files will be in the wrong place in the GSAC tree and your code will not compile or build corretly.
+
 ##All of the java classes will have this prefix as the first part of their names. Usually your acronym. Capitalize first letter, a Java class naming convention.
-target.prefix=Ring
+target.prefix=Myrepo
 
 # What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file from Java for db access.)
 target.dbdriver=mysql.jar
 
-You may wish to choose a top-level package name other than "org."  For example, if you wish to have the top level be "de", 
-first make a new subdirectory gsac/trunk/src/de/.  Then in your  macros.properties file use 
+   Other choices for the database driver jar file, mysql.jar, are postgres.jar and oracleDriver.jar.  Use the one for your database.
 
-target.package=de.myrepo.gsac
+After you created your myrepomacros.properties file 
 
-The target.package name is very important.  It determines the directories where your GSAC code is stored.  If there is an error in the target.package
-the files will be in the wrong place in the GSAC tree and your code will not compile or build corretly.
-
-Other choices for the database driver jar file, mysql.jar, are postgres.jar and oracleDriver.jar.  Use the one for your database.
-
-Then 
-
-cd ../ 
-
-to org/gsac/
+cd ../ to org/gsac/
 
 and run this ant command, replacing the 'myrepomacros.properties' file name with the name of your new properties file:
 
@@ -276,7 +272,7 @@ Follow the instructions in the README your new GSAC code area, org/myrepo/gsac/R
 
 end of README Part 1 for GSAC installation.
 
-March 25, 2013.
+March 26, 2013.
 Copyright (C) 2010-2013 UNAVCO.
 
 ################################################################################
