@@ -1,8 +1,10 @@
-####g###################################################################
+########################################################################
 
 GSAC_WS Installation     
 
 README, Part 2.
+
+March 26 2013
 
 This file describes how to complete your new gsac@MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -16,6 +18,11 @@ You may have used the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS
 Some file names in this README file, such as gsac@MACRO.PREFIX@.properties,
 may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
 Do not change actual filenames to match uppercase letters if any such are shown in this README file.
+
+Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
+the design of data repositories.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available 
+from UNAVCO at gsac-ws@unavco.org.
 
 ########################################################################
 
@@ -61,39 +68,47 @@ Or this baseurl may include an acronym for identification of your agency.
 The items repository.name and repository.description are used as labels on the web site.
 
 
+########################################################################
+Database
+########################################################################
 
 Setting and Hiding DB account information: the "GSAC DB Properties" File.
 
-You fill the file, @MACRO.SRCDIR@/dbresources/gsacdb_test.properties, to hold the database account details,
+You code the file, @MACRO.SRCDIR@/dbresources/gsacdb_test.properties, to hold the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
 
 gsac.db.username=db-gsac-username
 gsac.db.password=db-gsac-password
 gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
 
-The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  The database must have such an account.
-When the GSL assembles the JDBC URL it finds the user name and password from here, to read from the database.
+The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  
+The database must have an account GSAC can use to read from the database. GSAC does not write to any database.
+When the GSL assembles the JDBC URL it finds the user name and password from here.
 
 Note that Oracle and Postgres have different syntax for the last line in this file.  For postgres the form is 
+
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
 One Oracle JDBC URL is of the form:
+
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
-e.g:
+   e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-Also copy @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
+Copy the complete @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
+The two files with the same contents are a legacy from earlier GSAC code.
 
-[For those with GSAC sourceForge write access:
-Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
-Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository!]
+If you have GSAC SourceForge write access: Caution: 
+Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository or your account details will be public!
 
 Everytime you do "ant" to build your repository  the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
 @MACRO.SRCDIR@/resources/gsacdb.properties, and @MACRO.SRCDIR@/resources/gsacserver_test.properties
 is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. Can be confusing if you attempt to keep track of the several properties files.
 
 
-Your local build.xml file.
+########################################################################
+build.xml
+########################################################################
 
 The file build.xml, in your location @MACRO.SRCDIR@, should have these lines. Note the gsqc@MACRO.PREFIX@ : 
 
@@ -107,28 +122,28 @@ This target will be used by ant build process to make your GSAC server.
 You have specified the basic information needed to run your full GSAC server.
 
 
+########################################################################
+Initial compile 
+########################################################################
+
 Do the command ant in @MACRO.SRCDIR@:
 
 ant 
 
-This ant command builds the complete GSAC server for your repository.  (It also creates a new Tomcat war file, 
-something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
-if you use Tomcat.)  
-
 If the ant commands succeeds you will see output to the screen including 
 
 compile:
-    [javac] Compiling 7 source files
+    [javac] Compiling 6 source files
     [javac] Note: Some input files use unchecked or unsafe operations.
     [javac] Note: Recompile with -Xlint:unchecked for details.
 gsacjar:
-     [echo] Making jar /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0.jar
-     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0.jar
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo1.0.jar
 and including
 war:
      [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
-   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0/servlet-api.jar
-      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs.war
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war
      [echo] ********************************
      [echo] To run the server run:
      [echo] ant runserver
@@ -145,43 +160,47 @@ The source Java (.java) files compiled are like these in @MACRO.SRCDIR@:
 -rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
 -rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
 
+This ant command builds  GSAC for your repository, using code in @MACRO.SRCDIR@.  
+
+It uses core GSAC (GSL) code from the jar file  gsac/trunk/lib/gsacws.jar.  if you change core GSAC code,
+you must rebuild with ant in trunk/, and trhen rebuild your GSAC with ant in @MACRO.SRCDIR@.
+
+Your ant build also creates a new Tomcat war file, something like trunk/dist/gsacmyrepo.war, 
+which will be used late for your public web site, if you use Tomcat. 
+
+
+########################################################################
+Building Java support for the database connections
+########################################################################
 
 Now run this command in @MACRO.SRCDIR@:
 
 ant tables
 
-Output from the ant tables command includes lines like:
+Output from the ant tables command includes lines something like:
 
-tables:
-     [java] JVM args ignored when same JVM is used.
-...
      [java] processing AGENCY
      [java] processing EQUIPMENT
      [java] processing INSTRUMENTATION
      [java] processing RECEIVER
 
-each line corresponding to the name of a table in your database.
+Each line corresponds to the name of a table in your database.
 
-This should make the file @MACRO.SRCDIR@/database/Tables.java
+This makes a new Java file, @MACRO.SRCDIR@/Tables.java.  The package name in Tables.java (at or near line 3) should be 
 
-If the Tables.java files is in @MACRO.SRCDIR@/ (not in @MACRO.SRCDIR@/database/) move it to @MACRO.SRCDIR@/database/.
-You may need to first make the @MACRO.SRCDIR@/database subdirectory with command 
+package org.@MACRO.PREFIX@.gsac.database;
+  not
+package org.@MACRO.PREFIX@.gsac;
+
+Edit the Tables.java file to fix it.
+
+Make a new @MACRO.SRCDIR@/database subdirectory:
 
 mkdir database
 
-The package name in Tables.java (at or near line 3) should be 
-package org.ring.gsac.database;
-not
-package org.ring.gsac;
-If this is not the case, edit the Tables.java file to fix it.
+Move the Tables.java file down into database.
 
-Now run
-
-ant
-
-(yes, again).
-
-This time you should see 
+Now run ant again in @MACRO.SRCDIR@.  This time you should see 
 
 compile:
     [javac] Compiling 7 source files
@@ -191,9 +210,18 @@ and
 BUILD SUCCESSFUL
 Total time: 5 seconds
  
-This time ant compiles the six java file in @MACRO.SRCDIR@/, and also compiles the new Tables.java in @MACRO.SRCDIR@/database/.
-Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.
+This time ant compiles the six java files in @MACRO.SRCDIR@/, and compiles the new Tables.java in @MACRO.SRCDIR@/database/.
+Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.  
 
+The Tables classes provide a link between your database
+and your GSAC code.  You will  use names of items in the classes to identify your database tables and columns (fields)
+in your GSAC Java code.  For example, one table name is, in the GSAC universe, SITE_METADATA, and a column (field) in that table might be 
+COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use item names in it in coding soon.
+
+
+########################################################################
+Run a local test of your GSAC server
+########################################################################
 
 Now you can run an initial (but incomplete) test version of your new GSAC web server with:
 
@@ -204,35 +232,39 @@ Screen output of this ant command includes a line like
 
 GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
 
-In a browser on your desktop where you are developing your GSAC, look at that URL, 
-something like http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
-You should (!) see a new web page with minimal content:
+This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
+running ant runserver.  If you already use 8080 for another purpose, enter a different value in buuild.xml.  It is 
+also in the gsacrepository.sh for when running stand-alone.
 
-      Welcome to the GSAC Repository
+In a browser on your desktop where you are developing your GSAC, look at that URL, like 
+
+http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
+
+You should see a new web page with minimal content:
+
+                  Welcome to the GSAC Repository
       Search Sites | Search Files | Browse | Infomation | Help
 
-This shows that the GSAC code runs on your system.  
-
-(This new web site uses Jetty (see http://www.eclipse.org/jetty/), 
-a Java HTTP server and Java servlet container.  The Jetty servlet is for local testing, 
-which saves the trouble of deploying a .war file to a Tomcat implementation, and avoids restarting Tomcat 
-for every test of the new GSAC.  Public web servers often run with Tomcat in place of Jetty.)
+This shows that basic GSAC code runs on your system.  
+You can look at basic GSAC server web site pages, such as in the Information and Help links.
 
 You've generated the core GSAC repository source package (code or software) and an initial new GSAC server.
 
-You can look at basic GSAC server web site pages, such as in the Information and Help links.
-
 Stop the 'ant runserver' process with CTRL-c.  
 
-So far you have been bootstrapping a operational GSAC server which has complete core GSAC code 
-but which lacks specific details about your repository.
+This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP server and Java servlet container.  
+The Jetty servlet is for local testing, which saves the trouble of deploying a .war file to a Tomcat implementation 
+(and may avoid restarting Tomcat for every test of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
 
-Now you need to specify important details about your particular repository.
+So far you have been bootstrapping a operational GSAC server which has complete core GSAC code, 
+which lacks specific details about your repository.
+
+Now you need to specify the important parts of your data repository for GSAC.
 
 
 ########################################################################
-
 Using Your Database by means of the Tables.java
+########################################################################
 
 GSAC must identify the tables and columns (fields) in your database,
 which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
@@ -320,7 +352,7 @@ The output handler code for the GSAC format choices, HTML, SOPAC XML site log,
 SINEX, GAMIT station.info, GSAC FULL csv format, and the GSAC Plain Text format, 
 will handle the "standard parameters" in a "conforming GSAC geodesy implementation."
 
-Please do *not*  do svn commit into SourceForge for any modified SiteManager.java file.
+Please do *not* do svn commit into SourceForge for any modified SiteManager.java file, if you have SourceForge write permission.
 
 GSAC does not endorse file formats.  If there is a format which you think GSAC should offer, you can contact UNAVCO 
 to add it to GSAC code.  Or you can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
@@ -351,17 +383,25 @@ try your GSAC on your local development platform.
 
 Modify or add new Java to these files:
 
+
 @MACRO.PREFIX@Repository.java 
 
 Above the import lines, add the new Java package name, in this form:
 package org.@MACRO.PREFIX@.gsac; 
 
-In the method initResourceManagers(),  uncomment 
+In the method initResourceManagers(), make the choice if you want your GSAC repository to
+search on sites (stations or monuments), for data files, or for both:
+ 
+  public void initResourceManagers() {
+        // Use this line to search on BOTH sites and data files in the metadata.
+        super.initResourceManagers();
 
-     super.initResourceManagers();
+        // If you only want searches for sites,  uncomment this
+        //getResourceManager(GsacSite.CLASS_SITE);
 
-to search on both sites and data files in the database.  Or, if you wish  to only search only for sites or only for files, 
-use either one of the calls getResourceManager(GsacSite.CLASS_SITE) or getResourceManager(GsacFile.CLASS_FILE).
+        // If you only want searches for files,  uncomment this
+        // getResourceManager(GsacFile.CLASS_FILE);
+    }
 
 
 
@@ -554,6 +594,6 @@ to construct the complete URL specifying FTP for each data file, with extra Java
 such as data file name, which you can find in results from GSAC queries.
 
 
-15 March 2013
 SKW 
 UNAVCO
+
