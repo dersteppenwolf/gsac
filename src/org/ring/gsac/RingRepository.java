@@ -49,12 +49,12 @@ public class RingRepository extends GsacRepository implements GsacConstants {
      */
     public void initResourceManagers() {
         // Use this line to search on BOTH sites and data files in the metadata.
-        //super.initResourceManagers();
+        super.initResourceManagers();
 
-        // If you only want a query for either sites or files but not both, uncomment one of these
+        // If you only want searches for sites,  uncomment this
+        //getResourceManager(GsacSite.CLASS_SITE);
 
-        getResourceManager(GsacSite.CLASS_SITE);
-
+        // If you only want searches for files,  uncomment this
         // getResourceManager(GsacFile.CLASS_FILE);
     }
 

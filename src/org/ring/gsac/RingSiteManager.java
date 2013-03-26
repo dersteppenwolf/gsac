@@ -82,41 +82,46 @@ public class RingSiteManager extends SiteManager {
             String help = HtmlOutputHandler.stringSearchHelp;  /* where from ? */
 
             // language
+                // initCapability(new Capability(ARG_SITE_CODE, "Nome Sito / Site Code",
             Capability siteCode =
-                initCapability(new Capability(ARG_SITE_CODE, "Nome Sito / Site Code",
+                initCapability(new Capability(ARG_SITE_CODE, "Site Code",
                     Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
                      "Short name of the site", "Short name of the site. " + help);
 
-            siteCode.setBrowse(true);  /* which does ? */
+            siteCode.setBrowse(true);  /* which does ? look */
             capabilities.add(siteCode);
 
-            // language:   latitudine longitudine
+            // language:   
+                // .add(initCapability(new Capability(ARG_BBOX, "Posizione Limiti / Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
             capabilities
-                .add(initCapability(new Capability(ARG_BBOX, "Posizione Limiti / Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
+                .add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
             String[] values;
 
             // language:  luogo
+            //capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Luogo / Place", values, true, CAPABILITY_GROUP_ADVANCED));
             values = getDatabaseManager().readDistinctValues(
                 Tables.SITI.NAME,  // for a db table name
                 Tables.SITI.COL_LUOGO);  // for the db table and field name
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Luogo / Place", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // language: regione 
+            // capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Regione / Provincia", values, true, CAPABILITY_GROUP_ADVANCED));
             values = getDatabaseManager().readDistinctValues(
                 Tables.SITI.NAME,
                 Tables.SITI.COL_REGIONE);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Regione / Provincia / State", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Region / Province / State", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // language: regione nazione
+            //capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nazione / Country", values, true, CAPABILITY_GROUP_ADVANCED));
             values = getDatabaseManager().readDistinctValues(
                 Tables.SITI.NAME,
                 Tables.SITI.COL_NAZIONE);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nazione / Country", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Country", values, true, CAPABILITY_GROUP_ADVANCED));
 
             return capabilities;
         } catch (Exception exc) {

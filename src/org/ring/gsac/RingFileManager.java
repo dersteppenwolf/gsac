@@ -33,11 +33,9 @@ import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
@@ -217,6 +215,8 @@ public static class SITI_GSAC extends Tables {
 
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
                                    ARG_FILE_DATADATE_TO, null, null);
+        //        System.err.println ("date:" + dateRange[0] +" " + dateRange[1]);
+
 
         if (dataDateRange[0] != null) {
             appendSearchCriteria(msgBuff, "Publish date&gt;=",
@@ -227,6 +227,7 @@ public static class SITI_GSAC extends Tables {
             appendSearchCriteria(msgBuff, "Publish date&lt;=",
                                  "" + format(dataDateRange[1]));
         }
+
 
         //find and create the files
         /**
@@ -242,8 +243,13 @@ public static class SITI_GSAC extends Tables {
          *                           response.addResource(resource);
          */
 
+        //long t2 = System.currentTimeMillis();
+        //System.err.println("read " + cnt + " resources in " + (t2 - t1) + "ms");
+
         setSearchCriteriaMessage(response, msgBuff);
     }
+
+
 
     /**
      * CHANGEME
@@ -260,16 +266,18 @@ public static class SITI_GSAC extends Tables {
         return null;
     }
 
+
     /**
      * Create the list of resource types that are shown to the user. This is
-     * called by the getDefaultCapabilities
+     * called by the getDefaultCapabilities  look which is where?
      *
      * @return resource types
      */
     public List<ResourceType> doGetResourceTypes() {
         List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
+
         resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
-        resourceTypes.add(new ResourceType("qc", "QC Files"));
+        //resourceTypes.add(new ResourceType("qc", "QC Files"));
 
         return resourceTypes;
     }
