@@ -4,213 +4,273 @@ GSAC_WS Installation
 
 README, Part 2.
 
-This file describes how to complete your new gsacRing GSAC-WS Web Services suite,
+March 26 2013
+
+This file describes how to complete your new gsacring GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
-You should have first read and followed the installation instructions in
-the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
+You should have first read and followed the installation instructions in the first README file ("Part 1"), 
+in the main GSAC code area, trunk/src/org/gsac/.
+
+You may have used the "Installing GSAC-WS" section in the report "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories"               
 (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf),
-and in the README (Part 1) file in the main GSAC code area trunk/src/org/gsac/.
 
-This README, Part 2, was generated from the template package during your initial package build, 
-as described in README Part 1.
-
-Some file names in this README file, such as gsacRing.properties,
+Some file names in this README file, such as gsacring.properties,
 may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
 Do not change actual filenames to match uppercase letters if any such are shown in this README file.
 
+Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
+the design of data repositories.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available 
+from UNAVCO at gsac-ws@unavco.org.
+
 ########################################################################
 
-This README is found in your new GSAC package in org/ring/gsac/release/.
+Hopefully you've managed to generate the initial repository source package using README Part 1.
 
-Hopefully you've managed to generate the initial repository source package.
+This README (Part 2) file is found in your new GSAC package in org/ring/gsac/ (ignore the README file in org/ring/gsac/release).
 
-Now, change the working directory to you local GSAC code area, at org/ring/gsac 
+Now, change the working directory to your local GSAC code area, at org/ring/gsac 
 
 
    Adding Your Repository's Details
 
    Base URL and Names or Titles: The "GSAC Resources Properties" File.
 
-The file org/ring/gsac/resources/gsac.properties has a number of properties to specify, for example, 
-gsac.baseurl for the base url which will be part of the full URL of the website about your GSAC repository.
+The file org/ring/gsac/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
+gsac.baseurl is the part of the URL, the full URL of the website for your GSAC repository.
 
-    An example, a file myrepo/gsac/resources/gsac.properties might have: 
+Some values were created in the initial ant build you did already.
+
+    An example, a file ring/gsac/resources/gsac.properties might have: 
 
     #
     #This gets read by the base GsacRepository class for defining properties
     #This allows you to override the default GSAC server properties defined in
     #org/gsac/gsl/resources/gsac.properties
     #
-    gsac.baseurl = /gsacws
+    gsac.baseurl = /gsacring
     #Your repository name
-    gsac.repository.name=My repo GSAC Repository
+    gsac.repository.name=My new GSAC Repository
     #Your repository description
-    gsac.repository.description=The My repo GSAC Repository 
+    gsac.repository.description=The my new GSAC Repository 
 
-You may optionally add a new line with a maximum size when zipping up files, e.g. 100 MB, in bytes:    
+Change the items for your GSAC repository.
 
-    file.zip.maxsize=100000000 
+You optionally may add another new line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
+
+    file.zip.maxsize=100000000
 
 An example of gsac.baseurl is 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-Note that this baseurl need not include any identification of your agency since othe material supplies that, such as the domain in the URL.
 (The terms 'gsacapi/site/form' are always part of a GSAC URL (in the site search) and you do not enter them anywhere.)
-Several GSAC repositories used gsacws for th e baseurl.
+Or this baseurl may include an acronym for identification of your agency.
 
 The items repository.name and repository.description are used as labels on the web site.
-file.zip.maxsize limits the maximum size of science data file to be returned from a repository.
 
+
+########################################################################
+Database
+########################################################################
 
 Setting and Hiding DB account information: the "GSAC DB Properties" File.
 
-You create a different file, org/ring/gsac/gsac/gsac.properties, for the database account details,
+You code the file, org/ring/gsac/dbresources/gsacdb_test.properties, to hold the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
 
 gsac.db.username=db-gsac-username
 gsac.db.password=db-gsac-password
-gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
+gsac.db.jdbcurl=jdbc:mysql://ringdev.mydomain.org:3080/ringdb
 
-When the GSL assembles the JDBC URL it finds the user name and password from here, to read from the database.
-
-The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  The database must have such an account.
+The database host (like ringdev.mydomain.org), port (3080), account user name and account password are all given here.  
+The database must have an account GSAC can use to read from the database. GSAC does not write to any database.
+When the GSL assembles the JDBC URL it finds the user name and password from here.
 
 Note that Oracle and Postgres have different syntax for the last line in this file.  For postgres the form is 
+
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
 One Oracle JDBC URL is of the form:
+
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
-e.g:
+   e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-Caution: Do not check this code into a public software repository, such as GSAC with svn, since it has private database account information.
-Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository.
+Copy the complete org/ring/gsac/dbresources/gsacdb_test.properties to org/ring/gsac/dbresources/gsacdb_production.properties.
+The two files with the same contents are a legacy from earlier GSAC code.
 
-Note that there are *two* "gsac.properties" files, in src/org/myrepo/gsac/ and in src/org/myrepo/gsac/resources/. Sorry about the confusion.
+If you have GSAC SourceForge write access: Caution: 
+Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository or your account details will be public!
+
+Everytime you do "ant" to build your repository  the file org/ring/gsac/dbresources/gsacdb_test.properties is copied to the file
+org/ring/gsac/resources/gsacdb.properties, and org/ring/gsac/resources/gsacserver_test.properties
+is copied to org/ring/gsac/resources/gsacserver.properties. Can be confusing if you attempt to keep track of the several properties files.
 
 
+########################################################################
+build.xml
+########################################################################
 
-Extend the local build.xml file.
+The file build.xml, in your location org/ring/gsac, should have these lines. Note the gsqcring : 
 
-In the file build.xml, in your location org/ring/gsac, add a new build target like 
+    <target name="localinit">
+        <!-- base name for build products -->
+        <property name="basename" value="gsacring"/>
 
-    <target name="gsacmyrepo">
-        <property name="basename" value="gsacea"/>
-        <antcall target="build"/>
-        <echo message="********************************"/>
-        <echo message="To run the test server do the command:"/>
-        <echo message="ant runserver"/>
-        <echo message="********************************"/>
-    </target>
+This target will be used by ant build process to make your GSAC server.
 
-This target will be used by ant to make your GSAC server.
 
 You have specified the basic information needed to run your full GSAC server.
 
 
+########################################################################
+Initial compile 
+########################################################################
 
-Database Details
-
-In org/ring/gsac, run
-
-ant tables
-
-
-
-
-
-Do the command ant there:
+Do the command ant in org/ring/gsac:
 
 ant 
 
-This ant command builds an initial new GSAC server for your repository.  (It also creates a new Tomcat war file, 
-something like gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war, which will be used eventually for your public web site,
-if you use Tomcat.)  
-
 If the ant commands succeeds you will see output to the screen including 
+
 compile:
-    [javac] Compiling 7 source files
+    [javac] Compiling 6 source files
     [javac] Note: Some input files use unchecked or unsafe operations.
     [javac] Note: Recompile with -Xlint:unchecked for details.
 gsacjar:
-     [echo] Making jar /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0.jar
-     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0.jar
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacring1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacring1.0.jar
 and including
 war:
      [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
-   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs1.0/servlet-api.jar
-      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacigs.war
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacring1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacring.war
      [echo] ********************************
      [echo] To run the server run:
      [echo] ant runserver
      [echo] ********************************
 BUILD SUCCESSFUL
 Total time: 8 seconds
-Myrepo
-The source Java (.java) files compiled are like these:
-src/org/Myrepo/gsac/
+
+The source Java (.java) files compiled are like these in org/ring/gsac:
+
 -rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 MyrepoRepository.class
 -rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 MyrepoFileManager.class
 -rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 MyrepoServer.class
 -rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 MyrepoTest.class
 -rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
 -rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
-src/org/Myrepo/gsac/database/
-Tables.java
 
-To run a test version of your new web server try:
+This ant command builds  GSAC for your repository, using code in org/ring/gsac.  
+
+It uses core GSAC (GSL) code from the jar file  gsac/trunk/lib/gsacws.jar.  if you change core GSAC code,
+you must rebuild with ant in trunk/, and trhen rebuild your GSAC with ant in org/ring/gsac.
+
+Your ant build also creates a new Tomcat war file, something like trunk/dist/gsacring.war, 
+which will be used late for your public web site, if you use Tomcat. 
+
+
+########################################################################
+Building Java support for the database connections
+########################################################################
+
+Now run this command in org/ring/gsac:
+
+ant tables
+
+Output from the ant tables command includes lines something like:
+
+     [java] processing AGENCY
+     [java] processing EQUIPMENT
+     [java] processing INSTRUMENTATION
+     [java] processing RECEIVER
+
+Each line corresponds to the name of a table in your database.
+
+This makes a new Java file, org/ring/gsac/Tables.java.  The package name in Tables.java (at or near line 3) should be 
+
+package org.ring.gsac.database;
+  not
+package org.ring.gsac;
+
+Edit the Tables.java file to fix it.
+
+Make a new org/ring/gsac/database subdirectory:
+
+mkdir database
+
+Move the Tables.java file down into database.
+
+Now run ant again in org/ring/gsac.  This time you should see 
+
+compile:
+    [javac] Compiling 7 source files
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+and
+BUILD SUCCESSFUL
+Total time: 5 seconds
+ 
+This time ant compiles the six java files in org/ring/gsac/, and compiles the new Tables.java in org/ring/gsac/database/.
+Look for the new Tables*.class files in org/ring/gsac/database/.  
+
+The Tables classes provide a link between your database
+and your GSAC code.  You will  use names of items in the classes to identify your database tables and columns (fields)
+in your GSAC Java code.  For example, one table name is, in the GSAC universe, SITE_METADATA, and a column (field) in that table might be 
+COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use item names in it in coding soon.
+
+
+########################################################################
+Run a local test of your GSAC server
+########################################################################
+
+Now you can run an initial (but incomplete) test version of your new GSAC web server with:
 
 ant runserver
 
-This command runs the newo gsacRing GSAC repository server, on your local system.  
+This command runs an intial gsacring GSAC repository server, on your local desktop where you are developing your GSAC.  
 Screen output of this ant command includes a line like
 
-GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: GsacServlet: url:http://mycpuname:8080/gsacRing/gsacapi
+GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: GsacServlet: url:http://mycpuname:8080/gsacring/gsacapi
 
-In a browser, look at that URL, http://mycpuname:8080/gsacRing/gsacapi.  
+This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
+running ant runserver.  If you already use 8080 for another purpose, enter a different value in buuild.xml.  It is 
+also in the gsacrepository.sh for when running stand-alone.
+
+In a browser on your desktop where you are developing your GSAC, look at that URL, like 
+
+http://mycpuname:8080/gsacring/gsacapi.  
+
 You should see a new web page with minimal content:
 
-      Welcome to the GSAC Repository
+                  Welcome to the GSAC Repository
       Search Sites | Search Files | Browse | Infomation | Help
 
-This shows that the GSAC code runs on your system.  This new web site uses Jetty (see http://www.eclipse.org/jetty/), 
-a Java HTTP server and Java servlet container.  The Jetty servlet is for local testing, 
-which saves the trouble of deploying a .war file to a Tomcat implementation, and avoids restarting Tomcat 
-for every test of the new GSAC.  Public web servers often run with Tomcat in place of Jetty.
+This shows that basic GSAC code runs on your system.  
+You can look at basic GSAC server web site pages, such as in the Information and Help links.
 
-You've generated the GSAC repository source package and an initial new GSAC server.
+You've generated the core GSAC repository source package (code or software) and an initial new GSAC server.
 
 Stop the 'ant runserver' process with CTRL-c.  
 
-So far you have been bootstrapping a operational GSAC server which has complete core GSAC code 
-but which lacks specific details about your repository.
+This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP server and Java servlet container.  
+The Jetty servlet is for local testing, which saves the trouble of deploying a .war file to a Tomcat implementation 
+(and may avoid restarting Tomcat for every test of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
 
-Now you need to specify important details about your particular repository, such as 
-how to read from your database.
+So far you have been bootstrapping a operational GSAC server which has complete core GSAC code, 
+which lacks specific details about your repository.
 
-#################### ####################
+Now you need to specify the important parts of your data repository for GSAC.
+
 
 ########################################################################
+Using Your Database by means of the Tables.java
+########################################################################
 
-Reading Your Database: Making Tables.java
-
-GSAC has to be able to identify the tables and columns (fields) in your database,
+GSAC must identify the tables and columns (fields) in your database,
 which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
-There is a utility to generate a Java class (called Tables) which holds all of the database table names and the tables' column (field) names.  
+The Java class (in the file called Tables.java) holds all of the database table names and the tables' column (field) names.  
 
-To generate the Tables.java file, after you have made the properties files,  in org/ring/gsac run
-
-ant tables   
-
-Screen output from a successful run should include lines like these, showing names of tables in your database:
-
-tables:
-     [java] processing AGENCY
-     [java] processing COUNTRIES
-     [java] processing EQUIPMENT
-     ...
-
-This process will read your database and make a new file org/ring/gsac/Tables.java (or org/ring/gsac/database/Tables.java).
-The Java code defines classes with methods, such as the next code block for a table about GPS receivers, 
+The Java class Tables has methods, such as the next code block for a table about GPS receivers, 
 with methods getName() which gives the table name, and getColumns() which returns names for fields 
 in that table about GPS receivers, and which defines new String variables.
 
@@ -231,26 +291,13 @@ in that table about GPS receivers, and which defines new String variables.
         public static final String COL_COUNTRY =  NAME + ".Country";
         public static final String ORA_COUNTRY =  "Country";
         public static final String[] ARRAY = new String[] {
-            COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY,COL_PROPOSITIONDATE,COL_COMMITMENTLETTER,COL_CONSISTENT_RINEX_FILES,COL_INDIVIDUALCALIBRATION,COL_DATAQUALITY,COL_DENSIFICATIONSITE,COL_COLLOCATEDINSTRUMENT,COL_INTERESTEDANALYSISCENTRES,COL_HOURLY_DATA,COL_ECGN_DATA,COL_MAINDATACENTRE,COL_TIDEGAUGE,COL_REMARK
+            COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY, ...
         };
-        public static final String COLUMNS = SqlUtil.comma(ARRAY);
-        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
-    public static final STATION_IDENTIFICATION table  = new  		STATION_IDENTIFICATION();
-    };
 
-You will recognize the correspondence between your db's specific table names, such as Station Identification, and your field names, such as latitude,
-with the names GSAC uses internally, such as STATION_IDENTIFICATION.COL_LATITUDE.  
+You will recognize the correspondence between your database's specific table names, such as Station Identification, and your field names, such as latitude,
+with the names GSAC uses internally, in Tables.java, such as STATION_IDENTIFICATION.COL_LATITUDE.  
 
-To compile Tables.java to make the several corresponding Table "class" files in org/ring/gsac/database/, first make sure
-the Tables.java file is in, or is moved to, org/ring/gsac/database/, and also make sure that its package line (line 3) is like:
-
-package org.myrepo.gsac.database;
-
-Then in org/ring/gsac/ do the command:
-
-ant tables 
-
-Do a directory list of org/ring/gsac/database/ to make sure that the .class files are present.
+The GSAC forms of table and field (column) names from Tables.java will be used in new methods needed to implement your GSAC server, described below.
 
 
 ########################################################################
@@ -305,11 +352,11 @@ The output handler code for the GSAC format choices, HTML, SOPAC XML site log,
 SINEX, GAMIT station.info, GSAC FULL csv format, and the GSAC Plain Text format, 
 will handle the "standard parameters" in a "conforming GSAC geodesy implementation."
 
-Please do *not*  do svn commit for any modified SiteManager.java file into SourceForge.
+Please do *not* do svn commit into SourceForge for any modified SiteManager.java file, if you have SourceForge write permission.
 
-GSAC does not endorse file formats.  If there is a format which you think GSAC should 
-offer, you can contact UNAVCO to add it to GSAC code.  Or you can create a new "OutputHandler" Java class yourself and submit it to UNAVCO to add to GSAC.
-You create a new kind of format by writing a new Java class, similar to any of the above output handlers, such as HtmlSiteOutputHandler.  
+GSAC does not endorse file formats.  If there is a format which you think GSAC should offer, you can contact UNAVCO 
+to add it to GSAC code.  Or you can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
+You create a new kind of format by writing a new Java class, similar to any of the above output handlers, such as HtmlSiteOutputHandler.java.  
 The Java output handler source files are in trunk/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
 guides to what is needed in a similar Java class.  
 
@@ -318,40 +365,54 @@ guides to what is needed in a similar Java class.
 Extending Java Classes (Java Code changes)
 ########################################################################
 
-The RingRepository class is the main entry point. It mostly creates the RingSiteManager 
-and/or RingFileManager objects (for example for the UNAVCO IGS GSAC, in  trunk/src/org/igs/gsac/, 
+The ringRepository class is the main entry point. It mostly creates the ringSiteManager 
+and other ring---Manager.java (for example for the UNAVCO IGS GSAC, in  src/org/igs/gsac/, 
 the files IgsFileManager.java, IgsRepository.java, IgsServer.java, and IgsSiteManager.java).
 
-Files in org/ring/gsac/ have the Java code for your repository.   The Java file RingRepository.java is the main entry point, 
-where you add much of the code for the new repository.   Also the files RingSiteManager.java and 
-RingsFileManager.java t be extended to implement database queries used by your GSAC web form searches 
-and by the GSAC API.  See the lines in the Java classes in those files marked with CHANGEME in the comments, for what needs to be changed. 
+Files in org/ring/gsac/ have the Java code especially for your repository. 
+
+The files ringSiteManager.java and ringsFileManager.java must be extended to implement database queries used by your GSAC web form searches 
+and by the GSAC API.  See the lines in those Java files marked with CHANGEME for a small idea about what needs to be changed. 
 
 For a more detailed description of adding to the GSAC Java files, you may review code in other 
 GSAC implementations checked into SourceForge, such as the file org/igs/gsac/IgsSiteManager.java.
 
-Add to these files:
+After you have written new Java test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform.
 
-########################################################################
 
-IgsRepository.java 
+Modify or add new Java to these files:
+
+
+ringRepository.java 
 
 Above the import lines, add the new Java package name, in this form:
-package org.Ring.gsac; 
+package org.ring.gsac; 
 
-In the method initResourceManagers(),  uncomment 
-     super.initResourceManagers();
-to search on both sites and data files in the database.  
+In the method initResourceManagers(), make the choice if you want your GSAC repository to
+search on sites (stations or monuments), for data files, or for both:
+ 
+  public void initResourceManagers() {
+        // Use this line to search on BOTH sites and data files in the metadata.
+        super.initResourceManagers();
 
-If you wish  to only search  only for sites or only for files, use either the calls getResourceManager(GsacSite.CLASS_SITE) 
-or getResourceManager(GsacFile.CLASS_FILE).
+        // If you only want searches for sites,  uncomment this
+        //getResourceManager(GsacSite.CLASS_SITE);
+
+        // If you only want searches for files,  uncomment this
+        // getResourceManager(GsacFile.CLASS_FILE);
+    }
 
 
-########################################################################
 
-IgsFileManager.java 
+ringFileManager.java 
 
-This class has 3 'changeme' sections:
+You need not bother with this file if you do not supply a data file download service.
+
+Above the import lines, add the new Java package name, in this form:
+package org.ring.gsac;
+
+This class has 3 'Changeme' sections:
 
 doGetQueryCapabilities()
 
@@ -361,246 +422,77 @@ getResource()
 
 
 
-########################################################################
 
-IgsSiteManager.java  
+ringSiteManager.java  
 
-This class has 5 'changeme' sections...
+You will see a template file for ringSiteManager.java which was initially created automatically by the
+GSAC build process.  ringSiteManager.java requires most of the new JAVA code for a new GSAC.
 
-doGetQueryCapabilities() - defines things to search on
+A GSAC programmer needs to know Java and have an understanding of database concepts and queries.
 
-handleRequest
+First, above the "import" lines, add the new Java package name, in this form:
 
-getResource
+package org.ring.gsac;
 
-Default query order"
+such as package org.igs.gsac;  which is in the IgsSiteManager.java.
 
-makeResource
+Make sure you have a line like
 
-and also a change in getResourceSelectColumns().
-
-
-########################################################################
-More examples about extending Java.
-########################################################################
-
-GSAC core code provides a few common data values, such as latitude of a site.  For your GSAC you probably need to use additional values from your database for data searches or results.
-
-These examples are from code for the IGS Site Log Manager implementation of GSAC.  Since you have downloaded the GSAC code from SourceForge, you already have these files to look at.  The ISG GSAC code was checked into SourceForge as part of the GSAC.
-
-GSAC uses a consistent capitalization style to identify classes in Tables.java (from the database table names) and field names, in other Java files, Java variables and Java methods.  We strongly urge you to follow this convention to aid code readability and maintenance.
-
-To demonstrate how to add a new field's value from your database to the HTML (web page) results, here is the code for a database value called frequency standard, which in this database indicates the kind of clock used by a GNSS receiver.  
-
-The database used by GSCA is represented in Java by the file org/igs/gsac/database/Tables.java.  In that file there is a Java class for a db table called SITELOG_FREQUENCYSTANDARD, with a db field variable String COL_STANDARDTYPE.  You use these Java variables to write the new code.  Do not modify the IGS GSAC file Tables.java; it was created when the IGS GSAC template was built.  
-
-You look in your file  Tables.java to find the Java names for items you want to use from your database.
-In Tables.java, find the class in your db table, and the field in it you want to use, such as
-this representation of your db and its table which has a field for something called frequency standard:
-
- public static class SITELOG_FREQUENCYSTANDARD extends Tables {
-        public static final String NAME = "SiteLog_FrequencyStandard";
-        public String getName() {return NAME;}
-        public String getColumns() {return COLUMNS;}
-        public static final String COL_ID =  NAME + ".ID";
-        public static final String COL_STANDARDTYPE =  NAME + ".StandardType";
-        ....
-
-From this material, you can construct the full GSAC internal name for the value needed, such as Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE
+import org.ring.gsac.database.*;  (for example import org.igs.gsac.database.*;).
 
 
-In the file trunk/org/gsac/gsl/GsacExtArgs.java, add a new line to declare the internal variable name GSAc will use, like
-    public static final String SITE_METADATA_FREQUENCYSTANDARD = "site.metadata.frequencystandard"; 
-This declares a new Java variable to hold the value extracted from the database for a GPS receiver station or site.
-DO this for each new type to value to handle.
+(The ringSiteManager.java file has 5 'CHANGEME' notes in the template ringSiteManager.java provided by GSAC builds.
+The Changme lines are only a few hints of some places where new code is needed.)
 
+As a practical matter look at the ***SiteManager.java files in the IGS and RING GSAC packages, for how to create code to
+read from a database.  Every database is different so there is no way GSAC can provide this code in advance.
+You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
+values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
 
-To the file  like MyRepoSiteManager.java in trunk/org/myrepo/gsac/, add a method like private void readFrequencyStandardMetadata(GsacResource gsacResource)
-which has in part
- addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
-                    "Clock", results.getString( Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
+RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the
+GSAC build process the IgsSiteManager.java file has 550 more lines than its initial version.  These figures give you an idea
+how much coding is required to install GSAC.
 
-note this has:
-the GSAC variable GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
-a label ("Clock" in this case) for the HTML output page for a query, and
-a way (results.getString() ) to get the desired value from the db, using the full GSAC internal name for the Tables.java object.
+UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
+able to provide a way to automate some or all of the SiteManager.java code, but have not done so yet.  Even so, installing GSAC
+is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
+services, which also permit federated collaborations.
 
-Example of the complete method (from the IGS GSAC file, IgsSiteManager.java):
-    /**
-     * from db table represented in Tables.java as class SITELOG_FREQUENCYSTANDARD,
-     * get the value of String COL_STANDARDTYPE and add it (with the label "clock") to the GsacResource object "gsacResource".
-     * in this case the site is recognized in the db with the getDatabaseManager().select() call.
-     *
-     * SITE_METADATA_FREQUENCYSTANDARD must be declared in  GsacExtArgs.java.
-     *
-     * @param gsacResource  the GSAC resource object to add the value to.
-     *
-     * @throws Exception _more_
-     */
-    private void readFrequencyStandardMetadata(GsacResource gsacResource)
-            throws Exception {
-        // compose db query statement; 'order by' phrase is null.
-        Statement statement =
-            getDatabaseManager().select(
-                Tables.SITELOG_FREQUENCYSTANDARD.COLUMNS,
-                Tables.SITELOG_FREQUENCYSTANDARD.NAME,
-                Clause.eq(
-                    Tables.SITELOG_FREQUENCYSTANDARD.COL_FOURID,
-                    gsacResource.getId()), (String) null, -1);
-        ResultSet results;
-        try {
-            // do db query
-            SqlUtil.Iterator iter =
-                getDatabaseManager().getIterator(statement);
-            // process each line in results of db query; the GsacExtArgs item must have been added to GsacExtArgs.java.
-            while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
-                    "Clock",
-                    results.getString(Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-   }
-
-This reads the frequency standard value from the database.  The term "Clock" is a label for search results in the HTML web page of results.
-
-Then in the same Java file, add to the method 
-    public GsacSite makeResource(ResultSet results)
-the call to the new method:
-  readFrequencyStandardMetadata(site); 
-before the return statement.
-
-This method makeResource() loads  the results from a query.
-
-Build the new GSAC, in this case with "ant" in trunk/org/myrepo/gsac/.  Then test your changes with "ant runserver."
-
-This finds the frequency standard value at a site.
-
-To add the value to other GSAC output result formats, see the "...OutputHandler.java" files in trunk/org/gsac/gsl/output/site/.
-
-
-########################################################################
-Equipment data 
-########################################################################
-
-Data items which pertain to equipment (such as GNSS receivers and related instruments) have a special Java class
-    org/gsac/gsl/metadata/gnss/GnssEquipmentGroup.java.  
-Let's see how to add an equipment value to GSAC output.  
-
-We will again refer to core GSAC code, and examples of code in the IGS Site Log Manager GSAC.  Use this code as a template for writing new code about your equipment metadata.
-
-In  org/igs/gsac/database/Tables.java there is a Java class, representing a database table, called SITELOG_RECEIVER, with a variable String COL__FIRMWAREV, for the database's field holding the firmware version. You use these Java variables to write new code.  (Do not modify Tables.java) 
-
-In the method  
-    private void readEquipmentMetadata(GsacResource gsacResource) in org/igs/gsac/IgsSiteManager.java
-is one line:
-    equipment.setReceiverFirmware(results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
-in the location in the method which you can see in  IgsSiteManager.java.  
-
-In 
-    org/gsac/gsl/metadata/gnss/GnssEquipment.java is a new variable declaration
-    private String receiverFirmware = "";
-and two new methods:
-    public void setReceiverFirmware(String value) 
-and
-    public String getReceiverFirmware(String value)
-which have one very simple executable line in each method.
-
-The Java file GnssEquipmentGroup.java has two lines for the firmware version:
-   outputHandler.msg("Firmware"), 
-
-   equipmentRow(buff, getValue(equipment.getReceiverFirmware(), values, 4),"");
-Add similar lines to this same core GSAC Java file for your equipment metadata value.
-
-Equipment parameters may change with every site visit.  The IGS Site Log Manager GSAC which we are using as a template has code to show equipment metadata values for each visit ,in the results in HTML (web page).  This requires a few more lines of code in this method  gsl/metadata/gnss/GnssEquipment.java:   
-     String receiverSerial, String receiverFirmware,
-          receiverSerial, receiverFirmware, new double[] { 0,
-                        String receiverSerial, String receiverFirmware,
-        this.receiverFirmware = receiverFirmware;
-Look at the class file to see where and how these lines are used.  You add corresponding lines for your equipment.
-
-To add the equipment metadata firmware version to the XML Site Log output format, are these lines in these files:
-    org/gsac/gsl/util/XmlSiteLog.java:    
-        public static final String TAG_EQUIP_FIRMWAREVERSION =
-
-    org/gsac/gsl/output/site/SiteLogOutputHandler.java:           
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
-           equipment.getReceiverFirmware()));
-
-   org/gsac/gsl/output/site/XmlSiteLogOutputHandler.java:                
-        pw.append(makeTag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "",
-           equipment.getReceiverFirmware()));
-
-In short, use the IGS IGS Site Log Manager GSAC code to look for every instance of use of the GSAC variable  "COL_FIRMWAREV" and the related code files with "FIRMWAREVERSION" and "Firmware."  
-
-So far we have shown how to get database values about a discovered site, and how to output the value in the results from GSAC.  Here are examples how to include a new metadata parameter, such as for the city name, in the GSAC site query form.  You can duplicate this code for some new kind of field in your database, to allow remote users to query on that field.
-
-For example, in org/igs/gsac/database/Tables.java you need to verify that your database Java representation has the field value you wan to use, such as for IGS the value COL_CITY. and its associated database table class name; in the example there are two tables with this field value, and you need to use SITELOG_LOCATION.
-
-You need new lines like these in the core GSAC code (not IGS site log code):
-
-org/gsac/gsl/GsacExtArgs.java:  
-    public static final String ARG_CITY = GsacArgs.ARG_SITE_PREFIX + "city";
-
-In org/gsl/GsacRepository.java, in addToSearchForm() 
-add lines like
-                buffer.append(HtmlUtil.formEntry("City:",
-                  HtmlUtil.input(ARG_CITY,
-                  request.get(ARG_CITY, (String) null)));
-
-In org/gsac/gsl/metadata/PoliticalLocationMetadata.java there are several lines  to be duplicated:
-   private String city;
-   outputHandler.msgLabel("City"), city));
-
-and in addHtml(...) add
-     if (city != null) {
-            pw.append(outputHandler.formEntry(request,
-                    outputHandler.msgLabel("City"), city));
-        }
-
-and in this constructor add a new line
-    public PoliticalLocationMetadata(String country, String state,
-                                     String city) {
-        ...
-        this.city    = city;
-
-and create two new methods like these:
-    public void setCity(String value) {
-...
-    public String getCity() {... 
-which have very simple executable  contents (city = value; and return city;).
-
-In the example IGS code, there are lines to implement a query capability for, and  reading the city name:
-   org/igs/gsac/IgsSiteManager.java:   
-    values = getDatabaseManager().readDistinctValues
-    ( Tables.SITELOG_LOCATION.NAME, Tables.SITELOG_LOCATION.COL_CITY);
-
-    capabilities.add(new Capability(GsacExtArgs.ARG_CITY,    
-            "City", values, true, CAPABILITY_GROUP_ADVANCED));
-
-    org/igs/gsac/IgsSiteManager.java   
-       String city= results.getString(colCnt++);
-    org/igs/gsac/IgsSiteManager.java   
-       site.addMetadata(new PoliticalLocationMetadata(country, state, city));
+After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. More details about this process below.
 
 
 ########################################################################
 Web Site Page Design, Contents, and Images 
 ########################################################################
 
-The home page of a GSAC repository web site is detailed in a file such as
-src/org/myrepo/gsac/htdocs/gsacmyrepo_index.html
-
-Installing  GSAC initially creates a short version of this page which says only "Welcome to GSAC." 
+Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
 You can add more to this file for a larger page, using normal HTML.
-Note that these pages do not have complete <html> header lines, since these pages
-are wrapped inside the hearder and footer HTML files, mentioned next.
 
-The files footer.html and header.html in the directory org/ring/gsac/resources/
-specify web page layout and decoration surrounding the GSAC forms and results. They can be as simple as
+The home page of a GSAC repository web site is detailed in a file such as src/org/ring/htdocs/index.html
+In your GSAC code area, use mkdir htdocs to create htdocs/ in ring/gsac/ (src/org/ring/htdocs/).
+In ring/gsac/htdocs make a new HTML file index.html. A very simple but working one has these lines:
+
+    <link rel="search" type="application/opensearchdescription+xml" href="htdocs/opensearch.xml" 
+    title=" ring GSAC Repository" />
+    This is the ring GPS Repository
+
+Put image files used on the web main page  in the new directory, htdocs.
+
+In your index.html file, the image is added like 
+
+<img  src="${htdocs}/home-page-header_1.jpg" >
+
+As usual in HTML, images also may be retrieved from another web server, for example, with
+
+<img src="http://www.nasa.gov/images/gps_satellite.gif">.
+
+Note that these pages do not have complete <html>  lines (including <html> and more at the beginning, or the final </hmtl>), since these pages
+are wrapped inside the GSAC header and footer HTML files, mentioned next.
+
+The files footer.html and header.html, in the directory org/ring/gsac/resources/, specify the top and bottom of the 
+GSAC web pages at your locations, and provide web page layout and decoration surrounding  the GSAC forms and results. 
+These files may be as simple as
 
  header.html:
 	<html>
@@ -609,48 +501,40 @@ specify web page layout and decoration surrounding the GSAC forms and results. T
 	</head>
 	<body>
 
-or fully developed, such as using css.  Image files used on the web site can be put in the new directory, 
-org/ring/gsac/htdocs/, or they may be retrieved from another web server, for example, with
+or fully developed, such as using css.  
 
-   <img src="http://cddis.nasa.gov/images/spacer.gif">.
+Change the files resources/header.html and resources/footer.html to give the HTML appearance for the header and footer
+of all your web pages.  You may use these files to supply your standard agency's web site look to your GSAC repository web site.
 
-Change the files resources/header.html and resources/footer.html to give the HTML for the header and footer
-of all your web pages.  You may use these files to supply your standard agency's web site look
-to your GSAC repository web site.
-
-The GSAC query pages withe the search web forms, and pages with static GSCA information such as the help pages,
-are complete and provided by GSAC installation.  Is it possible to modify the search forms 
-with extensive Java programming. We urge you to write to UNAVCO if you see need for a change. 
+The GSAC query pages with the search web forms, and pages with static GSCA information such as the help pages,
+are complete and provided by GSAC installation, and use the same header and footer HTML files.  Is it possible to modify the search forms 
+with extensive Java programming, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
+other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
 
 
 ########################################################################
 Building and Running the GSAC server
 ########################################################################
 
-Once you have made needed additions to the Java code, to build your GSAC, in org/ring/gsac, run
+Once you have made the additions to the Java code, to build your GSAC, in org/ring/gsac, run
 simply:
 
  ant 
 
-The build.xml file used by ant is org/ring/gsac/build.xml. The ant build targets will copy one 
-of the gsacdb  properties files to resources/gsacsb.properties
-
-
 The ant target builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
-and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacws.war.
+and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsacring.war.
 
 To run the server, do:
 
  ant runserver
 
-This will run a test or demo version of your GSAC on your desktop, with Jetty doing the web page management.
+This will run a test version of your GSAC on your desktop, with Jetty doing the web page management.
 
 To see the new GSAC, in the runserver screen output  is a line such as
 
-     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacmyrepo/gsacapi
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacring/gsacapi
 
-Enter the "http:/hostname:8080/gsacmyrepo/gsacapi" part in a browser URL address window on the same machine to
-see your new GSAC.
+Enter the "http:/hostname:8080/gsacring/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
 
 
 ########################################################################
@@ -659,13 +543,13 @@ Hiding DB account info
 
 If you have some database authentication you need to use (or any other properties), 
 but don't want to check in with the properties files (into SourceForge or other svn), 
-you can create a org/Ring/gsacring.properties file. The contents are two lines:
+you can create a org/ring/gsacring.properties file. The contents are two lines:
 gsac.db.username=your-db-account-name
 gsac.db.password=your-db-account-password
 
 The ant runserver command implicitely uses this property file as a command line argument.
 When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
-So, for example, for a 'gsacmyrepo' server,  it looks for a gsacmyrepo.properties file. 
+So, for example, for a 'gsacring' server,  it looks for a gsacring.properties file. 
 Put the authentication information in that properties file so it's not checked into any svn.
 
 For the Unavco GSAC package we have the db auth information in SVN and it gets included in the .war file 
@@ -677,12 +561,12 @@ Running the new GSAC web site with Tomcat
 
 Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
 
-Building GSAC (in the src/org/Ring/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
- trunk/dist/gsacRing.war.  
+Building GSAC (in the src/org/ring/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
+ trunk/dist/gsacring.war.  
  
 Copy this file to the Tomcat apachetomcatdev/webapps/ folder on your web server host.  
 For example, on the Tomcat server, do something like
-cp gsacRing.war /usr/local/apachetomcatdev/webapps
+cp gsacring.war /usr/local/apachetomcatdev/webapps
 
 The GSAC server web should be available in a few seconds, if you are using "hot deploy," without a restart of Tomcat.
 
@@ -710,5 +594,6 @@ to construct the complete URL specifying FTP for each data file, with extra Java
 such as data file name, which you can find in results from GSAC queries.
 
 
-28 Feb. 2013
 SKW 
+UNAVCO
+
