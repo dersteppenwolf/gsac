@@ -28,7 +28,7 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.util.*;
 
-/* CHANGEME - done for INGV - include datahase package for the GSAC installation. */
+/* CHANGEME - done in for INGV - include datahase package for the GSAC installation. */
 import org.ring.gsac.database.*;
 
 import ucar.unidata.sql.Clause;
@@ -53,8 +53,95 @@ import java.util.List;
 /**
  * Handles all of the site related repository requests
  * The main entry point is the  {@link #handleRequest} method.
+
+  This class uses the INGV RING database ingv with table siti_gsac:
+
+mysql> describe siti_gsac;
++------------------------+---------------+------+-----+---------+-------+
+| Field                  | Type          | Null | Key | Default | Extra |
++------------------------+---------------+------+-----+---------+-------+
+| id_sito                | int(10)       | NO   |     | 0       |       |
+| nome_sito              | varchar(50)   | NO   |     | NULL    |       |
+| id_rete                | int(10)       | NO   |     | NULL    |       |
+| data_dismissione       | datetime      | YES  |     | NULL    |       |
+| geologia               | varchar(150)  | YES  |     | NULL    |       |
+| luogo                  | varchar(50)   | YES  |     | NULL    |       |
+| latitudine             | decimal(10,4) | YES  |     | NULL    |       |
+| longitudine            | decimal(10,4) | YES  |     | NULL    |       |
+| quota                  | decimal(10,4) | YES  |     | NULL    |       |
+| x                      | varchar(50)   | YES  |     | NULL    |       |
+| y                      | varchar(50)   | YES  |     | NULL    |       |
+| z                      | varchar(50)   | YES  |     | NULL    |       |
+| x_utmed50              | decimal(22,0) | YES  |     | NULL    |       |
+| y_utmed50              | decimal(22,0) | YES  |     | NULL    |       |
+| tipo_materializzazione | varchar(150)  | YES  |     | NULL    |       |
+| height_of_monument     | varchar(50)   | YES  |     | NULL    |       |
+| monument_foundation    | varchar(150)  | YES  |     | NULL    |       |
+| foundation_depth       | varchar(50)   | YES  |     | NULL    |       |
+| monument_inscription   | varchar(150)  | YES  |     | NULL    |       |
+| iers_domes_number      | varchar(50)   | YES  |     | NULL    |       |
+| bedrock_types          | varchar(150)  | YES  |     | NULL    |       |
+| id_on_site_agency      | int(10)       | YES  |     | NULL    |       |
+| id_responsible_agency  | int(10)       | YES  |     | NULL    |       |
+| id_monumento           | int(10)       | YES  |     | NULL    |       |
+| nazione                | varchar(100)  | YES  |     | NULL    |       |
+| regione                | varchar(100)  | YES  |     | NULL    |       |
+| attivo                 | tinyint(1)    | YES  |     | NULL    |       |
+| note                   | varchar(250)  | YES  |     | NULL    |       |
+| id_data_center         | int(10)       | YES  |     | NULL    |       |
+| monumentazione_esterna | varchar(128)  | YES  |     | NULL    |       |
+| agenzia                | varchar(150)  | YES  |     | NULL    |       |
++------------------------+---------------+------+-----+---------+-------+
+
+whose values are accessed in GSAC code with the GSAC class (in Tables.java):
+
+    public static class SITI_GSAC extends Tables {
+        public static final String NAME = "siti_gsac";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+
+        public static final String COL_ID_SITO =  NAME + ".id_sito";
+        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
+        public static final String COL_ID_RETE =  NAME + ".id_rete";
+        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
+        public static final String COL_GEOLOGIA =  NAME + ".geologia";
+        public static final String COL_LUOGO =  NAME + ".luogo";
+        public static final String COL_LATITUDINE =  NAME + ".latitudine";
+        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
+        public static final String COL_QUOTA =  NAME + ".quota";
+        public static final String COL_X =  NAME + ".x";
+        public static final String COL_Y =  NAME + ".y";
+        public static final String COL_Z =  NAME + ".z";
+        public static final String COL_X_UTMED50 =  NAME + ".x_utmed50";
+        public static final String COL_Y_UTMED50 =  NAME + ".y_utmed50";
+        public static final String COL_TIPO_MATERIALIZZAZIONE =  NAME + ".tipo_materializzazione";
+        public static final String COL_HEIGHT_OF_MONUMENT =  NAME + ".height_of_monument";
+        public static final String COL_MONUMENT_FOUNDATION =  NAME + ".monument_foundation";
+        public static final String COL_FOUNDATION_DEPTH =  NAME + ".foundation_depth";
+        public static final String COL_MONUMENT_INSCRIPTION =  NAME + ".monument_inscription";
+        public static final String COL_IERS_DOMES_NUMBER =  NAME + ".iers_domes_number";
+        public static final String COL_BEDROCK_TYPES =  NAME + ".bedrock_types";
+        public static final String COL_ID_ON_SITE_AGENCY =  NAME + ".id_on_site_agency";
+        public static final String COL_ID_RESPONSIBLE_AGENCY =  NAME + ".id_responsible_agency";
+        public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
+        public static final String COL_NAZIONE =  NAME + ".nazione";
+        public static final String COL_REGIONE =  NAME + ".regione";
+        public static final String COL_ATTIVO =  NAME + ".attivo";
+        public static final String COL_NOTE =  NAME + ".note";
+        public static final String COL_ID_DATA_CENTER =  NAME + ".id_data_center";
+        public static final String COL_MONUMENTAZIONE_ESTERNA =  NAME + ".monumentazione_esterna";
+        public static final String COL_AGENZIA =  NAME + ".agenzia";
+
+        public static final String[] ARRAY = new String[] {
+            COL_ID_SITO,COL_NOME_SITO,COL_ID_RETE,COL_DATA_DISMISSIONE,COL_GEOLOGIA,COL_LUOGO,COL_LATITUDINE,COL_LONGITUDINE,COL_QUOTA,COL_X,COL_Y,COL_Z,COL_X_UTMED50,COL_Y_UTMED50,                        COL_TIPO_MATERIALIZZAZIONE,COL_HEIGHT_OF_MONUMENT,COL_MONUMENT_FOUNDATION,COL_FOUNDATION_DEPTH,COL_MONUMENT_INSCRIPTION,COL_IERS_DOMES_NUMBER,COL_BEDROCK_TYPES,COL_ID_ON_SITE_AGENCY,                       COL_ID_RESPONSIBLE_AGENCY,COL_ID_MONUMENTO,COL_NAZIONE,COL_REGIONE,COL_ATTIVO,COL_NOTE,COL_ID_DATA_CENTER,COL_MONUMENTAZIONE_ESTERNA,COL_AGENZIA
+        };
+        public static final String COLUMNS = SqlUtil.comma(ARRAY);
+        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
+    public static final SITI_GSAC table  = new  SITI_GSAC();
+    }
+
  *
- * @author         Jeff McWhirter
+ * @author         S K Wier
  */
 public class RingSiteManager extends SiteManager {
 
@@ -82,17 +169,15 @@ public class RingSiteManager extends SiteManager {
             String help = HtmlOutputHandler.stringSearchHelp;  /* where from ? */
 
             // language
-                // initCapability(new Capability(ARG_SITE_CODE, "Nome Sito / Site Code",
             Capability siteCode =
                 initCapability(new Capability(ARG_SITE_CODE, "Site Code",
                     Capability.TYPE_STRING), CAPABILITY_GROUP_SITE_QUERY,
                      "Short name of the site", "Short name of the site. " + help);
 
-            siteCode.setBrowse(true);  /* which does ? look */
+            siteCode.setBrowse(true);  /* which does ? */
             capabilities.add(siteCode);
 
-            // language:   
-                // .add(initCapability(new Capability(ARG_BBOX, "Posizione Limiti / Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
+            // language:   latitudine longitudine
             capabilities
                 .add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
@@ -100,28 +185,25 @@ public class RingSiteManager extends SiteManager {
             String[] values;
 
             // language:  luogo
-            //capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Luogo / Place", values, true, CAPABILITY_GROUP_ADVANCED));
             values = getDatabaseManager().readDistinctValues(
-                Tables.SITI.NAME,  // for a db table name
-                Tables.SITI.COL_LUOGO);  // for the db table and field name
+                Tables.SITI_GSAC.NAME,  // for a db table name
+                Tables.SITI_GSAC.COL_LUOGO);  // for the db table and field name
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // language: regione 
-            // capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Regione / Provincia", values, true, CAPABILITY_GROUP_ADVANCED));
             values = getDatabaseManager().readDistinctValues(
-                Tables.SITI.NAME,
-                Tables.SITI.COL_REGIONE);
+                Tables.SITI_GSAC.NAME,
+                Tables.SITI_GSAC.COL_REGIONE);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Region / Province / State", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // language: regione nazione
-            //capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nazione / Country", values, true, CAPABILITY_GROUP_ADVANCED));
+            // language: nazione
             values = getDatabaseManager().readDistinctValues(
-                Tables.SITI.NAME,
-                Tables.SITI.COL_NAZIONE);
+                Tables.SITI_GSAC.NAME,
+                Tables.SITI_GSAC.COL_NAZIONE);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Country", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nation", values, true, CAPABILITY_GROUP_ADVANCED));
 
             return capabilities;
         } catch (Exception exc) {
@@ -147,7 +229,7 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     * CHANGEME - done for RING  whatsit
+     * CHANGEME - done for RING  
      * create and return GSAC's internal "resource" (site object) [NOT a db object]  identified by the given resource id  in this case NOME_SITO
      *
      * @param resourceId resource id. 
@@ -158,7 +240,7 @@ public class RingSiteManager extends SiteManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
 
-        Clause clause = Clause.eq(Tables.SITI.COL_NOME_SITO, resourceId);
+        Clause clause = Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, resourceId);
 
         Statement statement =
             getDatabaseManager().select(getResourceSelectColumns(),
@@ -195,10 +277,10 @@ public class RingSiteManager extends SiteManager {
                                            GsacResponse response,
                                            List<String> tableNames,
                                            StringBuffer msgBuff) {
-        tableNames.add(Tables.SITI.NAME);
+        tableNames.add(Tables.SITI_GSAC.NAME);
         List<Clause> clauses = new ArrayList();
-        String       latCol  = Tables.SITI.COL_LATITUDINE;
-        String       lonCol  = Tables.SITI.COL_LONGITUDINE;
+        String       latCol  = Tables.SITI_GSAC.COL_LATITUDINE;
+        String       lonCol  = Tables.SITI_GSAC.COL_LONGITUDINE;
         if (request.defined(ARG_NORTH)) {
             clauses.add(
                 Clause.le(
@@ -237,13 +319,13 @@ public class RingSiteManager extends SiteManager {
         }
 
         if (request.defined(ARG_SITE_ID)) {
-            addStringSearch(request, ARG_SITE_ID, " ", msgBuff, "Numero Sito / Site ID",
-                            Tables.SITI.COL_ID_SITO, clauses);
+            addStringSearch(request, ARG_SITE_ID, " ", msgBuff, "Site ID",
+                            Tables.SITI_GSAC.COL_ID_SITO, clauses);
         }
 
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE,
-                        msgBuff, "Numero Sito / Site Code",
-                        Tables.SITI.COL_NOME_SITO, clauses);
+                        msgBuff, "Site Code",
+                        Tables.SITI_GSAC.COL_NOME_SITO, clauses);
 
         if (request.defined(GsacExtArgs.ARG_COUNTRY)) {
             List<String> values =
@@ -252,7 +334,7 @@ public class RingSiteManager extends SiteManager {
             clauses.add(
                 Clause.or(
                     Clause.makeStringClauses(
-                        Tables.SITI.COL_NAZIONE, values)));
+                        Tables.SITI_GSAC.COL_NAZIONE, values)));
         }
 
         return clauses;
@@ -267,10 +349,10 @@ public class RingSiteManager extends SiteManager {
      *   Set this to what you want to sort on                  whatsit   order for what?
      */
     private static final String SITE_ORDER =
-        " ORDER BY  " + Tables.SITI.COL_NOME_SITO + " ASC ";
+        " ORDER BY  " + Tables.SITI_GSAC.COL_NOME_SITO + " ASC ";
 
 
-    // or by id number: " ORDER BY  " + Tables.SITI.COL_ID_SITO + " ??? see mysql order by syntax ";
+    // or by id number: " ORDER BY  " + Tables.SITI_GSAC.COL_ID_SITO + " ??? see mysql order by syntax ";
 
 
     /**
@@ -281,8 +363,47 @@ public class RingSiteManager extends SiteManager {
      * @return comma delimited fully qualified column names to select on
      */
     public String getResourceSelectColumns() {
-        return Tables.SITI.COLUMNS;
+        return Tables.SITI_GSAC.COLUMNS;
     }
+
+/*
+SITI_GSAC extends Tables {
+        public static final String NAME = "siti_gsac";
+
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_ID_SITO =  NAME + ".id_sito";
+        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
+        public static final String COL_ID_RETE =  NAME + ".id_rete";
+        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
+        public static final String COL_GEOLOGIA =  NAME + ".geologia";
+        public static final String COL_LUOGO =  NAME + ".luogo";
+        public static final String COL_LATITUDINE =  NAME + ".latitudine";
+        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
+        public static final String COL_QUOTA =  NAME + ".quota";
+        public static final String COL_X =  NAME + ".x";
+        public static final String COL_Y =  NAME + ".y";
+        public static final String COL_Z =  NAME + ".z";
+        public static final String COL_X_UTMED50 =  NAME + ".x_utmed50";
+        public static final String COL_Y_UTMED50 =  NAME + ".y_utmed50";
+        public static final String COL_TIPO_MATERIALIZZAZIONE =  NAME + ".tipo_materializzazione";
+        public static final String COL_HEIGHT_OF_MONUMENT =  NAME + ".height_of_monument";
+        public static final String COL_MONUMENT_FOUNDATION =  NAME + ".monument_foundation";
+        public static final String COL_FOUNDATION_DEPTH =  NAME + ".foundation_depth";
+        public static final String COL_MONUMENT_INSCRIPTION =  NAME + ".monument_inscription";
+        public static final String COL_IERS_DOMES_NUMBER =  NAME + ".iers_domes_number";
+        public static final String COL_BEDROCK_TYPES =  NAME + ".bedrock_types";
+        public static final String COL_ID_ON_SITE_AGENCY =  NAME + ".id_on_site_agency";
+        public static final String COL_ID_RESPONSIBLE_AGENCY =  NAME + ".id_responsible_agency";
+        public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
+        public static final String COL_NAZIONE =  NAME + ".nazione";
+        public static final String COL_REGIONE =  NAME + ".regione";
+        public static final String COL_ATTIVO =  NAME + ".attivo";
+        public static final String COL_NOTE =  NAME + ".note";
+        public static final String COL_ID_DATA_CENTER =  NAME + ".id_data_center";
+        public static final String COL_MONUMENTAZIONE_ESTERNA =  NAME + ".monumentazione_esterna";
+        public static final String COL_AGENZIA =  NAME + ".agenzia";
+*/
 
 
     /**
@@ -308,29 +429,40 @@ public class RingSiteManager extends SiteManager {
      */
     @Override
     public GsacSite makeResource(ResultSet results) throws Exception {
+/*
+
+        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
+        public static final String COL_ID_RETE =  NAME + ".id_rete";
+        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
+        public static final String COL_GEOLOGIA =  NAME + ".geologia";
+        public static final String COL_LUOGO =  NAME + ".luogo";
+        public static final String COL_LATITUDINE =  NAME + ".latitudine";
+        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
+        public static final String COL_QUOTA =  NAME + ".quota";--------------------  the elevation
+        public static final String COL_X =  NAME + ".x";
+        public static final String COL_Y =  NAME + ".y";
+        public static final String COL_Z =  NAME + ".z";
+*/
+
         int colCnt = 1;
         colCnt += 1;  
         String fourCharId = results.getString(colCnt++);
-        colCnt += 4;  
+        colCnt += 3;  
         String city       = results.getString(colCnt++);
-        String latString = results.getString(colCnt++);
-        String lonString = results.getString(colCnt++);
-        colCnt += 11;  
+        double latitude = convertFromISGSiteLogLatLongFormat (results.getDouble(colCnt++) );
+        double longitude = convertFromISGSiteLogLatLongFormat(results.getDouble(colCnt++) );
+        double elevation =  results.getDouble(colCnt++) ; 
+        
+        colCnt += 10;  
         String iersdomes = results.getString(colCnt++);  // see below    addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES",
         colCnt += 4;  
         String country    = results.getString(colCnt++);
         String state      = results.getString(colCnt++);
 
-        double latitude  = 0.0;
-         if (latString != null) { latitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(latString.trim())); }
-        double longitude  = 0.0;
-         if (lonString != null) { longitude = convertFromISGSiteLogLatLongFormat( Double.parseDouble(lonString.trim())); }
-        //String elevationString = results.getString(colCnt++);
-        //elevationString = StringUtil.findPattern(elevationString, "([\\d\\.-]+)");
-        //double elevation = (elevationString != null) ? Double.parseDouble(elevationString) : 0.0; 
-        //        System.err.println("lat:" + latString +" lon:" + lonString +" elev:" + elevationString);
+        //colCnt += 5;  
+        //String agency2    = results.getString(colCnt++);
 
-        GsacSite site = new GsacSite(fourCharId, fourCharId, "", latitude, longitude, 0.0);
+        GsacSite site = new GsacSite(fourCharId, fourCharId, "", latitude, longitude, elevation);
 
         // Add items to show in the HTML web page.
         // does this set the order of items on the page.
@@ -377,31 +509,31 @@ public class RingSiteManager extends SiteManager {
      * Convert the weird IGS site log database value format for latitude and longitude, such as 505216.68 or -1141736.6 
      * to correct values of latitude and longitude.
      *
-     * @param stupidFormat _more_
+     * @param igsFormat _more_
      *
      * @return _more_
      */
-    public static double convertFromISGSiteLogLatLongFormat(double stupidFormat) {
+    public static double convertFromISGSiteLogLatLongFormat(double igsFormat) {
         // These input numbers pack into one string all the degrees minutes and seconds of a latitude or longitude
         // eg dddmmss.ff  where dd or ddd or ddd is + or - degrees, mm is minutes, ss.ff is seconds in with 2 or 3 decimal values ff.
         // Note the sign in front applies to the final result, not only the degrees.
         
         // check if the value actually is in range of -360 to +360,  so probably is a correct format:
-        if (stupidFormat >-361.0 && stupidFormat<361.0) { return stupidFormat; }
+        if (igsFormat >-361.0 && igsFormat<361.0) { return igsFormat; }
 
-        if (Double.isNaN(stupidFormat)) {
-            System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() has bad or NaN 'number' input (lat or longitude):" + stupidFormat );
+        if (Double.isNaN(igsFormat)) {
+            System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() has bad or NaN 'number' input (lat or longitude):" + igsFormat );
             // input value is not a number,  such as "" from some IGS SLM  values.  CHECK: perhaps should return an impossible value, 9999, used for similar purpose in GAMIT station.info format. 
             return 9999;
         }
-        //System.err.println("convert IGS SLM lat/long formated value: " + stupidFormat );
-        int    intValue = (int) stupidFormat;
+        //System.err.println("convert IGS SLM lat/long formated value: " + igsFormat );
+        int    intValue = (int) igsFormat;
         String ddmmss   = String.valueOf(intValue);
         String secs = ddmmss.substring(ddmmss.length() - 2, ddmmss.length());
         String mins     = ddmmss.substring(ddmmss.length() - 4,
                                        ddmmss.length() - 2);
         String degs = ddmmss.substring(0, ddmmss.length() - 4);
-        //System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() converted:" + stupidFormat + " to:" + degs +" " + mins +" " + secs );
+        //System.err.println(" RingSiteManager:convertFromISGSiteLogLatLongFormat() converted:" + igsFormat + " to:" + degs +" " + mins +" " + secs );
         //  convert:-661700.24 to:-66 17 00       convert:1103110.92 to:110 31 10
         if (degs.equals("")) { degs="0"; }
         int nq = 1; // flag for a negative value when the degs part has no numbers, just the '-' sign
@@ -411,7 +543,7 @@ public class RingSiteManager extends SiteManager {
         int    di            = Integer.parseInt(degs);
         int    mi            = Integer.parseInt(mins);
         int    si            = Integer.parseInt(secs);
-        double decimalofsecs = stupidFormat - intValue;
+        double decimalofsecs = igsFormat - intValue;
         double dv            = 0.0;  // the result decimal value
         if (di >= 0) {
             dv = di + (mi / 60.0) + ((si + decimalofsecs) / 3600.0);
@@ -453,8 +585,7 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     * get all of the metadata for the given site     whatsit  who calls this?
-     *
+     * get all of the metadata for the given site     who calls this?
      *
      * @param level _more_
      * @param gsacResource resource
@@ -469,7 +600,7 @@ public class RingSiteManager extends SiteManager {
     }
 
     /**
-     * get id metadata for the given site  
+     * get id metadata for the given site; this ONLY called when user clicks on a site name in the sites' search results table on the table web page.
      *
      * @param gsacResource resource
      *
@@ -482,8 +613,8 @@ public class RingSiteManager extends SiteManager {
 
         /* make a db query state to find the site corresponding to the current site or "gsacResource"; the NOME_SITO is stored as the resource's Id */
         Statement statement =
-           getDatabaseManager().select( Tables.SITI.COLUMNS, Tables.SITI.NAME,
-                Clause.eq( Tables.SITI.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
+           getDatabaseManager().select( Tables.SITI_GSAC.COLUMNS, Tables.SITI_GSAC.NAME,
+                Clause.eq( Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
 
         try {
             SqlUtil.Iterator iter =
@@ -493,28 +624,19 @@ public class RingSiteManager extends SiteManager {
             while ((results = iter.getNext()) != null) {
 
                 /* for RING which does not have a site long name db value, combine the 4 character site ID with the place name 
-                   to make a kind of pseudo long name. */
-                String longName = results.getString(Tables.SITI.COL_NOME_SITO)+ " " + results.getString(Tables.SITI.COL_LUOGO);
-                gsacResource.setLongName( longName );
-                System.err.println("     long name is "+longName);
-
-                /* same code from wotking IgsSiteManager:
-                gsacResource.setLongName(
-                    results.getString( Tables.SITELOG_IDENTIFICATION.COL_SITENAME));  */
+                   to make a kind of long name. */
+                gsacResource.setLongName( results.getString(Tables.SITI_GSAC.COL_NOME_SITO) +" "+ results.getString(Tables.SITI_GSAC.COL_LUOGO));
 
                 /* get and check IERS_DOMES. */
-                String idn= results.getString( Tables.SITI.COL_IERS_DOMES_NUMBER);
+                String idn= results.getString( Tables.SITI_GSAC.COL_IERS_DOMES_NUMBER);
                 /* trap bad value  "(A9)" and fix  */
                 if ( idn != null && idn.equals("(A9)") ) { idn = " " ; }
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
 
-                /* argument 4 in this method's input is the value to save in the GSAC site object */
-                /* save the checked IERS DOMES value */
-                addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
+                String agen = results.getString( Tables.SITI_GSAC.COL_AGENZIA); //aaa
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "name of agency", agen);
 
-                // CDP number is not in RING database?
-
-                //Only read the first row of db query results returned
+                // only read the first row of db query results returned
                 break;
             }
         } finally {
@@ -525,17 +647,17 @@ public class RingSiteManager extends SiteManager {
         // db query part, to join the tables siti  and MONUMENTI_GPS for this site's ID_MONUMENTO
         List<Clause> clauses = new ArrayList<Clause>();
 
-        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId()));
+        clauses.add(Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()));
 
         // join the table with these 2 values:
-        clauses.add(Clause.join(Tables.SITI.COL_ID_MONUMENTO, Tables.MONUMENTI_GPS.COL_ID_MONUMENTO));
+        clauses.add(Clause.join(Tables.SITI_GSAC.COL_ID_MONUMENTO, Tables.MONUMENTI_GPS.COL_ID_MONUMENTO));
 
         String cols=SqlUtil.comma(new String[]{Tables.MONUMENTI_GPS.COL_DESCRIZIONE});
 
         List<String> tables = new ArrayList<String>();
 
         // the db query does "from" the  tables siti and MONUMENTI_GPS
-        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.SITI_GSAC.NAME);
         tables.add(Tables.MONUMENTI_GPS.NAME);
 
         statement =
@@ -559,18 +681,17 @@ public class RingSiteManager extends SiteManager {
         }
 
 
-
-        clauses = new ArrayList<Clause>();
-        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId()));
+/*
+        clauses.add(Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()));
         // join the table with these 2 values:
-        clauses.add(Clause.join(Tables.SITI.COL_ID_RESPONSIBLE_AGENCY, Tables.AGENZIE.COL_ID_AGENZIA));
+        clauses.add(Clause.join(Tables.SITI_GSAC.COL_ID_RESPONSIBLE_AGENCY, Tables.AGENZIE.COL_ID_AGENZIA));
 
         cols=SqlUtil.comma(new String[]{Tables.AGENZIE.COL_AGENZIA});
 
         tables = new ArrayList<String>();
 
         // the db query does "from" the tables siti and AGENZIE
-        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.SITI_GSAC.NAME);
         tables.add(Tables.AGENZIE.NAME);
 
         statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
@@ -587,6 +708,8 @@ public class RingSiteManager extends SiteManager {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
+*/
+
     }
 
 
@@ -609,8 +732,8 @@ public class RingSiteManager extends SiteManager {
         List<Clause> clauses = new ArrayList<Clause>();
 
         // db query part, to join the tables siti , MANUTENZIONE_ANTENNA, and STRUMENTI_ANTENNA
-        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId())); 
-        clauses.add(Clause.join(Tables.SITI.COL_ID_SITO, Tables.MANUTENZIONE_ANTENNA.COL_ID_SITO)); 
+        clauses.add(Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId())); 
+        clauses.add(Clause.join(Tables.SITI_GSAC.COL_ID_SITO, Tables.MANUTENZIONE_ANTENNA.COL_ID_SITO)); 
         clauses.add(Clause.join(Tables.MANUTENZIONE_ANTENNA.COL_ID_ANTENNA, Tables.STRUMENTI_ANTENNA.COL_ID_ANTENNA)); 
 
         String cols=SqlUtil.comma(new String[]{
@@ -622,7 +745,7 @@ public class RingSiteManager extends SiteManager {
         List<String> tables = new ArrayList<String>();
 
         // the db query does "from" the  tables siti , MANUTENZIONE_ANTENNA, and STRUMENTI_ANTENNA
-        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.SITI_GSAC.NAME);
         tables.add(Tables.MANUTENZIONE_ANTENNA.NAME);
         tables.add(Tables.STRUMENTI_ANTENNA.NAME);
 
@@ -688,8 +811,8 @@ public class RingSiteManager extends SiteManager {
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
 
-        clauses.add(Clause.eq(Tables.SITI.COL_NOME_SITO, gsacResource.getId())); 
-        clauses.add(Clause.join(Tables.SITI.COL_ID_SITO, Tables.MANUTENZIONE_RICEVITORE.COL_ID_SITO)); 
+        clauses.add(Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId())); 
+        clauses.add(Clause.join(Tables.SITI_GSAC.COL_ID_SITO, Tables.MANUTENZIONE_RICEVITORE.COL_ID_SITO)); 
         clauses.add(Clause.join(Tables.MANUTENZIONE_RICEVITORE.COL_ID_RICEVITORE, Tables.STRUMENTI_RICEVITORE.COL_ID_RICEVITORE)); 
 
         cols=SqlUtil.comma(new String[]{
@@ -697,7 +820,7 @@ public class RingSiteManager extends SiteManager {
              Tables.STRUMENTI_RICEVITORE.COL_RICEVITORE_TYPE , Tables.STRUMENTI_RICEVITORE.COL_SISTEMA_SATELLITE , Tables.STRUMENTI_RICEVITORE.COL_SERIAL_NUMBER  
                });
 
-        tables.add(Tables.SITI.NAME);
+        tables.add(Tables.SITI_GSAC.NAME);
         tables.add(Tables.MANUTENZIONE_RICEVITORE.NAME);
         tables.add(Tables.STRUMENTI_RICEVITORE.NAME);
 
