@@ -61,7 +61,9 @@ public class PoliticalLocationMetadata extends GsacMetadata {
 
 
     /**
-     * _more_
+     *  shows nation, region or state, and city or place in html output pages
+     *
+     * changed country -> nation and  state -> region/state, which are all cognates in Italian, French, German, Spanish and Portuguese
      *
      * @param request _more_
      * @param gsacResource _more_
@@ -77,17 +79,20 @@ public class PoliticalLocationMetadata extends GsacMetadata {
             throws IOException {
         if (country != null) {
             pw.append(outputHandler.formEntry(request,
-                    outputHandler.msgLabel("Country"), country));
+                    //outputHandler.msgLabel("Country"), country));
+                    outputHandler.msgLabel("Nation"), country));
         }
 
         if (state != null) {
             pw.append(outputHandler.formEntry(request,
-                    outputHandler.msgLabel("State"), state));
+                    //outputHandler.msgLabel("State"), state));
+                    outputHandler.msgLabel("Region/state"), state));
         }
 
         if (city != null) {
             pw.append(outputHandler.formEntry(request,
-                    outputHandler.msgLabel("City"), city));
+                    //outputHandler.msgLabel("City"), city));
+                    outputHandler.msgLabel("Place/city"), city));
         }
 
         return true;
