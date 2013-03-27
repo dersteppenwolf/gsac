@@ -114,13 +114,15 @@ with ant in your GSAC area, if you have made the GSAC code particular to your re
 
 Center the GSAC Site Map
 
-This is one case when you do modify the GSAC core code checked out from SourceForge.
+This is one case when you may wish to modify the GSAC core code checked out from SourceForge.
 
-Site search results from GSAC include a map for the site location, made using OpenLayers. 
+Site search results from GSAC include a map for the site location. The map is made using OpenLayers. 
 
-To center the map in the latitude-longitude region for your geodesy network:
+The default map in GSAC shows almost all of western Europe, east to Moscow and Turkey.
 
-edit gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js
+To center the map in the latitude-longitude region for your geodesy network, edit 
+
+gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js
 
 Set the longitude, latitude, and zoom level for the center of your map in the lines:
 
@@ -128,12 +130,11 @@ Set the longitude, latitude, and zoom level for the center of your map in the li
 /*   center of GSAC site map,  in US lower 48 states, with longitude, latitude */
 //var defaultLocation = new OpenLayers.LonLat(-104, 40);
 
-/*   default map center longitude, latitude: Royal Observatory, Greenwich, U.K. */
-var defaultLocation = new OpenLayers.LonLat(0.000, 51.4772);
-
+/*   default map center longitude, latitude:  14.15 E 48.5 N */
+var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
 
 Set the zoom level in the lines:
-/*   GSAC map of sites; set zoom level; 3 is about 10 000 km wide; 4 is about 3900 km wide. */
+/*   GSAC map of sites; set zoom level; 3 is about 10,000 km wide; 4 is about 3900 km wide. */
 var defaultZoomLevel = 4;
 
 Rebuild the GSAC core code with command ant in gsac/trunk/. 
