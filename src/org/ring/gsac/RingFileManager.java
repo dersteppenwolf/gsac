@@ -23,8 +23,12 @@ package org.ring.gsac;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+//import org.gsac.gsl.output.file.*;
+import org.gsac.gsl.util.*;
 
-/* CHANGEME - done for INGV - include datahase package for the GSAC installation. */
+
+
+/* CHANGEME - done for INGV RING - include database package for the GSAC installation. */
 import org.ring.gsac.database.*;
 
 import ucar.unidata.sql.Clause;
@@ -117,8 +121,6 @@ public static class SITI_GSAC extends Tables {
     private SimpleDateFormat yyyyMMDDSdf;
 
 
-
-
     /**
      * ctor
      *
@@ -127,7 +129,6 @@ public static class SITI_GSAC extends Tables {
     public RingFileManager(RingRepository repository) {
         super(repository);
 
-        // next 4 lines from cddis code; look is needed for ring?
         sdf         = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         yyyyMMDDSdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setTimeZone(TIMEZONE_UTC);
@@ -136,17 +137,38 @@ public static class SITI_GSAC extends Tables {
 
 
     /**
-     * _more_
+     *  enable what file-related items are used to search for geoscience data files to download
      *
-     * @return _more_
+     * @return  List of GSAC "Capabilities" which are things to search with
      */
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
 
-        // look - which are?   what does this do? - appears to add search boxes for file type, date range, publich date and file size
-        addDefaultCapabilities(capabilities);
+        //  from FileManager class -  add search boxes for file type, date range, publish date, and file size
+        //addDefaultCapabilities(capabilities);
 
-        // copied from cddis: look  is needed for ring?   what does this do?
+        // explicit code for the above search items. For RING only need date range for RINEX files (so far)
+        Capability   cap;
+        Capability[] dflt = { initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), 
+                                "File Query", "Type of file", null, getRepository().getVocabulary( ARG_FILE_TYPE, true)),
+
+                              initCapability(new Capability(ARG_FILE_DATADATE, "Data Dates",
+                                  Capability.TYPE_DATERANGE), "File Query", "Date the data this file holds was collected"),
+
+                              //initCapability(new Capability(ARG_FILE_PUBLISHDATE, "Publish Date",
+                              //    Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+
+                              //initCapability(cap = new Capability(ARG_FILE_FILESIZE,
+                              //        "File Size", Capability .TYPE_NUMBERRANGE), "File Query", "File size") 
+        };
+
+        //cap.setSuffixLabel("&nbsp;(bytes)");
+
+        for (Capability capability : dflt) {
+            capabilities.add(capability);
+        }
+
+        //  appears to add the SITE-related search choices into the file search web page form, so you can select files from particular sites
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
