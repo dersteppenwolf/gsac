@@ -4,7 +4,7 @@ GSAC_WS Installation
 
 README, Part 2.
 
-March 26 2013
+March 27 2013
 
 This file describes how to complete your new gsac@MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -511,6 +511,24 @@ are complete and provided by GSAC installation, and use the same header and foot
 with extensive Java programming, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
 other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
 
+########################################################################
+Dealing with Elevation and Ellipsoid Height
+########################################################################
+
+GSAC code assumes station height values are ellipsoid heights, the heights for locations in terrestrial reference frames, including 
+GNSS positions.
+
+If your location values are in elevations, heights above some geoid model, change these lines in these files in core GSAC code to 
+make output labels with "elevation" in place of "ellipsoid height:"
+
+gsl/output/GsacOutputHandler.java:               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
+gsl/output/HtmlOutputHandler.java:            labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
+gsl/output/site/CsvFullSiteOutputHandler.java:        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
+gsl/output/site/PlainTextSiteOutputHandler.java:        pw.append(    " site ellipsoidal height:     " + elevationFormat.format(el.getElevation()) + "" + "\n");
+gsl/output/site/PlainTextSiteOutputHandler.java:        pw.append(    " site ellipsoid name           \n");  // LOOK need GSAC parameter for this item
+gsl/output/site/SinexSiteOutputHandler.java:        pw.append(    " site ellipsoidal height:      "+ elevationFormat.format(el.getElevation()) + "" + "\n");
+
+Then rebuild core GSAC with command ant in trunk/, and rebuild your GSAC instance with ant or ant compile in your gsac/ file area.
 
 ########################################################################
 Building and Running the GSAC server
