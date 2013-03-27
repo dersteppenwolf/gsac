@@ -143,10 +143,10 @@ public static class SITI_GSAC extends Tables {
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
 
-        // look - which are?   what does this do?
+        // look - which are?   what does this do? - appears to add search boxes for file type, date range, publich date and file size
         addDefaultCapabilities(capabilities);
 
-        // from cddis: look  is needed for ring?   what does this do?
+        // copied from cddis: look  is needed for ring?   what does this do?
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
@@ -163,7 +163,6 @@ public static class SITI_GSAC extends Tables {
      */
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
-        //Some example code
 
         //The msgBuff holds the html that describes what is being searched for
         StringBuffer msgBuff = new StringBuffer();
@@ -199,11 +198,10 @@ public static class SITI_GSAC extends Tables {
                                  "" + format(publishDateRange[1]));
         }
 
-
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
                                    ARG_FILE_DATADATE_TO, null, null);
-        //        System.err.println ("date:" + dateRange[0] +" " + dateRange[1]);
 
+        // System.err.println ("date:" + dateRange[0] +" " + dateRange[1]);
 
         if (dataDateRange[0] != null) {
             appendSearchCriteria(msgBuff, "Publish date&gt;=",
@@ -214,21 +212,6 @@ public static class SITI_GSAC extends Tables {
             appendSearchCriteria(msgBuff, "Publish date&lt;=",
                                  "" + format(dataDateRange[1]));
         }
-
-
-        //find and create the files
-        /**
-         *   e.g.:
-         * GsacResource site = theSiteForThisFile; may be null
-         * String type = someType;
-         * GsacFile resource = new GsacFile(resourceId,
-         *                           new FileInfo(filePath, fileSize, md5),
-         *                           site,
-         *                           publishTime, fromTime, toTime,
-         *                           toResourceType(type));
-         *
-         *                           response.addResource(resource);
-         */
 
         //long t2 = System.currentTimeMillis();
         //System.err.println("read " + cnt + " resources in " + (t2 - t1) + "ms");
