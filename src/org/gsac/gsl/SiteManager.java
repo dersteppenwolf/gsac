@@ -190,15 +190,29 @@ public abstract class SiteManager extends GsacResourceManager {
 
         new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for full csv formatted file of site metadata
 
-        new TextSiteOutputHandler   (getRepository(), getResourceClass());   // for short csv formatted file of limited contents, an old minor format kept only for backward compatibility in case anyone ever used it.
+        // for short csv formatted file of limited contents, an old minor format kept only for backward compatibility in case anyone ever used it:
+        new TextSiteOutputHandler   (getRepository(), getResourceClass());   
+
+        // how is this different from XmlSiteLogOutputHandler ?
+        // new XmlSiteOutputHandler(getRepository(), getResourceClass());
+        // look - fails when invoked with
+//  GSAC INCOMING REQUEST is: /gsacring/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&search.y=0&search.x=0&site.code=i*
+//     [java] 2013-03-27 12:27:15.833::WARN:  Error for /gsacring/gsacapi/site/search/sites.xml
+//     [java] javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+//     [java]     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
+//     [java]     at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
+
+
 
 
         // IT formats. these only have skeleton code in case someone wants to build on them:
-        // the following formats only show a few parameters in results; more code needs to be written.
+
         new AtomSiteOutputHandler(getRepository(), getResourceClass());
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         new RssSiteOutputHandler(getRepository(), getResourceClass());
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        
+        // look fails with javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
     }
 
 
