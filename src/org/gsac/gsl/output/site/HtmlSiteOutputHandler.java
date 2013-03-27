@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -46,8 +46,8 @@ import javax.servlet.http.*;
  * Class description
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version        2013; see svn logs
+ * @author         J McWhirter, SKW
  */
 public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
@@ -300,11 +300,10 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         resultsContents.add(listSB.toString());
         resultsTitles.add(msg("Sites"));
 
-
-        String js = createMap(request,
-                              (List<GsacResource>) new ArrayList(sites),
-                              resultsTitles, resultsContents, -1, 500, false,
-                              true);
+        // create map for Search Results site search results web page
+        // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
+        String js = 
+           createMap(request, (List<GsacResource>) new ArrayList(sites),         resultsTitles,          resultsContents,       600,        400, false,             true);
 
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
