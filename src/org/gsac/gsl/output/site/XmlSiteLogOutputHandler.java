@@ -518,7 +518,8 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
      * @return _more_
      */
     private String makeTag(String tag, String attrs, String contents) {
-        if (contents.length() == 0) {
+        if (contents == null || contents.length() == 0) {
+            contents = "";
             return XmlUtil.tag(tag, attrs, contents);
         }
 
