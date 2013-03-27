@@ -2269,7 +2269,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add(SORT_SITE_NAME);
             labels.add(msg("Type"));
             sortValues.add(SORT_SITE_TYPE);
-            labels.add(msg("Location") + " (latitude, longitude, height)");
+            labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
             sortValues.add("");
             if (doDateRange) {
                 labels.add(msg("Date Range"));
