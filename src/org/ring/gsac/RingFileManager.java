@@ -149,8 +149,12 @@ public static class SITI_GSAC extends Tables {
 
         // explicit code for the above search items. For RING only need date range for RINEX files (so far)
         Capability   cap;
-        Capability[] dflt = { initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), 
-                                "File Query", "Type of file", null, getRepository().getVocabulary( ARG_FILE_TYPE, true)),
+        Capability[] dflt = { 
+                              // RING provides only RINEX files, so far.
+                              // this provides a box with 100-some possible file types, everything in the list in 
+                              // src/org/gsac/gsl/resources/vocabulary/file.type.properties
+                              //initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), 
+                              //  "File Query", "Type of file", null, getRepository().getVocabulary( ARG_FILE_TYPE, true)),
 
                               initCapability(new Capability(ARG_FILE_DATADATE, "Data Dates",
                                   Capability.TYPE_DATERANGE), "File Query", "Date the data this file holds was collected"),
