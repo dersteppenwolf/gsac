@@ -487,6 +487,13 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
    */
   public static String setStringLengthRight(String s, int desiredLength) {
     String padString = " ";
+    // null input trap
+    if ( s == null) {
+       s = "";
+    }
+    if (desiredLength<0) {
+         desiredLength=0;
+    }
     if (s.length() > desiredLength) {
         s =  s.substring(0,desiredLength);
     }
