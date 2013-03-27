@@ -40,7 +40,7 @@ import org.mortbay.jetty.servlet.ServletHolder;
 
 import java.io.*;
 
-
+import java.util.Locale;
 
 import java.util.Hashtable;
 import java.util.Properties;
@@ -132,6 +132,11 @@ public class GsacServer {
      * @throws Throwable On badness
      */
     public static void main(String[] args) throws Throwable {
+
+        // to force numerical output to use points (periods) before the fractional part of float numbers, 
+        // a  drastic solution is to set your Locale early in the main().
+        Locale.setDefault(new Locale("en", "US"));
+
         try {
             GsacServer jettyServer = new GsacServer(args);
         } catch (Exception exc) {

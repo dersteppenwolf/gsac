@@ -33,6 +33,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
+import java.util.Locale;
 
 
 import java.text.DecimalFormat;
@@ -500,6 +501,11 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      */
     public static void main(String[] args) throws Exception {
         GsacServlet servlet = new GsacServlet();
+
+        // to force numerical output to use points (periods) before the fractional part of float numbers, 
+        // a  drastic solution is to set your Locale early in the main().
+        Locale.setDefault(new Locale("en", "US"));
+
     }
 
 
