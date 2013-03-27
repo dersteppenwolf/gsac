@@ -179,7 +179,8 @@ public class GsacLogManager extends GsacManager {
         if (logDirectory != null) {
             getAccessLogger().info(message);
         } else {
-            System.err.println("GSAC REQUEST:" + message);
+            // gives like  GSAC REQUEST:127.0.1.1 [27/Mar/2013:16:40:01 +0000] "POST /gsacring/gsacapi/site/search HTTP/1.1" "http://swierd:8080/gsacring/gsacapi/site/form" "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.04 (lucid) Firefox/3.6.13" site 7
+            ; 
         }
     }
 
