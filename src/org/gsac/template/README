@@ -20,7 +20,8 @@ may have one or more upper case letters. The cooresponding actual GSAC files lac
 Do not change actual filenames to match uppercase letters if any such are shown in this README file.
 
 Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
-the design of data repositories.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
+the design of data repositories or what data values and files are available or of interest for you to
+offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
 data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available 
 from UNAVCO at gsac-ws@unavco.org.
 

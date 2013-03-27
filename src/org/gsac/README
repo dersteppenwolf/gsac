@@ -9,10 +9,11 @@ README, Part 1.
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
 This README file is in gsac/trunk/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
-Installation of GSAC requires some Java coding, as described in the README Part 2 file.  It is not possible for GSAC core code to anticipate 
-the design of data repositories.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
-data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available 
-from UNAVCO at gsac-ws@unavco.org.  
+Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
+the design of data repositories or what data values and files are available or of interest for you to
+offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
+from UNAVCO at gsac-ws@unavco.org.
 
 ################################################################################
 
