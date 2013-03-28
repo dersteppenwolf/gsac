@@ -186,12 +186,9 @@ in org/gsac/template/
 
 cp macros.properties   myrepomacros.properties
 
-'myrepo' is only a placeholder in this README file.  You can replace the 'myrepo' with an approprite name for your agency, project, or repository. 
+'myrepo' is only a placeholder in this README file.  You replace "myrepor" with an approprite name for your agency, project, or repository. 
 
-Edit the new properties file to define the target package name, directory, etc.  
-(Do not use a copy of an existing macros.properties file without the following edits.)
-
-For example:
+Edit the new properties file to define the target package name, directory, etc.  For example:
 
 ##Name you want for the repository
 target.name=Myrepo GSAC Repository

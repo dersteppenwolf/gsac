@@ -443,7 +443,9 @@ package org.@MACRO.PREFIX@.gsac;
 
 (You may have other top level package name than org.)
 
-This class, at least, has three places needing new code (sections flagged with "CHANGEME" in the code):
+You need to include your database classes:
+/* CHANGEME Include database package for the GSAC installation. */
+import org.@MACRO.PREFIX@.gsac.database.*;
 
 The method doGetQueryCapabilities:
 
