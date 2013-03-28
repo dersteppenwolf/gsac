@@ -219,6 +219,10 @@ and your GSAC code.  You will  use names of items in the classes to identify you
 in your GSAC Java code.  For example, one table name is, in the GSAC universe, SITE_METADATA, and a column (field) in that table might be 
 COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use item names in it in coding soon.
 
+If you later do "svn update" in your GSAC code area, svn will put a copy of the Tables.java file in @MACRO.SRCDIR@/ where it does not belong.
+If you then try "ant" in @MACRO.SRCDIR@/ a compile error is made.  Remove the Tables.java file from @MACRO.SRCDIR@/ and do "ant" again.
+Tables.java must be in @MACRO.SRCDIR@/database.
+
 
 ########################################################################
 Run a local test of your GSAC server
@@ -366,28 +370,47 @@ guides to what is needed in a similar Java class.
 Extending Java Classes (Java Code changes)
 ########################################################################
 
+To complete your GSAC server, you need to write new Java code to specify particular details of your data repository.
+
+It is not possible for GSAC core code to anticipate
+the design of data repositories or what data values and files are available or of interest for you to
+offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
+from UNAVCO at gsac-ws@unavco.org.
+
+For the GSAC at INGV/RING, the RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the
+GSAC build process, and the IgsSiteManager.java file has 550 more lines than its initial version.  These figures give you an idea
+how much coding is required to install GSAC.
+
+UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
+able to provide a way to automate some or all of the SiteManager.java code, but have not done so yet.  Even so, installing GSAC
+is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
+services, which also permit federated collaborations.
+
+
+Files in @MACRO.SRCDIR@/ have the Java code especially for your repository. 
+
 The @MACRO.PREFIX@Repository class is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
 and other @MACRO.PREFIX@---Manager.java (for example for the UNAVCO IGS GSAC, in  src/org/igs/gsac/, 
 the files IgsFileManager.java, IgsRepository.java, IgsServer.java, and IgsSiteManager.java).
 
-Files in @MACRO.SRCDIR@/ have the Java code especially for your repository. 
-
 The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
-and by the GSAC API.  See the lines in those Java files marked with CHANGEME for a small idea about what needs to be changed. 
+and by the GSAC API.   For more help adding to the GSAC Java files, you may review code in other 
+GSAC implementations checked into SourceForge, such as the files IgsSiteManager.java,  RingSiteManager.java, and CddisFileManager.java (very complex).
 
-For a more detailed description of adding to the GSAC Java files, you may review code in other 
-GSAC implementations checked into SourceForge, such as the file org/igs/gsac/IgsSiteManager.java.
-
-After you have written new Java test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
-try your GSAC on your local development platform.
-
-
-Modify or add new Java to these files:
+After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
+no errors in the compile step).  Stop ant runserver with CTRL-C.
 
 
-@MACRO.PREFIX@Repository.java 
+You need to modify or add new Java to these files:
 
-Above the import lines, add the new Java package name, in this form:
+                     ########################################################################
+
+The file @MACRO.PREFIX@Repository.java 
+
+Above the import lines, be sure there is correct new Java package name, in this form:
+
 package org.@MACRO.PREFIX@.gsac; 
 
 In the method initResourceManagers(), make the choice if you want your GSAC repository to
@@ -405,26 +428,100 @@ search on sites (stations or monuments), for data files, or for both:
     }
 
 
+                     ########################################################################
 
-@MACRO.PREFIX@FileManager.java 
+The file @MACRO.PREFIX@FileManager.java 
 
-You need not bother with this file if you do not supply a data file download service.
+This file specifies how GSAC searches for data files.  
 
-Above the import lines, add the new Java package name, in this form:
+You need not modify this file if you do not supply a data file download service.
+In that case, in @MACRO.PREFIX@Repository.java use only getResourceManager(GsacSite.CLASS_SITE) in initResourceManagers().
+
+Above the import lines, be sure the Java package name is correct, in this form:
+
 package org.@MACRO.PREFIX@.gsac;
 
-This class has 3 'Changeme' sections:
+(You may have other top level package name than org.)
 
-doGetQueryCapabilities()
+This class, at least, has three places needing new code (sections flagged with "CHANGEME" in the code):
 
-handleRequest()
+The method doGetQueryCapabilities:
 
-getResource()
+This class determines what items you can query on about files in your GSAC, for example,
+in both the web search form pages for File Searches, and using the API. Add the line
+import org.gsac.gsl.util.*; at the top of the file.
+
+    /**
+     * Enable what file-related items are used to search for geoscience data files to download
+     * CHANGEME
+     *
+     * @return  List of GSAC "Capabilities" which are things to search with
+     */
+    public List<Capability> doGetQueryCapabilities() {
+        List<Capability> capabilities = new ArrayList<Capability>();
+
+        //  from FileManager class -  add search boxes for file type, date range, publish date, and file size
+        // if you want to offer those choices, just uncomment this line:
+        //addDefaultCapabilities(capabilities);
+
+        // or use this explicit code for individual  search items. 
+        Capability   cap;
+        Capability[] dflt = {
+                              // this provides a box with 100-some possible file types, everything in the list in 
+                              // src/org/gsac/gsl/resources/vocabulary/file.type.properties
+                              //initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), 
+                              //  "File Query", "Type of file", null, getRepository().getVocabulary( ARG_FILE_TYPE, true)),
+
+                              // this provides a pair of date search boxes to specify the date range for data of interest:
+                              initCapability(new Capability(ARG_FILE_DATADATE, "Data Dates",
+                                  Capability.TYPE_DATERANGE), "File Query", "Date the data this file holds was collected"),
+
+                              // this is in case your data base has a "publication date" for data files:
+                              //initCapability(new Capability(ARG_FILE_PUBLISHDATE, "Publish Date",
+                              //    Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+
+                              // this for choosing files by size:
+                              //initCapability(cap = new Capability(ARG_FILE_FILESIZE,
+                              //        "File Size", Capability .TYPE_NUMBERRANGE), "File Query", "File size") 
+        };
+
+        // also use this if you use choosing files by size:
+        //cap.setSuffixLabel("&nbsp;(bytes)");
+
+        for (Capability capability : dflt) {
+            capabilities.add(capability);
+        }
+
+        //  and can add the SITE-related search choices to the file search web page form, so you can select files from particular sites
+        // in many cases this is very useful
+        capabilities.addAll(getSiteManager().doGetQueryCapabilities());
+
+        return capabilities;
+    }
+
+If you offer searches on file types, the GSAC file type search default uses the complete list of 100-some possible file types in core GSAC code in 
+gsac/resources/vocabulary/ in the file file.type.properties.  Make a similar vocabulary dir under the @MACRO.PREFIX@/gsac/resources/ dir and copy 
+the file.type.properties there and edit it for the types you want to offer.  You might offer for example these eight types:
+gnss.data.raw=GNSS Raw
+gnss.data.binex=BINEX
+gnss.data.rinex.observation=GNSS RINEX Observation
+gnss.data.rinex.navigation=GNSS Navigation
+gnss.data.rinex.navigation.nfile=GNSS Navigation "N" file
+gnss.data.rinex.navigation.gfile=GNSS Navigation "G" file
+gnss.data.rinex.meteorology=GNSS RINEX Meteorology
+gnss.data.teqc_summary=GNSS RINEX Observation QC Report
+
+
+The method handleRequest():
 
 
 
+The method getResource():
 
-@MACRO.PREFIX@SiteManager.java  
+
+                     ########################################################################
+
+The file @MACRO.PREFIX@SiteManager.java  
 
 You will see a template file for @MACRO.PREFIX@SiteManager.java which was initially created automatically by the
 GSAC build process.  @MACRO.PREFIX@SiteManager.java requires most of the new JAVA code for a new GSAC.
@@ -450,15 +547,6 @@ read from a database.  Every database is different so there is no way GSAC can p
 You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
 values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
 
-RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the
-GSAC build process the IgsSiteManager.java file has 550 more lines than its initial version.  These figures give you an idea
-how much coding is required to install GSAC.
-
-UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
-able to provide a way to automate some or all of the SiteManager.java code, but have not done so yet.  Even so, installing GSAC
-is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
-services, which also permit federated collaborations.
-
 After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. More details about this process below.
 
@@ -471,24 +559,22 @@ Installing  GSAC initially creates a short version of its web site home page whi
 You can add more to this file for a larger page, using normal HTML.
 
 The home page of a GSAC repository web site is detailed in a file such as src/org/@MACRO.PREFIX@/htdocs/index.html
-In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/htdocs/).
+In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/gsac/htdocs/).
 In @MACRO.PREFIX@/gsac/htdocs make a new HTML file index.html. A very simple but working one has these lines:
 
     <link rel="search" type="application/opensearchdescription+xml" href="htdocs/opensearch.xml" 
     title=" @MACRO.PREFIX@ GSAC Repository" />
     This is the @MACRO.PREFIX@ GPS Repository
 
-Put image files used on the web main page  in the new directory, htdocs.
+Put image files used on the web main page  in the directory htdocs.
 
-In your index.html file, the image is added like 
+In your index.html file, an image is added like <img  src="${htdocs}/network_map.jpg" >
 
-<img  src="${htdocs}/home-page-header_1.jpg" >
+If that does not work, try <img src="gsacring/gsacapi/htdocs/network_map.jpg">
 
-As usual in HTML, images also may be retrieved from another web server, for example, with
+As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
 
-<img src="http://www.nasa.gov/images/gps_satellite.gif">.
-
-Note that these pages do not have complete <html>  lines (including <html> and more at the beginning, or the final </hmtl>), since these pages
+Note that these pages do not have complete <html>  lines (including <html> and more at the beginning, or the final </html>), since these pages
 are wrapped inside the GSAC header and footer HTML files, mentioned next.
 
 The files footer.html and header.html, in the directory @MACRO.SRCDIR@/resources/, specify the top and bottom of the 
@@ -502,15 +588,17 @@ These files may be as simple as
 	</head>
 	<body>
 
-or fully developed, such as using css.  
+or fully developed, such as using css. To include an image use <img  src="${htdocs}/home-page-header_1.jpg" > 
+Image files are in @MACRO.PREFIX@/gsac/htdocs/.
 
 Change the files resources/header.html and resources/footer.html to give the HTML appearance for the header and footer
-of all your web pages.  You may use these files to supply your standard agency's web site look to your GSAC repository web site.
+for your GSAC web site pages.  You may use these files to supply your standard web site look to your GSAC repository web site.
 
-The GSAC query pages with the search web forms, and pages with static GSCA information such as the help pages,
-are complete and provided by GSAC installation, and use the same header and footer HTML files.  Is it possible to modify the search forms 
-with extensive Java programming, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
+The GSAC search web forms (web page content), and pages with static GSCA information such as the GSAC Help pages,
+are complete and provided by GSAC installation. They  use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
+with Java programming in the core GSAC code, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
 other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
+
 
 ########################################################################
 Dealing with Elevation and Ellipsoid Height
