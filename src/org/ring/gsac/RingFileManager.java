@@ -23,14 +23,11 @@ package org.ring.gsac;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
-//import org.gsac.gsl.output.file.*;
 import org.gsac.gsl.util.*;
-
-
-
-/* CHANGEME - done for INGV RING - include database package for the GSAC installation. */
+/* CHANGEME - done for INGV RING - include database package */
 import org.ring.gsac.database.*;
 
+import ucar.unidata.util.DateUtil;
 import ucar.unidata.sql.Clause;
 import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.StringUtil;
@@ -48,7 +45,36 @@ import java.util.TimeZone;
  * Handles all of the resource related repository requests. The main entry point is {@link #handleRequest}
  * Look for the CHANGEME comments
  *
- * @author  Jeff McWhirter
+ *  uses the Ring ingv db table:
+
+    public static class CLINIC_GSAC extends Tables {
+        public static final String NAME = "clinic_gsac";
+
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_SITO =  NAME + ".sito";
+        public static final String COL_FIRST_EPOCH =  NAME + ".first_epoch";
+        public static final String COL_LAST_EPOCH =  NAME + ".last_epoch";
+        public static final String COL_LINK =  NAME + ".link";
+
+        public static final String[] ARRAY = new String[] {
+            COL_SITO,COL_FIRST_EPOCH,COL_LAST_EPOCH,COL_LINK
+        };
+        public static final String COLUMNS = SqlUtil.comma(ARRAY);
+        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
+    public static final CLINIC_GSAC table  = new  CLINIC_GSAC();
+    }
+  
+   This is a simple schema with site name COL_SITO and a data file at that site, with metadata for start and end times for the data,
+   and the complete ftp url (with file name) where you can download the data file from RING servers.
+
+    Database rows are for example
+| RSTO | 2002-05-01 00:00:00 | 2002-05-01 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/121/RSTO1210.02d.Z |
+| INGR | 2002-11-15 00:00:00 | 2002-11-15 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/319/INGR3190.02d.Z |
+| TITO | 2002-11-25 00:00:00 | 2002-11-25 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/329/TITO3290.02d.Z |
+
+ *
+ * @author         S K Wier
  */
 public class RingFileManager extends FileManager {
 
@@ -56,6 +82,7 @@ public class RingFileManager extends FileManager {
 
     private static ResourceType[] GNSS_FILE_TYPES = { new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation") };
 
+    /*
     public static final String[] GNSS_METADATA_COLUMNS = new String[] {
         Tables.SITI_GSAC.COL_ID_SITO,
         Tables.SITI_GSAC.COL_NOME_SITO,
@@ -69,45 +96,8 @@ public class RingFileManager extends FileManager {
         Tables.SITI_GSAC.COL_REGIONE,
         Tables.SITI_GSAC.COL_AGENZIA,
     };
+    */
 
-     /*
-public static class SITI_GSAC extends Tables {
-        public static final String NAME = "siti_gsac";
-
-        public String getName() {return NAME;}
-        public String getColumns() {return COLUMNS;}
-        public static final String COL_ID_SITO =  NAME + ".id_sito";
-        public static final String COL_NOME_SITO =  NAME + ".nome_sito";
-        public static final String COL_ID_RETE =  NAME + ".id_rete";
-        public static final String COL_DATA_DISMISSIONE =  NAME + ".data_dismissione";
-        public static final String COL_GEOLOGIA =  NAME + ".geologia";
-        public static final String COL_LUOGO =  NAME + ".luogo";
-        public static final String COL_LATITUDINE =  NAME + ".latitudine";
-        public static final String COL_LONGITUDINE =  NAME + ".longitudine";
-        public static final String COL_QUOTA =  NAME + ".quota";
-        public static final String COL_X =  NAME + ".x";
-        public static final String COL_Y =  NAME + ".y";
-        public static final String COL_Z =  NAME + ".z";
-        public static final String COL_X_UTMED50 =  NAME + ".x_utmed50";
-        public static final String COL_Y_UTMED50 =  NAME + ".y_utmed50";
-        public static final String COL_TIPO_MATERIALIZZAZIONE =  NAME + ".tipo_materializzazione";
-        public static final String COL_HEIGHT_OF_MONUMENT =  NAME + ".height_of_monument";
-        public static final String COL_MONUMENT_FOUNDATION =  NAME + ".monument_foundation";
-        public static final String COL_FOUNDATION_DEPTH =  NAME + ".foundation_depth";
-        public static final String COL_MONUMENT_INSCRIPTION =  NAME + ".monument_inscription";
-        public static final String COL_IERS_DOMES_NUMBER =  NAME + ".iers_domes_number";
-        public static final String COL_BEDROCK_TYPES =  NAME + ".bedrock_types";
-        public static final String COL_ID_ON_SITE_AGENCY =  NAME + ".id_on_site_agency";
-        public static final String COL_ID_RESPONSIBLE_AGENCY =  NAME + ".id_responsible_agency";
-        public static final String COL_ID_MONUMENTO =  NAME + ".id_monumento";
-        public static final String COL_NAZIONE =  NAME + ".nazione";
-        public static final String COL_REGIONE =  NAME + ".regione";
-        public static final String COL_ATTIVO =  NAME + ".attivo";
-        public static final String COL_NOTE =  NAME + ".note";
-        public static final String COL_ID_DATA_CENTER =  NAME + ".id_data_center";
-        public static final String COL_MONUMENTAZIONE_ESTERNA =  NAME + ".monumentazione_esterna";
-        public static final String COL_AGENZIA =  NAME + ".agenzia";
-        */
 
     private static ResourceType[][] ALL_FILE_TYPES = { GNSS_FILE_TYPES };
 
@@ -137,7 +127,11 @@ public static class SITI_GSAC extends Tables {
 
 
     /**
-     *  enable what file-related items are used to search for geoscience data files to download
+     *
+     *  Enable what file-related items are used to search for geoscience data files to download
+     *  at this particular data repository.  Initially RING will only search on data times in files, from the database "ingv".
+     *  You can also search for sites, and files from selected sites.
+     * CHANGEME 
      *
      * @return  List of GSAC "Capabilities" which are things to search with
      */
@@ -172,7 +166,7 @@ public static class SITI_GSAC extends Tables {
             capabilities.add(capability);
         }
 
-        //  appears to add the SITE-related search choices into the file search web page form, so you can select files from particular sites
+        // add the SITE-related search choices into the file search web page form, so you can select files from particular sites
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
@@ -182,7 +176,7 @@ public static class SITI_GSAC extends Tables {
      * CHANGEME
      * handle the search request
      *
-     * @param request The request
+     * @param request The request [from the api or web search forms?]
      * @param response The response
      *
      * @throws Exception on badness
@@ -190,8 +184,11 @@ public static class SITI_GSAC extends Tables {
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
 
+        System.err.println("   ring file manager handleRequest ");
         //The msgBuff holds the html that describes what is being searched for
         StringBuffer msgBuff = new StringBuffer();
+
+        /*
         if (request.defined(ARG_FILESIZE_MIN)) {
             int size = request.get(ARG_FILESIZE_MIN, 0);
             appendSearchCriteria(msgBuff, "Filesize&gt;=",
@@ -223,27 +220,42 @@ public static class SITI_GSAC extends Tables {
             appendSearchCriteria(msgBuff, "Publish date&lt;=",
                                  "" + format(publishDateRange[1]));
         }
+        */
 
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
                                    ARG_FILE_DATADATE_TO, null, null);
 
-        // System.err.println ("date:" + dateRange[0] +" " + dateRange[1]);
-
         if (dataDateRange[0] != null) {
-            appendSearchCriteria(msgBuff, "Publish date&gt;=",
+            appendSearchCriteria(msgBuff, "Data date&gt;=",
                                  "" + format(dataDateRange[0]));
         }
 
         if (dataDateRange[1] != null) {
-            appendSearchCriteria(msgBuff, "Publish date&lt;=",
+            appendSearchCriteria(msgBuff, "Data date&lt;=",
                                  "" + format(dataDateRange[1]));
         }
 
-        //long t2 = System.currentTimeMillis();
-        //System.err.println("read " + cnt + " resources in " + (t2 - t1) + "ms");
+
+        System.err.println ("   RingFileManager: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
+
+
+        //find and create the files
+        /** 
+            e.g.:
+        GsacResource site = theSiteForThisFile; may be null
+        String type = someType;
+        GsacFile resource = new GsacFile(resourceId,
+                                    new FileInfo(filePath, fileSize, md5),
+                                    site,
+                                    publishTime, fromTime, toTime,
+                                    toResourceType(type));
+
+                                    response.addResource(resource);
+        **/
 
         setSearchCriteriaMessage(response, msgBuff);
     }
+
 
 
 
@@ -259,20 +271,88 @@ public static class SITI_GSAC extends Tables {
      * @throws Exception On badness
      */
     public GsacResource getResource(String resourceId) throws Exception {
-        return null;
+
+        System.err.println("   ring file manager getresource");
+        // the SQL search clause select logic, where a column value COL_SITO  = the "resourceId" which is some site name entered by the user in the api or search form
+        Clause clause = Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId);
+
+        // compose the complete select SQL phrase
+        Statement statement =
+            getDatabaseManager().select(Tables.CLINIC_GSAC.COLUMNS, clause.getTableNames(), clause);
+
+        try {
+            // make an SQL query, and get results
+            ResultSet results = statement.getResultSet();
+            if ( !results.next()) {
+                results.close();
+                return null;
+            }
+
+            String resourceID = "INGV/RING"; //type.makeId(new String[] { monumentID, startDate.toString(), resourceType.getId() });
+            String path = results.getString( Tables.CLINIC_GSAC.COL_LINK);
+            String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
+            GsacSite site = new GsacSite(null, monumentID, "");
+            // look fix these dates
+            Date startDate = null; //getDate(results, Tables.CLINIC_GSAC.COL_FIRST_EPOCH);
+            Date   endDate = null; //getDate(results, Tables.CLINIC_GSAC.COL_LAST_EPOCH);
+            ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation");
+            /* COL_SITO   COL_FIRST_EPOCH   COL_LAST_EPOCH   String COL_LINK */
+
+            //         GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
+            GsacFile file = new GsacFile(resourceID, new FileInfo(path), site,                         startDate,      endDate,     rt);
+
+            results.close();
+
+            return file;
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
     }
+
+/*
+        List<Clause> clauses = new ArrayList<Clause>();
+        clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId));
+        //clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, dttm));
+
+        // SQL query to select from the columns (fields) of rows in the database table CLINIC_GSAC, with  query clauses specified...
+        Statement statement =
+            //getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
+           getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME,
+                Clause.and(clauses), (String) null, -1);
+
+          try {
+                // do the SQL select query and get the results, one or more 'rows':
+                //SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+
+                ResultSet results = statement.getResultSet();
+
+                if (results.next()) {
+                    List<GsacFile> resources = null; // = makeGnssResources(type, results, resourceTypes, true);
+
+                    if (resources.size() > 0) {
+                        return resources.get(0);
+                    }
+                }
+                return null;
+            } finally {
+                getDatabaseManager().closeAndReleaseConnection(statement);
+            }
+*/
+
+
 
 
     /**
      * Create the list of resource types that are shown to the user. This is
-     * called by the getDefaultCapabilities  look which is where?
+     * called by the getDefaultCapabilities  look ?
      *
      * @return resource types
      */
     public List<ResourceType> doGetResourceTypes() {
         List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
 
-        //resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
+        resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
+
         //resourceTypes.add(new ResourceType("qc", "QC Files"));
 
         return resourceTypes;
