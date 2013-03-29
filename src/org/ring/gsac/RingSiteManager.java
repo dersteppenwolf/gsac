@@ -229,8 +229,11 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
+     * "create and return GSAC's internal "resource" (some kind of "site object") identified by the given resource id  in this case NOME_SITO."
+     *
+     * (appears to only be called when you click on a particular site in the table of sites found, after a search for sites.
+     *  something to do with composing an HTML page to show about one site?)
      * CHANGEME - done for RING  
-     * create and return GSAC's internal "resource" (site object) [NOT a db object]  identified by the given resource id  in this case NOME_SITO
      *
      * @param resourceId resource id. 
      *
@@ -240,12 +243,17 @@ public class RingSiteManager extends SiteManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
 
+        //System.err.println("   ring site manager getresource");
+
+        // the SQL search clause select where a column value COL_NOME_SITO  = the "resourceId" which is some site name entered by the user in the api or search form
         Clause clause = Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, resourceId);
 
+        // compose the complete select SQL phrase
         Statement statement =
             getDatabaseManager().select(getResourceSelectColumns(),
                                         clause.getTableNames(), clause);
         try {
+            // make an SQL query, and get results
             ResultSet results = statement.getResultSet();
             if ( !results.next()) {
                 results.close();
