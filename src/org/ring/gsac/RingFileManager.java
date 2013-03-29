@@ -176,6 +176,8 @@ public class RingFileManager extends FileManager {
     /**
      * CHANGEME
      * "handle the search request"     which means...
+     *   do the database search as specified by the user's search for files in the web site forms or via the API, (contained in arg "request")
+     *   and put an array of the results, found GSAC objects, in the object "GsacResponse response."
      *
      * @param request The request [from the api or web search forms?]
      * @param response The response
@@ -231,6 +233,7 @@ public class RingFileManager extends FileManager {
         System.err.println ("   RingFileManager: handleRequest: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
 
         if (dataDateRange[0] != null) {
+            // wrangle the input time into a format you can use in a SQL query
             Calendar cal = Calendar.getInstance();
             cal.setTime(dataDateRange[0]);
             //cal.add(Calendar.HOUR, 23);
@@ -238,6 +241,7 @@ public class RingFileManager extends FileManager {
             //cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
             
+            // make the sql query clause for start times of files
             clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, sqlStartDate));
 
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
@@ -258,8 +262,6 @@ public class RingFileManager extends FileManager {
             cal = null;
         }
 
-        System.err.println("   look FIX: RingFileManager: need to fix times in query clause");
-
         System.err.println("   look FIX: RingFileManager: need to add site name in query clause");
                // look  testing kludge; which station has data only in 2013!n local test db!
         clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, "GROT"));
@@ -270,7 +272,7 @@ public class RingFileManager extends FileManager {
         Statement statement =
            getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, mainClause);
 
-        System.err.println("   RingFileManager: select query is " +statement);
+        //System.err.println("   RingFileManager: select query is " +statement);
 
         int col = 1;
 
@@ -284,12 +286,13 @@ public class RingFileManager extends FileManager {
 
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
-               System.err.println("      RingFileManager:  got a file  match in db ");
-               // look FIX finish this code first:
-/*
-               col=0;
+               //System.err.println("      RingFileManager:  got a file  match in db ");
+
+               col=1;
                String siteID = results.getString(col++);
-               System.err.println("      RingFileManager:  got a file at site " +siteID);
+               // alternate String site_name = results.getString( Tables.CLINIC_GSAC.COL_SITO);
+               // System.err.println("      RingFileManager:  got a file at site " +siteID);
+
                Date fromTime = results.getDate(col++); // start_date
                Date toTime = results.getDate(col++); // end_date
                String ftpurl = results.getString(col++);
@@ -299,14 +302,15 @@ public class RingFileManager extends FileManager {
                //                      GsacFile(     resId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
                GsacFile fileItem = new GsacFile(siteID, new FileInfo(ftpurl), null, fromTime, toTime,     rt);
 
+               // pile up up all the things you found in here: this is the array of results from the GSAC file seach:
                response.addResource(fileItem);
+
                cnt++;
-               System.err.println("      RingFileManager:  made  a file object " );
-*/
-                /* if (!iter.countOK()) {
+               //System.err.println("      RingFileManager:  made  a file object " );
+               /* if (!iter.countOK()) {
                     response.setExceededLimit();
                     break;
-                }*/
+               }*/
             }
             iter.close();
         } finally {
@@ -335,7 +339,7 @@ public class RingFileManager extends FileManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
 
-        System.err.println("   ring file manager getresource");
+        //System.err.println("   ring file manager getresource");
 
         // compose the complete select SQL phrase; select matching sites by name:
         // the SQL search clause select logic, where a column value COL_SITO  = the "resourceId" which is some site name entered by the user in the api or search form
@@ -352,16 +356,16 @@ public class RingFileManager extends FileManager {
             // Database rows are for example
             // | RSTO | 2002-05-01 00:00:00 | 2002-05-01 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/121/RSTO1210.02d.Z |
             String baseName = results.getString(1);
-            // String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
-            System.err.println("   name?: " + baseName);
+            // alternate String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
+            //System.err.println("   site name: " + baseName);
             Date fromTime = results.getDate( 2 ); // start_date
-            System.err.println("   start time? : " + fromTime);
+            //       System.err.println("   files time range start time : " + fromTime);
             Date toTime = results.getDate( 3 ); // end_date
             //Date fromTime = getDate(results, Tables.CLINIC_GSAC.COL_FIRST_EPOCH);
             //Date toTime  =getDate(results, Tables.CLINIC_GSAC.COL_LAST_EPOCH);
             String location = results.getString(4);
             // String location= results.getString( Tables.CLINIC_GSAC.COL_LINK);
-            System.err.println("   ftp file location?: " + location );
+            //System.err.println("   ftp URL file location: " + location );
 
             /*    Date publishTime = results.getDate( 10 );
             long fileSize = results.getLong( 11 );
