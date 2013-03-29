@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
+import java.util.Calendar;
 
 
 /**
@@ -186,8 +187,7 @@ public class RingFileManager extends FileManager {
 
         //System.err.println("   ring file manager handleRequest ");
 
-        //The msgBuff holds the html that describes what is being searched for
-        // (look which is only used for text on the html page?)
+        //The msgBuff holds the html that describes what is being searched for // (look which is only used for text on the html page?)
         StringBuffer msgBuff = new StringBuffer();
 
         List<Clause> clauses = new ArrayList<Clause>();
@@ -224,86 +224,45 @@ public class RingFileManager extends FileManager {
         // end of these may have future use at RING.
         */
 
-/*
-        // from sopac:
-        // start/stop date range ///////////////////////////////////
-        Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
-                ARG_FILE_DATADATE_TO, null, null);
-        // TODO: now that we're only using year/doy virtual column, remove
-        // appendSearchCriteria method calls here?
-        if (dataDateRange[0] != null) {
-            //clauses.add(Clause.ge(Tables.DATA_RECORD.COL_START_TIME,
-            //      dataDateRange[0]));
-            appendSearchCriteria(msgBuff, "Start date&ge;=", ""
-                    + format(dataDateRange[0]));
 
-            // need to include year in query of table, this column is indexed,
-            // otherwise queries are very slow
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(dataDateRange[0]);
-            int year = cal.get(Calendar.YEAR);
-            int doy = cal.get(Calendar.DAY_OF_YEAR);
-            int yearDoy = year * 1000 + doy;
-            clauses.add(Clause.ge("DATA_RECORD.YEARDOY", // add this col to Tables.java
-                    yearDoy));
-            cal = null;
-        }
-        if (dataDateRange[1] != null) {
-            //clauses.add(Clause.le(Tables.DATA_RECORD.COL_STOP_TIME,
-            //      dataDateRange[1]));
-            appendSearchCriteria(msgBuff, "End date&le;=", ""
-                    + format(dataDateRange[1]));
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(dataDateRange[1]);
-            int year = cal.get(Calendar.YEAR);
-            int doy = cal.get(Calendar.DAY_OF_YEAR);
-            int yearDoy = year * 1000 + doy;
-            clauses.add(Clause.le("DATA_RECORD.YEARDOY", // add this col to Tables.java
-                    yearDoy));
-        }
-*/
-
+        // get vlaues of the data date range requested by the user, from the input from web search form or from the API:
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
 
         System.err.println ("   RingFileManager: handleRequest: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
-        // format is RingFileManager: requested date range Tue Mar 04 00:00:00 MST 2003 to Wed Mar 18 00:00:00 MDT 2009
-
-        //  look fix have to convert these times to qsl timestamp time formats to compare to times in clinic_gsac table
 
         if (dataDateRange[0] != null) {
-            /*Calendar cal = Calendar.getInstance();
+            Calendar cal = Calendar.getInstance();
             cal.setTime(dataDateRange[0]);
-            int year = cal.get(Calendar.YEAR);
-            int doy = cal.get(Calendar.DAY_OF_YEAR);
-            int yearDoy = year * 1000 + doy;
-            //clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, yearDoy));
-            //clauses.add(Clause.ge("DATA_RECORD.YEARDOY", yearDoy));
-            cal = null;
-            */
+            //cal.add(Calendar.HOUR, 23);
+            //cal.add(Calendar.MINUTE, 59);
+            //cal.add(Calendar.SECOND, 59);
+            java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
             
-            clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, format(dataDateRange[0])));
+            clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, sqlStartDate));
 
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
+            cal = null;
         }
 
         if (dataDateRange[1] != null) {
-            /*Calendar cal = Calendar.getInstance();
+            Calendar cal = Calendar.getInstance();
             cal.setTime(dataDateRange[1]);
-            int year = cal.get(Calendar.YEAR);
-            int doy = cal.get(Calendar.DAY_OF_YEAR);
-            int yearDoy = year * 1000 + doy;
-            //clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_LAST_EPOCH, yearDoy));
-            cal = null;
-            */
+            //cal.add(Calendar.HOUR, 23);
+            //cal.add(Calendar.MINUTE, 59);
+            //cal.add(Calendar.SECOND, 59);
+            java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
 
-            clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_LAST_EPOCH, format(dataDateRange[1])));
+            clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_LAST_EPOCH, sqlEndDate));
 
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
+            cal = null;
         }
-        System.err.println("   look FIX: RingFileManager: need to reformat dataDateRange values to work with timestamp vlaues in  query clause");
 
-        //clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId));
-        System.err.println("   look FIX: RingFileManager: need site name to complete query clause");
+        System.err.println("   look FIX: RingFileManager: need to fix times in query clause");
+
+        System.err.println("   look FIX: RingFileManager: need to add site name in query clause");
+               // look  testing kludge; which station has data only in 2013!n local test db!
+        clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, "GROT"));
 
         Clause mainClause = Clause.and(clauses);
 
@@ -325,6 +284,9 @@ public class RingFileManager extends FileManager {
 
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
+               System.err.println("      RingFileManager:  got a file  match in db ");
+               // look FIX finish this code first:
+/*
                col=0;
                String siteID = results.getString(col++);
                System.err.println("      RingFileManager:  got a file at site " +siteID);
@@ -340,6 +302,7 @@ public class RingFileManager extends FileManager {
                response.addResource(fileItem);
                cnt++;
                System.err.println("      RingFileManager:  made  a file object " );
+*/
                 /* if (!iter.countOK()) {
                     response.setExceededLimit();
                     break;
@@ -481,5 +444,6 @@ public class RingFileManager extends FileManager {
         return (RingSiteManager) getRepository().getResourceManager(
             GsacSite.CLASS_SITE);
     }
+
 
 }
