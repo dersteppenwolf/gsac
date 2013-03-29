@@ -174,7 +174,7 @@ public class RingFileManager extends FileManager {
 
     /**
      * CHANGEME
-     * handle the search request
+     * "handle the search request"     which means...
      *
      * @param request The request [from the api or web search forms?]
      * @param response The response
@@ -185,28 +185,30 @@ public class RingFileManager extends FileManager {
             throws Exception {
 
         System.err.println("   ring file manager handleRequest ");
+
         //The msgBuff holds the html that describes what is being searched for
+        // (look which is only used for text on the html page?)
         StringBuffer msgBuff = new StringBuffer();
 
+        List<Clause> clauses = new ArrayList<Clause>();
+
         /*
+        // these may have future use at RING:
         if (request.defined(ARG_FILESIZE_MIN)) {
             int size = request.get(ARG_FILESIZE_MIN, 0);
             appendSearchCriteria(msgBuff, "Filesize&gt;=",
                                  "" + request.get(ARG_FILESIZE_MIN, 0));
         }
-
         if (request.defined(ARG_FILESIZE_MAX)) {
             int size = request.get(ARG_FILESIZE_MAX, 0);
             appendSearchCriteria(msgBuff, "Filesize&lt;=",
                                  "" + request.get(ARG_FILESIZE_MAX, 0));
         }
-
         if (request.defined(ARG_FILE_TYPE)) {
             List<String> types =
                 (List<String>) request.getList(ARG_FILE_TYPE);
             addSearchCriteria(msgBuff, "Resource Type", types, ARG_FILE_TYPE);
         }
-
         Date[] publishDateRange =
             request.getDateRange(ARG_FILE_PUBLISHDATE_FROM,
                                  ARG_FILE_PUBLISHDATE_TO, null, null);
@@ -215,54 +217,131 @@ public class RingFileManager extends FileManager {
             appendSearchCriteria(msgBuff, "Publish date&gt;=",
                                  "" + format(publishDateRange[0]));
         }
-
         if (publishDateRange[1] != null) {
             appendSearchCriteria(msgBuff, "Publish date&lt;=",
                                  "" + format(publishDateRange[1]));
         }
+        // end of these may have future use at RING.
         */
 
+/*
+        // from sopac:
+        // start/stop date range ///////////////////////////////////
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM,
-                                   ARG_FILE_DATADATE_TO, null, null);
-
+                ARG_FILE_DATADATE_TO, null, null);
+        // TODO: now that we're only using year/doy virtual column, remove
+        // appendSearchCriteria method calls here?
         if (dataDateRange[0] != null) {
-            appendSearchCriteria(msgBuff, "Data date&gt;=",
-                                 "" + format(dataDateRange[0]));
-        }
+            //clauses.add(Clause.ge(Tables.DATA_RECORD.COL_START_TIME,
+            //      dataDateRange[0]));
+            appendSearchCriteria(msgBuff, "Start date&ge;=", ""
+                    + format(dataDateRange[0]));
 
+            // need to include year in query of table, this column is indexed,
+            // otherwise queries are very slow
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dataDateRange[0]);
+            int year = cal.get(Calendar.YEAR);
+            int doy = cal.get(Calendar.DAY_OF_YEAR);
+            int yearDoy = year * 1000 + doy;
+            clauses.add(Clause.ge("DATA_RECORD.YEARDOY", // add this col to Tables.java
+                    yearDoy));
+            cal = null;
+        }
         if (dataDateRange[1] != null) {
-            appendSearchCriteria(msgBuff, "Data date&lt;=",
-                                 "" + format(dataDateRange[1]));
+            //clauses.add(Clause.le(Tables.DATA_RECORD.COL_STOP_TIME,
+            //      dataDateRange[1]));
+            appendSearchCriteria(msgBuff, "End date&le;=", ""
+                    + format(dataDateRange[1]));
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dataDateRange[1]);
+            int year = cal.get(Calendar.YEAR);
+            int doy = cal.get(Calendar.DAY_OF_YEAR);
+            int yearDoy = year * 1000 + doy;
+            clauses.add(Clause.le("DATA_RECORD.YEARDOY", // add this col to Tables.java
+                    yearDoy));
         }
+*/
 
+        Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
 
         System.err.println ("   RingFileManager: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
 
+        if (dataDateRange[0] != null) {
+            clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, dataDateRange[0]));
 
-        //find and create the files
-        /** 
-            e.g.:
-        GsacResource site = theSiteForThisFile; may be null
-        String type = someType;
-        GsacFile resource = new GsacFile(resourceId,
-                                    new FileInfo(filePath, fileSize, md5),
-                                    site,
-                                    publishTime, fromTime, toTime,
-                                    toResourceType(type));
+            appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
+        }
 
-                                    response.addResource(resource);
-        **/
+        if (dataDateRange[1] != null) {
+            clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_LAST_EPOCH, dataDateRange[1]));
+
+            appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
+        }
+        //clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, starttime));
+        //clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, stoptime));
+        //clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId));
+
+        System.err.println("    FIX: RingFileManager: need site name to complete query clause");
+
+        Clause mainClause = Clause.and(clauses);
+
+        // SQL query to select from the columns (fields) of rows in the database table named CLINIC_GSAC, with  query clauses specified...
+        Statement statement =
+           getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, mainClause);
+
+        System.err.println("    RingFileManager: select query is " +statement);
+
+        int col = 1;
+
+        int cnt=0;
+        try {
+            //ResultSet results = statement.getResultSet();
+            ResultSet results = null;
+
+            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+            //SqlUtil.Iterator iter = SqlUtil.getIterator(statement, request.getOffset(), request.getLimit());
+
+            // process each line in results of db query  
+            while ((results = iter.getNext()) != null) {
+               col=0;
+               String siteID = results.getString(col++);
+               System.err.println("      RingFileManager:  got a file at site " +siteID);
+               Date fromTime = results.getDate(col++); // start_date
+               Date toTime = results.getDate(col++); // end_date
+               String ftpurl = results.getString(col++);
+
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation");
+
+               //                      GsacFile(     resId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
+               GsacFile fileItem = new GsacFile(siteID, new FileInfo(ftpurl), null, fromTime, toTime,     rt);
+
+               response.addResource(fileItem);
+               cnt++;
+               System.err.println("      RingFileManager:  made  a file object " );
+                /* if (!iter.countOK()) {
+                    response.setExceededLimit();
+                    break;
+                }*/
+            }
+            iter.close();
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
 
         setSearchCriteriaMessage(response, msgBuff);
-    }
+
+    } // end handleRequest
 
 
 
 
     /**
      * CHANGEME
-     * This takes the resource id that is used to identify files and
-     * creates a GsacFile object
+     * This takes the resource id that is used to identify files and creates a GsacFile object.
+     *
+     * (Appears to only be called when you click on a particular item in the table of things found, after a search.
+     *  Something to do with composing an HTML page to show about one site?)
      *
      * @param resourceId file id
      *
@@ -273,40 +352,53 @@ public class RingFileManager extends FileManager {
     public GsacResource getResource(String resourceId) throws Exception {
 
         System.err.println("   ring file manager getresource");
+
+        // compose the complete select SQL phrase; select matching sites by name:
         // the SQL search clause select logic, where a column value COL_SITO  = the "resourceId" which is some site name entered by the user in the api or search form
         Clause clause = Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId);
 
-        // compose the complete select SQL phrase
         Statement statement =
-            getDatabaseManager().select(Tables.CLINIC_GSAC.COLUMNS, clause.getTableNames(), clause);
+            getDatabaseManager().select(Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, clause);
 
+        int cnt=0;
         try {
-            // make an SQL query, and get results
             ResultSet results = statement.getResultSet();
-            if ( !results.next()) {
-                results.close();
-                return null;
-            }
+            while (results.next()) {
 
-            String resourceID = "INGV/RING"; //type.makeId(new String[] { monumentID, startDate.toString(), resourceType.getId() });
-            String path = results.getString( Tables.CLINIC_GSAC.COL_LINK);
-            String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
-            GsacSite site = new GsacSite(null, monumentID, "");
-            // look fix these dates
-            Date startDate = null; //getDate(results, Tables.CLINIC_GSAC.COL_FIRST_EPOCH);
-            Date   endDate = null; //getDate(results, Tables.CLINIC_GSAC.COL_LAST_EPOCH);
+            // Database rows are for example
+            // | RSTO | 2002-05-01 00:00:00 | 2002-05-01 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/121/RSTO1210.02d.Z |
+            String baseName = results.getString(1);
+            // String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
+            System.err.println("   name?: " + baseName);
+            Date fromTime = results.getDate( 2 ); // start_date
+            System.err.println("   start time? : " + fromTime);
+            Date toTime = results.getDate( 3 ); // end_date
+            //Date fromTime = getDate(results, Tables.CLINIC_GSAC.COL_FIRST_EPOCH);
+            //Date toTime  =getDate(results, Tables.CLINIC_GSAC.COL_LAST_EPOCH);
+            String location = results.getString(4);
+            // String location= results.getString( Tables.CLINIC_GSAC.COL_LINK);
+            System.err.println("   ftp file location?: " + location );
+
+            /*    Date publishTime = results.getDate( 10 );
+            long fileSize = results.getLong( 11 );
+            //System.err.println( "FileSize: " + fileSize );
+            int dataTypeID = results.getInt( 13 );
+            //System.err.println( "dataTypeID: " + dataTypeID );
+            */
+
+            //    GsacFile fileinfo = new GsacFile( resourceId, new FileInfo( location, fileSize, checkSum), null, publishTime, fromTime, toTime, toResourceType(type) ); */
+            //GsacSite site = new GsacSite(null, monumentID, "");
             ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation");
-            /* COL_SITO   COL_FIRST_EPOCH   COL_LAST_EPOCH   String COL_LINK */
 
-            //         GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
-            GsacFile file = new GsacFile(resourceID, new FileInfo(path), site,                         startDate,      endDate,     rt);
+            //         GsacFile(String        resId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
+            GsacFile fileInfo = new GsacFile(resourceId, new FileInfo(location), null,                         fromTime, toTime,     rt);
 
-            results.close();
-
-            return file;
+            return fileInfo;
+            }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
+        return null;
     }
 
 /*
