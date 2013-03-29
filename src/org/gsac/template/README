@@ -656,12 +656,10 @@ you can create a org/@MACRO.PREFIX@/@MACRO.BASENAME@.properties file. The conten
 gsac.db.username=your-db-account-name
 gsac.db.password=your-db-account-password
 
-The ant runserver command implicitely uses this property file as a command line argument.
+The ant runserver command implicitly uses this property file as a command line argument.
 When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
 So, for example, for a 'gsacmyrepo' server,  it looks for a gsacmyrepo.properties file. 
 Put the authentication information in that properties file so it's not checked into any svn.
-
-For the Unavco GSAC package we have the db auth information in SVN and it gets included in the .war file 
 
 
 ########################################################################
@@ -670,39 +668,35 @@ Running the new GSAC web site with Tomcat
 
 Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
 
-Building GSAC (in the src/org/@MACRO.PREFIX@/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
- trunk/dist/gsac@MACRO.PREFIX@.war.  
- 
-Copy this file to the Tomcat apachetomcatdev/webapps/ folder on your web server host.  
-For example, on the Tomcat server, do something like
-cp gsac@MACRO.PREFIX@.war /usr/local/apachetomcatdev/webapps
+Building GSAC (in the src/org/demo/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
 
-The GSAC server web should be available in a few seconds, if you are using "hot deploy," without a restart of Tomcat.
+ trunk/dist/gsacDemo.war.   
 
+Copy this file to the Tomcat folder for .war file folder on your web server host.  For example, 
+on the Tomcat server, do something like
+
+cp gsacDemo.war /usr/local/apachetomcat/webapps
+
+The GSAC server web should be available in a few seconds if you are using "hot deploy," without a restart of Tomcat.
+    
 You can see the log of Tomcat actions by doing for example,
- tail -f /usr/local/apachetomcatdev/logs/catalina.out
 
-If for some reason Tomcat and hotdeploy is misbehaving, or to restart Tomcat, you can do:
+ tail -f /usr/local/apachetomcat/logs/catalina.out
+    
+If for some reason Tomcat and hotdeploy are misbehaving, or to restart Tomcat, you can do:
+
 sudo /etc/init.d/tomcatdev stop
 sudo /etc/init.d/tomcatdev start
-to restart tomcat 
+
+to restart tomcat  and force a read of the .war files.
 
 The Tomcat's servlet reads the properties file:
 /usr/local/apachetomcatdev/conf/gsacigs.properties
-which contains the database authentication info.
- 
+which contains the database authentication info. This is in the .war file.
+
 ########################################################################
-Adding Data File Downloads from a GSAC Repository with FTP
 ########################################################################
 
-If you enable files searches, and your db has a complete URL specifying FTP for each data file,
-GSAC will return the FTP URLS, and a wget statement with the FTP URLs, as results from a file and site search.
-
-If your database does not have a field with the complete URL specifying FTP for each data file, you may bre able 
-to construct the complete URL specifying FTP for each data file, with extra Java coding, using parts of the URL
-such as data file name, which you can find in results from GSAC queries.
-
-
-SKW 
+SKW
 UNAVCO
 
