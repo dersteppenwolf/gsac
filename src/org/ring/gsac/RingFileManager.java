@@ -184,7 +184,7 @@ public class RingFileManager extends FileManager {
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
 
-        System.err.println("   ring file manager handleRequest ");
+        //System.err.println("   ring file manager handleRequest ");
 
         //The msgBuff holds the html that describes what is being searched for
         // (look which is only used for text on the html page?)
@@ -265,24 +265,45 @@ public class RingFileManager extends FileManager {
 
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
 
-        System.err.println ("   RingFileManager: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
+        System.err.println ("   RingFileManager: handleRequest: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
+        // format is RingFileManager: requested date range Tue Mar 04 00:00:00 MST 2003 to Wed Mar 18 00:00:00 MDT 2009
+
+        //  look fix have to convert these times to qsl timestamp time formats to compare to times in clinic_gsac table
 
         if (dataDateRange[0] != null) {
-            clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, dataDateRange[0]));
+            /*Calendar cal = Calendar.getInstance();
+            cal.setTime(dataDateRange[0]);
+            int year = cal.get(Calendar.YEAR);
+            int doy = cal.get(Calendar.DAY_OF_YEAR);
+            int yearDoy = year * 1000 + doy;
+            //clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, yearDoy));
+            //clauses.add(Clause.ge("DATA_RECORD.YEARDOY", yearDoy));
+            cal = null;
+            */
+            
+            clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, format(dataDateRange[0])));
 
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
         }
 
         if (dataDateRange[1] != null) {
-            clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_LAST_EPOCH, dataDateRange[1]));
+            /*Calendar cal = Calendar.getInstance();
+            cal.setTime(dataDateRange[1]);
+            int year = cal.get(Calendar.YEAR);
+            int doy = cal.get(Calendar.DAY_OF_YEAR);
+            int yearDoy = year * 1000 + doy;
+            //clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_LAST_EPOCH, yearDoy));
+            cal = null;
+            */
+
+            clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_LAST_EPOCH, format(dataDateRange[1])));
 
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
-        //clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, starttime));
-        //clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, stoptime));
-        //clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId));
+        System.err.println("   look FIX: RingFileManager: need to reformat dataDateRange values to work with timestamp vlaues in  query clause");
 
-        System.err.println("    FIX: RingFileManager: need site name to complete query clause");
+        //clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId));
+        System.err.println("   look FIX: RingFileManager: need site name to complete query clause");
 
         Clause mainClause = Clause.and(clauses);
 
@@ -290,7 +311,7 @@ public class RingFileManager extends FileManager {
         Statement statement =
            getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, mainClause);
 
-        System.err.println("    RingFileManager: select query is " +statement);
+        System.err.println("   RingFileManager: select query is " +statement);
 
         int col = 1;
 
