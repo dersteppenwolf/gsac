@@ -4,9 +4,10 @@ GSAC_WS Installation
 
 README, Part 1.
 
-26 March 2013.
+29 March 2013.
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
+
 This README file is in gsac/trunk/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
 Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
@@ -17,20 +18,17 @@ from UNAVCO at gsac-ws@unavco.org.
 
 ################################################################################
 
-
 UNAVCO's GSAC-WS is a software package to provide a complete suite of web services at a geoscience data repository
-for data discovery about sites (monuments) and about the GNSS instruments
-(antennas and receivers) at the sites, and data access (file downloads).
-GSAC provides a web site GUI, an APIi, and a GSAC client program using the API.
+for data discovery about sites (monuments) and about the GNSS instruments (antennas and receivers) at the sites, 
+and data access (file downloads).  GSAC provides a web site GUI, an API, and a GSAC client program using the API.
 GSAC is freely available from SourceForge, as described here.  GSAC was created and is maintained by UNAVCO (www.unavco.org).
 
-GSAC site searches provide details about sites (monuments) and about the GNSS instruments
-(antennas and receivers) at the sites, in geodesy formats such as SOPAC XML, SINEX, GAMIT station.info, and others.
+GSAC site searches provide details about sites (monuments) and about the GNSS instruments (antennas and receivers) at the sites, 
+in geodesy formats such as SOPAC XML, SINEX, GAMIT station.info, and others.  You may also provide a download service for RINEX 
+and many other types of other GNSS data files.
 
-You may also provide a download service for RINEX or other GNSS data files.
-File download is easy when you already have an FTP service, an FTP URL for each data file to download, and
-database records associating file download FTP URLs with the instrument site information in the database and with the
-start and end times of data in each file.
+GSAC may be used to provide web services for any science data repository with information in a database about instrumented stations
+at fixed locations and about data files from the instruments.
 
 The UNAVCO GSAC-WS home page is http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Web Services document,
 "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
@@ -48,17 +46,21 @@ To install GSAC you need a Linux OS or Mac, with Java 1.6 and the software engin
 You need a database (in MySQL, Postgres, or Oracle) with complete geodesy parameters about sites (monuments) 
 and about the GNSS instruments (antennas and receivers) at the sites.
 
-You have done the following already, if you are reading this README file in a GSAC installation:  
+File download is easy when you already have an FTP service, an FTP URL for each data file to download in 
+database records associating file download FTP URLs with the instrument site information (also in the database) and with the
+start and end times of data in each file.
+
+You may have done the following already, if you are reading this README file in a GSAC installation:  
 
 
 Creating the initial GSAC Server
 
-Make a top-level working directory for GSAC, and go there:
+Make a top-level working directory for GSAC, and go there. For example:
 
 mkdir ~/GSAC/
 cd    ~/GSAC/
 
-(You can install GSAC code anywhere, so need not make a new directory GSAC/.)
+(You can install GSAC code anywhere, so you do not need to make the new directory GSAC/.)
 
 In the directory where you will install GSAC, such as ~/GSAC/, check out the GSAC code from SourceForge, using this svn (subversion) command:
 
@@ -79,7 +81,9 @@ Do the command "ant" which builds all the core GSAC code:
 
 ant
 
-This ant command builds the core GSAC code, including the GSL (the GSAC service layer).
+This ant command builds the core GSAC code, including the GSL (the GSAC service layer).  If you later change or do svn update for
+core GSAC code (not code in your own personal GSAC), you need to do ant in trunk/ again to rebuild the core GSAC package.
+
 The file gsac/trunk/src/gsac/trunk/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.  
 This may take two or three minutes. The screen output ends with something like this:
 
@@ -102,10 +106,10 @@ If you investigate you will find dozens of new files and directories below trunk
 
 The core GSAC code is files in gsac/trunk/src/org/gsac/ and its subdirectories. 
 
-Building core GSAC code makes the .jar file gsac/trunk/lib/gsacws.jar (among other things).
-When you build code for you local GSAC, described in README part 2, the core GSAC code is
-imported or included in the gsacws.war file.  So to get changes in core GSAC into your local GSAC you must rebuild the
-core GSAC with ant.
+Building core GSAC code makes the .jar file gsac/trunk/lib/gsacws.jar (and other things).
+
+When you build code for your local GSAC, described in README part 2, the core GSAC code is
+imported or included n the gsacws.war file.  
 
 In general you modify files in the core GSAC code only rarely if ever.  If you change a file there,
 rebuild the GSAC core code with command ant in gsac/trunk/. Then rebuild your GSAC code
@@ -119,7 +123,7 @@ This is one case when you may wish to modify the GSAC core code checked out from
 
 Site search results from GSAC include a map for the site location. The map is made using OpenLayers. 
 
-The default map in GSAC shows almost all of western Europe, east to Moscow and Turkey.
+The default map in GSAC shows (at this time) almost all of western Europe, east to Moscow and Turkey.
 
 To center the map in the latitude-longitude region for your geodesy network, edit 
 
@@ -127,18 +131,19 @@ gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js
 
 Set the longitude, latitude, and zoom level for the center of your map in the lines:
 
-/*   center of GSAC map  or viewpoint: */
-/*   center of GSAC site map,  in US lower 48 states, with longitude, latitude */
+/*   center of GSAC map  or viewpoint, with longitude, latitude: */
+/*      center of GSAC site map for in US lower 48 states: */
 //var defaultLocation = new OpenLayers.LonLat(-104, 40);
 
-/*   default map center longitude, latitude:  14.15 E 48.5 N */
+/*   current GSAC default map center longitude, latitude:  14.15 E 48.5 N */
 var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
 
 Set the zoom level in the lines:
-/*   GSAC map of sites; set zoom level; 3 is about 10,000 km wide; 4 is about 3900 km wide. */
+
+/*   GSAC map of sites; set zoom level: 3 is about 10,000 km wide; 4 is about 3900 km wide. */
 var defaultZoomLevel = 4;
 
-Rebuild the GSAC core code with command ant in gsac/trunk/. 
+Rebuild the GSAC core code with command ant in gsac/trunk/.  
 
 For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers/wiki/SettingZoomLevels.
 
@@ -146,10 +151,12 @@ For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers
 ################################################################################
 
 
+The GSAC core code area
+
 Cd to gsac/trunk/src/org/gsac/  
 
 The full path such as gsac/trunk/src/org/gsac/, is not shown in all commands below.
-In most cases the leading gsac/trunk/src/ is not shown.
+In most cases the leading part gsac/trunk/src/ is not shown.
 
 What's in org/gsac/:
  
@@ -175,7 +182,7 @@ What's in org/gsac/:
 Generating Your Initial GSAC-WS repository package
 
 The template directory (org/gsac/template/) holds template files for the initial GSAC repository package 
-implementation. This allows you to generate a package with all of the boilerplate Java code and build scripts.
+implementation. This allows you to generate a new GSAC instance or package with all of the boilerplate Java code and build scripts.
 
 What you need to do next is define a set of macro values that are used to take the code in the 
 org/gsac/template/ package and make an initial collection of code for your new GSAC for your data repository.
@@ -186,7 +193,7 @@ in org/gsac/template/
 
 cp macros.properties   myrepomacros.properties
 
-'myrepo' is only a placeholder in this README file.  You replace "myrepor" with an approprite name for your agency, project, or repository. 
+'myrepo' is only a placeholder in this README file.  You replace "myrepo" with an appropriate name for your agency, project, or repository. 
 
 Edit the new properties file to define the target package name, directory, etc.  For example:
 
@@ -202,11 +209,12 @@ target.package=org.myrepo.gsac
    You may wish to choose a top-level package name other than "org."  For example, if you wish to have the top level be "de", 
    first make a new subdirectory gsac/trunk/src/de/.  Then in your  macros.properties file use 
    target.package=de.myrepo.gsac
+   You may use longer package names, such as the GSAC package at edu.ucsd.sopac.projects.gsac.repository from SOPAC at the University of California San Diego.
 
    The target.package name is very important.  It determines the directories where your GSAC code is stored.  If there is an error in the target.package
-   the files will be in the wrong place in the GSAC tree and your code will not compile or build corretly.
+   the files will be in the wrong place in the GSAC tree and your code will not compile or build corretly. Do not put your package in the core area src/org/gsac/.
 
-##All of the java classes will have this prefix as the first part of their names. Usually your acronym. Capitalize first letter, a Java class naming convention.
+##All of the Java classes will have this prefix as the first part of their names, usually your acronym. Capitalize the first letter, a Java class naming convention.
 target.prefix=Myrepo
 
 # What database driver jar file do we use? (This gets added to the generated build.xml to include the right jar file from Java for db access.)
@@ -214,13 +222,13 @@ target.dbdriver=mysql.jar
 
    Other choices for the database driver jar file, mysql.jar, are postgres.jar and oracleDriver.jar.  Use the one for your database.
 
-After you created your myrepomacros.properties file 
 
 cd ../ to org/gsac/
 
 and run this ant command, replacing the 'myrepomacros.properties' file name with the name of your new properties file:
 
             ant -propertyfile template/myrepomacros.properties makerepository   
+
 
 The final lines output to screen from ant should be like:
 init:
@@ -233,16 +241,20 @@ Totaltest2013a time: 1 second
 The 'myrepomacros.properties' file is only used one time.
 
 This ant makerepository process copies GSAC source and resource file templates to new directories and files, replacing the macros with
-the values you defined in myrepomacros.properties, into the specified new target directory tree, such as org/myrepo/.   This is 
+the values you defined in myrepomacros.properties, into the specified new package's directory tree, such as org/myrepo/.   This is 
 somewhat parallel to the core GSAC code files in org/gsac/.
 
 
 ################################################################################
 
 
-GSAC code for a Repository
+GSAC Code for a new Repository
 
-For a new implementation called myrepo, there are new files like these in org/myrepo/gsac/ : 
+After you created your myrepomacros.properties file cd to your new code area.  This is determines by your package name.  In the GSAC
+README files the path to your GSAC code is given as org/myrepo/, but your real path may not even have "org" of course. It could be
+something like this ficticious path fr/paris-sorbonne/geocentre/projets/gsac/repository/. 
+
+For a new implementation called myrepo, there are new files like these in the path with your GSAC code : 
 
    9851 2013-02-13 11:38 build.xml
    4096 2013-02-13 11:38 dbresources
@@ -260,18 +272,16 @@ For a new implementation called myrepo, there are new files like these in org/my
    3440 2013-02-13 11:38 MyrepoTest.java
 
 
-README, Part 2
+The README file is GSAC's README, Part 2.
 
-The Part 2 README file has been copied to your new package, for example, 
-to org/myrepo/gsac/README, and it has the next set of instructions for you to follow to complete your GSAC installation.  
+It has the next set of instructions for you to follow to complete your GSAC installation.  
 
-Follow the instructions in the README your new GSAC code area, org/myrepo/gsac/README.
+Follow the instructions in the README your new GSAC code area, such as org/myrepo/gsac/README.
 
 ################################################################################
 
 end of README Part 1 for GSAC installation.
 
-March 26, 2013.
 Copyright (C) 2010-2013 UNAVCO.
 
 ################################################################################
