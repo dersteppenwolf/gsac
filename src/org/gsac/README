@@ -13,8 +13,8 @@ This README file is in gsac/trunk/src/org/gsac/ in the GSAC package available fr
 Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
 the design of data repositories or what data values and files are available or of interest for you to
 offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your
-data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
-from UNAVCO at gsac-ws@unavco.org.
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. 
+Contact UNAVCO at gsac-ws@unavco.org to request software support.
 
 ################################################################################
 
