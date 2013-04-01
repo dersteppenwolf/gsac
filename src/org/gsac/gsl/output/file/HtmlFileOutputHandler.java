@@ -217,7 +217,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
         if (startTime != null) {
             if ((endTime == null) || endTime.equals(startTime)) {
-                sb.append(formEntry(request, msgLabel("Date"),
+                sb.append(formEntry(request, msgLabel("Start Date"),
                                     formatDate(startTime)));
             } else {
                 sb.append(formEntry(request, msgLabel("Date Range"),
@@ -359,6 +359,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
+                    // label the columns in the html page of files-found results:
                     String[] labels = new String[] {
                         (includeExtraCol
                          ? "&nbsp;"
@@ -414,6 +415,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
 
+
+                // Note: if you have no "related content" comment out this section
+/*
+
                 StringBuffer relatedContent = new StringBuffer();
                 for (int relatedIdx = 0; relatedIdx < relatedResources.size();
                         relatedIdx++) {
@@ -436,6 +441,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     relatedContent.append("NA");
                 }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
+*/
 
                 Date publishTime = resource.getPublishDate();
                 Date startTime   = resource.getFromDate();
@@ -454,6 +460,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
 
+ // Note: if you have no data for file sizes, comment out this section:
+/*
                 if (resource.getFileInfo().getFileSize() > 0) {
                     sb.append("<td align=\"right\" class=\"gsac-filesize\" "
                               + clickEvent + ">");
@@ -466,6 +474,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 } else {
                     sb.append(HtmlUtil.col("N/A"));
                 }
+*/
 
                 sb.append("</tr>\n");
             }
