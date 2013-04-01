@@ -4,7 +4,7 @@ GSAC_WS Installation
 
 README, Part 2.
 
-March 29, 2013
+April 2, 2013
 
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -339,8 +339,8 @@ The choices of what to show in GSAC are set in the file trunk/src/org/gsac/gsl/S
 
 You may very easily NOT offer some formats.  Comment out lines for handlers NOT wanted your GSAC-WS repository.
 For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
-new TextSiteLogOutputHandler(getRepository(), getResourceClas())
-in the file trunk/src/org/gsac/gsl/SiteManager.java. 
+new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file trunk/src/org/gsac/gsl/SiteManager.java. 
+
 However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
 There is no harm in offering all the choices, even if you do not see much use in some format.
 
@@ -364,41 +364,35 @@ guides to what is needed in a similar Java class.
 
 
 ########################################################################
-Extending Java Classes (Java Code changes)
+Extending Java Classes: Writing your new Java Code
 ########################################################################
 
 To complete your GSAC server, you need to write new Java code to specify particular details of your data repository.
+Files in @MACRO.SRCDIR@/ have the Java code especially for your repository. 
 
-It is not possible for GSAC core code to anticipate
-the design of data repositories or what data values and files are available or of interest for you to
+It is not possible for GSAC core code to anticipate the design of data repositories or what data values and files are available or of interest for you to
 offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your
 data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
 from UNAVCO at gsac-ws@unavco.org.
 
-For the GSAC at INGV/RING, the RingSiteManager.java has 490 lines more than the template RingSiteManager.java initially created automatically by the
-GSAC build process, and the IgsSiteManager.java file has 550 more lines than its initial version.  These figures give you an idea
-how much coding is required to install GSAC.
-
-UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
-able to provide a way to automate some or all of the SiteManager.java code, but have not done so yet.  Even so, installing GSAC
+For example, the GSAC at INGV/RING, the RingSiteManager.java file has 640 lines more than the template RingSiteManager.java initially created automatically by the
+GSAC build process.  These figures give you an idea how much coding is required to install GSAC.  Even so, installing GSAC
 is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
 services, which also permit federated collaborations.
 
+UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
+able to provide a way to automate some of the SiteManager.java code, but have not found a way to do so yet.  
 
-Files in @MACRO.SRCDIR@/ have the Java code especially for your repository. 
 
-The @MACRO.PREFIX@Repository class is the main entry point. It mostly creates the @MACRO.PREFIX@SiteManager 
-and other @MACRO.PREFIX@---Manager.java (for example for the UNAVCO IGS GSAC, in  src/org/igs/gsac/, 
-the files IgsFileManager.java, IgsRepository.java, IgsServer.java, and IgsSiteManager.java).
+The @MACRO.PREFIX@Repository class is the main entry point. 
 
 The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
 and by the GSAC API.   For more help adding to the GSAC Java files, you may review code in other 
-GSAC implementations checked into SourceForge, such as the files IgsSiteManager.java,  RingSiteManager.java, and CddisFileManager.java (very complex).
+GSAC implementations checked into SourceForge, such as the files  RingSiteManager.java and RingFileManager.java.
 
 After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
 no errors in the compile step).  Stop ant runserver with CTRL-C.
-
 
 You need to modify or add new Java to these files:
 
@@ -406,9 +400,11 @@ You need to modify or add new Java to these files:
 
 The file @MACRO.PREFIX@Repository.java 
 
-Above the import lines, be sure there is correct new Java package name, in this form:
+Above the import lines, be sure there is correct new Java package name, something like this:
 
 package org.@MACRO.PREFIX@.gsac; 
+
+which is of course dependent on your choice of name for your Java GSAC pacakge.
 
 In the method initResourceManagers(), make the choice if you want your GSAC repository to
 search on sites (stations or monuments), for data files, or for both:
@@ -424,12 +420,48 @@ search on sites (stations or monuments), for data files, or for both:
         // getResourceManager(GsacFile.CLASS_FILE);
     }
 
+                     ########################################################################
+
+The file @MACRO.PREFIX@SiteManager.java  
+
+This file specifies how GSAC searches for sites, and what information is returned to the user.  
+
+You will see a template file for @MACRO.PREFIX@SiteManager.java which was initially created automatically by the
+GSAC build process.  @MACRO.PREFIX@SiteManager.java requires about half of the new JAVA code for a new GSAC.
+
+A GSAC programmer needs to know Java and have an understanding of database concepts and queries, and in the process of
+writing new code for GSAC will leanr about GSAC core code.
+
+First, above the "import" lines, add the new Java package name, in this form:
+package org.@MACRO.PREFIX@.gsac;
+such as package org.igs.gsac;  which is in the IgsSiteManager.java.
+
+Make sure you have a line like
+import org.@MACRO.PREFIX@.gsac.database.*;  
+such as import org.igs.gsac.database.*;
+
+Most of the work is in created the methods 
+
+    public List<Capability> doGetQueryCapabilities()
+
+    public GsacResource getResource(String resourceId)
+
+    public List<Clause> getResourceClauses ()
+
+As a practical matter study the RingSiteManager.java file in the RING GSAC package(which you have installed from SourceForge with all of GSAC), 
+for how to create code to read from a database an dhow to make the "responses;" items GSAC makes to send back as results, to the user.  
+You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
+values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
+
+After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. More details about this process below.
+
 
                      ########################################################################
 
 The file @MACRO.PREFIX@FileManager.java 
 
-This file specifies how GSAC searches for data files.  
+This file specifies how GSAC searches for data files, and what is returned to the user.  
 
 You need not modify this file if you do not supply a data file download service.
 In that case, in @MACRO.PREFIX@Repository.java use only getResourceManager(GsacSite.CLASS_SITE) in initResourceManagers().
@@ -441,7 +473,7 @@ package org.@MACRO.PREFIX@.gsac;
 (You may have other top level package name than org.)
 
 You need to include your database classes:
-/* CHANGEME Include database package for the GSAC installation. */
+
 import org.@MACRO.PREFIX@.gsac.database.*;
 
 The method doGetQueryCapabilities:
@@ -510,44 +542,19 @@ gnss.data.rinex.navigation.gfile=GNSS Navigation "G" file
 gnss.data.rinex.meteorology=GNSS RINEX Meteorology
 gnss.data.teqc_summary=GNSS RINEX Observation QC Report
 
+Most of the work is in created the methods
 
-The method handleRequest():
+   public void handleRequest(GsacRequest request, GsacResponse response)
+which does  the database search as specified by the user's search for files in the web site forms or via the API, (contained in arg "request")
+and puts an array of the results, one or more GSAC_file objects, into the object "GsacResponse response."
 
+    public GsacResource getResource(String resourceId) 
+which composes one particular result provided to user, called when  a user clicks on a particular item in the table of things found, after a search.
+For example, used to make an HTML page to show about one file.
 
-
-The method getResource():
-
-
-                     ########################################################################
-
-The file @MACRO.PREFIX@SiteManager.java  
-
-You will see a template file for @MACRO.PREFIX@SiteManager.java which was initially created automatically by the
-GSAC build process.  @MACRO.PREFIX@SiteManager.java requires most of the new JAVA code for a new GSAC.
-
-A GSAC programmer needs to know Java and have an understanding of database concepts and queries.
-
-First, above the "import" lines, add the new Java package name, in this form:
-
-package org.@MACRO.PREFIX@.gsac;
-
-such as package org.igs.gsac;  which is in the IgsSiteManager.java.
-
-Make sure you have a line like
-
-import org.@MACRO.PREFIX@.gsac.database.*;  (for example import org.igs.gsac.database.*;).
-
-
-(The @MACRO.PREFIX@SiteManager.java file has 5 'CHANGEME' notes in the template @MACRO.PREFIX@SiteManager.java provided by GSAC builds.
-The Changme lines are only a few hints of some places where new code is needed.)
-
-As a practical matter look at the ***SiteManager.java files in the IGS and RING GSAC packages, for how to create code to
-read from a database.  Every database is different so there is no way GSAC can provide this code in advance.
+As a practical matter study the RingFileManager.java file in the RING GSAC package(which you have installed from SourceForge with all of GSAC), 
 You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
-values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
-
-After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
-try your GSAC on your local development platform. More details about this process below.
+values from the database, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
 
 
 ########################################################################
@@ -609,7 +616,7 @@ GNSS positions.
 If your location values have elevations, heights above some geoid model, you can change these lines in these files in core GSAC code to 
 make output labels with "elevation" in place of "ellipsoid height:"
 
-// About ellipsoidal height:
+Look for lines in the files with "// About ellipsoidal height:"
 
 gsl/output/GsacOutputHandler.java:               // About ellipsoidal height:
 gsl/output/HtmlOutputHandler.java:            // About ellipsoidal height:
@@ -620,18 +627,18 @@ gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
 gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
 gsl/output/site/XmlSiteLogOutputHandler.java:        // About ellipsoidal height:
 
+Then rebuild core GSAC with command ant in trunk/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
 
 Note that the geodesy formats SINEX, GAMIT station.info, and SOPAC XML Site Log do not have a choice of two labels to 
 distinguish ellipsoid height from elevation. In those cases you may need to force zero for ellipsoid heights if you lack that data.
 
-Then rebuild core GSAC with command ant in trunk/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
+For example SINEX has a parameter "_APP_H_" and SOPAC XML Site Log has a parameter "<mi:elevation-m_ellips> </mi:elevation-m_ellips>".
 
 ########################################################################
 Building and Running the GSAC server
 ########################################################################
 
-Once you have made the additions to the Java code, to build your GSAC, in @MACRO.SRCDIR@, run
-simply:
+Once you have made the additions to the Java code, to build your GSAC, in @MACRO.SRCDIR@, run simply:
 
  ant 
 
