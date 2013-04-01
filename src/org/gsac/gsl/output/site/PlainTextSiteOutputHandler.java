@@ -75,7 +75,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
 
-    /**  to format ellipsoidal height values sometimes called elevation in GSAC code.  */
+    /**  to format elevation / ellipsoidal height values sometimes called elevation in GSAC code.  */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
 
     /** for antenna offset values from instrument reference point.  */
@@ -233,8 +233,15 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         pw.append(    " site latitude:               "+ formatLocation(el.getLatitude())  + "" + "\n");
         pw.append(    " site longitude:              "+ formatLocation(el.getLongitude()) + "" + "\n");
         pw.append(    " site TRF or Datum name        \n");  // LOOK need GSAC parameter for this item
+
+        // About ellipsoidal height:
+        // use this label pair:
         pw.append(    " site ellipsoidal height:     " + elevationFormat.format(el.getElevation()) + "" + "\n");
         pw.append(    " site ellipsoid name           \n");  // LOOK need GSAC parameter for this item
+        // OR this pair, if you have elevaiton above a geoid, not ellipsoid height:
+        //pw.append(    " site elevation:              " + elevationFormat.format(el.getElevation()) + "" + "\n");
+        //pw.append(    " site geoid name:             \n");  // LOOK need GSAC parameter for this item
+
         if (el.hasXYZ()) {
             pw.append(" site X coordinate:           "+ el.getX() + "" + "\n");
             pw.append(" site Y coordinate:           "+ el.getY() + "" + "\n");

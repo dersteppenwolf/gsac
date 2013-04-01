@@ -99,7 +99,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
 
-    /**  to format ellipsoidal height values sometimes called elevation in GSAC code.  */
+    /**  to format elevation or ellipsoidal height values sometimes called elevation in GSAC code.  */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
 
     /**
@@ -166,7 +166,13 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
+
+        // About ellipsoidal height:
+        // choose use of elevation or ellipsoid height
+        // use this header line:
         pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
+        // OR this line, if you have eleation above a goid, not ellipsoid height:
+        //pw.append("ID,station name,latitude,longitude,elevation,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
         //pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
     }
 

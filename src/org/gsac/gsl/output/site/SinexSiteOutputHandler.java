@@ -86,7 +86,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
 
-    /**  to format ellipsoidal height values sometimes called elevation in GSAC code.  */
+    /**  to format elevation or ellipsoidal height values , called elevation in GSAC code.  */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
 
     /** for antenna offset values from instrument reference point.  */
@@ -222,6 +222,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         EarthLocation el = site.getEarthLocation();
         String latitude =formatLocation(el.getLatitude())  ;
         String longitude =formatLocation(el.getLongitude()) ;
+        // About ellipsoidal height:
+        // could force value "0.0" here if your metadata has elevation above a geoid not ellipsoid height:
         String ellipsoidalheight =elevationFormat.format(el.getElevation()) ;
         pw.append( setStringLength( longitude ,11) + " " );
         pw.append( setStringLength( latitude ,11) + " " );
@@ -283,7 +285,13 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         EarthLocation el = site.getEarthLocation();
         pw.append(    " site latitude:                "+ formatLocation(el.getLatitude())  + "" + "\n");
         pw.append(    " site longitude:               "+ formatLocation(el.getLongitude()) + "" + "\n");
+        
+        // About ellipsoidal height:
+        // NOTE if your site metadata has elevation above a geoid model, use this no-value line:
+        //pw.append(    " site ellipsoidal height:      \n");
+        // ELSE if your site metadata has true ellipsoidal height, use this line:
         pw.append(    " site ellipsoidal height:      "+ elevationFormat.format(el.getElevation()) + "" + "\n");
+
         if (el.hasXYZ()) {
             pw.append(" site X coordinate:            "+ el.getX() + "" + "\n");
             pw.append(" site Y coordinate:            "+ el.getY() + "" + "\n");

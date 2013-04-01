@@ -37,11 +37,11 @@ import java.io.*;
 
 
 /**
- * Class description
+ * Make or provide a jnlp script for files downloading with Java Webstart
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version       original 
+ * @author        J McWhirter
  */
 public class DownloaderFileOutputHandler extends GsacOutputHandler {
 
@@ -63,7 +63,7 @@ public class DownloaderFileOutputHandler extends GsacOutputHandler {
                                   output = new GsacOutput(this,
                                       OUTPUT_FILE_DOWNLOAD,
                                       "Download Files via Webstart",
-                                      "/files.jnlp", true, "Download Files"));
+                                      "/files.jnlp", true, "Download Files via Webstart"));
 
     }
 

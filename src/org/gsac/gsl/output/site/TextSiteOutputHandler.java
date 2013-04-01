@@ -51,6 +51,8 @@ import java.text.DecimalFormat;
  *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
  *      For bug reports and suggested improvments please contact UNAVCO.
  *
+ *      Note the "elevation" value may in fact be ellipsoid height, depending in the metadata available.
+ *
  * @version        29 Nov 2012 SKW;
  * @author         JM, SKW;
  * revision        26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits
@@ -63,7 +65,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     /** used to format numerical lat longi values */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.#####");
 
-    /**  to format ellipsoidal height values sometimes called elevation in GSAC code.  */
+    /**  to format elevation OR ellipsoidal height values sometimes called elevation in GSAC code.  */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.###");
 
     /** GSAC output id */
@@ -164,11 +166,9 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
 
                     } else if (param.equals(ARG_SITE_LATITUDE)) {
                         pw.print(latitude);
-                        //pw.print(site.getLatitude());
                         //System.out.println("  4 " + site.getLatitude() + "\n");
                     } else if (param.equals(ARG_SITE_LONGITUDE)) {
                         pw.print(longitude);
-                        //pw.print(site.getLongitude());
                         //System.out.println("  5 " + site.getLongitude() + "\n");
                     } else if (param.equals(ARG_SITE_ELEVATION)) {
                         pw.print(site.getElevation());

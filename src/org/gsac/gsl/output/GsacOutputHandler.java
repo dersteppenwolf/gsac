@@ -569,7 +569,13 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public String formatLatLonNoCommas(GsacResource resource) {
         return "latitude "+formatLatLon(resource.getLatitude()) + "  &nbsp; &nbsp; longitude "
+
+               // About ellipsoidal height:
+               // use this label:
                + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
+               // or this:
+               //+ formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; elevation "
+
                + resource.getElevation();
     }
 

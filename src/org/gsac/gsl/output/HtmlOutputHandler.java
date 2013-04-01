@@ -2269,7 +2269,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add(SORT_SITE_NAME);
             labels.add(msg("Type"));
             sortValues.add(SORT_SITE_TYPE);
+
+            // About ellipsoidal height:
+            // use either this label:
             labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
+            // OR this:
+            //labels.add(msg("Location") + " (latitude, longitude, elevation)");
+
             sortValues.add("");
             if (doDateRange) {
                 labels.add(msg("Date Range"));

@@ -606,17 +606,25 @@ Dealing with Elevation and Ellipsoid Height
 GSAC code assumes station height values are ellipsoid heights, the heights for locations in terrestrial reference frames, including 
 GNSS positions.
 
-If your location values are in elevations, heights above some geoid model, change these lines in these files in core GSAC code to 
+If your location values have elevations, heights above some geoid model, you can change these lines in these files in core GSAC code to 
 make output labels with "elevation" in place of "ellipsoid height:"
 
-gsl/output/GsacOutputHandler.java:               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
-gsl/output/HtmlOutputHandler.java:            labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
-gsl/output/site/CsvFullSiteOutputHandler.java:        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
-gsl/output/site/PlainTextSiteOutputHandler.java:        pw.append(    " site ellipsoidal height:     " + elevationFormat.format(el.getElevation()) + "" + "\n");
-gsl/output/site/PlainTextSiteOutputHandler.java:        pw.append(    " site ellipsoid name           \n");  // LOOK need GSAC parameter for this item
-gsl/output/site/SinexSiteOutputHandler.java:        pw.append(    " site ellipsoidal height:      "+ elevationFormat.format(el.getElevation()) + "" + "\n");
+// About ellipsoidal height:
 
-Then rebuild core GSAC with command ant in trunk/, and rebuild your GSAC instance with ant or ant compile in your gsac/ file area.
+gsl/output/GsacOutputHandler.java:               // About ellipsoidal height:
+gsl/output/HtmlOutputHandler.java:            // About ellipsoidal height:
+
+gsl/output/site/CsvFullSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/PlainTextSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/XmlSiteLogOutputHandler.java:        // About ellipsoidal height:
+
+
+Note that the geodesy formats SINEX, GAMIT station.info, and SOPAC XML Site Log do not have a choice of two labels to 
+distinguish ellipsoid height from elevation. In those cases you may need to force zero for ellipsoid heights if you lack that data.
+
+Then rebuild core GSAC with command ant in trunk/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
 
 ########################################################################
 Building and Running the GSAC server
