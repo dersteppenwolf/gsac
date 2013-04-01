@@ -56,8 +56,8 @@ public class WgetFileOutputHandler extends StreamingOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_WGET,
-                                      "Wget Script", "/files.sh", true,
-                                      "Wget Script"));
+                                      "Wget Script for FTP download", "/files.sh", true,
+                                      "Wget Script for FTP download"));
 
     }
 

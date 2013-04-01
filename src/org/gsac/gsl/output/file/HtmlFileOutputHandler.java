@@ -360,12 +360,18 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
                     // label the columns in the html page of files-found results:
-                    String[] labels = new String[] {
-                        (includeExtraCol
-                         ? "&nbsp;"
-                         : null), msg("File"), msg("Type"), msg(relatedLabel),
-                        msg("Date"), msg("File size")
-                    };
+                    String[] labels = null; 
+                    if (relatedLabel == null) {
+                      labels = new String[] {
+                        (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                  msg("Date"), msg("File size")
+                      };
+                    }
+                    else  {
+                      labels = new String[] {
+                        (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
+                      };
+                    }
+
                     String[] sortValues = new String[] {
                         (includeExtraCol
                          ? ""
