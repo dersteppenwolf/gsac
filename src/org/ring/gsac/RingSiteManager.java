@@ -28,7 +28,7 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.util.*;
 
-/* CHANGEME - done in for INGV - include datahase package for the GSAC installation. */
+/* CHANGEME - done in for INGV - include database package for the GSAC installation. */
 import org.ring.gsac.database.*;
 
 import ucar.unidata.sql.Clause;
@@ -272,7 +272,7 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     * How to use the Clause class to assemble a set of database search clauses from the URL [whatsit or html search form?] argument  
+     * How to use the Clause class to assemble a set of database search clauses from the URL  argument  
      *
      * @param request the resquest
      * @param response the response
@@ -354,7 +354,7 @@ public class RingSiteManager extends SiteManager {
 
     /**
      * CHANGEME Default query order. done for RING 
-     *   Set this to what you want to sort on                  whatsit   order for what?
+     *   Set this to what you want to sort on            
      */
     private static final String SITE_ORDER =
         " ORDER BY  " + Tables.SITI_GSAC.COL_NOME_SITO + " ASC ";

@@ -149,6 +149,7 @@ public class RingFileManager extends FileManager {
 
     /**
      * Handle the search request.   
+     * CHANGEME
      *
      * Do the database search as specified by the user's search for files in the web site forms or via the API, (contained in arg "request")
      * and put an array of the results, put into one or more GSAC_file objects, into the object "GsacResponse response."
