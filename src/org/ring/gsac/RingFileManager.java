@@ -44,9 +44,11 @@ import java.util.Calendar;
 
 /**
  * Handles all of the resource related repository requests. The main entry point is {@link #handleRequest}
- * Look for the CHANGEME comments
+ * 
+ * A GSAC FileManager class composes what file-related items are provided for file searches in the API and web site.
+ * A GSAC FileManager class composes what items are provided to be returned as results when a search finds something.
  *
- *  uses the Ring ingv db table:
+ * This RingFileManager.java uses the Ring ingv db table CLINIC_GSAC:
 
     public static class CLINIC_GSAC extends Tables {
         public static final String NAME = "clinic_gsac";
@@ -66,13 +68,15 @@ import java.util.Calendar;
     public static final CLINIC_GSAC table  = new  CLINIC_GSAC();
     }
   
-   This is a simple schema with site name COL_SITO and a data file at that site, with metadata for start and end times for the data,
-   and the complete ftp url (with file name) where you can download the data file from RING servers.
+   This is a simple schema with site names COL_SITO, with metadata for start and end times for the data in data files (COL_FIRST_EPOCH, and COL_LAST_EPOCH),
+   and the complete ftp url (with file name) COL_LINK where you can download the data file from RING servers.
 
     Database rows are for example
 | RSTO | 2002-05-01 00:00:00 | 2002-05-01 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/121/RSTO1210.02d.Z |
 | INGR | 2002-11-15 00:00:00 | 2002-11-15 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/319/INGR3190.02d.Z |
 | TITO | 2002-11-25 00:00:00 | 2002-11-25 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/329/TITO3290.02d.Z |
+
+ Note this reposioty only returns RINEX obs files.  This FileManager class lacks file type controls.
 
  *
  * @author         S K Wier
@@ -81,35 +85,6 @@ public class RingFileManager extends FileManager {
 
     public static final String TYPE_GNSS_OBSERVATION = "gnss.observation";
 
-    private static ResourceType[] GNSS_FILE_TYPES = { new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation") };
-
-    /*
-    public static final String[] GNSS_METADATA_COLUMNS = new String[] {
-        Tables.SITI_GSAC.COL_ID_SITO,
-        Tables.SITI_GSAC.COL_NOME_SITO,
-        Tables.SITI_GSAC.COL_LUOGO,
-        Tables.SITI_GSAC.COL_LATITUDINE,
-        Tables.SITI_GSAC.COL_LONGITUDINE,
-        Tables.SITI_GSAC.COL_IERS_DOMES_NUMBER,
-        Tables.SITI_GSAC.COL_ID_RESPONSIBLE_AGENCY,
-        Tables.SITI_GSAC.COL_ID_MONUMENTO,
-        Tables.SITI_GSAC.COL_NAZIONE,
-        Tables.SITI_GSAC.COL_REGIONE,
-        Tables.SITI_GSAC.COL_AGENZIA,
-    };
-    */
-
-
-    private static ResourceType[][] ALL_FILE_TYPES = { GNSS_FILE_TYPES };
-
-    /** _more_ */
-    public static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
-
-    /** _more_ */
-    private SimpleDateFormat sdf;
-
-    /** _more_ */
-    private SimpleDateFormat yyyyMMDDSdf;
 
 
     /**
@@ -120,33 +95,30 @@ public class RingFileManager extends FileManager {
     public RingFileManager(RingRepository repository) {
         super(repository);
 
-        sdf         = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        yyyyMMDDSdf = new SimpleDateFormat("yyyy-MM-dd");
-        sdf.setTimeZone(TIMEZONE_UTC);
-        yyyyMMDDSdf.setTimeZone(TIMEZONE_UTC);
     }
 
 
     /**
+     *  Enable what file-related items are used to search (query) for geoscience data files to download at this particular data repository.  
      *
-     *  Enable what file-related items are used to search for geoscience data files to download
-     *  at this particular data repository.  Initially RING will only search on data times in files, from the database "ingv".
-     *  You can also search for sites, and files from selected sites.
-     * CHANGEME 
+     * Initially RING will only search on data times in files, from the database "ingv".
+     * You can also search for sites, and files from selected sites.
      *
-     * @return  List of GSAC "Capabilities" which are things to search with
+     * "Capabilities" (in this class anyway) are things to search (query) with
+     *
+     * @return  List of GSAC "Capabilities"  objects
      */
     public List<Capability> doGetQueryCapabilities() {
         List<Capability> capabilities = new ArrayList<Capability>();
 
-        //  from FileManager class -  add search boxes for file type, date range, publish date, and file size
-        //addDefaultCapabilities(capabilities);
+        // from FileManager class -  add search boxes for all of these" file type, date range, publish date, and file size
+        // addDefaultCapabilities(capabilities);
 
-        // explicit code for the above search items. For RING only need date range for RINEX files (so far)
+        // explicit code for above search items. In this case only date range for RINEX files, since that is all there is data for in the database about files.
         Capability   cap;
         Capability[] dflt = { 
                               // RING provides only RINEX files, so far.
-                              // this provides a box with 100-some possible file types, everything in the list in 
+                              // this "File Type" 'capability' provides a box with 100-some possible file types, everything in the list in 
                               // src/org/gsac/gsl/resources/vocabulary/file.type.properties
                               //initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), 
                               //  "File Query", "Type of file", null, getRepository().getVocabulary( ARG_FILE_TYPE, true)),
@@ -154,6 +126,7 @@ public class RingFileManager extends FileManager {
                               initCapability(new Capability(ARG_FILE_DATADATE, "Data Dates",
                                   Capability.TYPE_DATERANGE), "File Query", "Date the data this file holds was collected"),
 
+                              // "Publish Date" is when a repository first made a file available.
                               //initCapability(new Capability(ARG_FILE_PUBLISHDATE, "Publish Date",
                               //    Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
 
@@ -167,20 +140,21 @@ public class RingFileManager extends FileManager {
             capabilities.add(capability);
         }
 
-        // add the SITE-related search choices into the file search web page form, so you can select files from particular sites
+        // Also add the SITE-related search choices into the file search web page form, so you can select files from particular sites
+        // (gets the site search forms from the related SiteManager class)
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
     }
 
     /**
-     * CHANGEME
-     * "handle the search request"     which means...
-     *   do the database search as specified by the user's search for files in the web site forms or via the API, (contained in arg "request")
-     *   and put an array of the results, found GSAC objects, in the object "GsacResponse response."
+     * Handle the search request.   
      *
-     * @param request The request [from the api or web search forms?]
-     * @param response The response
+     * Do the database search as specified by the user's search for files in the web site forms or via the API, (contained in arg "request")
+     * and put an array of the results, put into one or more GSAC_file objects, into the object "GsacResponse response."
+     *
+     * @param request The request [from the api or web search forms]
+     * @param response  one or more GSACFile objects, put into the container object "GsacResponse response."
      *
      * @throws Exception on badness
      */
@@ -194,58 +168,56 @@ public class RingFileManager extends FileManager {
 
         List<Clause> clauses = new ArrayList<Clause>();
 
-        /*
-        // these may have future use at RING:
+        /* file search items not used by RING but of possible interest elsewhere:
+
         if (request.defined(ARG_FILESIZE_MIN)) {
             int size = request.get(ARG_FILESIZE_MIN, 0);
-            appendSearchCriteria(msgBuff, "Filesize&gt;=",
-                                 "" + request.get(ARG_FILESIZE_MIN, 0));
+            // clauses.add(Clause.
+            appendSearchCriteria(msgBuff, "Filesize&gt;=", "" + request.get(ARG_FILESIZE_MIN, 0));
         }
+
         if (request.defined(ARG_FILESIZE_MAX)) {
             int size = request.get(ARG_FILESIZE_MAX, 0);
-            appendSearchCriteria(msgBuff, "Filesize&lt;=",
-                                 "" + request.get(ARG_FILESIZE_MAX, 0));
+            appendSearchCriteria(msgBuff, "Filesize&lt;=", "" + request.get(ARG_FILESIZE_MAX, 0));
         }
+
         if (request.defined(ARG_FILE_TYPE)) {
             List<String> types =
-                (List<String>) request.getList(ARG_FILE_TYPE);
-            addSearchCriteria(msgBuff, "Resource Type", types, ARG_FILE_TYPE);
+                (List<String>) request.getList(ARG_FILE_TYPE); addSearchCriteria(msgBuff, "Resource Type", types, ARG_FILE_TYPE);
         }
+
         Date[] publishDateRange =
-            request.getDateRange(ARG_FILE_PUBLISHDATE_FROM,
-                                 ARG_FILE_PUBLISHDATE_TO, null, null);
+            request.getDateRange(ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO, null, null);
 
         if (publishDateRange[0] != null) {
-            appendSearchCriteria(msgBuff, "Publish date&gt;=",
-                                 "" + format(publishDateRange[0]));
+            appendSearchCriteria(msgBuff, "Publish date&gt;=", "" + format(publishDateRange[0]));
         }
+
         if (publishDateRange[1] != null) {
-            appendSearchCriteria(msgBuff, "Publish date&lt;=",
-                                 "" + format(publishDateRange[1]));
+            appendSearchCriteria(msgBuff, "Publish date&lt;=", "" + format(publishDateRange[1]));
         }
-        // end of these may have future use at RING.
+
         */
 
 
-        // get vlaues of the data date range requested by the user, from the input from web search form or from the API:
+        // get vales of the data date range requested by the user, from the input from web search form / API:
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
 
-        System.err.println ("   RingFileManager: handleRequest: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
+        //System.err.println ("   RingFileManager: handleRequest: requested date range " + dataDateRange[0] +" to " + dataDateRange[1]);
 
         if (dataDateRange[0] != null) {
-            // wrangle the input time into a format you can use in a SQL query
             Calendar cal = Calendar.getInstance();
+            // wrangle the input time into a format you can use in a SQL query
             cal.setTime(dataDateRange[0]);
             //cal.add(Calendar.HOUR, 23);
             //cal.add(Calendar.MINUTE, 59);
             //cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
-            
             // make the sql query clause for start times of files
             clauses.add(Clause.ge(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, sqlStartDate));
+            cal = null;
 
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
-            cal = null;
         }
 
         if (dataDateRange[1] != null) {
@@ -255,28 +227,31 @@ public class RingFileManager extends FileManager {
             //cal.add(Calendar.MINUTE, 59);
             //cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
-
             clauses.add(Clause.le(Tables.CLINIC_GSAC.COL_LAST_EPOCH, sqlEndDate));
+            cal = null;
 
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
-            cal = null;
         }
 
-        System.err.println("   look FIX: RingFileManager: need to add site name in query clause");
-               // look  testing kludge; which station has data only in 2013!n local test db!
-        clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, "GROT"));
+
+        // add to query, search on site codes (names,  Tables.CLINIC_GSAC.COL_SITO ) using value(s) of name(s) from the sitemanager class search
+        List<String> args = null;
+        clauses.add(Clause.or(Clause.makeStringClauses( Tables.CLINIC_GSAC.COL_SITO,
+                    args = (List<String>) request.getList(ARG_SITE_CODE))));
+
+        addSearchCriteria(msgBuff, "Site code", args);
+
 
         Clause mainClause = Clause.and(clauses);
 
         // SQL query to select from the columns (fields) of rows in the database table named CLINIC_GSAC, with  query clauses specified...
-        Statement statement =
-           getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, mainClause);
+        Statement statement = getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, mainClause);
 
         //System.err.println("   RingFileManager: select query is " +statement);
 
-        int col = 1;
-
+        int col;
         int cnt=0;
+
         try {
             //ResultSet results = statement.getResultSet();
             ResultSet results = null;
@@ -302,11 +277,12 @@ public class RingFileManager extends FileManager {
                //                      GsacFile(     resId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
                GsacFile fileItem = new GsacFile(siteID, new FileInfo(ftpurl), null, fromTime, toTime,     rt);
 
-               // pile up up all the things you found in here: this is the array of results from the GSAC file seach:
+               // collect all the GsacFile objects made; this is the array of results from the GSAC file seach:
                response.addResource(fileItem);
 
                cnt++;
-               //System.err.println("      RingFileManager:  made  a file object " );
+
+               // code to check for exceeding max of how many results allowed
                /* if (!iter.countOK()) {
                     response.setExceededLimit();
                     break;
@@ -326,10 +302,10 @@ public class RingFileManager extends FileManager {
 
     /**
      * CHANGEME
-     * This takes the resource id that is used to identify files and creates a GsacFile object.
+     * This takes the resource id that is used to identify files and creates a Gsac object.
      *
-     * (Appears to only be called when you click on a particular item in the table of things found, after a search.
-     *  Something to do with composing an HTML page to show about one site?)
+     * Composes one particular result provided to user, called when  a user clicks on a particular item in the table of things found, after a search.
+     * For example, used to make an HTML page to show about one file. 
      *
      * @param resourceId file id
      *
@@ -339,7 +315,8 @@ public class RingFileManager extends FileManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
 
-        //System.err.println("   ring file manager getresource");
+        //System.err.println("   ringfilemanager: GsacResource, resourceId: " + resourceId );
+        // eg                  ringfilemanager: GsacResource, resourceId: GROT
 
         // compose the complete select SQL phrase; select matching sites by name:
         // the SQL search clause select logic, where a column value COL_SITO  = the "resourceId" which is some site name entered by the user in the api or search form
@@ -356,14 +333,19 @@ public class RingFileManager extends FileManager {
             // Database rows are for example
             // | RSTO | 2002-05-01 00:00:00 | 2002-05-01 23:59:00 | ftp://anonymous@bancadati2.gm.ingv.it/OUTGOING/RINEX30/RING/2002/121/RSTO1210.02d.Z |
             String baseName = results.getString(1);
-            // alternate String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
+            // alternate: String monumentID = results.getString( Tables.CLINIC_GSAC.COL_SITO);
             //System.err.println("   site name: " + baseName);
+
             Date fromTime = results.getDate( 2 ); // start_date
             //       System.err.println("   files time range start time : " + fromTime);
             Date toTime = results.getDate( 3 ); // end_date
+            // possible alternates:
             //Date fromTime = getDate(results, Tables.CLINIC_GSAC.COL_FIRST_EPOCH);
             //Date toTime  =getDate(results, Tables.CLINIC_GSAC.COL_LAST_EPOCH);
+
+            // get the full URL to use ftp to get one file:
             String location = results.getString(4);
+            // possible alternate:
             // String location= results.getString( Tables.CLINIC_GSAC.COL_LINK);
             //System.err.println("   ftp URL file location: " + location );
 
@@ -374,12 +356,10 @@ public class RingFileManager extends FileManager {
             //System.err.println( "dataTypeID: " + dataTypeID );
             */
 
-            //    GsacFile fileinfo = new GsacFile( resourceId, new FileInfo( location, fileSize, checkSum), null, publishTime, fromTime, toTime, toResourceType(type) ); */
-            //GsacSite site = new GsacSite(null, monumentID, "");
             ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation");
 
             //         GsacFile(String        resId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) 
-            GsacFile fileInfo = new GsacFile(resourceId, new FileInfo(location), null,                         fromTime, toTime,     rt);
+            GsacFile fileInfo = new GsacFile(resourceId, new FileInfo(location), null,  fromTime, toTime, rt);
 
             return fileInfo;
             }
@@ -389,64 +369,17 @@ public class RingFileManager extends FileManager {
         return null;
     }
 
-/*
-        List<Clause> clauses = new ArrayList<Clause>();
-        clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_SITO, resourceId));
-        //clauses.add(Clause.eq(Tables.CLINIC_GSAC.COL_FIRST_EPOCH, dttm));
-
-        // SQL query to select from the columns (fields) of rows in the database table CLINIC_GSAC, with  query clauses specified...
-        Statement statement =
-            //getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
-           getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME,
-                Clause.and(clauses), (String) null, -1);
-
-          try {
-                // do the SQL select query and get the results, one or more 'rows':
-                //SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-
-                ResultSet results = statement.getResultSet();
-
-                if (results.next()) {
-                    List<GsacFile> resources = null; // = makeGnssResources(type, results, resourceTypes, true);
-
-                    if (resources.size() > 0) {
-                        return resources.get(0);
-                    }
-                }
-                return null;
-            } finally {
-                getDatabaseManager().closeAndReleaseConnection(statement);
-            }
-*/
-
-
-
-
-    /**
-     * Create the list of resource types that are shown to the user. This is
-     * called by the getDefaultCapabilities  look ?
-     *
-     * @return resource types
-     */
-    public List<ResourceType> doGetResourceTypes() {
-        List<ResourceType> resourceTypes = new ArrayList<ResourceType>();
-
-        resourceTypes.add(new ResourceType("rinex", "RINEX Files"));
-
-        //resourceTypes.add(new ResourceType("qc", "QC Files"));
-
-        return resourceTypes;
-    }
 
 
     /**
      * helper method
+     * get the related Sitemanager for this FileManager, used for added site queries (searches) into the file search page, so
+     * the user can select files from one or more sites.
      *
      * @return sitemanager
      */
     public RingSiteManager getSiteManager() {
-        return (RingSiteManager) getRepository().getResourceManager(
-            GsacSite.CLASS_SITE);
+        return (RingSiteManager) getRepository().getResourceManager( GsacSite.CLASS_SITE);
     }
 
 
