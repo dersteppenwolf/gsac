@@ -235,20 +235,23 @@ public class RingFileManager extends FileManager {
         }
 
 
-        // add to query, search on site codes (names,  Tables.CLINIC_GSAC.COL_SITO ) using value(s) of name(s) from the sitemanager class search
-        List<String> args = null;
-        clauses.add(Clause.or(Clause.makeStringClauses( Tables.CLINIC_GSAC.COL_SITO,
-                    args = (List<String>) request.getList(ARG_SITE_CODE))));
+        // add to query, search on site codes ( that is names, from Tables.CLINIC_GSAC.COL_SITO ) using value(s) of name(s) from the sitemanager class search
+        //List<String> args = null;
+        //clauses.add(Clause.or(Clause.makeStringClauses( Tables.CLINIC_GSAC.COL_SITO, args = (List<String>) request.getList(ARG_SITE_CODE))));
 
-        addSearchCriteria(msgBuff, "Site code", args);
+        addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.CLINIC_GSAC.COL_SITO, clauses);
 
+        System.err.println("   RingFileManager: clauses " +clauses);
+
+        //addSearchCriteria(msgBuff, "Site code", args);
+        //System.err.println("   RingFileManager: args is " +args);
 
         Clause mainClause = Clause.and(clauses);
 
         // SQL query to select from the columns (fields) of rows in the database table named CLINIC_GSAC, with  query clauses specified...
         Statement statement = getDatabaseManager().select( Tables.CLINIC_GSAC.COLUMNS, Tables.CLINIC_GSAC.NAME, mainClause);
 
-        //System.err.println("   RingFileManager: select query is " +statement);
+        System.err.println("   RingFileManager: select query is " +statement);
 
         int col;
         int cnt=0;
