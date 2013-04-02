@@ -380,15 +380,19 @@ GSAC build process.  These figures give you an idea how much coding is required 
 is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
 services, which also permit federated collaborations.
 
+GSAC is written in Java with extensive use of object-oriented design.  It is designed to be generalized to permit GSAC to be used
+for a wide variety of situations, with few geodesy domain- (or any other domain-) specific structures about data in archives.  i
+GSAC uses Java library methods to deal with databases, which means
+database queries are written in Java, not SQL syntax. This allows GSAC to work with many different types of databases.
+All this means a GSAC programmer will need to gain some understanding of GSAC to be able to add new code to GSAC.
+
 UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
-able to provide a way to automate some of the SiteManager.java code, but have not found a way to do so yet.  
+able to provide a way to automate some of the SiteManager.java code and FileManager.java code.
 
-
-The @MACRO.PREFIX@Repository class is the main entry point. 
 
 The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
-and by the GSAC API.   For more help adding to the GSAC Java files, you may review code in other 
-GSAC implementations checked into SourceForge, such as the files  RingSiteManager.java and RingFileManager.java.
+and by the GSAC API.   For more help adding to the GSAC Java files, you should review code in other 
+GSAC implementations checked into SourceForge, such as the files RingSiteManager.java and RingFileManager.java.
 
 After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
@@ -399,6 +403,8 @@ You need to modify or add new Java to these files:
                      ########################################################################
 
 The file @MACRO.PREFIX@Repository.java 
+
+The @MACRO.PREFIX@Repository class is the main entry point. 
 
 Above the import lines, be sure there is correct new Java package name, something like this:
 
@@ -427,10 +433,10 @@ The file @MACRO.PREFIX@SiteManager.java
 This file specifies how GSAC searches for sites, and what information is returned to the user.  
 
 You will see a template file for @MACRO.PREFIX@SiteManager.java which was initially created automatically by the
-GSAC build process.  @MACRO.PREFIX@SiteManager.java requires about half of the new JAVA code for a new GSAC.
+GSAC build process.  @MACRO.PREFIX@SiteManager.java requires about half of the new Java code for a new GSAC.
 
 A GSAC programmer needs to know Java and have an understanding of database concepts and queries, and in the process of
-writing new code for GSAC will leanr about GSAC core code.
+writing new code for GSAC will learn about GSAC core code.
 
 First, above the "import" lines, add the new Java package name, in this form:
 package org.@MACRO.PREFIX@.gsac;
@@ -448,10 +454,11 @@ Most of the work is in created the methods
 
     public List<Clause> getResourceClauses ()
 
-As a practical matter study the RingSiteManager.java file in the RING GSAC package(which you have installed from SourceForge with all of GSAC), 
-for how to create code to read from a database an dhow to make the "responses;" items GSAC makes to send back as results, to the user.  
-You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
-values from the databas, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
+You write Java code to specify which database items you will query on in the GSAC search forms, and Java code to do  queries to extract
+addtitional values from the database, values not used in queries but required for the GSAC results, such as receiver firmware version number.
+
+As a practical matter study the RingSiteManager.java file in the RING GSAC package(which you have installed from SourceForge with all of GSAC). 
+The RingSiteManager.java case is a fairly strightforward case where all metadata about sites in in one database table.
 
 After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. More details about this process below.
@@ -463,8 +470,8 @@ The file @MACRO.PREFIX@FileManager.java
 
 This file specifies how GSAC searches for data files, and what is returned to the user.  
 
-You need not modify this file if you do not supply a data file download service.
-In that case, in @MACRO.PREFIX@Repository.java use only getResourceManager(GsacSite.CLASS_SITE) in initResourceManagers().
+You need not modify this file if you do not supply a data file download service.  In that case, 
+in @MACRO.PREFIX@Repository.java use only getResourceManager(GsacSite.CLASS_SITE) in initResourceManagers().
 
 Above the import lines, be sure the Java package name is correct, in this form:
 
@@ -542,19 +549,24 @@ gnss.data.rinex.navigation.gfile=GNSS Navigation "G" file
 gnss.data.rinex.meteorology=GNSS RINEX Meteorology
 gnss.data.teqc_summary=GNSS RINEX Observation QC Report
 
-Most of the work is in created the methods
+
+Most of the work in writing the FileManager.java class is in creating these two methods:
 
    public void handleRequest(GsacRequest request, GsacResponse response)
-which does  the database search as specified by the user's search for files in the web site forms or via the API, (contained in arg "request")
-and puts an array of the results, one or more GSAC_file objects, into the object "GsacResponse response."
+which does  the search for fails, as specified by the user's choices in the web site forms or via the API (contained in arg "request"),
+and puts an array of the results, one or more GSACFile objects, into the object "GsacResponse response."
+You write Java code to specify which database items you will query on in the GSAC search forms, and Java code to do  queries to extract
+addtitional values from the database, values not used in queries but required for the GSAC results, such as FTP URL for one file.
 
     public GsacResource getResource(String resourceId) 
-which composes one particular result provided to user, called when  a user clicks on a particular item in the table of things found, after a search.
-For example, used to make an HTML page to show about one file.
+which composes one particular result provided to user. This method is called when a user clicks on a particular item in the table of things 
+found, after a search.  For example, this mehtod may populate an HTML page.
 
-As a practical matter study the RingFileManager.java file in the RING GSAC package(which you have installed from SourceForge with all of GSAC), 
-You write Java code to specify which db items you will query on in the GSAC search forms, and Java code to do db queries to extract
-values from the database, values not used in queries but shown in the GSAC results, such as receiver firmware version number.
+As a practical matter study the RingFileManager.java file in the RING GSAC package (which comes from SourceForge with all of the GSAC package), 
+The RingFileManager.java case is a fairly strightforward case where all metadata about files in in one database table.
+
+GSAC FileManagers usually allow searches for files associated with sites where files were recorded. The FileManager uses help from the SiteManager 
+class to do this.
 
 
 ########################################################################
