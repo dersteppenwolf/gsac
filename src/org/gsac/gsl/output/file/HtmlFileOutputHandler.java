@@ -359,18 +359,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
-                    // label the columns in the html page of files-found results:
                     String[] labels = null; 
-                    if (relatedLabel == null) {
-                      labels = new String[] {
-                        (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                  msg("Date"), msg("File size")
-                      };
-                    }
-                    else  {
-                      labels = new String[] {
+                    labels = new String[] {
                         (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
-                      };
-                    }
+                    };
 
                     String[] sortValues = new String[] {
                         (includeExtraCol
@@ -421,10 +413,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
 
-
-                // Note: if you have no "related content" comment out this section
-/*
-
+              // Note: if you have no "related content" omit this section
+              if (resource.getRelatedResources() != null) {
                 StringBuffer relatedContent = new StringBuffer();
                 for (int relatedIdx = 0; relatedIdx < relatedResources.size();
                         relatedIdx++) {
@@ -447,7 +437,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     relatedContent.append("NA");
                 }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
-*/
+              }
 
                 Date publishTime = resource.getPublishDate();
                 Date startTime   = resource.getFromDate();
@@ -466,8 +456,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
 
- // Note: if you have no data for file sizes, comment out this section:
-/*
+              if (resource.getRelatedResources() != null) {
                 if (resource.getFileInfo().getFileSize() > 0) {
                     sb.append("<td align=\"right\" class=\"gsac-filesize\" "
                               + clickEvent + ">");
@@ -480,7 +469,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 } else {
                     sb.append(HtmlUtil.col("N/A"));
                 }
-*/
+             }
 
                 sb.append("</tr>\n");
             }
