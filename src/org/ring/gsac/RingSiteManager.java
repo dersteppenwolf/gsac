@@ -229,10 +229,10 @@ public class RingSiteManager extends SiteManager {
 
 
     /**
-     * "create and return GSAC's internal "resource" (some kind of "site object") identified by the given resource id  in this case NOME_SITO."
-     *
+     * "create and return GSAC's internal "resource" (some kind of "site object") identified by the given resource id  in this case NOME_SITO".
+     * What is returned as a result from a query with one or more hits.
      * (appears to only be called when you click on a particular site in the table of sites found, after a search for sites.
-     *  something to do with composing an HTML page to show about one site?)
+     * For composing an HTML page to show about one site.
      * CHANGEME - done for RING  
      *
      * @param resourceId resource id. 
@@ -249,9 +249,10 @@ public class RingSiteManager extends SiteManager {
         Clause clause = Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, resourceId);
 
         // compose the complete select SQL phrase
-        Statement statement =
-            getDatabaseManager().select(getResourceSelectColumns(),
-                                        clause.getTableNames(), clause);
+        Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
+
+        System.err.println("   RingSiteManager: get resource select query is " +statement);
+
         try {
             // make an SQL query, and get results
             ResultSet results = statement.getResultSet();
@@ -492,8 +493,7 @@ SITI_GSAC extends Tables {
      *
      * @return _more_
      */
-    public static double convertToISGSiteLogLatLongFormat(
-            double decimalDegrees) {
+    public static double convertToISGSiteLogLatLongFormat( double decimalDegrees) {
         // Convert TO the IGS site log database lat/longi style
         // such as 505216.68 or -1141736.6, from double degrees values of latitude and longitude.
         // input like -50.253, to give -501510.8
@@ -624,6 +624,9 @@ SITI_GSAC extends Tables {
            getDatabaseManager().select( Tables.SITI_GSAC.COLUMNS, Tables.SITI_GSAC.NAME,
                 Clause.eq( Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
 
+        System.err.println("   RingSiteManager: readIdentificationMetadata select query is " +statement);
+
+
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
@@ -687,36 +690,6 @@ SITI_GSAC extends Tables {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-
-
-/*
-        clauses.add(Clause.eq(Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()));
-        // join the table with these 2 values:
-        clauses.add(Clause.join(Tables.SITI_GSAC.COL_ID_RESPONSIBLE_AGENCY, Tables.AGENZIE.COL_ID_AGENZIA));
-
-        cols=SqlUtil.comma(new String[]{Tables.AGENZIE.COL_AGENZIA});
-
-        tables = new ArrayList<String>();
-
-        // the db query does "from" the tables siti and AGENZIE
-        tables.add(Tables.SITI_GSAC.NAME);
-        tables.add(Tables.AGENZIE.NAME);
-
-        statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        try {
-            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-            // process each line in results of db query  
-            while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "name of agency",
-                     results.getString(Tables.AGENZIE.COL_AGENZIA) );
-                //Only read the first row of db query results returned
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-*/
 
     }
 
