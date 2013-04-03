@@ -251,7 +251,7 @@ public class RingSiteManager extends SiteManager {
         // compose the complete select SQL phrase
         Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
 
-        System.err.println("   RingSiteManager: get resource select query is " +statement);
+        //System.err.println("   RingSiteManager: get resource select query is " +statement);
 
         try {
             // make an SQL query, and get results
@@ -624,7 +624,7 @@ SITI_GSAC extends Tables {
            getDatabaseManager().select( Tables.SITI_GSAC.COLUMNS, Tables.SITI_GSAC.NAME,
                 Clause.eq( Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
 
-        System.err.println("   RingSiteManager: readIdentificationMetadata select query is " +statement);
+        //System.err.println("   RingSiteManager: readIdentificationMetadata select query is " +statement);
 
 
         try {
