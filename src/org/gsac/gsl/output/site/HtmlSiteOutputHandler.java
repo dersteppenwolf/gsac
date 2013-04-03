@@ -69,7 +69,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_HTML,
-                                      "HTML (web page)"));
+                                      "HTML"));
         //        getRepository().addOutput(getResourceClass(), new GsacOutput(this,
         //                OUTPUT_SITE_DEFAULT, "Site Default"));
     }

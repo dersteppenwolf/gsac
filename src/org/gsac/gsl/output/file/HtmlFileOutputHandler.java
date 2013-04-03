@@ -208,12 +208,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         Date startTime   = resource.getFromDate();
         Date endTime     = resource.getToDate();
 
-        if (publishTime != null) {
 
+        if (publishTime != null) {
             sb.append(formEntry(request, msgLabel("Publish Date"),
                                 formatDate(publishTime)));
         }
-
 
         if (startTime != null) {
             if ((endTime == null) || endTime.equals(startTime)) {
@@ -223,6 +222,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 sb.append(formEntry(request, msgLabel("Date Range"),
                                     formatDate(resource)));
             }
+        }
+
+        if (endTime != null) {
+            sb.append(formEntry(request, msgLabel("End Date"),
+                                formatDate(endTime)));
         }
 
 

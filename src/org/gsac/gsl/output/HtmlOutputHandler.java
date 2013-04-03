@@ -2270,7 +2270,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             labels.add(msg("Type"));
             sortValues.add(SORT_SITE_TYPE);
 
-            // About ellipsoidal height:
+            // About ellipsoidal height or elevation, depending on what parameter's data is available:
             // use either this label:
             labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
             // OR this:
@@ -2327,13 +2327,17 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 sb.append(HtmlUtil.col(remoteHref));
             }
             sb.append("</tr></table></td>\n");
-            sb.append(HtmlUtil.col(href));
-            sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ",
-                                   clickEvent));
 
+            // show Site Code
+            sb.append(HtmlUtil.col(href));
+
+            // show Name
+            sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ", clickEvent));
+            System.err.println("     Html output   getLongName: " + resource.getLongName() );
+
+            //show Type of site
             if (resource.getType() != null) {
-                sb.append(HtmlUtil.col(resource.getType().getName(),
-                                       clickEvent));
+                sb.append(HtmlUtil.col(resource.getType().getName(), clickEvent));
             } else {
                 sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
@@ -2341,20 +2345,21 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             sb.append("<td " + clickEvent + ">");
 
-            // add latitude to row:
+            // show Location (lat, longi, vertical measure of some kind)
+            //    add latitude to row:
             sb.append(formatLatLon(resource.getLatitude()));
 
-            // comma separator may be confused with European comma for decimal point, so use space:
+            //    comma separator between latitude and longitude may be confused with European comma for decimal point, so use space:
             //sb.append(",");
             sb.append("&nbsp; &nbsp;");
 
-            // add longitude to row:
+            //   add longitude to row:
             sb.append(
                 formatLatLon(
                     EarthLocation.normalizeLongitude(
                         resource.getLongitude())));
 
-            // comma separator may be confused with European comma for decimal point, so use space:
+            //    comma separator may be confused with European comma for decimal point, so use space:
             //sb.append(",");
             sb.append("&nbsp; &nbsp;");
 
