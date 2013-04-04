@@ -280,6 +280,51 @@ Follow the instructions in the README your new GSAC code area, such as org/myrep
 
 ################################################################################
 
+Build a Federated GSAC:
+
+To install a federated GSAC, a single GSAc server merges searches and results from
+two or more other GSAC repositories, modify the file
+
+trunk/src/org/gsac/federated/resources/gsacserver.properties
+
+You connect to other GSACs like this in that file:
+
+##########################################
+# Server info
+gsac.server.hostname=repodev.unavco.org
+gsac.server.port=80
+
+#The list of remote server ids we are using
+#For each of these the federated repository looks for:
+#
+#gsac.federated.<id>.url=base gsac url
+#gsac.federated.<id>.name=repository name
+#gsac.federated.<id>.icon=url to icon for the repository
+
+gsac.federated.servers=unavcodev,sopac,cddis
+
+gsac.federated.unavcodev.url=http://repodev.unavco.org/gsacws
+gsac.federated.unavcodev.name=UNAVCO GSAC Repository
+gsac.federated.unavcodev.icon=http://www.unavco.org/favicon.ico
+
+gsac.federated.cddis.url=http://cddis.gsfc.nasa.gov/gsacws
+gsac.federated.cddis.name=CDDIS GSAC Repository
+gsac.federated.cddis.icon=http://cddis.nasa.gov/favicon.ico
+
+gsac.federated.sopac.url=http://geogsac.ucsd.edu:8080/gsacws
+gsac.federated.sopac.name=SOPAC GSAC Repository
+gsac.federated.sopac.icon=http://sopac.ucsd.edu/favicon.ico
+
+mmm
+You may wish to extend the web page files
+trunk/src/org/gsac/federated/:
+resources/header.html
+resources/footer.html
+package.html
+
+
+################################################################################
+
 end of README Part 1 for GSAC installation.
 
 Copyright (C) 2010-2013 UNAVCO.
