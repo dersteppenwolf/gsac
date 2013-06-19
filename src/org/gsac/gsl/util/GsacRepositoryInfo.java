@@ -30,7 +30,6 @@ import java.io.PrintWriter;
 
 import java.util.ArrayList;
 
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -45,6 +44,9 @@ public class GsacRepositoryInfo {
 
     /** xml tag name for the repository info */
     public static final String TAG_REPOSITORY = "repository";
+    
+    /** xml tag name for the remote repositories in the federated gsac */
+    public static final String TAG_REMOTEREPOSITORIES = "remoteRepositories";
 
     /** xml tag name */
     public static final String TAG_DESCRIPTION = "description";
@@ -81,6 +83,8 @@ public class GsacRepositoryInfo {
 
     /** _more_ */
     private Object REQUEST_MUTEX = new Object();
+    
+    private List<GsacRepositoryInfo> remoteRepositories = new ArrayList<GsacRepositoryInfo>();
 
     /**
      * _more_
@@ -140,6 +144,18 @@ public class GsacRepositoryInfo {
                         request,
                         repository.getUrlBase()
                         + repository.URL_BASE), ATTR_NAME, this.getName())));
+        
+        if(!getRemoteRepositories().isEmpty()) {
+        	pw.append(XmlUtil.openTag(TAG_REMOTEREPOSITORIES));
+        	for(GsacRepositoryInfo gri : getRemoteRepositories()) {
+	        	pw.append(
+	        			XmlUtil.tag(TAG_REPOSITORY,
+	        					XmlUtil.attrs(
+	        							ATTR_URL, gri.getUrl(),
+	        							ATTR_NAME, gri.getName())));
+        	}
+        	pw.append(XmlUtil.closeTag(TAG_REMOTEREPOSITORIES));
+        }
 
 
         pw.append(XmlUtil.tag(TAG_DESCRIPTION, "",
@@ -150,7 +166,6 @@ public class GsacRepositoryInfo {
         }
 
         pw.append(XmlUtil.closeTag(TAG_REPOSITORY));
-
     }
 
     /**
@@ -447,6 +462,18 @@ public class GsacRepositoryInfo {
     public String getIcon() {
         return icon;
     }
-
-
+    
+    /**
+     * Get the list of remote repositories. This will only be filled when this repository
+     * is a federated repository.
+     * 
+     * @return A list of GsacRepositoryInfo objects for each configured remote repository.
+     */
+    public List<GsacRepositoryInfo> getRemoteRepositories() {
+    	return new ArrayList<GsacRepositoryInfo>(remoteRepositories);
+    }
+    
+    public void setRemoteRepositories(List<GsacRepositoryInfo> remoteRepositories) {
+    	this.remoteRepositories = new ArrayList<GsacRepositoryInfo>(remoteRepositories);
+    }
 }

@@ -1904,6 +1904,7 @@ public class GsacRepository implements GsacConstants {
                     getServlet().getAbsoluteUrl(getUrlBase()),
                     getRepositoryName(), getRepositoryIcon());
             gri.setDescription(getRepositoryDescription());
+            gri.setRemoteRepositories(getServers());
             for (GsacResourceManager gom : resourceManagers) {
                 gri.addCollection(gom.getCapabilityCollection());
             }
@@ -2506,8 +2507,8 @@ public class GsacRepository implements GsacConstants {
             return;
         }
 
-        List<GsacRepositoryInfo> servers = getServers();
         GsacRepositoryInfo       gri     = getRepositoryInfo();
+        List<GsacRepositoryInfo> servers = gri.getRemoteRepositories();
         StringBuffer             sb      = new StringBuffer();
 
         getHtmlOutputHandler().initHtml(request, response, sb,
