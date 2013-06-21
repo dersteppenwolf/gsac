@@ -51,6 +51,7 @@
         <property name="failonerror" value="true"/>
         <property name="fork" value="true"/>
         <property name="maxmemory" value="512m"/>
+        <property name="fileencoding" value="UTF-8" />
 
         <!-- Java source version -->
         <property name="srcversion" value="1.6"/>
@@ -78,6 +79,7 @@
             srcdir="${srcdir}"
             fork="${fork}"
             memoryMaximumSize="${maxmemory}"
+            encoding="${fileencoding}"
         >
             <include name="org/gsac/gsl/**/*.java"/>
         </javac>
@@ -172,6 +174,7 @@
             srcdir="${srcdir}"
             fork="${fork}"
             memoryMaximumSize="${maxmemory}"
+            encoding="${fileencoding}"
         >
             <include name="org/gsac/gsl/downloader/*.java"/>
         </javac>
