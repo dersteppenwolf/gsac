@@ -4,7 +4,7 @@ GSAC_WS Installation
 
 README, Part 2.
 
-April 2, 2013
+April 2, 2013; modified June 21
 
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -622,11 +622,11 @@ other GSAC repositories, and for problem-free operation in a federated GSAC, it 
 Dealing with Elevation and Ellipsoid Height
 ########################################################################
 
-GSAC code assumes station height values are ellipsoid heights, the heights for locations in terrestrial reference frames, including 
-GNSS positions.
+GSAC code assumes station height values are elevations above a geoid model surface, 
+the heights for locations in terrestrial reference frames, including GNSS positions.
 
-If your location values have elevations, heights above some geoid model, you can change these lines in these files in core GSAC code to 
-make output labels with "elevation" in place of "ellipsoid height:"
+If your location values have ellipsoid heights, you can change these lines in these files in core GSAC code to 
+make output labels with "ellipsoid height" in place of "elevation":
 
 Look for lines in the files with "// About ellipsoidal height:"
 
