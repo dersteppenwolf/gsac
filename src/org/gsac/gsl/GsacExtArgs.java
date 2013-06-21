@@ -47,7 +47,7 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
 
-    /** dome name ot type, not the iers domes number  */
+    /** dome name or type, NOT the "IERSDOMES" value  */
     public static final String ARG_DOME = GsacArgs.ARG_SITE_PREFIX + "dome";
 
     /** _more_ */
