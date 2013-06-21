@@ -151,10 +151,11 @@ public abstract class SiteManager extends GsacResourceManager {
     /**
      * Create the output handlers for this resource, which handles (formats) the query results.
      *
-     * It seems that whichever is first in order below gets called when the web site search page (the from page, not a real search) is first called for, 
-     * BEFORE any query is made, which for some handlers can cause a failure and error to browser and no site search results shown. but the HTML handler seems to always work OK.
+     * Order here is order presented to the user, in the GSAC search form's page Results Output[+] menu, and in information page:
      *
-     * Order here is order in the GSAC search form's page Results Output[+] menu:
+     * It seems that whichever handler is first in order below gets called when the web site search page (the from page, not a real search) is first called for, 
+     * BEFORE any query is made, which for some handlers can cause a failure and error to browser and no site search results shown. 
+     * But the HTML handler seems to always work OK.
      */
     @Override
     public void initOutputHandlers() {
@@ -163,27 +164,25 @@ public abstract class SiteManager extends GsacResourceManager {
         /* "handlers" which make output in files with particular formats of results to be sent to remote user  */
 
         /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  */
-        /* For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) new TextSiteLogOutputHandler(getRepository(), getResourceClass()); */
-        /* However you are encouraged to allow all these, to show consistent results from Federated GSAC collections. */
-        /* There is no harm in offering all the choices, even if you do not see any value in one or more. */
+        /* For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) new TextSiteLogOutputHandler(getRepository(), getResourceClass()); */
+        /* However you are encouraged to allow all these, to show consistent results from all GSAC repositories. */
+        /* There is no harm in offering all the choices, even if you do not use one or more.  Others may be using them.*/
 
         // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
-
-        // for SOPAC XMP site log format 
-        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-        // how is this different from XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
 
         // for GAMIT's station.info format  
-        // commented out March 13 2012 as per Fran Boler since the visits in the databases shown in results are not arranged like geodesy visits typical in this format
-        // allow back in when UNAVCO has fixed the code for StationInfoSiteOutputHandler
         new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
         // not yet implemented: IGS site log; FIX SiteLogOutputHandler gives empty file
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
+
+        // for SOPAC XMP site log format 
+        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
+        // ? how is this different from XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // a plain text format to visually check what is available for sites' info.  Not for computer processing. Originally for GSAC developers. 
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
@@ -193,24 +192,22 @@ public abstract class SiteManager extends GsacResourceManager {
         // for short csv formatted file of limited contents, an old minor format kept only for backward compatibility in case anyone ever used it:
         new TextSiteOutputHandler   (getRepository(), getResourceClass());   
 
-        // how is this different from XmlSiteLogOutputHandler ?
-        // new XmlSiteOutputHandler(getRepository(), getResourceClass());
-        // look - fails when invoked with
+        //  JSON this output format this is used by Scott Baker's geodesy aggregator search tool, so has real and current use.
+        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        
+        // other IT formats
+        new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        new RssSiteOutputHandler(getRepository(), getResourceClass());
+        
+        //  GSAC (short) XML , different from XmlSiteLogOutputHandler  for SOPAC XML
+        new XmlSiteOutputHandler(getRepository(), getResourceClass());
+        // look - above fails when invoked with
 //  GSAC INCOMING REQUEST is: /gsacring/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&search.y=0&search.x=0&site.code=i*
 //     [java] 2013-03-27 12:27:15.833::WARN:  Error for /gsacring/gsacapi/site/search/sites.xml
 //     [java] javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
 //     [java]     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
 //     [java]     at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
 
-
-
-
-        // IT formats. these only have skeleton code in case someone wants to build on them:
-
-        new AtomSiteOutputHandler(getRepository(), getResourceClass());
-        new JsonSiteOutputHandler(getRepository(), getResourceClass());
-        new RssSiteOutputHandler(getRepository(), getResourceClass());
-        
         // look fails with javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
         //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
     }
