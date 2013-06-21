@@ -125,7 +125,9 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_FULL_CSV,
-                                      "GSAC Full Site CSV", "/sites.full.txt", true)); //  use .txt to allow seeing the result in the brower window.
+                                      "GSAC station info, csv (full)", "/fullsites.csv", true)); 
+                                      //  use .txt to allow seeing the result in the brower window.
+                                      // if you use .csv some browswers want to shove the results in Excel which is very un-useful.
                                   /*  'name in browser menu" ,  result  "file name extension" */
     }
 
@@ -170,9 +172,9 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         // About ellipsoidal height:
         // choose use of elevation or ellipsoid height
         // use this header line:
-        pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
+        //pw.append("ID,station name,latitude,longitude,ellipsoidal height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
         // OR this line, if you have eleation above a goid, not ellipsoid height:
-        //pw.append("ID,station name,latitude,longitude,elevation,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
+        pw.append("ID,station name,latitude,longitude,elevation,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,site count\n");
         //pw.append("#  missing times may mean 'equipment still in operation;' for other missing values see previous or next site's session. \n");
     }
 

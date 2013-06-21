@@ -82,7 +82,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_CSV,
-                                      "GSAC Short Site CSV", "/sites.csv", true));
+                                      "GSAC station info, csv (short)", "/sites.csv", true));
     }
 
 

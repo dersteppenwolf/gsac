@@ -351,10 +351,9 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
 
         // About ellipsoidal height:
         // could show zero value here if you have elevation above a geoid, not true ellipsoid heights:
-        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ELEVATION_M_ELLIPS, "",
-                              elevationFormat.format(el.getElevation())));
         //pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ELEVATION_M_ELLIPS, "",
-          //                    elevationFormat.format( 0.0 )));
+         //                     elevationFormat.format(el.getElevation())));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ELEVATION_M_ELLIPS, "", elevationFormat.format( 0.0 )));
 
         pw.append(
             XmlUtil.closeTag(XmlSiteLog.TAG_MI_APPROXIMATEPOSITIONITRF));

@@ -572,9 +572,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
                // About ellipsoidal height:
                // use this label:
-               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
+               //+ formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
                // or this:
-               //+ formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; elevation "
+               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; elevation "
 
                + resource.getElevation();
     }

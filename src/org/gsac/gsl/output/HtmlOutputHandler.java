@@ -2272,9 +2272,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
             // use either this label:
-            labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
+            //labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
             // OR this:
-            //labels.add(msg("Location") + " (latitude, longitude, elevation)");
+            labels.add(msg("Location") + " (latitude, longitude, elevation)");
 
             sortValues.add("");
             if (doDateRange) {
@@ -2333,7 +2333,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // show Name
             sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ", clickEvent));
-            System.err.println("     Html output   getLongName: " + resource.getLongName() );
+            //System.err.println("     HtmlOutputHandler.java getLongName: " + resource.getLongName() );
 
             //show Type of site
             if (resource.getType() != null) {

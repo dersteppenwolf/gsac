@@ -60,7 +60,7 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_XML,
-                                      "Site GSAC XML", "/sites.xml", true));
+                                      "GSAC Site XML", "/gsacsites.xml", true));
     }
 
 
@@ -78,7 +78,20 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter pw  = response.getPrintWriter();
+        // FIX this works for the UNAVCO GSAC but fails for RING GSAC: String      xml = getRepository().encodeObject(response.getSites());
+        // see gsl/GsacRepository.java for encodeObject
         String      xml = getRepository().encodeObject(response.getSites());
+/*
+
+        try {
+                    String      xml = getRepository().encodeObject(response.getSites());
+                    System.err.println("   XmlSiteOutputHandler string of sites xml=" + xml); 
+        } catch {
+
+        }
+*/
+        // List<GsacSite> sites = response.getSites();
+
         pw.print(xml);
         response.endResponse();
     }
