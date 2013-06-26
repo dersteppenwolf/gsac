@@ -47,6 +47,8 @@ import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.joda.time.*;
+
 /** 
  *  UNAVCO GSAC-WS output handler (formating of site query results) for the GAMIT station.info file format.
  *
@@ -247,6 +249,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     String vantht="-------";
     String vdome="-----";
 
+    boolean lastRecord = false;
 
         /* get a list of GsacMetadata objects, ie  the results from the GSAC query */
         List<GsacMetadata> equipmentMetadata =
@@ -283,21 +286,27 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             Date stopDate=null;
 
             if (equipment.hasReceiver()) {
+		System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - equipment has an receiver");
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
                 firmvers=equipment.getReceiverFirmware();
-                startDate = equipment.getFromDate();
-                stopDate = equipment.getToDate();
-                starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
-                starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
-                stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
-                stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
+//                startDate = equipment.getFromDate();
+//                stopDate = equipment.getToDate();
+//                starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
+//                starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
+//                stoptime= getNonNullGamitString(myFormatDateTime( equipment.getToDate()));
+//                stoptime = getGamitTimeFormat(stoptime, equipment.getToDate());
             } 
 
-            else if (equipment.hasAntenna()) {
+            if (equipment.hasAntenna()) {
+		System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - equipment has an antenna");
                 anttype=getNonNullGamitString(equipment.getAntenna());
                 antsn  =getNonNullGamitString(equipment.getAntennaSerial());
                 dome = getNonNullGamitString(equipment.getDome());
+	    }
+
+            if(equipment.hasReceiver() || equipment.hasAntenna() ) { 
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - adding Dates");
                 startDate = equipment.getFromDate();
                 stopDate = equipment.getToDate();
                 starttime= getNonNullGamitString(myFormatDateTime( equipment.getFromDate()));
@@ -321,27 +330,45 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             // MyVar == null ... null means that the object has a null pointer i.e. points to nothing.
 
             // trap and log bad cases, or print good line if possible:
+            Days diffDT = null;
+            if( startDate != null && stopDate !=null ) {
+            	DateTime startDT = new DateTime(startDate);
+                DateTime stopDT = new DateTime(stopDate);
+                diffDT = Days.daysBetween(startDT, stopDT);
+                System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start/end dates are different by "+ diffDT.getDays());
+            } else {
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start or end dates is/are	NULL");
+            }
             if ( startDate==null && stopDate==null) { 
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start/end dates NULL");
               pw.append("* Error in supplied information. In next line, representing one database record, the start time and stop time are both undefined. \n");
               pw.append("*");
               goterror =1;
             }
             else if ( startDate==null ) { 
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start date NULL");
               pw.append("* Error in supplied information. In next line, representing one database record, the start time is undefined. \n");
               pw.append("*");
               goterror =1;
             }
-            else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) == 0) {  // start time equals stop time
-              pw.append("* Error in supplied information. In next line, representing one database record, the start time equals stop time. Zero duration session. \n");
-              pw.append("*");
-              goterror =1;
+            
+            else if ( startDate!=null && stopDate!=null  &&  startDate.compareTo( stopDate) == 0) {  // start time equals stop time
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start/end dates SAME");
+              //pw.append("* Error in supplied information. In next line, representing one database record, the start time equals stop time. Zero duration session. \n");
+              //pw.append("*");
+              //goterror =1;
             }
             else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) > 0) {  // start time is later than stop time
-              pw.append("* Error in supplied information. In next line, representing one database record, the start time is after stop time \n");
-              pw.append("*");
-              goterror =1;
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start date AFTER end date");
+              //pw.append("* Error in supplied information. In next line, representing one database record, the start time is after stop time \n");
+              //pw.append("*");
+              //goterror =1;
+            } else if (stopDate == null ) {
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - stopDate is NULL");
+            	lastRecord = true;
             }
             if (1==goterror) {
+            	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - got ERROR");
               pw.append(   setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                 +setStringLength(antht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(antn,7)+"  "
                 +setStringLength(ante,7)+"  " +setStringLengthRight(rectype,20)+"  " +setStringLengthRight(firmvers,20)+"  "
@@ -353,7 +380,9 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             // all OK with dates,  note one date may be null
                 // sort gsac equip groups into gamit sessions
 
+            System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - dates are GOOD, sort groups");
                 if (session == 0) {
+                	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - start session");
                    block_startDate=startDate;
                    block_stopDate=stopDate;
                    session += 1;
@@ -370,9 +399,13 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
                 if (0 ==startDate.compareTo( block_startDate))  // this equipment block same time as previous 
                    { // still in this session
+                	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, same visit");
                    // see if the new stop time is later
                    if (stopDate != null && stopDate.compareTo( block_stopDate)>0) {
+                	   System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, same visit - stopDate NOT null, update block_stopDate");
                      block_stopDate=stopDate;
+                   } else {
+                	   System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, same visit - stopDate is NULL");
                    }
                    session += 1;
                    vrectype = rectype ;
@@ -386,15 +419,25 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    vantht = antht ;
                  }
 
-                if (startDate.compareTo( block_startDate) > 0)  // this equipment block begins after the previous one; so beginning a new geodesy site 'visit'
-                   { 
+                if (startDate.compareTo( block_startDate) > 0) { // this equipment block begins after the previous one; so beginning a new geodesy site 'visit'
+               
+                	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit -fw version is " +vfirmvers);
                    // starting a new  geodesy visit session
-
+                	System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit");
                    // first print out previous visit
                    starttime= getNonNullGamitString(myFormatDateTime(block_startDate) );
                    starttime = getGamitTimeFormat(starttime,block_startDate );
-                   stoptime= getNonNullGamitString(myFormatDateTime(block_stopDate) );
-                   stoptime = getGamitTimeFormat(stoptime,block_stopDate );
+                   
+                   System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit - stoptime is " + stoptime.toString());
+                   if(block_stopDate!=null)System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit - block_stoptime is "+ block_stopDate.toString());
+                  
+                     stoptime= getNonNullGamitString(myFormatDateTime(block_stopDate) );
+                   
+                     System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit - gammit non-null string stoptime is " + stoptime.toString());                  
+                     stoptime = getGamitTimeFormat(stoptime,block_stopDate );
+                   
+                   System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit - gamit stoptime format is " + stoptime.toString());
+                   // this write the previous record
                    pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                       +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
                       +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
@@ -413,7 +456,30 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    vantn = antn ;
                    vante = ante ;
                    vantht = antht ;
+                   
+                   if(lastRecord) {
+                	   System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - same session, new visit - LAST RECORD");
+                       starttime= getNonNullGamitString(myFormatDateTime(startDate) );
+                       starttime = getGamitTimeFormat(starttime,startDate );
+                       
+                       stoptime= getNonNullGamitString(myFormatDateTime(stopDate) );              
+                       stoptime = getGamitTimeFormat(stoptime,stopDate );
+                       
+                	   pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+                               +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
+                               +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+                               +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
+                	   
                    }
+                   
+                } else if (lastRecord && session == 2) {
+             	   System.out.println("StationInfoSiteOutputHandler.addSiteEquipment() - session 0 (2), new visit - LAST RECORD");
+             	   pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
+                            +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
+                            +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+                            +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
+             	   
+                }
 
 
         } // end for loop on GSAC equipment items , NOT gamit station.info sessions

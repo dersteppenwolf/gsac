@@ -35,7 +35,7 @@
         <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
         <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
 
-        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar"/>
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-1.6.2.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
@@ -110,7 +110,7 @@
               <attribute name="Implementation-Vendor" value="UNAVCO"/>
               <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
 
-              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  ${commons-dbcp.jar} log4j-1.2.15.jar oracleDriver.jar ${commons-pool.jar} jetty.jar jetty-util.jar  servlet-api.jar gson-1.5.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  ${commons-dbcp.jar} log4j-1.2.15.jar oracleDriver.jar ${commons-pool.jar} jetty.jar jetty-util.jar  servlet-api.jar gson-1.5.jar joda-time-1.6.2.jar"/>
             </manifest> 
         </jar>
         
@@ -125,6 +125,9 @@
 
          <copy failonerror="true" file="${libdir}/jetty-util.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/gson-1.5.jar"  todir="${gsacserverdir}"/>
+  		 
+	<!-- jlm -->
+   	<copy failonerror="true" file="${libdir}/joda-time-1.6.2.jar"  todir="${gsacserverdir}"/>
 
          <copy failonerror="true" file="${libdir}/servlet-api.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="false" file="${srcdir}/org/gsac/gsl/release/README.gsacserver"  todir="${gsacserverdir}"/>
@@ -158,6 +161,9 @@
             <zipfileset dir="${basedir}"  includes="lib/gson-1.5.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/jetty-util.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/servlet-api.jar"  prefix="gsacrelease"/>
+
+            <!-- jlm -->
+            <zipfileset dir="${basedir}"  includes="lib/joda-time-1.6.2.jar"  prefix="gsacrelease"/>
         </zip>
    </target>
 

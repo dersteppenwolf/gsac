@@ -48,6 +48,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.SortedSet;
+import java.util.NavigableSet;
+
+import java.util.Calendar;
 
 
 /**
@@ -543,10 +550,17 @@ public class IgsSiteManager extends SiteManager {
      * @throws Exception _more_
      */
     private void readEquipmentMetadata(GsacResource gsacResource)
-            throws Exception {
-
-        Hashtable<Date, GnssEquipment> visits = new Hashtable<Date,
-                                                    GnssEquipment>();
+    	throws Exception {
+    	
+    	
+    	GnssEquipment equipment = null;
+    	
+        Hashtable<Date, GnssEquipment> antVisits = new Hashtable<Date,
+                GnssEquipment>();   	
+        
+        Hashtable<Date, GnssEquipment> recVisits = new Hashtable<Date,
+                GnssEquipment>();   	
+        
         List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
         Statement           statement;
         ResultSet           results;
@@ -560,6 +574,8 @@ public class IgsSiteManager extends SiteManager {
                         .getId()), " order by "
                                    + Tables.SITELOG_ANTENNA
                                        .COL_DATEINSTALLEDANTENNA, -1);
+        
+        
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
@@ -573,7 +589,8 @@ public class IgsSiteManager extends SiteManager {
                             results,
                             Tables.SITELOG_ANTENNA.COL_DATEREMOVEDANTENNA) };
 
-
+                
+                
                 // trap and fix bad non-numerical value got from the db: Tables.SITELOG_ANTENNA.COL_MARKERUP
                 double deltahgt = 0.0;
                 String sord = results.getString(Tables.SITELOG_ANTENNA.COL_MARKERUP);
@@ -590,25 +607,26 @@ public class IgsSiteManager extends SiteManager {
                     if (snum.length()==0) { deltahgt = 0.0; }
                     else { deltahgt = Double.parseDouble(snum); }
                     System.err.println("    IgsSiteManager: bad 'double' from the db for SITELOG_ANTENNA.COL_MARKERUP=" + sord+";  will use double="+snum);
-                }
+                }        
+    	
 
-                GnssEquipment equipment =
-                    new GnssEquipment(dateRange,
-                        results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNATYPE),
-                        results.getString(Tables.SITELOG_ANTENNA.COL_SERIALNUMBERANTENNA),
-                        results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
-                        results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
-                        "", "", "", deltahgt);
+                equipment =
+                        new GnssEquipment(dateRange,
+                            results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNATYPE),
+                            results.getString(Tables.SITELOG_ANTENNA.COL_SERIALNUMBERANTENNA),
+                            results.getString(Tables.SITELOG_ANTENNA.COL_ANTENNARADOMETYPE),
+                            results.getString(Tables.SITELOG_ANTENNA.COL_RADOMESERIALNUMBER),
+                            "", "", "", deltahgt);
 
-                equipmentList.add(equipment);
+                    //equipmentList.add(equipment);
 
-                visits.put(dateRange[0], equipment);
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-
-
+                    antVisits.put(dateRange[0], equipment);
+            } //end while
+         } finally {
+                getDatabaseManager().closeAndReleaseConnection(statement);
+         }// end try antenna
+    	
+    	
         /* get from SITELOG_RECEIVER table */
         statement =
             getDatabaseManager()
@@ -618,6 +636,8 @@ public class IgsSiteManager extends SiteManager {
                         .getId()), " order by "
                                    + Tables.SITELOG_RECEIVER
                                        .COL_DATEINSTALLEDRECEIVER, -1);
+        
+        
         try {
             SqlUtil.Iterator iter =
                 getDatabaseManager().getIterator(statement);
@@ -630,49 +650,228 @@ public class IgsSiteManager extends SiteManager {
                         readDate(results,
                                  Tables.SITELOG_RECEIVER
                                      .COL_DATEREMOVEDRECEIVER) };
-                GnssEquipment equipment = visits.get(dateRange[0]);
-                if (equipment != null) {
-                    if ( !Misc.equals(equipment.getToDate(), dateRange[1])) {
-                        equipment = null;
-                    }
-                }
 
-                if (equipment == null) {
-                    equipment = new GnssEquipment(dateRange, "", "", "", "",
-                            "", "", "", Double.NaN);
-                    equipmentList.add(equipment);
-                }
-                equipment.setReceiver(
-                    results.getString(
-                        Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE));
-                equipment.setReceiverSerial(
-                    results.getString(
-                        Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER));
-                equipment.setReceiverFirmware(
-                    results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV));
-                equipment.setSatelliteSystem(
-                    results.getString(
-                        Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
-                //System.err.println(dateRange[0] + " " +  equipment.getReceiver());
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
+                /* Date[] dateRange, String antenna,
+                         String antennaSerial, String dome,
+                         String domeSerial, String receiver,
+                         String receiverSerial, String receiverFirmware,
+                         double zOffset) */
+                
+                equipment =
+                        new GnssEquipment(dateRange, "", "", "", "",
+                        		results.getString(Tables.SITELOG_RECEIVER.COL_RECEIVERTYPE),
+                                results.getString(Tables.SITELOG_RECEIVER.COL_SERIALNUMBERRECEIVER),                               
+                                results.getString(Tables.SITELOG_RECEIVER.COL_FIRMWAREV),
+                                0.0
+                                );
+                                
+                
+                equipment.setSatelliteSystem(results.getString(Tables.SITELOG_RECEIVER.COL_SATELLITESYSTEM));
+                        		
+                recVisits.put(dateRange[0], equipment);
+            } //end while
+         } finally {
+             getDatabaseManager().closeAndReleaseConnection(statement);
+         }// end try receiver 
+        
+        
+        // TODO: should check if either visit map is empty, if one is empty, use the other 
+        // to populate the equipmentList
+        
+        
+        // TODO: should check to see if all install dates are NOT null
+        // this is an error and should be managed
+                
+        // have two maps (antVisits, recVisits), merge records based on install & remove dates
+        // the keys are the install dates, the equipment record contains the remove date in the date range
+        
+        //loggerdebug("")
+        
+        Set<Date> antVisitKeys = antVisits.keySet();
+        NavigableSet<Date> antKeyTree = new TreeSet<Date>();
+        for ( Date d : antVisitKeys ) {
+        	antKeyTree.add(d);
         }
+        Set<Date> recVisitKeys = recVisits.keySet();
+        NavigableSet<Date> recKeyTree = new TreeSet<Date>();
+        for (Date dd : recVisitKeys ) {
+        	recKeyTree.add(dd);
+        }
+        
+        Date antInstallDate = null;
+        Date antRemoveDate = null;
+        Date recInstallDate = null;
+        Date recRemoveDate = null;
+        Date tailDate = null;
+        Date mergeInstallDate = null;
+        Date mergeRemoveDate = null;
+        
+        Date now = new Date();  
+        Calendar cal = Calendar.getInstance();  
+        cal.setTime(now);  
+        cal.add(Calendar.DAY_OF_YEAR, 1);  
+        Date tomorrow = cal.getTime(); 
+        
+        GnssEquipment mergedEquip = null;
+        
+        while ( !antKeyTree.isEmpty() ) {
+          // get the ant install visit date, remove from tree	
+          antInstallDate = antKeyTree.pollFirst();
+          
+          // set the date to earliest install date for remaining ants and recs
+          if(tailDate == null)tailDate = antInstallDate;
+          // get the ant remove date
+          GnssEquipment antEquip = antVisits.get(antInstallDate);
+          antRemoveDate = antEquip.getToDate();
+          // TODO: handle case where ant remove date is null
+    	  if( antRemoveDate == null) {
+    		  antRemoveDate = tomorrow;
+    		  mergeRemoveDate = null;
+    		  System.out.println("IGSSiteManager.readEquipmentMetadata() - antenna remove date is null");
+    	  
+    	  } else {
+    		  // need to validate remove is same or less than next install
+    		  Date nextAntInstallDate = antKeyTree.higher(antInstallDate);
+    		  if( nextAntInstallDate != null && nextAntInstallDate.compareTo(antRemoveDate) < 0 ){
+    			  System.out.println("IGSSiteManager.readEquipmentMetadata() - error - antenna removed after next antenna installl");
+    			  break;
+    		  }
+    		  mergeRemoveDate = antRemoveDate;
+    	  }
+          // get the rec install dates same or after the ant install date
+          NavigableSet<Date>   recSubKeyTree = recKeyTree.tailSet(tailDate, true);
+          for ( Date recID : recSubKeyTree ) {
+        	  recInstallDate = recID;
+        	  GnssEquipment recEquip = recVisits.get(recID);
+        	  recRemoveDate = recEquip.getToDate();
+        	  // TODO: handle case where rec remove date is null
+        	  if( recRemoveDate == null) {
+        		  recRemoveDate = tomorrow;
+        		  System.out.println("IGSSiteManager.readEquipmentMetadata() - receiver remove date is null");
+        		  if( antRemoveDate.compareTo(tomorrow) == 0)mergeRemoveDate = null;
+        	  }
+        	  
+        	  if( antRemoveDate.compareTo(recRemoveDate) == 0) {
+        		  // removed on same date
+        		  System.out.println("IGSSiteManager.readEquipmentMetadata() - antenna and receiver remove date is SAME");
+        		  if( antInstallDate.compareTo(recInstallDate) == 0 ) {
+        			  // installed on same date
+        			  mergeInstallDate = antInstallDate;
+        		  } else if ( antInstallDate.compareTo( recInstallDate) < 0 ) { 
+        			  // ant installed before receiver
+        			  mergeInstallDate = recInstallDate;
+        		  } else if ( antInstallDate.compareTo( recInstallDate) >0 ) {
+        			  // rec installed before ant
+        			  mergeInstallDate = antInstallDate;
+        		  }       			  
+        		  mergedEquip = mergeEquipment(antEquip, recEquip, mergeInstallDate, mergeRemoveDate);
+        		  // done checking receivers for this antenna
+        		  equipmentList.add(mergedEquip);
+        		  break;
+        		  
+        	  } else if ( antRemoveDate.compareTo(recRemoveDate) < 0 ) {
+        		  // ant removed before receiver
+        		  System.out.println("IGSSiteManager.readEquipmentMetadata() - antenna remove date is BEFORE receiver");
+           		  if( antInstallDate.compareTo(recInstallDate) == 0 ) {
+        			  // installed on same date
+        			  mergeInstallDate = antInstallDate;
+        		  } else if ( antInstallDate.compareTo( recInstallDate) < 0 ) { 
+        			  // ant installed before receiver
+        			  mergeInstallDate = recInstallDate;
+        		  } else if ( antInstallDate.compareTo( recInstallDate) >0 ) {
+        			  // rec installed before ant
+        			  mergeInstallDate = antInstallDate;
+        		  }       			  
+        		  mergedEquip = mergeEquipment(antEquip, recEquip, antInstallDate, mergeRemoveDate);
+        		  // need to make sure to this rec is assigned to the next ant
+        		  equipmentList.add(mergedEquip);
+        		  tailDate = recInstallDate;
+        		  break;
+        		  
+        	  } else if ( antRemoveDate.compareTo(recRemoveDate) > 0 ) {
+        		  //rec removed before ant
+        		  System.out.println("IGSSiteManager.readEquipmentMetadata() - antenna remove date is AFTER receiver");
+           		  if( antInstallDate.compareTo(recInstallDate) == 0 ) {
+        			  // installed on same date
+        			  mergeInstallDate = antInstallDate;
+        		  } else if ( antInstallDate.compareTo( recInstallDate) < 0 ) { 
+        			  // ant installed before receiver
+        			  mergeInstallDate = recInstallDate;
+        		  } else if ( antInstallDate.compareTo( recInstallDate) >0 ) {
+        			  // rec installed before ant
+        			  mergeInstallDate = antInstallDate;
+        		  }
+           		  if(  recRemoveDate.compareTo(tomorrow) == 0 ) {
+           			  mergeRemoveDate = null;
+           		  } else {
+           			  mergeRemoveDate = recRemoveDate;
+           		  }
+        		  mergedEquip = mergeEquipment(antEquip, recEquip, mergeInstallDate, mergeRemoveDate);
+        		  // need assign next receiver to this ant
+        		  equipmentList.add(mergedEquip);
+        		  continue;
+        		  
+        	  } else {
+        		  // this is BAD!
+        		  System.out.println("IGSSiteManager.readEquipmentMetadata() - error in data - incomplete equipment record");
+        	  }
+        	  
+        	  
+          } // end for rec install dates
+          
+        }  // end while more ants
+            
 
-
-        equipmentList = GnssEquipment.sort(equipmentList);
-        GnssEquipmentGroup equipmentGroup = null;
-        /* for every item 'equipment' in the local equipmentList, add it to the equipmentGroup */
-        for (GnssEquipment equipment : equipmentList) {
-            if (equipmentGroup == null) {
-                gsacResource.addMetadata(equipmentGroup =
+      equipmentList = GnssEquipment.sort(equipmentList);
+      GnssEquipmentGroup equipmentGroup = null;
+      /* for every item 'equipment' in the local equipmentList, add it to the equipmentGroup */
+      for (GnssEquipment gnssequipment : equipmentList) {
+         if (equipmentGroup == null) {
+             gsacResource.addMetadata(equipmentGroup =
                     new GnssEquipmentGroup());
-            }
-            equipmentGroup.add(equipment);
-        }
+         }
+         if(gnssequipment.hasAntenna()) {
+            	System.out.println("IGSSiteManager.readEquipmentMetadata() - adding equipment that DOES have an antenna to group");
+         } else {
+            	System.out.println("IGSSiteManager.readEquipmentMetadata() - ERROR: equipment added to group has NO antenna!");
+         }
+         if(gnssequipment.hasReceiver()) {
+         	System.out.println("IGSSiteManager.readEquipmentMetadata() - adding equipment that DOES have an receiver to group");
+      } else {
+         	System.out.println("IGSSiteManager.readEquipmentMetadata() - ERROR: equipment added to group has NO receiver");
+      }
+         equipmentGroup.add(gnssequipment);
+     }
 
+}
+  
+ 
+    
+    /** merge the equiment record using the to/from dates
+     * 
+     */
+    private GnssEquipment mergeEquipment(GnssEquipment antenna, GnssEquipment receiver, Date toDate, Date fromDate) {
+    	
+    	GnssEquipment equipment = null;
+    	
+    	Date range[] = {toDate, fromDate};
+    	equipment = new GnssEquipment ( range,
+    		antenna.getAntenna(),
+    		antenna.getAntennaSerial(),
+    		antenna.getDome(),
+    		antenna.getDomeSerial(),
+    		receiver.getReceiver(),
+    		receiver.getReceiverSerial(),
+    		receiver.getReceiverFirmware(),
+    		antenna.getXyzOffset()   			
+    	);
+    	
+    	equipment.setSatelliteSystem(receiver.getSatelliteSystem());
+    	
+    	
+    	return equipment;
     }
-
+    
     public boolean checkDouble( String input )  
     {  
        try  
