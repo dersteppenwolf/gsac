@@ -58,7 +58,7 @@
 
         <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
         <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
-        <property name="classpath" value="${srcdir}:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
+        <property name="classpath" value="${srcdir}:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-1.6.2.jar"/>
 
 
         <property name="build.sysclasspath"    value="ignore" />
@@ -122,7 +122,7 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="${basename}"/>
               <attribute name="Main-class" value="${serverclass}"/>
-              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar log4j-1.2.15.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar log4j-1.2.15.jar joda-time-1.6.2.jar"/>
             </manifest> 
         </jar>
     </target>
@@ -159,6 +159,9 @@
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/gson-1.5.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/servlet-api.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/log4j-1.2.15.jar"/>
+
+        <!-- jlm -->
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/joda-time-1.6.2.jar"/>
 
         <copy overwrite="true"  todir="${reldir}"  file="${repositorydir}/release/README"/>
         <copy overwrite="true"  todir="${reldir}"  file="${repositorydir}/gsacrepository.sh">
