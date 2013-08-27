@@ -4,8 +4,6 @@ GSAC_WS Installation
 
 README, Part 2.
 
-April 2, 2013; modified June 21
-
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
@@ -31,9 +29,9 @@ This README (Part 2) file is found in your new GSAC package in @MACRO.SRCDIR@/ (
 Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ 
 
 
-   Adding Your Repository's Details
+Adding Your Repository's Details
 
-   Base URL and Names or Titles: The "GSAC Resources Properties" File.
+Base URL and Names or Titles: The "GSAC Resources Properties" File.
 
 The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
 gsac.baseurl is the part of the URL, the full URL of the website for your GSAC repository.
@@ -42,11 +40,10 @@ Some values were created in the initial ant build you did already.
 
     An example, a file myrepo/gsac/resources/gsac.properties might have: 
 
-    #
     #This gets read by the base GsacRepository class for defining properties
     #This allows you to override the default GSAC server properties defined in
     #org/gsac/gsl/resources/gsac.properties
-    #
+    #  be sure to start the baseurl with / :
     gsac.baseurl = /gsacmyrepo
     #Your repository name
     gsac.repository.name=My repo GSAC Repository
@@ -55,15 +52,15 @@ Some values were created in the initial ant build you did already.
 
 Change the items for your GSAC repository.
 
-You optionally may add another new line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
-
-    file.zip.maxsize=100000000
-
-An example of gsac.baseurl is 'gsacws' in the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-(The terms 'gsacapi/site/form' are always part of a GSAC URL (in the site search) and you do not enter them anywhere.)
-Or this baseurl may include an acronym for identification of your agency.
+The example of gsac.baseurl is 'gsacws' from the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
+You can use 'gsacws', or this baseurl part could be from an acronym for identification of your agency, for example 'NASA_GSAC'.
+(The other parts 'gsacapi/site/form' are always part of a GSAC URL (for a site search) and you do not enter them anywhere.)
 
 The items repository.name and repository.description are used as labels on the web site.
+
+You optionally may use another line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
+
+    file.zip.maxsize=100000000
 
 
 ########################################################################
@@ -83,7 +80,10 @@ The database host (like myrepodev.mydomain.org), port (3080), account user name 
 The database must have an account GSAC can use to read from the database. GSAC does not write to any database.
 When the GSL assembles the JDBC URL it finds the user name and password from here.
 
-Note that Oracle and Postgres have different syntax for the last line in this file.  For postgres the form is 
+One MySQL example which may work running both the db and GSAC on your computer is 
+gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
+
+Note that Oracle and Postgres have different syntax for the 'jdbc' line in this file.  For postgres the form is 
 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
@@ -96,10 +96,11 @@ One Oracle JDBC URL is of the form:
 Copy the complete @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
 The two files with the same contents are a legacy from earlier GSAC code.
 
-If you have GSAC SourceForge write access: Caution: 
-Do not do 'svn add' or 'svn commit' this file to the GSAC SourceForge repository or your account details will be public!
+If you have GSAC SourceForge write access: 
+'Caution': 
+Do not do 'svn add' or 'svn commit' for this file or your account details will be public!
 
-Everytime you do "ant" to build your repository  the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
+Everytime you do "ant" to build your repository, the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
 @MACRO.SRCDIR@/resources/gsacdb.properties, and @MACRO.SRCDIR@/resources/gsacserver_test.properties
 is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. Can be confusing if you attempt to keep track of the several properties files.
 
@@ -108,14 +109,16 @@ is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. Can be confusing if
 build.xml
 ########################################################################
 
-The file build.xml, in your location @MACRO.SRCDIR@, should have these lines. Note the gsqc@MACRO.PREFIX@ : 
+Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. Note the gsac@MACRO.PREFIX@ : 
+(may have an extra upper case letter in @MACRO.PREFIX@)
 
     <target name="localinit">
         <!-- base name for build products -->
         <property name="basename" value="gsac@MACRO.PREFIX@"/>
 
-This target will be used by ant build process to make your GSAC server.
+Probably no changes are needed here.
 
+This target will be used by ant build process to make your GSAC server.
 
 You have specified the basic information needed to run your full GSAC server.
 
@@ -124,11 +127,11 @@ You have specified the basic information needed to run your full GSAC server.
 Initial compile 
 ########################################################################
 
-Do the command ant in @MACRO.SRCDIR@:
+Do the command 'ant' in @MACRO.SRCDIR@:
 
 ant 
 
-If the ant commands succeeds you will see output to the screen including 
+When the ant command succeeds you will see output to the screen including 
 
 compile:
     [javac] Compiling 6 source files
@@ -148,6 +151,8 @@ war:
      [echo] ********************************
 BUILD SUCCESSFUL
 Total time: 8 seconds
+
+This 'ant' build will take about 5 to 10 seconds.
 
 The source Java (.java) files compiled are like these in @MACRO.SRCDIR@:
 
@@ -181,16 +186,22 @@ Output from the ant tables command includes lines something like:
      [java] processing EQUIPMENT
      [java] processing INSTRUMENTATION
      [java] processing RECEIVER
+...
+BUILD SUCCESSFUL
+Total time: 2 seconds
 
-Each line corresponds to the name of a table in your database.
+Each 'processing' line corresponds to a named table in your database.
 
-This makes a new Java file, @MACRO.SRCDIR@/Tables.java.  The package name in Tables.java (at or near line 3) should be 
+This makes a new Java file, @MACRO.SRCDIR@/Tables.java. This file defines Java 'Tables' classes
+with complete specifications for your GSAC database, using GSAC Java code.
+
+The package name in Tables.java (at or near line 3) should be
 
 package org.@MACRO.PREFIX@.gsac.database;
   not
 package org.@MACRO.PREFIX@.gsac;
 
-Edit the Tables.java file to fix it.
+Edit that line in the Tables.java file to fix it.  Do not make other changes to the file.
 
 Make a new @MACRO.SRCDIR@/database subdirectory:
 
@@ -198,7 +209,11 @@ mkdir database
 
 Move the Tables.java file down into database.
 
-Now run ant again in @MACRO.SRCDIR@.  This time you should see 
+mv Tables.java database/
+
+Do not leave a copy of Tables.java in @MACRO.SRCDIR@/.
+
+Now run just 'ant' again in @MACRO.SRCDIR@.  This time you should see 
 
 compile:
     [javac] Compiling 7 source files
@@ -211,14 +226,16 @@ Total time: 5 seconds
 This time ant compiles the six java files in @MACRO.SRCDIR@/, and compiles the new Tables.java in @MACRO.SRCDIR@/database/.
 Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.  
 
-The Tables classes provide a link between your database
-and your GSAC code.  You will  use names of items in the classes to identify your database tables and columns (fields)
-in your GSAC Java code.  For example, one table name is, in the GSAC universe, SITE_METADATA, and a column (field) in that table might be 
-COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use item names in it in coding soon.
+The Tables classes provide a link between your database and your GSAC code.  
 
+You will use names of items in the classes in Tables.java to identify your database tables and columns (fields)
+in your GSAC Java code.  For example, one table name may be, in GSAC code, SITE_METADATA, and a column (field) in that table might be 
+COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
+
+CAUTION:
 If you later do "svn update" in your GSAC code area, svn will put a copy of the Tables.java file in @MACRO.SRCDIR@/ where it does not belong.
 If you then try "ant" in @MACRO.SRCDIR@/ a compile error is made.  Remove the Tables.java file from @MACRO.SRCDIR@/ and do "ant" again.
-Tables.java must be in @MACRO.SRCDIR@/database.
+Tables.java must be ONLY in @MACRO.SRCDIR@/database.
 
 
 ########################################################################
@@ -244,13 +261,14 @@ http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.
 
 You should see a new web page with minimal content:
 
-                  Welcome to the GSAC Repository
-      Search Sites | Search Files | Browse | Infomation | Help
+                    Search Sites | Search Files | Browse | Infomation | Help
+    Welcome to the GSAC Repository
 
-This shows that basic GSAC code runs on your system.  
-You can look at basic GSAC server web site pages, such as in the Information and Help links.
+This shows that basic GSAC code runs on your system.  You can look at the GSAC informational pages, such as the Information and Help links.
+The 'Search' links probably won't do much yet.
 
-You've generated the core GSAC repository source package (code or software) and an initial new GSAC server.
+Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
+
 
 Stop the 'ant runserver' process with CTRL-c.  
 
@@ -258,10 +276,9 @@ This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP s
 The Jetty servlet is for local testing, which saves the trouble of deploying a .war file to a Tomcat implementation 
 (and may avoid restarting Tomcat for every test of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
 
-So far you have been bootstrapping a operational GSAC server which has complete core GSAC code, 
-which lacks specific details about your repository.
-
-Now you need to specify the important parts of your data repository for GSAC.
+You have made an operational GSAC server which has complete core GSAC code, but which lacks specific details about your repository,
+that is, where to find station and instrument metadata, and geodesy file info, in your database.
+Now you need to specify those important parts of your data repository for GSAC.
 
 
 ########################################################################
@@ -724,3 +741,4 @@ which contains the database authentication info. This is in the .war file.
 SKW
 UNAVCO
 
+template of  April 2, 2013; modified June 21
