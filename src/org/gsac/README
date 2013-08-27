@@ -2,13 +2,13 @@
 
 GSAC-WS Installation
 
-README, Part 1.  Creating the initial GSAC Server at your repository
+README, Part 1.  Creating the Initial GSAC Server at your repository
 
-June 11, 2013.
+20 August 2013.
 
-The GSAC-WS home page is from UNAVCO at http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Web Services document,
+The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Web Services document,
 "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail and lists requirements to install and run GSACC.  The GSAC User Guide
+introduces GSAC in detail , with the first steps to install and run GSACC.  The GSAC User Guide
 "UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
 is for persons using data repositories powered by GSAC.
 
@@ -28,12 +28,14 @@ Quick Install, Part 1.  Creating the initial GSAC Server at your repository
 For experienced GSAC operators and software engineers.
 
 Find or make a top-level working directory for GSAC, and go there. For example:
+
 mkdir ~/GSAC/
+
 cd    ~/GSAC/
 
 Check out the GSAC code from SourceForge:
 
-svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac  (may be obsolete in June 2013 due to changes at sourceforge)
+svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac  (may be obsolete due to changes at sourceforge)
 
 cd to  gsac/trunk/
 
@@ -41,9 +43,10 @@ ant
 
 Edit gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js to set the longitude, latitude, and zoom level for the center of your map in the lines:
 var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
-var defaultZoomLevel = 4;
+var defaultZoomLevel = 5;
+The value defaultZoomLevel = 4 will show all of western Europe. 
 
-Rebuild the GSAC core code with command ant in ~/GSAC/sourceforge/gsac/trunk/  
+Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/sourceforge/gsac/trunk/  
 
 cd to ~/GSAC/sourceforge/gsac/trunk/src/org/gsac/template/
 
@@ -53,14 +56,32 @@ Edit the new myrepomacros.properties file to set:
 target.name=Myrepo GSAC Repository
 target.basename=gsacmyrepo     // used in Java package name and for the top level directory for your new GSAC code files.
 target.package=org.myrepo.gsac // if not beginning with org, see notes below for the Java pacakge name.
-target.prefix=Myrepo           // used in names of Java files
+target.prefix=Myrepo           // used in names of Java files. Java style has first letter in uppper case, only.
 target.dbdriver=mysql.jar      // or postgres.jar or oracleDriver.jar
 
-cd ../  // to org/gsac/
+cd ../   
+
+to src/org/gsac/. Then run a command like this, with the new macros.properties file name:
+
 ant -propertyfile template/myrepomacros.properties makerepository   
 
-cd to the top directory with your GSAC code, such as 
-~/GSAC/sourceforge/gsac/trunk/src/org/myrepo/gsac/. Follow the README file there to complete GSAC installation. 
+cd to the just-made new top directory with in the new GSAC code just for your repository, such as 
+
+~/GSAC/sourceforge/gsac/trunk/src/org/myrepo/gsac/. 
+
+Follow the README file there to complete your GSAC installation. 
+
+
+
+################################################################################ ################################################################################
+################################################################################ ################################################################################
+
+Complete GSAC installation instructions (README Part 1)
+
+################################################################################ ################################################################################
+################################################################################ ################################################################################
+
+
 
 ################################################################################
 
