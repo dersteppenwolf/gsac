@@ -17,6 +17,9 @@ var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vm
 
 /*   center of GSAC map to show one site: */
 
+/*   center of GSAC site map, for NOANET, longitude east positive, latitude north positive */
+var defaultLocation = new OpenLayers.LonLat(23.5, 38.0)
+
 /*   center of GSAC site map, in Italy for RING GSAC */
 //var defaultLocation = new OpenLayers.LonLat(15, 41) 
 
@@ -27,8 +30,7 @@ var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vm
 var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
 
 /*   GSAC map of sites; set zoom level; 3 is about 10,000 km wide; 4 is about 3900 km wide. */
-var defaultZoomLevel = 4;
-
+var defaultZoomLevel = 6;
 
 
 function loadjscssfile(filename, filetype){
