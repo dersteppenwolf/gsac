@@ -559,23 +559,19 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
     /**
-     * separate values of lat, long, and ellipsoid height with &nbsp; spaces for HTML output.
-     * to avoid confusion in Europe where latLonFormat appears to use commas for decimal points.
+     * compose (latitude, longitude, elevation) and separate the values of lat, long, and ellipsoid height with &nbsp; spaces for HTML output.
+     * to avoid confusion in Europe where latLonFormat uses commas for decimal points.
      *
-     * so far, is used only in HTML site page
+     * so far, this used only in HTML site page
      *
      * @param resource _more_
      * @return _more_
      */
     public String formatLatLonNoCommas(GsacResource resource) {
+        // output  (latitude, longitude, elevation) :
+        // About ellipsoidal height: // use this label: //+ formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
         return "latitude "+formatLatLon(resource.getLatitude()) + "  &nbsp; &nbsp; longitude "
-
-               // About ellipsoidal height:
-               // use this label:
-               //+ formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
-               // or this:
-               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; elevation "
-
+               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; elevation(ellip. hgt) "
                + resource.getElevation();
     }
 
