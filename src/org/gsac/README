@@ -4,7 +4,7 @@ GSAC-WS Installation
 
 README, Part 1.  Creating the Initial GSAC Server at your repository
 
-20 August 2013.
+30 August 2013.  SKW UNAVCO
 
 The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Web Services document,
 "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
@@ -154,9 +154,9 @@ ant
 
 This ant command builds the core GSAC code, including the GSL, the GSAC service layer.  If you later change or do svn update for
 new core GSAC code made by others (not already in your own personal GSAC), you need to do ant in gsac-code/ again to rebuild the core GSAC package.
-(The file gsac-code/org/src/gsac/trunk/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.) 
+(The file gsac-code/org/src/gsac/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.) 
 
-This may take two or three minutes. The screen output ends with something like this:
+This may take one to three minutes. Watch for errors sent to the screen.  The screen output ends with something like this:
 
 localinit:
 init:
