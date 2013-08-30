@@ -1738,9 +1738,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (metadata instanceof ImageMetadata) {
             ImageMetadata imageMetadata = (ImageMetadata) metadata;
             String        img           =
-                HtmlUtil.img(imageMetadata.getUrl(), "",
-                             HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0")
-                             + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "600"));
+                //HtmlUtil.img(imageMetadata.getUrl(), "", HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0") + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "600"));
+                // reduce image width so that it  takes up less of page
+                HtmlUtil.img(imageMetadata.getUrl(), "", HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0") + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "300"));
             img = HtmlUtil.href(imageMetadata.getUrl(), img,
                                 " rel=\"lightbox\" ");
             pw.append(img);
@@ -2274,7 +2274,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             // use either this label:
             //labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
             // OR this:
-            labels.add(msg("Location") + " (latitude, longitude, elevation)");
+            labels.add(msg("Location") + " (latitude, longitude, ellips. hgt.)");
 
             sortValues.add("");
             if (doDateRange) {
