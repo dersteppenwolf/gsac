@@ -23,11 +23,11 @@ package org.gsac.gsl;
 
 
 /**
- * Interface description
+ * Interface description: defines GSAC variables; declares names of them (such as "site....") to use making API queries and in making results returned.
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version  Aug 29, 2013 
+ * @author   JM; SKW; 2010-2013.
  */
 public interface GsacExtArgs {
 
@@ -71,17 +71,32 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_STATE = GsacArgs.ARG_SITE_PREFIX + "state";
 
-
-    /** _more_ */
+    /** Name of station's tectonic plate.  */
     public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX + "tectonicplate";
 
+    /**  */
     public static final String SITE_METADATA_MONUMENTINSCRIPTION = "site.metadata.monumentinscription";
+
     public static final String SITE_METADATA_IDENTIFICATIONMONUMENT = "site.metadata.identificationmonument";
+
     public static final String SITE_METADATA_MONUMENTDESCRIPTION = "site.metadata.monumentdescription";
+
     public static final String SITE_METADATA_IERDOMES = "site.metadata.ierdomes";
+
+    /** not used yet (?) */
     public static final String SITE_METADATA_INDIVIDUALCALIBRATION = "site.metadata.calibration";
+
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
+
     public static final String SITE_METADATA_NAMEAGENCY = "site.metadata.nameagency";
+
     public static final String SITE_METADATA_FREQUENCYSTANDARD = "metadata.frequencystandard";
+
+    public static final String SITE_PHOTO_URL = "site.metadata.photoURL";
+
+    /**  the x,y,z coordinate values of a location in a terrestrila reference frame: */
+    public static final String SITE_TRF_X = "site.metadata.x";
+    public static final String SITE_TRF_Y = "site.metadata.y";
+    public static final String SITE_TRF_Z = "site.metadata.z";
 
 }
