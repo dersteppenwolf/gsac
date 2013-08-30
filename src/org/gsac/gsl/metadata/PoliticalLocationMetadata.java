@@ -86,7 +86,7 @@ public class PoliticalLocationMetadata extends GsacMetadata {
         if (state != null) {
             pw.append(outputHandler.formEntry(request,
                     //outputHandler.msgLabel("State"), state));
-                    outputHandler.msgLabel("Region/state"), state));
+                    outputHandler.msgLabel("Province/State"), state));
         }
 
         if (city != null) {
