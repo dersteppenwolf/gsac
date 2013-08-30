@@ -1,4 +1,4 @@
-########################################################################
+#######################################################################/
 
 GSAC_WS Installation     
 
@@ -8,7 +8,7 @@ This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services
 to provide web service access to site-located data in a geoscience data repository.
 
 You should have first read and followed the installation instructions in the first README file ("Part 1"), 
-in the main GSAC code area, trunk/src/org/gsac/.
+in the main GSAC code area, gsac-code/src/org/gsac/.
 
 Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
 the design of data repositories or what data values and files are available or are of interest for you to
@@ -131,20 +131,20 @@ Do the command 'ant' in @MACRO.SRCDIR@:
 
 ant 
 
-When the ant command succeeds you will see output to the screen including 
+When the ant command succeeds you will see output to the screen something like this
 
 compile:
     [javac] Compiling 6 source files
     [javac] Note: Some input files use unchecked or unsafe operations.
     [javac] Note: Recompile with -Xlint:unchecked for details.
 gsacjar:
-     [echo] Making jar /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo1.0.jar
-     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo1.0.jar
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0.jar
 and including
 war:
-     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
-   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo1.0/servlet-api.jar
-      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacmyrepo.war
+     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/gsac-code/dist
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo.war
      [echo] ********************************
      [echo] To run the server run:
      [echo] ant runserver
@@ -165,10 +165,10 @@ The source Java (.java) files compiled are like these in @MACRO.SRCDIR@:
 
 This ant command builds GSAC for your repository, using code in @MACRO.SRCDIR@.  
 
-It uses core GSAC (GSL) code from the jar file  gsac/trunk/lib/gsacws.jar.  If you change core GSAC code,
-you must rebuild with ant in trunk/, and then rebuild your GSAC with ant in @MACRO.SRCDIR@.
+It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If you change core GSAC code,
+you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in @MACRO.SRCDIR@.
 
-Your ant build also creates a new Tomcat war file, something like trunk/dist/gsacmyrepo.war, 
+Your ant build also creates a new Tomcat war file, something like gsac-code/dist/gsacmyrepo.war, 
 which will be used late for your public web site, if you use Tomcat. 
 
 
@@ -352,11 +352,11 @@ available (not intended for computer processing).
 If you are satisfied with your GSAC repository offering these formats, 
 you need do nothing about output format choices. Go to the next topic.
 
-The choices of what to show in GSAC are set in the file trunk/src/org/gsac/gsl/SiteManager.java. 
+The choices of what to show in GSAC are set in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
 
 You may very easily NOT offer some formats.  Comment out lines for handlers NOT wanted your GSAC-WS repository.
 For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
-new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file trunk/src/org/gsac/gsl/SiteManager.java. 
+new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
 
 However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
 There is no harm in offering all the choices, even if you do not see much use in some format.
@@ -376,7 +376,7 @@ Please do *not* do svn commit into SourceForge for any modified SiteManager.java
 GSAC does not endorse file formats.  If there is a format which you think GSAC should offer, you can contact UNAVCO 
 to add it to GSAC code.  Or you can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
 You create a new kind of format by writing a new Java class, similar to any of the above output handlers, such as HtmlSiteOutputHandler.java.  
-The Java output handler source files are in trunk/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
+The Java output handler source files are in gsac-code/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
 guides to what is needed in a similar Java class.  
 
 
@@ -605,7 +605,7 @@ Put image files used on the web main page  in the directory htdocs.
 
 In your index.html file, an image is added like <img  src="${htdocs}/network_map.jpg" >
 
-If that does not work, try <img src="gsacring/gsacapi/htdocs/network_map.jpg">
+If that does not work, try <img src="gsacmyrepo/gsacapi/htdocs/network_map.jpg"> with the correct myrepo part.
 
 As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
 
@@ -656,7 +656,7 @@ gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
 gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
 gsl/output/site/XmlSiteLogOutputHandler.java:        // About ellipsoidal height:
 
-Then rebuild core GSAC with command ant in trunk/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
+Then rebuild core GSAC with command ant in gsac-code/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
 
 Note that the geodesy formats SINEX, GAMIT station.info, and SOPAC XML Site Log do not have a choice of two labels to 
 distinguish ellipsoid height from elevation. In those cases you may need to force zero for ellipsoid heights if you lack that data.
@@ -671,8 +671,8 @@ Once you have made the additions to the Java code, to build your GSAC, in @MACRO
 
  ant 
 
-The ant target builds a .zip of a stand-alone gsac server in ~/gsac/sourceforge/gsac/trunk/dist/  
-and generates a Tomcat war file  ~/gsac/sourceforge/gsac/trunk/dist/gsac@MACRO.PREFIX@.war.
+The ant target builds a .zip of a stand-alone gsac server in gsac-code/dist/  
+and generates a Tomcat war file  gsac-code/dist/gsac@MACRO.PREFIX@.war.
 
 To run the server, do:
 
@@ -711,7 +711,7 @@ Apache Tomcat is a Java servlet container to power web applications. See http://
 
 Building GSAC (in the src/org/demo/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
 
- trunk/dist/gsacDemo.war.   
+ gsac-code/dist/gsacDemo.war.   
 
 Copy this file to the Tomcat folder for .war file folder on your web server host.  For example, 
 on the Tomcat server, do something like
