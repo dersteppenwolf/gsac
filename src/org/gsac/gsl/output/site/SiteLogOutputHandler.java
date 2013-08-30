@@ -79,7 +79,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
     /** date formatter */
     private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 
-    /** date formatter */
+    /** date and time formatter; looks like ISO 8601 standard */
     private SimpleDateFormat sdf2 =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
 
