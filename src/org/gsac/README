@@ -13,7 +13,7 @@ introduces GSAC in detail , with the first steps to install and run GSACC.  The 
 is for persons using data repositories powered by GSAC.
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
-This file is in gsac/trunk/src/org/gsac/ in the GSAC package available from SourceForge as described below.
+This file is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
 Installation of GSAC requires some Java coding described in README part 2.  It is not possible for GSAC core code to anticipate
 the design of data repositories or what data values and files are available or of interest for you to
@@ -33,24 +33,27 @@ mkdir ~/GSAC/
 
 cd    ~/GSAC/
 
-Check out the GSAC code from SourceForge:
+Check out the GSAC code from SourceForge --
+(go to https://sourceforge.net/projects/gsac/; and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command, such as:)
+by entering this command:
+svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
-svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac  (may be obsolete due to changes at sourceforge)
-
-cd to  gsac/trunk/
+cd to  gsac-code/
 
 ant
 
-Edit gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js to set the longitude, latitude, and zoom level for the center of your map in the lines:
-var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
-var defaultZoomLevel = 5;
-The value defaultZoomLevel = 4 will show all of western Europe. 
+Edit gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js to set the longitude, latitude, and zoom level for the center of your map in the lines:
+The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area km across. 
 
-Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/sourceforge/gsac/trunk/  
+  var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
+  var defaultZoomLevel = 5;
 
-cd to ~/GSAC/sourceforge/gsac/trunk/src/org/gsac/template/
+Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/ .  You may find the screen messages interesting to show the 
+process of a GSAC build. 
 
-cp macros.properties   myrepomacros.properties  //  replace "myrepo" with an appropriate name for your repository.
+cd to gsac-code/src/org/gsac/template/
+
+cp macros.properties   myrepomacros.properties  //  replace "myrepo" in the new file name with an appropriate name for your repository.
 
 Edit the new myrepomacros.properties file to set:
 target.name=Myrepo GSAC Repository
@@ -65,12 +68,13 @@ to src/org/gsac/. Then run a command like this, with the new macros.properties f
 
 ant -propertyfile template/myrepomacros.properties makerepository   
 
-cd to the just-made new top directory with in the new GSAC code just for your repository, such as 
+Look to be sure not errors are sent to the screen.
 
-~/GSAC/sourceforge/gsac/trunk/src/org/myrepo/gsac/. 
+cd to the just-made new directory with new GSAC code just for your repository, such as 
+
+  gsac-code/src/org/myrepo/gsac/. 
 
 Follow the README file there to complete your GSAC installation. 
-
 
 
 ################################################################################ ################################################################################
@@ -142,24 +146,24 @@ The download may take as long as 20 minutes, depending on your Internet connecti
 
 Build core GSAC code:
 
-Next, cd to  ~/GSAC/sourceforge/gsac/trunk/ in your GSAC area.
+Next, cd to  ~/GSAC/gsac-code/,  your GSAC files area.
 
 Do the command "ant" which builds all the core GSAC code:
 
 ant
 
 This ant command builds the core GSAC code, including the GSL, the GSAC service layer.  If you later change or do svn update for
-new core GSAC code made by others (not already in your own personal GSAC), you need to do ant in trunk/ again to rebuild the core GSAC package.
-(The file gsac/trunk/src/gsac/trunk/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.) 
+new core GSAC code made by others (not already in your own personal GSAC), you need to do ant in gsac-code/ again to rebuild the core GSAC package.
+(The file gsac-code/org/src/gsac/trunk/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.) 
 
 This may take two or three minutes. The screen output ends with something like this:
 
 localinit:
 init:
 war:
-     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/trunk/dist
-   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacea1.0/servlet-api.jar
-      [war] Building war: /home/wier/gsac/sourceforge/gsac/trunk/dist/gsacws.war
+     [copy] Copying 1 file to /home/mydir/gsac/gsac-code/dist
+   [delete] Deleting:         /home/mydir/gsac/gsac-code/dist/gsacea1.0/servlet-api.jar
+      [war] Building war: /home/mydir/gsac/gsac-code/dist/gsacws.war
      [echo] ********************************
      [echo] To run the test     server do the command:
      [echo] ant runserver
@@ -167,18 +171,18 @@ war:
 BUILD SUCCESSFUL
 Total time: 1 minute 25 seconds
 
-The ant build also will create these items in gsac/trunk/:
+The ant build also will create these items in gsac-code/:
 build.xml   dist/   examples/   lib/    README  src/
-If you investigate you will find dozens of new files and directories below trunk/.
+If you investigate you will find dozens of new files and directories below gsac-code/.
 
-The core GSAC code is files in gsac/trunk/src/org/gsac/ and its subdirectories. 
+The core GSAC code is files in gsac-code/src/org/gsac/ and its subdirectories. 
 
-Building core GSAC code makes the .jar file gsac/trunk/lib/gsacws.jar (and other things).
+Building core GSAC code makes the .jar file gsac-code/lib/gsacws.jar (and other things).
 The file gsacws.jar holds all the core GSAC code.  When you build code for your local GSAC, described in README part 2, the core GSAC code is
 imported or included in the gsacws.war file.  
 
 In general you modify files in the core GSAC code only rarely if ever.  If you change a file there,
-rebuild the GSAC core code with command ant in gsac/trunk/. Then rebuild your GSAC code
+rebuild the GSAC core code with command ant in gsac-code/. Then rebuild your GSAC code
 with ant in your GSAC area, if you have made the GSAC code particular to your repository.
 Contact UNAVCO if you have or need changes to core GSAC code, such as format changes in an output ("GSAC results") file.
 
@@ -192,7 +196,7 @@ The default map in GSAC shows (at this time) almost all of western Europe, east 
 
 To center the map in the latitude-longitude region for your geodesy network, edit 
 
-gsac/trunk/src/org/gsac/gsl/htdocs/repositorymap.js
+gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js
 
 Set the longitude, latitude, and zoom level for the center of your map in the lines:
 
@@ -210,7 +214,7 @@ var defaultZoomLevel = 4;
 
 For more about OpenLayers maps, see for example http://trac.osgeo.org/openlayers/wiki/SettingZoomLevels.
 
-Rebuild the GSAC core code with command ant in gsac/trunk/.  
+Rebuild the GSAC core code with command ant in gsac-code/trunk/.  
 
 
 ################################################################################
@@ -218,10 +222,9 @@ Rebuild the GSAC core code with command ant in gsac/trunk/.
 
 The GSAC Core Code
 
-Core GSAC code is in ~/GSAC/sourceforge/gsac/trunk/src/org/gsac/  
+Core GSAC code is in ~/GSAC/gsac-code/src/org/gsac/  
 
-The full path such as ~/GSAC/sourceforge/gsac/trunk/src/org/gsac, is not shown in all commands here.
-In most cases the leading part ~/GSAC/sourceforge/gsac/trunk/src/ is not shown.
+The full path such as ~/GSAC/gsac-code/src/org/gsac, is not shown in all commands here.
 
 (Note there are two "gsac" in the full path; the one under sourceforge/ has all GSAC code including your 
 local repository's code; the one under org/ has core GSAC code used by all repositories.)
@@ -275,7 +278,7 @@ target.basename=gsacmyrepo
 target.package=org.myrepo.gsac
 
 You may wish to choose a top-level Java package name other than "org."  For example, if you wish to have the top level be "de", 
-first make a new subdirectory gsac/trunk/src/de/.  Then in your  macros.properties file use 
+first make a new subdirectory gsac-code/src/de/.  Then in your  macros.properties file use 
 target.package=de.myrepo.gsac
 You may use longer package names, such as the GSAC package at edu.ucsd.sopac.projects.gsac.repository from SOPAC at the University of California San Diego.
 
@@ -303,7 +306,7 @@ ant -propertyfile template/myrepomacros.properties makerepository
 The final lines output to screen from ant should be like:
 init:
 copyjava:
-     [copy] Copying 1 file to ~/gsac/sourceforge/gsac/trunk/src/org/myrepo/gsac
+     [copy] Copying 1 file to ~/gsac/gsac-code/src/org/myrepo/gsac
      [echo] Repository source package has been created
 BUILD SUCCESSFUL
 Total time: 1 second
@@ -321,7 +324,7 @@ somewhat parallel to the core GSAC code files in org/gsac/.
 GSAC Code for a new Repository
 
 After you created your myrepomacros.properties file, cd to the top directory with your GSAC code, such as 
-~/GSAC/sourceforge/gsac/trunk/src/org/myrepo/gsac.  This is determined by your package name.  In the GSAC
+~/GSAC/gsac-code/src/org/myrepo/gsac.  This is determined by your package name.  In the GSAC
 README files the path to your GSAC code is given as src/org/myrepo/, but your real path may not even have "org" of course. It could be
 something like this ficticious path fr/paris-sorbonne/geocentre/projets/gsac/repository/. 
 
@@ -353,7 +356,7 @@ Build a Federated GSAC:
 To install a federated GSAC, a single GSAC server which merges searches and results from
 two or more other GSAC repositories, modify the file
 
-trunk/src/org/gsac/federated/resources/gsacserver.properties
+gsac-code/src/org/gsac/federated/resources/gsacserver.properties
 
 You connect to other GSACs in the file:
 
@@ -383,7 +386,7 @@ gsac.federated.sopac.name=SOPAC GSAC Repository
 gsac.federated.sopac.icon=http://sopac.ucsd.edu/favicon.ico
 
 You may wish to extend the web page files
-cd trunk/src/org/gsac/federated/
+cd gsac-code/src/org/gsac/federated/
 resources/header.html
 resources/footer.html
 package.html
