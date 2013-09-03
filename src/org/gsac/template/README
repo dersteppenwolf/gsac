@@ -16,9 +16,10 @@ offer online.  New code is needed to adapt GSAC to your database and possibly to
 data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation.
 Contact UNAVCO at gsac-ws@unavco.org to request software support.
 
-Some file names in this README file, such as gsac@MACRO.PREFIX@.properties,
-may have one or more upper case letters. The cooresponding actual GSAC files lack upper case in their names. 
-Do not change actual filenames to match uppercase letters if any such are shown in this README file.
+Some file names in this README file, such as gsac@MACRO.PREFIX@.properties, may have one or more upper case letters. 
+The cooresponding actual GSAC files lack upper case in their namesi, except Java class file name begin wiht one upper case letter. 
+Do not change actual filenames to match other uppercase letters shown in this README file.
+
 
 ########################################################################
 
@@ -26,24 +27,18 @@ Hopefully you've managed to generate the initial repository source package using
 
 This README (Part 2) file is found in your new GSAC package in @MACRO.SRCDIR@/ (ignore the README file in @MACRO.SRCDIR@/release).
 
-Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ 
+Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ .
 
 
-Adding Your Repository's Details
-
-Base URL and Names or Titles: The "GSAC Resources Properties" File.
+Adding Your Repository's Details: The "GSAC Resources Properties" File.
 
 The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
-gsac.baseurl is the part of the URL, the full URL of the website for your GSAC repository.
+gsac.baseurl will be part of the full URL for your GSAC repository.
 
-Some values were created in the initial ant build you did already.
+Some values were created in the initial ant build you just made.
 
-    An example, a file myrepo/gsac/resources/gsac.properties might have: 
+    An example, a file myrepo/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
 
-    #This gets read by the base GsacRepository class for defining properties
-    #This allows you to override the default GSAC server properties defined in
-    #org/gsac/gsl/resources/gsac.properties
-    #  be sure to start the baseurl with / :
     gsac.baseurl = /gsacmyrepo
     #Your repository name
     gsac.repository.name=My repo GSAC Repository
@@ -58,7 +53,7 @@ You can use 'gsacws', or this baseurl part could be from an acronym for identifi
 
 The items repository.name and repository.description are used as labels on the web site.
 
-You optionally may use another line with a maximum size when zipping up files, e.g. 100 MB, in bytes:
+You optionally add this line showing the  maximum size allowed when zipping up files, e.g. 100 MB, in bytes:
 
     file.zip.maxsize=100000000
 
@@ -96,21 +91,22 @@ One Oracle JDBC URL is of the form:
 Copy the complete @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
 The two files with the same contents are a legacy from earlier GSAC code.
 
-If you have GSAC SourceForge write access: 
-'Caution': 
-Do not do 'svn add' or 'svn commit' for this file or your account details will be public!
+'Caution': If you have GSAC SourceForge write access: 
+Do not do 'svn add' or 'svn commit' this file, or your database account details will be public!
 
-Everytime you do "ant" to build your repository, the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file
-@MACRO.SRCDIR@/resources/gsacdb.properties, and @MACRO.SRCDIR@/resources/gsacserver_test.properties
-is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. Can be confusing if you attempt to keep track of the several properties files.
+Everytime you do "ant" to build your repository, the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file @MACRO.SRCDIR@/resources/gsacdb.properties, 
+and to the file @MACRO.SRCDIR@/dbresources/gsacdb_production.propertiea.s
+Also the file @MACRO.SRCDIR@/resources/gsacserver_test.properties is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. 
+This can be confusing if you attempt to keep track of the several properties files.
 
 
 ########################################################################
 build.xml
 ########################################################################
 
-Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. Note the gsac@MACRO.PREFIX@ : 
-(may have an extra upper case letter in @MACRO.PREFIX@)
+Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. 
+(Note that gsac@MACRO.PREFIX@ in this section may have an upper case letter in @MACRO.PREFIX@ where the actual word in build.xml has lower case which is correct.
+The uppercase is an artifact of automatic generation of this README file.)
 
     <target name="localinit">
         <!-- base name for build products -->
@@ -169,7 +165,7 @@ It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If yo
 you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in @MACRO.SRCDIR@.
 
 Your ant build also creates a new Tomcat war file, something like gsac-code/dist/gsacmyrepo.war, 
-which will be used late for your public web site, if you use Tomcat. 
+which will be used as the servelet container for your public web site, if you use Tomcat. 
 
 
 ########################################################################
@@ -195,10 +191,9 @@ Each 'processing' line corresponds to a named table in your database.
 This makes a new Java file, @MACRO.SRCDIR@/Tables.java. This file defines Java 'Tables' classes
 with complete specifications for your GSAC database, using GSAC Java code.
 
-The package name in Tables.java (at or near line 3) should be
-
+The package name in Tables.java (at or near line 3) should be edited to end with .database: 
 package org.@MACRO.PREFIX@.gsac.database;
-  not
+  not the supplied value:
 package org.@MACRO.PREFIX@.gsac;
 
 Edit that line in the Tables.java file to fix it.  Do not make other changes to the file.
@@ -207,13 +202,13 @@ Make a new @MACRO.SRCDIR@/database subdirectory:
 
 mkdir database
 
-Move the Tables.java file down into database.
+Move the Tables.java file down into @MACRO.SRCDIR@/database:
 
 mv Tables.java database/
 
 Do not leave a copy of Tables.java in @MACRO.SRCDIR@/.
 
-Now run just 'ant' again in @MACRO.SRCDIR@.  This time you should see 
+Now build GSAC with 'ant' again in @MACRO.SRCDIR@.  This time you should see 
 
 compile:
     [javac] Compiling 7 source files
@@ -223,7 +218,7 @@ and
 BUILD SUCCESSFUL
 Total time: 5 seconds
  
-This time ant compiles the six java files in @MACRO.SRCDIR@/, and compiles the new Tables.java in @MACRO.SRCDIR@/database/.
+This time ant compiles the six java files in @MACRO.SRCDIR@/, and compiles the new Java class file Tables.java in @MACRO.SRCDIR@/database/.
 Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.  
 
 The Tables classes provide a link between your database and your GSAC code.  
