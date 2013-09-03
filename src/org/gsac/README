@@ -51,7 +51,7 @@ Do an intial ant build with the command:
 ant
 
 Edit gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js to set the longitude, latitude, and zoom level for the center of your map in the lines:
-The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1500 km across. 
+The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1200 km wide by 800 km high. 
 
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
   var defaultZoomLevel = 5;
@@ -65,10 +65,10 @@ cp macros.properties   myrepomacros.properties  //  replace "myrepo" in the new 
 
 Edit the new myrepomacros.properties file to set:
 target.name=Myrepo GSAC Repository
-target.basename=gsacmyrepo     // used in Java package name and for the top level directory for your new GSAC code files.
-target.package=org.myrepo.gsac // if not beginning with org, see notes below for the Java pacakge name.
+target.basename=gsacmyrepo     // used in Java package name and for the new directory for your new GSAC code files.
+target.package=org.myrepo.gsac // The Java package name. If not beginning with org, see notes below for the Java package name.
 target.prefix=Myrepo           // used in names of Java files. Java style has first letter in uppper case, only.
-target.dbdriver=mysql.jar      // or postgres.jar or oracleDriver.jar
+target.dbdriver=mysql.jar      // or postgres.jar or oracleDriver.jar; which db server type you use.
 
 cd ../   
 
@@ -113,20 +113,20 @@ at fixed locations and about data files from the instruments.
 
 To install GSAC you need  
 
-  Linux OS or Mac, with Java 1.6 and the software engineering tools svn (subversion), ant, and bash.
+>   a database, with complete metadata about sites(stations), their instruments, and their data files (if any). GSAC presently can read Oracle, Postgres, or MySQL. 
+    You can use an existing database you have, with no changes to it but some changes will be needed to GSAC code to use your database table and field names. 
+    Or you can make a new database using the GSAC prototype MySQL database schema, populating it with your data values.
 
-  a database (in MySQL, Postgres, or Oracle) with complete geodesy parameters about sites (monuments) 
-and about the GNSS instruments (antennas and receivers) at the sites.
-  
-  a web server (usually with Tomcat)
+>   usually, but optionally, data files from the instruments. GSAC can provide discovery and download of geodesy data files (like RINEX files), if you have an FTP / HTTP download service set up for the data files.
+    File download is easy when you already have an FTP service, with an FTP URL for each data file to download in database records associating file download FTP URLs with the 
+    instrument site information (also in the database), and with the start and end times of data in each file.
 
-  FTP download if you wish GSAC to provide data file downloads
+>   a web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its own (included) application server, Jetty.
 
-  an FTP URL for each data file to download in the database
+>   the GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package from SourceForge.
 
-File download is easy when you already have an FTP service, an FTP URL for each data file to download in 
-database records associating file download FTP URLs with the instrument site information (also in the database) and with the
-start and end times of data in each file.
+>   A Linux system for code development, with related software tools (bash, Java 1.6, svn, and ant), and with access to your GSAC database and web server.
+
 
 ################################################################################
 
