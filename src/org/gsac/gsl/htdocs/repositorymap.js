@@ -18,7 +18,7 @@ var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vm
 /*   center of GSAC map to show one site: */
 
 /*   center of GSAC site map, for NOANET, longitude east positive, latitude north positive */
-var defaultLocation = new OpenLayers.LonLat(23.5, 38.0)
+//var defaultLocation = new OpenLayers.LonLat(23.5, 38.0)
 
 /*   center of GSAC site map, in Italy for RING GSAC */
 //var defaultLocation = new OpenLayers.LonLat(15, 41) 

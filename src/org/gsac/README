@@ -6,14 +6,18 @@ README, Part 1.  Creating the Initial GSAC Server at your repository
 
 30 August 2013.  SKW UNAVCO
 
-The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html.  The GSAC Web Services document,
-"UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail , with the first steps to install and run GSACC.  The GSAC User Guide
-"UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
+UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
+consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
+
+The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html.  If you plan to install GSAC, first read
+the GSAC Intallation page, http://facility.unavco.org/data/gsacws/gsac-install.html.
+
+The GSAC Web Services document, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
+introduces GSAC in detail.  The GSAC User Guide "UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
 is for persons using data repositories powered by GSAC.
 
-This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.
-This file is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
+This README file describes the first steps in GSAC installation once oyu have the set-up described in the  GSAC Intallation page, 
+and is the first of two README files detailing GSAC installation.  This file is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
 Installation of GSAC requires some Java coding described in README part 2.  It is not possible for GSAC core code to anticipate
 the design of data repositories or what data values and files are available or of interest for you to
@@ -34,21 +38,25 @@ mkdir ~/GSAC/
 cd    ~/GSAC/
 
 Check out the GSAC code from SourceForge --
-(go to https://sourceforge.net/projects/gsac/; and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command, such as:)
+
+(Go to https://sourceforge.net/projects/gsac/; and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command below.)
 by entering this command:
+
 svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
 cd to  gsac-code/
 
+Do an intial ant build with the command:
+
 ant
 
 Edit gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js to set the longitude, latitude, and zoom level for the center of your map in the lines:
-The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area km across. 
+The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1500 km across. 
 
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
   var defaultZoomLevel = 5;
 
-Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/ .  You may find the screen messages interesting to show the 
+Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  You may find the screen messages interesting to show the 
 process of a GSAC build. 
 
 cd to gsac-code/src/org/gsac/template/
@@ -68,13 +76,14 @@ to src/org/gsac/. Then run a command like this, with the new macros.properties f
 
 ant -propertyfile template/myrepomacros.properties makerepository   
 
-Look to be sure not errors are sent to the screen.
+Look to be sure no errors are sent to the screen.  This process creates a new code area, something line
+gsac-code/src/org/myrepo/gsac/, and populates it with initial coding files for your GSAC repository.
 
-cd to the just-made new directory with new GSAC code just for your repository, such as 
+cd to the just-made new directory with new GSAC code just for your repository, such as gsac-code/src/org/myrepo/gsac/. 
 
-  gsac-code/src/org/myrepo/gsac/. 
+Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
-Follow the README file there to complete your GSAC installation. 
+(end of quick install README Part 1).
 
 
 ################################################################################ ################################################################################
@@ -134,10 +143,17 @@ cd    ~/GSAC/
 
 In the directory where you will install GSAC, such as ~/GSAC/, check out the GSAC code from SourceForge, using this svn (subversion) command:
 
-svn co https://gsac.svn.sourceforge.net/svnroot/gsac gsac
-(may be obsolete in June 2013 due to changes at sourceforge)
 
-This svn command creates the new subdirectory "gsac" and files under it. 
+Check out the GSAC code from SourceForge --
+
+(Go to https://sourceforge.net/projects/gsac/; and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command below.)
+by entering this command:
+
+svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
+
+cd to  gsac-code/
+
+This svn command creates the new subdirectory "gsac-code" and files under it. 
 
 The download may take as long as 20 minutes, depending on your Internet connection speed.
 
@@ -152,9 +168,9 @@ Do the command "ant" which builds all the core GSAC code:
 
 ant
 
-This ant command builds the core GSAC code, including the GSL, the GSAC service layer.  If you later change or do svn update for
-new core GSAC code made by others (not already in your own personal GSAC), you need to do ant in gsac-code/ again to rebuild the core GSAC package.
-(The file gsac-code/org/src/gsac/build.xml is used by this ant command. 'ant' looks for a build.xml file in the working directory.) 
+(ant uses the build.xml in its directory, and may use other build.xml files further down the directory tres, such as the file  gsac-code/org/src/gsac/build.xml.)
+
+This ant command builds the core GSAC code, including the GSL, the GSAC service layer.  
 
 This may take one to three minutes. Watch for errors sent to the screen.  The screen output ends with something like this:
 
@@ -184,6 +200,11 @@ imported or included in the gsacws.war file.
 In general you modify files in the core GSAC code only rarely if ever.  If you change a file there,
 rebuild the GSAC core code with command ant in gsac-code/. Then rebuild your GSAC code
 with ant in your GSAC area, if you have made the GSAC code particular to your repository.
+
+(If you later change code, or get new files with an svn update for
+new core GSAC code made by others (not already in your own personal GSAC), you need to do ant in gsac-code/ again to rebuild the core GSAC package.
+Then rebuild your GSAC with ant in your lcoal directory area, as described below.)
+
 Contact UNAVCO if you have or need changes to core GSAC code, such as format changes in an output ("GSAC results") file.
 
 ################################################################################
@@ -201,9 +222,6 @@ gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js
 Set the longitude, latitude, and zoom level for the center of your map in the lines:
 
 /*   center of GSAC map  or viewpoint, with longitude, latitude: */
-/*      center of GSAC site map for in US lower 48 states: */
-//var defaultLocation = new OpenLayers.LonLat(-104, 40);
-
 /*   current GSAC default map center longitude, latitude:  14.15 E 48.5 N */
 var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
 
@@ -224,12 +242,9 @@ The GSAC Core Code
 
 Core GSAC code is in ~/GSAC/gsac-code/src/org/gsac/  
 
-The full path such as ~/GSAC/gsac-code/src/org/gsac, is not shown in all commands here.
+The full path including for example ~/GSAC/gsac-code/src/org/, is not shown in all commands here.
 
-(Note there are two "gsac" in the full path; the one under sourceforge/ has all GSAC code including your 
-local repository's code; the one under org/ has core GSAC code used by all repositories.)
-
-What's in org/gsac/:
+What's in src/org/gsac/:
  
    build.xml  used by ant 
 
@@ -243,7 +258,7 @@ What's in org/gsac/:
 
    ramadda/ The files for the RAMADDA GSAC plugin, for the RAMADDA content management system (not described here)
 
-   README   Part 1 for GSAC installation 
+   README   Part 1 for GSAC installation  (the file you are reading)
 
    template/  see the next section. 
 
@@ -277,10 +292,11 @@ target.basename=gsacmyrepo
 ##target Java package name.  Replace the 'myrepo' part with your acronym, and retain the org. and .gsac parts:
 target.package=org.myrepo.gsac
 
-You may wish to choose a top-level Java package name other than "org."  For example, if you wish to have the top level be "de", 
+(You may wish to choose a top-level Java package name other than "org."  For example, if you wish to have the top level be "de", 
 first make a new subdirectory gsac-code/src/de/.  Then in your  macros.properties file use 
 target.package=de.myrepo.gsac
 You may use longer package names, such as the GSAC package at edu.ucsd.sopac.projects.gsac.repository from SOPAC at the University of California San Diego.
+)
 
 A correct target.package name is important.  It determines the directories where your GSAC code is stored.  If there is an error in the target.package
 the files will be in the wrong place in the GSAC tree and your code will not compile or build correctly. Do not put your package in the core area src/org/gsac/.
@@ -296,7 +312,7 @@ Other choices for the database driver jar file, mysql.jar, are postgres.jar and 
 
 Create initial code for new repository
 
-cd ../ to org/gsac/
+cd ../ to src/org/gsac/
 
 and run this ant command, replacing the 'myrepomacros.properties' file name with the name of your new properties file:
 
@@ -323,10 +339,11 @@ somewhat parallel to the core GSAC code files in org/gsac/.
 
 GSAC Code for a new Repository
 
-After you created your myrepomacros.properties file, cd to the top directory with your GSAC code, such as 
-~/GSAC/gsac-code/src/org/myrepo/gsac.  This is determined by your package name.  In the GSAC
-README files the path to your GSAC code is given as src/org/myrepo/, but your real path may not even have "org" of course. It could be
-something like this ficticious path fr/paris-sorbonne/geocentre/projets/gsac/repository/. 
+After you created your myrepomacros.properties file, cd to the new directory with your GSAC code, such as 
+~/GSAC/gsac-code/src/org/myrepo/gsac.  This is determined by your package name.  
+
+(In the GSAC README files the path to your GSAC code is given as src/org/myrepo/, but your real path may not even have "org" of course. It could be
+something like this ficticious path fr/paris-sorbonne/geocentre/projets/gsac/repository/. )
 
 For a new implementation called myrepo, there are new files like these in the top directory with your GSAC code: 
 
