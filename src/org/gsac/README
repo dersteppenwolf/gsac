@@ -16,7 +16,7 @@ The GSAC Web Services document, "UNAVCO GSAC WS: Web Services for Geodesy Data R
 introduces GSAC in detail.  The GSAC User Guide "UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
 is for persons using data repositories powered by GSAC.
 
-This README file describes the first steps in GSAC installation once oyu have the set-up described in the  GSAC Intallation page, 
+This README file describes the first steps in GSAC installation once you have the necessary software resources described in the GSAC Intallation page, 
 and is the first of two README files detailing GSAC installation.  This file is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
 Installation of GSAC requires some Java coding described in README part 2.  It is not possible for GSAC core code to anticipate
@@ -369,6 +369,9 @@ Follow the instructions in the README the top directory with your GSAC code.
 ################################################################################
 
 Build a Federated GSAC:
+
+(NOT done as part of a GSAC to offer web services for your local data repository)
+
 
 To install a federated GSAC, a single GSAC server which merges searches and results from
 two or more other GSAC repositories, modify the file
