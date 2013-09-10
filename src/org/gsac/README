@@ -4,7 +4,7 @@ GSAC-WS Installation
 
 README, Part 1.  Creating the Initial GSAC Server at your repository
 
-30 August 2013.  SKW UNAVCO
+September 9, 2013.  SKW UNAVCO
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
@@ -37,9 +37,9 @@ mkdir ~/GSAC/
 
 cd    ~/GSAC/
 
-Check out the GSAC code from SourceForge --
+Check out the GSAC code from SourceForge (go to https://sourceforge.net/projects/gsac/; 
+    and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command).
 
-(Go to https://sourceforge.net/projects/gsac/; and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command below.)
 by entering this command:
 
 svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
