@@ -4,6 +4,33 @@ GSAC_WS Installation
 
 README, Part 2.
 
+September 9, 2013.   SKW  UNAVCO
+
+This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
+to provide web service access to site-located data in a geoscience data repository.
+
+You should have first read and followed the installation instructions in the first README file ("Part 1"), 
+in the main GSAC code area, gsac-code/src/org/gsac/.
+
+Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
+the design of data repositories or what data values and files are available or are of interest for you to
+offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation.
+Contact UNAVCO at gsac-ws@unavco.org to request software support.
+
+This README file is automatically generated when you do the command 'ant makerepository' during GSAC installation, but the file creation may have an error.
+Some file names such as gsacrMyRepo.properties or gsac@MACRO.PREFIX@.properties in this README file, may have one or more upper case letters.                  
+The cooresponding actual GSAC files on disk lack upper case in their names.
+Some new Java class file names do have upper case letters, such as UnavcoSiteManager.java.         
+Do not change actual filenames of files made by GSAC to match the uppercase letters shown in this README file.
+
+
+#######################################################################/
+
+GSAC_WS Installation     
+
+README, Part 2.
+
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
@@ -21,6 +48,723 @@ The cooresponding actual GSAC files lack upper case in their namesi, except Java
 Do not change actual filenames to match other uppercase letters shown in this README file.
 
 
+########################################################################
+
+Hopefully you've managed to generate the initial repository source package using README Part 1.
+
+This README (Part 2) file is found in your new GSAC package in @MACRO.SRCDIR@/ (ignore the README file in @MACRO.SRCDIR@/release).
+
+Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ .
+
+
+Adding Your Repository's Details: The "GSAC Resources Properties" File.
+
+The file @MACRO.SRCDIR@/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
+gsac.baseurl will be part of the full URL for your GSAC repository.
+
+Some values were created in the initial ant build you just made.
+
+    An example, a file myrepo/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
+
+    gsac.baseurl = /gsacmyrepo
+    #Your repository name
+    gsac.repository.name=My repo GSAC Repository
+    #Your repository description
+    gsac.repository.description=The My repo GSAC Repository 
+
+Change the items for your GSAC repository.
+
+The example of gsac.baseurl is 'gsacws' from the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
+You can use 'gsacws', or this baseurl part could be from an acronym for identification of your agency, for example 'NASA_GSAC'.
+(The other parts 'gsacapi/site/form' are always part of a GSAC URL (for a site search) and you do not enter them anywhere.)
+
+The items repository.name and repository.description are used as labels on the web site.
+
+You optionally add this line showing the  maximum size allowed when zipping up files, e.g. 100 MB, in bytes:
+
+    file.zip.maxsize=100000000
+
+
+########################################################################
+Database
+########################################################################
+
+Setting and Hiding DB account information: the "GSAC DB Properties" File.
+
+You code the file, @MACRO.SRCDIR@/dbresources/gsacdb_test.properties, to hold the database account details,
+to permit the GSAC web server process to read from the geodesy database.  The contents are like:
+
+gsac.db.username=db-gsac-username
+gsac.db.password=db-gsac-password
+gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
+
+The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  
+The database must have an account GSAC can use to read from the database. GSAC does not write to any database.
+When the GSL assembles the JDBC URL it finds the user name and password from here.
+
+One MySQL example which may work running both the db and GSAC on your computer is 
+gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
+
+Note that Oracle and Postgres have different syntax for the 'jdbc' line in this file.  For postgres the form is 
+
+=jdbc:postgresql://<hostname>:<port>/<database>.  
+
+One Oracle JDBC URL is of the form:
+
+=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
+   e.g:
+=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
+
+Copy the complete @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
+The two files with the same contents are a legacy from earlier GSAC code.
+
+'Caution': If you have GSAC SourceForge write access: 
+Do not do 'svn add' or 'svn commit' this file, or your database account details will be public!
+
+Everytime you do "ant" to build your repository, the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file @MACRO.SRCDIR@/resources/gsacdb.properties, 
+and to the file @MACRO.SRCDIR@/dbresources/gsacdb_production.propertiea.s
+Also the file @MACRO.SRCDIR@/resources/gsacserver_test.properties is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. 
+This can be confusing if you attempt to keep track of the several properties files.
+
+There are several files named *.properties in your GSAC code area.  The files in these two sections are the only ones you need to look at to make a working GSAC.
+
+########################################################################
+build.xml
+########################################################################
+
+Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. 
+(Note that gsac@MACRO.PREFIX@ in this section may have an upper case letter in @MACRO.PREFIX@ where the actual word in build.xml has lower case which is correct.
+The uppercase is an artifact of automatic generation of this README file.)
+
+    <target name="localinit">
+        <!-- base name for build products -->
+        <property name="basename" value="gsac@MACRO.PREFIX@"/>
+
+Probably no changes are needed here.
+
+This target will be used by ant build process to make your GSAC server.
+
+You have specified the basic information needed to run your full GSAC server.
+
+
+########################################################################
+Initial compile 
+########################################################################
+
+Do the command 'ant' in @MACRO.SRCDIR@:
+
+ant 
+
+When the ant command succeeds you will see output to the screen something like this
+
+compile:
+    [javac] Compiling 6 source files
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+gsacjar:
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0.jar
+and including
+war:
+     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/gsac-code/dist
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo.war
+     [echo] ********************************
+     [echo] To run the server run:
+     [echo] ant runserver
+     [echo] ********************************
+BUILD SUCCESSFUL
+Total time: 8 seconds
+
+This 'ant' build will take about 5 to 10 seconds.
+
+The source Java (.java) files compiled are like these in @MACRO.SRCDIR@:
+
+-rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 MyrepoRepository.class
+-rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 MyrepoFileManager.class
+-rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 MyrepoServer.class
+-rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 MyrepoTest.class
+-rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
+-rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
+
+This ant command builds GSAC for your repository, using code in @MACRO.SRCDIR@.  
+
+It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If you change core GSAC code,
+you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in @MACRO.SRCDIR@.
+
+Your ant build also creates a new Tomcat war file, something like gsac-code/dist/gsacmyrepo.war, 
+which will be used as the servelet container for your public web site, if you use Tomcat. 
+
+
+########################################################################
+Building Java support for the database connections
+########################################################################
+
+Now run this command in @MACRO.SRCDIR@:
+
+ant tables
+
+Output from the ant tables command includes lines something like:
+
+     [java] processing AGENCY
+     [java] processing EQUIPMENT
+     [java] processing INSTRUMENTATION
+     [java] processing RECEIVER
+...
+BUILD SUCCESSFUL
+Total time: 2 seconds
+
+Each 'processing' line corresponds to a named table in your database.
+
+This makes a new Java file, @MACRO.SRCDIR@/Tables.java. This file defines Java 'Tables' classes
+with complete specifications for your GSAC database, using GSAC Java code.
+
+The package name in Tables.java (at or near line 3) should be edited to end with .database: 
+package org.@MACRO.PREFIX@.gsac.database;
+  not the supplied value:
+package org.@MACRO.PREFIX@.gsac;
+
+Edit that line in the Tables.java file to fix it.  Do not make other changes to the file.
+
+Make a new @MACRO.SRCDIR@/database subdirectory:
+
+mkdir database
+
+Move the Tables.java file down into @MACRO.SRCDIR@/database:
+
+mv Tables.java database/
+
+Do not leave a copy of Tables.java in @MACRO.SRCDIR@/.
+
+Now build GSAC with 'ant' again in @MACRO.SRCDIR@.  This time you should see 
+
+compile:
+    [javac] Compiling 7 source files
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+and
+BUILD SUCCESSFUL
+Total time: 5 seconds
+ 
+This time ant compiles the six java files in @MACRO.SRCDIR@/, and compiles the new Java class file Tables.java in @MACRO.SRCDIR@/database/.
+Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.  
+
+The Tables classes provide a link between your database and your GSAC code.  
+
+You will use names of items in the classes in Tables.java to identify your database tables and columns (fields)
+in your GSAC Java code.  For example, one table name may be, in GSAC code, SITE_METADATA, and a column (field) in that table might be 
+COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
+
+CAUTION:
+If you later do "svn update" in your GSAC code area, svn will put a copy of the Tables.java file in @MACRO.SRCDIR@/ where it does not belong.
+If you then try "ant" in @MACRO.SRCDIR@/ a compile error is made.  Remove the Tables.java file from @MACRO.SRCDIR@/ and do "ant" again.
+Tables.java must be ONLY in @MACRO.SRCDIR@/database.
+
+
+########################################################################
+Run a local test of your GSAC server
+########################################################################
+
+Now you can run an initial (but incomplete) test version of your new GSAC web server with:
+
+ant runserver
+
+This command runs an intial gsac@MACRO.PREFIX@ GSAC repository server, on your local desktop where you are developing your GSAC.  
+Screen output of this ant command includes a line like
+
+GSAC INFO: Tue Aug 28 14:33:59 EDT 2012: GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
+
+This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
+running ant runserver.  If you already use 8080 for another purpose, enter a different value in buuild.xml.  It is 
+also in the gsacrepository.sh for when running stand-alone.
+
+In a browser on your desktop where you are developing your GSAC, look at that URL, like 
+
+http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
+
+You should see a new web page with minimal content:
+
+                    Search Sites | Search Files | Browse | Infomation | Help
+    Welcome to the GSAC Repository
+
+This shows that basic GSAC code runs on your system.  You can look at the GSAC informational pages, such as the Information and Help links.
+The 'Search' links probably won't do much yet.
+
+Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
+
+
+Stop the 'ant runserver' process with CTRL-c.  
+
+This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP server and Java servlet container.  
+The Jetty servlet is for local testing, which saves the trouble of deploying a .war file to a Tomcat implementation 
+(and may avoid restarting Tomcat for every test of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
+
+You have made an operational GSAC server which has complete core GSAC code, but which lacks specific details about your repository,
+that is, where to find station and instrument metadata, and geodesy file info, in your database.
+Now you need to specify those important parts of your data repository for GSAC.
+
+
+########################################################################
+Using Your Database by means of the Tables.java
+########################################################################
+
+GSAC must identify the tables and columns (fields) in your database,
+which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
+The Java class (in the file called Tables.java) holds all of the database table names and the tables' column (field) names.  
+
+The Java class Tables has methods, such as the next code block for a table about GPS receivers, 
+with methods getName() which gives the table name, and getColumns() which returns names for fields 
+in that table about GPS receivers, and which defines new String variables.
+
+     public static class STATION_IDENTIFICATION extends Tables {
+        public static final String NAME = "Station_Identification";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_MARKERNAME =  NAME + ".MarkerName";
+        public static final String ORA_MARKERNAME =  "MarkerName";
+        public static final String COL_MARKERNUMBER = NAME + ".MarkerNumber";
+        public static final String ORA_MARKERNUMBER = "MarkerNumber";
+        public static final String COL_LATITUDE =  NAME + ".Latitude";
+        public static final String ORA_LATITUDE =  "Latitude";
+        public static final String COL_LONGITUDE =  NAME + ".Longitude";
+        public static final String ORA_LONGITUDE =  "Longitude";
+        public static final String COL_CITY =  NAME + ".City";
+        public static final String ORA_CITY =  "City";
+        public static final String COL_COUNTRY =  NAME + ".Country";
+        public static final String ORA_COUNTRY =  "Country";
+        public static final String[] ARRAY = new String[] {
+            COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY, ...
+        };
+
+You will recognize the correspondence between your database's specific table names, such as Station Identification, and your field names, such as latitude,
+with the names GSAC uses internally, in Tables.java, such as STATION_IDENTIFICATION.COL_LATITUDE.  
+
+The GSAC forms of table and field (column) names from Tables.java will be used in new methods needed to implement your GSAC server, described below.
+
+
+########################################################################
+GSAC's Format Choices for Query Results
+########################################################################
+
+GSAC offers several choices for formats of the results of queries.  For example, on any GSAC web site, 
+either open the Information page's Output types list - click on [+] - or in a Search form, open the Results [+] area
+and then the Output: menu.
+
+GSAC now offers results in these formats:
+
+HTML                    output=site.html (for the GSAC web pages of results)
+XML Site Log (SOPAC)    output=site.xmllog
+SINEX                   output=site.snx
+GAMIT station.info      output=site.station.info
+GSAC Plain text         output=site.plaintext
+GSAC Full Site CSV      output=site.csv.full
+GSAC Short Site CSV     output=site.csv
+GSAC Site ATOM          output=site.gsacatom
+GSAC Site JSON          output=site.json
+GSAC Site RSS           output=site.gsacrss
+Google Earth KML        output=site.kml
+Google Earth KMZ        output=site.kmz
+
+(The terms output=... are the result format arguments in GSAC API queries.)
+
+GSAC offers both a short csv (comma separated value) file formats with only 
+site name and location, and a full csv file with lots of geodesy site data.
+The GSAC plain text format is for quick visual inspection of the site values 
+available (not intended for computer processing).
+
+If you are satisfied with your GSAC repository offering these formats, 
+you need do nothing about output format choices. Go to the next topic.
+
+The choices of what to show in GSAC are set in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
+
+You may very easily NOT offer some formats.  Comment out lines for handlers NOT wanted your GSAC-WS repository.
+For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
+new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
+
+However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
+There is no harm in offering all the choices, even if you do not see much use in some format.
+
+To conform with other GSAC repositories we ask you not to revise any GSAC-supplied format.  You are very welcome to make a new similar but altered 
+handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+
+For bug reports and suggested improvements about formats please contact UNAVCO.
+
+The output handler code for the GSAC format choices, HTML, SOPAC XML site log,
+SINEX, GAMIT station.info, GSAC FULL csv format, and the GSAC Plain Text format, 
+will handle the "standard parameters" in a "conforming GSAC geodesy implementation."
+
+Please do *not* do svn commit into SourceForge for any modified SiteManager.java file, if you have SourceForge write permission.
+
+GSAC does not endorse file formats.  If there is a format which you think GSAC should offer, you can contact UNAVCO 
+to add it to GSAC code.  Or you can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
+You create a new kind of format by writing a new Java class, similar to any of the above output handlers, such as HtmlSiteOutputHandler.java.  
+The Java output handler source files are in gsac-code/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
+guides to what is needed in a similar Java class.  
+
+
+########################################################################
+Extending Java Classes: Writing your new Java Code
+########################################################################
+
+To complete your GSAC server, you need to write new Java code to specify particular details of your data repository.
+Files in @MACRO.SRCDIR@/ have the Java code especially for your repository. 
+
+It is not possible for GSAC core code to anticipate the design of data repositories or what data values and files are available or of interest for you to
+offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
+from UNAVCO at gsac-ws@unavco.org.
+
+For example, the GSAC at INGV/RING, the RingSiteManager.java file has 640 lines more than the template RingSiteManager.java initially created automatically by the
+GSAC build process.  These figures give you an idea how much coding is required to install GSAC.  Even so, installing GSAC
+is far simpler than creating a suite of geoscience web services ab initio, and GSAC provides complete and standard data repository
+services, which also permit federated collaborations.
+
+GSAC is written in Java with extensive use of object-oriented design.  It is designed to be generalized to permit GSAC to be used
+for a wide variety of situations, with few geodesy domain- (or any other domain-) specific structures about data in archives.  i
+GSAC uses Java library methods to deal with databases, which means
+database queries are written in Java, not SQL syntax. This allows GSAC to work with many different types of databases.
+All this means a GSAC programmer will need to gain some understanding of GSAC to be able to add new code to GSAC.
+
+UNAVCO hopes to simplify GSAC installation, or at least make it less demanding to create the new Java code. We may be
+able to provide a way to automate some of the SiteManager.java code and FileManager.java code.
+
+
+The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must be extended to implement database queries used by your GSAC web form searches 
+and by the GSAC API.   For more help adding to the GSAC Java files, you should review code in other 
+GSAC implementations checked into SourceForge, such as the files RingSiteManager.java and RingFileManager.java.
+
+After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
+no errors in the compile step).  Stop ant runserver with CTRL-C.
+
+You need to modify or add new Java to these files:
+
+                     ########################################################################
+
+The file @MACRO.PREFIX@Repository.java 
+
+The @MACRO.PREFIX@Repository class is the main entry point. 
+
+Above the import lines, be sure there is correct new Java package name, something like this:
+
+package org.@MACRO.PREFIX@.gsac; 
+
+which is of course dependent on your choice of name for your Java GSAC pacakge.
+
+In the method initResourceManagers(), make the choice if you want your GSAC repository to
+search on sites (stations or monuments), for data files, or for both:
+ 
+  public void initResourceManagers() {
+        // Use this line to search on BOTH sites and data files in the metadata.
+        super.initResourceManagers();
+
+        // If you only want searches for sites,  uncomment this
+        //getResourceManager(GsacSite.CLASS_SITE);
+
+        // If you only want searches for files,  uncomment this
+        // getResourceManager(GsacFile.CLASS_FILE);
+    }
+
+                     ########################################################################
+
+The file @MACRO.PREFIX@SiteManager.java  
+
+This file specifies how GSAC searches for sites, and what information is returned to the user.  
+
+You will see a template file for @MACRO.PREFIX@SiteManager.java which was initially created automatically by the
+GSAC build process.  @MACRO.PREFIX@SiteManager.java requires about half of the new Java code for a new GSAC.
+
+A GSAC programmer needs to know Java and have an understanding of database concepts and queries, and in the process of
+writing new code for GSAC will learn about GSAC core code.
+
+First, above the "import" lines, add the new Java package name, in this form:
+package org.@MACRO.PREFIX@.gsac;
+such as package org.igs.gsac;  which is in the IgsSiteManager.java.
+
+Make sure you have a line like
+import org.@MACRO.PREFIX@.gsac.database.*;  
+such as import org.igs.gsac.database.*;
+
+Most of the work is in created the methods 
+
+    public List<Capability> doGetQueryCapabilities()
+
+    public GsacResource getResource(String resourceId)
+
+    public List<Clause> getResourceClauses ()
+
+You write Java code to specify which database items you will query on in the GSAC search forms, and Java code to do  queries to extract
+addtitional values from the database, values not used in queries but required for the GSAC results, such as receiver firmware version number.
+
+As a practical matter study the RingSiteManager.java file in the RING GSAC package(which you have installed from SourceForge with all of GSAC). 
+The RingSiteManager.java case is a fairly strightforward case where all metadata about sites in in one database table.
+
+After you have written new Java, test it with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. More details about this process below.
+
+
+                     ########################################################################
+
+The file @MACRO.PREFIX@FileManager.java 
+
+This file specifies how GSAC searches for data files, and what is returned to the user.  
+
+You need not modify this file if you do not supply a data file download service.  In that case, 
+in @MACRO.PREFIX@Repository.java use only getResourceManager(GsacSite.CLASS_SITE) in initResourceManagers().
+
+Above the import lines, be sure the Java package name is correct, in this form:
+
+package org.@MACRO.PREFIX@.gsac;
+
+(You may have other top level package name than org.)
+
+You need to include your database classes:
+
+import org.@MACRO.PREFIX@.gsac.database.*;
+
+The method doGetQueryCapabilities:
+
+This class determines what items you can query on about files in your GSAC, for example,
+in both the web search form pages for File Searches, and using the API. Add the line
+import org.gsac.gsl.util.*; at the top of the file.
+
+    /**
+     * Enable what file-related items are used to search for geoscience data files to download
+     * CHANGEME
+     *
+     * @return  List of GSAC "Capabilities" which are things to search with
+     */
+    public List<Capability> doGetQueryCapabilities() {
+        List<Capability> capabilities = new ArrayList<Capability>();
+
+        //  from FileManager class -  add search boxes for file type, date range, publish date, and file size
+        // if you want to offer those choices, just uncomment this line:
+        //addDefaultCapabilities(capabilities);
+
+        // or use this explicit code for individual  search items. 
+        Capability   cap;
+        Capability[] dflt = {
+                              // this provides a box with 100-some possible file types, everything in the list in 
+                              // src/org/gsac/gsl/resources/vocabulary/file.type.properties
+                              //initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), 
+                              //  "File Query", "Type of file", null, getRepository().getVocabulary( ARG_FILE_TYPE, true)),
+
+                              // this provides a pair of date search boxes to specify the date range for data of interest:
+                              initCapability(new Capability(ARG_FILE_DATADATE, "Data Dates",
+                                  Capability.TYPE_DATERANGE), "File Query", "Date the data this file holds was collected"),
+
+                              // this is in case your data base has a "publication date" for data files:
+                              //initCapability(new Capability(ARG_FILE_PUBLISHDATE, "Publish Date",
+                              //    Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+
+                              // this for choosing files by size:
+                              //initCapability(cap = new Capability(ARG_FILE_FILESIZE,
+                              //        "File Size", Capability .TYPE_NUMBERRANGE), "File Query", "File size") 
+        };
+
+        // also use this if you use choosing files by size:
+        //cap.setSuffixLabel("&nbsp;(bytes)");
+
+        for (Capability capability : dflt) {
+            capabilities.add(capability);
+        }
+
+        //  and can add the SITE-related search choices to the file search web page form, so you can select files from particular sites
+        // in many cases this is very useful
+        capabilities.addAll(getSiteManager().doGetQueryCapabilities());
+
+        return capabilities;
+    }
+
+If you offer searches on file types, the GSAC file type search default uses the complete list of 100-some possible file types in core GSAC code in 
+gsac/resources/vocabulary/ in the file file.type.properties.  Make a similar vocabulary dir under the @MACRO.PREFIX@/gsac/resources/ dir and copy 
+the file.type.properties there and edit it for the types you want to offer.  You might offer for example these eight types:
+gnss.data.raw=GNSS Raw
+gnss.data.binex=BINEX
+gnss.data.rinex.observation=GNSS RINEX Observation
+gnss.data.rinex.navigation=GNSS Navigation
+gnss.data.rinex.navigation.nfile=GNSS Navigation "N" file
+gnss.data.rinex.navigation.gfile=GNSS Navigation "G" file
+gnss.data.rinex.meteorology=GNSS RINEX Meteorology
+gnss.data.teqc_summary=GNSS RINEX Observation QC Report
+
+
+Most of the work in writing the FileManager.java class is in creating these two methods:
+
+   public void handleRequest(GsacRequest request, GsacResponse response)
+which does  the search for fails, as specified by the user's choices in the web site forms or via the API (contained in arg "request"),
+and puts an array of the results, one or more GSACFile objects, into the object "GsacResponse response."
+You write Java code to specify which database items you will query on in the GSAC search forms, and Java code to do  queries to extract
+addtitional values from the database, values not used in queries but required for the GSAC results, such as FTP URL for one file.
+
+    public GsacResource getResource(String resourceId) 
+which composes one particular result provided to user. This method is called when a user clicks on a particular item in the table of things 
+found, after a search.  For example, this mehtod may populate an HTML page.
+
+As a practical matter study the RingFileManager.java file in the RING GSAC package (which comes from SourceForge with all of the GSAC package), 
+The RingFileManager.java case is a fairly strightforward case where all metadata about files in in one database table.
+
+GSAC FileManagers usually allow searches for files associated with sites where files were recorded. The FileManager uses help from the SiteManager 
+class to do this.
+
+
+########################################################################
+Web Site Page Design, Contents, and Images 
+########################################################################
+
+Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
+You can add more to this file for a larger page, using normal HTML.
+
+The home page of a GSAC repository web site is detailed in a file such as src/org/@MACRO.PREFIX@/htdocs/index.html
+In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/gsac/htdocs/).
+In @MACRO.PREFIX@/gsac/htdocs make a new HTML file index.html. A very simple but working one has these lines:
+
+    <link rel="search" type="application/opensearchdescription+xml" href="htdocs/opensearch.xml" 
+    title=" @MACRO.PREFIX@ GSAC Repository" />
+    This is the @MACRO.PREFIX@ GPS Repository
+
+Put image files used on the web main page  in the directory htdocs.
+
+In your index.html file, an image is added like <img  src="${htdocs}/network_map.jpg" >
+
+If that does not work, try <img src="gsacmyrepo/gsacapi/htdocs/network_map.jpg"> with the correct myrepo part.
+
+As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
+
+Note that these pages do not have complete <html>  lines (including <html> and more at the beginning, or the final </html>), since these pages
+are wrapped inside the GSAC header and footer HTML files, mentioned next.
+
+The files footer.html and header.html, in the directory @MACRO.SRCDIR@/resources/, specify the top and bottom of the 
+GSAC web pages at your locations, and provide web page layout and decoration surrounding  the GSAC forms and results. 
+These files may be as simple as
+
+ header.html:
+	<html>
+	<head>
+	<title>New Repos GSAC Repository</title>
+	</head>
+	<body>
+
+or fully developed, such as using css. To include an image use <img  src="${htdocs}/home-page-header_1.jpg" > 
+Image files are in @MACRO.PREFIX@/gsac/htdocs/.
+
+Change the files resources/header.html and resources/footer.html to give the HTML appearance for the header and footer
+for your GSAC web site pages.  You may use these files to supply your standard web site look to your GSAC repository web site.
+
+The GSAC search web forms (web page content), and pages with static GSCA information such as the GSAC Help pages,
+are complete and provided by GSAC installation. They  use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
+with Java programming in the core GSAC code, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
+other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
+
+
+########################################################################
+Dealing with Elevation and Ellipsoid Height
+########################################################################
+
+GSAC code assumes station height values are elevations above a geoid model surface, 
+the heights for locations in terrestrial reference frames, including GNSS positions.
+
+If your location values have ellipsoid heights, you can change these lines in these files in core GSAC code to 
+make output labels with "ellipsoid height" in place of "elevation":
+
+Look for lines in the files with "// About ellipsoidal height:"
+
+gsl/output/GsacOutputHandler.java:               // About ellipsoidal height:
+gsl/output/HtmlOutputHandler.java:            // About ellipsoidal height:
+
+gsl/output/site/CsvFullSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/PlainTextSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/XmlSiteLogOutputHandler.java:        // About ellipsoidal height:
+
+Then rebuild core GSAC with command ant in gsac-code/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
+
+Note that the geodesy formats SINEX, GAMIT station.info, and SOPAC XML Site Log do not have a choice of two labels to 
+distinguish ellipsoid height from elevation. In those cases you may need to force zero for ellipsoid heights if you lack that data.
+
+For example SINEX has a parameter "_APP_H_" and SOPAC XML Site Log has a parameter "<mi:elevation-m_ellips> </mi:elevation-m_ellips>".
+
+########################################################################
+Building and Running the GSAC server
+########################################################################
+
+Once you have made the additions to the Java code, to build your GSAC, in @MACRO.SRCDIR@, run simply:
+
+ ant 
+
+The ant target builds a .zip of a stand-alone gsac server in gsac-code/dist/  
+and generates a Tomcat war file  gsac-code/dist/gsac@MACRO.PREFIX@.war.
+
+To run the server, do:
+
+ ant runserver
+
+This will run a test or demo version of your GSAC on your desktop, with Jetty doing the web page management.
+
+To see the new GSAC, in the runserver screen output  is a line such as
+
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacmyrepo/gsacapi
+
+Enter the "http:/hostname:8080/gsacmyrepo/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
+
+
+########################################################################
+Hiding DB account info
+########################################################################
+
+If you have some database authentication you need to use (or any other properties), 
+but don't want to check in with the properties files (into SourceForge or other svn), 
+you can create a org/@MACRO.PREFIX@/@MACRO.BASENAME@.properties file. The contents are two lines:
+gsac.db.username=your-db-account-name
+gsac.db.password=your-db-account-password
+
+The ant runserver command implicitly uses this property file as a command line argument.
+When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
+So, for example, for a 'gsacmyrepo' server,  it looks for a gsacmyrepo.properties file. 
+Put the authentication information in that properties file so it's not checked into any svn.
+
+
+########################################################################
+Running the new GSAC web site with Tomcat
+########################################################################
+
+Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
+
+Building GSAC (in the src/org/demo/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
+
+ gsac-code/dist/gsacDemo.war.   
+
+Copy this file to the Tomcat folder for .war file folder on your web server host.  For example, 
+on the Tomcat server, do something like
+
+cp gsacDemo.war /usr/local/apachetomcat/webapps
+
+The GSAC server web should be available in a few seconds if you are using "hot deploy," without a restart of Tomcat.
+    
+You can see the log of Tomcat actions by doing for example,
+
+ tail -f /usr/local/apachetomcat/logs/catalina.out
+    
+If for some reason Tomcat and hotdeploy are misbehaving, or to restart Tomcat, you can do:
+
+sudo /etc/init.d/tomcatdev stop
+sudo /etc/init.d/tomcatdev start
+
+to restart tomcat  and force a read of the .war files.
+
+The Tomcat's servlet reads the properties file:
+/usr/local/apachetomcatdev/conf/gsacigs.properties
+which contains the database authentication info. This is in the .war file.
+
+########################################################################
+########################################################################
+
+SKW
+UNAVCO
+
+template of  April 2, 2013; modified June 21
 ########################################################################
 
 Hopefully you've managed to generate the initial repository source package using README Part 1.
