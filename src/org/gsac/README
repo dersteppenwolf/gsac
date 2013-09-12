@@ -142,12 +142,7 @@ cd    ~/GSAC/
 (You can install GSAC code anywhere, so you need not make a new directory GSAC/.)
 
 In the directory where you will install GSAC, such as ~/GSAC/, check out the GSAC code from SourceForge, using this svn (subversion) command:
-
-
-Check out the GSAC code from SourceForge --
-
 (Go to https://sourceforge.net/projects/gsac/; and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command below.)
-by entering this command:
 
 svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
