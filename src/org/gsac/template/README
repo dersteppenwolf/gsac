@@ -62,7 +62,7 @@ You optionally add this line showing the  maximum size allowed when zipping up f
 
 
 ########################################################################
-Database
+Connecting to the Database used by GSAC
 ########################################################################
 
 Setting and Hiding DB account information: the "GSAC DB Properties" File.
@@ -105,7 +105,7 @@ This can be confusing if you attempt to keep track of the several properties fil
 There are several files named *.properties in your GSAC code area.  The files in these two sections are the only ones you need to look at to make a working GSAC.
 
 ########################################################################
-build.xml
+Verify a correct build.xml file
 ########################################################################
 
 Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. 
@@ -122,9 +122,8 @@ This target will be used by ant build process to make your GSAC server.
 
 You have specified the basic information needed to run your full GSAC server.
 
-
 ########################################################################
-Initial compile 
+Initial compile of GSAC in your new GSAC code area
 ########################################################################
 
 Do the command 'ant' in @MACRO.SRCDIR@:
@@ -173,7 +172,7 @@ which will be used as the servelet container for your public web site, if you us
 
 
 ########################################################################
-Building Java support for the database connections
+Automatic Code Generation for Java support for reading from the Database 
 ########################################################################
 
 Now run this command in @MACRO.SRCDIR@:
@@ -207,10 +206,12 @@ with complete specifications for your GSAC database, using GSAC Java code.
 
 The package name in Tables.java (at or near line 3) should be edited to end with .database: 
 package org.@MACRO.PREFIX@.gsac.database;
+
   not the supplied value:
 package org.@MACRO.PREFIX@.gsac;
 
-Edit that line in the Tables.java file to fix it.  Do not make other changes to the file.
+Edit that line in the Tables.java file to add ".database" in that line.  Do not make other changes to the file.
+
 
 Make a new @MACRO.SRCDIR@/database subdirectory:
 
@@ -222,7 +223,11 @@ mv Tables.java database/
 
 Do not leave a copy of Tables.java in @MACRO.SRCDIR@/.
 
-Now build GSAC with 'ant' again in @MACRO.SRCDIR@.  This time you should see 
+########################################################################
+Second compile of GSAC in your new GSAC code area
+########################################################################
+
+Now build GSAC again, with 'ant' in @MACRO.SRCDIR@.  This time you should see 
 
 compile:
     [javac] Compiling 7 source files
@@ -233,13 +238,13 @@ BUILD SUCCESSFUL
 Total time: 5 seconds
  
 This time ant compiles the six java files in @MACRO.SRCDIR@/, and compiles the new Java class file Tables.java in @MACRO.SRCDIR@/database/.
-Look for the new Tables*.class files in @MACRO.SRCDIR@/database/.  
+(You can check for some new Tables*.class files in @MACRO.SRCDIR@/database/.)  
 
 The Tables classes provide a link between your database and your GSAC code.  
 
-You will use names of items in the classes in Tables.java to identify your database tables and columns (fields)
-in your GSAC Java code.  For example, one table name may be, in GSAC code, SITE_METADATA, and a column (field) in that table might be 
-COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
+Names of items (Java variables) in the class files made from Tables.java to identify your database tables and columns (fields)
+in GSAC Java code.  For example, one table name may be, in GSAC code, Tables.STATION, and a column (field) in that table might be 
+Tables.STATION.COL_LATITUDE or COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
 
 CAUTION:
 If you later do "svn update" in your GSAC code area, svn will put a copy of the Tables.java file in @MACRO.SRCDIR@/ where it does not belong.
@@ -273,8 +278,8 @@ You should see a new web page with minimal content:
                     Search Sites | Search Files | Browse | Infomation | Help
     Welcome to the GSAC Repository
 
-This shows that basic GSAC code runs on your system.  You can look at the GSAC informational pages, such as the Information and Help links.
-The 'Search' links probably won't do much yet.
+This shows that all the core GSAC code runs on your system.  You can look at the GSAC informational pages, such as the Information and Help links.
+The 'Search' links won't do much yet.
 
 Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
 
