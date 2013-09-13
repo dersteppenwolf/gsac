@@ -116,7 +116,7 @@ The uppercase is an artifact of automatic generation of this README file.)
         <!-- base name for build products -->
         <property name="basename" value="gsac@MACRO.PREFIX@"/>
 
-Probably no changes are needed here.
+Probably no changes are needed here.  (There usually is no upper case letter in the real file's value="gsac@MACRO.PREFIX@".)
 
 This target will be used by ant build process to make your GSAC server.
 
@@ -180,13 +180,23 @@ Now run this command in @MACRO.SRCDIR@:
 
 ant tables
 
-Output from the ant tables command includes lines something like:
+Output from the ant tables command includes lines  to the screen something like this:
 
+Buildfile: build.xml
+localinit:
+init:
+tables:
+     [java] JVM args ignored when same JVM is used.
+     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
+     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
+     [java] processing ACCESS_PERMISSION
      [java] processing AGENCY
-     [java] processing EQUIPMENT
-     [java] processing INSTRUMENTATION
-     [java] processing RECEIVER
-...
+     [java] processing ANTENNA_SESSION
+     [java] processing ANTENNA_TYPE
+     [java] processing COUNTRY
+     [java] processing FILE_TYPE
+     [java] processing GNSS_DATA_FILE
+     ...[more...
 BUILD SUCCESSFUL
 Total time: 2 seconds
 
