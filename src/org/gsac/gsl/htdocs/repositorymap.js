@@ -15,22 +15,28 @@ var map_wms_topographic = "wms:Topo Maps,http://terraservice.net/ogcmap.ashx,DRG
 var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vmap0,basic";
 
 
-/*   center of GSAC map to show one site: */
+/*   center of GSAC map as longitude east positive, latitude north positive; */
 
-/*   center of GSAC site map, for NOANET, longitude east positive, latitude north positive */
-//var defaultLocation = new OpenLayers.LonLat(23.5, 38.0)
+/*   center for western Europe,  defaultZoomLevel = 4; */
+//var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
 
-/*   center of GSAC site map, in Italy for RING GSAC */
+/*   center of GSAC site map, for SEGAL's 289 stations; defaultZoomLevel = 5; */
+//var defaultLocation = new OpenLayers.LonLat(-6.0, 40.0) 
+
+/*   center of GSAC site map, for NOANET, NOA, Athens; defaultZoomLevel = 5; */
+//var defaultLocation = new OpenLayers.LonLat(23.88, 38.52)
+
+/*   center for RENAG, France */
+var defaultLocation = new OpenLayers.LonLat(2.1, 47.0);
+
+/*   center for RING GSAC */
 //var defaultLocation = new OpenLayers.LonLat(15, 41) 
 
-/*   center of GSAC site map,  in US lower 48 states, with longitude, latitude */
+/*   center of GSAC site map, western US lower 48 states, with longitude, latitude */
 //var defaultLocation = new OpenLayers.LonLat(-104, 40);
 
-/*   default map center longitude, latitude: Europe, 14.15 E  48.5 N */
-var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
-
-/*   GSAC map of sites; set zoom level; 3 is about 10,000 km wide; 4 is about 3900 km wide. */
-var defaultZoomLevel = 6;
+/*   GSAC map of sites; set zoom level; 3 is about 10,000 km wide; 4 is about 3900 km wide; 5 for France, Spain or Greece sized areas. */
+var defaultZoomLevel = 5;
 
 
 function loadjscssfile(filename, filetype){
