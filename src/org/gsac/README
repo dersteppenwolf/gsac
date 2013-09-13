@@ -4,7 +4,7 @@ GSAC-WS Installation
 
 README, Part 1.  Creating the Initial GSAC Server at your repository
 
-September 9, 2013.  SKW UNAVCO
+September 12, 2013.  SKW UNAVCO
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
@@ -64,11 +64,14 @@ cd to gsac-code/src/org/gsac/template/
 cp macros.properties   myrepomacros.properties  //  replace "myrepo" in the new file name with an appropriate name for your repository.
 
 Edit the new myrepomacros.properties file to set:
+
 target.name=Myrepo GSAC Repository
 target.basename=gsacmyrepo     // used in Java package name and for the new directory for your new GSAC code files.
 target.package=org.myrepo.gsac // The Java package name. If not beginning with org, see notes below for the Java package name.
 target.prefix=Myrepo           // used in names of Java files. Java style has first letter in uppper case, only.
 target.dbdriver=mysql.jar      // or postgres.jar or oracleDriver.jar; which db server type you use.
+
+Then
 
 cd ../   
 
