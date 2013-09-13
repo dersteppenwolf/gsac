@@ -50,9 +50,9 @@ Some values were created in the initial ant build you just made.
 
 Change the items for your GSAC repository.
 
-The example of gsac.baseurl is 'gsacws' from the URL of GSAC at CDDIS, http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-You can use 'gsacws', or this baseurl part could be from an acronym for identification of your agency, for example 'NASA_GSAC'.
-(The other parts 'gsacapi/site/form' are always part of a GSAC URL (for a site search) and you do not enter them anywhere.)
+The  gsac.baseurl is used in a URL to a GSAC server such as the "gsacws" in  http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
+You can use 'gsacws', or this baseurl  can have an acronym for identification of your agency, for example 'acrogsac'.
+(The other parts of a GSAC URL 'gsacapi/site/form' are always part (for a site search) and you do not enter them anywhere while installing GSAC.)
 
 The items repository.name and repository.description are used as labels on the web site.
 
