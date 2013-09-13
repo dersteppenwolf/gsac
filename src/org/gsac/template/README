@@ -24,30 +24,6 @@ The cooresponding actual GSAC files on disk lack upper case in their names.
 Some new Java class file names do have upper case letters, such as UnavcoSiteManager.java.         
 Do not change actual filenames of files made by GSAC to match the uppercase letters shown in this README file.
 
-
-#######################################################################/
-
-GSAC_WS Installation     
-
-README, Part 2.
-
-This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
-to provide web service access to site-located data in a geoscience data repository.
-
-You should have first read and followed the installation instructions in the first README file ("Part 1"), 
-in the main GSAC code area, gsac-code/src/org/gsac/.
-
-Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
-the design of data repositories or what data values and files are available or are of interest for you to
-offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
-data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation.
-Contact UNAVCO at gsac-ws@unavco.org to request software support.
-
-Some file names in this README file, such as gsac@MACRO.PREFIX@.properties, may have one or more upper case letters. 
-The cooresponding actual GSAC files lack upper case in their namesi, except Java class file name begin wiht one upper case letter. 
-Do not change actual filenames to match other uppercase letters shown in this README file.
-
-
 ########################################################################
 
 Hopefully you've managed to generate the initial repository source package using README Part 1.
