@@ -195,6 +195,9 @@ public abstract class SiteManager extends GsacResourceManager {
         //  JSON this output format this is used by Scott Baker's geodesy aggregator search tool, so has real and current use.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         
+        // FIX look fails with javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+
         // other IT formats
         new AtomSiteOutputHandler(getRepository(), getResourceClass());
         new RssSiteOutputHandler(getRepository(), getResourceClass());
@@ -202,14 +205,11 @@ public abstract class SiteManager extends GsacResourceManager {
         //  GSAC (short) XML , different from XmlSiteLogOutputHandler  for SOPAC XML
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
         // look - above fails when invoked with
-//  GSAC INCOMING REQUEST is: /gsacring/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&search.y=0&search.x=0&site.code=i*
-//     [java] 2013-03-27 12:27:15.833::WARN:  Error for /gsacring/gsacapi/site/search/sites.xml
-//     [java] javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
-//     [java]     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
-//     [java]     at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
-
-        // look fails with javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
-        //new KmlSiteOutputHandler(getRepository(), getResourceClass());  // for Google Earth KMZ and KML
+        //  GSAC INCOMING REQUEST is: /gsacring/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&search.y=0&search.x=0&site.code=i*
+        //     [java] 2013-03-27 12:27:15.833::WARN:  Error for /gsacring/gsacapi/site/search/sites.xml
+        //     [java] javax.xml.parsers.FactoryConfigurationError: Provider org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+        //     [java]     at javax.xml.parsers.DocumentBuilderFactory.newInstance(DocumentBuilderFactory.java:129)
+        //     [java]     at ucar.unidata.xml.XmlUtil.getDocument(XmlUtil.java:1561)
     }
 
 
