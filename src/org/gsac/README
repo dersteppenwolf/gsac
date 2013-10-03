@@ -52,6 +52,10 @@ To install subversion ("svn"), do command sudo apt-get install subversion
 If you elect to use MySQL (see below), versions 5.1 to 5.5 work. Do the command sudo apt-get install mysql-server
 This requests a you to enter a new so-called "root" password for MySQL use, which is a new password, not your Linux system root password.
 
+Installation of GSAC on Debian Linux may be as easy, for Debian users.  
+
+In principle you may be able to install GSAC on a new Mac. It likely will be more difficult than using Linux.  The new Mac OS does not come with svn but can use svn.  Instructions about how to install svn on the Mac are online (for example http://www.wikihow.com/Install-Subversion-on-Mac-OS-X).  UNAVCO uses Linux and has little knowledge of building GSAC on a Mac.
+
 ################################################################################
 
 The GSAC Database
