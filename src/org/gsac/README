@@ -4,31 +4,94 @@ GSAC-WS Installation
 
 README, Part 1.  Creating the Initial GSAC Server at your repository
 
-September 12, 2013.  SKW UNAVCO
+October 3, 2013.  SKW UNAVCO
 
-UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
+This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.  
+This README file is "README Part 1," and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
+
+UNAVCO's GSAC-WS, called GSAC, is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
 
-The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html.  If you plan to install GSAC, first read
-the GSAC Intallation page, http://facility.unavco.org/data/gsacws/gsac-install.html.
-
+The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html. 
 The GSAC Web Services document, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC in detail.  The GSAC User Guide "UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
+introduces GSAC.  The GSAC User Guide "UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
 is for persons using data repositories powered by GSAC.
-
-This README file describes the first steps in GSAC installation once you have the necessary software resources described in the GSAC Intallation page, 
-and is the first of two README files detailing GSAC installation.  This file is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
-
-Installation of GSAC requires some Java coding described in README part 2.  It is not possible for GSAC core code to anticipate
-the design of data repositories or what data values and files are available or of interest for you to
-offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your
-data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. 
-Contact UNAVCO at gsac-ws@unavco.org to request software support.
 
 ################################################################################
 
-Quick Install, Part 1.  Creating the initial GSAC Server at your repository
+Installing GSAC Web Services -- What You Need
 
+You can install GSAC web services for a data repository when you have:
+
+    a database, with complete metadata about sites(stations), their instruments, and their data files (if any). GSAC presently can read Oracle, Postgres, or MySQL. You can use an existing database you have, with no changes to it -- but some changes will be needed to GSAC code to be able to read the database. Or you can make a new database using the GSAC prototype database schema (as described below), populating it with your data values. See more in The GSAC Database, below.
+
+    usually, but optionally, data files from the instruments for remote users to download. GSAC can provide discovery and download of geodesy data files like RINEX files.
+
+    if you want to offer data file downloads, an FTP / HTTP download server the data files. GSAC does not download files. GSAC tells users how and where to download files. For example, GSAC can run on a web server different from one or more servers for downloads, a benefit.
+
+    a web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its own included application server, Jetty.
+
+    the GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package from SourceForge.
+
+    A Linux system for the initial installation and test of GSAC, with related software tools bash, Java JDK 1.6 or 1.7, subversion ("svn"), and ant, and with access to your GSAC database.
+
+A typical Linux system for the initial installation and test of GSAC could be Ubuntu, version 11, 12 or 13. Use the bash shell.
+Ubuntu with bash has very simple installation of the software tools you need.
+
+Java version 1.6 or 1.7 works. Ubuntu may come with Java JDK which is all you need for GSAC builds. If your system lacks Java, or to upgrade to Java (JDK) 1.7, do:
+sudo apt-get install openjdk-7-jdk
+sudo update-alternatives --config java       Choose the item for the Java version you want.
+In ~/.bashrc, add
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386
+and do command source ~/.bashrc
+
+To install ant, do command sudo apt-get install ant
+
+To install subversion ("svn"), do command sudo apt-get install subversion
+
+If you elect to use MySQL (see below), versions 5.1 to 5.5 work. Do the command sudo apt-get install mysql-server
+This requests a you to enter a new so-called "root" password for MySQL use, which is a new password, not your Linux system root password.
+
+################################################################################
+
+The GSAC Database
+
+An essential part of GSAC installation and operations, which is not available from online resources, is a database which you create and maintain, about sites (stations), their instruments, and their data files (if any). The GSAC database contains the information about stations which you wish to offer online, and about stations' data files which you wish to offer for download. The database must contain up-to-date, complete, and correct information if GSAC services are to represent your data repository correctly. (The GSAC database is also a good way to manage contents of your data repository, aside from GSAC operations, if it is well designed. To manage a data center, a well-designed database is much less error prone, and much more suited to computer operations, than text files such as IGS site logs or SINEX files.)
+
+There are two ways to supply a database for GSAC. First, you can use an existing Oracle, Postgres, or MySQL database about your data holdings and stations, if it has the database fields used by GSAC. See the Prototype GSAC database schema (MySQL form) at http://facility-beta-web-server.win.int.unavco.org/data/gsacws/docs/Prototype_GSAC_Database_MySQL_schema_notes.txt. This set of parameters enables GSAC to provide its complete suite of web services for searching for geodesy stations information and for station instrument data files, and for data file downloads by GSAC. This list is provided so that persons considering GSAC may see if they have adequate types of metadata in an exisiting database to support GSAC web services. In general the fields which may be NULL in the database are not required for GSAC operations. This schema is for MySQL but the parallel to Postgres and Oracle should be clear.
+
+Or, second, you can create a new a database for GSAC for your data center. UNAVCO supplies a standard or prototype GSAC database in MySQL (a schema in a MySQL .sql or dump file). The schema supports geodesy data search and discovery, and all the GSAC formats of search results including web pages, and SINEX and GAMIT station.info files. You can download the MySQL schema .sql file 
+Prototype_GSAC_Database.sql (http://facility-beta-web-server.win.int.unavco.org/data/gsacws/docs/Prototype_GSAC_Database.sql) for the prototype GSAC database (a MySQL "dump file"). (You can look at this MySQL file in your browser too: click on it.) This prototype schema may be revised in future, but it is quite complete now.
+
+The tables and fields (columns) in the prototype GSAC schema show the essential parameters needed for GSAC, and their data types. The prototype design corresponds to common geodesy needs, such as encapsulating station receiver-antenna sessions, and helps avoid error-prone database practices, such as storing latitude values or time values in a character strings. The prototype design includes features to insure reduced problems in an archive database. For example, only actual dates and numbers can be stored in date and number fields. Databases which store dates or numbers as character strings are error-prone and difficult to manage. GSAC uses all times and dates in UTC, in ISO 8601 format.
+
+To create a new MySQL GSAC prototype database using that .sql file:
+- if you do not have MySQL, install it. On some Linux systems you can simply do the command sudo apt-get install mysql-server. This requests a you to enter a new so-called "root" password for MySQL use, which is a new password, not your Linux system root password.
+- start the MySQL server, for example in Linux with "sudo /etc/init.d/mysql restart"
+- cd to the folder with the file Prototype_GSAC_Database.sql
+- edit the .sql file to change the name of the database, before you use mysql to create the database. You can change all instances of `Prototype_GSAC_Database` to your new db name, something like MyCenter_GSAC_database; the name is not particularly important and will not be publically visible.
+- run mysql as mysql root and create a new MySQL account for GSAC, called for example gsac
+- run the mysql command line tool, such as, in Linux, "mysql -u gsac -p"
+(MySQL documentation is online, as at http://dev.mysql.com/doc/refman/5.1/en/index.html).
+- in mysql (mysql>) do the command source Prototype_GSAC_Database.sql; (including the ;)
+
+This creates a GSAC prototype MySQL database, which is of course initially empty of your GNSS metadata. You can use mysql commands to explore the new database schema.
+
+You need to populate the database with the information about your stations, instruments, and instrument data files. UNAVCO has a script to populate the GSAC prototype database with information about geodesy data files you already have on an FTP or HTTP site. UNAVCO is creating a script to populate a GSAC prototype database from a SINEX file (which may be tricky to use). If you use the GSAC prototype database design, you can email UNAVCO to get whatever version of these scripts we have to help you populate your database. The scripts are written in Python.
+
+UNAVCO is very happy to aid and advise about GSAC installations and operations. UNAVCO has a responsibility to ensure that GSAC itself installs properly. UNAVCO can help install GSAC, in some cases, by providing a provisional working database with some of your data center's information, if some conditions are met including your use of the provisional database schema.
+
+UNAVCO does not populate your database beyond an initial set of data to ensure GSAC is working. Populating your database, and maintaining it, is necessary to operate GSAC, but doing so is entirely outside of GSAC itself -- see the diagram on the GSAC web home page-- and is your responsibility. Likewise GSAC does not provide services to check data quality or otherwise manage a data archive. GSAC is web services; it does not "know" (much) about geodesy.
+
+
+################################################################################
+
+Installing the GSAC Web Services Software Package
+Part 1.  Creating the initial GSAC Server at your repository
+
+################################################################################
+
+Quick Install for Part 1.  
 For experienced GSAC operators and software engineers.
 
 Find or make a top-level working directory for GSAC, and go there. For example:
@@ -37,20 +100,28 @@ mkdir ~/GSAC/
 
 cd    ~/GSAC/
 
-Check out the GSAC code from SourceForge (go to https://sourceforge.net/projects/gsac/; 
-    and click on 'Code' menu item in 'Summary Files ...' menu line, to get the command).
-
+Check out the GSAC code from SourceForge 
+   (to get this command, go to https://sourceforge.net/projects/gsac/ and click on 'Code' menu item in 'Summary Files ...' menu line)
 by entering this command:
 
 svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
-cd to  gsac-code/
+The svn checkout creates a new folder gsac-code and many folders and files in it.
+
+cd gsac-code/
+
+Note the files in this new folder; one is a copy of the prototype GSAC database in a MySQL .sql file.
 
 Do an intial ant build with the command:
 
 ant
 
-Edit gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js to set the longitude, latitude, and zoom level for the center of your map in the lines:
+
+Next, edit 
+
+gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
+
+to set the longitude, latitude, and zoom level for the center of your map in the lines:
 The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1200 km wide by 800 km high. 
 
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
@@ -59,9 +130,13 @@ The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an a
 Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  You may find the screen messages interesting to show the 
 process of a GSAC build. 
 
-cd to gsac-code/src/org/gsac/template/
+Next
 
-cp macros.properties   myrepomacros.properties  //  replace "myrepo" in the new file name with an appropriate name for your repository.
+cd  ~/GSAC/gsac-code/src/org/gsac/template/
+
+and replace "myrepo" in the new file name with an appropriate name for your repository.
+
+cp macros.properties   myrepomacros.properties  
 
 Edit the new myrepomacros.properties file to set:
 
@@ -77,10 +152,15 @@ cd ../
 
 to src/org/gsac/. Then run a command like this, with the new macros.properties file name:
 
+BE SURE to use your new file name, not myrepomacros.properties:
+
 ant -propertyfile template/myrepomacros.properties makerepository   
 
-Look to be sure no errors are sent to the screen.  This process creates a new code area, something line
-gsac-code/src/org/myrepo/gsac/, and populates it with initial coding files for your GSAC repository.
+Look to be sure no errors are sent to the screen.  
+
+This process creates a new code area, beginning with a new folder, something line
+gsac-code/src/org/myrepo/gsac/ 
+and populates it with initial all-new files for your GSAC repository.
 
 cd to the just-made new directory with new GSAC code just for your repository, such as gsac-code/src/org/myrepo/gsac/. 
 
@@ -90,55 +170,15 @@ Follow the README file there to complete your GSAC installation. That is README 
 
 
 ################################################################################ ################################################################################
-################################################################################ ################################################################################
 
-Complete GSAC installation instructions (README Part 1)
+Complete GSAC installation instructions for  Part 1.
 
-################################################################################ ################################################################################
-################################################################################ ################################################################################
-
-
-
-################################################################################
-
-UNAVCO's GSAC-WS is a software package to provide a complete suite of web services at a geoscience data repository
-for data discovery about sites (monuments) and about the GNSS instruments (antennas and receivers) at the sites, 
-and about data access (file downloads).  GSAC provides a web site GUI, an HTTP or RESTful API, and a GSAC client program using the API.
-GSAC is freely available from SourceForge, as described here.  GSAC was created and is maintained by UNAVCO (www.unavco.org).
-
-GSAC site searches provide details about sites (monuments) and about the GNSS instruments (antennas and receivers) at the sites, 
-in geodesy formats such as SINEX, GAMIT station.info, SOPAC XML and others.  You may also provide a download service for RINEX 
-and other type of geodesy data files.  GSAC may be used to provide web services for any science data repository with information in a database about instrumented stations
-at fixed locations and about data files from the instruments.
-
-################################################################################
-
-
-To install GSAC you need  
-
->   a database, with complete metadata about sites(stations), their instruments, and their data files (if any). GSAC presently can read Oracle, Postgres, or MySQL. 
-    You can use an existing database you have, with no changes to it but some changes will be needed to GSAC code to use your database table and field names. 
-    Or you can make a new database using the GSAC prototype MySQL database schema, populating it with your data values.
-
->   usually, but optionally, data files from the instruments. GSAC can provide discovery and download of geodesy data files (like RINEX files), if you have an FTP / HTTP download service set up for the data files.
-    File download is easy when you already have an FTP service, with an FTP URL for each data file to download in database records associating file download FTP URLs with the 
-    instrument site information (also in the database), and with the start and end times of data in each file.
-
->   a web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its own (included) application server, Jetty.
-
->   the GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package from SourceForge.
-
->   A Linux system for code development, with related software tools (bash, Java 1.6, svn, and ant), and with access to your GSAC database and web server.
-
-
-################################################################################
-
+[some parts may be obsolete compared to the correct Quick install guidance, above.]
 
 Check out GSAC code from SourceForge
 
-You may have done the following already, if you are reading this README file in a GSAC installation:  
+Usually, you  make a new top-level working directory for GSAC, and go there. For example:
 
-Find or make a top-level working directory for GSAC, and go there. For example:
 mkdir ~/GSAC/
 cd    ~/GSAC/
 
@@ -149,18 +189,18 @@ In the directory where you will install GSAC, such as ~/GSAC/, check out the GSA
 
 svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
-cd to  gsac-code/
-
+The download may take as long as 20 minutes, depending on your Internet connection speed.
 This svn command creates the new subdirectory "gsac-code" and files under it. 
 
-The download may take as long as 20 minutes, depending on your Internet connection speed.
+cd   gsac-code/
 
-################################################################################
+
 
 
 Build core GSAC code:
 
-Next, cd to  ~/GSAC/gsac-code/,  your GSAC files area.
+Next, 
+cd   ~/GSAC/gsac-code/
 
 Do the command "ant" which builds all the core GSAC code:
 
