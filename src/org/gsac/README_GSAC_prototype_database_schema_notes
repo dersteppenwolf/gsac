@@ -1,0 +1,405 @@
+
+Prototype GSAC database schema, MySQL form.
+
+Tables and Field (column) definitions and notes.
+
+ 3 October 2013.
+
+UNAVCO, Boulder Colorado.
+
+Current database: Prototype_GSAC_Database
+
++-----------------------------------+
+| Tables_in_Prototype_GSAC_Database |
++-----------------------------------+
+| access_permission                 |
+| agency                            |
+| antenna_session                   |
+| antenna_type                      |
+| country                           |
+| file_type                         |
+| gnss_data_file                    |
+| monument_description              |
+| project                           |
+| province_region_state             |
+| radome_type                       |
+| receiver_firmware_version         |
+| receiver_session                  |
+| receiver_type                     |
+| station                           |
+| station_session                   |
+| station_style                     |
++-----------------------------------+
+
+describe access_permission;
++-------------------------------+-----------------+------+-----+---------+----------------+
+| Field                         | Type            | Null | Key | Default | Extra          |
++-------------------------------+-----------------+------+-----+---------+----------------+
+| access_permission_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| access_permission_description | varchar(80)     | NO   |     | NULL    |                |
++-------------------------------+-----------------+------+-----+---------+----------------+
+Table access_permission is a static table with values describing the level of access permitted for one (or more) data files from stations.
+Used by tables station and gnss_data_file. See use details below under those tables' descriptions.
+Values are:
+mysql> select * from  access_permission;
++----------------------+----------------------------------------------------------------------------------+
+| access_permission_id | access_permission_description                                                    |
++----------------------+----------------------------------------------------------------------------------+
+|                    1 | no public access allowed                                                         |
+|                    2 | public access allowed for station and instrument metadata and geodesy data files |
+|                    3 | public access allowed for station and instrument metadata only                   |
++----------------------+----------------------------------------------------------------------------------+
+
+describe agency;
++--------------------+-----------------+------+-----+---------+----------------+
+| Field              | Type            | Null | Key | Default | Extra          |
++--------------------+-----------------+------+-----+---------+----------------+
+| agency_id          | int(4) unsigned | NO   | PRI | NULL    | auto_increment |
+| agency_name        | varchar(100)    | NO   |     | NULL    |                |
+| mailing_address    | varchar(100)    | YES  |     | NULL    |                |
+| agency_url         | varchar(100)    | YES  |     | NULL    |                |
+| prime_contact_name | varchar(100)    | YES  |     | NULL    |                |
+| prime_telephone    | varchar(50)     | YES  |     | NULL    |                |
+| prime_fax          | varchar(50)     | YES  |     | NULL    |                |
+| prime_email        | varchar(100)    | YES  |     | NULL    |                |
++--------------------+-----------------+------+-----+---------+----------------+
+Table agency is used with table project by table station to specify owner-operators of instrument stations by agency and network.
+
+
+describe antenna_session;
++------------------------+-----------------+------+-----+---------+----------------+
+| Field                  | Type            | Null | Key | Default | Extra          |
++------------------------+-----------------+------+-----+---------+----------------+
+| antenna_session_id     | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id             | int(6) unsigned | NO   |     | NULL    |                |
+| antenna_type_id        | int(5) unsigned | NO   |     | NULL    |                |
+| antenna_serial_number  | varchar(20)     | NO   |     | NULL    |                |
+| antenna_installed_date | datetime        | NO   |     | NULL    |                |
+| antenna_removed_date   | datetime        | NO   |     | NULL    |                |
+| antenna_offset_up      | float           | NO   |     | NULL    |                |
+| antenna_offset_north   | float           | NO   |     | NULL    |                |
+| antenna_offset_east    | float           | NO   |     | NULL    |                |
+| antenna_HtCod          | char(5)         | YES  |     | NULL    |                |
+| radome_type_id         | int(5) unsigned | YES  |     | NULL    |                |
++------------------------+-----------------+------+-----+---------+----------------+
+Table antenna_session specifies a time interval at one station when the antenna information shown does not change.
+
+
+describe antenna_type;
++-------------------+-----------------+------+-----+---------+----------------+
+| Field             | Type            | Null | Key | Default | Extra          |
++-------------------+-----------------+------+-----+---------+----------------+
+| antenna_type_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| antenna_type_name | varchar(15)     | NO   |     | NULL    |                |
+| igs_defined       | char(1)         | NO   |     | N       |                |
++-------------------+-----------------+------+-----+---------+----------------+
+Table antenna_type lists IGS-defined GNSS antenna type names.  Used in table antenna_session.
+Use one of these for each antenna at your stations.
+The 290 supplied values of antenna_type_name are like this:  
+select * from antenna_type;
++-----------------+-------------------+-------------+
+| antenna_type_id | antenna_type_name | igs_defined |
++-----------------+-------------------+-------------+
+|             311 | 3S-02-1AERO-CR    | Y           |
+...
+|             324 | ASH111661         | Y           |
+|             325 | ASH700228A        | Y           |
+|             326 | ASH700228A+EX     | Y           |
+...
+|             597 | TR GEOD L1/L2 W   | Y           |
+|             598 | TRM10877.10+RGP   | Y           |
+|             599 | TRM10877.10+SGP   | Y           |
+|             600 | GPPNULLANTENNA    | Y           |
++-----------------+-------------------+-------------+
+
+
+describe country;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| country_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| country_name | varchar(70)     | NO   |     | NULL    |                |
++--------------+-----------------+------+-----+---------+----------------+
+Table country supplies consistent country names; used by table station.
+
+
+describe file_type;
++----------------+-----------------+------+-----+---------+----------------+
+| Field          | Type            | Null | Key | Default | Extra          |
++----------------+-----------------+------+-----+---------+----------------+
+| file_type_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| file_type_name | varchar(60)     | YES  |     | NULL    |                |
++----------------+-----------------+------+-----+---------+----------------+
+Table file_type is semi-static and supplies consistent names for GNSS data file types or formats.
+You may add new rows here if your data center has other types; in that case also add to GSAC file ---FileManager.java for your GSAC.
+Values are:
+mysql> select * from file_type;
++--------------+-------------------------------------------------------+
+| file_type_id | file_type_name                                        |
++--------------+-------------------------------------------------------+
+|            1 | RINEX observation file,  Z compression (o.Z)          |
+|            2 | RINEX navigation file (n)                             |
+|            3 | RINEX met file (m)                                    |
+|            4 | RINEX observation file; Hatanaka; Z compression (d.Z) |
+|            5 | RINEX navigation file; Z compression (n.Z)            |
+|            6 | RINEX GLONASS navigation file; Z compression (g.Z)    |
+|            7 | IGS site log file                                     |
+|            8 | SINEX                                                 |
+|            9 | PBO Time Series, .pos format                          |
+|           10 | RINEX observation file (o); no compression            |
+|           11 | PBO Time Series, .csv format                          |
++--------------+-------------------------------------------------------+y
+PBO time series formatted files are for example:
+.pos file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
+.csv file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.csv
+
+
+describe gnss_data_file;
++------------------------+-----------------+------+-----+---------+----------------+
+| Field                  | Type            | Null | Key | Default | Extra          |
++------------------------+-----------------+------+-----+---------+----------------+
+| file_id                | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id             | int(6) unsigned | NO   |     | NULL    |                |
+| file_type_id           | int(3) unsigned | NO   |     | NULL    |                |
+| data_start_time        | datetime        | NO   |     | NULL    |                |
+| data_stop_time         | datetime        | NO   |     | NULL    |                |
+| published_date         | datetime        | NO   |     | NULL    |                |
+| updated                | datetime        | YES  |     | NULL    |                |
+| file_MD5               | char(32)        | YES  |     | NULL    |                |
+| file_url               | varchar(120)    | YES  |     | NULL    |                |
+| access_permission_id   | int(3) unsigned | YES  |     | NULL    |                |
+| embargo_duration_hours | int(6) unsigned | YES  |     | NULL    |                |
+| embargo_after_date     | datetime        | YES  |     | NULL    |                |
++------------------------+-----------------+------+-----+---------+----------------+
+Table gnss_data_file describes each gnss data file on you FTP or HTTP server and potentially
+offered for download by GSAC, subject to values of access_permission and/or embargo values 
+for each file or station.  
+Field embargo_after_date is a date after which no access is allowed for this file.
+Field embargo_duration_hours is a time interval length, in hours, preceeding the present time when no access is allowed for this file.
+Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
+If any are set, the priority of checking is in that order.
+If access_permission_id and the embargo values are NOT set either here for one file,  and also Not set in the
+corresponding station which created the data file, public access is allowed.
+
+describe monument_description;
++-------------------------+-----------------+------+-----+---------+----------------+
+| Field                   | Type            | Null | Key | Default | Extra          |
++-------------------------+-----------------+------+-----+---------+----------------+
+| monument_description_id | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| monument_description    | varchar(70)     | NO   |     | NULL    |                |
++-------------------------+-----------------+------+-----+---------+----------------+
+Table of free-form text values describing the monument (usually construction), such as "UNAVCO deep-drill braced".
+
+
+describe project;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| project_id   | int(4) unsigned | NO   | PRI | NULL    | auto_increment |
+| project_name | varchar(40)     | YES  |     | NULL    |                |
+| agency_id    | int(4) unsigned | NO   |     | NULL    |                |
++--------------+-----------------+------+-----+---------+----------------+
+Table project is used with table agency by table station to specify owner-operators of instrument stations by agency and network.
+
+
+describe province_region_state;
++----------------------------+-----------------+------+-----+---------+----------------+
+| Field                      | Type            | Null | Key | Default | Extra          |
++----------------------------+-----------------+------+-----+---------+----------------+
+| province_region_state_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| province_region_state_name | varchar(70)     | NO   |     | NULL    |                |
++----------------------------+-----------------+------+-----+---------+----------------+
+Table supplies consistent names for provinces, regions, or states (divisions in a country); used by table station.
+
+
+describe radome_type;
++---------------------+-----------------+------+-----+---------+----------------+
+| Field               | Type            | Null | Key | Default | Extra          |
++---------------------+-----------------+------+-----+---------+----------------+
+| radome_type_id      | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| radome_type_name    | varchar(4)      | NO   |     | NULL    |                |
+| igs_defined         | char(1)         | NO   |     | N       |                |
+| description_English | varchar(150)    | YES  |     | NULL    |                |
+| description_RENAG   | varchar(150)    | YES  |     | NULL    |                |
++---------------------+-----------------+------+-----+---------+----------------+
+Table radome_type lists IGS defined GNSS antenna type names, and some others defined by RENAG.  Used in table antenna_session.
+Use one of these for each antenna session at your stations.
+Values are:
+select * from radome_type;
++----------------+------------------+-------------+---------------------+---------------------------------------------------------------------------------------------------------------------
+| radome_type_id | radome_type_name | igs_defined | description_English | description_RENAG                                                                                                  
++----------------+------------------+-------------+---------------------+-------------------------------------------------------------------------------------------------------------------
+|              1 | SNOW             | Y           | NULL                | Radôme conique d'ASHTECH                                                                                         
+|              2 | JAVC             | Y           | NULL                | Radôme conique pour l'antenne chokering JAVAD JAV_RINGANT_G3T                                                           |
+|              3 | JVDM             | Y           | NULL                | Radôme conique pour l'antenne       chokering JAVAD JAVRINGANT_DM                                                       |
+|              4 | LEIC             | Y           | NULL                | Radôme conique pour les antennes LEICA AT303 et AT503                                                                   |
+|              5 | LEIM             | Y           | NULL                | NULL                                                                                                             
+|              6 | LEIS             | Y           | NULL                | Radôme sphérique pour l'antenne LEICA de type DORNE MARGOLIN                                                    
+|              7 | LEIT             | Y           | NULL                | NULL                                                                                                                     |
+|              8 | MMAC             | Y           | NULL                | Radôme sphérique couvrant les éléments de l'antenne Macrometer MiniMac MAC4647942                              
+|              9 | NOVC             | Y           | NULL                | NULL                                                                                                                     |
+|             10 | NOVS             | Y           | NULL                | NULL                                                                                                                     |
+|             11 | SPKE             | Y           | NULL                | Radôme conique avec pointe de SPECTRA PRECISION utilié avec l'antenne SPP571908273                          
+|             12 | CONE             | Y           | NULL                | Radôme conique pour l'antenne Topcon p/n 10-031401-01                                                        
+|             13 | TPSD             | Y           | NULL                | Radôme hémisphérique pour l'antenne Topcon PG-A1 et G3-A1                                                   
+|             14 | TPSH             | Y           | NULL                | Radôme hémisphérique pour l'antenne choke ring de Topcon                                                   
+|             15 | RPTR             | Y           | NULL                | Radôme ancien de 19 pouces en plastique pour l'antenne Trimble TRM33429.00+GP                                           |
+|             16 | TCWD             | Y           | NULL                | Radôme conique pour l'antenne Trimble 24490-00                                                                     |
+|             17 | TZGD             | Y           | NULL                | Radôme hémisphérique pour l'antenne Zephyr Geodetic 41249.00                                              
+|             18 | NONE             | N           | no radome           | Pas de radôme       
+|             19 | DOME             | N           | NULL                | D'autres types de radômes  
+|             20 | SCIS             | N           | NULL                | Radôme de SCIGN de petite taille (dite short pour moins de hauteur)                                                     |
+|             21 | AUST             | N           | NULL                | Radôme australien hémisphérique en Perspex clair                                                                      |
+|             22 | BEVA             | N           | NULL                | Radôme autrichien de type cylindrique alongé avec dôme sphérique                                                     |
+|             23 | CAFG             | N           | NULL                | Coffre en fibre de verre dite Kearney-Powerglass, utilisé en Californie par USGS pour les vieilles stations SCIGN       |
+|             24 | DUTD             | N           | NULL                | Radôme hollandais fabriqué par Delft University of Technology                                                      |
+|             25 | EMRA             | N           | NULL                | Radôme sphérique acrylique clair fabriqué par NRCan, utilisé dans le réseau WCDA (Western Canada Deformation Array) |
+|             26 | ENCL             | N           | NULL                | Radômes type inconnus                                                                                                   |
+|             27 | GRAZ             | N           | NULL                | Radôme autrichien de type cylindrique avec dôme sphérique                                                             |
+|             28 | JPLA             | N           | NULL                | Radôme acrylique fabriqué par JPL                                                                                      |
+|             29 | OLGA             | N           | NULL                | Radôme autrichien de type standard cylindrique    avec dôme sphérique                                                 |
+|             30 | OSOD             | N           | NULL                | Radôme utilisé dans le réseau suédois                                                                                |
+|             31 | PFAN             | N           | NULL                | Gros radôme autrichien de type cylindrique avec dôme sphérique                                                        |
+|             32 | SCIT             | N           | NULL                | Radôme de SCIGN de grande taille (dite tall pour plus de hauteur)                                                       |
+|             33 | SCPL             | N           | NULL                | Radôme en polycarbonate de 24-48 pouces de diamètre utilisé dans les vieux sites SCIGN (CHIL, CMP9, CLAR, LEEP)       |
+|             34 | UNAV             | N           | NULL                | Radôme sphérique clair de l'UNAVCO. Ring Cap                                                                           |
++----------------+------------------+-------------+---------------------+--------------------------------------------------------------------------------------------------------------------------+
+
+
+describe receiver_firmware_version;
++--------------------------------+-----------------+------+-----+---------+----------------+
+| Field                          | Type            | Null | Key | Default | Extra          |
++--------------------------------+-----------------+------+-----+---------+----------------+
+| receiver_firmware_version_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| receiver_firmware_version_name | varchar(20)     | NO   |     | NULL    |                |
+| SwVer                          | varchar(5)      | YES  |     | NULL    |                |
++--------------------------------+-----------------+------+-----+---------+----------------+
+Receiver firmware versions used by table receiver_session.
+
+
+describe receiver_session;
++------------------------------+-----------------+------+-----+---------+----------------+
+| Field                        | Type            | Null | Key | Default | Extra          |
++------------------------------+-----------------+------+-----+---------+----------------+
+| receiver_session_id          | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id                   | int(6) unsigned | NO   |     | NULL    |                |
+| receiver_type_id             | int(5) unsigned | NO   |     | NULL    |                |
+| receiver_firmware_version_id | int(5) unsigned | NO   |     | NULL    |                |
+| receiver_serial_number       | varchar(20)     | NO   |     | NULL    |                |
+| receiver_installed_date      | datetime        | NO   |     | NULL    |                |
+| receiver_removed_date        | datetime        | YES  |     | NULL    |                |
+| receiver_sample_interval     | float           | YES  |     | NULL    |                |
++------------------------------+-----------------+------+-----+---------+----------------+
+Table receiver_session specifies a time interval at one station when the receiver information shown does not change.
+
+
+describe receiver_type;
++--------------------+-----------------+------+-----+---------+----------------+
+| Field              | Type            | Null | Key | Default | Extra          |
++--------------------+-----------------+------+-----+---------+----------------+
+| receiver_type_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| receiver_type_name | varchar(20)     | NO   |     | NULL    |                |
+| igs_defined        | char(1)         | NO   |     | N       |                |
++--------------------+-----------------+------+-----+---------+----------------+
+Table receiver_type lists IGS-defined GNSS receiver type names.  Used in table receiver_session.
+Use one of these for each receiver at your stations.
+The 302 supplied values of receiver_type_name are like this:  
+select * from receiver_type;
++------------------+----------------------+-------------+
+| receiver_type_id | receiver_type_name   | igs_defined |
++------------------+----------------------+-------------+
+|              306 | 3SNAV GNSS-300       | Y           |
+|              315 | 3SNAV R100-40T 12    | Y           |
+...
+|              318 | ASHTECH 3DF-XXIV     | Y           |
+|              319 | ASHTECH 802147_A     | Y           |
+...
+|              602 | TRIMBLE SPS855       | Y           |
+|              603 | TRIMBLE SPS985       | Y           |
+|              604 | CMC ALLSTAR 12       | Y           |
+|              605 | CMC ALLSTAR OEM      | Y           |
+|              606 | ESA/ISN GNSS         | Y           |
+|              607 | ROCKWELL ZODIAC OEM  | Y           |
++------------------+----------------------+-------------+
+
+
+describe station;
++--------------------------+-----------------+------+-----+---------+----------------+
+| Field                    | Type            | Null | Key | Default | Extra          |
++--------------------------+-----------------+------+-----+---------+----------------+
+| station_id               | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
+| code_4char_ID            | char(4)         | NO   |     | NULL    |                |
+| station_name             | varchar(50)     | NO   |     | NULL    |                |
+| latitude_north           | double          | NO   |     | NULL    |                |
+| longitude_east           | double          | NO   |     | NULL    |                |
+| ellipsoidal_height       | float           | YES  |     | NULL    |                |
+| station_installed_date   | datetime        | NO   |     | NULL    |                |
+| station_style_id         | int(3) unsigned | NO   |     | NULL    |                |
+| monument_description_id  | int(5) unsigned | NO   |     | NULL    |                |
+| project_id               | int(5) unsigned | NO   |     | NULL    |                |
+| country_id               | int(5) unsigned | NO   |     | NULL    |                |
+| province_region_state_id | int(5) unsigned | YES  |     | NULL    |                |
+| city                     | varchar(50)     | YES  |     | NULL    |                |
+| x                        | double          | YES  |     | NULL    |                |
+| y                        | double          | YES  |     | NULL    |                |
+| z                        | double          | YES  |     | NULL    |                |
+| station_removed_date     | datetime        | YES  |     | NULL    |                |
+| iers_domes               | varchar(9)      | YES  |     | NULL    |                |
+| station_photo_URL        | varchar(100)    | YES  |     | NULL    |                |
+| access_permission_id     | int(3) unsigned | YES  |     | NULL    |                |
+| embargo_duration_hours   | int(6) unsigned | YES  |     | NULL    |                |
+| embargo_after_date       | datetime        | YES  |     | NULL    |                |
++--------------------------+-----------------+------+-----+---------+----------------+
+Table station specifies one instrumented site or monument.
+Contains access permissions controls for ALL gnss data files from this station on your FTP or HTTP server and potentially
+offered for download by GSAC, subject to the values of access_permission and/or embargo values .
+Field embargo_after_date is a date after which no access is allowed for all files from this station.
+Field embargo_duration_hours is a time interval length, in hours, preceeding the present time when no access is allowed for all files.
+Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
+If any are set, the priority of checking is in that order.
+If access_permission_id and the embargo values are not set here and also not set for one file in the gnss_data-file table, public access is allowed to that file.
+Station access permission controls have priority over individual file access controls.
+Use station access permission controls to control access to all files from one station, with only one field value in the station table. 
+
+Obsolete:
+describe station_session;
++------------------------------+-----------------+------+-----+---------+----------------+
+| Field                        | Type            | Null | Key | Default | Extra          |
++------------------------------+-----------------+------+-----+---------+----------------+
+| station_session_id           | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id                   | int(6) unsigned | NO   |     | NULL    |                |
+| session_start_date           | datetime        | NO   |     | NULL    |                |
+| session_end_date             | datetime        | NO   |     | NULL    |                |
+| receiver_type_id             | int(5) unsigned | NO   |     | NULL    |                |
+| receiver_firmware_version_id | int(5) unsigned | NO   |     | NULL    |                |
+| receiver_serial_number       | varchar(20)     | NO   |     | NULL    |                |
+| antenna_type_id              | int(5) unsigned | NO   |     | NULL    |                |
+| antenna_serial_number        | varchar(20)     | NO   |     | NULL    |                |
+| antenna_offset_up            | float           | NO   |     | NULL    |                |
+| antenna_offset_north         | float           | NO   |     | NULL    |                |
+| antenna_offset_east          | float           | NO   |     | NULL    |                |
+| radome_type_id               | int(5) unsigned | NO   |     | NULL    |                |
+| sample_interval              | float           | YES  |     | NULL    |                |
+| antenna_HtCod                | char(5)         | YES  |     | NULL    |                |
++------------------------------+-----------------+------+-----+---------+----------------+
+Information in table station_session duplicates information in antenna_session and receiver_session tables, a bad idea for data archive management.
+This table will not be used by GSAC Java code after sometime in October 2013 (file ____SiteManager.java at each GSAC).
+
+
+describe station_style;
++--------------------+-----------------+------+-----+---------+----------------+
+| Field              | Type            | Null | Key | Default | Extra          |
++--------------------+-----------------+------+-----+---------+----------------+
+| station_style_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_style_name | varchar(20)     | NO   |     | NULL    |                |
++--------------------+-----------------+------+-----+---------+----------------+
+Specifies nature of station operations; used by table station. Values are:
+select * from station_style;
++------------------+---------------------+
+| station_style_id | station_style_name  |
++------------------+---------------------+
+|                1 | GPS/GNSS Campaign   |
+|                2 | GPS/GNSS Continuous |
+|                3 | GPS/GNSS Mobile     |
++------------------+---------------------+
+
