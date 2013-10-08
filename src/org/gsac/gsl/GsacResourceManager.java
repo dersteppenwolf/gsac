@@ -479,7 +479,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         if (getDatabaseManager() == null) {
             return;
         }
-        long         t1         = System.currentTimeMillis();
+        //long         t1         = System.currentTimeMillis();
         List<String> tableNames = new ArrayList<String>();
         Clause       clause = getResourceClause(request, response, tableNames);
         //        System.err.println("Resource clauses:" + clause);
@@ -510,7 +510,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     public int processStatement(GsacRequest request, GsacResponse response,
                                 Statement statement, int offset, int limit)
             throws Exception {
-        long t1 = System.currentTimeMillis();
+        //long t1 = System.currentTimeMillis();
+
         //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
@@ -527,7 +528,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         }
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
-        long t2 = System.currentTimeMillis();
+        //long t2 = System.currentTimeMillis();
 
         //        System.err.println("read " + iter.getCount() + " resources in "
         //                           + (t2 - t1) + "ms");
