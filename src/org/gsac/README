@@ -81,16 +81,22 @@ To create a new MySQL GSAC prototype database using that .sql file:
 
 This creates a GSAC prototype MySQL database, which is of course initially empty of your GNSS metadata. You can use mysql commands to explore the new database schema.
 
+################################################################################
+
+Populate the Database
+
 You need to populate the database with the information about your stations, instruments, and instrument data files. UNAVCO has a script to populate the GSAC prototype database with information about geodesy data files you already have on an FTP or HTTP site. UNAVCO is creating a script to populate a GSAC prototype database from a SINEX file (which may be tricky to use). If you use the GSAC prototype database design, you can email UNAVCO to get whatever version of these scripts we have to help you populate your database. The scripts are written in Python.
 
-UNAVCO is very happy to aid and advise about GSAC installations and operations. UNAVCO has a responsibility to ensure that GSAC itself installs properly. UNAVCO can help install GSAC, in some cases, by providing a provisional working database with some of your data center's information, if some conditions are met including your use of the provisional database schema.
+UNAVCO can aid and advise about GSAC installations and operations. UNAVCO has a responsibility to ensure that GSAC itself installs properly. UNAVCO can help install GSAC, in some cases including providing a provisional working database with some of your data center's information, if some conditions are met including your use of the provisional database schema. UNAVCO will populate the provisional database with an initial but incomplete set of data, just enough to ensure that GSAC is working.
 
-UNAVCO does not populate your database beyond an initial set of data to ensure GSAC is working. Populating your database, and maintaining it, is necessary to operate GSAC, but doing so is entirely outside of GSAC itself -- see the diagram on the GSAC web home page-- and is your responsibility. Likewise GSAC does not provide services to check data quality or otherwise manage a data archive. GSAC is web services; it does not "know" (much) about geodesy.
+Completely populating your database, and maintaining it, is necessary to operate GSAC, but doing so is entirely outside of GSAC -- see the diagram on the home page of the GSAC web site -- and is your responsibility. 
+Also, GSAC does not check data file quality or otherwise manage a data archive. GSAC is web services, not a content management system, and it does not "know" (much) about geodesy. 
 
 
 ################################################################################
 
 Installing the GSAC Web Services Software Package
+
 Part 1.  Creating the initial GSAC Server at your repository
 
 ################################################################################
@@ -125,48 +131,56 @@ Next, edit
 
 gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
 
-to set the longitude, latitude, and zoom level for the center of your map in the lines:
-The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1200 km wide by 800 km high. 
+to set the longitude, latitude, and zoom level for the center of the map GSCA shows in results on the web page.  For example:
 
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
   var defaultZoomLevel = 5;
 
+The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1200 km wide by 800 km high. 
+
+
 Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  You may find the screen messages interesting to show the 
 process of a GSAC build. 
+
 
 Next
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
-and replace "myrepo" in the new file name with an appropriate name for your repository.
+Copy macros.properties to a temporary working file.  The name does not matter; mymacros.properties is fine:
 
-cp macros.properties   myrepomacros.properties  
+cp macros.properties   mymacros.properties  
 
 Edit the new myrepomacros.properties file to set:
 
 target.name=Myrepo GSAC Repository
 target.basename=gsacmyrepo     // used in Java package name and for the new directory for your new GSAC code files.
+
 target.package=org.myrepo.gsac // The Java package name. If not beginning with org, see notes below for the Java package name.
+
 target.prefix=Myrepo           // used in names of Java files. Java style has first letter in uppper case, only.
+
 target.dbdriver=mysql.jar      // or postgres.jar or oracleDriver.jar; which db server type you use.
 
 Then
 
 cd ../   
 
-to src/org/gsac/. Then run a command like this, with the new macros.properties file name:
+to src/org/gsac/. Then run a command like this, with the new macros.properties file:
 
-BE SURE to use your new file name, not myrepomacros.properties:
-
-ant -propertyfile template/myrepomacros.properties makerepository   
+ant -propertyfile template/mymacros.properties makerepository   
 
 Look to be sure no errors are sent to the screen.  
 
 This process creates a new code area, beginning with a new folder, something line
-gsac-code/src/org/myrepo/gsac/ 
-and populates it with initial all-new files for your GSAC repository.
 
-cd to the just-made new directory with new GSAC code just for your repository, such as gsac-code/src/org/myrepo/gsac/. 
+~/GSAC/gsac-code/src/org/myrepo/ 
+
+and populates it with initial all-new directories and files for your GSAC repository's code.
+
+cd to the just-made new directory with new GSAC code just for your repository, such as 
+
+cd ~/GSAC/gsac-code/src/org/myrepo/gsac/. 
 
 Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
