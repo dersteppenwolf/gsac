@@ -109,16 +109,16 @@ Verify that the build.xml file has your GSAC in it.
 ########################################################################
 
 Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. 
-(Note that gsac@MACRO.PREFIX@ in this section may have an upper case letter in @MACRO.PREFIX@ where the actual word in build.xml has lower case which is correct.
-The uppercase is an artifact of automatic generation of this README file.)
+Note that the value represneted by 'gsac@MACRO.PREFIX@' below may have an upper case letter in @MACRO.PREFIX@ where the actual word in build.xml has lower case which is correct.
+(The uppercase is only an artifact of the automatic generation of this README file.)
 
     <target name="localinit">
         <!-- base name for build products -->
         <property name="basename" value="gsac@MACRO.PREFIX@"/>
+          or
+        <property name="basename" value="@MACRO.PREFIX@gsac"/>
 
-Probably no changes are needed here.  (There usually is no upper case letter in the real file's value="gsac@MACRO.PREFIX@".)
-
-This target will be used by ant build process to make your GSAC server.
+No changes are needed here unless something went wrong.  This target will be used by ant build process to make your GSAC server.  
 
 You have specified the basic information needed to run your full GSAC server.
 
@@ -335,74 +335,12 @@ with the names GSAC uses internally, in Tables.java, such as STATION.COL_LATITUD
 
 The GSAC forms of table and field (column) names from Tables.java will be used in new methods needed to implement your GSAC server, described below.
 
-
 ########################################################################
-GSAC's Format Choices for Query Results
-########################################################################
-
-GSAC offers several choices for formats of the results of queries.  For example, on any GSAC web site, 
-either open the Information page's Output types list - click on [+] - or in a Search form, open the Results [+] area
-and then the Output: menu.
-
-GSAC now offers results in these formats:
-
-HTML                    output=site.html (for the GSAC web pages of results)
-XML Site Log (SOPAC)    output=site.xmllog
-SINEX                   output=site.snx
-GAMIT station.info      output=site.station.info
-GSAC Plain text         output=site.plaintext
-GSAC Full Site CSV      output=site.csv.full
-GSAC Short Site CSV     output=site.csv
-GSAC Site ATOM          output=site.gsacatom
-GSAC Site JSON          output=site.json
-GSAC Site RSS           output=site.gsacrss
-Google Earth KML        output=site.kml
-Google Earth KMZ        output=site.kmz
-
-(The terms output=... are the result format arguments in GSAC API queries.)
-
-GSAC offers both a short csv (comma separated value) file formats with only 
-site name and location, and a full csv file with lots of geodesy site data.
-The GSAC plain text format is for quick visual inspection of the site values 
-available (not intended for computer processing).
-
-If you are satisfied with your GSAC repository offering these formats, 
-you need do nothing about output format choices. Go to the next topic.
-
-The choices of what to show in GSAC are set in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
-
-You may very easily NOT offer some formats, if you don't want to offer them.  Comment out lines for handlers, in gsac/gsl/SiteManager.java,  NOT wanted your GSAC-WS repository.
-For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
-new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
-
-However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
-There is no harm in offering all the choices .  Even if you do not see much use in some format, others may be expecting it from a GSAC service.
-
-To conform with other GSAC repositories it may be good not to revise any GSAC-supplied output format.  
-For GSAC bug reports and suggested improvements about formats please contact UNAVCO.
-
-You could, alternately, make a new and similar but altered 
-handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
-GSAC code changes in thsi case into GSAC without consulting UNAVCO.
-
-Please do *not* do svn commit into SourceForge for any modified SiteManager.java file or output handler, if you have SourceForge write permission.
-
-GSAC does not promote, endorse, deprecate or modify file formats (except possibly for changes to GSAC's own formats).  
-If there is another format which you think GSAC should offer, you can contact UNAVCO 
-to add it to GSAC code.  
-
-You can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
-You create a new kind of format by writing a new Java class, similar to any of the above output handlers.
-The Java output handler source files are in gsac-code/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
-guides to what is needed in a similar Java class.  Remember to call it in gsl/SiteManager.java and rebuild everything.
-
-
-########################################################################
-Extending Java Classes: Writing your new Java Code
+Extending Java Classes: Essential new Java Classes for your GSAC.
 ########################################################################
 
 To complete your GSAC server, you need new Java code to specify particular details of your data repository.
-Files in @MACRO.SRCDIR@/ have the Java code especially for your repository, which a the bridge between your database on one hand and GCAC core code on the other. 
+Files in @MACRO.SRCDIR@/ have new Java code for your repository, which is the bridge between your database on one hand and GCAC core code on the other. 
 
 It is not possible for GSAC core code to anticipate the design of data repositories, or what data types  and files are available, or what is of interest for you to
 offer online in GSAC.  New code is needed to adapt GSAC to your database and possibly to other system features at your
@@ -410,18 +348,30 @@ data repository.  Users may need to correspond with UNAVCO if they want to have 
 from UNAVCO at gsac-ws@unavco.org.
 
 
-The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must be new to some extent, and correct, to implement database queries used by your GSAC web form searches 
-and by the GSAC API.  
+The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must implement database queries (about data files and stations)
+ to your GSAC database, used by your GSAC web form searches and by the GSAC API.  
 
-The initial or template files for these Java classes are intended to work with the prototype GSAC database schema (MYSQL), and they <i>may</i>
-work properly if you have that database schema.
+The initial or template files for these Java classes  supplied so far lack any database details (since the Tables class you have is ubknown to core GSAC).
 
-If you are using your own database schema, first compare it to the prototype GSAC database schema.  Then modify @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java 
-to get GSAC to work with your database.  This will be the most demanding part of GSAC installation.
+Replace the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java  with these Prototype GSAC Java classes found online:
 
-Test a new GSAC  with the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+http://facility.unavco.org/data/gsacws/docs/PrototypeSiteManager.java
+
+http://facility.unavco.org/data/gsacws/docs/PrototypeFileManager.java
+
+Edit both the names and contents of these two files to change all instances of "Prototype" in them to your GSAC name, such as "Myrepo" (whatever is on the other .java files in tour GSAC area).
+See notes below about  @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java.
+ 
+If you use the Prototype GSAC db design, test a new GSAC, using the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
 no errors in the compile step).  Stop ant runserver with CTRL-C.
+
+If the ant build has errors they will hopefully show where is the diconnect between your database (represented by Tables classes) and 
+your new  @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java files.
+
+If you are using your own database schema, first you will need compare it to the prototype GSAC database schema.  
+Then modify the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java 
+to get GSAC to work with your database.  This will be the most demanding part of GSAC installation.
 
 
                      ########################################################################
@@ -556,6 +506,66 @@ are complete and provided by GSAC installation. They  use your header and footer
 with Java programming in the core GSAC code, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
 other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
 
+
+########################################################################
+GSAC's Format Choices for Query Results
+########################################################################
+
+GSAC offers several choices for formats of the results of queries.  For example, on any GSAC web site, 
+either open the Information page's Output types list - click on [+] - or in a Search form, open the Results [+] area
+and then the Output: menu.
+
+GSAC now offers results in these formats:
+
+HTML                    output=site.html (for the GSAC web pages of results)
+XML Site Log (SOPAC)    output=site.xmllog
+SINEX                   output=site.snx
+GAMIT station.info      output=site.station.info
+GSAC Plain text         output=site.plaintext
+GSAC Full Site CSV      output=site.csv.full
+GSAC Short Site CSV     output=site.csv
+GSAC Site ATOM          output=site.gsacatom
+GSAC Site JSON          output=site.json
+GSAC Site RSS           output=site.gsacrss
+Google Earth KML        output=site.kml
+Google Earth KMZ        output=site.kmz
+
+(The terms output=... are the result format arguments in GSAC API queries.)
+
+GSAC offers both a short csv (comma separated value) file formats with only 
+site name and location, and a full csv file with lots of geodesy site data.
+The GSAC plain text format is for quick visual inspection of the site values 
+available (not intended for computer processing).
+
+If you are satisfied with your GSAC repository offering these formats, 
+you need do nothing about output format choices. Go to the next topic.
+
+The choices of what to show in GSAC are set in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
+
+You may very easily NOT offer some formats, if you don't want to offer them.  Comment out lines for handlers, in gsac/gsl/SiteManager.java,  NOT wanted your GSAC-WS repository.
+For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
+new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
+
+However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
+There is no harm in offering all the choices .  Even if you do not see much use in some format, others may be expecting it from a GSAC service.
+
+To conform with other GSAC repositories it may be good not to revise any GSAC-supplied output format.  
+For GSAC bug reports and suggested improvements about formats please contact UNAVCO.
+
+You could, alternately, make a new and similar but altered 
+handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+GSAC code changes in thsi case into GSAC without consulting UNAVCO.
+
+Please do *not* do svn commit into SourceForge for any modified SiteManager.java file or output handler, if you have SourceForge write permission.
+
+GSAC does not promote, endorse, deprecate or modify file formats (except possibly for changes to GSAC's own formats).  
+If there is another format which you think GSAC should offer, you can contact UNAVCO 
+to add it to GSAC code.  
+
+You can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
+You create a new kind of format by writing a new Java class, similar to any of the above output handlers.
+The Java output handler source files are in gsac-code/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
+guides to what is needed in a similar Java class.  Remember to call it in gsl/SiteManager.java and rebuild everything.
 
 ########################################################################
 Dealing with Elevation and Ellipsoid Height
