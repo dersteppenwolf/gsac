@@ -28,8 +28,8 @@ import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.util.*;
 import org.apache.log4j.Logger;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 import edu.ucsd.sopac.projects.gsac.repository.utils.*;
 
 import org.joda.time.DateTime;

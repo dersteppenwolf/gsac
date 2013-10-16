@@ -28,8 +28,6 @@ import org.gsac.gsl.output.file.*;
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.StringUtil;
 

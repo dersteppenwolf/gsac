@@ -35,10 +35,10 @@ import org.ramadda.repository.type.*;
 
 import org.w3c.dom.*;
 
-import ucar.unidata.sql.Clause;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 
 
-import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
@@ -253,7 +253,7 @@ public class RamaddaGsacRepository extends GsacRepository {
                            getRepository().getDatabaseManager().getIterator(
                                getRepository().getDatabaseManager().select(
                                    GsacSiteTypeHandler.GSAC_COL_ID, tables,
-                                   clause, null, -1)));
+                                   clause,(String) null, -1)));
 
         for (String id : ids) {
             Entry entry = getRepository().getEntryManager().getEntry(null,
@@ -380,7 +380,7 @@ public class RamaddaGsacRepository extends GsacRepository {
                 request = getRepository().getTmpRequest();
             }
             result.putProperty(Repository.PROP_NAVLINKS,
-                               getRepository().getNavLinks(request));
+                               getRepository().getPageHandler().getNavLinks(request));
             getRepository().getPageHandler().decorateResult(request, result);
             return new StringBuffer(new String(result.getContent()));
         } catch (Exception exc) {

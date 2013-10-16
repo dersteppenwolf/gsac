@@ -2,7 +2,7 @@
 
 package gov.nasa.cddis.gsac;
 
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.SqlUtil;
 
 //J-
 public abstract class Tables {

@@ -23,7 +23,7 @@ package org.gsac.gsl.util;
 
 import org.gsac.gsl.*;
 
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -24,13 +24,14 @@ package org.gsac.ramadda;
 import org.ramadda.repository.*;
 import org.ramadda.repository.output.*;
 import org.ramadda.repository.type.*;
-
+import org.ramadda.util.FormInfo;
 
 import org.w3c.dom.*;
 
 
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.HtmlUtil;
+
 
 
 import ucar.unidata.util.StringUtil;
@@ -107,13 +108,14 @@ public class GsacFileTypeHandler extends GenericTypeHandler {
      *
      * @throws Exception _more_
      */
+@Override
     public void addColumnToEntryForm(Request request, Column column,
                                      StringBuffer formBuffer, Entry entry,
-                                     Object[] values, Hashtable state)
+                                     Object[] values, Hashtable state, FormInfo formInfo)
             throws Exception {
         if ( !column.getName().equals("siteid")) {
             super.addColumnToEntryForm(request, column, formBuffer, entry,
-                                       values, state);
+                                       values, state, formInfo);
             return;
         }
 

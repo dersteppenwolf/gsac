@@ -27,8 +27,6 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.site.XmlSiteOutputHandler;
 import org.gsac.gsl.util.*;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
 import ucar.unidata.util.HtmlUtil;
 
 import ucar.unidata.util.IOUtil;

@@ -31,8 +31,8 @@ import org.gsac.gsl.util.*;
 /* CHANGEME - done in for INGV - include database package for the GSAC installation. */
 import org.ring.gsac.database.*;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Misc;

@@ -7,8 +7,8 @@ package edu.ucsd.sopac.projects.gsac.repository;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;

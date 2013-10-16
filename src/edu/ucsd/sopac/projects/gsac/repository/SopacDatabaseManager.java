@@ -12,7 +12,7 @@ import javax.naming.Context;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
 
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.SqlUtil;
 
 import org.gsac.gsl.database.*;
 

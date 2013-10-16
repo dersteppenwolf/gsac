@@ -25,8 +25,8 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 
 
 import ucar.unidata.util.DateUtil;

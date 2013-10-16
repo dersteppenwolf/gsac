@@ -2,7 +2,7 @@
 
 package org.igs.gsac.database;
 
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.SqlUtil;
 
 //J-
 public abstract class Tables {

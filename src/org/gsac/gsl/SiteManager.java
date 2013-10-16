@@ -27,8 +27,8 @@ import org.gsac.gsl.output.*;
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

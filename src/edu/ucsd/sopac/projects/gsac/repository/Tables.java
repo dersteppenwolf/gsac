@@ -2,7 +2,7 @@
 
 package edu.ucsd.sopac.projects.gsac.repository;
 
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.SqlUtil;
 
 //J-
 public abstract class Tables {

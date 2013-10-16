@@ -28,8 +28,8 @@ import org.gsac.gsl.util.*;
 import org.ring.gsac.database.*;
 
 import ucar.unidata.util.DateUtil;
-import ucar.unidata.sql.Clause;
-import ucar.unidata.sql.SqlUtil;
+import org.ramadda.sql.Clause;
+import org.ramadda.sql.SqlUtil;
 import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
