@@ -1,13 +1,24 @@
 
-Prototype GSAC database schema, MySQL form.
+					Prototype GSAC database schema
 
-Tables and Field (column) definitions and notes.
+				Tables and Field (column) definitions and notes.
 
- 3 October 2013.
+						 16 October 2013.
 
-UNAVCO, Boulder Colorado.
+					    UNAVCO, Boulder Colorado.
 
-Current database: Prototype_GSAC_Database
+
+Use of this schema makes a database which GSAC can use with Prototype GSAC Java code supplied by UNAVCO,
+simplifying GSAC installation.  This schema also is suitable for maintaining a GNSS data center's holdings, outside of GSAC.
+
+This document uses MySQL forms, but the same  database schema can be used in Postgres and Oracle 
+to make a Prototype GSAC database.  Use exactly the same name for tables and fields.
+
+Note that GSAV requires access to a database about your GNSS data center's holdings, but the database is not part of 
+GSAC itself.  Population and maintenance of the database is the reponsibility of a GNSS data center.  GSAC does not do 
+database maintenance.   GSAC is not content management software; GSAC is web services.
+
+For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 
 +-----------------------------------+
 | Tables_in_Prototype_GSAC_Database |
@@ -83,6 +94,8 @@ describe antenna_session;
 | radome_type_id         | int(5) unsigned | YES  |     | NULL    |                |
 +------------------------+-----------------+------+-----+---------+----------------+
 Table antenna_session specifies a time interval at one station when the antenna information shown does not change.
+HtCod is only for GAMIT station.info format files and otherwise is not used by GSAC.
+GSAC does not generate values of HtCod, or "know" what is valid. The database operator must set HtCod values.
 
 
 describe antenna_type;
@@ -133,22 +146,20 @@ describe file_type;
 Table file_type is semi-static and supplies consistent names for GNSS data file types or formats.
 You may add new rows here if your data center has other types; in that case also add to GSAC file ---FileManager.java for your GSAC.
 Values are:
-mysql> select * from file_type;
-+--------------+-------------------------------------------------------+
-| file_type_id | file_type_name                                        |
-+--------------+-------------------------------------------------------+
-|            1 | RINEX observation file,  Z compression (o.Z)          |
-|            2 | RINEX navigation file (n)                             |
-|            3 | RINEX met file (m)                                    |
-|            4 | RINEX observation file; Hatanaka; Z compression (d.Z) |
-|            5 | RINEX navigation file; Z compression (n.Z)            |
-|            6 | RINEX GLONASS navigation file; Z compression (g.Z)    |
-|            7 | IGS site log file                                     |
-|            8 | SINEX                                                 |
-|            9 | PBO Time Series, .pos format                          |
-|           10 | RINEX observation file (o); no compression            |
-|           11 | PBO Time Series, .csv format                          |
-+--------------+-------------------------------------------------------+y
+mysql> select * from file_type;  [revised]
++--------------+-------------------------------+
+| file_type_id | file_type_name                |
++--------------+-------------------------------+
+|            1 | IGS site log file             |
+|            2 | RINEX GLONASS navigation file |
+|            3 | RINEX met file                |
+|            4 | RINEX navigation file         |
+|            5 | RINEX observation file        |
+|            6 | SINEX                         |
+|            7 | SOPAC XML log file            |
+|            8 | Time series PBO csv format    |
+|            9 | Time series PBO pos format    |
++--------------+-------------------------------+
 PBO time series formatted files are for example:
 .pos file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
 .csv file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.csv
@@ -171,15 +182,15 @@ describe gnss_data_file;
 | embargo_duration_hours | int(6) unsigned | YES  |     | NULL    |                |
 | embargo_after_date     | datetime        | YES  |     | NULL    |                |
 +------------------------+-----------------+------+-----+---------+----------------+
-Table gnss_data_file describes each gnss data file on you FTP or HTTP server and potentially
-offered for download by GSAC, subject to values of access_permission and/or embargo values 
-for each file or station.  
+Table gnss_data_file describes each GNSS instrument data file on your FTP or HTTP server and potentially
+offered for download by GSAC, subject to values of access_permission and/or embargo values for each file or station.  
+Field access_permission_id controls whether access is allowed for this file. See access_permission table.
 Field embargo_after_date is a date after which no access is allowed for this file.
 Field embargo_duration_hours is a time interval length, in hours, preceeding the present time when no access is allowed for this file.
 Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
 If any are set, the priority of checking is in that order.
-If access_permission_id and the embargo values are NOT set either here for one file,  and also Not set in the
-corresponding station which created the data file, public access is allowed.
+If access_permission_id and the embargo values are NOT set either here for one file,  and also NOT set for the
+corresponding station which created the data file (in table station), public access is allowed for this file.
 
 describe monument_description;
 +-------------------------+-----------------+------+-----+---------+----------------+
@@ -199,7 +210,8 @@ describe project;
 | project_name | varchar(40)     | YES  |     | NULL    |                |
 | agency_id    | int(4) unsigned | NO   |     | NULL    |                |
 +--------------+-----------------+------+-----+---------+----------------+
-Table project is used with table agency by table station to specify owner-operators of instrument stations by agency and network.
+Table project values are extra station information about owner-operators of instrument stations, with related agency and network.
+This may be omitted.
 
 
 describe province_region_state;
@@ -275,6 +287,8 @@ describe receiver_firmware_version;
 | SwVer                          | varchar(5)      | YES  |     | NULL    |                |
 +--------------------------------+-----------------+------+-----+---------+----------------+
 Receiver firmware versions used by table receiver_session.
+SwVer is only for GAMIT station.info format files and otherwise is not used by GSAC.
+GSAC does not generate values of SwVer, or "know" what is valid. The database operator must set SwVer values.
 
 
 describe receiver_session;
@@ -289,9 +303,11 @@ describe receiver_session;
 | receiver_installed_date      | datetime        | NO   |     | NULL    |                |
 | receiver_removed_date        | datetime        | YES  |     | NULL    |                |
 | receiver_sample_interval     | float           | YES  |     | NULL    |                |
+| satellite_system             | varchar(60)     | YES  |     | NULL    |                |
 +------------------------------+-----------------+------+-----+---------+----------------+
 Table receiver_session specifies a time interval at one station when the receiver information shown does not change.
-
+Field  satellite_system is a list (as a simple character string) of the GNSS satellite systems received, with "," separators, 
+such as GPS or GPS,GLONASS,GALILEO or someday GPS,GLONASS,GALILEO,SBAS,QZSS,BEIDOU/COMPASS,IRNSS.  BEIDOU/COMPASS is one system name.
 
 describe receiver_type;
 +--------------------+-----------------+------+-----+---------+----------------+
@@ -335,8 +351,9 @@ describe station;
 | ellipsoidal_height       | float           | YES  |     | NULL    |                |
 | station_installed_date   | datetime        | NO   |     | NULL    |                |
 | station_style_id         | int(3) unsigned | NO   |     | NULL    |                |
+| access_permission_id     | int(3) unsigned | YES  |     | NULL    |                |
 | monument_description_id  | int(5) unsigned | NO   |     | NULL    |                |
-| project_id               | int(5) unsigned | NO   |     | NULL    |                |
+| project_id               | int(5) unsigned | YES  |     | NULL    |                |
 | country_id               | int(5) unsigned | NO   |     | NULL    |                |
 | province_region_state_id | int(5) unsigned | YES  |     | NULL    |                |
 | city                     | varchar(50)     | YES  |     | NULL    |                |
@@ -346,22 +363,27 @@ describe station;
 | station_removed_date     | datetime        | YES  |     | NULL    |                |
 | iers_domes               | varchar(9)      | YES  |     | NULL    |                |
 | station_photo_URL        | varchar(100)    | YES  |     | NULL    |                |
-| access_permission_id     | int(3) unsigned | YES  |     | NULL    |                |
+| agency_id                | int(3) unsigned | YES  |     | NULL    |                |
+| networks                 | varchar(2000)   | YES  |     | NULL    |                |
 | embargo_duration_hours   | int(6) unsigned | YES  |     | NULL    |                |
 | embargo_after_date       | datetime        | YES  |     | NULL    |                |
 +--------------------------+-----------------+------+-----+---------+----------------+
-Table station specifies one instrumented site or monument.
+Table station specifies one instrumented station, site, or monument.
 Contains access permissions controls for ALL gnss data files from this station on your FTP or HTTP server and potentially
 offered for download by GSAC, subject to the values of access_permission and/or embargo values .
 Field embargo_after_date is a date after which no access is allowed for all files from this station.
 Field embargo_duration_hours is a time interval length, in hours, preceeding the present time when no access is allowed for all files.
 Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
 If any are set, the priority of checking is in that order.
-If access_permission_id and the embargo values are not set here and also not set for one file in the gnss_data-file table, public access is allowed to that file.
-Station access permission controls have priority over individual file access controls.
-Use station access permission controls to control access to all files from one station, with only one field value in the station table. 
+If access_permission_id and the embargo values are not set here and also not set for files from this station
+ in the gnss_data_file table, public access (download) is allowed for those files.
+Station access permission controls here have priority over individual file access controls in the gnss_data_file table.
+Use station access permission controls in table station to control access to all files from one station, by setting only one value in the station table.
+Field networks is a comma-separated list in one character string, such as "PBO, Cascadia" or a long list like 
+"Snake River Plain 2008, Wasatch Fault 1994, Yellowstone/Snake River Plain 2000, Yellowstone/Wasatch Fault 1995"
+of the named groups of stations this station belongs to. It may be omitted, or have one network such as "PBO".
 
-Obsolete:
+
 describe station_session;
 +------------------------------+-----------------+------+-----+---------+----------------+
 | Field                        | Type            | Null | Key | Default | Extra          |
@@ -381,9 +403,12 @@ describe station_session;
 | radome_type_id               | int(5) unsigned | NO   |     | NULL    |                |
 | sample_interval              | float           | YES  |     | NULL    |                |
 | antenna_HtCod                | char(5)         | YES  |     | NULL    |                |
+| satellite_system             | varchar(60)     | YES  |     | NULL    |                |
 +------------------------------+-----------------+------+-----+---------+----------------+
-Information in table station_session duplicates information in antenna_session and receiver_session tables, a bad idea for data archive management.
-This table will not be used by GSAC Java code after sometime in October 2013 (file ____SiteManager.java at each GSAC).
+Information in table station_session duplicates information in antenna_session and receiver_session tables, a bad idea for data archive management.  
+This table may not be used by GSAC Java code after sometime in October 2013; look for the latest version of PrototypeSiteManager.java to adapt for each GSAC.
+Field  satellite_system is a list (as a simple character string) of the GNSS satellite systems received with "," separators, 
+such as GPS or GPS,GLONASS,GALILEO or someday GPS,GLONASS,GALILEO,SBAS,QZSS,BEIDOU/COMPASS,IRNSS.  BEIDOU/COMPASS is one system name.
 
 
 describe station_style;
