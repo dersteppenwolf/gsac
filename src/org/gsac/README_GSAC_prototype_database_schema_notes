@@ -15,8 +15,8 @@ This document uses MySQL forms, but the same  database schema can be used in Pos
 to make a Prototype GSAC database.  Use exactly the same name for tables and fields.
 
 Note that GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
-GSAC itself.  Population and maintenance of the database is the reponsibility of a GNSS data center.  GSAC does not do 
-database maintenance.   GSAC is not content management software; GSAC is web services.
+GSAC itself.  Cretion, population, and maintenance of the database is the reponsibility of a GNSS data center.  
+GSAC does not do database maintenance.  GSAC is not content management software; GSAC is web services.
 
 For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 A MySQL dump file (.sql file) for this schema can be downloaded from the web site, on the installation page.
@@ -184,6 +184,10 @@ describe gnss_data_file;
 | access_permission_id   | int(3) unsigned | YES  |     | NULL    |                |
 | embargo_duration_hours | int(6) unsigned | YES  |     | NULL    |                |
 | embargo_after_date     | datetime        | YES  |     | NULL    |                |
+| file_url_protocol      | varchar(5)      | YES  |     | NULL    |                |
+| file_url_ip_domain     | varchar(120)    | YES  |     | NULL    |                |
+| file_url_folders       | varchar(120)    | YES  |     | NULL    |                |
+| file_url_filename      | varchar(120)    | YES  |     | NULL    |                |
 +------------------------+-----------------+------+-----+---------+----------------+
 Table gnss_data_file describes each GNSS instrument data file on your FTP or HTTP server and potentially
 offered for download by GSAC, subject to values of access_permission and/or embargo values for each file or station.  
@@ -194,6 +198,21 @@ Any or all of access_permission_id, embargo_duration_hours, and embargo_after_da
 If any are set, the priority of checking is in that order.
 If access_permission_id and the embargo values are NOT set either here for one file,  and also NOT set for the
 corresponding station which created the data file (in table station), public access is allowed for this file.
+For file downloading, GSAC first checks for a non-null value for file_url. If it is non-null, GSAC supplies that
+value to the file search results, for users to use in downloading the file.  
+If file_url is null, GSAC will attempt to construct a complete URL to download the file by concatenating 
+file_url_protocol + "://" + file_url_ip_domain + file_url_folders + file_url_filename. 
+For a URL such as http://facility.unavco.org/gsacws/gsacapi/file/view?file.id=17914102 or 
+http://egelados.gein.noa.gr/services/GPS/GPS_DATA/2011/365/vlsm3650.11d.Z, the parts are:
+ file_url_protocol is ftp or http 
+ file_url_ip_domain is "facility.unavco.org" or "egelados.gein.noa.gr" (no /)
+ file_url_folders  is "/gsacws/gsacapi/file/" or "/services/GPS/GPS_DATA/2011/365/"  (has all /)
+ file_url_filename is "view?file.id=17914102" or "vlsm3650.11d.Z"
+GSAC will insert "://" as shown, but no other "/" characters.
+This approach to constructing the file_url is simply to allow changes in one of the parts without having to
+change the complete file_url, if you change how your data file server works.
+Field value file_MD5 may be used by GSAC users to check success of file downloads, if you supply MD5 check sum values for each file. 
+Supplying MD5 values is recommended but not required for GSAC operations.
 
 describe monument_description;
 +-------------------------+-----------------+------+-----+---------+----------------+
