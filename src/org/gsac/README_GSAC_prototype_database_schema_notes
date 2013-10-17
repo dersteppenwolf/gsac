@@ -14,12 +14,14 @@ simplifying GSAC installation.  This schema also is suitable for maintaining a G
 This document uses MySQL forms, but the same  database schema can be used in Postgres and Oracle 
 to make a Prototype GSAC database.  Use exactly the same name for tables and fields.
 
-Note that GSAV requires access to a database about your GNSS data center's holdings, but the database is not part of 
+Note that GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
 GSAC itself.  Population and maintenance of the database is the reponsibility of a GNSS data center.  GSAC does not do 
 database maintenance.   GSAC is not content management software; GSAC is web services.
 
 For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 A MySQL dump file (.sql file) for this schema can be downloaded from the web site, on the installation page.
+
+show tables;
 
 +-----------------------------------+
 | Tables_in_Prototype_GSAC_Database |
@@ -108,8 +110,8 @@ describe antenna_type;
 | igs_defined       | char(1)         | NO   |     | N       |                |
 +-------------------+-----------------+------+-----+---------+----------------+
 Table antenna_type lists IGS-defined GNSS antenna type names.  Used in table antenna_session.
-Use one of these for each antenna at your stations.
-The 290 supplied values of antenna_type_name are like this:  
+Use one of these for each antenna at your stations.  The 290 supplied values of antenna_type_name are like this:  
+
 select * from antenna_type;
 +-----------------+-------------------+-------------+
 | antenna_type_id | antenna_type_name | igs_defined |
