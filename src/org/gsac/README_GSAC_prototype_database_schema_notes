@@ -19,6 +19,7 @@ GSAC itself.  Population and maintenance of the database is the reponsibility of
 database maintenance.   GSAC is not content management software; GSAC is web services.
 
 For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
+A MySQL dump file (.sql file) for this schema can be downloaded from the web site, on the installation page.
 
 +-----------------------------------+
 | Tables_in_Prototype_GSAC_Database |
