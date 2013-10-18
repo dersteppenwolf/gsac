@@ -602,7 +602,7 @@ public class GsacRepository implements GsacConstants {
             }
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
-                System.out.println("GSAC INCOMING REQUEST is: "+request.toString());
+                System.out.println("GSAC new request is: "+request.toString());
                 int resourceCnt = -1;
                 if (response != null) {
                     resourceCnt = response.getNumResources();
@@ -610,17 +610,16 @@ public class GsacRepository implements GsacConstants {
                 getLogManager().logAccess(request, what, resourceCnt);
             }
         } catch (UnknownRequestException exc) {
-            getLogManager().logError("Unknown request:" + uri + "?"
-                                     + request.getUrlArgs(), null);
-            request.sendError(HttpServletResponse.SC_NOT_FOUND,
-                              "Unknown request:" + uri);
+            System.out.println                                 ("GSAC unknown request is: "+request.toString());
+            getLogManager().logError                           ("GSAC unknown request is: " + uri + "?" + request.getUrlArgs(), null);
+            request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC unknown request is: " + uri);
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection
         } catch (Exception exc) {
             //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
-            getLogManager().logError("Error processing request:" + uri + "?"
-                                     + request.getUrlArgs(), thr);
+            System.out.println                                 ("Error processing request: "+request.toString());
+            getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
             try {
                 request.sendError(
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
