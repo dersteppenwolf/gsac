@@ -4,7 +4,7 @@ GSAC-WS Installation
 
 README, Part 1.  Creating the Initial GSAC Server at your repository
 
-October 16, 2013.  SKW UNAVCO
+October 18, 2013.  SKW UNAVCO
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.  
 This README file is "README Part 1," and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
@@ -23,17 +23,17 @@ Installing GSAC Web Services -- What You Need
 
 You can install GSAC web services for a data repository when you have:
 
-    a database, with complete metadata about sites(stations), their instruments, and their data files (if any). GSAC presently can read Oracle, Postgres, or MySQL. You can use an existing database you have, with no changes to it -- but some changes will be needed to GSAC code to be able to read the database. Or you can make a new database using the GSAC prototype database schema (as described below), populating it with your data values. See more in The GSAC Database, below.
+    A database, with complete metadata about sites (stations or monuments), their instruments, and their data files (if any). GSAC presently can read Oracle, Postgres, or MySQL. You can use an existing database you have, with no changes to it -- but new Java code for GSAC code to be needed to read the database. Or you can make a new database using the GSAC prototype database schema (as described below), populating it with your data values, which allows you to use GSAC code with very few changes. See more in The GSAC Database, below.
 
-    usually, but optionally, data files from the instruments for remote users to download. GSAC can provide discovery and download of geodesy data files like RINEX files.
+    A web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its own included application server, Jetty.
 
-    if you want to offer data file downloads, an FTP / HTTP download server the data files. GSAC does not download files. GSAC tells users how and where to download files. For example, GSAC can run on a web server different from one or more servers for downloads, a benefit.
+    Usually, GNSS data files from the instruments, for remote users to download. GSAC can provide discovery and download of geodesy data files like RINEX files. This is optional.
 
-    a web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its own included application server, Jetty.
-
-    the GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package from SourceForge.
+    If you want to offer data file downloads, an FTP / HTTP download server the data files. GSAC does not download files. GSAC tells users how and where to download files (a URL to the file). For example, GSAC itself can run on a web server different from the server(s) for downloads, a benefit.
 
     A Linux system for the initial installation and test of GSAC, with related software tools bash, Java JDK 1.6 or 1.7, subversion ("svn"), and ant, and with access to your GSAC database.
+
+    The GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package from SourceForge.
 
 A typical Linux system for the initial installation and test of GSAC could be Ubuntu, version 11, 12 or 13. Use the bash shell.
 Ubuntu with bash has very simple installation of the software tools you need.
@@ -54,7 +54,7 @@ This requests a you to enter a new so-called "root" password for MySQL use, whic
 
 Installation of GSAC on Debian Linux may be as easy, for Debian users.  
 
-In principle you may be able to install GSAC on a new Mac. It likely will be more difficult than using Linux.  The new Mac OS does not come with svn but can use svn.  Instructions about how to install svn on the Mac are online (for example http://www.wikihow.com/Install-Subversion-on-Mac-OS-X).  UNAVCO uses Linux and has little knowledge of building GSAC on a Mac.
+In principle you may be able to install GSAC on a new Mac. It may be more difficult than using Linux.  The new Mac OS does not come with svn but can use svn.  Instructions about how to install svn on the Mac are online (for example http://www.wikihow.com/Install-Subversion-on-Mac-OS-X).  
 
 ################################################################################
 
@@ -425,13 +425,21 @@ Follow the instructions in the README the top directory with your GSAC code.
 
 ################################################################################
 
-Build a Federated GSAC:
+To Build a Federated GSAC
 
-(NOT done as part of a GSAC to offer web services for your local data repository)
+(not a GSAC to offer web services for a local data repository)
+
+Two or more GSAC repositories may choose to collaborate to offer a single "federated" GSAC repository which, while maintaining the independence of each individual GSAC repository, allows for merged or joint searches of all the collaborating GSACs at once.
+
+A "federated GSAC" is an independent GSAC and is a new separate GSAC installation. Unlike a basic data repository GSAC, it does not use a local database with information about local data resources. Rather it "knows about" two or more other data repository GSACs, and queries them for information, using their published API search capabiliities. A federated GSAC does not store any data from the collaborating individual GSAC repositories. Among several advantages, this means a federated GSAC always shows the most recent data available from the collaborating individual GSAC repositories.
+
+Installing a federated GSAC is different from installing a data repository GSAC. See the GSAC installation README Part 1 file. A federated GSAC can run on a web server remote from servers at data repositories with databases and FTP/HTML download of data files. Or one web server can run one or more individual (data repository) GSAC repositories, and a federated GSAC, at the same time with no internal connections between them. 
 
 
 To install a federated GSAC, a single GSAC server which merges searches and results from
-two or more other GSAC repositories, modify the file
+two or more other GSAC repositories, here is the first step.
+
+Modify the file
 
 gsac-code/src/org/gsac/federated/resources/gsacserver.properties
 
