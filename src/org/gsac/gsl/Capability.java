@@ -109,6 +109,9 @@ public class Capability {
     /** _more_ */
     public static final String TYPE_DATERANGE = "date_range";
 
+    /** _more_  new 15 Oct 2103 */
+    public static final String TYPE_FILETYPE = "file.type";
+
 
     /** _more_ */
     public static final String TYPE_NUMBERRANGE = "number_range";
