@@ -121,8 +121,6 @@ The svn checkout creates a new folder gsac-code and many folders and files in it
 
 cd gsac-code/
 
-Note the files in this new folder; one is a copy of the prototype GSAC database in a MySQL .sql file.
-
 Do an initial ant build with the command:
 
 ant
@@ -143,6 +141,9 @@ Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.
 You may find the screen messages interesting to show the process of a GSAC build. 
 
 
+(Note the files in this gsac-code/src/org/gsac/; one is a copy of the prototype GSAC database in a MySQL .sql file.)
+
+ 
 Next
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
