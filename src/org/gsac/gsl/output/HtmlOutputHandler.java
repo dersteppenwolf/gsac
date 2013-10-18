@@ -1573,10 +1573,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         List<ResourceGroup> groups = resource.getResourceGroups();
         if (groups.size() > 0) {
             pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
+                    ? "Network"
+                    : "Networks"), getGroupHtml(groups,
+                    resource.getResourceClass(), false)));
+        }
+            /* was pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
                     ? "Group"
                     : "Groups"), getGroupHtml(groups,
                     resource.getResourceClass(), false)));
-        }
+            */
 
 
         processMetadata(request, pw, resource, resource.getMetadata(),
@@ -2282,7 +2287,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sortValues.add("");
             if (doResourceGroups) {
-                labels.add(msg("Groups"));
+                // add top label to column of networks for each site
+                // was labels.add(msg("Groups"));
+                labels.add(msg("Networks"));
                 sortValues.add("");
             }
             TABLE_LABELS     = Misc.listToStringArray(labels);
