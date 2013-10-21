@@ -15,7 +15,7 @@
 <!--
 used by the javadoc target
 -->
-        <property name="classpath" value="${lib}/servlet-api.jar:${lib}/unidatautil.jar:${lib}/idv.jar:${lib}/ramadda.jar:${lib}/gson-1.5.jar"/>
+        <property name="classpath" value="${lib}/servlet-api.jar:${lib}/unidatautil.jar:${lib}/idv.jar:${lib}/ramaddautil.jar:${lib}/gson-1.5.jar"/>
 
     </target>
 

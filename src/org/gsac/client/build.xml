@@ -21,7 +21,7 @@
         <property name="clientzip" value="${distdir}/gsacclient.zip"/>
         <property name="clientjar" value="${distdir}/gsacclient.jar"/>
 
-        <property name="classpath" value="${libdir}/commons-dbcp-1.4.jar:${libdir}/commons-pool-1.5.4.jar:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/ramadda.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar"/>
+        <property name="classpath" value="${libdir}/commons-dbcp-1.4.jar:${libdir}/commons-pool-1.5.4.jar:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/ramaddautil.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>

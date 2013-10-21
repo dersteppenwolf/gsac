@@ -35,7 +35,7 @@
         <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
         <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
 
-        <property name="classpath" value="${libdir}/ramadda.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/ramadda.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-1.6.2.jar"/>
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/ramaddautil.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-1.6.2.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
@@ -110,14 +110,14 @@
               <attribute name="Implementation-Vendor" value="UNAVCO"/>
               <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
 
-              <attribute name="Class-Path" value="gsacws.jar ramadda.jar unidatautil.jar  ${commons-dbcp.jar} log4j-1.2.15.jar oracleDriver.jar ${commons-pool.jar} jetty.jar jetty-util.jar  servlet-api.jar gson-1.5.jar joda-time-1.6.2.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar ramaddautil.jar unidatautil.jar  ${commons-dbcp.jar} log4j-1.2.15.jar oracleDriver.jar ${commons-pool.jar} jetty.jar jetty-util.jar  servlet-api.jar gson-1.5.jar joda-time-1.6.2.jar"/>
             </manifest> 
         </jar>
         
          <copy failonerror="true"  file="${gsacserverjar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true"  file="${gsacwsjar}"  todir="${gsacserverdir}"/>
 
-         <copy failonerror="true" file="${libdir}/ramadda.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/ramaddautil.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/unidatautil.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
@@ -152,7 +152,7 @@
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/README.release" fullpath="gsacrelease/README"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/releasebuild.xml" fullpath="gsacrelease/build.xml"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/**/*"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/ramadda.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/ramaddautil.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/unidatautil.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-dbcp.jar}"  prefix="gsacrelease"/>

@@ -61,7 +61,7 @@
 
 
 
-        <property name="classpath" value="${srcdir}:${libdir}/mysql.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/ramadda.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
+        <property name="classpath" value="${srcdir}:${libdir}/mysql.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/ramaddautil.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
 
 
 
@@ -124,7 +124,7 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="${basename}"/>
               <attribute name="Main-class" value="${serverclass}"/>
-              <attribute name="Class-Path" value="gsacws.jar ramadda.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar ramaddautil.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
             </manifest> 
         </jar>
     </target>
@@ -155,7 +155,7 @@
         <mkdir dir="${reldirlib}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
         <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramadda.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramaddautil.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidatautil.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-util.jar"/>
