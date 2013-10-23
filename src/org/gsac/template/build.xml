@@ -59,11 +59,7 @@
         <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
         
 
-<<<<<<< .mine
         <property name="classpath" value="${srcdir}:${libdir}/ramaddautil.jar:${libdir}/@MACRO.DBJAR@:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/ramaddautil.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
-=======
-        <property name="classpath" value="${srcdir}:${libdir}/ramadda.jar:${libdir}/@MACRO.DBJAR@:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
->>>>>>> .r754
 
 
         <property name="build.sysclasspath"    value="ignore" />
@@ -125,11 +121,7 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="${basename}"/>
               <attribute name="Main-class" value="${serverclass}"/>
-<<<<<<< .mine
               <attribute name="Class-Path" value="gsacws.jar ramaddautil.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar @MACRO.DBJAR@ ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
-=======
-              <attribute name="Class-Path" value="gsacws.jar ramadda.jar ramaddalib.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar @MACRO.DBJAR@ ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
->>>>>>> .r754
             </manifest> 
         </jar>
     </target>
@@ -161,7 +153,6 @@
         <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
         <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramaddautil.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramaddalib.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidatautil.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-util.jar"/>
