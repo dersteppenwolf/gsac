@@ -4,7 +4,7 @@ GSAC_WS Installation
 
 README, Part 2.
 
-October 3, 2013.   SKW  UNAVCO
+October 24, 2013.   SKW  UNAVCO
 
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -21,8 +21,8 @@ Contact UNAVCO at gsac-ws@unavco.org to request software support.
 This README file is automatically generated when you do the command 'ant makerepository' during GSAC installation, but the file creation may have an error.
 Some file names such as gsacrMyRepo.properties or gsac@MACRO.PREFIX@.properties in this README file, may have one or more upper case letters.                  
 The cooresponding actual GSAC files on disk lack upper case in their names.
-Some new Java class file names do have upper case letters, such as UnavcoSiteManager.java.         
-Do not change actual filenames of files made by GSAC to match the uppercase letters shown in this README file.
+Java class file names may have upper case letters, such as UnavcoSiteManager.java.         
+Do not change actual filenames of files made by GSAC to match any uppercase letters shown in this README file.
 
 ########################################################################
 
@@ -225,11 +225,7 @@ mv Tables.java database/
 Do not leave a copy of Tables.java in @MACRO.SRCDIR@/.
 
 
-########################################################################
-Another build of GSAC in your new GSAC code area
-########################################################################
-
-Now build GSAC again, with 'ant' in @MACRO.SRCDIR@.  This time you should see 
+Build GSAC again, with 'ant' in @MACRO.SRCDIR@.  This time you should see 
 
 compile:
     [javac] Compiling 7 source files
@@ -347,36 +343,56 @@ offer online in GSAC.  New code is needed to adapt GSAC to your database and pos
 data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
 from UNAVCO at gsac-ws@unavco.org.
 
+Your files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java
+(at least these files) must implement database queries (about geodesy data files and stations)
+to your GSAC database, used by your GSAC web form searches and by the GSAC API.
 
-The files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java must implement database queries (about data files and stations)
- to your GSAC database, used by your GSAC web form searches and by the GSAC API.  
+The initial or template files for these Java classes automatically created in your local GSAC area of course
+lack any database details (since the Tables class you just made was unknown).
 
-The initial or template files for these Java classes  supplied so far lack any database details (since the Tables class you have is ubknown to core GSAC).
+########################################################################
+ Using the Prototype GSAC db design
+########################################################################
 
-Replace the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java  with these Prototype GSAC Java classes found online:
+If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes prototype files which will probably make a working GSAC installation with little Java coding.
 
-http://facility.unavco.org/data/gsacws/docs/PrototypeSiteManager.java
+Replace your new files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java with these two "Prototype" files, elsewhere in your GSAC package:
 
-http://facility.unavco.org/data/gsacws/docs/PrototypeFileManager.java
+gsac-code/src/org/prototype/gsac/PrototypeSiteManager.java
+gsac-code/src/org/prototype/gsac/PrototypeFileManager.java
 
-Edit both the names and contents of these two files to change all instances of "Prototype" in them to your GSAC name, such as "Myrepo" (whatever is on the other .java files in tour GSAC area).
-See notes below about  @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java.
- 
-If you use the Prototype GSAC db design, test a new GSAC, using the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
-try your GSAC on your local development platform. You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
-no errors in the compile step).  Stop ant runserver with CTRL-C.
+Change them to fit into your GSAC code:
+- rename them both, replacing Prototype in the names with with your file name part someting like Myrepo.
+- in the files change all uses of Prototype in Java class and method names using your file name part to replace Myrepo.
+- replace the lines
+package org.prototype.gsac;
+import  org.prototype.gsac.database.*;
+with
+package org.myrep.gsac;
+import  org.myrep.gsac.database.*;
+using whatever your short name is, in place of myrep.
 
-If the ant build has errors they will hopefully show where is the diconnect between your database (represented by Tables classes) and 
-your new  @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java files.
+Also see notes below about SiteManager.java and FileManager.java.
 
-If you are using your own database schema, first you will need compare it to the prototype GSAC database schema.  
-Then modify the files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java 
-to get GSAC to work with your database.  This will be the most demanding part of GSAC installation.
+Then test your new GSAC, using the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. (You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
+no errors in the compile step.)
 
+Stop ant runserver with CTRL-C.
 
-                     ########################################################################
+If the ant build has errors they will hopefully show where is the disconnect between your database (represented by Tables classes) and
+your new  PrototypeSiteManager.java and PrototypesFileManager.java files.
 
-Side notes.
+########################################################################
+ Using Other Databases
+########################################################################
+
+If you are using your own database schema, first compare its schema to the prototype GSAC database schema.
+Then modify copies of the files PrototypeSiteManager.java and PrototypesFileManager.java
+to get GSAC to work with your database. You will be changing, at least, database names of tables and fields: see the Java file Tables.java you made.
+Probably you will rewrite the SQL queries, and how query results are habdled for GSAC use. This will be the most demanding part of GSAC installation.
+
+########################################################################
 
 The file @MACRO.PREFIX@Repository.java 
 
