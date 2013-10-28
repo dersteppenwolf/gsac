@@ -105,7 +105,7 @@ This can be confusing if you attempt to keep track of the several properties fil
 The properties files in these two sections are the only ones you need to look at to make a working GSAC.
 
 ########################################################################
-Verify that the build.xml file has your GSAC in it.
+Initial compile of GSAC in your new GSAC code area
 ########################################################################
 
 Check that the file build.xml, in your location @MACRO.SRCDIR@, has these lines. 
@@ -115,16 +115,12 @@ Note that the value represneted by 'gsac@MACRO.PREFIX@' below may have an upper 
     <target name="localinit">
         <!-- base name for build products -->
         <property name="basename" value="gsac@MACRO.PREFIX@"/>
+
           or
+
         <property name="basename" value="@MACRO.PREFIX@gsac"/>
 
 No changes are needed here unless something went wrong.  This target will be used by ant build process to make your GSAC server.  
-
-You have specified the basic information needed to run your full GSAC server.
-
-########################################################################
-Initial compile of GSAC in your new GSAC code area
-########################################################################
 
 Do the command 'ant' in @MACRO.SRCDIR@:
 
@@ -168,7 +164,7 @@ It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If yo
 as if you do an svn update to get new core code from SourceForge for GSAC,
 you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in @MACRO.SRCDIR@.
 
-Your ant build also creates a new Tomcat "war" file, something like gsacmyrepo.war, located in gsac-code/dist/, 
+Your ant build also creates a new Tomcat "war" file, named something like gsacmyrepo.war, located in gsac-code/dist/, 
 which will be used as the servlet (application) container for your public web site, if you use Tomcat. 
 
 
@@ -282,7 +278,6 @@ The 'Search' links won't do much yet.
 
 Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
 
-
 Stop the 'ant runserver' process with CTRL-c.  
 
 This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP server and Java servlet container.  
@@ -354,15 +349,15 @@ lack any database details (since the Tables class you just made was unknown).
  Using the Prototype GSAC db design
 ########################################################################
 
-If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes prototype files which will probably make a working GSAC installation with little Java coding.
+If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes prototype Java files which will probably make a working GSAC installation with little Java coding.
 
-Replace your new files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java with these two "Prototype" files, elsewhere in your GSAC package:
+Replace your new files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java with these two "Prototype" files,  from in your GSAC package:
 
 gsac-code/src/org/prototype/gsac/PrototypeSiteManager.java
 gsac-code/src/org/prototype/gsac/PrototypeFileManager.java
 
 Change them to fit into your GSAC code:
-- rename them both, replacing Prototype in the names with with your file name part someting like Myrepo.
+- rename them both, replacing Prototype in the file names with with your file name part, something like Myrepo.
 - in the files change all uses of Prototype in Java class and method names using your file name part to replace Myrepo.
 - replace the lines
 package org.prototype.gsac;
@@ -381,7 +376,7 @@ no errors in the compile step.)
 Stop ant runserver with CTRL-C.
 
 If the ant build has errors they will hopefully show where is the disconnect between your database (represented by Tables classes) and
-your new  PrototypeSiteManager.java and PrototypesFileManager.java files.
+your new  PrototypeSiteManager.java and PrototypesFileManager.java files, by naming variable names in the Java code (like COL_NETWORKS) not found in your Tables classes and java file.
 
 ########################################################################
  Using Other Databases
