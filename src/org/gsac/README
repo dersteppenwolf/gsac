@@ -1,25 +1,21 @@
 ################################################################################
 
 GSAC-WS Installation
-README, Part 1.  Creating the Initial GSAC Server at your repository
 
-October 21, 2013.  SKW UNAVCO
+README, Part 1.  Creating an initial GSAC server at your repository
+
+October 28, 2013.  SKW UNAVCO
 
 UNAVCO's GSAC-WS, called GSAC, is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
-
 The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html. 
-The GSAC Web Services document, "UNAVCO GSAC WS: Web Services for Geodesy Data Repositories" (http://facility.unavco.org/data/gsacws/docs/UNAVCO_GSAC_Web_services.pdf)
-introduces GSAC.  The GSAC User Guide "UNAVCO GSAC WS: User Guide for GSAC Data Repositories" (http://facility.unavco.org/data/gsacws/UNAVCO_GSAC_User_Guide.pdf)
-is for persons using data repositories powered by GSAC.
-
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.  
 This README file is "Part 1" of two GSAC README files for installation, and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
 ################################################################################
 
-Installing GSAC Web Services -- What You Need
+Installing GSAC Web Services -- System Requirements
 
 You can install GSAC web services for a data repository when you have:
 
@@ -82,7 +78,6 @@ To create a new MySQL GSAC prototype database using that .sql file:
 
 This creates a GSAC prototype MySQL database, which is of course initially empty of your GNSS metadata. 
 
-################################################################################
 
 Populate the Database
 
@@ -103,6 +98,7 @@ Installing the GSAC Web Services Software Package for a Data Repository, Part 1.
  
 Creating the initial GSAC Server at your repository
 
+Get GSAC from SourceForge
 
 Choose or make a top-level working directory for GSAC, and go there. For example:
 
@@ -123,11 +119,16 @@ Do an initial ant build with the command:
 
 ant
 
-Next, edit 
+Look for any error messages.
+
+
+Beginning to make your GSAC
+
+Edit  the file
 
 gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
 
-to set the longitude, latitude, and zoom level for the center of the map GSAC shown shows in site search results on a web page.  For example:
+to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  For example:
 
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
   var defaultZoomLevel = 5;
@@ -200,18 +201,7 @@ copyjava:
 init:
 copyjava:
      [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
-init:
-copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
-init:
-copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
-init:
-copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
-init:
-copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
+...
      [echo] Repository source package has been created
 BUILD SUCCESSFUL
 
@@ -225,7 +215,7 @@ and populates it with initial all-new directories and files for your GSAC reposi
 
 cd to the just-made new directory with new GSAC code just for your repository, such as 
 
-cd ~/GSAC/gsac-code/src/org/myrepo/gsac/. 
+cd ~/GSAC/gsac-code/src/org/myrepo/gsac/ 
 
 Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
