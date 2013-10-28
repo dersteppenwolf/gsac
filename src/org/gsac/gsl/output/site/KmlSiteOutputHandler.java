@@ -143,7 +143,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                                : GsacResponse.MIME_KMZ);
         getRepository().processRequest(getResourceClass(), request, response);
         Element root   = KmlUtil.kml("Site Search");
-        Element doc    = KmlUtil.document(root, "Sites", true);
+        Element doc    = KmlUtil.document(root, "GSAC Google Earth Stations", true);
         Element folder = doc;
         //        Element folder = KmlUtil.folder(doc, "Site Groups", false);
         List<GsacSite>             sites    = response.getSites();
