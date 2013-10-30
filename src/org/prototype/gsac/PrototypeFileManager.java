@@ -26,8 +26,9 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
-// older version had import ucar.unidata.sql.Clause;
-//                   import ucar.unidata.sql.SqlUtil;
+// older version (to Oct 16 2013) had 
+//     import ucar.unidata.sql.Clause;
+//     import ucar.unidata.sql.SqlUtil;
 import org.ramadda.sql.Clause;
 import org.ramadda.sql.SqlUtil;
 
@@ -47,33 +48,21 @@ import java.util.Calendar;
 
 /**
  * Handles all of the resource related repository requests. The main entry point is {@link #handleRequest}
+ * For the Prototype GSAC (Geodesy Seamless Archive). 
  * 
- * For this particular GSAC, code to handle data file searches ands download information.
+ * For a particular GSAC, code to handle data file searches ands download information, based on the database read by GSAC about data holdings.
  * 
  * A GSAC FileManager class composes what file-related items are provided for SEARCHES for files in the API and web site.
- *
  * A GSAC FileManager class composes what items are provided returned in the RESULTS when a search finds something.
  *
- * This ---FileManager.java uses the prototype GSCA db table gnss_data_file;
+ * This FileManager.java uses the prototype GSCA db table gnss_data_file;
  *
- * @author  Jeff McWhirter 2011; S K Wier 14 Oct 2013; UNAVCO;  
+ * @author  Jeff McWhirter 2011
+ * @author  S K Wier 30 Oct 2013; UNAVCO  
  */
 public class PrototypeFileManager extends FileManager {
 
-    // See prototype db table file_type for types to use at this data center. These *may* be offered:
-    public static final String TYPE_GNSS_OBSERVATION = "gnss.observation";
-    public static final String TYPE_GNSS_OBSERVATION1 = "gnss.o.Z";
-    public static final String TYPE_GNSS_OBSERVATION2 = "gnss.navigation";
-    public static final String TYPE_GNSS_OBSERVATION3 = "gnss.met";
-    public static final String TYPE_GNSS_OBSERVATION4 = "gnss.d.Z";
-    public static final String TYPE_GNSS_OBSERVATION5 = "gnss.n.Z";
-    public static final String TYPE_GNSS_OBSERVATION6 = "gnss.g.Z";
-    public static final String TYPE_GNSS_OBSERVATION7 = "gnss.igssitelog";
-    public static final String TYPE_GNSS_OBSERVATION8  = "gnss.sinex";
-    public static final String TYPE_GNSS_OBSERVATION9  = "gnss.pbo_ts_pos";
-    public static final String TYPE_GNSS_OBSERVATION11 = "gnss.pbo_ts_csv";
-    public static final String TYPE_GNSS_OBSERVATION10 = "gnss.o";
-
+    public static final String TYPE_GNSS_OBSERVATION = "geodesy.data";
 
     /**
      * ctor
@@ -84,7 +73,6 @@ public class PrototypeFileManager extends FileManager {
         super(repository);
 
     }
-
 
     /**
      *  Enable what file-related items are used in searches (database queries) for geoscience data files to download from this particular data repository.  
@@ -99,21 +87,6 @@ public class PrototypeFileManager extends FileManager {
         List<Capability> capabilities = new ArrayList<Capability>();
 
         // addDefaultCapabilities(capabilities);
-        /* 
-        which is, from gsl/FileManager.java:
-        public void addDefaultCapabilities(List<Capability> capabilities) {
-        Capability   cap;
-              // this "File Type" 'capability' provides a box with 100-some possible file types, everything in the list in  src/org/gsac/gsl/resources/vocabulary/file.type.properties
-        Capability[] dflt = { initCapability( new Capability( ARG_FILE_TYPE, "File Type", new ArrayList<IdLabel>(), true), "File Query", "Type of file", null,
-                                           getRepository().getVocabulary( ARG_FILE_TYPE, true)), 
-
-                                             //(new Capability(ARG_FILE_DATADATE, "Data Date", Capability.TYPE_DATERANGE), "File Query", "Date the data this file holds was collected"),
-              };
-        cap.setSuffixLabel("&nbsp;(bytes)");
-        for (Capability capability : dflt) {
-            capabilities.add(capability);
-        }
-        */
 
         Capability   cap;
 
@@ -146,7 +119,7 @@ public class PrototypeFileManager extends FileManager {
             capabilities.add(capability);
         }
 
-        // Also add the station-related search choices into the file search web page form, so you can select files from particular sites
+        // Also add all the station-related search choices into the file search web page form, so you can select files from particular sites
         // (gets all the site searches from the related SiteManager class)
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
@@ -157,7 +130,7 @@ public class PrototypeFileManager extends FileManager {
      * Handle the search request.   
      * 1. Compose a db query select clause for the requests' values, and make the select query on the GSAC db.
      * 2. Do the database search as specified by the user's search for files in the web site forms or via the API, (contained in input object "request")
-     *    and put an array of the results, put into one or more GSAC_file objects, into the container object "GsacResponse response."
+     *    and put an array of the results, with one or more GSAC_file objects, into the container object "GsacResponse response."
      *
      * @param request    The request [from the api or web search forms] what to search with
      * @param response   one or more GSACFile objects, in a "GsacResponse"
@@ -172,7 +145,6 @@ public class PrototypeFileManager extends FileManager {
         // make the SQL query to select from the columns (fields) of rows in the database, with  query clauses generated here.
 
         /* file search items not used yet, but of possible interest
-
         if (request.defined(ARG_FILESIZE_MIN)) {
             int size = request.get(ARG_FILESIZE_MIN, 0);
             clauses.add(Clause.appendSearchCriteria(msgBuff, "Filesize&gt;=", "" + request.get(ARG_FILESIZE_MIN, 0));
@@ -185,7 +157,6 @@ public class PrototypeFileManager extends FileManager {
             List<String> types = (List<String>) request.getList(ARG_FILE_TYPE); 
             addSearchCriteria(msgBuff, "Resource Type", types, ARG_FILE_TYPE);
         }
-
         Date[] publishDateRange =
             request.getDateRange(ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO, null, null);
         if (publishDateRange[0] != null) {
@@ -282,12 +253,8 @@ public class PrototypeFileManager extends FileManager {
              });
 
 
-        //System.err.println("   FileManager:handleRequest select line  is  ");
-
-        // NO where check on file type yet !
-
-        // do the sql select from the database
-        Statement statement = getDatabaseManager().select( cols,  tables,  mainClause);
+        //Statement statement = getDatabaseManager().select( cols,  tables,  mainClause);
+        Statement statement = getDatabaseManager().select( cols,  tables,  mainClause, " order by " + Tables.GNSS_DATA_FILE.COL_DATA_START_TIME+", "+Tables.STATION.COL_CODE_4CHAR_ID, -1);
 
         //System.err.println("       sql statmnt obj    " +statement);
 
@@ -303,7 +270,7 @@ public class PrototypeFileManager extends FileManager {
             // process each line 
             while ((results = iter.getNext()) != null) {
                
-               // get individual values from each "results" (one line)
+               // get an individual file's  values from each single row returned in the array "results"
                String siteID = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
                int station_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_STATION_ID);
                int file_type_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID);
@@ -311,6 +278,7 @@ public class PrototypeFileManager extends FileManager {
                Date data_stop_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
                Date published_date  = results.getDate(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE);
                String file_url = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_URL);
+               String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
 
                // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
@@ -365,19 +333,11 @@ public class PrototypeFileManager extends FileManager {
                //System.err.println("  FileManager:handleRequest(): got file site id " + siteID+"  file time range start " 
                //                        + data_start_time+" file time range end " + data_stop_time+"  file url : " + file_url);
 
-               // check if file type is as needed
-               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS - Observation");
-               if (1==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION1, "IGS site log");  }
-               if (2==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION2, "RINEX GLONASS navigation file");}
-               if (3==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION3, "RINEX met file");}
-               if (4==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION4, "RINEX navigation file");}
-               if (5==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION5, "RINEX observation file" ) ; }
-               if (6==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION6, "SINEX");  }
-               if (7==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION7, "SOPAC XML log file");  }
-               if (8==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION8, "Time Series PBO csv");  }
-               if (9==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION9, "Time Series PBO pos");  }
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
+               if (file_type_name != null) {
+                  rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
+               }
 
-               //OK if you got this far you have a file which meets the search criteria:, so make GscaFile onject for it.
                //GsacFile(String          repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
                GsacFile fileInfo = new GsacFile(siteID, new FileInfo(file_url), null,                     published_date,   data_start_time, data_stop_time, rt);
 
@@ -419,11 +379,14 @@ public class PrototypeFileManager extends FileManager {
 
 
     /**
-     * This takes the resource id that is used to identify files and creates a Gsac object.
-     * LOOK FIX this is why "Could not find resource"  is shown on click of file url in table of file found results: not clear what it does, or what is resourceId
+     * This takes the resource id that is used to identify files and creates a GsacFile object.
+     * FIX bug: inadequate to find user-selected file by dates etc. Returns a GsacFile object for the station; for first file found for that station in the database.
+     *  not the file clicked on.  and, How to get file times in here?
      *
-     * Composes one particular result provided to user, called when  a user clicks on a particular item in the table of things found, after a search.
-     * For example, used to make an HTML page to show about one file. 
+     * Composes one particular "resource page"  when a user clicks on a particular item in the table of results, for files in this case, after a search.
+     *  used to make an HTML page about one file. 
+     *
+     * But also note that the 'resource page' has no more information that in the table of results, for files in this case, after a search.  So why bother?
      *
      * @param resourceId file id
      *
@@ -432,43 +395,50 @@ public class PrototypeFileManager extends FileManager {
      * @throws Exception On badness
      */
     public GsacResource getResource(String resourceId) throws Exception {
-        System.err.println("                    FileManager: getResource() MAKE a GacFile obj for " + resourceId); ///
+        //System.err.println("   filemanager: GsacResource, resourceId=_" + resourceId +"_");
 
-
-
-
-
-        Clause clause = Clause.eq(Tables.GNSS_DATA_FILE.COL_STATION_ID, resourceId);
-        Statement statement = getDatabaseManager().select( Tables.GNSS_DATA_FILE.COLUMNS, Tables.GNSS_DATA_FILE.NAME, clause);
-        int cnt=0;
-        int col;
+        List<String> tables = new ArrayList<String>();
+        List<Clause> clauses = new ArrayList<Clause>();
+        tables.add(Tables.STATION.NAME);
+        tables.add(Tables.GNSS_DATA_FILE.NAME);
+        tables.add(Tables.FILE_TYPE.NAME);
+        // clauses: WHERE this station is id-ed by its 4 char id:, and join other tables
+        clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, resourceId));
+        clauses.add(Clause.join(Tables.GNSS_DATA_FILE.COL_STATION_ID, Tables.STATION.COL_STATION_ID));
+        clauses.add(Clause.join(Tables.FILE_TYPE.COL_FILE_TYPE_ID, Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID )) ;
+        //  and for the mysql SELECT clause: make a list of what to get (row values returned):
+        String cols=SqlUtil.comma(new String[]{
+             Tables.GNSS_DATA_FILE.COL_STATION_ID,
+             Tables.GNSS_DATA_FILE.COL_DATA_START_TIME,
+             Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME,
+             Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE,
+             Tables.GNSS_DATA_FILE.COL_FILE_URL,
+             Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID,
+             Tables.STATION.COL_CODE_4CHAR_ID,
+             Tables.STATION.COL_STATION_ID,
+             Tables.FILE_TYPE.COL_FILE_TYPE_NAME
+             });
+        Statement statement =  getDatabaseManager().select(cols,  tables, Clause.and(clauses));
         try {
             ResultSet results = statement.getResultSet();
             while (results.next()) {
                int station_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_STATION_ID);
                int file_type_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID);
+               String file_type_name  = results.getString(Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
+               String file_url = results.getString(Tables.GNSS_DATA_FILE.COL_FILE_URL);
+               String siteID = ""+station_id;
                Date data_start_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
                Date data_stop_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
                Date published_date  = results.getDate(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE);
-               String file_url = results.getString(Tables.GNSS_DATA_FILE.COL_FILE_URL);
-               String siteID = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
-               // test on file_type_id to set rt
-               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION, "GNSS data file");
-               if (1==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION1, "IGS site log");  }
-               if (2==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION2, "RINEX GLONASS navigation file");}
-               if (3==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION3, "RINEX met file");}
-               if (4==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION4, "RINEX navigation file");}
-               if (5==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION5, "RINEX observation file" ) ; }
-               if (6==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION6, "SINEX");  }
-               if (7==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION7, "SOPAC XML log file");  }
-               if (8==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION8, "Time Series PBO csv");  }
-               if (9==file_type_id) { rt = new ResourceType(TYPE_GNSS_OBSERVATION9, "Time Series PBO pos");  }
-               //         GsacFile(    String repositoryId,     FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
-               GsacFile fileInfo = new GsacFile(resourceId, new FileInfo(file_url), null,                         published_date,  data_start_time,data_stop_time, rt);
-               System.err.println("                    FileManager: getResource() made a GacFile obj");
+
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
+               if (file_type_name != null) {
+                  rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
+               }
+               //         GsacFile(String repositoryId, FileInfo fileInfo,      GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
+               GsacFile fileInfo = new GsacFile(resourceId, new FileInfo(file_url), null,                     published_date,    data_start_time,    data_stop_time, rt);
                return fileInfo;
             } // end while
-
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
