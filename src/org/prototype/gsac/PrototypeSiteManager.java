@@ -55,9 +55,10 @@ import java.util.List;
 import java.util.HashSet;
 
 
+
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
- * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
+ * For the Prototype GSAC (Geodesy Seamless Archive). 
  *
  * This class is one major part of making a new local GSAC; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
  *
@@ -69,9 +70,11 @@ import java.util.HashSet;
  * - how to package up the results from the query (method makeResource below) into a java object for further use, such as for the HTML pages of
  *   search results on the GSAC web site, and the items in other result formats like SINEX.
  *
- * Code in the GSAC SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
- * This instance of the GSAC SiteManager class uses the GSAC Prototype database schema.
+ * The base class is gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
+ * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
+ * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
+ * @author  Jeff McWhirter 2011
  * @author  S K Wier, UNAVCO; version of 24 Oct 2013.
  */
 public class PrototypeSiteManager extends SiteManager {
@@ -576,11 +579,9 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * Create a single site:  make a GsacSite object which has site metadata (for display in web page, or to send to user as 'results' in some form determined by an OutputHandler class).
-     * input "results" is one row got from the  db query.
-     * Previous code did a db select clause to get one (or more?) rows in the db station table for one (or more?) site ids
-     * From each row returned by the query, get the station's data. 
-     * Note order of columns in returned row determines where you find things; see the db schema.
+     * Create a single 'site':  make a GsacSite object which has site metadata (for display in web page, or to send to user as 'results' in some form determined by an OutputHandler class).
+     * input "results" is one row got from the db query, a search on stations.
+     * Previous code to this call did a db select clause to get one (or more?) rows in the db station table for one (or more?) site ids
      *
      * @param results db results
      *
@@ -592,65 +593,9 @@ public class PrototypeSiteManager extends SiteManager {
     @Override
     public GsacResource makeResource(ResultSet results) 
         throws Exception {
-        /*
-        using table station; from Prototype GSAC database:
-        +--------------------------+-----------------+------+-----+---------+----------------+
-        | Field                    | Type            | Null | Key | Default | Extra          |
-        +--------------------------+-----------------+------+-----+---------+----------------+
-        | station_id               | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
-        | code_4char_ID            | char(4)         | NO   |     | NULL    |                |
-        | station_name             | varchar(50)     | NO   |     | NULL    |                |
-        | latitude_north           | double          | NO   |     | NULL    |                |
-        | longitude_east           | double          | NO   |     | NULL    |                |
-        | ellipsoidal_height       | float           | YES  |     | NULL    |                |
-        | station_installed_date   | datetime        | NO   |     | NULL    |                |
-        | station_style_id         | int(3) unsigned | NO   |     | NULL    |                |
-        | access_permission_id     | int(3) unsigned | YES  |     | NULL    |                |
-        | monument_description_id  | int(5) unsigned | NO   |     | NULL    |                |
-        | project_id               | int(5) unsigned | YES  |     | NULL    |                |
-        | country_id               | int(5) unsigned | NO   |     | NULL    |                |
-        | province_region_state_id | int(5) unsigned | YES  |     | NULL    |                |
-        | city                     | varchar(50)     | YES  |     | NULL    |                |
-        | x                        | double          | YES  |     | NULL    |                |
-        | y                        | double          | YES  |     | NULL    |                |
-        | z                        | double          | YES  |     | NULL    |                |
-        | station_removed_date     | datetime        | YES  |     | NULL    |                |
-        | iers_domes               | varchar(9)      | YES  |     | NULL    |                |
-        | station_photo_URL        | varchar(100)    | YES  |     | NULL    |                |
-        | agency_id                | int(3) unsigned | YES  |     | NULL    |                |
-        | networks                 | varchar(2000)   | YES  |     | NULL    |                |
-        | embargo_duration_hours   | int(6) unsigned | YES  |     | NULL    |                |
-        | embargo_after_date       | datetime        | YES  |     | NULL    |                |
-        +--------------------------+-----------------+------+-----+---------+----------------+
-        24 rows in set 
-        */
+        // depends on 'station' table in the database
 
-        /* old: access by column counting in the row returned from the database:; this fails if order of fields in db table is shifted, not a good result.
-        int colCnt = 1;
-        colCnt += 1;  
-        String fourCharId= results.getString(colCnt++);  // COL_CODE_4CHAR_ID
-        String staname   = results.getString(colCnt++); // COL_STATION_NAME
-        double latitude  = results.getDouble(colCnt++); // COL_LATITUDE_NORTH
-        double longitude = results.getDouble(colCnt++); // COL_LONGITUDE_EAST
-        double ellipsoid_hgt =  results.getDouble(colCnt++); //  COL_ELLIPSOIDAL_HEIGHT
-        colCnt += 2;  
-        int station_style_id    = results.getInt(colCnt++); 
-        //int access_permission_id    = results.getInt(colCnt++); 
-        int monument_description_id    = results.getInt(colCnt++); 
-        int countryid    = results.getInt(colCnt++);
-        int stateid      = results.getInt(colCnt++);
-        String city      = results.getString(colCnt++);
-        colCnt += 3;  
-        String iersdomes = results.getString(colCnt++);  // see below  "IERS DOMES"; another way to get and save metadata.
-        String station_photo_URL = results.getString(colCnt++);
-        //System.err.println("   SiteManager: photo url is " + station_photo_URL) ;
-        int agencyid    = results.getInt(colCnt++); // or getLong
-        String networks = results.getString(colCnt++);
-        int projectid    = results.getInt(colCnt++); // or getLong
-        int access_permission_id    = results.getInt(colCnt++); 
-        */
-
-        // access by name of field in database row: 
+        // access values by name of field in database row: 
         String  fourCharId   = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
         String  staname   =    results.getString(Tables.STATION.COL_STATION_NAME);
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
@@ -664,19 +609,15 @@ public class PrototypeSiteManager extends SiteManager {
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); // or getLong
-        int projectid    =     results.getInt(Tables.STATION.COL_PROJECT_ID); // or getLong
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
         String networks = results.getString(Tables.STATION.COL_NETWORKS);
          
-        /*  Make a site object, with some basic values.
-           GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
+        /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
          * @param siteId        unique repository specific id  (internal to/for GSAC only?)
          * @param siteCode      site code , the 4 character IB like VSLM or P111.
          * @param name          site name like 'Marshall'
-         * @param latitude location
-         * @param longitude location
-         * @param so-called elevation, but actually GSAC like GNSS data uses height above reference ellipsoid, not elevation which is height above some geoid model surface.
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
+         * the so-called elevation, but actually GSAC like GNSS data, uses height above reference ellipsoid, not elevation which is height above some geoid model surface.
         */
         GsacSite site = new GsacSite(fourCharId, fourCharId, staname, latitude, longitude, ellipsoid_hgt);
 
@@ -791,48 +732,6 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
         
-        /* obsolete: this code from an early verison of prototype db schema which lacked the agency_id
-        // where station.project_id gives project.agency_id gives agency.agency_name;
-        int agency_id=0;
-        clauses.add(Clause.join(Tables.STATION.COL_PROJECT_ID, Tables.PROJECT.COL_PROJECT_ID));
-        clauses.add(Clause.eq(Tables.PROJECT.COL_PROJECT_ID, projectid));
-        cols=SqlUtil.comma(new String[]{Tables.PROJECT.COL_AGENCY_ID});
-        tables.add(Tables.STATION.NAME);
-        tables.add(Tables.PROJECT.NAME);
-        statement = //select            what    from      where
-           getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        //System.err.println("   SiteManager: agency id query is " +statement);
-        try {
-           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           while ((qresults = iter.getNext()) != null) {
-               agency_id = qresults.getInt(Tables.PROJECT.COL_AGENCY_ID);
-               break;
-           }
-        } finally {
-           getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-            //System.err.println("   SiteManager: agency id  is " +agency_id);
-        statement =
-            getDatabaseManager().select( Tables.AGENCY.COLUMNS, Tables.AGENCY.NAME, Clause.eq( Tables.AGENCY.COL_AGENCY_ID, agency_id) );
-                //    gsacResource.getId()), (String) null, -1);
-        try {
-            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-            // process each line in results of db query  
-            while ((qresults = iter.getNext()) != null) {
-                // args to addPropertyMetadata() are [see definition of addPropertyMetadata in this file below]:
-                // the resource you are adding it to;
-                // the label on the web page or results
-                // the db column name 
-                String agency = qresults.getString( Tables.AGENCY.COL_AGENCY_NAME);
-                addPropertyMetadata( site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "Agency", agency);          // compare item zzz
-                //System.err.println("   SiteManager: agency   is " +agency);
-                break;
-            }
-        } finally {
-            getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-        */
-
         // add URL(s) of image(s) here; will appear on web page of one station results
         MetadataGroup imagesGroup = null;
         if ( station_photo_URL != null) {
