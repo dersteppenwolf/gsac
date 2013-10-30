@@ -365,7 +365,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                     String[] labels = null; 
                     labels = new String[] {
-                        (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
+                        // for related content (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
+                        // or if no "related content"; see below
+                                               (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size")
                     };
 
                     String[] sortValues = new String[] {
@@ -383,44 +385,76 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
+
                 String clickEvent = getEntryEventJS(resource.getId(),
                                         URL_FILE_VIEW, ARG_FILE_ID)[1];
+
 
                 String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(),
                                  true);
                 //                sb.append(HtmlUtil.col(cbx));
+
                 String remoteHref = getRepository().getRemoteHref(resource);
+
                 if (remoteHref.length() > 0) {
                     sb.append(HtmlUtil.col(remoteHref));
                 }
+
                 sb.append("</tr></table></td>\n");
-                String href = makeResourceViewHref(resource);
-                //                sb.append(HtmlUtil.col(href));
-                String url = resource.getFileInfo().getUrl();
+
+                String url = resource.getFileInfo().getUrl();  // url is the complete URL to download one file 
                 if (url != null) {
+                    String downloadHref = HtmlUtil.href
+                                           ( url, IOUtil.getFileTail(url) );
+                                           //( url, url); // show complete text of the url for the link on the page
+                                           //  (url, HtmlUtil.img( iconUrl("/down_arrow.gif"))); // shows a little arrow
+                    String tmp = downloadHref; 
+                    sb.append(HtmlUtil.col(tmp));
+                } else {
+                    sb.append(HtmlUtil.col("N/A"));
+                }
+                /* original code which shows in the table of files - found results, in the "File" column (labeled above), 
+                   a down arrow which is a link to the file for singl file down laod, and a link which is text of the filename
+                   to a "resource page" which of the typical geodesy archive of data files, has no more information than the table of files - found results.
+                   This is deprecated since of no use.
+
+                // this href serves for a link to the "resource page about the file," not to the file.
+                // onscreen it looks like text like a file name " soph0330.13d.Z"
+                String href = makeResourceViewHref(resource);
+                //                sb.append(HtmlUtil.col(href)); // do this when you want this thing in a column by itself
+
+                String url = resource.getFileInfo().getUrl();  // url is the ...
+                if (url != null) {
+                    // note ! this 'href' is not the href above 
                     String downloadHref = HtmlUtil.href(
                                               url,
-                                              HtmlUtil.img(
-                                                  iconUrl(
-                                                      "/down_arrow.gif")));
+                                              HtmlUtil.img( iconUrl("/down_arrow.gif")));
+
+                    // so this "File" column will show BOTH these items in this order
                     String tmp = downloadHref + " " + href;
                     sb.append(HtmlUtil.col(tmp));
                 } else {
                     sb.append(HtmlUtil.col("N/A"));
                 }
+                */
 
                 if (resource.getType() != null) {
-                    sb.append(HtmlUtil.col(resource.getType().getName(),
+                    String type = resource.getType().getName();
+                    // for showing "Type" in table of results, limit field to 50 chars to fit on web page
+                    String shorttype= type.substring(0,50);
+                    //sb.append(HtmlUtil.col(resource.getType().getName(),
+                    sb.append(HtmlUtil.col( shorttype,
                                            clickEvent));
                 } else {
                     sb.append(HtmlUtil.col("N/A", clickEvent));
                 }
 
-
-              // Note: if you have no "related content" omit this section
-              if (resource.getRelatedResources() != null) {
-                StringBuffer relatedContent = new StringBuffer();
-                for (int relatedIdx = 0; relatedIdx < relatedResources.size();
+                // Note: if you have no "related content" omit this section  JM
+                // AND also in that case revise about 54 lines above, with column labels  SKW
+                /* yup for geodesy data center , get rid of the mystery "NA" column in table of file search results
+                if (resource.getRelatedResources() != null) {
+                  StringBuffer relatedContent = new StringBuffer();
+                  for (int relatedIdx = 0; relatedIdx < relatedResources.size();
                         relatedIdx++) {
                     GsacResource relatedResource =
                         relatedResources.get(relatedIdx);
@@ -441,7 +475,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     relatedContent.append("NA");
                 }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
-              }
+                }
+                */
 
                 Date publishTime = resource.getPublishDate();
                 Date startTime   = resource.getFromDate();
