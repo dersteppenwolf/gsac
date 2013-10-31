@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -19,8 +19,6 @@
  */
 
 package org.gsac.gsl.output.file;
-
-
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
@@ -43,11 +41,12 @@ import javax.servlet.http.*;
 
 
 /**
- * Class description
+ * Class description not given by author
  *
  *
  * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @author         Jeff McWhirter
+ * modified 30 Oct 2013, S K Wier 
  */
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
@@ -363,12 +362,18 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(
                         "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
+                    // related content is for example site name 
+                    //System.err.println (" relatedLabel is _"+relatedLabel+"_");
                     String[] labels = null; 
-                    labels = new String[] {
-                        // for related content (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
-                        // or if no "related content"; see below
-                                               (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size")
-                    };
+                    if ( relatedLabel.equals("") || relatedLabel == null)
+                    {
+                        labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
+                        // if no "related content"; see below
+                    }
+                    else {
+                        labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
+                    }
+                    
 
                     String[] sortValues = new String[] {
                         (includeExtraCol
@@ -402,7 +407,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 sb.append("</tr></table></td>\n");
 
-                String url = resource.getFileInfo().getUrl();  // url is the complete URL to download one file 
+                // show link to the url, the complete URL to download one file 
+                String url = resource.getFileInfo().getUrl();  
                 if (url != null) {
                     String downloadHref = HtmlUtil.href
                                            ( url, IOUtil.getFileTail(url) );
@@ -413,10 +419,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 } else {
                     sb.append(HtmlUtil.col("N/A"));
                 }
-                /* original code which shows in the table of files - found results, in the "File" column (labeled above), 
-                   a down arrow which is a link to the file for singl file down laod, and a link which is text of the filename
-                   to a "resource page" which of the typical geodesy archive of data files, has no more information than the table of files - found results.
-                   This is deprecated since of no use.
+                /* original code which shows, in the table of file-search results, in the "File" column (labeled above), 
+                   a down arrow which is a link to the file for single file download, and a link(highlighed file name) 
+                   to a "resource page" which in the typical geodesy archive of data files, has no more information than the table of files - found results.
+                   This is deprecated since of no use.  Why clikc ot get a new page to see the same information you are looking at?
 
                 // this href serves for a link to the "resource page about the file," not to the file.
                 // onscreen it looks like text like a file name " soph0330.13d.Z"
@@ -439,20 +445,19 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 */
 
                 if (resource.getType() != null) {
-                    String type = resource.getType().getName();
-                    // for showing "Type" in table of results, limit field to 50 chars to fit on web page
-                    String shorttype= type.substring(0,50);
-                    //sb.append(HtmlUtil.col(resource.getType().getName(),
-                    sb.append(HtmlUtil.col( shorttype,
-                                           clickEvent));
+                    String filetype = resource.getType().getName();
+                    // optional: to limit field to 50 chars to fit on web page
+                    // filetype= filetype.substring(0,50);
+                    sb.append(HtmlUtil.col( filetype, clickEvent));
                 } else {
-                    sb.append(HtmlUtil.col("N/A", clickEvent));
+                    sb.append(HtmlUtil.col("(file type not specified)", clickEvent));
                 }
 
-                // Note: if you have no "related content" omit this section  JM
-                // AND also in that case revise about 54 lines above, with column labels  SKW
-                /* yup for geodesy data center , get rid of the mystery "NA" column in table of file search results
-                if (resource.getRelatedResources() != null) {
+                // Note: if you have no "related content", skip this
+                //  i.e. get rid of the mystery "NA" column in table of file search results
+                //System.err.println (" relatedLabel 2 is _"+relatedLabel+"_");
+                //if ( ( !relatedLabel.equals("") || relatedLabel != null) ) {  //&& resource.getRelatedResources() != null) {
+                if ( 0<relatedLabel.length()) {
                   StringBuffer relatedContent = new StringBuffer();
                   for (int relatedIdx = 0; relatedIdx < relatedResources.size();
                         relatedIdx++) {
@@ -470,13 +475,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     } else {
                         relatedContent.append(relatedResource.getLongLabel());
                     }
-                }
-                if (relatedResources.size() == 0) {
+                  }
+                  if (relatedResources.size() == 0) {
                     relatedContent.append("NA");
-                }
+                  }
                 sb.append(HtmlUtil.col(relatedContent.toString()));
                 }
-                */
+                //  */
 
                 Date publishTime = resource.getPublishDate();
                 Date startTime   = resource.getFromDate();
