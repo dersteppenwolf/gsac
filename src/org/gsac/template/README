@@ -476,9 +476,9 @@ Web Site Page Design, Contents, and Images
 Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
 You can add more to this file for a larger page, using normal HTML.
 
-The home page of a GSAC repository web site is detailed in a file such as src/org/@MACRO.PREFIX@/htdocs/index.html
+The home page of a GSAC repository web site is detailed in an index.html file.
 In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/gsac/htdocs/).
-In @MACRO.PREFIX@/gsac/htdocs make a new HTML file index.html. A very simple but working one has these lines:
+In @MACRO.PREFIX@/gsac/htdocs make a new HTML file, index.html. A very simple but working one has these lines:
 
     <link rel="search" type="application/opensearchdescription+xml" href="htdocs/opensearch.xml" 
     title=" @MACRO.PREFIX@ GSAC Repository" />
