@@ -343,10 +343,17 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         double seconds = (minsdegfrac*3600 - minutes*60) ;  
         String deg = ""+degrees;
         String min = ""+minutes;
+        // note minutes is integer; can be '0'; need an extra leading space if only have a minute value like 9.9 using 3 spaces not 4
+        if (10>minutes) { min = "  "+min; }
+
         String sec = secFormat.format(seconds); // one decimal point
+        // if sec is '0'
         if (sec.length() <=2 ) { sec = sec+".0"; }
-        String s = deg + " " + min + " " + sec;
-        return setStringLength(s, 11);
+        // need an extra leading space if only have a single-digitn integer part of seconds value like 9.9,  using 3 spaces not 4
+        if (seconds<10.0 ) { sec = "  "+sec; }
+
+        String latStr = deg + " " + min + " " + sec;
+        return setStringLength(latStr, 11);
     }
 
     /**
@@ -373,8 +380,14 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         //int frac = int ( (seconds - isec) *10);  // integer number of tenths of seconds
         String deg = ""+degrees;
         String min = ""+minutes;
+        // note minutes is integer; can be '0'; need an extra leading space if only have a minute value like 9.9 using 3 spaces not 4
+        if (10>minutes) { min = "  "+min; }
+
         String sec = secFormat.format(seconds); // one decimal point;  but look it rounds to one decimal , so 15.97 becomes 16 not '16.0'
+        // if sec is '0'
         if (sec.length() <=2 ) { sec = sec+".0"; }
+        // need an extra leading space if only have a single-digitn integer part of seconds value like 9.9,  using 3 spaces not 4
+        if (seconds<10.0 ) { sec = "  "+sec; }
         String s = deg + " " + min + " " + sec;
         // tests s = s + "(from "+decimalDegrees+" minsdegfrac="+minsdegfrac+" minutes="+minutes+"  seconds="+seconds+" deg="+deg+" min="+min +" sec="+sec+")" ;
         return setStringLength(s, 11);
