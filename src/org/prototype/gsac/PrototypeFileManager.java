@@ -57,7 +57,7 @@ import java.util.Calendar;
  *
  * This FileManager.java uses the prototype GSCA db table gnss_data_file;
  *
- * @author  Jeff McWhirter 2011
+ * @author  Jeff McWhirter 2011  template without code for any particular database variable names.
  * @author  S K Wier 30 Oct 2013; UNAVCO  
  */
 public class PrototypeFileManager extends FileManager {
@@ -338,11 +338,11 @@ public class PrototypeFileManager extends FileManager {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
 
-               //GsacFile(String          repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
-               GsacFile fileInfo = new GsacFile(siteID, new FileInfo(file_url), null,                     published_date,   data_start_time, data_stop_time, rt);
+               //Gsac File(String          repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
+               GsacFile gsacFile = new GsacFile(siteID, new FileInfo(file_url), null,                     published_date,   data_start_time, data_stop_time, rt);
 
-               // collect all the GsacFile objects made; this is the array of results from the GSAC file seach:
-               response.addResource(fileInfo);
+               // collect all the Gsac File objects made; this is the array of results from the GSAC file seach:
+               response.addResource(gsacFile);
 
                /*  this  busts file search big time // FIX code to check for exceeding max of how many results allowed
                if (!iter.countOK()) {
@@ -435,9 +435,9 @@ public class PrototypeFileManager extends FileManager {
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
-               //         GsacFile(String repositoryId, FileInfo fileInfo,      GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
-               GsacFile fileInfo = new GsacFile(resourceId, new FileInfo(file_url), null,                     published_date,    data_start_time,    data_stop_time, rt);
-               return fileInfo;
+               //         Gsac File(String repositoryId, FileInfo fileInfo,      GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
+               GsacFile gsacFile = new GsacFile(resourceId, new FileInfo(file_url), null,                     published_date,    data_start_time,    data_stop_time, rt);
+               return gsacFile;
             } // end while
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
