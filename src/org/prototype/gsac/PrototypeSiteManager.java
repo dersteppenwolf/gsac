@@ -55,10 +55,10 @@ import java.util.List;
 import java.util.HashSet;
 
 
-
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  * For the Prototype GSAC (Geodesy Seamless Archive). 
+ * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
  *
  * This class is one major part of making a new local GSAC; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
  *
@@ -74,7 +74,7 @@ import java.util.HashSet;
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * @author  Jeff McWhirter 2011
+ * @author  Jeff McWhirter 2011 template without code for any particular database variable names.
  * @author  S K Wier, UNAVCO; version of 24 Oct 2013.
  */
 public class PrototypeSiteManager extends SiteManager {
@@ -613,9 +613,6 @@ public class PrototypeSiteManager extends SiteManager {
         String networks = results.getString(Tables.STATION.COL_NETWORKS);
          
         /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
-         * @param siteId        unique repository specific id  (internal to/for GSAC only?)
-         * @param siteCode      site code , the 4 character IB like VSLM or P111.
-         * @param name          site name like 'Marshall'
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
          * the so-called elevation, but actually GSAC like GNSS data, uses height above reference ellipsoid, not elevation which is height above some geoid model surface.
         */
