@@ -43,10 +43,8 @@ import javax.servlet.http.*;
 /**
  * Class description not given by author
  *
- *
- * @version        Enter version here..., Wed, May 19, '10
  * @author         Jeff McWhirter
- * modified 30 Oct 2013, S K Wier 
+ * @author S K Wier Jan 2013 - 5 Nov 2013
  */
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
@@ -338,86 +336,82 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             long size = 0;
             int  cnt  = 0;
 
+            // NOTE in this main loop the "resource" is a GsacFile
             for (GsacFile resource : files) {
-                List<GsacResource> relatedResources =
-                    resource.getRelatedResources();
+                List<GsacResource> relatedResources = resource.getRelatedResources();
+
                 String relatedLabel = "";
                 if (relatedResources.size() > 0) {
-                    relatedLabel = getResourceManager(
-                        relatedResources.get(0)).getResourceLabel(false);
+                    relatedLabel = getResourceManager( relatedResources.get(0)).getResourceLabel(false);
+                    // related content is for example site name 
+                    System.err.println (" relatedLabel is _"+relatedLabel+"_");
                 }
+
+                // first row in table is labels
                 if (cnt == 0) {
                     request.remove(ARG_OUTPUT);
-                    sb.append(HtmlUtil.formPost(request.getUrl(null),
-                            HtmlUtil.attr("name", "searchform")));;
 
-                    sb.append(
-                        "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
+                    sb.append(HtmlUtil.formPost(request.getUrl(null), HtmlUtil.attr("name", "searchform")));;
+
+                    sb.append( "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
-                    boolean includeExtraCol =
-                        getRepository().getRemoteHref(resource).length() > 0;
-                    includeExtraCol = false;
 
-                    sb.append(
-                        "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+                    boolean includeExtraCol = getRepository().getRemoteHref(resource).length() > 0;
 
-                    // related content is for example site name 
-                    //System.err.println (" relatedLabel is _"+relatedLabel+"_");
+                    sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+
                     String[] labels = null; 
+                    // if no "related content"; and also see below
                     if ( relatedLabel.equals("") || relatedLabel == null)
                     {
-                        labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
-                        // if no "related content"; see below
+                        labels = new String[] {  msg("File"), msg("File type"),msg("Time range"), msg("Sample rate"), msg("MD5"), msg("File size") };
+                        //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
+                        //labels = new String[] {  msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
                     }
                     else {
-                        labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
+                        labels = new String[] {  msg("File"), msg("Type"),msg("Time range"), msg("Sample rate"), msg("MD5"), msg("File size") };
+                        //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
+                        //labels = new String[] {  msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
                     }
                     
-
-                    String[] sortValues = new String[] {
-                        (includeExtraCol
-                         ? ""
-                         : null), "", SORT_FILE_TYPE, "",
-                        SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
-                    };
-                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
-                                   sortValues);
+                    String[] sortValues = new String[] { (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
+                    //String[] sortValues = new String[] {  "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
+                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
                 }
                 cnt++;
-                openEntryRow(sb, resource.getId(), URL_FILE_VIEW,
-                             ARG_FILE_ID);
+
+                // what does this do?
+                openEntryRow(sb, resource.getId(), URL_FILE_VIEW, ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
 
+                String clickEvent = getEntryEventJS(resource.getId(), URL_FILE_VIEW, ARG_FILE_ID)[1];
 
-                String clickEvent = getEntryEventJS(resource.getId(),
-                                        URL_FILE_VIEW, ARG_FILE_ID)[1];
-
-
-                String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(),
-                                 true);
+                // what does this do?
+                // String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(), true);
                 //                sb.append(HtmlUtil.col(cbx));
 
+                /* this may be the mystery link in the first column of file search results table   mmm
                 String remoteHref = getRepository().getRemoteHref(resource);
 
                 if (remoteHref.length() > 0) {
                     sb.append(HtmlUtil.col(remoteHref));
                 }
+                */
 
                 sb.append("</tr></table></td>\n");
 
                 // show link to the url, the complete URL to download one file 
                 String url = resource.getFileInfo().getUrl();  
                 if (url != null) {
-                    String downloadHref = HtmlUtil.href
-                                           ( url, IOUtil.getFileTail(url) );
-                                           //( url, url); // show complete text of the url for the link on the page
-                                           //  (url, HtmlUtil.img( iconUrl("/down_arrow.gif"))); // shows a little arrow
+                    String downloadHref = HtmlUtil.href ( url, IOUtil.getFileTail(url) );
+                                                      //( url, url); // show complete text of the url for the link on the page
+                                                      //( url, HtmlUtil.img( iconUrl("/down_arrow.gif"))); // shows a little arrow
                     String tmp = downloadHref; 
                     sb.append(HtmlUtil.col(tmp));
                 } else {
-                    sb.append(HtmlUtil.col("N/A"));
+                    sb.append(HtmlUtil.col("no file URL for download"));
                 }
                 /* original code which shows, in the table of file-search results, in the "File" column (labeled above), 
                    a down arrow which is a link to the file for single file download, and a link(highlighed file name) 
@@ -446,17 +440,17 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 if (resource.getType() != null) {
                     String filetype = resource.getType().getName();
-                    // optional: to limit field to 50 chars to fit on web page
-                    // filetype= filetype.substring(0,50);
+                    // optional: to limit field to 40 chars to fit on web page
+                    //filetype= filetype.substring(0,40);
                     sb.append(HtmlUtil.col( filetype, clickEvent));
                 } else {
-                    sb.append(HtmlUtil.col("(file type not specified)", clickEvent));
+                    sb.append(HtmlUtil.col("file type not specified", clickEvent));
                 }
 
                 // Note: if you have no "related content", skip this
                 //  i.e. get rid of the mystery "NA" column in table of file search results
                 //System.err.println (" relatedLabel 2 is _"+relatedLabel+"_");
-                //if ( ( !relatedLabel.equals("") || relatedLabel != null) ) {  //&& resource.getRelatedResources() != null) {
+                //if ( ( !relatedLabel.equals("") || relatedLabel != null) )   //&& resource.getRelatedResources() != null) 
                 if ( 0<relatedLabel.length()) {
                   StringBuffer relatedContent = new StringBuffer();
                   for (int relatedIdx = 0; relatedIdx < relatedResources.size();
@@ -467,11 +461,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         relatedContent.append("<br>");
                     }
                     if (relatedResource.getId() != null) {
-                        String relatedUrl =
-                            makeResourceViewUrl(relatedResource);
-                        relatedContent.append("<a href=\"" + relatedUrl
-                                + "\">" + relatedResource.getLongLabel()
-                                + "</a>");
+                        String relatedUrl = makeResourceViewUrl(relatedResource);
+
+                        relatedContent.append("<a href=\"" + relatedUrl + "\">" + relatedResource.getLongLabel() + "</a>");
                     } else {
                         relatedContent.append(relatedResource.getLongLabel());
                     }
@@ -479,44 +471,63 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                   if (relatedResources.size() == 0) {
                     relatedContent.append("NA");
                   }
-                sb.append(HtmlUtil.col(relatedContent.toString()));
+                  sb.append(HtmlUtil.col(relatedContent.toString()));
                 }
-                //  */
+                // sss  */
 
-                Date publishTime = resource.getPublishDate();
+                // LOOK FIX these time values have only date at this point, no times; need both. fix whereever these are loaded upstream
                 Date startTime   = resource.getFromDate();
                 Date endTime     = resource.getToDate();
+                Date publishTime = resource.getPublishDate();
+                //System.err.println("   Html File output table: file has start to end times "+startTime +" - "+endTime );
 
+
+                if (startTime == null && endTime != null) {
+                   sb.append(HtmlUtil.col(" start? - " + formatDate(endTime), clickEvent));
+                }
+                else if (endTime == null && startTime != null) {
+                   sb.append(HtmlUtil.col(formatDate(startTime) + " - end? ", clickEvent));
+                }
+                else {
+                   sb.append(HtmlUtil.col(formatDate(startTime) + " - " + formatDate(endTime), clickEvent));
+                }
+                /*
+                original:
                 if (startTime == null) {
                     sb.append(HtmlUtil.col(formatDate(publishTime)));
                 } else {
                     if ((endTime == null) || endTime.equals(startTime)) {
-                        sb.append(HtmlUtil.col(formatDate(startTime),
-                                clickEvent));
+
+                        sb.append(HtmlUtil.col(formatDate(startTime), clickEvent));
                     } else {
-                        sb.append(HtmlUtil.col(formatDate(startTime) + " - "
-                                + formatDate(endTime), clickEvent));
+
+                        sb.append(HtmlUtil.col(formatDate(startTime) + " - " + formatDate(endTime), clickEvent));
                     }
                 }
+                */
+
+                // show sample rate for this file
+                    sb.append(HtmlUtil.col("rate unknown"));
+
+                // show sample rate for this file
+                    sb.append(HtmlUtil.col("MD5 unknown"));
 
 
+                // show file size value if any
               if (resource.getRelatedResources() != null) {
                 if (resource.getFileInfo().getFileSize() > 0) {
-                    sb.append("<td align=\"right\" class=\"gsac-filesize\" "
-                              + clickEvent + ">");
+                    sb.append("<td align=\"right\" class=\"gsac-filesize\" " + clickEvent + ">");
                     size += resource.getFileInfo().getFileSize();
-                    sb.append(
-                        "" + formatFileSize(
-                            resource.getFileInfo().getFileSize()));
-
+                    sb.append( "" + formatFileSize( resource.getFileInfo().getFileSize()));
                     sb.append("</td>");
                 } else {
-                    sb.append(HtmlUtil.col("N/A"));
+                    sb.append(HtmlUtil.col(" size unknown"));
                 }
-             }
+              }
 
                 sb.append("</tr>\n");
-            }
+            } // end of loop on files for (GsacFile resource : files)
+
             if (cnt == 0) {
                 sb.append(
                     getRepository().makeInformationDialog(
