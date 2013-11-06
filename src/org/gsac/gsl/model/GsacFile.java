@@ -64,13 +64,10 @@ public class GsacFile extends GsacResource {
      * @param publishTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo,
-                    GsacResource relatedResource, Date publishTime,
-                    ResourceType type) {
-        this(repositoryId, fileInfo, relatedResource, publishTime,
-             publishTime, publishTime, type);
-    }
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource, Date publishTime, ResourceType type) {
 
+        this(repositoryId, fileInfo, relatedResource, publishTime, publishTime, publishTime, type);
+    }
 
     /**
      * _more_
@@ -80,13 +77,10 @@ public class GsacFile extends GsacResource {
      * @param publishTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo, Date publishTime,
-                    ResourceType type) {
-        this(repositoryId, fileInfo, null, publishTime, publishTime,
-             publishTime, type);
+    public GsacFile(String repositoryId, FileInfo fileInfo, Date publishTime, ResourceType type) {
+
+        this(repositoryId, fileInfo, null, publishTime, publishTime, publishTime, type);
     }
-
-
 
     /**
      * ctor
@@ -98,13 +92,10 @@ public class GsacFile extends GsacResource {
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo,
-                    GsacResource relatedResource, Date startTime,
-                    Date endTime, ResourceType type) {
-        this(repositoryId, fileInfo, relatedResource, startTime, startTime,
-             endTime, type);
-    }
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource, Date startTime, Date endTime, ResourceType type) {
 
+        this(repositoryId, fileInfo, relatedResource, startTime, startTime, endTime, type);
+    }
 
 
     /**
@@ -118,10 +109,10 @@ public class GsacFile extends GsacResource {
      * @param endTime _more_
      * @param type _more_
      */
-    public GsacFile(String repositoryId, FileInfo fileInfo,
-                    GsacResource relatedResource, Date publishTime,
-                    Date startTime, Date endTime, ResourceType type) {
+    public GsacFile(String repositoryId, FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type) {
+
         super(repositoryId, type);
+
         this.fileInfo = fileInfo;
         if (relatedResource != null) {
             addRelatedResource(relatedResource);
