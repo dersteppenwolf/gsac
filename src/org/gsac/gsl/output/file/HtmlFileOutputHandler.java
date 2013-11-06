@@ -334,6 +334,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             override.put(ARG_OUTPUT, OUTPUT_FILE_HTML);
             makeNextPrevHeader(request, response, sb);
             long size = 0;
+            float sampint = 0.0f;
             int  cnt  = 0;
 
             // NOTE in this main loop the "resource" is a GsacFile
@@ -365,12 +366,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     // if no "related content"; and also see below
                     if ( relatedLabel.equals("") || relatedLabel == null)
                     {
-                        labels = new String[] {  msg("File"), msg("File type"),msg("Time range"), msg("Sample rate"), msg("MD5"), msg("File size") };
+                        labels = new String[] {  msg("File"), msg("File type"),msg("Time range"), msg("Sample interval"), msg("MD5"), msg("File size") };
                         //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
                         //labels = new String[] {  msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
                     }
                     else {
-                        labels = new String[] {  msg("File"), msg("Type"),msg("Time range"), msg("Sample rate"), msg("MD5"), msg("File size") };
+                        labels = new String[] {  msg("File"), msg("File type"),msg("Time range"), msg("Sample interval"), msg("MD5"), msg("File size") };
                         //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
                         //labels = new String[] {  msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
                     }
@@ -381,7 +382,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 cnt++;
 
-                // what does this do?
+                //   LOOK this method was modified 6 Nov 2013
                 openEntryRow(sb, resource.getId(), URL_FILE_VIEW, ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
@@ -392,7 +393,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 // String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(), true);
                 //                sb.append(HtmlUtil.col(cbx));
 
-                /* this may be the mystery link in the first column of file search results table   mmm
+                /* this is not the mystery link in the first column of file search results table   mmm
                 String remoteHref = getRepository().getRemoteHref(resource);
 
                 if (remoteHref.length() > 0) {
@@ -404,15 +405,17 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 // show link to the url, the complete URL to download one file 
                 String url = resource.getFileInfo().getUrl();  
+                //System.err.println ("  html file page sees url "+url);
                 if (url != null) {
                     String downloadHref = HtmlUtil.href ( url, IOUtil.getFileTail(url) );
                                                       //( url, url); // show complete text of the url for the link on the page
                                                       //( url, HtmlUtil.img( iconUrl("/down_arrow.gif"))); // shows a little arrow
-                    String tmp = downloadHref; 
+                    String tmp = downloadHref;  // this looks pointless but is necessary
                     sb.append(HtmlUtil.col(tmp));
                 } else {
                     sb.append(HtmlUtil.col("no file URL for download"));
                 }
+
                 /* original code which shows, in the table of file-search results, in the "File" column (labeled above), 
                    a down arrow which is a link to the file for single file download, and a link(highlighed file name) 
                    to a "resource page" which in the typical geodesy archive of data files, has no more information than the table of files - found results.
@@ -507,16 +510,30 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 */
 
                 // show sample rate for this file
-                    sb.append(HtmlUtil.col("rate unknown"));
+                if (resource.getFileInfo().getSampleInterval() > 0) {
+                    sb.append("<td align=\"center\" class=\"gsac-sampint\" " + clickEvent + ">");
+                    sampint          += resource.getFileInfo().getSampleInterval();
+                    sb.append( "" +  resource.getFileInfo().getSampleInterval() );
+                    sb.append("</td>");
+                } else {
+                    sb.append(HtmlUtil.col(" unknown"));
+                }
 
-                // show sample rate for this file
-                    sb.append(HtmlUtil.col("MD5 unknown"));
-
+                // show MD5 value for this file
+                if (resource.getFileInfo().getMd5() != "") {
+                    //sb.append("<td align=\"center\" class=\"gsac-md5\" " + clickEvent + ">");
+                    sb.append("<td align=\"center\" class=\"gsac-md5\" " + ">");
+                    //sampint          += resource.getFileInfo().getSampleInterval();
+                    sb.append( "" +  resource.getFileInfo().getMd5() );
+                    sb.append("</td>");
+                } else {
+                    sb.append(HtmlUtil.col(" unknown"));
+                }
 
                 // show file size value if any
               if (resource.getRelatedResources() != null) {
                 if (resource.getFileInfo().getFileSize() > 0) {
-                    sb.append("<td align=\"right\" class=\"gsac-filesize\" " + clickEvent + ">");
+                    sb.append("<td align=\"center\" class=\"gsac-filesize\" " + clickEvent + ">");
                     size += resource.getFileInfo().getFileSize();
                     sb.append( "" + formatFileSize( resource.getFileInfo().getFileSize()));
                     sb.append("</td>");
@@ -529,21 +546,27 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             } // end of loop on files for (GsacFile resource : files)
 
             if (cnt == 0) {
-                sb.append(
-                    getRepository().makeInformationDialog(
-                        msg("No files found")));
+                sb.append( getRepository().makeInformationDialog( msg("No files found")));
             } else {
                 sb.append("<tr><td>&nbsp;</td>");
+
                 sb.append("<td align=right>" + cnt + HtmlUtil.space(1)
+
                           + msg("files") + "</td>");
+
                 sb.append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
+
                 sb.append("<td align=\"right\" class=\"gsac-filesize\">");
                 if (size > 0) {
                     sb.append("" + formatFileSize(size));
                 }
+
                 sb.append("</td>");
+
                 sb.append("</tr>\n");
+
                 sb.append("</table>\n");
+
                 sb.append(HtmlUtil.formClose());
             }
 
