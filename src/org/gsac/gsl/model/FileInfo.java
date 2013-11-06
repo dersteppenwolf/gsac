@@ -58,6 +58,9 @@ public class FileInfo {
     /** _more_ */
     private String md5;
 
+    /**  sample rate in seconds of instrument making this geodesy data file */
+    private float sample_interval=0.0f;
+
     /**
      * ctor
      */
@@ -184,6 +187,24 @@ public class FileInfo {
      */
     public long getFileSize() {
         return fileSize;
+    }
+
+    /**
+     * Set the sample_interval property.
+     *
+     * @param value The new value for 
+     */
+    public void  setSampleInterval(float val )  {
+       sample_interval=val;
+    }
+
+    /**
+     *  Get the property.
+     *
+     *  @return the 
+     */
+    public float getSampleInterval() {
+        return sample_interval;
     }
 
     /**
