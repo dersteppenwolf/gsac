@@ -26,9 +26,6 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
-// older version (to Oct 16 2013) had 
-//     import ucar.unidata.sql.Clause;
-//     import ucar.unidata.sql.SqlUtil;
 import org.ramadda.sql.Clause;
 import org.ramadda.sql.SqlUtil;
 
@@ -58,7 +55,7 @@ import java.util.Calendar;
  * This FileManager.java uses the prototype GSCA db table gnss_data_file;
  *
  * @author  Jeff McWhirter 2011  template without code for any particular database variable names.
- * @author  S K Wier 30 Oct 2013; UNAVCO  
+ * @author  S K Wier  Nov. 6 2013; UNAVCO  
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -109,8 +106,9 @@ public class PrototypeFileManager extends FileManager {
               // search on "Publish Date" is when a repository first made a file available.
               //initCapability(new Capability(ARG_FILE_PUBLISHDATE, "Publish Date",
               //    Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+              // LLOK could also search on revision_time in gsac prototype database
 
-              // search on file size.  
+              // search on file size.  Not now regarded as useful. Nov. 2013.
               //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability .TYPE_NUMBERRANGE), "File Query", "File size") 
         };
         // use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
@@ -146,11 +144,11 @@ public class PrototypeFileManager extends FileManager {
 
         /* file search items not used yet, but of possible interest
         if (request.defined(ARG_FILESIZE_MIN)) {
-            int size = request.get(ARG_FILESIZE_MIN, 0);
+            int size = request.get(ARG_FILESIZE_MIN, 0);  // use long not int
             clauses.add(Clause.appendSearchCriteria(msgBuff, "Filesize&gt;=", "" + request.get(ARG_FILESIZE_MIN, 0));
         }
         if (request.defined(ARG_FILESIZE_MAX)) {
-            int size = request.get(ARG_FILESIZE_MAX, 0);
+            int size = request.get(ARG_FILESIZE_MAX, 0); // use long not int
             appendSearchCriteria(msgBuff, "Filesize&lt;=", "" + request.get(ARG_FILESIZE_MAX, 0));
         }
         if (request.defined(ARG_FILE_TYPE)) {
@@ -241,13 +239,17 @@ public class PrototypeFileManager extends FileManager {
              Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME,
              Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE,
              Tables.GNSS_DATA_FILE.COL_FILE_URL,
-             Tables.STATION.COL_CODE_4CHAR_ID,
+             Tables.GNSS_DATA_FILE.COL_FILE_SIZE,
+             Tables.GNSS_DATA_FILE.COL_FILE_MD5,
              Tables.GNSS_DATA_FILE.COL_ACCESS_PERMISSION_ID,
              Tables.GNSS_DATA_FILE.COL_EMBARGO_DURATION_HOURS,
              Tables.GNSS_DATA_FILE.COL_EMBARGO_AFTER_DATE,
+
+             Tables.STATION.COL_CODE_4CHAR_ID,
              Tables.STATION.COL_ACCESS_PERMISSION_ID,
              Tables.STATION.COL_EMBARGO_DURATION_HOURS,
              Tables.STATION.COL_EMBARGO_AFTER_DATE,
+
              Tables.FILE_TYPE.COL_FILE_TYPE_ID,
              Tables.FILE_TYPE.COL_FILE_TYPE_NAME
              });
@@ -278,7 +280,10 @@ public class PrototypeFileManager extends FileManager {
                Date data_stop_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
                Date published_date  = results.getDate(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE);
                String file_url = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_URL);
+               String file_md5 = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
+               long file_size= results.getInt          (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
+               float sample_interval = 15.0f; // static value for test until get from db 
 
                // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
@@ -327,21 +332,30 @@ public class PrototypeFileManager extends FileManager {
                      continue;
                      }
 
-               // int  count = (request.getParameter("counter") == null) ? 0 : Integer.parseInt(request.getParameter("counter"));
-
-               //System.err.println("   got site code, file id, and its file url         " + siteID +"  file type="+file_type_id+ "  url="+file_url ) ;
-               //System.err.println("  FileManager:handleRequest(): got file site id " + siteID+"  file time range start " 
-               //                        + data_start_time+" file time range end " + data_stop_time+"  file url : " + file_url);
+               //int count = (request.getParameter("counter") == null) ? 0 : Integer.parseInt(request.getParameter("counter"));
 
                ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
 
-               //Gsac File(String          repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
-               GsacFile gsacFile = new GsacFile(siteID, new FileInfo(file_url), null,                     published_date,   data_start_time, data_stop_time, rt);
+               String sizestr = ""+file_size;
+               String sistr = ""+ sample_interval;
 
-               // collect all the Gsac File objects made; this is the array of results from the GSAC file seach:
+               //System.err.println("  FileManager got a file at site id " + siteID+" time start="+data_start_time+" end=" 
+               //       + data_stop_time+"   file url=" + file_url+"  md5="+file_md5+" size="+sizestr + " samp int="+sistr);
+
+               // make and populate a FileInfo object for this file, used by other parts of GSAC for output handling.
+               FileInfo fileinfo = new FileInfo(file_url);
+               fileinfo.setMd5(file_md5);
+               fileinfo.setFileSize(file_size);
+               fileinfo.setSampleInterval(sample_interval);
+
+               // make and populate a GsacFile object for this file, used by other parts of GSAC for output handling.
+               GsacFile gsacFile = new GsacFile(siteID, fileinfo, null, published_date, data_start_time, data_stop_time, rt);
+               // from Gsac File(String          repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
+
+               // collect all the GsacFile objects made; this is the array of results from the GSAC file search:
                response.addResource(gsacFile);
 
                /*  this  busts file search big time // FIX code to check for exceeding max of how many results allowed
