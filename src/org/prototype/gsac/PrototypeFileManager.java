@@ -41,6 +41,7 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.Calendar;
+//import java.text.DateFormat;
 
 
 /**
@@ -276,9 +277,21 @@ public class PrototypeFileManager extends FileManager {
                String siteID = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
                int station_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_STATION_ID);
                int file_type_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID);
-               Date data_start_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
-               Date data_stop_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
-               Date published_date  = results.getDate(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE);
+               // LOOK the following are defective because java.sql.Date objects used in java sql class ResultSet "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
+               String start_time  = results.getString(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
+               String stop_time  = results.getString(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
+               String pub_time  = results.getString(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE) ;
+
+               // make sure they are in format "yyyy-MM-dd HH:mm:ss" - LOOK may need more code here
+               start_time= start_time.substring(0,19);
+               stop_time= stop_time.substring(0,19);
+               pub_time = pub_time.substring(0,19);
+               //// System.err.println("  file info for site id " + siteID+" times start="+start_time+"  stop=" + stop_time);
+               
+               Date data_start_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start_time);
+               Date data_stop_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time);
+               Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
+
                String file_url = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_URL);
                String file_md5 = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
                long file_size= results.getInt          (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
@@ -342,8 +355,7 @@ public class PrototypeFileManager extends FileManager {
                String sizestr = ""+file_size;
                String sistr = ""+ sample_interval;
 
-               //System.err.println("  FileManager got a file at site id " + siteID+" time start="+data_start_time+" end=" 
-               //       + data_stop_time+"   file url=" + file_url+"  md5="+file_md5+" size="+sizestr + " samp int="+sistr);
+               //System.err.println("  data time range for site id " + siteID+" times start="+data_start_time+"  to " + data_stop_time);
 
                // make and populate a FileInfo object for this file, used by other parts of GSAC for output handling.
                FileInfo fileinfo = new FileInfo(file_url);
@@ -441,6 +453,7 @@ public class PrototypeFileManager extends FileManager {
                String file_type_name  = results.getString(Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
                String file_url = results.getString(Tables.GNSS_DATA_FILE.COL_FILE_URL);
                String siteID = ""+station_id;
+               // LOOK the following are defective because java.sql.Date objects "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
                Date data_start_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
                Date data_stop_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
                Date published_date  = results.getDate(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE);
@@ -458,6 +471,25 @@ public class PrototypeFileManager extends FileManager {
         }
         return null;
     }
+
+
+    /** Transform ISO 8601 string to Calendar. */
+    /*
+    public static Calendar toCalendar(final String iso8601string)
+            throws ParseException {
+        Calendar calendar = GregorianCalendar.getInstance();
+        String s = iso8601string.replace("Z", "+00:00");
+        try {
+            s = s.substring(0, 22) + s.substring(23);
+        } catch (IndexOutOfBoundsException e) {
+            throw new ParseException("Invalid length", 0);
+        }
+        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
+        calendar.setTime(date);
+        return calendar;
+    }
+    */
+
 
     /**
      * helper method
