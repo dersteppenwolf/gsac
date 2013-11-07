@@ -59,8 +59,11 @@ public abstract class GsacOutputHandler implements GsacConstants {
     protected SimpleDateFormat dateSdf = makeDateFormat("yyyy-MM-dd");
 
     /** date format */
-    protected SimpleDateFormat dateTimeSdf =
-        makeDateFormat("yyyy-MM-dd HH:mm");
+    protected SimpleDateFormat dateTimeSdf = makeDateFormat("yyyy-MM-dd HH:mm");
+
+    /** date format with hour min sec*/
+    //protected SimpleDateFormat dateTimeHMS = makeDateFormat("yyyy-MM-dd HH:mm");
+        // makes bad results hours later makeDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /** date format */
     protected SimpleDateFormat timeSdf = makeDateFormat("HH:mm:ss z");
@@ -341,6 +344,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
         }
     }
 
+
+    // FIX bug formatDateTime gives result hours later than input date-time
+
     /**
      * _more_
      *
@@ -369,6 +375,28 @@ public abstract class GsacOutputHandler implements GsacConstants {
             return dateTimeSdf.format(date);
         }
     }
+
+    /**
+     * _more_
+     *
+     * @param date _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     
+    public String formatDateTimeHMS(Date date, String dflt) {
+        if (date == null) {
+            return dflt;
+        }
+        synchronized (dateTimeHMS) {
+            System.err.println("              formatDateTimeHMS  input is " +  date);
+            String datetime=dateTimeHMS.format(date);
+            System.err.println("              formatDateTimeHMS output is " +  datetime);
+            //return dateTimeHMS.format(date);
+            return datetime;
+        }
+    }
+     */
 
     /**
      *  Cut and pasted from GsacRepositoryManager

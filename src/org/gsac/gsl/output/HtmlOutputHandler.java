@@ -2401,6 +2401,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     /**
      * _more_
      *
+     * block code for  link to the "resource page" for this file   6 Nov 2013
+     *
      * @param sb _more_
      * @param resourceId _more_
      * @param baseUrl _more_
@@ -2410,25 +2412,28 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                              String baseUrl, String urlArg) {
         try {
             String   domId   = cleanIdForJS(resourceId);
-            String   rowId   = "row_" + domId;
             String   divId   = "div_" + domId;
+            /*
+            String   rowId   = "row_" + domId;
             String   imgId   = "img_" + domId;
             String[] events  = getEntryEventJS(resourceId, baseUrl, urlArg);
             String   event1  = events[0];
             String   event2  = events[1];
-            String   dartImg =
-                HtmlUtil.img(iconUrl("/blank.gif"), "",
-                             event2
+            String   dartImg = HtmlUtil.img(iconUrl("/blank.gif"), "", event2
                              + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "10")
                              + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")
                              + HtmlUtil.id(imgId));
-            sb.append("<tr valign=\"bottom\" " + HtmlUtil.id(rowId) + " "
-                      + event1 + ">");
+            */
+            // ? makes little black down arrow in first column of file search results table
+            //sb.append("<tr valign=\"bottom\" " + HtmlUtil.id(rowId) + " " + event1 + ">");
 
-            sb.append(
-                "<td><div " + HtmlUtil.id(divId)
-                + "><table border=0 class=\"gsac-innerresult-table\" cellpadding=0 cellspacing=0><tr>");
-            sb.append(HtmlUtil.col(dartImg));
+            // makes first column in table, a <td>, for the invisible link to the "resource page" for this file
+            // this sb.append line by itself makes an empty column with no link
+            sb.append( "<td><div " + HtmlUtil.id(divId) + "><table border=0 class=\"gsac-innerresult-table\" cellpadding=0 cellspacing=0><tr>");
+
+            // ? makes invisible link to the "resource page" for this file
+            //sb.append(HtmlUtil.col(dartImg));
+
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
