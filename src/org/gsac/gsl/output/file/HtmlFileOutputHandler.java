@@ -29,13 +29,11 @@ import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
 
 import java.io.*;
-
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-
+import java.text.SimpleDateFormat;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -478,19 +476,26 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 Date publishTime = resource.getPublishDate();
                 //System.err.println("                    Html File output table: file has start to end times "+startTime +" - "+endTime );
 
-                // FIX bug formatDateTime gives result hours later than input date-time
+                // FIX bug GsacOutputHandler:formatDateTime gives result hours later than input date-time
+ 
+                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //Date now = new Date();
+                String start = sdfDate.format(startTime);
+                String end = sdfDate.format(endTime);
+                String publish = sdfDate.format(publishTime);
 
                 if (startTime == null && endTime != null) {
                    //sb.append(HtmlUtil.col("start unknown - " + formatDate(endTime), clickEvent));
-                   sb.append(HtmlUtil.col("start unknown - " + formatDateTime(endTime)));
+                   //sb.append(HtmlUtil.col("start unknown - " + formatDateTime(endTime)));
+                   sb.append(HtmlUtil.col("start unknown - " + end));
                 }
                 else if (endTime == null && startTime != null) {
-                   //sb.append(HtmlUtil.col(formatDate(startTime) + " - end unknown", clickEvent));
-                   sb.append(HtmlUtil.col(formatDateTime(startTime) + " - end unknown"));
+                   //sb.append(HtmlUtil.col(formatDateTime(startTime) + " - end unknown", clickEvent));
+                   sb.append(HtmlUtil.col( start + " - end unknown"));
                 }
                 else {
-                   //sb.append(HtmlUtil.col(formatDate(startTime) + " - " + formatDate(endTime), clickEvent));
-                   sb.append(HtmlUtil.col(formatDateTime(startTime) + " - " + formatDateTime(endTime)));
+                   //sb.append(HtmlUtil.col(formatDateTime(startTime) + " - " + formatDateTime(endTime), clickEvent));
+                   sb.append(HtmlUtil.col(start + " - " + end));
                 }
                 /*
                 original:

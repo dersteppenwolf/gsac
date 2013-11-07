@@ -61,13 +61,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
     /** date format */
     protected SimpleDateFormat dateTimeSdf = makeDateFormat("yyyy-MM-dd HH:mm");
 
-    /** date format with hour min sec*/
-    //protected SimpleDateFormat dateTimeHMS = makeDateFormat("yyyy-MM-dd HH:mm");
-        // makes bad results hours later makeDateFormat("yyyy-MM-dd HH:mm:ss");
-
     /** date format */
     protected SimpleDateFormat timeSdf = makeDateFormat("HH:mm:ss z");
-
 
     /** http://stackoverflow.com/questions/5054132/how-to-change-the-decimal-separator-of-decimalformat-from-comma-to-dot-point **/
     /** http://stackoverflow.com/questions/4738853/java-decimal-format-parse-to-return-double-value-with-specified-number-of-deci/4739381#4739381 */
@@ -376,27 +371,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
         }
     }
 
-    /**
-     * _more_
-     *
-     * @param date _more_
-     * @param dflt _more_
-     *
-     * @return _more_
-     
-    public String formatDateTimeHMS(Date date, String dflt) {
-        if (date == null) {
-            return dflt;
-        }
-        synchronized (dateTimeHMS) {
-            System.err.println("              formatDateTimeHMS  input is " +  date);
-            String datetime=dateTimeHMS.format(date);
-            System.err.println("              formatDateTimeHMS output is " +  datetime);
-            //return dateTimeHMS.format(date);
-            return datetime;
-        }
-    }
-     */
 
     /**
      *  Cut and pasted from GsacRepositoryManager
