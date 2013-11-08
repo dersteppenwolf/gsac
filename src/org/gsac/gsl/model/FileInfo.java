@@ -50,13 +50,13 @@ public class FileInfo {
     private File localFile;
 
     /** _more_ */
-    private String url;
+    private String url="";
 
     /** _more_ */
-    private long fileSize = -1;
+    private long fileSize = 0;
 
     /** _more_ */
-    private String md5;
+    private String md5="";
 
     /**  sample rate in seconds of instrument making this geodesy data file */
     private float sample_interval=0.0f;
@@ -110,8 +110,7 @@ public class FileInfo {
      * @param type _more_
      * @param localFile _more_
      */
-    public FileInfo(String url, long fileSize, String md5, int type,
-                    File localFile) {
+    public FileInfo(String url, long fileSize, String md5, int type, File localFile) {
         this.url       = url;
         this.fileSize  = fileSize;
         this.md5       = md5;
