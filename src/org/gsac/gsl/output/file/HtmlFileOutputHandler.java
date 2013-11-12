@@ -42,7 +42,7 @@ import javax.servlet.http.*;
  * Class description not given by author
  *
  * @author         Jeff McWhirter
- * @author S K Wier Jan 2013 - 5 Nov 2013
+ * @author S K Wier Jan 2013 - 12 Nov 2013
  */
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
@@ -354,26 +354,27 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
                     String[] labels = null; 
-                    // if no "related content"; and also see below
+                    labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                    /* to handle "related content"; and also see below
                     if ( relatedLabel.equals("") || relatedLabel == null)
                     {
-                        labels = new String[] {  msg("File"), msg("File type"),msg("Time range"), msg("&Delta;t"), msg("MD5"), msg("File size") };
+                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
+                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
                         //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
                         //labels = new String[] {  msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
                     }
                     else {
-                        labels = new String[] {  msg("File"), msg("File type"),msg("Time range"), msg("&Delta;t"), msg("MD5"), msg("File size") };
-                        //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
-                        //labels = new String[] {  msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size") };
+                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
                     }
+                    */
                     
                     String[] sortValues = new String[] { (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
-                    //String[] sortValues = new String[] {  "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
+                    //String[] sortValues = new String[] {  "",                             SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
                 }
                 cnt++;
 
-                //   LOOK this method was modified 6 Nov 2013
+                // this method was modified 6 Nov 2013
                 openEntryRow(sb, resource.getId(), URL_FILE_VIEW, ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
@@ -384,8 +385,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 // what does this do?
                 // String cbx = HtmlUtil.checkbox(ARG_FILE_ID, resource.getId(), true);
                 //                sb.append(HtmlUtil.col(cbx));
-
-                /* this is not the mystery link in the first column of file search results table   mmm
+                /* this is not the mystery link in the first column of file search results table   
                 String remoteHref = getRepository().getRemoteHref(resource);
 
                 if (remoteHref.length() > 0) {
@@ -409,9 +409,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
                 /* original code which shows, in the table of file-search results, in the "File" column (labeled above), 
-                   a down arrow which is a link to the file for single file download, and a link(highlighed file name) 
-                   to a "resource page" which in the typical geodesy archive of data files, has no more information than the table of files - found results.
-                   This is deprecated since of seemingly little use for a geodesy archive.  Why click to get a new page to see the same information you are looking at?
+                   a down arrow which is a link to the file for single file download, and a link (a highlighted file name) 
+                   to a "resource page" which in the typical geodesy archive of data files, has no more information than the table of files-found results.
+                   This is deprecated a geodesy archive.  Why click to get a new page with some of the same information you are looking at?
 
                 // this href serves for a link to the "resource page about the file," not to the file.
                 // onscreen it looks like text like a file name " soph0330.13d.Z"
@@ -435,18 +435,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 if (resource.getType() != null) {
                     String filetype = resource.getType().getName();
-                    // optional: to limit field to 40 chars to fit on web page
-                    //filetype= filetype.substring(0,40);
-                    //sb.append(HtmlUtil.col( filetype, clickEvent));
                     sb.append(HtmlUtil.col( filetype));
                 } else {
                     //sb.append(HtmlUtil.col("file type not specified", clickEvent));
                     sb.append(HtmlUtil.col("file type not specified"));
                 }
 
-                // Note: if you have no "related content", skip this
-                //  i.e. get rid of the mystery "NA" column in table of file search results
-                //System.err.println (" relatedLabel 2 is _"+relatedLabel+"_");
+                //  if you have no "related content", skip this
+                //  i.e. get rid of the mystery original "NA" column in table of file search results
                 //if ( ( !relatedLabel.equals("") || relatedLabel != null) )   //&& resource.getRelatedResources() != null) 
                 if ( 0<relatedLabel.length()) {
                   StringBuffer relatedContent = new StringBuffer();
@@ -474,10 +470,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 Date startTime   = resource.getFromDate();
                 Date endTime     = resource.getToDate();
                 Date publishTime = resource.getPublishDate();
-                //System.err.println("                    Html File output table: file has start to end times "+startTime +" - "+endTime );
 
-                // FIX bug GsacOutputHandler:formatDateTime gives result hours later than input date-time
- 
+                //  to fix a bug original code with GsacOutputHandler:formatDateTime gives a wrong date-time value, hours later than input date-time
                 SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 //Date now = new Date();
                 String start = sdfDate.format(startTime);
@@ -486,7 +480,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 if (startTime == null && endTime != null) {
                    //sb.append(HtmlUtil.col("start unknown - " + formatDate(endTime), clickEvent));
-                   //sb.append(HtmlUtil.col("start unknown - " + formatDateTime(endTime)));
                    sb.append(HtmlUtil.col("start unknown - " + end));
                 }
                 else if (endTime == null && startTime != null) {
@@ -512,7 +505,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 */
 
-                // show sample rate for this file; note the column label above is Delta-symbol t.
+                // show sample rate for this file; note the column label coded above ass the Delta-symbol  in HTML
                 if (resource.getFileInfo().getSampleInterval() > 0) {
                     //sb.append("<td align=\"left\" class=\"gsac-sampint\" " + clickEvent + ">");
                     sb.append("<td align=\"left\" class=\"gsac-sampint\" " +  ">");
@@ -523,7 +516,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(HtmlUtil.col(" unknown"));
                 }
 
-                // show MD5 value for this file
+                // show MD5 value for this file if any
                 if (resource.getFileInfo().getMd5() != "") {
                     sb.append("<td align=\"left\" class=\"gsac-md5\" " + ">");
                     sb.append( "<font size=-2>" +  resource.getFileInfo().getMd5() +"</font>");
@@ -554,13 +547,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             } else {
                 sb.append("<tr><td>&nbsp;</td>");
 
-                sb.append("<td align=right>" + cnt + HtmlUtil.space(1) + msg("files") + "</td>");
+                sb.append("<td align=left>" + cnt + HtmlUtil.space(1) + msg("files") + "</td>");
 
                 sb.append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 
                 sb.append("<td>&nbsp;</td>");
 
-                sb.append("<td align=\"right\" class=\"gsac-filesize\">");
+                sb.append("<td align=\"left\" class=\"gsac-filesize\">");
                 if (size > 0) {
                     sb.append("" + formatFileSize(size));
                 }
