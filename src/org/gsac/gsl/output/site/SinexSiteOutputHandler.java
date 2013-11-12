@@ -90,8 +90,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     /**  for lati or longi seconds part (float) to string  with only one decimal place*/
     private DecimalFormat secFormat = new DecimalFormat("##.#");
 
-    /**  to format elevation or ellipsoidal height values , called elevation in GSAC code.  */
-    private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
+    /**  to format ellipsoidal height values, called "elevation" in older GSAC code.  */
+    private DecimalFormat heightFormat = new DecimalFormat("####0.##");
 
     /** for antenna offset values from instrument reference point.  */
     private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
@@ -204,12 +204,12 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
     /**
      * print results of site location, as per SINEX specs: 
-+SITE/ID
-*CODE PT __DOMES__ T _STATION DESCRIPTION__ APPROX_LON_ APPROX_LAT_ _APP_H_
- ABMF  A 97103M001 P Les Abymes, FR         298 28 20.9  16 15 44.3   -25.6
- ABPO  A 33302M001 P Antananarivo, MG        47 13 45.2 -19  1  5.9  1553.0
- PALV  A 66005M002 P Palmer Station, AQ     295 56 56.0 -64 46 30.3    31.1
- PARK  A 50108M001 P Parkes, AU             148 15 52.6 -32 59 55.5   397.3
+        +SITE/ID
+        *CODE PT __DOMES__ T _STATION DESCRIPTION__ APPROX_LON_ APPROX_LAT_ _APP_H_
+         ABMF  A 97103M001 P Les Abymes, FR         298 28 20.9  16 15 44.3   -25.6
+         ABPO  A 33302M001 P Antananarivo, MG        47 13 45.2 -19  1  5.9  1553.0
+         PALV  A 66005M002 P Palmer Station, AQ     295 56 56.0 -64 46 30.3    31.1
+         PARK  A 50108M001 P Parkes, AU             148 15 52.6 -32 59 55.5   397.3
      *
      * @param pw _more_
      * @param site _more_
@@ -220,20 +220,29 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         pw.append(" "+ setStringLength(site.getShortName(),4) +"  A");
         pw.append(" "+ setStringLength( (getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") ),9) +" P");
-        pw.append(" "+ setStringLengthRight(site.getLongName(),22) +" ");
+        pw.append(" "+ setStringLengthRight(site.getLongName(),22));
 
         EarthLocation el = site.getEarthLocation();
         String latitude = formatLatitudeDMS (el.getLatitude() ) ;
         String longitude =formatLongitudeDMS (el.getLongitude()) ; 
-        //pw.append( setStringLength( longitude, 11) + " " );
-        //pw.append( setStringLength( latitude,  11) + " " );
-        pw.append( longitude + " " );
-        pw.append( latitude  + " " );
+        pw.append( longitude );
+        pw.append( latitude );
 
-        // About ellipsoidal height or so-called elevation:
+        // About ellipsoidal height 
         // could force value "0.0" here if your metadata has elevation above a geoid not ellipsoid height:
-        String ellipsoidalheight =elevationFormat.format(el.getElevation()) ;
-        pw.append( setStringLength( ellipsoidalheight, 7) );
+        // but usually geodesy positions from GNSS receivers have ellipsoidal height
+        String ellipsoidalheight =heightFormat.format(el.getElevation()) ;  // one decimal point; but if decimal fraction is zero as in 5.0 then this gives just "5" not 5.0; no good.
+        // fix it:
+        if (ellipsoidalheight.contains(".") ) { ; }
+        else { ellipsoidalheight=ellipsoidalheight+".0"; }
+        //  add " " as needed for SINEX column-count format
+        String add="";
+        if (ellipsoidalheight.length() ==3 )      { add="     "; }
+        else if (ellipsoidalheight.length() ==4 ) { add="    "; }
+        else if (ellipsoidalheight.length() ==5 ) { add="   "; }
+        else if (ellipsoidalheight.length() ==6 ) { add="  "; }
+        ellipsoidalheight = add+ ellipsoidalheight;
+        pw.append( ellipsoidalheight );
         pw.append("\n");  //  end of line
     }
 
@@ -294,9 +303,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         
         // About ellipsoidal height:
         // NOTE if your site metadata has elevation above a geoid model, use this no-value line:
-        pw.append(    " site ellipsoidal height:      \n");
+        //pw.append(    " site ellipsoidal height:      \n");
         // ELSE if your site metadata has true ellipsoidal height, use this line:
-        //pw.append(    " site ellipsoidal height:      "+ elevationFormat.format(el.getElevation()) + "" + "\n");
+        pw.append(    " site ellipsoidal height:      "+ heightFormat.format(el.getElevation()) + "" + "\n");
 
         if (el.hasXYZ()) {
             pw.append(" site X coordinate:            "+ el.getX() + "" + "\n");
@@ -323,37 +332,80 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     }
 
     /**
-     * format a position value LATITUDE to  degrees and minutes (integers) and DECIMAL seconds as per sinex format.
-     * of the form exactly:   LAT -36 36 10.2  
-     *  in range -90.0 to + 90.0; but allow bad values outside that range from the user's data to be shown
+     * format a position value double value of latitude LATITUDE input, to degrees(int) and minutes (integer) and DECIMAL seconds as per sinex format.
+     * of the form exactly:   LAT -36 36 10.2, in range -90.0 to + 90.0; 
+     * LOOK NOTE: show zero for latitude when given  bad values outside that range.
+     * example as per SINEX specs: 
+        +//SITE/ID
+        *CODE PT __DOMES__ T _STATION DESCRIPTION__ APPROX_LON_ APPROX_LAT_ _APP_H_
+         ABMF  A 97103M001 P Les Abymes, FR         298 28 20.9  16 15 44.3   -25.6
+         ABPO  A 33302M001 P Antananarivo, MG        47 13 45.2 -19  1  5.9  1553.0
+         PALV  A 66005M002 P Palmer Station, AQ     295 56 56.0 -64 46 30.3    31.1
+         PARK  A 50108M001 P Parkes, AU             148 15 52.6 -32 59 55.5   397.3
      *
      * @param double decimalDegrees 
      *
      * @return a String 
      */
     private String formatLatitudeDMS(double decimalDegrees) {
-        // example of converting -15.353 
+        // return zero for latitude when given  bad values outside that range.
+        //                                                            " -64 46 30.3"
+        if ( decimalDegrees<-90.0 || decimalDegrees > 90.0) {  return "   0  0  0.0"; }
+
+        String sdlat=""+decimalDegrees;
+        //System.out.println("\n  formatLatitudeDMS.  input value   ="+sdlat);
+
+        // example of converting -15.1014 
         int    degrees = (int) decimalDegrees;  // truncates as desired, to a + or - integer ; -15 in this case
-        // minutes part as fraction of degree; always positive:
-        double minsdegfrac = decimalDegrees - degrees;  // like |-15.353 - (-15)| = |-0.353| = .353.
+
+        // make minutes part as fraction of degree; always positive:
+        double minsdegfrac = decimalDegrees - degrees;  // like -15.1014 - (-15) = -01014.
+        // drop the minux part of the fraction, if any
         if ( minsdegfrac < 0.0) { minsdegfrac *= -1.0; }
+
         // "minutes part" in units minutes: 
-        int minutes = (int) (minsdegfrac * 60);  // like  (int)(0.647*60) = int(38.82)= 38 minutes 
-        // decimal seconds: comp by minutes fraction in unit seconds minus integer minutes in units seconds  
+        int minutes = (int) (minsdegfrac * 60);  // like  (int)(0.1014*60) = int(6.084)= 6 minutes 
+
+        String sdeg=""+degrees;
+        String smin=""+minutes;
+        String add="";
+        
+        // sdeg should have 4 characters
+        if (sdeg.length() ==1 )      { add="   "; }
+        else if (sdeg.length() ==2 ) { add="  "; }
+        else if (sdeg.length() ==3 ) { add=" "; }
+        sdeg=add + sdeg;
+        //System.out.println("  formatLatitudeDMS sdeg =_"+sdeg+"__" );
+        // smin should have 3 characters
+        if (smin.length() ==1 )      { add="  "; }
+        else if (smin.length() ==2 ) { add=" "; }
+        smin=add+ smin;
+        //System.out.println("  formatLatitudeDMS smin =_"+smin+"__" );
+        //System.out.println("  formatLatitudeDMS model   _ -64 46 30.3__");
+        //System.out.println("  formatLatitudeDMS  dg mn =_"+sdeg+smin+"__" );
+
+        // decimal seconds: compute by (minutes fraction in unit seconds) minus integer minutes in units seconds  
         double seconds = (minsdegfrac*3600 - minutes*60) ;  
-        String deg = ""+degrees;
-        String min = ""+minutes;
-        // note minutes is integer; can be '0'; need an extra leading space if only have a minute value like 9.9 using 3 spaces not 4
-        if (10>minutes) { min = "  "+min; }
 
-        String sec = secFormat.format(seconds); // one decimal point
+        String ssec = secFormat.format(seconds); // one decimal point; but if decimal fraction is zero as in 5.0 then this gives just "5" not 5.0; no good.
+        // fix it:
+        if (ssec.contains(".") ) { ; }
+        else { ssec=ssec+".0"; }
+        //  add " " as needed for SINEX column-count format
+        if (ssec.length() ==1 )      { add="    "; }
+        else if (ssec.length() ==2 ) { add="   "; }
+        else if (ssec.length() ==3 ) { add="  "; }
+        else if (ssec.length() ==4 ) { add=" "; }
+        ssec=add+ssec;
         // if sec is '0'
-        if (sec.length() <=2 ) { sec = sec+".0"; }
+        //if (sec.length() <=2 ) { sec = sec+".0"; }
         // need an extra leading space if only have a single-digitn integer part of seconds value like 9.9,  using 3 spaces not 4
-        if (seconds<10.0 ) { sec = "  "+sec; }
+        //if (seconds<10.0 ) { sec = "  "+sec; }
 
-        String latStr = deg + " " + min + " " + sec;
-        return setStringLength(latStr, 11);
+        String latStr = sdeg + smin + ssec;
+        //System.out.println("  formatLatitudeDMS  dg mn =_"+latStr+"__" );
+        //return setStringLength(latStr, 11);
+        return latStr;
     }
 
     /**
@@ -366,6 +418,64 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      * @return a String 
      */
     private String formatLongitudeDMS(double decimalDegrees) {
+        // return zero for latitude when given  bad values outside that range.
+        //                                                            " -64 46 30.3"
+        if ( decimalDegrees<-360.0 || decimalDegrees >360.00) {  return "   0  0  0.0"; }
+
+        String sdlat=""+decimalDegrees;
+        //System.out.println("\n  formatLongitudeDMS.  input value   ="+sdlat);
+
+        // example of converting -15.1014 
+        int    degrees = (int) decimalDegrees;  // truncates as desired, to a + or - integer ; -15 in this case
+
+        // make minutes part as fraction of degree; always positive:
+        double minsdegfrac = decimalDegrees - degrees;  // like -15.1014 - (-15) = -01014.
+        // drop the minux part of the fraction, if any
+        if ( minsdegfrac < 0.0) { minsdegfrac *= -1.0; }
+
+        // "minutes part" in units minutes: 
+        int minutes = (int) (minsdegfrac * 60);  // like  (int)(0.1014*60) = int(6.084)= 6 minutes 
+
+        String sdeg=""+degrees;
+        String smin=""+minutes;
+        String add="";
+        
+        // sdeg should have 4 characters
+        if (sdeg.length() ==1 )      { add="  "; }
+        else if (sdeg.length() ==2 ) { add="  "; }
+        else if (sdeg.length() ==3 ) { add=" "; }
+        sdeg=add + sdeg;
+        //System.out.println("  formatLongitudeDMS sdeg =_"+sdeg+"__" );
+        // smin should have 3 characters
+        if (smin.length() ==1 )      { add="  "; }
+        else if (smin.length() ==2 ) { add=" "; }
+        smin=add+ smin;
+        //System.out.println("  formatLongitudeDMS smin =_"+smin+"__" );
+        //System.out.println("  formatLongitudeDMS model   _ -164 46 30.3__");
+        //System.out.println("  formatLongitudeDMS  dg mn =_"+sdeg+smin+"__" );
+
+        // decimal seconds: compute by (minutes fraction in unit seconds) minus integer minutes in units seconds  
+        double seconds = (minsdegfrac*3600 - minutes*60) ;  
+
+        String ssec = secFormat.format(seconds); // one decimal point; but if decimal fraction is zero as in 5.0 then this gives just "5" not 5.0; no good.
+        // fix it:
+        if (ssec.contains(".") ) { ; }
+        else { ssec=ssec+".0"; }
+        //  add " " as needed for SINEX column-count format
+        if (ssec.length() ==1 )      { add="    "; }
+        else if (ssec.length() ==2 ) { add="   "; }
+        else if (ssec.length() ==3 ) { add="  "; }
+        else if (ssec.length() ==4 ) { add=" "; }
+        ssec=add+ssec;
+        // if sec is '0'
+        //if (sec.length() <=2 ) { sec = sec+".0"; }
+        // need an extra leading space if only have a single-digitn integer part of seconds value like 9.9,  using 3 spaces not 4
+        //if (seconds<10.0 ) { sec = "  "+sec; }
+
+        String lonStr = sdeg + smin + ssec;
+        return lonStr;
+
+        /* orig
         if (decimalDegrees<0.0) { decimalDegrees = decimalDegrees + 360.0; }
 
         int    degrees = (int) decimalDegrees;  // truncates as desired, to a + or - integer ; -15 in this case
@@ -391,6 +501,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         String s = deg + " " + min + " " + sec;
         // tests s = s + "(from "+decimalDegrees+" minsdegfrac="+minsdegfrac+" minutes="+minutes+"  seconds="+seconds+" deg="+deg+" min="+min +" sec="+sec+")" ;
         return setStringLength(s, 11);
+        */
     }
 
 
@@ -698,12 +809,12 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
   /**
    *  make string of  input date and time, in the  SINEX  time format:
-| Time                                 | YY:DDD:SSSSS. "UTC" | I2.2, |
-| | YY = last 2 digits of the year,    | 1H:,I3.3, |
-| | if YY <= 50 implies 21-st century, | 1H:,I5.5 |
-| | if YY > 50 implies 20-th century,  | |
-| | DDD = 3-digit day in year,         | |
-| | SSSSS = 5-digit seconds in day.    | |
+    | Time                                 | YY:DDD:SSSSS. "UTC" | I2.2, |
+    | | YY = last 2 digits of the year,    | 1H:,I3.3, |
+    | | if YY <= 50 implies 21-st century, | 1H:,I5.5 |
+    | | if YY > 50 implies 20-th century,  | |
+    | | DDD = 3-digit day in year,         | |
+    | | SSSSS = 5-digit seconds in day.    | |
    *
    * @param  input String starttime; time to be formatted
    * @param 
