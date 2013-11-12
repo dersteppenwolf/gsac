@@ -141,7 +141,7 @@ public class PrototypeFileManager extends FileManager {
         StringBuffer msgBuff = new StringBuffer();
         List<Clause> clauses = new ArrayList<Clause>();
 
-        // make the SQL query to select from the columns (fields) of rows in the database, with  query clauses generated here.
+        // make SQL query(ies) to select from the columns (fields) of rows in the database, with  query clauses generated here.
 
         /* file search items not used yet, but of possible interest
         if (request.defined(ARG_FILESIZE_MIN)) {
@@ -166,9 +166,8 @@ public class PrototypeFileManager extends FileManager {
         }
         */
 
-        // LOOK how this works
+        //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_CODE_4CHAR_ID, clauses);
-        //System.err.println("   FileManager:handleRequest clause at 1 " + clauses) ;
         
         // make query clause for the  file type
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
@@ -188,8 +187,8 @@ public class PrototypeFileManager extends FileManager {
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
 
         if (dataDateRange[0] != null) {
+            // wrangle the data start time into a format you can use in a SQL query
             Calendar cal = Calendar.getInstance();
-            // wrangle the input time into a format you can use in a SQL query
             cal.setTime(dataDateRange[0]);
             // to shift one day earlier:   3 lines:
             //cal.add(Calendar.HOUR, 23);
@@ -197,9 +196,10 @@ public class PrototypeFileManager extends FileManager {
             //cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
             // make the sql query clause for start times of files
+            // time of data must be inside some one receiver session
             clauses.add(Clause.ge(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME, sqlStartDate));
-            cal = null;
-
+            clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlStartDate));
+            //cal = null;
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
         }
 
@@ -212,27 +212,24 @@ public class PrototypeFileManager extends FileManager {
             cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
             clauses.add(Clause.le(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME, sqlEndDate));
-            cal = null;
-
+            // time of data must be inside some one receiver session
+            clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
+            //cal = null;
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
 
-        // sql select needs to join row pairs from these tables ie use both, connected by the station_id values.
+        // to get file info, join these db tables:
+        // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
         clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.GNSS_DATA_FILE.COL_STATION_ID )) ;
  
-        // sql select needs to join row pairs from these tables ie use both, connected by the station_id values.
+        clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.GNSS_DATA_FILE.COL_STATION_ID )) ;
+ 
         clauses.add(Clause.join(Tables.FILE_TYPE.COL_FILE_TYPE_ID, Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID )) ;
  
         Clause mainClause = Clause.and(clauses);
         //System.err.println("   FileManager:handleRequest select where clause " + mainClause) ;
 
-        //  the sql select FROM clause, ie which tables  
-        List<String> tables = new ArrayList<String>();
-        tables.add(Tables.STATION.NAME);
-        tables.add(Tables.GNSS_DATA_FILE.NAME);
-        tables.add(Tables.FILE_TYPE.NAME);
-        
-        //  and for the mysql SELECT clause: make a list of what to get (row values returned):
+        // for the SQl select clause: WHAT to select (row values returned):
         String cols=SqlUtil.comma(new String[]{
              Tables.GNSS_DATA_FILE.COL_STATION_ID,
              Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID,
@@ -252,11 +249,32 @@ public class PrototypeFileManager extends FileManager {
              Tables.STATION.COL_EMBARGO_AFTER_DATE,
 
              Tables.FILE_TYPE.COL_FILE_TYPE_ID,
-             Tables.FILE_TYPE.COL_FILE_TYPE_NAME
+             Tables.FILE_TYPE.COL_FILE_TYPE_NAME,
+
+             Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL
              });
 
+           // Get data sample interval with another SQL query: sss
+            /*
+            RECEIVER_SESSION extends Tables {
+            ...
+            public static final String COL_STATION_ID =  NAME + ".station_id";
+            public static final String COL_RECEIVER_TYPE_ID =  NAME + ".receiver_type_id";
+            public static final String COL_RECEIVER_FIRMWARE_VERSION_ID =  NAME + ".receiver_firmware_version_id";
+            public static final String COL_RECEIVER_SERIAL_NUMBER =  NAME + ".receiver_serial_number";
+            public static final String COL_RECEIVER_INSTALLED_DATE =  NAME + ".receiver_installed_date";
+            public static final String COL_RECEIVER_REMOVED_DATE =  NAME + ".receiver_removed_date";
+            public static final String COL_RECEIVER_SAMPLE_INTERVAL =  NAME + ".receiver_sample_interval";
+            public static final String COL_SATELLITE_SYSTEM =  NAME + ".satellite_system";
+            */
 
-        //Statement statement = getDatabaseManager().select( cols,  tables,  mainClause);
+        //  for the sql select FROM clause, which tables to select from
+        List<String> tables = new ArrayList<String>();
+        tables.add(Tables.GNSS_DATA_FILE.NAME);
+        tables.add(Tables.STATION.NAME);
+        tables.add(Tables.FILE_TYPE.NAME);
+        tables.add(Tables.RECEIVER_SESSION.NAME);
+
         Statement statement = getDatabaseManager().select( cols,  tables,  mainClause, " order by " + Tables.GNSS_DATA_FILE.COL_DATA_START_TIME+", "+Tables.STATION.COL_CODE_4CHAR_ID, -1);
 
         //System.err.println("       sql statmnt obj    " +statement);
@@ -296,7 +314,7 @@ public class PrototypeFileManager extends FileManager {
                String file_md5 = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
                long file_size= results.getInt          (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
-               float sample_interval = 15.0f; // static value for test until get from db 
+               float sample_interval = results.getFloat (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); //9999.0f; static value for test until get from db 
 
                // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
@@ -345,6 +363,7 @@ public class PrototypeFileManager extends FileManager {
                      continue;
                      }
 
+               // OK this file may be shown to user for downloading
                //int count = (request.getParameter("counter") == null) ? 0 : Integer.parseInt(request.getParameter("counter"));
 
                ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
@@ -471,24 +490,6 @@ public class PrototypeFileManager extends FileManager {
         }
         return null;
     }
-
-
-    /** Transform ISO 8601 string to Calendar. */
-    /*
-    public static Calendar toCalendar(final String iso8601string)
-            throws ParseException {
-        Calendar calendar = GregorianCalendar.getInstance();
-        String s = iso8601string.replace("Z", "+00:00");
-        try {
-            s = s.substring(0, 22) + s.substring(23);
-        } catch (IndexOutOfBoundsException e) {
-            throw new ParseException("Invalid length", 0);
-        }
-        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
-        calendar.setTime(date);
-        return calendar;
-    }
-    */
 
 
     /**
