@@ -173,7 +173,7 @@ public class PrototypeSiteManager extends SiteManager {
             // get receiver type names used by stations in this database, only.
             // Show only the ones at stations in this repository, since the protoype GSAC db has all IGS receiver names, more than 200. 
             //    or simpler?: get all items in row where: from code for RING:
-            // Statement statement = getDatabaseManager().select(Tables.SITI_GSAC.COLUMNS, Tables.SITI_GSAC.NAME, Clause.eq( Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
+            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
             ResultSet results;
             ArrayList<String> rvalues = new ArrayList<String>();
             List<Clause> clauses = new ArrayList<Clause>();
@@ -227,7 +227,7 @@ public class PrototypeSiteManager extends SiteManager {
             // get antenna type names used by stations in this database, only.
             // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
             //    simpler?: or get all items in row where: example 
-            //     Statement statement = getDatabaseManager().select( Tables.SITI_GSAC.COLUMNS, Tables.SITI_GSAC.NAME, Clause.eq( Tables.SITI_GSAC.COL_NOME_SITO, gsacResource.getId()), (String) null, -1);
+            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
             ArrayList<String> avalues = new ArrayList<String>();
             clauses =      new ArrayList<Clause>();
             //  WHERE 
@@ -1290,6 +1290,7 @@ public class PrototypeSiteManager extends SiteManager {
 
     /**
      * Convert a db datetime field to a 'Date' object.
+     * NOTE this uses the java sql package ResultSet class and ONLY returns dates with NO time of day allowed.
      *
      * @param results a row from a qb query which has a datetime field
      * @param column a string name for a db field with  for example a MySQL 'datetime' object,
