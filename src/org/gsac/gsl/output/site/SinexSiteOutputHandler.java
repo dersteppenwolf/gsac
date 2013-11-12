@@ -241,7 +241,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         else if (ellipsoidalheight.length() ==4 ) { add="    "; }
         else if (ellipsoidalheight.length() ==5 ) { add="   "; }
         else if (ellipsoidalheight.length() ==6 ) { add="  "; }
-        ellipsoidalheight = add+ ellipsoidalheight;
+        else if (ellipsoidalheight.length() ==7 ) { add=" "; }
+        ellipsoidalheight = add+ellipsoidalheight;
         pw.append( ellipsoidalheight );
         pw.append("\n");  //  end of line
     }
