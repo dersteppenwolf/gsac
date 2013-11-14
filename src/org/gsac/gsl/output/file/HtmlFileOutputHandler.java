@@ -324,38 +324,72 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                                                      String>();
             override.put(ARG_OUTPUT, OUTPUT_FILE_HTML);
             makeNextPrevHeader(request, response, sb);
-            long size = 0;
-            float sampint = 0.0f;
+            long filesizesum = 0;
+            //float sampint = 0.0f;
             int  cnt  = 0;
 
             // NOTE in this main loop the "resource" is a GsacFile
             for (GsacFile resource : files) {
+
                 List<GsacResource> relatedResources = resource.getRelatedResources();
 
-                String relatedLabel = "";
+                String relatedLabel = null;
                 if (relatedResources.size() > 0) {
                     relatedLabel = getResourceManager( relatedResources.get(0)).getResourceLabel(false);
                     // related content is for example site name 
-                    System.err.println (" relatedLabel is _"+relatedLabel+"_");
                 }
 
                 // first row in table is labels
                 if (cnt == 0) {
                     request.remove(ARG_OUTPUT);
-
                     sb.append(HtmlUtil.formPost(request.getUrl(null), HtmlUtil.attr("name", "searchform")));;
+                    sb.append(
+                        "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
+                    sb.append(toolbar);
+                    sb.append("</div></td></tr></table>");
+                    
+                    boolean includeExtraCol = getRepository().getRemoteHref(resource).length() > 0;
+                    includeExtraCol = false;
 
+                    sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+
+                    String[] labels = null;
+                    if (  relatedLabel != null)
+                    { 
+                       // unavco gsac server has this case (pre-Nov 2013)
+                       labels = new String[] {
+                           (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
+                           };
+                    }
+                    else {  // for prototype gsac 
+                       labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                    }
+
+                    String[] sortValues = new String[] {
+                        (includeExtraCol
+                         ? ""
+                         : null), "", SORT_FILE_TYPE, "",
+                        SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
+                    };
+                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
+                                   sortValues);
+                    /* 
+                    request.remove(ARG_OUTPUT);
+                    sb.append(HtmlUtil.formPost(request.getUrl(null), HtmlUtil.attr("name", "searchform")));;
                     sb.append( "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
 
                     boolean includeExtraCol = getRepository().getRemoteHref(resource).length() > 0;
 
+
                     sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
+
 
                     String[] labels = null; 
                     labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
-                    /* to handle "related content"; and also see below
+
+                    // * to handle "related content"; and also see below
                     if ( relatedLabel.equals("") || relatedLabel == null)
                     {
                         labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
@@ -366,14 +400,18 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     else {
                         labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
                     }
-                    */
+                    //* /
                     
                     String[] sortValues = new String[] { (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
+
                     //String[] sortValues = new String[] {  "",                             SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
+
+                     */
                 }
                 cnt++;
 
+        
                 // this method was modified 6 Nov 2013
                 openEntryRow(sb, resource.getId(), URL_FILE_VIEW, ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
@@ -395,9 +433,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 sb.append("</tr></table></td>\n");
 
+
                 // show link to the url, the complete URL to download one file 
                 String url = resource.getFileInfo().getUrl();  
-                //System.err.println ("  html file page sees url "+url);
                 if (url != null) {
                     String downloadHref = HtmlUtil.href ( url, IOUtil.getFileTail(url) );
                                                       //( url, url); // show complete text of the url for the link on the page
@@ -407,6 +445,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 } else {
                     sb.append(HtmlUtil.col("no file URL for download"));
                 }
+
 
                 /* original code which shows, in the table of file-search results, in the "File" column (labeled above), 
                    a down arrow which is a link to the file for single file download, and a link (a highlighted file name) 
@@ -441,10 +480,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append(HtmlUtil.col("file type not specified"));
                 }
 
+
                 //  if you have no "related content", skip this
                 //  i.e. get rid of the mystery original "NA" column in table of file search results
                 //if ( ( !relatedLabel.equals("") || relatedLabel != null) )   //&& resource.getRelatedResources() != null) 
-                if ( 0<relatedLabel.length()) {
+                if ( relatedLabel!=null && relatedResources!=null && relatedLabel.length() > 0) {
                   StringBuffer relatedContent = new StringBuffer();
                   for (int relatedIdx = 0; relatedIdx < relatedResources.size();
                         relatedIdx++) {
@@ -467,81 +507,104 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                   sb.append(HtmlUtil.col(relatedContent.toString()));
                 }
 
+
+                Date publishTime = resource.getPublishDate();
                 Date startTime   = resource.getFromDate();
                 Date endTime     = resource.getToDate();
-                Date publishTime = resource.getPublishDate();
+                String start = " ";
+                String end = " ";
+                String publish = " ";
 
-                //  to fix a bug original code with GsacOutputHandler:formatDateTime gives a wrong date-time value, hours later than input date-time
-                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //Date now = new Date();
-                String start = sdfDate.format(startTime);
-                String end = sdfDate.format(endTime);
-                String publish = sdfDate.format(publishTime);
 
-                if (startTime == null && endTime != null) {
-                   //sb.append(HtmlUtil.col("start unknown - " + formatDate(endTime), clickEvent));
-                   sb.append(HtmlUtil.col("start unknown - " + end));
-                }
-                else if (endTime == null && startTime != null) {
-                   //sb.append(HtmlUtil.col(formatDateTime(startTime) + " - end unknown", clickEvent));
-                   sb.append(HtmlUtil.col( start + " - end unknown"));
-                }
-                else {
-                   //sb.append(HtmlUtil.col(formatDateTime(startTime) + " - " + formatDateTime(endTime), clickEvent));
-                   sb.append(HtmlUtil.col(start + " - " + end));
-                }
-                /*
-                original:
-                if (startTime == null) {
-                    sb.append(HtmlUtil.col(formatDate(publishTime)));
-                } else {
-                    if ((endTime == null) || endTime.equals(startTime)) {
-
-                        sb.append(HtmlUtil.col(formatDate(startTime), clickEvent));
+                if (relatedResources.size() > 0) {  
+                    // original code for unavco gsac server
+                    if (startTime == null) {
+                        sb.append(HtmlUtil.col(formatDate(publishTime)));
                     } else {
-
-                        sb.append(HtmlUtil.col(formatDate(startTime) + " - " + formatDate(endTime), clickEvent));
+                        if ((endTime == null) || endTime.equals(startTime)) {
+                            sb.append(HtmlUtil.col(formatDate(startTime),
+                                    clickEvent));
+                        } else {
+                            sb.append(HtmlUtil.col(formatDate(startTime) + " - "
+                                    + formatDate(endTime), clickEvent));
+                        }
                     }
                 }
-                */
+                else {
+                    // more complete info in prototype gsac:
+                    //  to fix a bug original code with GsacOutputHandler:formatDateTime gives a wrong date-time value, hours later than input date-time
+                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    if (publishTime != null) {
+                        publish = sdfDate.format(publishTime);
+                    }
 
-                // show sample rate for this file; note the column label coded above ass the Delta-symbol  in HTML
-                if (resource.getFileInfo().getSampleInterval() > 0) {
-                    //sb.append("<td align=\"left\" class=\"gsac-sampint\" " + clickEvent + ">");
-                    sb.append("<td align=\"left\" class=\"gsac-sampint\" " +  ">");
-                    sampint          += resource.getFileInfo().getSampleInterval();
-                    sb.append( "" +  resource.getFileInfo().getSampleInterval() );
-                    sb.append("</td>");
-                } else {
-                    sb.append(HtmlUtil.col(" unknown"));
+                    if (startTime == null && endTime != null) {
+                           end = sdfDate.format(endTime);
+                           sb.append(HtmlUtil.col("unknown start to " + end));
+                    }
+                    else if (endTime == null && startTime != null) {
+                           start = sdfDate.format(startTime);
+                           sb.append(HtmlUtil.col( start + " - end unknown"));
+                    }
+                    else {
+                           // case of prototype gsac code has proper times: 
+                           start = sdfDate.format(startTime);
+                           end = sdfDate.format(endTime);
+                           sb.append(HtmlUtil.col(start + " - " + end));
+                    }
                 }
 
-                // show MD5 value for this file if any
-                if (resource.getFileInfo().getMd5() != "") {
-                    sb.append("<td align=\"left\" class=\"gsac-md5\" " + ">");
-                    sb.append( "<font size=-2>" +  resource.getFileInfo().getMd5() +"</font>");
-                    sb.append("</td>");
-                } else {
-                    sb.append(HtmlUtil.col(" unknown"));
+                //  if you have no "related content", skip this (not shown for unavco gsac server)
+                if (relatedResources.size() > 0) {  
+                   ;
+                }
+                else {
+                    // show sample rate for this file;  (prototype gsac servers).  note the column label coded above as the Delta-symbol  in HTML
+                    if ( resource.getFileInfo().getSampleInterval() > 0) {
+                        //sb.append("<td align=\"left\" class=\"gsac-sampint\" " + clickEvent + ">");
+                        sb.append("<td align=\"left\" class=\"gsac-sampint\" " +  ">");
+                        //sampint       += resource.getFileInfo().getSampleInterval();
+                        sb.append( "" +  resource.getFileInfo().getSampleInterval() );
+                        sb.append("</td>");
+                    } else {
+                        sb.append(HtmlUtil.col(" unknown"));
+                    }
+                }
+
+                //  if you have no "related content", skip this (not shown for unavco gsac server)
+                if (relatedResources.size() > 0) {  
+                   ;
+                }
+                else {
+                    // show MD5 value for this file if any (prototype gsac servers)
+                    if (resource.getFileInfo().getMd5()!= null && resource.getFileInfo().getMd5() != "") {
+                        sb.append("<td align=\"left\" class=\"gsac-md5\" " + ">");
+                        sb.append( "<font size=-2>" +  resource.getFileInfo().getMd5() +"</font>");
+                        sb.append("</td>");
+                    } else {
+                        sb.append(HtmlUtil.col(" unknown"));
+                    }
                 }
 
                 // show file size value if any
-              if (resource.getRelatedResources() != null) {
-                if (resource.getFileInfo().getFileSize() > 0) {
-                    //sb.append("<td align=\"left\" class=\"gsac-filesize\" " + clickEvent + ">");
-                    sb.append("<td align=\"left\" class=\"gsac-filesize\" "+ ">");
-                    size += resource.getFileInfo().getFileSize();
-                    sb.append( "" + formatFileSize( resource.getFileInfo().getFileSize()));
-                    sb.append("</td>");
-                } else {
-                    sb.append(HtmlUtil.col(" size unknown"));
-                }
-              }
+                if (resource.getRelatedResources() != null) {
+                    if ( resource.getFileInfo().getFileSize() > 0) {
+                        //sb.append("<td align=\"left\" class=\"gsac-filesize\" " + clickEvent + ">");
+                        sb.append("<td align=\"left\" class=\"gsac-filesize\" "+ ">");
+                        filesizesum += resource.getFileInfo().getFileSize();
+                        sb.append( "" + formatFileSize( resource.getFileInfo().getFileSize()));
+                        sb.append("</td>");
+                    } else {
+                        sb.append(HtmlUtil.col(" size unknown"));
+                    }
+                 }
+
 
                 sb.append("</tr>\n");
             } // end of loop on files for (GsacFile resource : files)
 
-            // show lower line of table with number of files found, and sum of all sizes found
+
+            // show lower line of table with count of files found, and sum of all sizes found
             if (cnt == 0) {
                 sb.append( getRepository().makeInformationDialog( msg("No files found")));
             } else {
@@ -551,11 +614,13 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 sb.append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 
-                sb.append("<td>&nbsp;</td>");
 
                 sb.append("<td align=\"left\" class=\"gsac-filesize\">");
-                if (size > 0) {
-                    sb.append("" + formatFileSize(size));
+                if (filesizesum > 0) {
+                    sb.append("" + formatFileSize(filesizesum));
+                }
+                else {
+                    sb.append(HtmlUtil.col(" sizes unknown"));
                 }
                 sb.append("</td>");
 
