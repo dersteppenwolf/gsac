@@ -476,7 +476,7 @@ Web Site Page Design, Contents, and Images
 Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
 You can add more to this file for a larger page, using normal HTML.
 
-The home page of a GSAC repository web site is detailed in an index.html file.
+The contents of a home page of a GSAC repository web site is contained in an index.html file.
 In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/gsac/htdocs/).
 In @MACRO.PREFIX@/gsac/htdocs make a new HTML file, index.html. A very simple but working one has these lines:
 
@@ -492,7 +492,8 @@ If that does not work, try <img src="gsacmyrepo/gsacapi/htdocs/network_map.jpg">
 
 As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
 
-Note that these pages do not have complete <html>  lines (including <html> and more at the beginning, or the final </html>), since these pages
+Note that the index page does  not have a complete set of HTML lines, found on a typical web page, 
+including <html> and more at the beginning, or the final </html>, since the index contents
 are wrapped inside the GSAC header and footer HTML files, mentioned next.
 
 The files footer.html and header.html, in the directory @MACRO.SRCDIR@/resources/, specify the top and bottom of the 
@@ -511,6 +512,9 @@ Image files are in @MACRO.PREFIX@/gsac/htdocs/.
 
 Change the files resources/header.html and resources/footer.html to give the HTML appearance for the header and footer
 for your GSAC web site pages.  You may use these files to supply your standard web site look to your GSAC repository web site.
+
+Please include an email address for Contact or Support in your header or footer.  If persons using your GSAC have
+questions, they need an easy way to reach you.  This will help your GSAC service be responsive, and not frustrating.
 
 The GSAC search web forms (web page content), and pages with static GSCA information such as the GSAC Help pages,
 are complete and provided by GSAC installation. They  use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
