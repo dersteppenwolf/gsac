@@ -442,7 +442,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         String add="";
         
         // sdeg should have 4 characters
-        if (sdeg.length() ==1 )      { add="  "; }
+        if (sdeg.length() ==1 )      { add="   "; }
         else if (sdeg.length() ==2 ) { add="  "; }
         else if (sdeg.length() ==3 ) { add=" "; }
         sdeg=add + sdeg;
