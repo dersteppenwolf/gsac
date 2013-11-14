@@ -55,8 +55,8 @@ import java.util.Calendar;
  *
  * This FileManager.java uses the prototype GSCA db table gnss_data_file;
  *
- * @author  Jeff McWhirter 2011  template without code for any particular database variable names.
- * @author  S K Wier  Nov. 6 2013; UNAVCO  
+ * @author  Jeff McWhirter 2011  non-functional template file without any code for any database variables.
+ * @author  S K Wier Nov. 6;14, 2013
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -143,29 +143,6 @@ public class PrototypeFileManager extends FileManager {
 
         // make SQL query(ies) to select from the columns (fields) of rows in the database, with  query clauses generated here.
 
-        /* file search items not used yet, but of possible interest
-        if (request.defined(ARG_FILESIZE_MIN)) {
-            int size = request.get(ARG_FILESIZE_MIN, 0);  // use long not int
-            clauses.add(Clause.appendSearchCriteria(msgBuff, "Filesize&gt;=", "" + request.get(ARG_FILESIZE_MIN, 0));
-        }
-        if (request.defined(ARG_FILESIZE_MAX)) {
-            int size = request.get(ARG_FILESIZE_MAX, 0); // use long not int
-            appendSearchCriteria(msgBuff, "Filesize&lt;=", "" + request.get(ARG_FILESIZE_MAX, 0));
-        }
-        if (request.defined(ARG_FILE_TYPE)) {
-            List<String> types = (List<String>) request.getList(ARG_FILE_TYPE); 
-            addSearchCriteria(msgBuff, "Resource Type", types, ARG_FILE_TYPE);
-        }
-        Date[] publishDateRange =
-            request.getDateRange(ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO, null, null);
-        if (publishDateRange[0] != null) {
-            appendSearchCriteria(msgBuff, "Publish date&gt;=", "" + format(publishDateRange[0]));
-        }
-        if (publishDateRange[1] != null) {
-            appendSearchCriteria(msgBuff, "Publish date&lt;=", "" + format(publishDateRange[1]));
-        }
-        */
-
         //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_CODE_4CHAR_ID, clauses);
         
@@ -173,15 +150,7 @@ public class PrototypeFileManager extends FileManager {
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
             clauses.add( Clause.or( Clause.makeStringClauses( Tables.FILE_TYPE.COL_FILE_TYPE_NAME, values)));
-            // if (request.defined(ARG_FILE_TYPE)) {
-            // arg File type is label for html page "Search Criteria" section.
-            //List<String> types = (List<String>) request.getList(ARG_FILE_TYPE); 
-            //addSearchCriteria(msgBuff, "Ffile Type", types, ARG_FILE_TYPE);
-            //System.err.println (" file type(s) to find :"+types);
-            //System.err.println (" msgBuff :"+msgBuff);
         }
-        //System.err.println("   FileManager:handleRequest clause at 2 " + clauses) ;
-
         
         // get values of the data date range requested by the user, from the input from web search form / API:
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
@@ -190,16 +159,10 @@ public class PrototypeFileManager extends FileManager {
             // wrangle the data start time into a format you can use in a SQL query
             Calendar cal = Calendar.getInstance();
             cal.setTime(dataDateRange[0]);
-            // to shift one day earlier:   3 lines:
-            //cal.add(Calendar.HOUR, 23);
-            //cal.add(Calendar.MINUTE, 59);
-            //cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
-            // make the sql query clause for start times of files
-            // time of data must be inside some one receiver session
             clauses.add(Clause.ge(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME, sqlStartDate));
+            // time of data must be inside some one receiver session
             clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlStartDate));
-            //cal = null;
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
         }
 
@@ -214,20 +177,16 @@ public class PrototypeFileManager extends FileManager {
             clauses.add(Clause.le(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME, sqlEndDate));
             // time of data must be inside some one receiver session
             clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
-            //cal = null;
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
 
         // to get file info, join these db tables:
         // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
         clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.GNSS_DATA_FILE.COL_STATION_ID )) ;
- 
         clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.GNSS_DATA_FILE.COL_STATION_ID )) ;
- 
         clauses.add(Clause.join(Tables.FILE_TYPE.COL_FILE_TYPE_ID, Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID )) ;
  
         Clause mainClause = Clause.and(clauses);
-        //System.err.println("   FileManager:handleRequest select where clause " + mainClause) ;
 
         // for the SQl select clause: WHAT to select (row values returned):
         String cols=SqlUtil.comma(new String[]{
@@ -249,24 +208,9 @@ public class PrototypeFileManager extends FileManager {
              Tables.STATION.COL_EMBARGO_AFTER_DATE,
 
              Tables.FILE_TYPE.COL_FILE_TYPE_ID,
-             Tables.FILE_TYPE.COL_FILE_TYPE_NAME,
-
+             Tables.FILE_TYPE.COL_FILE_TYPE_NAME,             // last item has no final ,
              Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL
              });
-
-           // Get data sample interval with another SQL query: sss
-            /*
-            RECEIVER_SESSION extends Tables {
-            ...
-            public static final String COL_STATION_ID =  NAME + ".station_id";
-            public static final String COL_RECEIVER_TYPE_ID =  NAME + ".receiver_type_id";
-            public static final String COL_RECEIVER_FIRMWARE_VERSION_ID =  NAME + ".receiver_firmware_version_id";
-            public static final String COL_RECEIVER_SERIAL_NUMBER =  NAME + ".receiver_serial_number";
-            public static final String COL_RECEIVER_INSTALLED_DATE =  NAME + ".receiver_installed_date";
-            public static final String COL_RECEIVER_REMOVED_DATE =  NAME + ".receiver_removed_date";
-            public static final String COL_RECEIVER_SAMPLE_INTERVAL =  NAME + ".receiver_sample_interval";
-            public static final String COL_SATELLITE_SYSTEM =  NAME + ".satellite_system";
-            */
 
         //  for the sql select FROM clause, which tables to select from
         List<String> tables = new ArrayList<String>();
@@ -275,11 +219,11 @@ public class PrototypeFileManager extends FileManager {
         tables.add(Tables.FILE_TYPE.NAME);
         tables.add(Tables.RECEIVER_SESSION.NAME);
 
-        Statement statement = getDatabaseManager().select( cols,  tables,  mainClause, " order by " + Tables.GNSS_DATA_FILE.COL_DATA_START_TIME+", "+Tables.STATION.COL_CODE_4CHAR_ID, -1);
+        //System.err.println("  FileHandler:handleRequest(): select FROM "+tables+" WHERE "+mainClause);
 
-        //System.err.println("       sql statmnt obj    " +statement);
-
-        int col;
+        // do sql query type "select distinct " columns:
+        String distinctCols= getDatabaseManager().distinct(cols);   // adds " distinct " before the list of columns
+        Statement statement = getDatabaseManager().select(distinctCols,  tables,  mainClause, " order by " + Tables.GNSS_DATA_FILE.COL_DATA_START_TIME+", "+Tables.STATION.COL_CODE_4CHAR_ID, -1);
 
         try {
             ResultSet results = null;
@@ -288,24 +232,20 @@ public class PrototypeFileManager extends FileManager {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             //  or SqlUtil.Iterator iter = SqlUtil.getIterator(statement, request.getOffset(), request.getLimit());
 
-            // process each line 
+            // process each line (row) returned by the select query: 
             while ((results = iter.getNext()) != null) {
-               
                // get an individual file's  values from each single row returned in the array "results"
                String siteID = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
                int station_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_STATION_ID);
                int file_type_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID);
-               // LOOK the following are defective because java.sql.Date objects used in java sql class ResultSet "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
+
                String start_time  = results.getString(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
                String stop_time  = results.getString(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
                String pub_time  = results.getString(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE) ;
-
                // make sure they are in format "yyyy-MM-dd HH:mm:ss" - LOOK may need more code here
                start_time= start_time.substring(0,19);
                stop_time= stop_time.substring(0,19);
                pub_time = pub_time.substring(0,19);
-               //// System.err.println("  file info for site id " + siteID+" times start="+start_time+"  stop=" + stop_time);
-               
                Date data_start_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start_time);
                Date data_stop_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time);
                Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
@@ -314,7 +254,11 @@ public class PrototypeFileManager extends FileManager {
                String file_md5 = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
                long file_size= results.getInt          (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
-               float sample_interval = results.getFloat (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); //9999.0f; static value for test until get from db 
+               float sample_interval = 9999.0f; // static value for test until get from db 
+               sample_interval = results.getFloat (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
+
+               //System.err.println("  file info for site id " + siteID+" times "+start_time+" to" + stop_time);
+               //System.err.println("  FileHandler:handleRequest(): file for site " + siteID+"  url = "+file_url);
 
                // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
@@ -364,6 +308,7 @@ public class PrototypeFileManager extends FileManager {
                      }
 
                // OK this file may be shown to user for downloading
+
                //int count = (request.getParameter("counter") == null) ? 0 : Integer.parseInt(request.getParameter("counter"));
 
                ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
@@ -371,13 +316,10 @@ public class PrototypeFileManager extends FileManager {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
 
-               String sizestr = ""+file_size;
-               String sistr = ""+ sample_interval;
-
-               //System.err.println("  data time range for site id " + siteID+" times start="+data_start_time+"  to " + data_stop_time);
-
                // make and populate a FileInfo object for this file, used by other parts of GSAC for output handling.
                FileInfo fileinfo = new FileInfo(file_url);
+               String sizestr = ""+file_size;
+               String sistr = ""+ sample_interval;
                fileinfo.setMd5(file_md5);
                fileinfo.setFileSize(file_size);
                fileinfo.setSampleInterval(sample_interval);
@@ -389,34 +331,11 @@ public class PrototypeFileManager extends FileManager {
                // collect all the GsacFile objects made; this is the array of results from the GSAC file search:
                response.addResource(gsacFile);
 
-               /*  this  busts file search big time // FIX code to check for exceeding max of how many results allowed
-               if (!iter.countOK()) {
-                    response.setExceededLimit();
-                    break;
-               }
-               */
-
-            } // end while 
+            } // end while  loop on sql query rows (file info) returned
             iter.close();
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-
-        /* new from unavco gsac code 
-        //If we have any site types specified then check if the user selected CAMPAIGN
-        boolean lookForCampaignData = true;
-        if (request.defined(ARG_SITE_TYPE)) {
-            if ( !request.get(ARG_SITE_TYPE, new ArrayList()).contains(
-                    UnavcoSiteManager.SITETYPE_CAMPAIGN)) {
-                lookForCampaignData = false;
-            }
-        }
-        if (lookForCampaignData) {
-            // uggh What to do here? 
-        }
-        response.appendMessage(
-            "Note: This GSAC service does not currently support access to campaign data<br>");
-        */
 
         setSearchCriteriaMessage(response, msgBuff);
 
@@ -424,14 +343,13 @@ public class PrototypeFileManager extends FileManager {
 
 
     /**
-     * This takes the resource id that is used to identify files and creates a GsacFile object.
-     * FIX bug: inadequate to find user-selected file by dates etc. Returns a GsacFile object for the station; for first file found for that station in the database.
-     *  not the file clicked on.  and, How to get file times in here?
+     * original comment: "This takes the resource id that is used to identify files and creates a GsacFile object."
      *
-     * Composes one particular "resource page"  when a user clicks on a particular item in the table of results, for files in this case, after a search.
-     *  used to make an HTML page about one file. 
+     * Composes one particular HTML "resource page"  when a user clicks on a particular item in the table of results, for files in this case, after a search.
      *
-     * But also note that the 'resource page' has no more information that in the table of results, for files in this case, after a search.  So why bother?
+     * FIX bug:  input arg is inadequate to find user-selected file by dates etc. Returns a GsacFile object for the station; for first file found for that station in the database.
+     *  not the file clicked on. and, how to get file times in here?
+     * But note that the 'resource page' has no more information that in the table of results, for files in this case, after a search.  So why bother?
      *
      * @param resourceId file id
      *
