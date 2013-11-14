@@ -15,27 +15,17 @@ var map_wms_topographic = "wms:Topo Maps,http://terraservice.net/ogcmap.ashx,DRG
 var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vmap0,basic";
 
 
-/*   center of GSAC map as longitude east positive, latitude north positive; */
+/*   set center of GSAC site map, in US lower 48 states, with longitude east, latitude north */
+var defaultLocation = new OpenLayers.LonLat(-116.0, 40.0);
 
-/*   center for western Europe,  defaultZoomLevel = 4; */
+/*   center for Geoazur, France */
+//var defaultLocation = new OpenLayers.LonLat(2.1, 47.0);
+
+/*   center,  Europe, 14.15 E  48.5 N */
 //var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
 
-/*   center of GSAC site map, for SEGAL's 289 stations; defaultZoomLevel = 5; */
-//var defaultLocation = new OpenLayers.LonLat(-6.0, 40.0) 
 
-/*   center of GSAC site map, for NOANET, NOA, Athens; defaultZoomLevel = 5; */
-//var defaultLocation = new OpenLayers.LonLat(23.88, 38.52)
-
-/*   center for RENAG, France */
-var defaultLocation = new OpenLayers.LonLat(2.1, 47.0);
-
-/*   center for RING GSAC */
-//var defaultLocation = new OpenLayers.LonLat(15, 41) 
-
-/*   center of GSAC site map, western US lower 48 states, with longitude, latitude */
-//var defaultLocation = new OpenLayers.LonLat(-104, 40);
-
-/*   GSAC map of sites; set zoom level; 3 is about 10,000 km wide; 4 is about 3900 km wide; 5 for France, Spain or Greece sized areas. */
+/*   zoom for GSAC map of sites; set zoom level; 3 is about 10000 km wide; 4 is about 3900 km wide. */
 var defaultZoomLevel = 5;
 
 
@@ -89,7 +79,7 @@ function RepositoryMap (mapId, params) {
     this.addBaseLayers = function() {
         if(!this.mapLayers) {
 
-/* some of these layers are said not to work right:
+/* some of these layers no longer work in 2013:
             this.mapLayers = [
                          map_wms_openlayers,
                          map_yahoo,
@@ -104,13 +94,15 @@ function RepositoryMap (mapId, params) {
                          ];
 */
 
-            /* it may be that first in this list is layer shown first */
+            /* the first in this list is the layer shown first; others available with (+) button on map */
             this.mapLayers = [
-                         map_yahoo,
-                         map_wms_openlayers,
+                         map_yahoo, // good map background with lots of details
+                         map_wms_openlayers 
+                         // it seems that new libs in Oct or earlier 2103 with this google item cause all maps to be blank map_google_terrain,
+                         // ditto map_google_hybrid,
+                         // ditto map_google_satellite
                          ];
         }
-
             
         for (i = 0; i < this.mapLayers.length; i++) {
             mapLayer = this.mapLayers[i];
