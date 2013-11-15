@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -285,6 +285,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         String rectype ="";
         String firmvers ="";
         String recsn ="";
+        int gotsession=0;
 
         List<GsacMetadata> equipmentMetadata = site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
              
@@ -293,6 +294,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         // get equip details
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
+            gotsession=1;
 
             if (equipment.hasReceiver()) {
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
@@ -325,11 +327,17 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 */
             }
 
+           // construct the csv file line for this session at a site:
+           pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
+               starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sitecount+"\n");
+
         } // end get equip details
 
-        // construct the csv file line for this session at a site:
-        pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
-            starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sitecount+"\n");
+        // construct the csv file line  if lacking session info:
+        if ( 0 == gotsession) {
+           pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
+               starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sitecount+"\n");
+        }
 
     }     // end addSiteEquipment
 
