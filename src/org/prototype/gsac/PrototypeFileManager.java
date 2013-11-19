@@ -55,8 +55,8 @@ import java.util.Calendar;
  *
  * This FileManager.java uses the prototype GSCA db table gnss_data_file;
  *
- * @author  Jeff McWhirter 2011  non-functional template file without any code for any database variables.
- * @author  S K Wier Nov. 6;14, 2013
+ * @author  Jeff McWhirter 2011  minimal function template file (made from gsac/fsl/template/Filemanager.java) without any code for any database variables.
+ * @author  S K Wier Nov. 6, 14, 2013
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -74,10 +74,10 @@ public class PrototypeFileManager extends FileManager {
 
     /**
      *  Enable what file-related items are used in searches (database queries) for geoscience data files to download from this particular data repository.  
-     *  These items can be used for searches: date range of files; file type.
+     *  These items can be used for searches: date range of files; file type, etc.
      *  This also shows the station search itemss on the file search page so the user can, for example, limit files found to one or a few stations.
      *
-     *  In GSAC "Capabilities" are the things to search (query) on. 
+     *  In GSAC, "Capabilities" are the things to search (query) on. 
      *
      * @return  List of GSAC "Capabilities"  objects
      */
@@ -146,6 +146,35 @@ public class PrototypeFileManager extends FileManager {
         //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_CODE_4CHAR_ID, clauses);
         
+
+        // FROM SiteManager: circa line 371
+        String latCol  = Tables.STATION.COL_LATITUDE_NORTH;
+        String lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
+             // query for the station's name string  
+        if (request.defined(ARG_SITE_NAME)) {
+            addStringSearch(request, ARG_SITE_NAME, " ", msgBuff, "Site Name", Tables.STATION.COL_STATION_NAME, clauses);
+            //System.err.println("   SiteManager: query for name " + ARG_SITE_NAME ) ;
+        }
+             // query for the station's  location inside a latitude-longitude box
+        if (request.defined(ARG_NORTH)) {
+            clauses.add( Clause.le( latCol, request.get(ARG_NORTH, 0.0)));
+            appendSearchCriteria(msgBuff, "north&lt;=", "" + request.get(ARG_NORTH, 0.0));
+        }
+        if (request.defined(ARG_SOUTH)) {
+            clauses.add( Clause.ge( latCol, request.get(ARG_SOUTH, 0.0)));
+            appendSearchCriteria(msgBuff, "south&gt;=", "" + request.get(ARG_SOUTH, 0.0));
+        }
+        if (request.defined(ARG_EAST)) {
+            clauses.add( Clause.le( lonCol, request.get(ARG_EAST, 0.0)));
+            appendSearchCriteria(msgBuff, "east&lt;=", "" + request.get(ARG_EAST, 0.0));
+        }
+        if (request.defined(ARG_WEST)) {
+            clauses.add( Clause.ge( lonCol, request.get(ARG_WEST, 0.0)));
+            appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
+        }
+        // end FROM SiteManager:
+
+
         // make query clause for the  file type
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
