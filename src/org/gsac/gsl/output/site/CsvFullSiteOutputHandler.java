@@ -72,6 +72,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
     String id ="";
     String name ="";
+    String oldname ="";
     String country= "";
     String state ="";
     String city   ="";
@@ -148,9 +149,8 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         //Get all the sites in the results (response) from the GSAC site query made by the user: 
         List<GsacSite> sites = response.getSites();
         sitecount=0;
-        //For each site:
+        //For each site actually each equipment session at each site:
         for (GsacSite site : sites) {
-            sitecount++;
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
             addSiteIdentification(pw, site);
@@ -185,6 +185,12 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
         id = site.getShortName();
+        //     System.out.println("  site  "+ id +"   "+name);
+        // count distinct sites
+        if ( id != oldname ) {
+            sitecount++;
+            oldname = id;
+        }
         name = cleanString( site.getLongName() ); // cleanString removes unwanted commas in the name which mess up the csv line
         mondesc =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
         iersdomes =getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "");
@@ -192,7 +198,6 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         cdpnum =getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "");
         Date date = site.getFromDate();
         if (date != null) { indate = myFormatDateTime(date); }
-        //     System.out.println("  site  "+ id +"   "+name);
     }
 
     /**
