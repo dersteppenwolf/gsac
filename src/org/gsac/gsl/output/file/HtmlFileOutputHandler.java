@@ -515,9 +515,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 String end = " ";
                 String publish = " ";
 
+                // any real "relatedResources" is, so far, from the UNAVCO GSAC instances, not the Prototype GSAC for general use.
 
                 if (relatedResources.size() > 0) {  
-                    // original code for unavco gsac server
+                    // original code to preserve legacy output format from the unavco gsac server
                     if (startTime == null) {
                         sb.append(HtmlUtil.col(formatDate(publishTime)));
                     } else {
