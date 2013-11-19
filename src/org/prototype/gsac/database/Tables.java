@@ -145,15 +145,20 @@ public abstract class Tables {
         public static final String COL_DATA_START_TIME =  NAME + ".data_start_time";
         public static final String COL_DATA_STOP_TIME =  NAME + ".data_stop_time";
         public static final String COL_PUBLISHED_DATE =  NAME + ".published_date";
-        public static final String COL_UPDATED =  NAME + ".updated";
+        public static final String COL_REVISION_TIME =  NAME + ".revision_time";
+        public static final String COL_FILE_SIZE =  NAME + ".file_size";
         public static final String COL_FILE_MD5 =  NAME + ".file_MD5";
         public static final String COL_FILE_URL =  NAME + ".file_url";
+        public static final String COL_FILE_URL_PROTOCOL =  NAME + ".file_url_protocol";
+        public static final String COL_FILE_URL_IP_DOMAIN =  NAME + ".file_url_ip_domain";
+        public static final String COL_FILE_URL_FOLDERS =  NAME + ".file_url_folders";
+        public static final String COL_FILE_URL_FILENAME =  NAME + ".file_url_filename";
         public static final String COL_ACCESS_PERMISSION_ID =  NAME + ".access_permission_id";
-        public static final String COL_EMBARGO_DURATION_HOURS =  NAME + ".embargo_duration_hours";
         public static final String COL_EMBARGO_AFTER_DATE =  NAME + ".embargo_after_date";
+        public static final String COL_EMBARGO_DURATION_HOURS =  NAME + ".embargo_duration_hours";
 
         public static final String[] ARRAY = new String[] {
-            COL_FILE_ID,COL_STATION_ID,COL_FILE_TYPE_ID,COL_DATA_START_TIME,COL_DATA_STOP_TIME,COL_PUBLISHED_DATE,COL_UPDATED,COL_FILE_MD5,COL_FILE_URL,COL_ACCESS_PERMISSION_ID,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
+            COL_FILE_ID,COL_STATION_ID,COL_FILE_TYPE_ID,COL_DATA_START_TIME,COL_DATA_STOP_TIME,COL_PUBLISHED_DATE,COL_REVISION_TIME,COL_FILE_SIZE,COL_FILE_MD5,COL_FILE_URL,COL_FILE_URL_PROTOCOL,COL_FILE_URL_IP_DOMAIN,COL_FILE_URL_FOLDERS,COL_FILE_URL_FILENAME,COL_ACCESS_PERMISSION_ID,COL_EMBARGO_AFTER_DATE,COL_EMBARGO_DURATION_HOURS
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
@@ -176,25 +181,6 @@ public abstract class Tables {
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
     public static final MONUMENT_DESCRIPTION table  = new  MONUMENT_DESCRIPTION();
-    }
-
-
-
-    public static class PROJECT extends Tables {
-        public static final String NAME = "project";
-
-        public String getName() {return NAME;}
-        public String getColumns() {return COLUMNS;}
-        public static final String COL_PROJECT_ID =  NAME + ".project_id";
-        public static final String COL_PROJECT_NAME =  NAME + ".project_name";
-        public static final String COL_AGENCY_ID =  NAME + ".agency_id";
-
-        public static final String[] ARRAY = new String[] {
-            COL_PROJECT_ID,COL_PROJECT_NAME,COL_AGENCY_ID
-        };
-        public static final String COLUMNS = SqlUtil.comma(ARRAY);
-        public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
-    public static final PROJECT table  = new  PROJECT();
     }
 
 
@@ -316,7 +302,6 @@ public abstract class Tables {
         public static final String COL_STATION_STYLE_ID =  NAME + ".station_style_id";
         public static final String COL_ACCESS_PERMISSION_ID =  NAME + ".access_permission_id";
         public static final String COL_MONUMENT_DESCRIPTION_ID =  NAME + ".monument_description_id";
-        public static final String COL_PROJECT_ID =  NAME + ".project_id";
         public static final String COL_COUNTRY_ID =  NAME + ".country_id";
         public static final String COL_PROVINCE_REGION_STATE_ID =  NAME + ".province_region_state_id";
         public static final String COL_CITY =  NAME + ".city";
@@ -332,7 +317,7 @@ public abstract class Tables {
         public static final String COL_EMBARGO_AFTER_DATE =  NAME + ".embargo_after_date";
 
         public static final String[] ARRAY = new String[] {
-            COL_STATION_ID,COL_CODE_4CHAR_ID,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_ELLIPSOIDAL_HEIGHT,COL_STATION_INSTALLED_DATE,COL_STATION_STYLE_ID,COL_ACCESS_PERMISSION_ID,COL_MONUMENT_DESCRIPTION_ID,COL_PROJECT_ID,COL_COUNTRY_ID,COL_PROVINCE_REGION_STATE_ID,COL_CITY,COL_X,COL_Y,COL_Z,COL_STATION_REMOVED_DATE,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_AGENCY_ID,COL_NETWORKS,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
+            COL_STATION_ID,COL_CODE_4CHAR_ID,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_ELLIPSOIDAL_HEIGHT,COL_STATION_INSTALLED_DATE,COL_STATION_STYLE_ID,COL_ACCESS_PERMISSION_ID,COL_MONUMENT_DESCRIPTION_ID,COL_COUNTRY_ID,COL_PROVINCE_REGION_STATE_ID,COL_CITY,COL_X,COL_Y,COL_Z,COL_STATION_REMOVED_DATE,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_AGENCY_ID,COL_NETWORKS,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);

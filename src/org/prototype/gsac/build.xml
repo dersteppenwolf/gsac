@@ -126,7 +126,7 @@
 <!--
               <attribute name="Class-Path" value="gsacws.jar ramaddautil.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
 -->
-              <attribute name="Class-Path" value="gsacws.jar ramadda.jar     ramaddalib.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-   pool.  jar} log4j-1.2.15.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar ramadda.jar     ramaddalib.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-pool.jar}log4j-1.2.15.jar"/>
 
             </manifest> 
         </jar>
