@@ -41,21 +41,27 @@ import java.text.DecimalFormat;
  *
  * This produces a SHORT report with few values. FB wants to keep it (legacy issue).   Noted Feb 25 2013.
  *
+ * 26 feb 2013: output shows huge number of digits in latitude and longitude. Reformatted same.
+ * 20 Nov 2013:
+ * 1. first column in output removed: in the unavco gsac is such as "13922_AHUP_268"  an internal identifier in the UNAVCO GSAC code, and of no use to any geodesy user
+ * or simply repeats second column in prototype gsac
+ * 2. replace top header line with standard csv format style.
+ *
  * sample of formatted results:
- * #site.id,site.code,site.name,site.latitude,site.longitude,site.elevation
- * BADG,BADG,Badary,51.7697,102.235,811.4
- * BAIE,BAIE,BAIE RACS-GSD,49.1868,-68.2628,27.5
+ * old:  
+    #site.id,site.code,site.name,site.latitude,site.longitude,site.elevation
+    13922_AHUP_268,AHUP,Ahua,19.3791,-155.2661,1104.8471
+    17048_AINP_467,AINP,Ainapo,19.3727,-155.458,1568.1289
+    18823_ALAL_937,ALAL,Alala Lava Flow,19.3815,-155.5915,3203.6935
+    18380_ALEP_678,ALEP,ALEA Permanent,19.5412,-155.6441,2922.0759
+    18825_ANIP_938,ANIP,Anipeahi,19.3956,-155.5173,2599.3176 
+ * new:
+ *
  * 
- *      To conform with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
- *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
- *      GSAC code changes in thsi case into GSAC without consulting UNAVCO.
- *      For bug reports and suggested improvments please contact UNAVCO.
+ *      Note the "elevation" value is in fact  ellipsoid height, depending in the metadata available.
  *
- *      Note the "elevation" value may in fact be ellipsoid height, depending in the metadata available.
- *
- * @version        29 Nov 2012 SKW;
- * @author         JM, SKW;
- * revision        26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits
+ * @author  Jeff McWhirter
+ * @author SK Wier 26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits. 20 Nov 2013; see above.
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
     String latitude ="";
@@ -80,8 +86,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public TextSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_CSV,
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV,
                                       "GSAC station info, csv (short)", "/sites.csv", true));
     }
 
@@ -99,17 +104,15 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
             throws IOException, ServletException {
         response.startResponse(GsacResponse.MIME_CSV);
         PrintWriter  pw          = response.getPrintWriter();
-        String       delimiter   = (request.defined(ARG_DELIMITER)
-                                    ? request.get(ARG_DELIMITER, " ")
-                                    : ",");
+
+        String       delimiter   = (request.defined(ARG_DELIMITER) ? request.get(ARG_DELIMITER, " ") : ",");
         String       paramString = request.get(ARG_PARAMS, (String) null);
 
         List<String> params      = ((paramString == null)
                                     ? new ArrayList<String>()
-                                    : StringUtil.split(paramString, ",", true,
-                                        true));
+                                    : StringUtil.split(paramString, ",", true, true));
         if (params.size() == 0) {
-            params.add(ARG_SITE_ID);
+            params.add(ARG_SITE_ID);  // note this is a odd thing like 18825_ANIP_938  in the unavco gsac code
             params.add(ARG_SITE_CODE);
             params.add(ARG_SITE_NAME);
             params.add(ARG_SITE_LATITUDE);
@@ -118,8 +121,12 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         }
         try {
             int colCnt = 0;
+            // #fields=ID[type='string'],station name[type='string'],latitude,longitude,ellip. height[unit='m']
+            String l1= "#fields=ID[type='string'],station name[type='string'],latitude,longitude,ellipsoid height[unit='m']";
+            pw.print(l1);
+            /* old: 
             for (String param : params) {
-                if (colCnt > 0) {
+                if (colCnt > 1) {
                     pw.print(",");
                 } else {
                     pw.print("#");
@@ -127,6 +134,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                 colCnt++;
                 pw.print(param);
             }
+            */
             pw.print("\n");
 
             int siteCnt = 0;
@@ -142,8 +150,8 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
 
                 // for each parm in the List
                 for (String param : params) {
-                    if (colCnt > 0) {
-                        pw.print(delimiter);
+                    if (colCnt > 1) {
+                        pw.print(delimiter); // add a ,
                     }
                     colCnt++;
                     //System.out.println(" parm #"+ parmCnt +  "   \n");
@@ -155,6 +163,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                         pw.print(cleanString(site.getLongName(), delimiter));
                         //System.out.println("  2 " + site.getLongName() + "\n");
                     } else if (param.equals(ARG_SITE_ID)) {
+                        ; /* no longer wanted 20 Nov 2013
                         String id = site.getId();
                         if (getRepository().isRemoteResource(site)) {
                             String[] pair =
@@ -163,7 +172,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                         }
                         pw.print(cleanString(id, delimiter));
                         //System.out.println("  3 " + id + "\n");
-
+                        */
                     } else if (param.equals(ARG_SITE_LATITUDE)) {
                         pw.print(latitude);
                         //System.out.println("  4 " + site.getLatitude() + "\n");
@@ -226,7 +235,5 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         String s = latLonFormat.format(v);
         return s;
     }
-
-
 
 }
