@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010,2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -35,6 +35,8 @@ import java.util.List;
 /**
  * Holds gnss equipment metadata
  *
+ * @author J McWhirter 2010
+ * @author SK Wier Nov 21, 2013   added new parameters sampInt;  and swVer used in GAMIT station.info site files
  */
 public class GnssEquipment extends GsacMetadata {
 
@@ -72,6 +74,12 @@ public class GnssEquipment extends GsacMetadata {
 
     /** _more_ */
     private double[] xyzOffset = { 0, 0, 0 };
+
+    /** _more_ */
+    private String swVer ="";  // special value for GAMIT station.info site file; "SwVer" is derived in mysterious way (not UNAVCO's business to know) from receiverFirmware version name.
+
+    /** _more_ */
+    private float sampInt;  // receiver's sampling interval in seconds
 
     /**
      * _more_
@@ -345,6 +353,43 @@ public class GnssEquipment extends GsacMetadata {
      */
     public String getReceiverFirmware() {
         return receiverFirmware;
+    }
+
+    /**
+     *  Set the SwVer property.
+     *
+     *  @param value The new value
+     */
+    public void setSwVer(String value) {
+        swVer = value;
+    }
+
+    /**
+     *  Get the  SwVer
+     *
+     *  @return  it
+     */
+    public String getSwVer() {
+        return swVer;
+    }
+
+
+    /**
+     *  Set the  sampling interval
+     *
+     *  @param value The new value
+     */
+    public void setSampleInterval(float value) {
+        sampInt = value;
+    }
+
+    /**
+     *  Get the sampling interval
+     *
+     *  @return it
+     */
+    public float getSampleInterval() {
+        return sampInt;
     }
 
     /**
