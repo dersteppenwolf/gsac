@@ -114,7 +114,7 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * A capability here which for example is tied to the value GsacExtArgs.ARG_ANTENNA has corresponding code in the method getResourceClauses which creates a query with it when user does so.
      *
-     * (Perhaps a call to here needs to go before makeCapabilities call so regular site search form appears  before advanced search?)
+     * (Perhaps a call  to this method goes before makeCapabilities call, so regular site search form appears before advanced search?)
      *
      * CHANGEME if you have other things to search on, or different db table or field names for the items to search on.
      *
@@ -907,50 +907,10 @@ public class PrototypeSiteManager extends SiteManager {
         List<Clause> clauses = new ArrayList<Clause>();
         List<String> tables = new ArrayList<String>();
 
-        /*
-        mysql> describe antenna_type;
-        +-------------------+-----------------+------+-----+---------+----------------+
-        | Field             | Type            | Null | Key | Default | Extra          |
-        +-------------------+-----------------+------+-----+---------+----------------+
-        | antenna_type_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
-        | antenna_type_name | varchar(15)     | NO   |     | NULL    |                |
-        | igs_defined       | char(1)         | NO   |     | N       |                |
-        +-------------------+-----------------+------+-----+---------+----------------+
-
-        mysql> describe radome_type;
-        +------------------+-----------------+------+-----+---------+----------------+
-        | Field            | Type            | Null | Key | Default | Extra          |
-        +------------------+-----------------+------+-----+---------+----------------+
-        | radome_type_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
-        | radome_type_name | varchar(4)      | NO   |     | NULL    |                |
-        | igs_defined      | char(1)         | NO   |     | N       |                |
-        +------------------+-----------------+------+-----+---------+----------------+
-
-        mysql> describe antenna_session;
-        +------------------------+-----------------+------+-----+---------+----------------+
-        | Field                  | Type            | Null | Key | Default | Extra          |
-        +------------------------+-----------------+------+-----+---------+----------------+
-        | antenna_session_id     | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
-        | station_id             | int(6) unsigned | NO   |     | NULL    |                |
-        | antenna_type_id        | int(5) unsigned | NO   |     | NULL    |                |
-        | antenna_serial_number  | varchar(20)     | NO   |     | NULL    |                |
-        | antenna_installed_date | datetime        | NO   |     | NULL    |                |
-        | antenna_removed_date   | datetime        | NO   |     | NULL    |                |
-        | radome_type_id         | int(5) unsigned | NO   |     | NULL    |                |
-        | antenna_offset_up      | float           | NO   |     | NULL    |                |
-        | antenna_offset_north   | float           | NO   |     | NULL    |                |
-        | antenna_offset_east    | float           | NO   |     | NULL    |                |
-        | antenna_HtCod          | char(5)         | YES  |     | NULL    |                |
-        +------------------------+-----------------+------+-----+---------+----------------+            lll
-        */
-
-        // WHERE  this station is ided by its 4 char id:
+        // WHERE  this station is id-ed by its 4 char id:
         clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId())); 
         // and where the antenna session has the station id number
         clauses.add(Clause.join(Tables.STATION_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
-        //clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
-        //clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
-        // could return >1 row
   
         // "AA"; SELECT WHAT:  list is matched with line "BB" below.
         String cols=SqlUtil.comma(new String[]{
@@ -966,7 +926,8 @@ public class PrototypeSiteManager extends SiteManager {
              Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID , 
              Tables.STATION_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID , 
              Tables.STATION_SESSION.COL_RECEIVER_SERIAL_NUMBER,   
-             Tables.STATION_SESSION.COL_SATELLITE_SYSTEM       
+             Tables.STATION_SESSION.COL_SATELLITE_SYSTEM,       
+             Tables.STATION_SESSION.COL_SAMPLE_INTERVAL       
              /*
              Tables.ANTENNA_SESSION.COL_ANTENNA_SESSION_ID ,
              Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE ,
@@ -998,16 +959,18 @@ public class PrototypeSiteManager extends SiteManager {
         int station_sess_id=0;
         int receiverid=0;
         int receiver_firmware_id=0;
-        int antennaid=602; // means missing in gsac protoytpe db; not specially important
+        int antennaid=602; // means ' antenna info is missing', in gsac protoytpe db; not especially important
         int radomeid=0;
         float dnorth=0.0f;
         float deast=0.0f;
+        float sampInt;
         Double zoffset=0.0;
         String antenna_serial=" ";
         String receiver_serial=" ";
         String anttype=" ";
         String rcvrtype=" ";
         String rcvrfw=" ";
+        String swver=" ";
         String radometype=" ";
         String satellitesys=" ";
         Date indate=null;
@@ -1029,6 +992,7 @@ public class PrototypeSiteManager extends SiteManager {
                 zoffset = results.getDouble(Tables.STATION_SESSION.COL_ANTENNA_OFFSET_UP);
                 dnorth = results.getFloat(Tables.STATION_SESSION.COL_ANTENNA_OFFSET_NORTH);
                 deast= results.getFloat(Tables.STATION_SESSION.COL_ANTENNA_OFFSET_EAST);
+                sampInt= results.getFloat(Tables.STATION_SESSION.COL_SAMPLE_INTERVAL);
                 antennaid = results.getInt(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID);
                 radomeid = results.getInt(Tables.STATION_SESSION.COL_RADOME_TYPE_ID);
                 receiverid = results.getInt(Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID);
@@ -1081,12 +1045,13 @@ public class PrototypeSiteManager extends SiteManager {
                        getDatabaseManager().closeAndReleaseConnection(statement);
                 }
 
-                // get value of RECEIVER_FIRMWARE VERSION
+                // get value of RECEIVER_FIRMWARE VERSION and SwVer aaa
                 avalues =  new ArrayList<String>();
                 clauses =  new ArrayList<Clause>();
                 tables =   new ArrayList<String>();
                 clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_ID, receiver_firmware_id) );
-                cols=SqlUtil.comma(new String[]{Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME});
+                cols=SqlUtil.comma(new String[]{Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME,
+                                                Tables.RECEIVER_FIRMWARE_VERSION.COL_SWVER});
                 tables.add(Tables.RECEIVER_FIRMWARE_VERSION.NAME);
                 statement =
                    getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
@@ -1094,6 +1059,7 @@ public class PrototypeSiteManager extends SiteManager {
                    SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
                    while ((results = iter2.getNext()) != null) {
                        rcvrfw = results.getString(Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME);
+                       swver = results.getString(Tables.RECEIVER_FIRMWARE_VERSION.COL_SWVER);
                        //System.err.println("    SiteManager: read equip got RECEIVER FIRMWARE_VERSION "+ rcvrfw );
                        //break;
                    }
@@ -1127,11 +1093,12 @@ public class PrototypeSiteManager extends SiteManager {
                 //  public GnssEquipment(Date[] dateRange, String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
                 GnssEquipment equipment =
                     new GnssEquipment(          dateRange,        anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
+                equipment.setSwVer(swver);
+                equipment.setSampleInterval(sampInt);
                 equipmentList.add(equipment);
                 visits.put(dateRange[0], equipment);
 
-                // from ring equipment.setSatelliteSystem( results.getString( Tables.STRUMENTI_RICEVITORE.COL_SISTEMA_SATELLITE)); 
-                equipment.setSatelliteSystem(satellitesys);  // test of 
+                equipment.setSatelliteSystem(satellitesys);  
 
             }
         } finally {
