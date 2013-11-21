@@ -173,7 +173,7 @@ if (param.equals(ARG_SITE_TYPE)) {
         if (date != null) { pw.append(" site installed date:         "+ myFormatDateTime(date) + "\n"); }
         else { pw.append(             " site installed date: \n"); }
         Date todate = site.getToDate();
-        if (todate != null) { pw.append(" site removed date:         "+ myFormatDateTime(todate) + "\n"); }
+        if (todate != null) { pw.append(" site removed date:           "+ myFormatDateTime(todate) + "\n"); }
         else { pw.append(               " site removed date: \n"); }
         pw.append(    " site monument description:   "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
         pw.append(    " site frequency standard:     "+ getProperty(site, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "") + "\n");
@@ -292,6 +292,9 @@ if (param.equals(ARG_SITE_TYPE)) {
                 pw.append("      receiver type:          "+ equipment.getReceiver() + "\n");
                 pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
                 pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
+                pw.append("      receiver firmware SwVer:"+ equipment.getSwVer() + "\n");
+                
+                pw.append("      receiver sample intervl:"+ (""+equipment.getSampleInterval()) + "\n");  // float to string trick
                 pw.append("      receiver installed date:"+ myFormatDateTime(equipment.getFromDate()) + "\n");
                 pw.append("      receiver removed date:  "+ myFormatDateTime(equipment.getToDate()) + "\n");
             }

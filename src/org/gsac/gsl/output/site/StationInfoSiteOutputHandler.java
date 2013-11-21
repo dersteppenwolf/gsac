@@ -222,11 +222,12 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         String antht ="-------";
         String htcod ="-----";
         String dome ="-----";
-        String swvers ="-----";
+        String swVer ="-----";
 
         String vrectype ="--------------------";
         String vrecsn ="--------------------";
         String vfirmvers="--------------------";
+        String vswVer="-----";
         String vanttype="--------------------";
         String vantsn="--------------------";
         String vantn="0";
@@ -234,9 +235,8 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         String vantht="-------";
         String vdome="-----";
 
-        /* get a list of GsacMetadata objects, ie  the results from the GSAC query */
-        List<GsacMetadata> equipmentMetadata =
-            site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+        /* get a list of GsacMetadata objects, ie, the results from the GSAC query */
+        List<GsacMetadata> equipmentMetadata = site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
 
         int goterror =0;
         int session =0;
@@ -273,6 +273,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                 rectype=equipment.getReceiver() ;
                 recsn=equipment.getReceiverSerial();
                 firmvers=equipment.getReceiverFirmware();
+                swVer=equipment.getSwVer();
                 starttime= getNonNullGamitString(dateTimeFormat_ISO8601( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
 
@@ -329,7 +330,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
               pw.append(   setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                 +setStringLength(antht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(antn,7)+"  "
                 +setStringLength(ante,7)+"  " +setStringLengthRight(rectype,20)+"  " +setStringLengthRight(firmvers,20)+"  "
-                +setStringLength(swvers,5)+"  " +setStringLengthRight(recsn,20)+"  " +setStringLengthRight(anttype,15)+"  "
+                +setStringLength(swVer,5)+"  " +setStringLengthRight(recsn,20)+"  " +setStringLengthRight(anttype,15)+"  "
                 +setStringLengthRight(dome,5)+"  " +setStringLengthRight(antsn,20)        +"\n");
                 continue;  // bad times so jump to next equipment block
             }
@@ -342,6 +343,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    block_stopDate=stopDate;
                    session += 1;
                    vrectype = rectype ;
+                   vswVer = swVer ;
                    vrecsn =recsn;
                    vfirmvers = firmvers;
                    vanttype=anttype;
@@ -360,6 +362,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    }
                    session += 1;
                    vrectype = rectype ;
+                   vswVer = swVer;
                    vrecsn =recsn;
                    vfirmvers = firmvers;
                    vanttype=anttype;
@@ -381,11 +384,11 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    stoptime = getGamitTimeFormat(stoptime,block_stopDate );
                    pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                       +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
-                      +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+                      +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(vswVer,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
                       +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
                    /* test logging System.out.println(" site info normal line "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
                       +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
-                      +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+                      +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(vswVer,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
                       +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
                    */
 
@@ -394,6 +397,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    block_stopDate=stopDate;
                    session += 1;
                    vrectype = rectype ;
+                   vswVer = swVer;
                    vrecsn =recsn;
                    vfirmvers = firmvers;
                    vanttype=anttype;
@@ -413,11 +417,11 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
        stoptime = getGamitTimeFormat(stoptime,block_stopDate );
        pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
           +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
-          +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+          +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(vswVer,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
           +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
        /* test logging System.out.println(" site info normal line "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
           +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
-          +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(swvers,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
+          +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(vswVer,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
           +setStringLengthRight(vanttype,15)+"  " +setStringLengthRight(vdome,5)+"  " +setStringLengthRight(vantsn,20)        +"\n");
        */
 
