@@ -217,6 +217,7 @@ public class PrototypeFileManager extends FileManager {
  
         Clause mainClause = Clause.and(clauses);
 
+
         // for the SQl select clause: WHAT to select (row values returned):
         String cols=SqlUtil.comma(new String[]{
              Tables.GNSS_DATA_FILE.COL_STATION_ID,
@@ -224,9 +225,13 @@ public class PrototypeFileManager extends FileManager {
              Tables.GNSS_DATA_FILE.COL_DATA_START_TIME,
              Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME,
              Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE,
-             Tables.GNSS_DATA_FILE.COL_FILE_URL,
              Tables.GNSS_DATA_FILE.COL_FILE_SIZE,
              Tables.GNSS_DATA_FILE.COL_FILE_MD5,
+             Tables.GNSS_DATA_FILE.COL_FILE_URL,
+             Tables.GNSS_DATA_FILE.COL_FILE_URL_PROTOCOL,
+             Tables.GNSS_DATA_FILE.COL_FILE_URL_IP_DOMAIN,
+             Tables.GNSS_DATA_FILE.COL_FILE_URL_FOLDERS,
+             Tables.GNSS_DATA_FILE.COL_FILE_URL_FILENAME,
              Tables.GNSS_DATA_FILE.COL_ACCESS_PERMISSION_ID,
              Tables.GNSS_DATA_FILE.COL_EMBARGO_DURATION_HOURS,
              Tables.GNSS_DATA_FILE.COL_EMBARGO_AFTER_DATE,
@@ -279,9 +284,26 @@ public class PrototypeFileManager extends FileManager {
                Date data_stop_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time);
                Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
 
-               String file_url = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_URL);
                String file_md5 = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
                long file_size= results.getInt          (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
+
+               String file_url = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_URL);
+               // if this gsac does not supply the complete FILE_URL, try to compose it from all the parts of a complete url found in the database
+               if (file_url==null || file_url.length()< 13 )   // error check for say ftp://a.b.c/d has length of 13
+                   {
+                   String file_url_protocol = results.getString  (Tables.GNSS_DATA_FILE.COL_FILE_URL_PROTOCOL);
+                   String file_url_ip_domain = results.getString (Tables.GNSS_DATA_FILE.COL_FILE_URL_IP_DOMAIN);
+                   String file_url_folders = results.getString   (Tables.GNSS_DATA_FILE.COL_FILE_URL_FOLDERS);
+                   String file_url_filename = results.getString  (Tables.GNSS_DATA_FILE.COL_FILE_URL_FILENAME);
+
+                   file_url =file_url_protocol + "://" + file_url_ip_domain + file_url_folders + file_url_filename;
+
+                   }
+               if (file_url==null || file_url.length()< 13 )   // if still no good url
+               {
+                  continue; // no way to download this file so do not show it in GSAC results
+               }
+
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
                float sample_interval = 9999.0f; // static value for test until get from db 
                sample_interval = results.getFloat (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
