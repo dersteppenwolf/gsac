@@ -82,20 +82,62 @@ public class PrototypeFileManager extends FileManager {
      * @return  List of GSAC "Capabilities"  objects
      */
     public List<Capability> doGetQueryCapabilities() {
-        List<Capability> capabilities = new ArrayList<Capability>();
-
         // addDefaultCapabilities(capabilities);
+        try {
 
+        List<Capability> capabilities = new ArrayList<Capability>();
         Capability   cap;
-
-        // get the file type names from the database
         String [] values; 
+
+        // search on data file types; 
+        //get all the file type names from the database
+        /* 
         try {
              values = getDatabaseManager().readDistinctValues( Tables.FILE_TYPE.NAME, Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
           } catch (Exception exc) {
                throw new RuntimeException(exc);
         }
-        Arrays.sort(values);
+        //Arrays.sort(values);  if you sort these from the gsac prototype db, the Borehole strainmeter type shows first on the web page, but is of no interest for early GSAC-s
+        */
+        // LOOK improvment: only get the file types in this data archive to offer here
+        // get only file type names from this data center.
+        ResultSet results;
+        ArrayList<String> avalues = new ArrayList<String>();
+        List<Clause> clauses = new ArrayList<Clause>();
+        //  WHERE 
+        clauses.add(Clause.join(Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID, Tables.FILE_TYPE.COL_FILE_TYPE_ID));
+        //  SELECT what column values to find
+        String cols=SqlUtil.comma(new String[]{Tables.FILE_TYPE.COL_FILE_TYPE_NAME});
+        //  FROM   
+        List<String> tables = new ArrayList<String>();
+        tables.add(Tables.GNSS_DATA_FILE.NAME);
+        tables.add(Tables.FILE_TYPE.NAME);
+        Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        try {
+           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+           // process each line in results of db query  
+           while ((results = iter.getNext()) != null) {
+               String ftype= results.getString(Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
+               // save distinct values
+               int notfound=1;
+               for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                  if ( avalues.get(vi).equals(ftype) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(ftype);
+                         //System.err.println(" this data center has file type  " + ftype ) ;
+                   }
+               }
+        } finally {
+           getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+        String[] itemArray = new String[avalues.size()];
+        values = avalues.toArray(itemArray);
+        // sort by alphabet: Arrays.sort(values);
+
 
         Capability[] dflt = { 
 
@@ -123,6 +165,10 @@ public class PrototypeFileManager extends FileManager {
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
+
     }
 
     /**
