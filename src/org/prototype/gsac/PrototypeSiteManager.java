@@ -125,7 +125,7 @@ public class PrototypeSiteManager extends SiteManager {
             // order of adding to capabilities here specifies order on html site search page
             List<Capability> capabilities = new ArrayList<Capability>();
 
-            //     Basic search items 
+            // Essential search items 
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* some mouse over help text */
             // search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*
@@ -137,18 +137,19 @@ public class PrototypeSiteManager extends SiteManager {
             siteCode.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteCode);
 
-            help="Full name of the site, such as Marshall, part plus wildcard * such as Mar*, or ...";
+            // search with site full name or partial name
+            help="Full name of the site, such as Marshall, or part or name plus wildcard(*) such as Mar*";
             Capability siteName =
                 initCapability(     new Capability(ARG_SITE_NAME, "Site Name",             Capability.TYPE_STRING), 
                        CAPABILITY_GROUP_SITE_QUERY, "Name of the site",                    "Name of site.   " + help);
             siteName.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteName);
 
-            // code for latitude-longitude bounding box; not in browse service
+            // site search for latitude-longitude bounding boxi; 4 boxes; not in browse service
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
-            // site search page has "Data Date Range"  pair of boxes;
+            // site search by "Data Date Range" pair of boxes;
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
                                initCapability( new Capability(ARG_SITE_DATE_FROM, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
@@ -158,17 +159,14 @@ public class PrototypeSiteManager extends SiteManager {
             String[] values;
 
             /*
-            more ideas from the Unavco-gsac server site code:
-            capabilities.add( initCapability( new Capability( ARG_SITE_DATE, "Data Date Range", Capability.TYPE_DATERANGE),                CAPABILITY_GROUP_SITE_QUERY, 
-                           "Data exists between these dates"));
+            more possible search items, from the Unavco-gsac server site code:
             capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
                         "The site's metadata was modified between these dates"));
             capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
                         "The site was created between these dates"));
             */
 
-            //  Advanced search items 
-            // "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
+            //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
 
             /* search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
             values = getDatabaseManager().readDistinctValues( Tables.STATION_STYLE.NAME, Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
@@ -187,7 +185,7 @@ public class PrototypeSiteManager extends SiteManager {
             String cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_NAME});
             //  FROM   
             List<String> tables = new ArrayList<String>();
-            tables.add(Tables.STATION_SESSION.NAME);
+            //tables.add(Tables.STATION_SESSION.NAME);
             tables.add(Tables.STATION.NAME);
             tables.add(Tables.STATION_STYLE.NAME);
             Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
@@ -220,8 +218,6 @@ public class PrototypeSiteManager extends SiteManager {
 
             // search on antenna types: get antenna type names used by stations in this database, only.
             // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
-            //    simpler?: or get all items in row where: example 
-            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
@@ -257,140 +253,6 @@ public class PrototypeSiteManager extends SiteManager {
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
-
-/*
-            // get antenna type names used by stations in this database, only.
-            // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
-            //    simpler?: or get all items in row where: example 
-            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
-            ArrayList<String> avalues = new ArrayList<String>();
-            clauses =      new ArrayList<Clause>();
-            //  WHERE 
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
-            //  SELECT what to 
-            cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
-            //  FROM   
-            tables = new ArrayList<String>();
-            tables.add(Tables.STATION_SESSION.NAME);
-            tables.add(Tables.ANTENNA_TYPE.NAME);
-            statement =
-               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-            try {
-               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-               // process each line in results of db query  
-               while ((results = iter.getNext()) != null) {
-                   String anttype= results.getString(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME);
-                   int notfound=1;
-                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                      if ( avalues.get(vi).equals(anttype) ) { 
-                         notfound=0;
-                         break;
-                         }
-                   }
-                   if (notfound==1) {
-                         avalues.add(anttype);
-                   }
-               }
-            } finally {
-               getDatabaseManager().closeAndReleaseConnection(statement);
-            }
-            itemArray = new String[avalues.size()];
-            values = avalues.toArray(itemArray);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
-
-            // get antenna type names used by stations in this database, only.
-            // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
-            //    simpler?: or get all items in row where: example 
-            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
-            ArrayList<String> avalues = new ArrayList<String>();
-            clauses =      new ArrayList<Clause>();
-            //  WHERE 
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
-            //  SELECT what to 
-            cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
-            //  FROM   
-            tables = new ArrayList<String>();
-            tables.add(Tables.STATION_SESSION.NAME);
-            tables.add(Tables.ANTENNA_TYPE.NAME);
-            statement =
-               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-            try {
-               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-               // process each line in results of db query  
-               while ((results = iter.getNext()) != null) {
-                   String anttype= results.getString(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME);
-                   int notfound=1;
-                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                      if ( avalues.get(vi).equals(anttype) ) { 
-                         notfound=0;
-                         break;
-                         }
-                   }
-                   if (notfound==1) {
-                         avalues.add(anttype);
-                   }
-               }
-            } finally {
-               getDatabaseManager().closeAndReleaseConnection(statement);
-            }
-            itemArray = new String[avalues.size()];
-            values = avalues.toArray(itemArray);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
-*/
-
-            // search on receiver types: get receiver type names used by stations in this database, only.
-            // Show only the ones at stations in this repository, since the protoype GSAC db has all IGS receiver names, more than 200. 
-            //    or simpler?: get all items in row where: from code for RING:
-            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
-            ArrayList<String> rvalues = new ArrayList<String>();
-            clauses = new ArrayList<Clause>();
-            //  for an SQL statement, the WHERE the test part in the select statement 
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
-            //  for the SELECT clause,  which items (fields) to get from the db (result in rows returned):
-            cols=SqlUtil.comma(new String[]{Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME});
-            //  for the SQL FROM, the which tables to select from part 
-            tables = new ArrayList<String>();
-            tables.add(Tables.STATION_SESSION.NAME);
-            tables.add(Tables.RECEIVER_TYPE.NAME);
-            // SELECT receiver_type.receiver_type_name FROM station_session,receiver_type WHERE (station_session.receiver_type_id = receiver_type.receiver_type_id);
-            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-            //          select          what    from      where
-            //System.err.println("   SiteManager: get resource select query is " +statement);
-            try {
-               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-               // process each line in results of db query  
-               while ((results = iter.getNext()) != null) {
-                   String rcvtype= results.getString(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
-                   // the values may have duplicates
-                   int notfound=1;
-                   for (int rcvi= 0; rcvi<rvalues.size(); rcvi+=1 ) {
-                      if ( rvalues.get(rcvi).equals(rcvtype) ) { 
-                         notfound=0;
-                         break;
-                         }
-                   }
-                   if (notfound==1) {
-                         rvalues.add(rcvtype);
-                         //System.err.println("        receiver type  is " +rcvtype);
-                   }
-                   //if you want Only read the first row of db query results returned
-                   //break;
-               }
-            } finally {
-               getDatabaseManager().closeAndReleaseConnection(statement);
-            }
-            itemArray = new String[rvalues.size()];
-            values = rvalues.toArray(itemArray);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
-
-            /* for federated gsac, allow all types with this simple code:
-            values = getDatabaseManager().readDistinctValues( Tables.RECEIVER_TYPE.NAME, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
-            */
 
 
             /* get all radome type names in the db 
@@ -435,8 +297,8 @@ public class PrototypeSiteManager extends SiteManager {
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_DOME, "Radome type", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // search on country, province/state, and city
 
+            // search on country, province/state, and city
 
             // add box to choose by country
             values = getDatabaseManager().readDistinctValues( Tables.COUNTRY.NAME, Tables.COUNTRY.COL_COUNTRY_NAME);
@@ -453,7 +315,8 @@ public class PrototypeSiteManager extends SiteManager {
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place/city", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            //  omit for now LOOK - search on [data sampling] interval ; float value in seconds per sample as 30 or 0.1 or 0.01
+            // better move this to data file search:
+            //  omit for now LOOK - search on data sampling interval ; float value in seconds per sample as 30 or 0.1 or 0.01
             // get value from receiver session table
 
             return capabilities;
