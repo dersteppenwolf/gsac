@@ -327,13 +327,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             long filesizesum = 0;
             //float sampint = 0.0f;
             int  cnt  = 0;
+            String relatedLabel = null;
 
             // NOTE in this main loop the "resource" is a GsacFile
             for (GsacFile resource : files) {
+                relatedLabel = null;
 
                 List<GsacResource> relatedResources = resource.getRelatedResources();
 
-                String relatedLabel = null;
                 if (relatedResources.size() > 0) {
                     relatedLabel = getResourceManager( relatedResources.get(0)).getResourceLabel(false);
                     // related content is for example site name 
@@ -615,6 +616,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 sb.append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 
+                if (  relatedLabel == null) // need extra column, empty, for table bottom row, if not the unavco server
+                   { sb.append("<td>&nbsp;</td>"); }
 
                 sb.append("<td align=\"left\" class=\"gsac-filesize\">");
                 if (filesizesum > 0) {
