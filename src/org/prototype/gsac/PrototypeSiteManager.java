@@ -170,59 +170,134 @@ public class PrototypeSiteManager extends SiteManager {
             //  Advanced search items 
             // "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
 
-            // get receiver type names used by stations in this database, only.
-            // Show only the ones at stations in this repository, since the protoype GSAC db has all IGS receiver names, more than 200. 
-            //    or simpler?: get all items in row where: from code for RING:
-            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
+            /* search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
+            values = getDatabaseManager().readDistinctValues( Tables.STATION_STYLE.NAME, Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
+            */
+            // OR
+            // SELECT station_style.station_style_name FROM station_session,station,station_style WHERE ((station_session.station_id =  station.station_id) AND (station.station_style_id = station_style.station_style_id));
+            // get only site type names (station_style table values) used by stations in this database, only.
             ResultSet results;
-            ArrayList<String> rvalues = new ArrayList<String>();
+            ArrayList<String> avalues = new ArrayList<String>();
             List<Clause> clauses = new ArrayList<Clause>();
-            //  for an SQL statement, the WHERE the test part in the select statement 
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
-            //  for the SELECT clause,  which items (fields) to get from the db (result in rows returned):
-            String cols=SqlUtil.comma(new String[]{Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME});
-            //  for the SQL FROM, the which tables to select from part 
+            //  WHERE 
+            clauses.add(Clause.join(Tables.STATION.COL_STATION_STYLE_ID, Tables.STATION_STYLE.COL_STATION_STYLE_ID));
+            //  SELECT what column values to find
+            String cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_NAME});
+            //  FROM   
             List<String> tables = new ArrayList<String>();
             tables.add(Tables.STATION_SESSION.NAME);
-            tables.add(Tables.RECEIVER_TYPE.NAME);
-            // SELECT receiver_type.receiver_type_name FROM station_session,receiver_type WHERE (station_session.receiver_type_id = receiver_type.receiver_type_id);
-            Statement  statement =
-            //          select          what    from      where
-            getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-            //System.err.println("   SiteManager: get resource select query is " +statement);
+            tables.add(Tables.STATION.NAME);
+            tables.add(Tables.STATION_STYLE.NAME);
+            Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
-                   String rcvtype= results.getString(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
-                   // the values may have duplicates
+                   String statype= results.getString(Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
+                   // save distinct values
                    int notfound=1;
-                   for (int rcvi= 0; rcvi<rvalues.size(); rcvi+=1 ) {
-                      if ( rvalues.get(rcvi).equals(rcvtype) ) { 
+                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                      if ( avalues.get(vi).equals(statype) ) {
                          notfound=0;
                          break;
                          }
                    }
                    if (notfound==1) {
-                         rvalues.add(rcvtype);
-                         //System.err.println("        receiver type  is " +rcvtype);
+                         avalues.add(statype);
+                         //System.err.println(" this data center has stations with  site type  " + statype ) ;
                    }
-                   //if you want Only read the first row of db query results returned
-                   //break;
                }
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-            String[] itemArray = new String[rvalues.size()];
-            values = rvalues.toArray(itemArray);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
+            String[] itemArray = new String[avalues.size()];
+            values = avalues.toArray(itemArray);
+            // sort by alphabet:
+            // Arrays.sort(values);
+            capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            /* for federated gsac, allow all types with this simple code:
-            values = getDatabaseManager().readDistinctValues( Tables.RECEIVER_TYPE.NAME, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
+            // search on antenna types: get antenna type names used by stations in this database, only.
+            // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
+            //    simpler?: or get all items in row where: example 
+            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
+            avalues = new ArrayList<String>();
+            clauses = new ArrayList<Clause>();
+            //  WHERE 
+            clauses.add(Clause.join(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
+            //  SELECT what to 
+            cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
+            //  FROM   
+            tables = new ArrayList<String>();
+            tables.add(Tables.STATION_SESSION.NAME);
+            tables.add(Tables.ANTENNA_TYPE.NAME);
+            statement =
+               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            try {
+               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+               // process each line in results of db query  
+               while ((results = iter.getNext()) != null) {
+                   String anttype= results.getString(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME);
+                   int notfound=1;
+                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                      if ( avalues.get(vi).equals(anttype) ) { 
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(anttype);
+                   }
+               }
+            } finally {
+               getDatabaseManager().closeAndReleaseConnection(statement);
+            }
+            itemArray = new String[avalues.size()];
+            values = avalues.toArray(itemArray);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
-            */
+            capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
+
+/*
+            // get antenna type names used by stations in this database, only.
+            // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
+            //    simpler?: or get all items in row where: example 
+            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
+            ArrayList<String> avalues = new ArrayList<String>();
+            clauses =      new ArrayList<Clause>();
+            //  WHERE 
+            clauses.add(Clause.join(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
+            //  SELECT what to 
+            cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
+            //  FROM   
+            tables = new ArrayList<String>();
+            tables.add(Tables.STATION_SESSION.NAME);
+            tables.add(Tables.ANTENNA_TYPE.NAME);
+            statement =
+               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            try {
+               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+               // process each line in results of db query  
+               while ((results = iter.getNext()) != null) {
+                   String anttype= results.getString(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME);
+                   int notfound=1;
+                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                      if ( avalues.get(vi).equals(anttype) ) { 
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(anttype);
+                   }
+               }
+            } finally {
+               getDatabaseManager().closeAndReleaseConnection(statement);
+            }
+            itemArray = new String[avalues.size()];
+            values = avalues.toArray(itemArray);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // get antenna type names used by stations in this database, only.
             // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
@@ -263,6 +338,60 @@ public class PrototypeSiteManager extends SiteManager {
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
+*/
+
+            // search on receiver types: get receiver type names used by stations in this database, only.
+            // Show only the ones at stations in this repository, since the protoype GSAC db has all IGS receiver names, more than 200. 
+            //    or simpler?: get all items in row where: from code for RING:
+            // Statement statement = getDatabaseManager().select(Tables.GSACDB.COLUMNS, Tables.GSACDB.NAME, Clause.eq( Tables.GSACDB.COL_NAME_SITW, gsacResource.getId()), (String) null, -1);
+            ArrayList<String> rvalues = new ArrayList<String>();
+            clauses = new ArrayList<Clause>();
+            //  for an SQL statement, the WHERE the test part in the select statement 
+            clauses.add(Clause.join(Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
+            //  for the SELECT clause,  which items (fields) to get from the db (result in rows returned):
+            cols=SqlUtil.comma(new String[]{Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME});
+            //  for the SQL FROM, the which tables to select from part 
+            tables = new ArrayList<String>();
+            tables.add(Tables.STATION_SESSION.NAME);
+            tables.add(Tables.RECEIVER_TYPE.NAME);
+            // SELECT receiver_type.receiver_type_name FROM station_session,receiver_type WHERE (station_session.receiver_type_id = receiver_type.receiver_type_id);
+            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            //          select          what    from      where
+            //System.err.println("   SiteManager: get resource select query is " +statement);
+            try {
+               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+               // process each line in results of db query  
+               while ((results = iter.getNext()) != null) {
+                   String rcvtype= results.getString(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
+                   // the values may have duplicates
+                   int notfound=1;
+                   for (int rcvi= 0; rcvi<rvalues.size(); rcvi+=1 ) {
+                      if ( rvalues.get(rcvi).equals(rcvtype) ) { 
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         rvalues.add(rcvtype);
+                         //System.err.println("        receiver type  is " +rcvtype);
+                   }
+                   //if you want Only read the first row of db query results returned
+                   //break;
+               }
+            } finally {
+               getDatabaseManager().closeAndReleaseConnection(statement);
+            }
+            itemArray = new String[rvalues.size()];
+            values = rvalues.toArray(itemArray);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
+
+            /* for federated gsac, allow all types with this simple code:
+            values = getDatabaseManager().readDistinctValues( Tables.RECEIVER_TYPE.NAME, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
+            */
+
 
             /* get all radome type names in the db 
             values = getDatabaseManager().readDistinctValues( Tables.RADOME_TYPE.NAME, Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME);
@@ -306,24 +435,25 @@ public class PrototypeSiteManager extends SiteManager {
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_DOME, "Radome type", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // search on station 'style', country, province/state, and city
-            values = getDatabaseManager().readDistinctValues( Tables.STATION_STYLE.NAME, Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
+            // search on country, province/state, and city
 
+
+            // add box to choose by country
             values = getDatabaseManager().readDistinctValues( Tables.COUNTRY.NAME, Tables.COUNTRY.COL_COUNTRY_NAME);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nation", values, true, CAPABILITY_GROUP_ADVANCED));
 
+            // add box to choose by state or province 
             values = getDatabaseManager().readDistinctValues( Tables.PROVINCE_REGION_STATE.NAME, Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Province/state", values, true, CAPABILITY_GROUP_ADVANCED));
 
+            // add box to choose by city
             values = getDatabaseManager().readDistinctValues( Tables.STATION.NAME, Tables.STATION.COL_CITY);  // get all the city (place) names in GSAC's database.
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place/city", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            //  omit for now LOOK - search on [data sampling] interval ; use float value in seconds per sample as 30 or 0.1 or 0.01
+            //  omit for now LOOK - search on [data sampling] interval ; float value in seconds per sample as 30 or 0.1 or 0.01
             // get value from receiver session table
 
             return capabilities;
