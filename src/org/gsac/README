@@ -139,50 +139,59 @@ The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an a
 Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
 You may find the screen messages interesting to show the process of a GSAC build. 
 
+
 Next
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
-Copy prototypemacros.properties to a temporary working file:  
+The file macros.properties has:
 
-cp prototypemacros.properties   mymacros.properties  
+    ##
+    ## Properties used to generate a new GSAC-WS repository. This is a template or model of a similar file to make a new instance of a GSAC installation.
+    ##
+    ## Make a new version of this file with a different name, which will be used to automatically build the initial version of your GSAC installation.
+    ## See instructions in the GSAC package in the file  README in gsac-code/src/org/gsac/.
+    ##
 
-The new file name does not matter, but do not use the file prototypemacros.properties itself.  mymacros.properties is fine. 
+    ## To name the repository (spaces are allowed); can use any character string such as The My Repo GPS GSAC Repository
+    target.name=Demo GSAC Repository
 
-Edit the new properties file to set values for your repository GSAC:
+    ## This is used to create the jar and war release file names; replace the 'demo' part, making for example gsacmyrepo. No spaces.
+    target.basename=gsacdemo
 
-The initial file:
-##
-## Properties used to generate a new GSAC-WS repository. See README (part 1) in gsac-code/src/org/gsac/.
-##
-## Name of the repository; spaces are allowed.  You can use any character string such as The My Repo GPS GSAC Repository
-target.name=Prototype GSAC Repository
-## This is used to create the jar and war release file names; for example myrepogsac.
-target.basename=prototype_gsac
-## the new package name; replace the 'prototype' part, making for example org.gsacmyrepo.gsac
-target.package=org.prototype.gsac
-## Java class (file) name prefix.  All of the new java classes (and new .java files) will have this as a prefix for their names
-## Replace Prototype with a word with no spaces like Myrepo, and with only the first letter in upper case, to match Java class naming conventions.
-target.prefix=Prototype
-## What Java database driver file to use?  Choose one of these three:
-target.dbdriver=mysql.jar
-#target.dbdriver=oracleDriver.jar
-#target.dbdriver=postgres.jar
- 
-becomes something like this:
+    ## A standard Java package name.  Replace the 'agency' part, making for example org.nasa.gsac.  This also controls making and naming the new directory path to hold your GSAC installations's code.
+    target.package=org.agency.gsac
+    ## If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.
 
-## Properties used to generate a new GSAC-WS repository. See README (part 1) in gsac-code/src/org/gsac/.
-target.name=Myrepo GSAC Repository  
-target.basename=gsacmyrepo     
-target.package=org.myrepo.gsac // The Java package name. If not beginning with org, see notes below for the Java package name.
-target.prefix=Myrepo           
-target.dbdriver=mysql.jar     
+    ## All of the new Java .java files and .class files for your GSAC installation will have the following prefix for their names.
+    ## Replace Demo with a short name for your data repository, something like Myrepo.  Use no spaces, and with only the first letter in upper case, to match Java class naming conventions.
+    target.prefix=Demo
+
+    ## Choose which Java database driver (in GSAC) to read the database your GSAC code will read.  Choose (uncomment) one of these three:
+    target.dbdriver=mysql.jar
+    #target.dbdriver=oracleDriver.jar
+    #target.dbdriver=postgres.jar
+
+Copy that file macros.properties to a temporary working file (any new name), such as  
+
+cp macros.properties mymacros.properties  
+
+The new file name does not matter.
+
+Edit the new properties file to set values for your repository GSAC.  For example, new values something like these:
+
+    target.name=The Agency GNSS GSAC Repository  
+    target.basename=gsacmyrepo     
+    target.package=org.myagency.gsac  [If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.]
+    target.prefix=Myrepo           
+    target.dbdriver=mysql.jar     
 
 Then
 
 cd ../   
+(i.e. cd to ~/GSAC/gsac-code/src/org/gsac/)
 
-to src/org/gsac/. Then run a command like this, with the new macros.properties file:
+Then run a command like this, with the new properties file name in place of mymacros.properties:
 
 ant -propertyfile template/mymacros.properties makerepository   
 
@@ -205,13 +214,15 @@ copyjava:
      [echo] Repository source package has been created
 BUILD SUCCESSFUL
 
-Look to be sure no errors are sent to the screen.  
+Look to be sure no errors occur.  
 
-This process creates a new code area, beginning with a new folder, such as
+This process creates a new code area and new Java files for your GSAC installation, beginning with a new folder, such as
 
 ~/GSAC/gsac-code/src/org/myrepo/ 
+  or 
+~/GSAC/gsac-code/src/edu/uniutopia/
 
-and populates it with initial all-new directories and files for your GSAC repository's code.
+and populates it with some initial and all-new directories and files for your GSAC repository's code.
 
 cd to the just-made new directory with new GSAC code just for your repository, such as 
 
