@@ -3,34 +3,37 @@
 
 				    Tables and Field Definitions and Notes.
 
-					           November 27, 2013          
+					           December 12, 2013          
 
 					       UNAVCO, Boulder Colorado.
 
 
 GSAC is UNAVCO's Geodesy Seamless Archive Code package, supplying web services for geodesy archives.
+For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 
+GSAC is designed with the concept of sites(stations or monuments), at precisely known positions, with instruments recording 
+data files of signals for geophysics, such as GNSS antennas or tiltmeters.  Sites are stationary 
+while each data file is created. Sites have antennas (detectors) and receivers (data loggers).
+
+GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
+GSAC itself.  Creation, population, and maintenance of the database is the reponsibility of a GNSS data center.  
+GSAC does not do database maintenance.  GSAC is not content management software; GSAC is web services.
+
+UNAVCO provides a prototype GSAC database design (schema) and code in GSAC to read from such a database.
 Use of this schema makes a database which GSAC can use with Prototype GSAC Java code supplied by UNAVCO,
 simplifying GSAC installation.  
-
-GSAC is designed with the concept of sites at precisely known positions, with instruments recording 
-data files of signals for geophysics, such as GNSS antennas, and tiltmeters.  Sites are stationary 
-while each data file is created. Sites have antennas (detectors) and receivers (data loggers).
 
 This document uses MySQL forms, but essentially the same database schema can be used in Postgres and Oracle 
 to make a GSAC database.  Use the same name for tables and fields, since the GSAC classes 
 PrototypeSiteManager and PrototypeFileManager use them; those classes connect the GSAC code to the
 database. Retain the supplied column values, such as the antenna types, in the same row order.
 
-GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
-GSAC itself.  Creation, population, and maintenance of the database is the reponsibility of a GNSS data center.  
-GSAC does not do database maintenance.  GSAC is not content management software; GSAC is web services.
-
-For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 A MySQL dump file (.sql file) for this schema can be downloaded from the web site, on the installation page.
 The .sql file is also in the GSAC package from SourceForge, in gsac-code/src/org/prototype/gsac/Prototype_GSAC_Database.sql.
 
-Small distances are in meters.  Dates with times are in ISO 8601 format, in UTC time zone only.
+Small distances are in meters.  Dates with times are in ISO 8601 format, in UTC time zone only. Numerical data are
+stored with numerical data types in the database, and date and time values are stored with date and time data types,
+to reduce data entry errors.
 
 show tables;
 
@@ -55,7 +58,7 @@ show tables;
 | station_style                     |
 +-----------------------------------+
 
-describe access_permission;
+Table access_permission;
 +-------------------------------+-----------------+------+-----+---------+----------------+
 | Field                         | Type            | Null | Key | Default | Extra          |
 +-------------------------------+-----------------+------+-----+---------+----------------+
@@ -65,16 +68,16 @@ describe access_permission;
 Table access_permission is a static table with values describing the level of access permitted for one (or more) data files from stations.
 Used by tables station and gnss_data_file. See use details below under those tables' descriptions.
 Values are:
-mysql> select * from  access_permission;
-+----------------------+----------------------------------------------------------------------------------+
-| access_permission_id | access_permission_description                                                    |
-+----------------------+----------------------------------------------------------------------------------+
-|                    1 | no public access allowed                                                         |
-|                    2 | public access allowed for station and instrument metadata and geodesy data files |
-|                    3 | public access allowed for station and instrument metadata only                   |
-+----------------------+----------------------------------------------------------------------------------+
++----------------------+---------------------------------------------------------------------------------+
+| access_permission_id | access_permission_description                                                   |
++----------------------+---------------------------------------------------------------------------------+
+|                    1 | no public access allowed                                                        |
+|                    2 | public access allowed for station metadata, instrument metadata, and data files |
+|                    3 | public access allowed for station and instrument metadata only                  |
++----------------------+---------------------------------------------------------------------------------+
+For consistency in GSAC operations, the permissions above and their id numbers are "standard" and should be the same across all GSAC operations.
 
-describe agency;
+Table agency;
 +--------------------+-----------------+------+-----+---------+----------------+
 | Field              | Type            | Null | Key | Default | Extra          |
 +--------------------+-----------------+------+-----+---------+----------------+
@@ -90,7 +93,7 @@ describe agency;
 Table agency is used by table station to specify owner-operators of instrument stations by agency and network.
 
 
-describe antenna_session;
+Table antenna_session;
 +------------------------+-----------------+------+-----+---------+----------------+
 | Field                  | Type            | Null | Key | Default | Extra          |
 +------------------------+-----------------+------+-----+---------+----------------+
@@ -111,7 +114,7 @@ HtCod is only for GAMIT station.info format files and otherwise is not used by G
 GSAC does not generate values of HtCod, or "know" what is valid. The database operator must set HtCod values.
 
 
-describe antenna_type;
+Table antenna_type;
 +-------------------+-----------------+------+-----+---------+----------------+
 | Field             | Type            | Null | Key | Default | Extra          |
 +-------------------+-----------------+------+-----+---------+----------------+
@@ -142,17 +145,18 @@ select * from antenna_type;
 +-----------------+-------------------+-------------+
 
 
-describe country;
+Table country;
 +--------------+-----------------+------+-----+---------+----------------+
 | Field        | Type            | Null | Key | Default | Extra          |
 +--------------+-----------------+------+-----+---------+----------------+
 | country_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | country_name | varchar(70)     | NO   |     | NULL    |                |
 +--------------+-----------------+------+-----+---------+----------------+
-Table country supplies consistent country names; used by table station.
+Table country supplies country names; used by table station.
+GSAC uses a keyed table like this to insure there is one name and spelling for each country, to aid searches.
 
 
-describe file_type;
+Table file_type;
 +----------------+-----------------+------+-----+---------+----------------+
 | Field          | Type            | Null | Key | Default | Extra          |
 +----------------+-----------------+------+-----+---------+----------------+
@@ -161,31 +165,29 @@ describe file_type;
 +----------------+-----------------+------+-----+---------+----------------+
 Table file_type supplies names for data file types or formats.
 To allow consistent and problem-free interoperability with GSAC at several data centers, use these file types if you can.  
-If needed, you can add a new type in a new row to this table in your database, if you offer files of another type.
-Note that file type does not specify if there is any compression of files, such as a Unix (Z) compression, 
-or Hatanaka-compressed RINEX files ('.d' files).  
-GSAC does not check or know what is actually in a file. This allows a GSAC server to handle many file formats.
-One file type name may cover several related formats.  For example, "RINEX observation file" can refers to all of "o" files,
-".d" files, "o.Z" files, and "d.Z" files.  It is up to the file user to know how to work with files received from file download URLs supplied by GSAC. 
+Note that file type does not specify if there is any compression of files, such as a Unix (Z) compression, or Hatanaka-compressed RINEX files ('.d' files).  
+GSAC does not check or know what is actually in a file. This allows a GSAC server to handle most any data file format.
+One file type name may cover several related formats.  For example, "RINEX observation file" can refers to ".d" files, "o.Z" files, and "d.Z" files.  
+It is up to the file user to know how to work with files received from file download URLs supplied by GSAC. 
 At the moment, file_types are:
-mysql> select * from file_type;
+Table file_type;
 +--------------+----------------------------------------------+
-| file_type_id | file_type_name                               | 
--+--------------+---------------------------------------------+
+| file_type_id | file_type_name                               |
++--------------+----------------------------------------------+
 |            1 | instrument raw binary file                   |
-|            2 | RINEX GPS navigation file   
-|            3 | RINEX meteorological file     
-|            4 | RINEX observation file        
-|            5 | RINEX GLONASS navigation file 
-|            6 | RINEX Galileo navigation file 
-|            7 | RINEX QZSS navigation file    
-|            8 | RINEX COMPASS navigation file 
-|            9 | position time series PBO cvs format    
-|           10 | position time series PBO pos format   
-|           11 | SOPAC XML log file            
-|           12 | SINEX                         
-|           13 | station.info GAMIT            
-|           14 | IGS site log file             
+|            2 | RINEX GPS navigation file                    |
+|            3 | RINEX meteorological file                    |
+|            4 | RINEX observation file                       |
+|            5 | RINEX GLONASS navigation file                |
+|            6 | RINEX Galileo navigation file                |
+|            7 | RINEX QZSS navigation file                   |
+|            8 | RINEX COMPASS navigation file                |
+|            9 | position time series PBO cvs format          |
+|           10 | position time series PBO pos format          |
+|           11 | SOPAC XML site log                           |
+|           12 | SINEX                                        |
+|           13 | station.info GAMIT                           |
+|           14 | IGS format site log                          |
 |           15 | BSM (borehole strainmeter) Raw               |
 |           16 | BSM (borehole strainmeter) Processed         |
 |           17 | BSM (borehole strainmeter) Notes             |
@@ -193,20 +195,24 @@ mysql> select * from file_type;
 |           19 | Tiltmeter Raw ASCII Data                     |
 |           20 | Tiltmeter Plots                              |
 |           21 | Seismometer data                             |
-|           22 | DORIS data                                   |
+|           22 | position time series plot image file         |
 |           23 | SLR data                                     |
 |           24 | VLBI data                                    |
+|           25 | DORIS data                                   |
 +--------------+----------------------------------------------+
+If needed, you can add a new type in a new row to this table in your database, if you offer files of another type.
+That is all you need to do to allow your GSAC service to handle a new kind of data file.
+For consistency in GSAC operations, the file types named above and their id numbers are "standard" and should be the same across all GSAC operations.
 PBO formats of time series files are for example:
 .pos file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
 .csv file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.csv
 
 
-describe gnss_data_file;
+Table  gnss_data_file;
 +------------------------+------------------+------+-----+---------+----------------+
 | Field                  | Type             | Null | Key | Default | Extra          |
 +------------------------+------------------+------+-----+---------+----------------+
-| file_id                | int(5) unsigned  | NO   | PRI | NULL    | auto_increment |
+| file_id                | int(6) unsigned  | NO   | PRI | NULL    | auto_increment |
 | station_id             | int(6) unsigned  | NO   |     | NULL    |                |
 | file_type_id           | int(3) unsigned  | NO   |     | NULL    |                |
 | data_start_time        | datetime         | NO   |     | NULL    |                |
@@ -254,7 +260,7 @@ Supplying MD5 check sum values is recommended but not required for GSAC operatio
 Field file_size is in integer bytes. Supplying file_size values is recommended but not required for GSAC operations.
 
 
-describe monument_description;
+Table monument_description;
 +-------------------------+-----------------+------+-----+---------+----------------+
 | Field                   | Type            | Null | Key | Default | Extra          |
 +-------------------------+-----------------+------+-----+---------+----------------+
@@ -264,7 +270,7 @@ describe monument_description;
 Table of free-form text values describing the monument (usually construction), such as "UNAVCO deep-drill braced".
 
 
-describe province_region_state;
+Table province_region_state;
 +----------------------------+-----------------+------+-----+---------+----------------+
 | Field                      | Type            | Null | Key | Default | Extra          |
 +----------------------------+-----------------+------+-----+---------+----------------+
@@ -274,7 +280,7 @@ describe province_region_state;
 Table supplies consistent names for provinces, regions, or states (divisions in a country); used by table station.
 
 
-describe radome_type;
+Table radome_type;
 +---------------------+-----------------+------+-----+---------+----------------+
 | Field               | Type            | Null | Key | Default | Extra          |
 +---------------------+-----------------+------+-----+---------+----------------+
@@ -288,7 +294,6 @@ Table radome_type lists IGS defined GNSS antenna type names, and some others def
 Use one of these for each GNSS antenna session at your stations.
 If a station detects signals other than GNSS, such as tilt data,  there is no radome of course (use NONE).
 Values are:
-select * from radome_type;
 +----------------+------------------+-------------+---------------------+---------------------------------------------------------------------------------------------------------------------
 | radome_type_id | radome_type_name | igs_defined | description_English | description_RENAG                                                                                                  
 +----------------+------------------+-------------+---------------------+-------------------------------------------------------------------------------------------------------------------
@@ -329,7 +334,7 @@ select * from radome_type;
 +----------------+------------------+-------------+---------------------+--------------------------------------------------------------------------------------------------------------------------+
 
 
-describe receiver_firmware_version;
+Table receiver_firmware_version;
 +--------------------------------+-----------------+------+-----+---------+----------------+
 | Field                          | Type            | Null | Key | Default | Extra          |
 +--------------------------------+-----------------+------+-----+---------+----------------+
@@ -342,7 +347,7 @@ SwVer is only for GAMIT station.info format files and otherwise is not used by G
 GSAC does not generate values of SwVer, or "know" what is valid. The database operator must set SwVer values.
 
 
-describe receiver_session;
+Table receiver_session;
 +------------------------------+-----------------+------+-----+---------+----------------+
 | Field                        | Type            | Null | Key | Default | Extra          |
 +------------------------------+-----------------+------+-----+---------+----------------+
@@ -361,7 +366,7 @@ Field  satellite_system is a list (as a simple character string) of the GNSS sat
 such as GPS or GPS,GLONASS,GALILEO or someday GPS,GLONASS,GALILEO,SBAS,QZSS,BEIDOU/COMPASS,IRNSS.  BEIDOU/COMPASS is one system name.
 Field receiver_sample_interval is in seconds.
 
-describe receiver_type;
+Table receiver_type;
 +--------------------+-----------------+------+-----+---------+----------------+
 | Field              | Type            | Null | Key | Default | Extra          |
 +--------------------+-----------------+------+-----+---------+----------------+
@@ -396,7 +401,7 @@ select * from receiver_type;
 +------------------+----------------------+-------------+
 
 
-describe station;
+Table station;
 +--------------------------+-----------------+------+-----+---------+----------------+
 | Field                    | Type            | Null | Key | Default | Extra          |
 +--------------------------+-----------------+------+-----+---------+----------------+
@@ -441,7 +446,7 @@ Field networks is a comma-separated list in one character string, such as "PBO, 
 "Snake River Plain 2008, Wasatch Fault 1994, Yellowstone/Snake River Plain 2000, Yellowstone/Wasatch Fault 1995"
 of the named groups of stations this station belongs to. It may be omitted, or have one network such as "PBO".
 
-table station_session
+Table station_session
 +------------------------------+-----------------+------+-----+---------+----------------+
 | Field                        | Type            | Null | Key | Default | Extra          |
 +------------------------------+-----------------+------+-----+---------+----------------+
@@ -468,7 +473,7 @@ Information in table station_session joins and includes information from the ant
 Field sample_interval is in seconds.
 
 
-describe station_style;
+Table station_style;
 +--------------------+-----------------+------+-----+---------+----------------+
 | Field              | Type            | Null | Key | Default | Extra          |
 +--------------------+-----------------+------+-----+---------+----------------+
@@ -476,7 +481,7 @@ describe station_style;
 | station_style_name | varchar(20)     | NO   |     | NULL    |                |
 +--------------------+-----------------+------+-----+---------+----------------+
 Station_style specifies nature of station operations and / or instruments; used by table station. Values are static and include:
-select * from station_style;
+values supplied in from station_style;
 +------------------+---------------------+
 | station_style_id | station_style_name  |
 +------------------+---------------------+
@@ -491,8 +496,8 @@ select * from station_style;
 |                9 | VLBI                |
 +------------------+---------------------+
 The intention is to use broad catagories. Particular instruments, as in 'receiver' and 'antenna' types,
- and types of data files, indicate more details about data types detected and instruments in use. 
+and types of data files, indicate more details about a site's data types detected and instruments in use. 
 You may add new rows at the end of this table for other types of station operations and / or instruments.
-Do not change the row order, so that all GSACs have a common interface.
+For consistency in GSAC operations, the names above and their id numbers are "standard" and should be the same across all GSAC operations.
 These values are selected in the GSAC Search Sites interface as 'site type' values.
 

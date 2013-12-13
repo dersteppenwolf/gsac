@@ -167,7 +167,7 @@ CREATE TABLE `file_type` (
   `file_type_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `file_type_name` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`file_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +176,7 @@ CREATE TABLE `file_type` (
 
 LOCK TABLES `file_type` WRITE;
 /*!40000 ALTER TABLE `file_type` DISABLE KEYS */;
-INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'DORIS data'),(23,'SLR data'),(24,'VLBI data');
+INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'position time series plot image file'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data');
 /*!40000 ALTER TABLE `file_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -188,7 +188,7 @@ DROP TABLE IF EXISTS `gnss_data_file`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gnss_data_file` (
-  `file_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
+  `file_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
   `station_id` int(6) unsigned NOT NULL,
   `file_type_id` int(3) unsigned NOT NULL,
   `data_start_time` datetime NOT NULL,
@@ -485,4 +485,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-11-27  9:59:17
+-- Dump completed on 2013-12-12  9:09:15
