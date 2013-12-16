@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					           December 12, 2013          
+					           December 16, 2013          
 
 					       UNAVCO, Boulder Colorado.
 
@@ -199,13 +199,13 @@ Table file_type;
 |           23 | SLR data                                     |
 |           24 | VLBI data                                    |
 |           25 | DORIS data                                   |
+|           26 | BINEX                                        |
 +--------------+----------------------------------------------+
 If needed, you can add a new type in a new row to this table in your database, if you offer files of another type.
 That is all you need to do to allow your GSAC service to handle a new kind of data file.
 For consistency in GSAC operations, the file types named above and their id numbers are "standard" and should be the same across all GSAC operations.
-PBO formats of time series files are for example:
-.pos file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
-.csv file: ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.csv
+PBO formats of time series files are found in these sample files: for the .pos format ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
+and for the .csv file ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.csv
 
 
 Table  gnss_data_file;

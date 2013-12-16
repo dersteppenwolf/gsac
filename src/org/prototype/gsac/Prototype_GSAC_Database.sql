@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: Prototype_GSAC_Database
+-- Host: localhost    Database: Prototype_GSAC_Database_with_data
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `Prototype_GSAC_Database`
+-- Current Database: `Prototype_GSAC_Database_with_data`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database_with_data` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `Prototype_GSAC_Database`;
+USE `Prototype_GSAC_Database_with_data`;
 
 --
 -- Table structure for table `access_permission`
@@ -43,7 +43,7 @@ CREATE TABLE `access_permission` (
 
 LOCK TABLES `access_permission` WRITE;
 /*!40000 ALTER TABLE `access_permission` DISABLE KEYS */;
-INSERT INTO `access_permission` VALUES (1,'no public access allowed'),(2,'public access allowed for station and instrument metadata and geodesy data files'),(3,'public access allowed for station and instrument metadata only');
+INSERT INTO `access_permission` VALUES (1,'no public access allowed'),(2,'public access allowed for station metadata, instrument metadata, and data files'),(3,'public access allowed for station and instrument metadata only');
 /*!40000 ALTER TABLE `access_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,7 +167,7 @@ CREATE TABLE `file_type` (
   `file_type_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `file_type_name` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`file_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +176,7 @@ CREATE TABLE `file_type` (
 
 LOCK TABLES `file_type` WRITE;
 /*!40000 ALTER TABLE `file_type` DISABLE KEYS */;
-INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'position time series plot image file'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data');
+INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'position time series plot image file'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'),(26,'BINEX');
 /*!40000 ALTER TABLE `file_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -485,4 +485,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-12-12  9:09:15
+-- Dump completed on 2013-12-16 15:42:19
