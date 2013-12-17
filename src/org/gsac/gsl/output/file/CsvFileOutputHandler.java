@@ -99,11 +99,12 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             pw.print(file.getType().getLabel() + ",");
             pw.print(fi.getMd5() + ",");
             pw.print(fi.getFileSize() + ",");
-            pw.print(file.getPublishDate() + ",");
+            //pw.print(file.getPublishDate() + ",");
+
             // new: Note the publish date does not include mm:ss and is NOT in ISO 8601 format but we will leave it the old way in case of legacy users out there.  SKW 18 Nov 2103.
-            //Date date = file.getPublishDate();
-            //SimpleDateFormat sdf = makeDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
-            //pw.print( sdf.format(date) + "," );
+            Date date = file.getPublishDate();
+            SimpleDateFormat sdf = makeDateFormat("yyyy-MM-dd HH:mm:ss");  // wherefor ssz? 
+            pw.print( sdf.format(date) + "," );
 
             // old and never used it appears:
             //List<GsacResource> relatedResources = file.getRelatedResources();
