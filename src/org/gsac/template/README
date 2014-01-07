@@ -91,14 +91,12 @@ One Oracle JDBC URL is of the form:
    e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-Copy the complete @MACRO.SRCDIR@/dbresources/gsacdb_test.properties to @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
-The two files with the same contents are a legacy from earlier GSAC code.
+(The file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties is not used now. It can be empty.)
 
-'Caution': If you have GSAC SourceForge write access: 
-Do not do 'svn add' or 'svn commit' this file, or your database account details will be public!
+If you have GSAC SourceForge write access, do not do 'svn add' or 'svn commit' this file, or your database account details will become public.
 
 Everytime you do "ant" to build your repository, the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file @MACRO.SRCDIR@/resources/gsacdb.properties, 
-and to the file @MACRO.SRCDIR@/dbresources/gsacdb_production.propertiea.s
+and to the file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
 Also the file @MACRO.SRCDIR@/resources/gsacserver_test.properties is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. 
 This can be confusing if you attempt to keep track of the several properties files.
 
