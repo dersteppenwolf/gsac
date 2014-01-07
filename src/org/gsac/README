@@ -109,9 +109,12 @@ cd    ~/GSAC/
 Check out the GSAC code from SourceForge by entering this command:
 (to get this command, go to https://sourceforge.net/projects/gsac/ and click on the 'Code' menu item in the 'Summary Files ...' menu line)
 
-svn checkout svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
+svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
-The svn checkout creates a new folder gsac-code and many folders and files in it.
+(svn export simply downloads all the files for the project, with no revision control permission required. It also does not litter each directory with .svn directories.
+svn checkout is used if you will plan to check in new code to GSAC on SourceForge.)
+
+The svn export creates a new folder gsac-code and many folders and files in it.
 
 cd gsac-code/
 
