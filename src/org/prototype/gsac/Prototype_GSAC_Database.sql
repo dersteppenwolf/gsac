@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: Prototype_GSAC_Database_with_data
+-- Host: localhost    Database: Prototype_GSAC_Database
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `Prototype_GSAC_Database_with_data`
+-- Current Database: `Prototype_GSAC_Database`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database_with_data` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `Prototype_GSAC_Database_with_data`;
+USE `Prototype_GSAC_Database`;
 
 --
 -- Table structure for table `access_permission`
