@@ -46,6 +46,7 @@ import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +54,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.HashSet;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 
 /**
@@ -487,7 +490,7 @@ public class PrototypeSiteManager extends SiteManager {
         // the SQL search clause: select where a column value COL_CODE_4CHAR_ID  = the "resourceId" which is some site 4 char ID entered by the user in the api or search form
         Clause clause = Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, resourceId);
 
-        // compose the complete select SQL phrase; apply the select clause to the table(s) given.
+        // compose the complete select SQL phrase; apply the select clause to the table(s) given. see select ( ) in gsl/database/GsacDatabaseManager.java
         //                                                 DB  .select( what to find (fields),     from which tables,      where clause, )  
         // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
         // and this works OK:
@@ -881,10 +884,8 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * Get metadata for antenna and receiver sessions (implied from site visits).
-     * LOOK will be revised extensively to make equipment sessions from only the antenna and receiver session tables, not from the station_session table, in October 2013.
-     *
-     * Get equipment metadata from the db tables 
+     * For the station with the input 4 char ID number gsacResource.getId(), get the metadata for each station session, when
+     * generated from the antenna and receiver sessions.
      *
      * @param gsacResource _more_
      *
@@ -893,62 +894,6 @@ public class PrototypeSiteManager extends SiteManager {
     private void readEquipmentMetadata(GsacResource gsacResource)
             throws Exception {
                
-        Hashtable<Date, GnssEquipment> visits = new Hashtable<Date, GnssEquipment>();
-        List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
-        Statement           statement;
-        ResultSet           results;
-        List<Clause> clauses = new ArrayList<Clause>();
-        List<String> tables = new ArrayList<String>();
-
-        // WHERE  this station is id-ed by its 4 char id:
-        clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId())); 
-        // and where the antenna session has the station id number
-        clauses.add(Clause.join(Tables.STATION_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
-  
-        // "AA"; SELECT WHAT:  list is matched with line "BB" below.
-        String cols=SqlUtil.comma(new String[]{
-             Tables.STATION_SESSION.COL_STATION_SESSION_ID , 
-             Tables.STATION_SESSION.COL_ANTENNA_SERIAL_NUMBER , 
-             Tables.STATION_SESSION.COL_SESSION_START_DATE , 
-             Tables.STATION_SESSION.COL_SESSION_END_DATE , 
-             Tables.STATION_SESSION.COL_ANTENNA_OFFSET_UP , 
-             Tables.STATION_SESSION.COL_ANTENNA_OFFSET_NORTH , 
-             Tables.STATION_SESSION.COL_ANTENNA_OFFSET_EAST , 
-             Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID , 
-             Tables.STATION_SESSION.COL_RADOME_TYPE_ID , 
-             Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID , 
-             Tables.STATION_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID , 
-             Tables.STATION_SESSION.COL_RECEIVER_SERIAL_NUMBER,   
-             Tables.STATION_SESSION.COL_SATELLITE_SYSTEM,       
-             Tables.STATION_SESSION.COL_SAMPLE_INTERVAL       
-             /*
-             Tables.ANTENNA_SESSION.COL_ANTENNA_SESSION_ID ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_UP ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_NORTH ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_EAST ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID ,
-             Tables.ANTENNA_SESSION.COL_ANTENNA_SERIAL_NUMBER , // not a number; is a varchar (20) String
-             Tables.ANTENNA_SESSION.COL_RADOME_TYPE_ID ,
-             Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID ,
-             Tables.RECEIVER_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID ,
-             Tables.RECEIVER_SESSION.COL_RECEIVER_SERIAL_NUMBER // not a number; is a varchar (20) String
-             */
-         });
-
-        // FROM these tables
-        tables.add(Tables.STATION.NAME);
-        tables.add(Tables.STATION_SESSION.NAME);
-        // same info is also in these, but not arranged for this current purpose:
-        //tables.add(Tables.ANTENNA_SESSION.NAME);
-        //tables.add(Tables.RECEIVER_SESSION.NAME);
-
-        // compose the db query string using GSAC code:
-        //                       select          what    from      where
-        //          getDatabaseManager().select(cols,  tables, Clause.and(clauses),  (String) null,  -1);
-        statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.STATION_SESSION.COL_SESSION_START_DATE, -1);
-
         int station_sess_id=0;
         int receiverid=0;
         int receiver_firmware_id=0;
@@ -956,7 +901,7 @@ public class PrototypeSiteManager extends SiteManager {
         int radomeid=0;
         float dnorth=0.0f;
         float deast=0.0f;
-        float sampInt;
+        float sampInt=0.0f;
         Double zoffset=0.0;
         String antenna_serial=" ";
         String receiver_serial=" ";
@@ -970,133 +915,535 @@ public class PrototypeSiteManager extends SiteManager {
         Date outdate=null;
         Date[] dateRange=null;
 
+        Hashtable<Date, GnssEquipment> equip_sessions = new Hashtable<Date, GnssEquipment>();
+        List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
+        Statement           statement;
+        ResultSet           results;
+        List<Clause> clauses = new ArrayList<Clause>();
+        List<String> tables = new ArrayList<String>();
+        String cols;
+
+        List<Date>  antstartDates= new ArrayList<Date>();
+        List<Date>  rcvstartDates=new ArrayList<Date>();
+        
+        List<Date>  startDates= new ArrayList<Date>();
+        List<Date>  stopDates =new ArrayList<Date>();
+
+        List<Date[]>  sessionDates=new ArrayList<Date[]>(); // a list if pairs of dates in dateRange objects; each equipment session start end end time.
+
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+
+        //System.err.println("\n  --------------------------------------------------------------- get times of equip sessions at station "+gsacResource.getId());
+
+        // get antenna session time intervals
+        // mysql> select antenna_session.antenna_installed_date,antenna_session.antenna_removed_date from station,antenna_session  where ( (station.code_4char_ID like "%ORID%") and station.   
+        //   station_id=antenna_session.station_id and (antenna_installed_date < antenna_session.antenna_removed_date OR antenna_removed_date="0000-00-00 00:00:00" )
+        //   and antenna_installed_date is not null ) order by antenna_session.antenna_installed_date;
+        //+------------------------+----------------------+
+        //| antenna_installed_date | antenna_removed_date |
+        //+------------------------+----------------------+
+        //| 2000-07-20 00:00:00    | 2002-10-31 12:00:00  |
+        //| 2002-10-31 12:00:00    | 2002-12-13 12:00:00  |
+        //| 2002-12-13 12:00:00    | 2008-11-04 20:00:00  |
+        //| 2008-11-06 07:00:00    | 0000-00-00 00:00:00  |
+        //+------------------------+----------------------+
+        // WHERE  this station is id-ed by its 4 char id:
+        clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId())); 
+        // and where the antenna session has the station id number
+        clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
+        // AA mysql select WHAT:  list is matched with line "BB" below.
+        cols=SqlUtil.comma(new String[]{ Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE });
+        // FROM these tables
+        tables.add(Tables.STATION.NAME);
+        tables.add(Tables.ANTENNA_SESSION.NAME);
+        statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE, -1);
+        int ni=0;
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
-                //  "BB"  items must match with line "AA" above.
-                station_sess_id = results.getInt(Tables.STATION_SESSION.COL_STATION_SESSION_ID);
-                antenna_serial = results.getString(Tables.STATION_SESSION.COL_ANTENNA_SERIAL_NUMBER);
-                //indate = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
-                indate = readDate( results,   Tables.STATION_SESSION.COL_SESSION_START_DATE);
-                //outdate = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
-                outdate = readDate( results, Tables.STATION_SESSION.COL_SESSION_END_DATE);
-                dateRange = new Date[] { indate, outdate  };
-                //          new Date[] { readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE), readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)  };
-                zoffset = results.getDouble(Tables.STATION_SESSION.COL_ANTENNA_OFFSET_UP);
-                dnorth = results.getFloat(Tables.STATION_SESSION.COL_ANTENNA_OFFSET_NORTH);
-                deast= results.getFloat(Tables.STATION_SESSION.COL_ANTENNA_OFFSET_EAST);
-                sampInt= results.getFloat(Tables.STATION_SESSION.COL_SAMPLE_INTERVAL);
-                antennaid = results.getInt(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID);
-                radomeid = results.getInt(Tables.STATION_SESSION.COL_RADOME_TYPE_ID);
-                receiverid = results.getInt(Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID);
-                receiver_firmware_id = results.getInt(Tables.STATION_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID);
-                receiver_serial = results.getString(Tables.STATION_SESSION.COL_RECEIVER_SERIAL_NUMBER);
-                satellitesys = results.getString(Tables.STATION_SESSION.COL_SATELLITE_SYSTEM);
+               // code to get CORRECT times with hours mins and seconds:
 
-                //System.err.println("    SiteManager: read equip got session session id "+ station_sess_id );
-
-                // get value of ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME
-                ArrayList<String> avalues = new ArrayList<String>();
-                clauses =      new ArrayList<Clause>();
-                //  WHERE  this antenna type id key value is equal to
-                clauses.add(Clause.eq(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID, antennaid) );
-                //  SELECT what to return
-                cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
-                //  FROM the table (s)
-                tables = new ArrayList<String>();
-                tables.add(Tables.ANTENNA_TYPE.NAME);
-                statement =
-                   getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-                try {
-                   SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
-                   while ((results = iter2.getNext()) != null) {
-                       anttype= results.getString(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME);
-                       //System.err.println("    SiteManager: read equip got antenna type "+ anttype );
-                       //break;
-                   }
-                } finally {
-                       getDatabaseManager().closeAndReleaseConnection(statement);
+               String sdt=null;
+               //System.err.println("   get antenna sdt indate string  "); //bbb
+               try {
+                   sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
+                } catch (Exception exc) {
+                    //System.err.println("   BAD antenna results.getString  "); 
+                    continue;  //throw new RuntimeException(exc);
                 }
+               //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
 
-                // get value of RECEIVER_TYPE_NAME
-                avalues =  new ArrayList<String>();
-                clauses =  new ArrayList<Clause>();
-                tables =   new ArrayList<String>();
-                clauses.add(Clause.eq(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID, receiverid) );
-                cols=SqlUtil.comma(new String[]{Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME});
-                tables.add(Tables.RECEIVER_TYPE.NAME);
-                statement =
-                   getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-                try {
-                   SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
-                   while ((results = iter2.getNext()) != null) {
-                       rcvrtype= results.getString(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
-                       //System.err.println("    SiteManager: read equip got RECEIVER type "+ rcvrtype );
-                       //break;
-                   }
-                } finally {
-                       getDatabaseManager().closeAndReleaseConnection(statement);
-                }
+               // trap missing installed date
+               if  (  sdt == null ) {
+                    //System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
+                   continue;
+               }
+               sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
+               String odt = null;
+               indate = formatter.parse(sdt);  //  DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  
 
-                // get value of RECEIVER_FIRMWARE VERSION and SwVer aaa
-                avalues =  new ArrayList<String>();
-                clauses =  new ArrayList<Clause>();
-                tables =   new ArrayList<String>();
-                clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_ID, receiver_firmware_id) );
-                cols=SqlUtil.comma(new String[]{Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME,
-                                                Tables.RECEIVER_FIRMWARE_VERSION.COL_SWVER});
-                tables.add(Tables.RECEIVER_FIRMWARE_VERSION.NAME);
-                statement =
-                   getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-                try {
-                   SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
-                   while ((results = iter2.getNext()) != null) {
-                       rcvrfw = results.getString(Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME);
-                       swver = results.getString(Tables.RECEIVER_FIRMWARE_VERSION.COL_SWVER);
-                       //System.err.println("    SiteManager: read equip got RECEIVER FIRMWARE_VERSION "+ rcvrfw );
-                       //break;
-                   }
-                } finally {
-                       getDatabaseManager().closeAndReleaseConnection(statement);
-                }
+               Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
+               if (null == test) { 
+                   outdate = new Date();  // ie now
+               } 
+               else { 
+                  odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
+                  //System.err.println("        odt  string = "+odt); // CORRECT with time of day
+                  outdate = formatter.parse(odt); 
+               }
+               // these value are CORRECT and include hours minutes and seconds:
+               //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
+               //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
 
-                // get value of RADOME_TYPE.COL_RADOME_TYPE_NAME
-                avalues =  new ArrayList<String>();
-                clauses =  new ArrayList<Clause>();
-                tables =   new ArrayList<String>();
-                clauses.add(Clause.eq(Tables.RADOME_TYPE.COL_RADOME_TYPE_ID, radomeid) );
-                cols=SqlUtil.comma(new String[]{Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME});
-                tables.add(Tables.RADOME_TYPE.NAME);
-                statement =
-                   getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-                try {
-                   SqlUtil.Iterator iter3 = getDatabaseManager().getIterator(statement);
-                   while ((results = iter3.getNext()) != null) {
-                       radometype= results.getString(Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME);
-                       if (radometype.equals("unkn"))
-                          { radometype=" "; }
-                       //System.err.println("    SiteManager: read equip got radome type "+ radometype);
-                       //break;
-                   }
-                } finally {
-                       getDatabaseManager().closeAndReleaseConnection(statement);
-                }
-
-                // construct a "GnssEquipment" object with these values:
-                //  public GnssEquipment(Date[] dateRange, String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
-                GnssEquipment equipment =
-                    new GnssEquipment(          dateRange,        anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
-                equipment.setSwVer(swver);
-                equipment.setSampleInterval(sampInt);
-                equipmentList.add(equipment);
-                visits.put(dateRange[0], equipment);
-
-                equipment.setSatelliteSystem(satellitesys);  
-
-            }
+               startDates.add(indate);
+               stopDates.add(outdate) ;
+               antstartDates.add(indate);
+               if (null!=indate && null!=outdate && indate.after(outdate)) {
+                    System.err.println("   GSAC DB values ERROR:  Dates of antenna session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +"  end time: "+ outdate);
+                    continue;
+                 }
+               ni+=1;
+            } // end while  ((results = iter.getNext()) != null)
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
+
+
+        // get receiver session time intervals
+        clauses = new ArrayList<Clause>();
+        tables = new ArrayList<String>();
+        // WHERE  this station is id-ed by its 4 char id:
+        clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId()));
+        // and where the row for each receiver session has the station id number
+        clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID));
+        // AA mysql select WHAT:  list is matched with line "BB" below.
+        cols=SqlUtil.comma(new String[]{ Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE });
+        // FROM these tables
+        tables.add(Tables.STATION.NAME);
+        tables.add(Tables.RECEIVER_SESSION.NAME);
+        statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, -1);
+        ni=0;
+        try {
+            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+            while ((results = iter.getNext()) != null) {
+               // code to get CORRECT times with hours mins and seconds:
+               String sdt=null;
+               //System.err.println("   get rcvr  sdt indate string  "); //bbb
+               try {
+                   sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE);
+                } catch (Exception exc) {
+                    //System.err.println("   BAD rcvr results.getString  "); 
+                    continue;  //throw new RuntimeException(exc);
+                }
+               //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
+
+               // trap missing installed date
+               if  (  sdt == null ) {
+                    //System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero rcvr INSTALLED_DATE");
+                   continue;
+               }
+               sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
+               String odt = null;
+               indate = formatter.parse(sdt); 
+
+               Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
+               if (null == test) { 
+                   outdate = new Date();  // ie now
+               } 
+               else { 
+                  odt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE)+"00";
+                  //System.err.println("        odt  string = "+odt); // CORRECT with time of day
+                  outdate = formatter.parse(odt); 
+               }
+               // these value are CORRECT and include hours minutes and seconds:
+               //System.err.println("   receiver session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
+               startDates.add(indate);
+               stopDates.add(outdate) ;
+               rcvstartDates.add(indate);
+               if (null!=indate && null!=outdate && indate.after(outdate)) {
+                    System.err.println("   GSAC DB values ERROR:  Dates of receiver session (station "+gsacResource.getId()+") are reversed: begin time: "+ indate +"  end time: "+ outdate);
+                    continue;
+                 }
+               ni+=1;
+            } // end while 
+        } finally {
+            getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+
+        //  FIX LOOK finish   error check: if found no ant or rcv session times: fff
+        // FIX LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
+        if ( rcvstartDates.size() == 0 ) { 
+              //System.err.println("      NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
+              // OK to return from this method call with empty results:
+              GnssEquipmentGroup equipmentGroup = null;
+              gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
+              return;
+        }
+        if ( antstartDates.size()==  0 ) { 
+              //System.err.println("      NO antenna sessions in GSAC database for station "+gsacResource.getId()); 
+              GnssEquipmentGroup equipmentGroup = null;
+              gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
+              return;
+        }
+
+        Collections.sort(startDates);
+        Collections.sort(stopDates);
+        
+        // make the equip sessions'  start-stop time pairs
+        Date goodstart =startDates.get(0); // the current equip session's start time
+        Date stop = null;
+        Date start = null;
+        int si=0;
+        int eqsi=1;
+        for (int ai= 1; ai<startDates.size(); ai+=1 ) {
+            // start time of the NEXT session...
+            start = startDates.get(ai);
+
+            // finish the current session...  startDates often has duplicate times
+            if ( start.after(goodstart) ) {
+                // find next available stop time after the goodstart time
+                for ( si=0; si<stopDates.size(); si+= 1) {
+                    stop  = stopDates.get(si);
+                    if (stop.after(goodstart)) {
+                       if (1==ai) {  // fix odd bug; finds two cases for first session
+                         break;
+                       }
+                       else {
+                          dateRange = new Date[] { goodstart, stop };
+                          sessionDates.add(dateRange);
+                          //System.err.println("    station "+gsacResource.getId()+"  Dates of equip session  "+eqsi+"    "+ ft.format(goodstart) +"   -   "+ ft.format(stop));
+                          eqsi+=1;
+                          break;
+                       }
+                    }
+                }
+                goodstart = start;
+            }
+            else {
+               continue; // continue to look for the next new start time > current goodstart time
+            }
+        } // end loop on start dates
+        // finish the last session times:
+        for ( si=0; si<stopDates.size(); si+= 1) {
+            stop  = stopDates.get(si);
+            if (stop.after(goodstart)) {
+               dateRange = new Date[] { goodstart, stop };
+               sessionDates.add(dateRange);
+               //System.err.println("    station "+gsacResource.getId()+"  Dates of equip session  "+eqsi+"     "+ ft.format(goodstart) +"   -   "+ ft.format(stop));
+               break;
+            }
+        }
+
+        //       iterate over the array
+        //for( date adate : antstopDates ) {
+        //    ...
+        ///}
+
+        // make equip session data objects for each equip session at this station 
+        int antsii=0;
+        for ( si=0; si<sessionDates.size(); si+= 1) {
+            //System.err.println("\n       make equip session data objects for session "+ (si+1) );
+
+            clauses = new ArrayList<Clause>();
+            // WHERE  this station is id-ed by its 4 char id:
+            clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId())); 
+            // and where the antenna session has the station id number
+            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
+            Date astartDate= (sessionDates.get(si))[0];
+            Date astopDate= (sessionDates.get(si))[1];
+            dateRange = sessionDates.get(si);
+            // get info for whichever one antenna session spans this equipment session
+            clauses.add(Clause.le(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE, astartDate));
+            // adding this next clause this fails sql select  when ANTENNA_REMOVED_DATE is a valid 00 entry = "now" ie not removed; code below handles this case.
+            //clauses.add(Clause.ge(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE, astopDate));
+            // removing this clause finds many antenna sessions;
+            cols=SqlUtil.comma(new String[]{
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_SESSION_ID ,
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE ,
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE ,
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID ,
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_SERIAL_NUMBER , // not a number; is a varchar (20) String
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_UP ,
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_NORTH ,
+                 Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_EAST ,
+                 Tables.ANTENNA_SESSION.COL_RADOME_TYPE_ID 
+             });
+            // FROM these tables
+            tables = new ArrayList<String>();
+            tables.add(Tables.STATION.NAME);
+            tables.add(Tables.ANTENNA_SESSION.NAME);
+            // compose the db query string using GSAC code:
+            //                               select what    from      where
+            statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), (String) null, -1);
+            //System.err.println("   mysql: "+statement);
+            // for the time range constraint, should get only one row!
+            /*
+            desc antenna_session;
+            +------------------------+-----------------+------+-----+---------+----------------+
+            | Field                  | Type            | Null | Key | Default | Extra          |
+            +------------------------+-----------------+------+-----+---------+----------------+
+            | antenna_session_id     | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+            | station_id             | int(6) unsigned | NO   |     | NULL    |                |
+            | antenna_type_id        | int(5) unsigned | NO   |     | NULL    |                |
+            | antenna_serial_number  | varchar(20)     | NO   |     | NULL    |                |
+            | antenna_installed_date | datetime        | NO   |     | NULL    |                |
+            | antenna_removed_date   | datetime        | NO   |     | NULL    |                |
+            | antenna_offset_up      | float           | NO   |     | NULL    |                |
+            | antenna_offset_north   | float           | NO   |     | NULL    |                |
+            | antenna_offset_east    | float           | NO   |     | NULL    |                |
+            | antenna_HtCod          | char(5)         | YES  |     | NULL    |                |
+            | radome_type_id         | int(5) unsigned | YES  |     | NULL    |                |
+            +------------------------+-----------------+------+-----+---------+----------------+
+            */
+            try {
+                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+                while ((results = iter.getNext()) != null) {
+                           //System.err.println("         Dates of equip session  "+(si+1)+"     "+ ft.format(astartDate) +"   -   "+ ft.format(astopDate));
+
+                           // code to get CORRECT times with hours mins and seconds:
+                           String sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE)+"00";
+                           String odt = null;
+                           //System.err.println("   sdt antstart string = "+sdt); // CORRECT with time of day
+                           Date antstart = formatter.parse(sdt);
+                           Date antstop = new Date();  // ie now
+
+                           Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
+                           if (null == test) {
+                              ;
+                           }
+                           else {
+                              odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
+                              //System.err.println("        odt  string = "+odt); // CORRECT with time of day
+                              antstop = formatter.parse(odt);
+                           }
+                           // these value are CORRECT and include hours minutes and seconds:
+                           //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
+                           //System.err.println("   antenna session times = "+ ft.format(antstart) +"   | "+ft.format(antstop) );
+
+                            //if (ad1 <= astart                                && ad2 >= astopdate ) is ok
+                            if  (antstart.compareTo(astartDate) <= 0 && antstop.compareTo(astopDate) >= 0) {
+                                ;
+                            }
+                            else { //System.err.println("           skip it");
+                                continue;
+                            }
+                            //System.err.println("         GOOD     anten session  "+(antsii+1)+"     "+ ft.format(antstart) +"   -   "+ ft.format(antstop));
+
+                            antsii+=1;
+                            antennaid = results.getInt(Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID);
+                            antenna_serial = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_SERIAL_NUMBER);
+                            zoffset = results.getDouble(Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_UP);
+                            dnorth = results.getFloat(Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_NORTH);
+                            deast= results.getFloat(Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_EAST);
+                            radomeid = results.getInt(Tables.ANTENNA_SESSION.COL_RADOME_TYPE_ID);
+                            //sampInt= results.getFloat(Tables.ANTENNA_SESSION.COL_SAMPLE_INTERVAL);
+                            //satellitesys = results.getString(Tables.ANTENNA_SESSION.COL_SATELLITE_SYSTEM);
+
+                            // get value of ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME
+                            anttype = null;
+                            clauses = new ArrayList<Clause>();
+                            //  WHERE  this antenna type id key value is equal to
+                            clauses.add(Clause.eq(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID, antennaid) );
+                            cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
+                            tables = new ArrayList<String>();
+                            tables.add(Tables.ANTENNA_TYPE.NAME);
+                            statement =
+                               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+                            try {
+                               SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
+                               while ((results = iter2.getNext()) != null) {
+                                   anttype= results.getString(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME);
+                                   //System.err.println("    SiteManager: read equip got antenna type "+ anttype );
+                                   //break; // one row only
+                               }
+                            } finally {
+                                   ; //getDatabaseManager().closeAndReleaseConnection(statement);
+                            }
+
+                            // get value of RADOME_TYPE.COL_RADOME_TYPE_NAME
+                            ArrayList<String> avalues = new ArrayList<String>();
+                            clauses =  new ArrayList<Clause>();
+                            tables =   new ArrayList<String>();
+                            clauses.add(Clause.eq(Tables.RADOME_TYPE.COL_RADOME_TYPE_ID, radomeid) );
+                            cols=SqlUtil.comma(new String[]{Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME});
+                            tables.add(Tables.RADOME_TYPE.NAME);
+                            statement =
+                               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+                            try {
+                               SqlUtil.Iterator iter3 = getDatabaseManager().getIterator(statement);
+                               while ((results = iter3.getNext()) != null) {
+                                   radometype= results.getString(Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME);
+                                   if (radometype.equals("unkn"))
+                                      { radometype=" "; }
+                                   //System.err.println("    SiteManager: read equip got radome type "+ radometype);
+                                   //break;
+                               }
+                            } finally {
+                                   getDatabaseManager().closeAndReleaseConnection(statement);
+                            }
+                       //System.err.println("     ant type id"+antennaid+" ant sn "+antenna_serial+"  delta z nor east "+zoffset+" "+dnorth+" "+deast+"  radome id "+radomeid+"  antenna type "+ anttype);
+                       }
+               } finally {
+                     getDatabaseManager().closeAndReleaseConnection(statement);
+               }
+
+
+
+            // get receiver metadata: BBB
+            /* mysql> desc receiver_session;
+            +------------------------------+-----------------+------+-----+---------+----------------+
+            | Field                        | Type            | Null | Key | Default | Extra          |
+            +------------------------------+-----------------+------+-----+---------+----------------+
+            | receiver_session_id          | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+            | station_id                   | int(6) unsigned | NO   |     | NULL    |                |
+            | receiver_type_id             | int(5) unsigned | NO   |     | NULL    |                |
+            | receiver_firmware_version_id | int(5) unsigned | NO   |     | NULL    |                |
+            | receiver_serial_number       | varchar(20)     | NO   |     | NULL    |                |
+            | receiver_installed_date      | datetime        | NO   |     | NULL    |                |
+            | receiver_removed_date        | datetime        | YES  |     | NULL    |                |
+            | receiver_sample_interval     | float           | YES  |     | NULL    |                |
+            | satellite_system             | varchar(60)     | YES  |     | NULL    |                |
+            +------------------------------+-----------------+------+-----+---------+----------------+
+            */
+            clauses = new ArrayList<Clause>();
+            // WHERE  this station is id-ed by its 4 char id:
+            clauses.add(Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId())); 
+            // and where the session has the station id number
+            clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.STATION.COL_STATION_ID)); 
+            astartDate= (sessionDates.get(si))[0];
+            astopDate= (sessionDates.get(si))[1];
+            dateRange = sessionDates.get(si);
+            // get info for whichever one antenna session spans this equipment session
+            clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, astartDate));
+            // adding this next clause this fails sql select  when RECEIVER_REMOVED_DATE is a valid 00 entry = "now" ie not removed; code below handles this case.
+            //clauses.add(Clause.ge(Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE, astopDate));
+            // removing this clause finds many antenna sessions;
+            cols=SqlUtil.comma(new String[]{
+                 Tables.RECEIVER_SESSION.COL_RECEIVER_SESSION_ID ,
+                 Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE ,
+                 Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE ,
+                 Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID ,
+             Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID , 
+             Tables.RECEIVER_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID , 
+             Tables.RECEIVER_SESSION.COL_RECEIVER_SERIAL_NUMBER,   
+             Tables.RECEIVER_SESSION.COL_SATELLITE_SYSTEM,       
+             Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL       
+             });
+            // FROM these tables
+            tables = new ArrayList<String>();
+            tables.add(Tables.STATION.NAME);
+            tables.add(Tables.RECEIVER_SESSION.NAME);
+            // compose the db query string using GSAC code:
+            //                               select what    from      where
+            statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), (String) null, -1);
+            //System.err.println("   mysql: "+statement);
+            try {
+                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+                while ((results = iter.getNext()) != null) {
+                           //System.err.println("         Dates of equip session  "+(si+1)+"     "+ ft.format(astartDate) +"   -   "+ ft.format(astopDate));
+
+                           // code to get CORRECT times with hours mins and seconds:
+                           String sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE)+"00";
+                           String odt = null;
+                           //System.err.println("   sdt antstart string = "+sdt); // CORRECT with time of day
+                           Date antstart = formatter.parse(sdt);
+                           Date antstop = new Date();  // ie now
+
+                           Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
+                           if (null == test) {
+                              ;
+                           }
+                           else {
+                              odt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE)+"00";
+                              //System.err.println("        odt  string = "+odt); // CORRECT with time of day
+                              antstop = formatter.parse(odt);
+                           }
+                           // these value are CORRECT and include hours minutes and seconds:
+                           //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
+                           //System.err.println("   antenna session times = "+ ft.format(antstart) +"   | "+ft.format(antstop) );
+
+                            //if (ad1 <= astart                                && ad2 >= astopdate ) is ok
+                            if  (antstart.compareTo(astartDate) <= 0 && antstop.compareTo(astopDate) >= 0) {
+                                ;
+                            }
+                            else { //System.err.println("           skip it");
+                                continue;
+                            }
+                            //System.err.println("         GOOD     recvr session  "+(antsii+1)+"     "+ ft.format(antstart) +"   -   "+ ft.format(antstop));
+
+                            antsii+=1;
+                            receiverid = results.getInt          (Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID);
+                            receiver_firmware_id = results.getInt(Tables.RECEIVER_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID);
+                            receiver_serial = results.getString  (Tables.RECEIVER_SESSION.COL_RECEIVER_SERIAL_NUMBER);
+                            satellitesys = results.getString     (Tables.RECEIVER_SESSION.COL_SATELLITE_SYSTEM);
+
+                            // get value of RECEIVER_TYPE_NAME
+                            ArrayList<String> avalues =  new ArrayList<String>();
+                            clauses =  new ArrayList<Clause>();
+                            tables =   new ArrayList<String>();
+                            clauses.add(Clause.eq(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID, receiverid) );
+                            cols=SqlUtil.comma(new String[]{Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME});
+                            tables.add(Tables.RECEIVER_TYPE.NAME);
+                            statement =
+                               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+                            try {
+                               SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
+                               while ((results = iter2.getNext()) != null) {
+                                   rcvrtype= results.getString(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
+                                   //System.err.println("    SiteManager: read equip got RECEIVER type "+ rcvrtype );
+                                   //break;
+                               }
+                            } finally {
+                                   getDatabaseManager().closeAndReleaseConnection(statement);
+                            }
+
+                            // get value of RECEIVER_FIRMWARE VERSION and SwVer aaa
+                            avalues =  new ArrayList<String>();
+                            clauses =  new ArrayList<Clause>();
+                            tables =   new ArrayList<String>();
+                            clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_ID, receiver_firmware_id) );
+                            cols=SqlUtil.comma(new String[]{Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME,
+                                                            Tables.RECEIVER_FIRMWARE_VERSION.COL_SWVER});
+                            tables.add(Tables.RECEIVER_FIRMWARE_VERSION.NAME);
+                            statement =
+                               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+                            try {
+                               SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
+                               while ((results = iter2.getNext()) != null) {
+                                   rcvrfw = results.getString(Tables.RECEIVER_FIRMWARE_VERSION.COL_RECEIVER_FIRMWARE_VERSION_NAME);
+                                   swver = results.getString(Tables.RECEIVER_FIRMWARE_VERSION.COL_SWVER);
+                                   //System.err.println("    SiteManager: read equip got RECEIVER FIRMWARE_VERSION "+ rcvrfw );
+                                   //break;
+                               }
+                            } finally {
+                                   getDatabaseManager().closeAndReleaseConnection(statement);
+                            } // end get value of RECEIVER_FIRMWARE VERSION and SwVer
+
+                        //System.err.println("      rcvr type"+               rcvrtype+"  rcvr sn "+        receiver_serial+ " receiverFirmware "+       rcvrfw );
+                       }
+               } finally {
+                     getDatabaseManager().closeAndReleaseConnection(statement);
+               }
+
+               // have gotten all equip session info for this station:
+               //System.err.println("    dateRange "+dateRange[0]+"-"+dateRange[1]+"  ant type "+anttype+" ant sn "+antenna_serial+"  delta z nor east "+zoffset+" "+dnorth+" "+deast+"  radome type "+radometype+"  antenna type "+ anttype);
+               //System.err.println("      rcvr type"+               rcvrtype+"  rcvr sn "+        receiver_serial+ " receiverFirmware "+       rcvrfw );
+
+            // construct a "GnssEquipment" object with these values:
+            //  public GnssEquipment(Date[] dateRange, String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
+            GnssEquipment equipment =
+                new GnssEquipment( dateRange, anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
+
+            equipment.setSwVer(swver);
+            equipment.setSampleInterval(sampInt);
+            equipmentList.add(equipment);
+
+            //equip_sessions.put(dateRange[0], equipment);
+
+            equipment.setSatelliteSystem(satellitesys);  
+
+        } // end loop on all equip sessions
 
         equipmentList = GnssEquipment.sort(equipmentList);
         GnssEquipmentGroup equipmentGroup = null;
@@ -1250,7 +1597,10 @@ public class PrototypeSiteManager extends SiteManager {
 
     /**
      * Convert a db datetime field to a 'Date' object.
-     * NOTE this uses the java sql package ResultSet class and ONLY returns dates with NO time of day allowed.
+     * NOTE this uses the java sql package ResultSet class and ONLY returns calendar date -- with NO time of day allowed.
+
+            could use results.getTime()
+            could use results.getTimeSTAmp() both in java sql
      *
      * @param results a row from a qb query which has a datetime field
      * @param column a string name for a db field with  for example a MySQL 'datetime' object,
