@@ -34,6 +34,8 @@ import java.io.*;
 import java.text.DecimalFormat;
 
 import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+
 
 import java.util.Date;
 
@@ -340,8 +342,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
 
-    // FIX bug formatDateTime gives result hours later than input date-time
-
     /**
      * _more_
      *
@@ -352,8 +352,6 @@ public abstract class GsacOutputHandler implements GsacConstants {
     public String formatDateTime(Date date) {
         return formatDateTime(date, null);
     }
-
-
     /**
      * _more_
      *
@@ -362,13 +360,24 @@ public abstract class GsacOutputHandler implements GsacConstants {
      *
      * @return _more_
      */
+
     public String formatDateTime(Date date, String dflt) {
         if (date == null) {
             return dflt;
         }
+        //String stringdate= date.toString();
+        //System.err.println("  formatDateTime: date time string is "+stringdate);  
+        // gives  formatDateTime: date time string is Wed Apr 22 09:00:00 MDT 2009
+        //return stringdate;
+          
+        /* BUG this origianl code gives date and time in some  time zone, NOT what is supplied!
         synchronized (dateTimeSdf) {
             return dateTimeSdf.format(date);
         }
+        */
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return formatter.format(date);
     }
 
 
