@@ -242,6 +242,9 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
         int session =0;
         Date block_startDate=null;
         Date block_stopDate=null;
+        Date laststartDate=null;
+        Date laststopDate=null;
+        int cnt=1;
 
         /* for each one, get out its 'GnssEquipment' object and do ... */
         for (GsacMetadata metadata : equipmentMetadata) {
@@ -268,6 +271,12 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             Date stopDate=null;
             startDate = equipment.getFromDate();
             stopDate = equipment.getToDate();
+            cnt=+1;
+            if (1==cnt) {
+               laststartDate  = startDate; 
+               laststopDate = stopDate;
+
+               }
 
             if (equipment.hasReceiver()) {
                 rectype=equipment.getReceiver() ;
@@ -307,22 +316,27 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
             // trap and log bad cases, or print good line if possible:
             if ( startDate==null && stopDate==null) { 
-              pw.append("* Error in supplied information. In next line, representing one database record, the start time and stop time are both undefined. \n");
+              pw.append("*               Error in supplied information. In next line, representing one database record, the start time and stop time are both undefined. \n");
               pw.append("*");
               goterror =1;
             }
             else if ( startDate==null ) { 
-              pw.append("* Error in supplied information. In next line, representing one database record, the start time is undefined. \n");
+              pw.append("*               Error in supplied information. In next line, representing one database record, the start time is undefined. \n");
+              pw.append("*");
+              goterror =1;
+            }
+            else if ( startDate!=null && stopDate!=null  && startDate.compareTo( laststartDate) > 0 && startDate.compareTo( laststopDate) < 0) {  // start  is inside previous site visitt
+              pw.append("*               Error in supplied information. In next line, representing one equipment session, the start time is inside the previous session's time range. \n");
               pw.append("*");
               goterror =1;
             }
             else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) == 0) {  // start time equals stop time
-              pw.append("* Error in supplied information. In next line, representing one database record, the start time equals stop time. Zero duration session. \n");
+              pw.append("*               Error in supplied information. In next line, representing one database record, the start time equals stop time. Zero duration session. \n");
               pw.append("*");
               goterror =1;
             }
             else if ( startDate!=null && stopDate!=null  && startDate.compareTo( stopDate) > 0) {  // start time is later than stop time
-              pw.append("* Error in supplied information. In next line, representing one database record, the start time is after stop time \n");
+              pw.append("*              Error in supplied information. In next line, representing one database record, the start time is after stop time \n");
               pw.append("*");
               goterror =1;
             }
@@ -407,6 +421,8 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
                    vante = ante ;
                    vantht = antht ;
                    }
+            laststartDate=startDate;
+            laststopDate=stopDate;
 
         } // end for loop on GSAC equipment items , NOT gamit station.info sessions
 

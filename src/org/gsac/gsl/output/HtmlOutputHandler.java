@@ -2277,9 +2277,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
             // use either this label:
-            //labels.add(msg("Location") + " (latitude, longitude, ellipsoid height)");
-            // OR this:
+            //labels.add(msg("Location") + " (latitude, longitude, elevation)");
+            // OR this (preferred):
             labels.add(msg("Location") + " (latitude, longitude, ellips. hgt.)");
+            // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 10 meters or more. A very big deal to our users.
 
             sortValues.add("");
             if (doDateRange) {
@@ -2335,20 +2336,24 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             sb.append("</tr></table></td>\n");
 
-            // show Site Code
+            // show Site Code, the 4 char ID
+            // FIX may be bad values for special letters in German Swedish Icelandic, etc.
             sb.append(HtmlUtil.col(href));
 
-            // show Name
+            // show full station name
+            // FIX gives bad values for special letters in German Swedish Icelandic, etc.
             sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ", clickEvent));
+            // FIX the next shows the longName is a bad value:
             //System.err.println("     HtmlOutputHandler.java getLongName: " + resource.getLongName() );
+            //                         HtmlOutputHandler.java getLongName: InntakshÃºs KÃ¡rahnjÃºkavirkjunar viÃ° HÃ¡lslÃ³n
+            // OK, so where is longName set?
 
-            //show Type of site
+            //show Type of site, OK since values are supplied by prototype GSAC database in most cases, with plain latin letters.
             if (resource.getType() != null) {
                 sb.append(HtmlUtil.col(resource.getType().getName(), clickEvent));
             } else {
                 sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
-
 
             sb.append("<td " + clickEvent + ">");
 
