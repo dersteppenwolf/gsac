@@ -70,8 +70,8 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /** date formatter without the "T" found in other GSAC code */
-    /* somehow the Z here results in a value like "2001-07-11 00:00:00 -0600" with no Z */
-    private SimpleDateFormat dateTimeFormatnoT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    /* BUG: somehow the Z time here results in a value like "2001-07-11 00:00:00 -0600" with no Z and shifted to some other time zone/
+    //private SimpleDateFormat dateTimeFormatnoT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.#####");
@@ -325,10 +325,12 @@ if (param.equals(ARG_SITE_TYPE)) {
      * @return _more_
      */
     private String myFormatDateTime(Date date) {
-        if (date == null) { return ""; }
-        synchronized (dateTimeFormatnoT) {
+        if (date == null) { return " "; }
+        /* orig code shifts to bad time zone: synchronized (dateTimeFormatnoT) {
             return dateTimeFormatnoT.format(date);
-        }
+        }*/
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
     }
 
     /**
