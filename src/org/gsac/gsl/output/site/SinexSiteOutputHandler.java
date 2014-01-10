@@ -711,9 +711,11 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      */
     private String myFormatDateTime(Date date) {
         if (date == null) { return ""; }
-        synchronized (dateTimeFormat) {
+        /*synchronized (dateTimeFormat) {
             return dateTimeFormat.format(date);
-        }
+        }*/
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
     }
 
     /**
@@ -725,9 +727,11 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      */
     private String myFormatDate(Date date) {
         if (date == null) { return ""; }
-        synchronized (dateFormat) {
+        /*synchronized (dateFormat) {
             return dateFormat.format(date);
-        }
+         */}
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
     }
 
 

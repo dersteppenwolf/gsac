@@ -362,9 +362,12 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     private String myFormatDateTime(Date date) {
         if (date == null) { return ""; }
-        synchronized (dateTimeFormatnoT) {
+        /*synchronized (dateTimeFormatnoT) {
             return dateTimeFormatnoT.format(date);
-        }
+        } */
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
+
     }
 
     /**
