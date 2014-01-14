@@ -37,6 +37,7 @@
         <property name="failonerror" value="true"/>
         <property name="fork" value="true"/>
         <property name="maxmemory" value="512m"/>
+        <property name="fileencoding" value="UTF-8" />
 
         <!-- Java source version -->
         <property name="srcversion" value="1.6"/>
@@ -60,6 +61,7 @@
             failonerror="${failonerror}" 
             srcdir="${srcdir}"
             fork="${fork}"
+            encoding="${fileencoding}"
             memoryMaximumSize="${maxmemory}"
         >
             <include name="org/gsac/client/**/*.java"/>
