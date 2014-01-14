@@ -311,7 +311,7 @@ public class GsacRepository implements GsacConstants {
         }
 
         if (catalinaBase != null) {
-            System.err.println("GSAC: catalina base:" + catalinaBase);
+            //System.err.println("GSAC: catalina base:" + catalinaBase);
             //Use the  url base as the tail of the local tomcat properties file
             //in case we have different repositories running under the same tomcat
             File[] catalinaConfFiles = { new File(catalinaBase
@@ -2147,7 +2147,7 @@ public class GsacRepository implements GsacConstants {
         // add thing to get browser to show utf-8 characters ok:
         htmlHeader = htmlHeader.replaceFirst("<head>", "<head><meta charset='utf-8'>");
 
-        System.err.println(" html header "+htmlHeader);
+        //System.err.println(" html header "+htmlHeader);
         return htmlHeader;
     }
 
