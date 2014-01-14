@@ -2143,7 +2143,11 @@ public class GsacRepository implements GsacConstants {
         if (request.isMobile()) {
             return mobileHeader;
         }
+  
+        // add thing to get browser to show utf-8 characters ok:
+        htmlHeader = htmlHeader.replaceFirst("<head>", "<head><meta charset='utf-8'>");
 
+        System.err.println(" html header "+htmlHeader);
         return htmlHeader;
     }
 
