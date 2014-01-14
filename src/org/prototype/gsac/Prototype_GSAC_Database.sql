@@ -19,7 +19,7 @@
 -- Current Database: `Prototype_GSAC_Database`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE `Prototype_GSAC_Database` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 USE `Prototype_GSAC_Database`;
 
@@ -485,4 +485,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-12-16 15:42:19
+-- Dump completed on 2014-01-14 15:42:19
