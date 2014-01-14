@@ -584,7 +584,6 @@ public class PrototypeSiteManager extends SiteManager {
      * @return the site
      *
      * @throws Exception on badness
-
      */
     @Override
     public GsacResource makeResource(ResultSet results) 
@@ -592,21 +591,35 @@ public class PrototypeSiteManager extends SiteManager {
         // depends on 'station' table in the database
 
         // access values by name of field in database row: 
-        String  fourCharId   = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
-        String  staname   =    results.getString(Tables.STATION.COL_STATION_NAME);
-        double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
-        double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
-        double ellipsoid_hgt =     results.getDouble(Tables.STATION.COL_ELLIPSOIDAL_HEIGHT);
-        int station_style_id  =results.getInt(Tables.STATION.COL_STATION_STYLE_ID);
-        int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
-        int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
-        int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
+
+        // to fix busted jdbc reading of names in Icelandic characters which are correct in the mysql db:
+        // no workee: String  staname   =  results.getString(Tables.STATION.COL_STATION_NAME);
+        // to force as UTF-8 in java:          new String( results.getBytes(), "UTF-8"); // 
+        String staname = new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
+        //System.err.println("   station name from  getBytes  " +staname);
+        //String iersdomes =   new String( results.getBytes(Tables.STATION.COL_IERS_DOMES), "UTF-8");//results.getString(Tables.STATION.COL_IERS_DOMES);
+        //String station_photo_URL = new String( results.getBytes(Tables.STATION.COL_STATION_PHOTO_URL), "UTF-8");//results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
+        //String networks  =   new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");//results.getString(Tables.STATION.COL_NETWORKS);
+
+        //String city      =   new String( results.getBytes(Tables.STATION.COL_CITY), "UTF-8");//results.getString(Tables.STATION.COL_CITY);
+
         String city      =     results.getString(Tables.STATION.COL_CITY);
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
+        String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
+
+
+        String fourCharId    =  results.getString(Tables.STATION.COL_CODE_4CHAR_ID);  // not a var char so does not work 
+
+        double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
+        double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
+        double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_ELLIPSOIDAL_HEIGHT);
+        int station_style_id = results.getInt(Tables.STATION.COL_STATION_STYLE_ID);
+        int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
+        int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); // or getLong
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
-        String networks = results.getString(Tables.STATION.COL_NETWORKS);
+        int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
          
         /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
@@ -667,7 +680,7 @@ public class PrototypeSiteManager extends SiteManager {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            // process each line in results of db query  
            while ((qresults = iter.getNext()) != null) {
-               country = qresults.getString(Tables.COUNTRY.COL_COUNTRY_NAME);
+               country = new String( qresults.getBytes(Tables.COUNTRY.COL_COUNTRY_NAME), "UTF-8"); //qresults.getString(Tables.COUNTRY.COL_COUNTRY_NAME);
                // you want Only read the first row of db query results returned
                break;
            }
@@ -690,13 +703,14 @@ public class PrototypeSiteManager extends SiteManager {
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
-               state = qresults.getString(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
+                     System.err.println("   get state name");
+               state = new String( qresults.getBytes(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME), "UTF-8"); // qresults.getString(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
+                     System.err.println("   did get state name"+state);
                break;
            }
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-            //System.err.println("   SiteManager: province is " +state);
 
         // add all three aboce items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
@@ -716,8 +730,7 @@ public class PrototypeSiteManager extends SiteManager {
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
-               //state = qresults.getString(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
-               String agency = qresults.getString( Tables.AGENCY.COL_AGENCY_NAME);
+               String agency = new String( qresults.getBytes(Tables.AGENCY.COL_AGENCY_NAME), "UTF-8"); // qresults.getString( Tables.AGENCY.COL_AGENCY_NAME);
                addPropertyMetadata( site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "Agency", agency);    
                break;
                }
@@ -818,7 +831,7 @@ public class PrototypeSiteManager extends SiteManager {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
-                gsacResource.setLongName( results.getString(Tables.STATION.COL_STATION_NAME) );
+                gsacResource.setLongName( new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8") ); /*results.getString(Tables.STATION.COL_STATION_NAME)*/  
 
                 // get values from the dq query row returned, and then et for x,y,z, the SITE_TRF_X  etc.
                 // Note if you add similar but new and different parameters to your data base, you also need to
@@ -845,9 +858,6 @@ public class PrototypeSiteManager extends SiteManager {
                 // note an empty string idn="" will NOT make a line in the web page output, so use " " so you know there is missing information about iers domes value.
                 // add value to results from GSAC searches:
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
-
-                //  this value handeled elsewhere in this class:
-                //String station_photo_url= results.getString( Tables.STATION.COL_STATION_PHOTO_URL);
 
                 // only red the first row of db query results returned
                 break;
@@ -976,12 +986,12 @@ public class PrototypeSiteManager extends SiteManager {
 
                // trap missing installed date
                if  (  sdt == null ) {
-                    //System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
+                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
                    continue;
                }
                sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
                String odt = null;
-               indate = formatter.parse(sdt);  //  DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  
+               indate = formatter.parse(sdt); 
 
                Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
                if (null == test) { 
@@ -1027,7 +1037,33 @@ public class PrototypeSiteManager extends SiteManager {
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
+               /*
+               String sdt=null;
+               System.err.println("   get receiver indate string  "); //bbb
+               try {
+                   sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
+                } catch (Exception exc) {
+                    //System.err.println("   BAD rcv results.getString  "); 
+                    continue;  //throw new RuntimeException(exc);
+                }
+               System.err.println("              indate string = "+sdt); // CORRECT with time of day
+
+               // String sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE);
+               //System.err.println("   sdt indate string = "+sdt); // CORRECT with time of day
+               sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
+               indate = formatter.parse(sdt); 
+               Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
+               if (null == test) { 
+                   outdate = new Date();  // ie now
+               } 
+               else { 
+                  String odt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE)+"00";
+                  //System.err.println("        odt  string = "+odt); // CORRECT with time of day
+                  outdate = formatter.parse(odt); 
+               }
+               */
                // code to get CORRECT times with hours mins and seconds:
+
                String sdt=null;
                //System.err.println("   get rcvr  sdt indate string  "); //bbb
                try {
@@ -1040,7 +1076,7 @@ public class PrototypeSiteManager extends SiteManager {
 
                // trap missing installed date
                if  (  sdt == null ) {
-                    //System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero rcvr INSTALLED_DATE");
+                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero rcvr INSTALLED_DATE");
                    continue;
                }
                sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
@@ -1057,6 +1093,8 @@ public class PrototypeSiteManager extends SiteManager {
                   outdate = formatter.parse(odt); 
                }
                // these value are CORRECT and include hours minutes and seconds:
+               //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
+               //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
                //System.err.println("   receiver session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
                startDates.add(indate);
                stopDates.add(outdate) ;
@@ -1074,14 +1112,14 @@ public class PrototypeSiteManager extends SiteManager {
         //  FIX LOOK finish   error check: if found no ant or rcv session times: fff
         // FIX LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
         if ( rcvstartDates.size() == 0 ) { 
-              //System.err.println("      NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
+              System.err.println("  NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
               // OK to return from this method call with empty results:
               GnssEquipmentGroup equipmentGroup = null;
               gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
               return;
         }
         if ( antstartDates.size()==  0 ) { 
-              //System.err.println("      NO antenna sessions in GSAC database for station "+gsacResource.getId()); 
+              System.err.println("  NO antenna sessions in GSAC database for station "+gsacResource.getId()); 
               GnssEquipmentGroup equipmentGroup = null;
               gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
               return;
@@ -1135,12 +1173,8 @@ public class PrototypeSiteManager extends SiteManager {
             }
         }
 
-        //       iterate over the array
-        //for( date adate : antstopDates ) {
-        //    ...
-        ///}
 
-        // make equip session data objects for each equip session at this station 
+        // make equip sessions' metadata data objects for each equip session at this station 
         int antsii=0;
         for ( si=0; si<sessionDates.size(); si+= 1) {
             //System.err.println("\n       make equip session data objects for session "+ (si+1) );
@@ -1430,6 +1464,8 @@ public class PrototypeSiteManager extends SiteManager {
                //System.err.println("    dateRange "+dateRange[0]+"-"+dateRange[1]+"  ant type "+anttype+" ant sn "+antenna_serial+"  delta z nor east "+zoffset+" "+dnorth+" "+deast+"  radome type "+radometype+"  antenna type "+ anttype);
                //System.err.println("      rcvr type"+               rcvrtype+"  rcvr sn "+        receiver_serial+ " receiverFirmware "+       rcvrfw );
 
+
+            // CCCC
             // construct a "GnssEquipment" object with these values:
             //  public GnssEquipment(Date[] dateRange, String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
             GnssEquipment equipment =
@@ -1456,7 +1492,8 @@ public class PrototypeSiteManager extends SiteManager {
             equipmentGroup.add(an_equipment);
         }
 
-    }  // end of read equip metadata
+
+    }  // end of read equip metadata ()
 
 
 
