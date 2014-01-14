@@ -198,6 +198,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         String now;
         now = getNonNullString(myFormatDateTime( new Date()));
         now = getSinexTimeFormat(now, new Date());
+        // need this at top of page <meta charset='utf-8'>
         pw.append(  "%=SNX 2.01 " + getRepository().getRepositoryName() + " "+ now + "\n"); 
         pw.append(  "*-------------------------------------------------------------------------------\n");
     }
@@ -220,7 +221,16 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         pw.append(" "+ setStringLength(site.getShortName(),4) +"  A");
         pw.append(" "+ setStringLength( (getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") ),9) +" P");
-        pw.append(" "+ setStringLengthRight(site.getLongName(),22));
+
+        /*
+        from GsacSite site
+        String id = site.getShortName();
+        String name = site.getLongName();
+        */
+        String name = site.getLongName();
+        //System.out.println("  sinex staname =" +name);
+        // shows correct Icelandic characters
+        pw.append(" "+ setStringLengthRight(name,22));
 
         EarthLocation el = site.getEarthLocation();
         String latitude = formatLatitudeDMS (el.getLatitude() ) ;
@@ -729,7 +739,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         if (date == null) { return ""; }
         /*synchronized (dateFormat) {
             return dateFormat.format(date);
-         */}
+        } 
+          */
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
     }
