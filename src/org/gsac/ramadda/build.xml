@@ -21,7 +21,7 @@
         <property name="javac.failonerror" value="true"/>
         <property name="javac.fork" value="true"/>
         <property name="javac.maxmemory" value="512m"/>
-
+        <property name="fileencoding" value="UTF-8" />
 
     </target>
 
@@ -44,6 +44,7 @@
             failonerror="${javac.failonerror}"
             fork="${javac.fork}"
             memoryMaximumSize="${javac.maxmemory}"
+            encoding="${fileencoding}"
            target="1.5"
         >
         <include name="org/gsac/ramadda/**/*.java"/>
