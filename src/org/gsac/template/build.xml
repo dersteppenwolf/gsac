@@ -70,6 +70,8 @@
         <property name="javac.failonerror" value="true"/>
         <property name="javac.fork" value="true"/>
         <property name="javac.maxmemory" value="512m"/>
+        <property name="fileencoding" value="UTF-8" />
+
     </target>
 
 
@@ -143,6 +145,7 @@
             srcdir="${srcdir}"
             failonerror="${javac.failonerror}"
             fork="${javac.fork}"
+            encoding="${fileencoding}"
             memoryMaximumSize="${javac.maxmemory}"
             target="1.5">
 
