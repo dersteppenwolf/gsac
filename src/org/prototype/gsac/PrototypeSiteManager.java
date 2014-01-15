@@ -1000,16 +1000,28 @@ public class PrototypeSiteManager extends SiteManager {
                     System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
                    continue;
                }
-               sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
-               String odt = null;
+               // if returned time has this precision: 2008-11-04 20:00:00.0
+               if (sdt.length() == 21) {sdt = sdt +"00"; } // extend .0 tenth seconds to .000 ms value
+               else if (sdt.length() == 19) {sdt = sdt +".000"; } //  if got like 2008-11-04 20:00:00
+               else if (sdt.length() == 16) {sdt = sdt +":00.000"; } //  if got like 2008-11-04 20:00
                indate = formatter.parse(sdt); 
 
+               String odt=null;
+               //String outdate;
+               try {
+                       odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
+               } catch (Exception exc) {
+                        continue;  //throw new RuntimeException(exc);
+               }
                Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
                if (null == test) { 
                    outdate = new Date();  // ie now
                } 
                else { 
-                  odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
+                  //odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
+                  if (odt.length() == 21) {odt = odt +"00"; } // extend .0 tenth seconds to .000 ms value
+                  else if (odt.length() == 19) {odt = odt +".000"; } //  if got like 2008-11-04 20:00:00
+                  else if (odt.length() == 16) {odt = odt +":00.000"; } //  if got like 2008-11-04 20:00
                   //System.err.println("        odt  string = "+odt); // CORRECT with time of day
                   outdate = formatter.parse(odt); 
                }
