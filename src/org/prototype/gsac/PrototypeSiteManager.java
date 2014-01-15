@@ -709,9 +709,9 @@ public class PrototypeSiteManager extends SiteManager {
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
-                     System.err.println("   get state name");
+               //      System.err.println("   get state name");
                state = new String( qresults.getBytes(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME), "UTF-8"); // qresults.getString(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
-                     System.err.println("   did get state name"+state);
+               //      System.err.println("   did get state name"+state);
                break;
            }
             } finally {
