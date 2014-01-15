@@ -61,6 +61,7 @@ import java.text.DateFormat;
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  * For the Prototype GSAC (Geodesy Seamless Archive). 
+ * Uses GSAC prototype database tables and columns. 
  * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
  *
  * This class is one major part of making a new local GSAC; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
@@ -78,7 +79,7 @@ import java.text.DateFormat;
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
  * @author  Jeff McWhirter 2011 template without code for any particular database variable names.
- * @author  S K Wier, UNAVCO; version of 24 Oct 2013.
+ * @author  S K Wier, UNAVCO; PrototypeSiteManager 15 Jan 2014.
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -592,18 +593,23 @@ public class PrototypeSiteManager extends SiteManager {
 
         // access values by name of field in database row: 
 
-        // to fix busted jdbc reading of names in Icelandic characters which are correct in the mysql db:
-        // no workee: String  staname   =  results.getString(Tables.STATION.COL_STATION_NAME);
-        // to force as UTF-8 in java:          new String( results.getBytes(), "UTF-8"); // 
-        String staname = new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
-        //System.err.println("   station name from  getBytes  " +staname);
+        // to fix busted java-jdbc reading of names in Icelandic or other non-latin characters which are correct in the mysql db:
+        String    staname  =                  results.getString(Tables.STATION.COL_STATION_NAME);
+        if (null!=staname) {
+                 staname       =   new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
+        }
+        //System.err.println("   station " +staname);
+
+        String     city        =     results.getString(Tables.STATION.COL_CITY);
+        if (null!= city) {
+                    city =  new String( results.getBytes(Tables.STATION.COL_CITY), "UTF-8");
+        }
+        //System.err.println("   city = " +city);
+
         //String iersdomes =   new String( results.getBytes(Tables.STATION.COL_IERS_DOMES), "UTF-8");//results.getString(Tables.STATION.COL_IERS_DOMES);
         //String station_photo_URL = new String( results.getBytes(Tables.STATION.COL_STATION_PHOTO_URL), "UTF-8");//results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         //String networks  =   new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");//results.getString(Tables.STATION.COL_NETWORKS);
-
-        //String city      =   new String( results.getBytes(Tables.STATION.COL_CITY), "UTF-8");//results.getString(Tables.STATION.COL_CITY);
-
-        String city      =     results.getString(Tables.STATION.COL_CITY);
+        // these very probably are latin characters:
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
@@ -831,7 +837,12 @@ public class PrototypeSiteManager extends SiteManager {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             // process each line in results of db query  
             while ((results = iter.getNext()) != null) {
-                gsacResource.setLongName( new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8") ); /*results.getString(Tables.STATION.COL_STATION_NAME)*/  
+                String    staname  =                  results.getString(Tables.STATION.COL_STATION_NAME);
+                if (null!=staname) {
+                         staname       =   new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
+                }
+                // ok gsacResource.setLongName( new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8") ); /*results.getString(Tables.STATION.COL_STATION_NAME)*/  
+                gsacResource.setLongName( staname ); 
 
                 // get values from the dq query row returned, and then et for x,y,z, the SITE_TRF_X  etc.
                 // Note if you add similar but new and different parameters to your data base, you also need to
