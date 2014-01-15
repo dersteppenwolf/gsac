@@ -19,7 +19,7 @@
 -- Current Database: `Prototype_GSAC_Database`
 --
 
-CREATE DATABASE `Prototype_GSAC_Database` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE DATABASE  `Prototype_GSAC_Database` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 USE `Prototype_GSAC_Database`;
 
@@ -34,7 +34,7 @@ CREATE TABLE `access_permission` (
   `access_permission_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `access_permission_description` varchar(80) NOT NULL,
   PRIMARY KEY (`access_permission_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,7 +64,7 @@ CREATE TABLE `agency` (
   `prime_fax` varchar(50) DEFAULT NULL,
   `prime_email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`agency_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +96,7 @@ CREATE TABLE `antenna_session` (
   `antenna_HtCod` char(5) DEFAULT NULL,
   `radome_type_id` int(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`antenna_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -120,7 +120,7 @@ CREATE TABLE `antenna_type` (
   `antenna_type_name` varchar(15) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`antenna_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=644 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=644 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +144,7 @@ CREATE TABLE `country` (
   `country_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `country_name` varchar(70) NOT NULL,
   PRIMARY KEY (`country_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=64 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,7 +167,7 @@ CREATE TABLE `file_type` (
   `file_type_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `file_type_name` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`file_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,7 +188,7 @@ DROP TABLE IF EXISTS `gnss_data_file`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gnss_data_file` (
-  `file_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `file_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `station_id` int(6) unsigned NOT NULL,
   `file_type_id` int(3) unsigned NOT NULL,
   `data_start_time` datetime NOT NULL,
@@ -206,7 +206,7 @@ CREATE TABLE `gnss_data_file` (
   `embargo_after_date` datetime DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   PRIMARY KEY (`file_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=74919 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=74919 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE `monument_description` (
   `monument_description_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `monument_description` varchar(70) NOT NULL,
   PRIMARY KEY (`monument_description_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,7 +252,7 @@ CREATE TABLE `province_region_state` (
   `province_region_state_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `province_region_state_name` varchar(70) NOT NULL,
   PRIMARY KEY (`province_region_state_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=59 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -278,7 +278,7 @@ CREATE TABLE `radome_type` (
   `description_English` varchar(150) DEFAULT NULL,
   `description_RENAG` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`radome_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,7 +303,7 @@ CREATE TABLE `receiver_firmware_version` (
   `receiver_firmware_version_name` varchar(20) NOT NULL,
   `SwVer` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`receiver_firmware_version_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -334,7 +334,7 @@ CREATE TABLE `receiver_session` (
   `receiver_sample_interval` float DEFAULT NULL,
   `satellite_system` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`receiver_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,7 +358,7 @@ CREATE TABLE `receiver_type` (
   `receiver_type_name` varchar(20) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`receiver_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=613 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=613 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -403,7 +403,7 @@ CREATE TABLE `station` (
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
   PRIMARY KEY (`station_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -440,7 +440,7 @@ CREATE TABLE `station_session` (
   `antenna_HtCod` char(5) DEFAULT NULL,
   `satellite_system` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`station_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=150 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=150 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -463,7 +463,7 @@ CREATE TABLE `station_style` (
   `station_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `station_style_name` varchar(20) NOT NULL,
   PRIMARY KEY (`station_style_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -485,4 +485,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-01-14 15:42:19
+-- Dump completed on 2014-01-15 13:33:58
