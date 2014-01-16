@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					           December 16, 2013          
+					           January 15, 2013          
 
 					       UNAVCO, Boulder Colorado.
 
@@ -24,12 +24,13 @@ Use of this schema makes a database which GSAC can use with Prototype GSAC Java 
 simplifying GSAC installation.  
 
 This document uses MySQL forms, but essentially the same database schema can be used in Postgres and Oracle 
-to make a GSAC database.  Use the same name for tables and fields, since the GSAC classes 
+to make a GSAC database -- if you use the exact same name for tables and fields, since the GSAC classes 
 PrototypeSiteManager and PrototypeFileManager use them; those classes connect the GSAC code to the
 database. Retain the supplied column values, such as the antenna types, in the same row order.
 
 A MySQL dump file (.sql file) for this schema can be downloaded from the web site, on the installation page.
 The .sql file is also in the GSAC package from SourceForge, in gsac-code/src/org/prototype/gsac/Prototype_GSAC_Database.sql.
+The schema uses default character set of utf8, to permit non-latin characters, as in some European languages.
 
 Small distances are in meters.  Dates with times are in ISO 8601 format, in UTC time zone only. Numerical data are
 stored with numerical data types in the database, and date and time values are stored with date and time data types,
@@ -201,10 +202,12 @@ Table file_type;
 |           25 | DORIS data                                   |
 |           26 | BINEX                                        |
 +--------------+----------------------------------------------+
-If needed, you can add a new type in a new row to this table in your database, if you offer files of another type.
-That is all you need to do to allow your GSAC service to handle a new kind of data file.
-For consistency in GSAC operations, the file types named above and their id numbers are "standard" and should be the same across all GSAC operations.
-PBO formats of time series files are found in these sample files: for the .pos format ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
+If needed, you can add a new type in a new row to this table in your database, if you offer geoscience data files of another type for downloading.
+That is all you need to do to allow your GSAC service to handle a new kind of data file, that and having the correct file_type_id in each file's db row in the gnss_data_file table.
+For consistency in GSAC operations, the file types named above and their file_type_id numbers are a GSAC "standard" and should be the same across all GSAC operations.
+
+GSAC recommends the PBO formats for time series files, as found in these sample files: 
+For the .pos format ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.pos
 and for the .csv file ftp://data-out.unavco.org/pub/products/position/AB02/AB02.nmt.nam08.csv
 
 
@@ -428,6 +431,7 @@ Table station;
 | networks                 | varchar(2000)   | YES  |     | NULL    |                |
 | embargo_duration_hours   | int(6) unsigned | YES  |     | NULL    |                |
 | embargo_after_date       | datetime        | YES  |     | NULL    |                |
+| station_edit_permission_id|int(3) unsigned | YES  |     | NULL    |                |
 +--------------------------+-----------------+------+-----+---------+----------------+
 Table station specifies one instrumented station, site, or monument.
 Contains access permissions controls for ALL gnss data files from this station on your FTP or HTTP server and potentially
@@ -445,6 +449,7 @@ Use station access permission controls in table station to control access to all
 Field networks is a comma-separated list in one character string, such as "PBO, Cascadia" or a long list like 
 "Snake River Plain 2008, Wasatch Fault 1994, Yellowstone/Snake River Plain 2000, Yellowstone/Wasatch Fault 1995"
 of the named groups of stations this station belongs to. It may be omitted, or have one network such as "PBO".
+About station_edit_permission_id, see the notes for table station_edit_permission below.
 
 Table station_session
 +------------------------------+-----------------+------+-----+---------+----------------+
@@ -481,7 +486,7 @@ Table station_style;
 | station_style_name | varchar(20)     | NO   |     | NULL    |                |
 +--------------------+-----------------+------+-----+---------+----------------+
 Station_style specifies nature of station operations and / or instruments; used by table station. Values are static and include:
-values supplied in from station_style;
+values supplied in from station_style:
 +------------------+---------------------+
 | station_style_id | station_style_name  |
 +------------------+---------------------+
@@ -500,4 +505,23 @@ and types of data files, indicate more details about a site's data types detecte
 You may add new rows at the end of this table for other types of station operations and / or instruments.
 For consistency in GSAC operations, the names above and their id numbers are "standard" and should be the same across all GSAC operations.
 These values are selected in the GSAC Search Sites interface as 'site type' values.
+
+
+Table station_edit_permission;
++-------------------------------------+-----------------+------+-----+---------+----------------+
+| Field                               | Type            | Null | Key | Default | Extra          |
++-------------------------------------+-----------------+------+-----+---------+----------------+
+| station_edit_permission_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_edit_permission_description | varchar(80)     | NO   |     | NULL    |                |
++-------------------------------------+-----------------+------+-----+---------+----------------+
+values supplied in station_edit_permission:
++----------------------------+--------------------------------------------------------+
+| station_edit_permission_id | station_edit_permission_description                    |
++----------------------------+--------------------------------------------------------+
+|                          1 | NO edits allowed of station information by db operator |
+|                          2 | edits allowed of station information by db operator    |
++----------------------------+--------------------------------------------------------+
+This table is not used in GSAC oeprations.  The value in each station table reminds the GSAC data center operator
+that a station's metadata (in station table) should not be revised.  This applies to a GSAC data center
+offering data provided by another agency.
 
