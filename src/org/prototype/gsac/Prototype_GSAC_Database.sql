@@ -19,7 +19,7 @@
 -- Current Database: `Prototype_GSAC_Database`
 --
 
-CREATE DATABASE  `Prototype_GSAC_Database` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci; 
 
 USE `Prototype_GSAC_Database`;
 
@@ -153,6 +153,7 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
+INSERT INTO `country` VALUES (0,'unknown');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -238,6 +239,7 @@ CREATE TABLE `monument_description` (
 
 LOCK TABLES `monument_description` WRITE;
 /*!40000 ALTER TABLE `monument_description` DISABLE KEYS */;
+INSERT INTO `monument_description` VALUES (0,'unknown');
 /*!40000 ALTER TABLE `monument_description` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -261,6 +263,7 @@ CREATE TABLE `province_region_state` (
 
 LOCK TABLES `province_region_state` WRITE;
 /*!40000 ALTER TABLE `province_region_state` DISABLE KEYS */;
+INSERT INTO `province_region_state` VALUES (0,'unknown');
 /*!40000 ALTER TABLE `province_region_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -402,6 +405,7 @@ CREATE TABLE `station` (
   `networks` varchar(2000) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
+  `station_edit_permission_id` int(3) unsigned DEFAULT NULL,
   PRIMARY KEY (`station_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -413,6 +417,30 @@ CREATE TABLE `station` (
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `station_edit_permission`
+--
+
+DROP TABLE IF EXISTS `station_edit_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `station_edit_permission` (
+  `station_edit_permission_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
+  `station_edit_permission_description` varchar(80) NOT NULL,
+  PRIMARY KEY (`station_edit_permission_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `station_edit_permission`
+--
+
+LOCK TABLES `station_edit_permission` WRITE;
+/*!40000 ALTER TABLE `station_edit_permission` DISABLE KEYS */;
+INSERT INTO `station_edit_permission` VALUES (1,'NO edits allowed of station information by db operator'),(2,'edits allowed of station information by db operator');
+/*!40000 ALTER TABLE `station_edit_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -485,4 +513,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-01-15 13:33:58
+-- Dump completed on 2014-01-16  9:17:09
