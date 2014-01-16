@@ -521,7 +521,8 @@ values supplied in station_edit_permission:
 |                          1 | NO edits allowed of station information by db operator |
 |                          2 | edits allowed of station information by db operator    |
 +----------------------------+--------------------------------------------------------+
-This table is not used in GSAC oeprations.  The value in each station table reminds the GSAC data center operator
+This table is not used in GSAC operations.  The corresponding id value in each station table reminds the GSAC data center operator
 that a station's metadata (in station table) should not be revised.  This applies to a GSAC data center
-offering data provided by another agency.
+offering data provided by another agency.  You may need to add new rows to a stations receiver and antenna sessions
+if instruments change (and to related tables when necessary, such as receiver_type).
 
