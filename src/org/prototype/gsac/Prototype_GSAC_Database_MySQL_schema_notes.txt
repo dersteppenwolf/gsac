@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					           January 15, 2013          
+					           January 17, 2013          
 
 					       UNAVCO, Boulder Colorado.
 
@@ -240,7 +240,7 @@ Start and end times for data in the file (date and time in UTC) is also required
 Use end time = start time if the data is for one time only.
 Field access_permission_id controls whether access is allowed for this file. See access_permission table.
 Field embargo_after_date is a date after which no access is allowed for this file.
-Field embargo_duration_hours is a time interval length, in hours, preceeding the present time when no access is allowed for this file.
+Field embargo_duration_hours is a time interval length, in hours, preceding the present time when no access is allowed for this file.
 Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
 If any are set, the priority of checking is in that order.
 If access_permission_id and the embargo values are NOT set either here for one file,  and also NOT set for the
@@ -431,7 +431,7 @@ Table station;
 | networks                 | varchar(2000)   | YES  |     | NULL    |                |
 | embargo_duration_hours   | int(6) unsigned | YES  |     | NULL    |                |
 | embargo_after_date       | datetime        | YES  |     | NULL    |                |
-| station_edit_permission_id|int(3) unsigned | YES  |     | NULL    |                |
+| station_edit_permission_id |int(3) unsigned| YES  |     | NULL    |                |
 +--------------------------+-----------------+------+-----+---------+----------------+
 Table station specifies one instrumented station, site, or monument.
 Contains access permissions controls for ALL gnss data files from this station on your FTP or HTTP server and potentially
@@ -439,7 +439,7 @@ offered for download by GSAC, according to the values of access_permission and/o
 Field embargo_after_date is a date after which no access is allowed for all files from this station.
 Value of access_permission simply allows or denys all access to files from this station.  Files from this station will *not* 
 appear in results of file searches using GSAC if access is denied with access_permission.
-Field embargo_duration_hours is a time interval length, in hours preceeding the present time, when no access is allowed for all files.
+Field embargo_duration_hours is a time interval length, in hours preceding the present time, when no access is allowed for all files.
 Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
 If any are set, the priority of checking is in that order.
 If access_permission_id and the embargo values are not set here and also not set for files from this station
@@ -449,7 +449,8 @@ Use station access permission controls in table station to control access to all
 Field networks is a comma-separated list in one character string, such as "PBO, Cascadia" or a long list like 
 "Snake River Plain 2008, Wasatch Fault 1994, Yellowstone/Snake River Plain 2000, Yellowstone/Wasatch Fault 1995"
 of the named groups of stations this station belongs to. It may be omitted, or have one network such as "PBO".
-About station_edit_permission_id, see the notes for table station_edit_permission below.
+About station_edit_permission_id, see the notes for table station_edit_permission below.  You need not set values 
+for station_edit_permission_id in the station table for GSAC to work properly; this is an optional item.
 
 Table station_session
 +------------------------------+-----------------+------+-----+---------+----------------+
@@ -521,7 +522,8 @@ values supplied in station_edit_permission:
 |                          1 | NO edits allowed of station information by db operator |
 |                          2 | edits allowed of station information by db operator    |
 +----------------------------+--------------------------------------------------------+
-This table is not used in GSAC operations.  The corresponding id value in each station table reminds the GSAC data center operator
+This table is not read by GSAC, so you need not define station_edit_permission_id values in other GSAC tables.
+The corresponding id value in each station table reminds the GSAC data center operator
 that a station's metadata (in station table) should not be revised.  This applies to a GSAC data center
 offering data provided by another agency.  You may need to add new rows to a stations receiver and antenna sessions
 if instruments change (and to related tables when necessary, such as receiver_type).
