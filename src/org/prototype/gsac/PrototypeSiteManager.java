@@ -189,7 +189,6 @@ public class PrototypeSiteManager extends SiteManager {
             String cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_NAME});
             //  FROM   
             List<String> tables = new ArrayList<String>();
-            //tables.add(Tables.STATION_SESSION.NAME);
             tables.add(Tables.STATION.NAME);
             tables.add(Tables.STATION_STYLE.NAME);
             Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
@@ -225,12 +224,12 @@ public class PrototypeSiteManager extends SiteManager {
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
+            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
             //  SELECT what to 
             cols=SqlUtil.comma(new String[]{Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME});
             //  FROM   
             tables = new ArrayList<String>();
-            tables.add(Tables.STATION_SESSION.NAME);
+            tables.add(Tables.ANTENNA_SESSION.NAME);
             tables.add(Tables.ANTENNA_TYPE.NAME);
             statement =
                getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
@@ -267,12 +266,12 @@ public class PrototypeSiteManager extends SiteManager {
             avalues = new ArrayList<String>();
             clauses =      new ArrayList<Clause>();
             //  WHERE
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_RADOME_TYPE_ID, Tables.RADOME_TYPE.COL_RADOME_TYPE_ID));
+            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_RADOME_TYPE_ID, Tables.RADOME_TYPE.COL_RADOME_TYPE_ID));
             //  SELECT what to
             cols=SqlUtil.comma(new String[]{Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME});
             //  FROM which tables (for a table join)
             tables = new ArrayList<String>();
-            tables.add(Tables.STATION_SESSION.NAME);
+            tables.add(Tables.ANTENNA_SESSION.NAME);
             tables.add(Tables.RADOME_TYPE.NAME);
             statement =
                getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
@@ -439,30 +438,30 @@ public class PrototypeSiteManager extends SiteManager {
         // FIX next three queries are buggy - return > 1 result per correct result
         if (request.defined(GsacExtArgs.ARG_RECEIVER)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_RECEIVER);
-            tableNames.add(Tables.STATION_SESSION.NAME);
+            tableNames.add(Tables.RECEIVER_SESSION.NAME);
             tableNames.add(Tables.RECEIVER_TYPE.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.STATION_SESSION.COL_STATION_ID));
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
+            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.RECEIVER_SESSION.COL_STATION_ID));
+            clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
             clauses.add(Clause.eq(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for rcvr " + values.get(0)) ;
         }
         
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
-            tableNames.add(Tables.STATION_SESSION.NAME);
+            tableNames.add(Tables.ANTENNA_SESSION.NAME);
             tableNames.add(Tables.ANTENNA_TYPE.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.STATION_SESSION.COL_STATION_ID));
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
+            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.ANTENNA_SESSION.COL_STATION_ID));
+            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
             clauses.add(Clause.eq(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for antenna " + values.get(0)) ;
         }
         
         if (request.defined(GsacExtArgs.ARG_DOME)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_DOME);
-            tableNames.add(Tables.STATION_SESSION.NAME);
+            tableNames.add(Tables.ANTENNA_SESSION.NAME);
             tableNames.add(Tables.RADOME_TYPE.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.STATION_SESSION.COL_STATION_ID));
-            clauses.add(Clause.join(Tables.STATION_SESSION.COL_RADOME_TYPE_ID, Tables.RADOME_TYPE.COL_RADOME_TYPE_ID));
+            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.ANTENNA_SESSION.COL_STATION_ID));
+            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_RADOME_TYPE_ID, Tables.RADOME_TYPE.COL_RADOME_TYPE_ID));
             clauses.add(Clause.eq(Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for radome " + values.get(0)) ;
         }
@@ -1664,7 +1663,7 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * @param results a row from a qb query which has a datetime field
      * @param column a string name for a db field with  for example a MySQL 'datetime' object,
-     *                such as the String held by Tables.STATION_SESSION.COL_SESSION_START_DATE
+     *                such as the String held by Tables.ANTENNA_SESSION.COL_SESSION_START_DATE
      *
      * @return _more_
      */
