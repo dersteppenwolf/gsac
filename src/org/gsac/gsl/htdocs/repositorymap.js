@@ -1,6 +1,14 @@
 /*
- * Copyright 2013 UNAVCO
- */
+ * GSAC map controls.
+*/
+
+/*  set zoom control for Google Maps map of GSAC sites; zoom level 3 is about 10000 km wide; 4 is about 3900 km wide. */
+var defaultZoomLevel = 4;
+
+/*  set center of GSAC site map, with longitude east (west is negative), latitude north, and set zoom level */
+/*  example: center of Caribbean area */
+var defaultLocation = new OpenLayers.LonLat(-77.0, 16.00);
+
 
 var mapLayers = null;
 var map_google_terrain = "google.terrain";
@@ -13,21 +21,6 @@ var map_ms_aerial = "ms.aerial";
 var map_yahoo = "yahoo";
 var map_wms_topographic = "wms:Topo Maps,http://terraservice.net/ogcmap.ashx,DRG";
 var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vmap0,basic";
-
-
-/*   set center of GSAC site map, in US lower 48 states, with longitude east, latitude north */
-var defaultLocation = new OpenLayers.LonLat(-116.0, 40.0);
-
-/*   center for Geoazur, France */
-//var defaultLocation = new OpenLayers.LonLat(2.1, 47.0);
-
-/*   center,  Europe, 14.15 E  48.5 N */
-//var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
-
-
-/*   zoom for GSAC map of sites; set zoom level; 3 is about 10000 km wide; 4 is about 3900 km wide. */
-var defaultZoomLevel = 5;
-
 
 function loadjscssfile(filename, filetype){
     if (filetype=="js") { 
