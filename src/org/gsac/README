@@ -1,14 +1,14 @@
 ################################################################################
 
-GSAC-WS Installation
+GSAC Installation
 
 README, Part 1.  Creating an initial GSAC server at your repository
 
-October 28, 2013.  SKW UNAVCO
+22 Jan. 2014.  SKW UNAVCO
 
-UNAVCO's GSAC-WS, called GSAC, is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
+UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
-The UNAVCO GSAC-WS home page is at http://facility.unavco.org/data/gsacws/gsacws.html. 
+The UNAVCO GSAC home page is at http://facility.unavco.org/data/gsacws/gsacws.html. 
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.  
 This README file is "Part 1" of two GSAC README files for installation, and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
@@ -40,17 +40,24 @@ In ~/.bashrc, add
 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386
 and do command source ~/.bashrc
 
-To install ant, do command sudo apt-get install ant
+To install ant on Ubuntu (and probably on Debian), do command 
 
-To install subversion ("svn"), do command sudo apt-get install subversion
+sudo apt-get install ant
 
-If you elect to use MySQL (see below), versions 5.1 to 5.5 work. Do the command sudo apt-get install mysql-server
+To install subversion ("svn") on Ubuntu (and probably on Debian), do command i
+
+sudo apt-get install subversion
+
+If you elect to use MySQL (see below), versions 5.1 to 5.5 are known to work properly.  i
+To install MySQL on Ubuntu (and probably on Debian), do the command 
+
+sudo apt-get install mysql-server
+
 This requests a you to enter a new so-called "root" password for MySQL use, which is a new password, not your Linux system root password.
 
-Installation of GSAC on Debian Linux may be as easy, for Debian users.  
-
 In principle you may be able to install GSAC on a Mac. It may be more difficult than using Linux.  
-The Mac OS does not come with svn but can use svn.  Instructions about how to install svn on the Mac are online (for example http://www.wikihow.com/Install-Subversion-on-Mac-OS-X).  
+The Mac OS does not come with svn but it can use svn.  Instructions about how to install svn on the Mac are online (for example http://www.wikihow.com/Install-Subversion-on-Mac-OS-X).  
+
 
 ################################################################################
 
@@ -150,7 +157,7 @@ cd  ~/GSAC/gsac-code/src/org/gsac/template/
 The file macros.properties has:
 
     ##
-    ## Properties used to generate a new GSAC-WS repository. This is a template or model of a similar file to make a new instance of a GSAC installation.
+    ## Properties used to generate a new GSAC repository. This is a template or model of a similar file to make a new instance of a GSAC installation.
     ##
     ## Make a new version of this file with a different name, which will be used to automatically build the initial version of your GSAC installation.
     ## See instructions in the GSAC package in the file  README in gsac-code/src/org/gsac/.
@@ -222,8 +229,6 @@ Look to be sure no errors occur.
 This process creates a new code area and new Java files for your GSAC installation, beginning with a new folder, such as
 
 ~/GSAC/gsac-code/src/org/myrepo/ 
-  or 
-~/GSAC/gsac-code/src/edu/uniutopia/
 
 and populates it with some initial and all-new directories and files for your GSAC repository's code.
 
