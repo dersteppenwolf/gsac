@@ -37,7 +37,7 @@ import org.gsac.gsl.output.HtmlOutputHandler;
 
 import ucar.unidata.util.Misc;
 
-// older version had import ucar.unidata.sql.Clause;
+// older version (before Oct 2013) had import ucar.unidata.sql.Clause;
 //                   import ucar.unidata.sql.SqlUtil;
 import org.ramadda.sql.Clause;
 import org.ramadda.sql.SqlUtil;
@@ -79,7 +79,7 @@ import java.text.DateFormat;
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
  * @author  Jeff McWhirter 2011 template without code for any particular database variable names.
- * @author  S K Wier, UNAVCO; PrototypeSiteManager 15 Jan 2014.
+ * @author  S K Wier, UNAVCO; PrototypeSiteManager 23 Jan 2014.
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -163,7 +163,7 @@ public class PrototypeSiteManager extends SiteManager {
             String[] values;
 
             /*
-            more possible search items, from the Unavco-gsac server site code:
+            more possible search items, from the Unavco-gsac server sitemanager code:
             capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
                         "The site's metadata was modified between these dates"));
             capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
@@ -171,6 +171,44 @@ public class PrototypeSiteManager extends SiteManager {
             */
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
+
+            ResultSet results;
+            ArrayList<String> avalues = new ArrayList<String>();
+            List<Clause> clauses = new ArrayList<Clause>();
+            List<String> tables = new ArrayList<String>();
+
+            // get network(s) names found in all stations:
+            //  WHERE
+            String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
+            //  FROM which tables (for a table join)
+            tables.add(Tables.STATION.NAME);
+            Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            try {
+               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+               // process each line in results of db query
+               while ((results = iter.getNext()) != null) {
+                   String networks= results.getString(Tables.STATION.COL_NETWORKS);
+                   int notfound=1;
+                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                      if ( avalues.get(vi).equals(networks) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(networks);
+                         //System.err.println("      in this network a listed radome type  is " +dometype);
+                   }
+               }
+            } finally {
+               getDatabaseManager().closeAndReleaseConnection(statement);
+            }
+            String[] itemArray = new String[avalues.size()];
+            values = avalues.toArray(itemArray);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
+
+
 
             /* search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
             values = getDatabaseManager().readDistinctValues( Tables.STATION_STYLE.NAME, Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
@@ -180,18 +218,17 @@ public class PrototypeSiteManager extends SiteManager {
             // OR
             // SELECT station_style.station_style_name FROM station_session,station,station_style WHERE ((station_session.station_id =  station.station_id) AND (station.station_style_id = station_style.station_style_id));
             // get only site type names (station_style table values) used by stations in this database, only.
-            ResultSet results;
-            ArrayList<String> avalues = new ArrayList<String>();
-            List<Clause> clauses = new ArrayList<Clause>();
+            avalues = new ArrayList<String>();
+            clauses = new ArrayList<Clause>();
             //  WHERE 
             clauses.add(Clause.join(Tables.STATION.COL_STATION_STYLE_ID, Tables.STATION_STYLE.COL_STATION_STYLE_ID));
             //  SELECT what column values to find
-            String cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_NAME});
+            cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_NAME});
             //  FROM   
-            List<String> tables = new ArrayList<String>();
+            tables = new ArrayList<String>();
             tables.add(Tables.STATION.NAME);
             tables.add(Tables.STATION_STYLE.NAME);
-            Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
@@ -213,7 +250,7 @@ public class PrototypeSiteManager extends SiteManager {
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-            String[] itemArray = new String[avalues.size()];
+            itemArray = new String[avalues.size()];
             values = avalues.toArray(itemArray);
             // sort by alphabet:
             // Arrays.sort(values);
@@ -256,6 +293,8 @@ public class PrototypeSiteManager extends SiteManager {
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
+
+
 
 
             /* get all radome type names in the db 
@@ -311,12 +350,12 @@ public class PrototypeSiteManager extends SiteManager {
             // add box to choose by state or province 
             values = getDatabaseManager().readDistinctValues( Tables.PROVINCE_REGION_STATE.NAME, Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Province/state", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Province / region / state", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // add box to choose by city
             values = getDatabaseManager().readDistinctValues( Tables.STATION.NAME, Tables.STATION.COL_CITY);  // get all the city (place) names in GSAC's database.
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place/city", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place / City", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // better move this to data file search:
             //  omit for now LOOK - search on data sampling interval ; float value in seconds per sample as 30 or 0.1 or 0.01
