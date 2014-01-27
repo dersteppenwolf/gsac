@@ -187,7 +187,9 @@ public class PrototypeSiteManager extends SiteManager {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query
                while ((results = iter.getNext()) != null) {
-                   String networks= results.getString(Tables.STATION.COL_NETWORKS);
+                   String networks= results.getString(Tables.STATION.COL_NETWORKS); // comma sep list of names of networks
+
+                   /* old way 
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
                       if ( avalues.get(vi).equals(networks) ) {
@@ -196,9 +198,25 @@ public class PrototypeSiteManager extends SiteManager {
                          }
                    }
                    if (notfound==1) {
-                         avalues.add(networks);
-                         //System.err.println("      in this network a listed radome type  is " +dometype);
+                   ...
+                   */
+          
+                   if (networks.length()>0) {
+                         //System.err.println("      station has network(s) _"+networks+"_");
+                         // split at commas to get each network name
+                         String[] parts = networks.split(",");
+                         if  (parts.length>0) {
+                            //loop on all; make sure not already seen
+                            for (int ni= 0; ni<parts.length; ni+=1 ) {
+                               String nwname = parts[ni]; 
+                               if ( ! avalues.contains(nwname)) {
+                                   avalues.add(nwname);
+                                   //System.err.println("      new network _"+nwname+"_");
+                               }
+                            }
+                         }
                    }
+
                }
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
@@ -207,7 +225,6 @@ public class PrototypeSiteManager extends SiteManager {
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
-
 
 
             /* search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
