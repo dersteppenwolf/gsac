@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					           January 17, 2013          
+					           January 30, 2013          
 
 					       UNAVCO, Boulder Colorado.
 
@@ -55,7 +55,6 @@ show tables;
 | receiver_session                  |
 | receiver_type                     |
 | station                           |
-| station_session                   |
 | station_style                     |
 +-----------------------------------+
 
@@ -454,31 +453,13 @@ of the named groups of stations this station belongs to. It may be omitted, or h
 About station_edit_permission_id, see the notes for table station_edit_permission below.  You need not set values 
 for station_edit_permission_id in the station table for GSAC to work properly; this is an optional item.
 
+
 Table station_session
-+------------------------------+-----------------+------+-----+---------+----------------+
-| Field                        | Type            | Null | Key | Default | Extra          |
-+------------------------------+-----------------+------+-----+---------+----------------+
-| station_session_id           | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
-| station_id                   | int(6) unsigned | NO   |     | NULL    |                |
-| session_start_date           | datetime        | NO   |     | NULL    |                |
-| session_end_date             | datetime        | NO   |     | NULL    |                |
-| receiver_type_id             | int(5) unsigned | NO   |     | NULL    |                |
-| receiver_firmware_version_id | int(5) unsigned | NO   |     | NULL    |                |
-| receiver_serial_number       | varchar(20)     | NO   |     | NULL    |                |
-| antenna_type_id              | int(5) unsigned | NO   |     | NULL    |                |
-| antenna_serial_number        | varchar(20)     | NO   |     | NULL    |                |
-| antenna_offset_up            | float           | NO   |     | NULL    |                |
-| antenna_offset_north         | float           | NO   |     | NULL    |                |
-| antenna_offset_east          | float           | NO   |     | NULL    |                |
-| radome_type_id               | int(5) unsigned | NO   |     | NULL    |                |
-| sample_interval              | float           | YES  |     | NULL    |                |
-| antenna_HtCod                | char(5)         | YES  |     | NULL    |                |
-| satellite_system             | varchar(60)     | YES  |     | NULL    |                |
-+------------------------------+-----------------+------+-----+---------+----------------+
-A station session is a time interval with no instrumentation changes at a site or station. 
-This is also called an "equipment session," or confusingly a "visit," for periods when no equipment changes.
-Information in table station_session joins and includes information from the antenna_session and receiver_session tables.
-Field sample_interval is in seconds.
+The station session table was used in GSAC prior to fall 2013.  It merged data values already present in the
+tables antenna-session and receiver_session.  This practice is hard to maintain and easily leads to errors in the database.
+GSAC no longer needs or uses the table station_session.  If your GSAC database has the station session table, update to new GSAC code and 
+remove that table from the database.  You may leave the table in the database until after you know if is no longer called
+by your GSAC code.  (Search your GSAC code for calls on this table with the command grep STATION_SESS *.java).
 
 
 Table station_style;

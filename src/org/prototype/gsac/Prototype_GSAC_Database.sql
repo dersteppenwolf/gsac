@@ -19,7 +19,7 @@
 -- Current Database: `Prototype_GSAC_Database`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci; 
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype_GSAC_Database` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `Prototype_GSAC_Database`;
 
@@ -153,7 +153,7 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
-INSERT INTO `country` VALUES (0,'unknown');
+INSERT INTO `country` VALUES (0,'');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,7 +168,7 @@ CREATE TABLE `file_type` (
   `file_type_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `file_type_name` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`file_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -177,7 +177,7 @@ CREATE TABLE `file_type` (
 
 LOCK TABLES `file_type` WRITE;
 /*!40000 ALTER TABLE `file_type` DISABLE KEYS */;
-INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX      Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),  (12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole  strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'position time series plot image file'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'), (26,'BINEX'),(27,'GNSS observation QC file (teqc \'S\' file)');
+INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'position time series plot image file'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'),(26,'BINEX'),(27,'GNSS observation QC file (teqc \'S\' file)');
 /*!40000 ALTER TABLE `file_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -193,7 +193,7 @@ CREATE TABLE `gnss_data_file` (
   `station_id` int(6) unsigned NOT NULL,
   `file_type_id` int(3) unsigned NOT NULL,
   `data_start_time` datetime NOT NULL,
-  `data_stop_time` datetime NOT NULL,  
+  `data_stop_time` datetime NOT NULL,
   `data_year` int(4) unsigned DEFAULT NULL,
   `data_day_of_year` int(3) unsigned DEFAULT NULL,
   `published_date` datetime NOT NULL,
@@ -241,7 +241,7 @@ CREATE TABLE `monument_description` (
 
 LOCK TABLES `monument_description` WRITE;
 /*!40000 ALTER TABLE `monument_description` DISABLE KEYS */;
-INSERT INTO `monument_description` VALUES (0,'unknown');
+INSERT INTO `monument_description` VALUES (0,'');
 /*!40000 ALTER TABLE `monument_description` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -265,7 +265,7 @@ CREATE TABLE `province_region_state` (
 
 LOCK TABLES `province_region_state` WRITE;
 /*!40000 ALTER TABLE `province_region_state` DISABLE KEYS */;
-INSERT INTO `province_region_state` VALUES (0,'unknown');
+INSERT INTO `province_region_state` VALUES (0,'');
 /*!40000 ALTER TABLE `province_region_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -280,10 +280,10 @@ CREATE TABLE `radome_type` (
   `radome_type_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `radome_type_name` varchar(4) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
-  `description_IGS_English` varchar(150) DEFAULT NULL,
+  `description_English` varchar(150) DEFAULT NULL,
   `description_RENAG` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`radome_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -292,7 +292,7 @@ CREATE TABLE `radome_type` (
 
 LOCK TABLES `radome_type` WRITE;
 /*!40000 ALTER TABLE `radome_type` DISABLE KEYS */;
-INSERT INTO `radome_type` VALUES (1,'SNOW','Y','ASHTECH conical \'snow\' antenna dome','RadÃ´me conique d\'ASHTECH'),(2,'JAVC','Y','Conical dome for JAV_RINGANT_G3T chokering antenna','RadÃ´me conique pour   l\'antenne chokering JAVAD JAV_RINGANT_G3T'),(3,'JVDM','Y','Conical dome for JAVRINGANT_DM chokering antenna','RadÃ´me conique pour l\'antenne chokering JAVAD JAVRINGANT_DM'),(4,'LEIC','Y','Dome for LEICA    AT303 and AT503 conical shape','RadÃ´me conique pour les antennes LEICA AT303 et AT503'),(5,'LEIM','Y','Dome for LEICA AR20','[RadÃ´me pour l\'antenne LEICA AR20]'),(6,'LEIS','Y','Dome for DORNE MARGOLIN     LEICA spherical shape','RadÃ´me sphÃ©rique pour l\'antenne LEICA de type DORNE MARGOLIN'),(7,'LEIT','Y','Dome for LEICA AR25','[RadÃ´me pour l\'antenne LEICA AR25]'),(8,'MMAC','Y','Clear spherical dome       covering antenna element with MiniMac MAC4647942 antenna','RadÃ´me sphÃ©rique couvrant les Ã©lÃ©ments de l\'antenne Macrometer MiniMac MAC4647942'),(9,'NOVC','Y','NOVATEL conical dome used with the NOV533+CR antenna','[RadÃ´me conique NOVATEL pour l\'antenne NOV533+CR]'),(10,'NOVS','Y','NOVATEL spherical dome used with NOV750 NOV750.R4 NOV750.R5','[RadÃ´me sphÃ©rique NOVATEL pour les antennes NOV750, NOV750.R4,  NOV750.R5]'),(11,'SPKE','Y','SPECTRA PRECISION conical dome with spike used with the SPP571908273 antenna','RadÃ´me conique avec   pointe de SPECTRA PRECISION utiliÃ© avec l\'antenne SPP571908273'),(12,      'CONE','Y','Topcon part no. 10-031401-01 conical dome','RadÃ´me conique pour l\'antenne Topcon p/n 10-031401-01'),(13,'TPSD','Y','Topcon hemispherical dome for PG-A1 and G3-A1','RadÃ´me hÃ©misphÃ©rique pour  l\'antenne Topcon PG-A1 et G3-A1'),(14,'TPSH','Y','Topcon hemispherical dome for choke ring antenna','RadÃ´me hÃ©misphÃ©rique pour l\'antenne choke ring de Topcon'),(15,'RPTR','Y','Regal Plastic 19 inch dome for TRM33429.00+GP','RadÃ´me ancien de 19 pouces en plastique pour l\'antenne Trimble TRM33429.00+GP'),(16,'TCWD','Y','Dome for Trimble 24490-00','RadÃ´me      conique pour l\'antenne Trimble 24490-00'),(17, 'TZGD','Y','hemispheric for Zephyr Geodetic 41249.00 antenna','RadÃ´me hÃ©misphÃ©rique pour l\'antenne Zephyr Geodetic 41249.00'),(18,'NONE','Y','No antenna dome','Pas de radÃ´me'),(19,'DOME','Y',            'Miscellaneous antenna dome','D\'autres types de           radÃ´mes'),(20,'SCIS','Y','SCIGN short antenna dome','RadÃ´me de SCIGN de petite taille (dite short pour moins de hauteur)'),(21,'AUST','Y',         'Australian radome: hemispherical High Impact Clear Perspex','RadÃ´me australien hÃ©misphÃ©rique en Perspex clair'),(22,'BEVA','Y','Austrian dome with cylinders and spherical cap elongated design','RadÃ´me   autrichien de type cylindrique alongÃ© avec dÃ´me sphÃ©rique'),(23,'CAFG','Y','Kearney-Powerglass fiberglass enclosure used in California by USGS&early SCIGN sites(PVEP TRAK HOLC)','Coffre en fibre de verre  dite Kearney-Powerglass, utilisÃ© en Californie par USGS pour les vieilles stations SCIGN'),(24,'DUTD','Y','Delft University of Technology Design','RadÃ´me hollandais     fabriquÃ© par Delft University of    Technology'),(25,'EMRA','Y','EMR clear spherical acrylic dome','RadÃ´me sphÃ©rique acrylique clair fabriquÃ© par NRCan, utilisÃ© dans le rÃ©seau WCDA (Western Canada Deformation Array)'),(26,'ENCL','Y',      'Miscellaneous antenna enclosure','RadÃ´mes type inconnus'),(27,'GRAZ','Y','see BEVA and OLGA. Moved dome GRAZ to *Previously Valid*','RadÃ´me autrichien de type cylindrique avec dÃ´me sphÃ©rique'),(28,      'JPLA','Y','JPL acrylic dome','RadÃ´me acrylique fabriquÃ© par JPL'),(29,'OLGA','Y','Austrian dome with cylinders and spherical cap standard design','RadÃ´me autrichien de type standard cylindrique    avec   dÃ´me sphÃ©rique'),(30,'OSOD','Y','Dome used in Swedish array','RadÃ´me utilisÃ© dans le rÃ©seau suÃ©dois'),(31,'PFAN','Y','Austrian dome with cylinders and spherical cap big size design','Gros radÃ´me       autrichien de type cylindrique avec dÃ´me sphÃ©rique'),(32,'SCIT','Y','SCIGN tall antenna dome','RadÃ´me de SCIGN de grande taille (dite tall pour plus de hauteur)'),(33,'SCPL','Y','Polycarbonate enclosures  24-48 diameter used at early SCIGN sites (CHIL CMP9 CLAR LEEP)','RadÃ´me en polycarbonate de 24-48 pouces de diamÃ¨tre utilisÃ© dans les vieux sites SCIGN (CHIL, CMP9, CLAR, LEEP)'),(34,'UNAV','Y','UNAVCO    clear spherical antenna dome','RadÃ´me sphÃ©rique clair de l\'UNAVCO. Ring Cap'),(35,'UNKN','Y','Use for historic data periods only when radome status was not accurately recorded',NULL),(36,'CHCD','Y','CHC   hemispherical  long life dome for CHCC220GR',NULL);
+INSERT INTO `radome_type` VALUES (1,'SNOW','Y','ASHTECH conical \'snow\' antenna dome','RadÃ´me conique d\'ASHTECH'),(2,'JAVC','Y','Conical dome for JAV_RINGANT_G3T chokering antenna','RadÃ´me conique pour   l\'antenne chokering JAVAD JAV_RINGANT_G3T'),(3,'JVDM','Y','Conical dome for JAVRINGANT_DM chokering antenna','RadÃ´me conique pour l\'antenne chokering JAVAD JAVRINGANT_DM'),(4,'LEIC','Y','Dome for LEICA    AT303 and AT503 conical shape','RadÃ´me conique pour les antennes LEICA AT303 et AT503'),(5,'LEIM','Y','Dome for LEICA AR20','[RadÃ´me pour l\'antenne LEICA AR20]'),(6,'LEIS','Y','Dome for DORNE MARGOLIN     LEICA spherical shape','RadÃ´me sphÃ©rique pour l\'antenne LEICA de type DORNE MARGOLIN'),(7,'LEIT','Y','Dome for LEICA AR25','[RadÃ´me pour l\'antenne LEICA AR25]'),(8,'MMAC','Y','Clear spherical dome       covering antenna element with MiniMac MAC4647942 antenna','RadÃ´me sphÃ©rique couvrant les Ã©lÃ©ments de l\'antenne Macrometer MiniMac MAC4647942'),(9,'NOVC','Y','NOVATEL conical dome used with the NOV533+CR antenna','[RadÃ´me conique NOVATEL pour l\'antenne NOV533+CR]'),(10,'NOVS','Y','NOVATEL spherical dome used with NOV750 NOV750.R4 NOV750.R5','[RadÃ´me sphÃ©rique NOVATEL pour les antennes NOV750, NOV750.R4,  NOV750.R5]'),(11,'SPKE','Y','SPECTRA PRECISION conical dome with spike used with the SPP571908273 antenna','RadÃ´me conique avec   pointe de SPECTRA PRECISION utiliÃ© avec l\'antenne SPP571908273'),(12,      'CONE','Y','Topcon part no. 10-031401-01 conical dome','RadÃ´me conique pour l\'antenne Topcon p/n 10-031401-01'),(13,'TPSD','Y','Topcon hemispherical dome for PG-A1 and G3-A1','RadÃ´me hÃ©misphÃ©rique pour  l\'antenne Topcon PG-A1 et G3-A1'),(14,'TPSH','Y','Topcon hemispherical dome for choke ring antenna','RadÃ´me hÃ©misphÃ©rique pour l\'antenne choke ring de Topcon'),(15,'RPTR','Y','Regal Plastic 19 inch dome for TRM33429.00+GP','RadÃ´me ancien de 19 pouces en plastique pour l\'antenne Trimble TRM33429.00+GP'),(16,'TCWD','Y','Dome for Trimble 24490-00','RadÃ´me      conique pour l\'antenne Trimble 24490-00'),(17, 'TZGD','Y','hemispheric for Zephyr Geodetic 41249.00 antenna','RadÃ´me hÃ©misphÃ©rique pour l\'antenne Zephyr Geodetic 41249.00'),(18,'NONE','Y','No antenna dome','Pas de radÃ´me'),(19,'DOME','Y',            'Miscellaneous antenna dome','D\'autres types de           radÃ´mes'),(20,'SCIS','Y','SCIGN short antenna dome','RadÃ´me de SCIGN de petite taille (dite short pour moins de hauteur)'),(21,'AUST','Y',         'Australian radome: hemispherical High Impact Clear Perspex','RadÃ´me australien hÃ©misphÃ©rique en Perspex clair'),(22,'BEVA','Y','Austrian dome with cylinders and spherical cap elongated design','RadÃ´me   autrichien de type cylindrique alongÃ© avec dÃ´me sphÃ©rique'),(23,'CAFG','Y','Kearney-Powerglass fiberglass enclosure used in California by USGS&early SCIGN sites(PVEP TRAK HOLC)','Coffre en fibre de verre  dite Kearney-Powerglass, utilisÃ© en Californie par USGS pour les vieilles stations SCIGN'),(24,'DUTD','Y','Delft University of Technology Design','RadÃ´me hollandais     fabriquÃ© par Delft University of    Technology'),(25,'EMRA','Y','EMR clear spherical acrylic dome','RadÃ´me sphÃ©rique acrylique clair fabriquÃ© par NRCan, utilisÃ© dans le rÃ©seau WCDA (Western Canada Deformation Array)'),(26,'ENCL','Y',      'Miscellaneous antenna enclosure','RadÃ´mes type inconnus'),(27,'GRAZ','Y','see BEVA and OLGA. Moved dome GRAZ to *Previously Valid*','RadÃ´me autrichien de type cylindrique avec dÃ´me sphÃ©rique'),(28,      'JPLA','Y','JPL acrylic dome','RadÃ´me acrylique fabriquÃ© par JPL'),(29,'OLGA','Y','Austrian dome with cylinders and spherical cap standard design','RadÃ´me autrichien de type standard cylindrique    avec   dÃ´me sphÃ©rique'),(30,'OSOD','Y','Dome used in Swedish array','RadÃ´me utilisÃ© dans le rÃ©seau suÃ©dois'),(31,'PFAN','Y','Austrian dome with cylinders and spherical cap big size design','Gros radÃ´me       autrichien de type cylindrique avec dÃ´me sphÃ©rique'),(32,'SCIT','Y','SCIGN tall antenna dome','RadÃ´me de SCIGN de grande taille (dite tall pour plus de hauteur)'),(33,'SCPL','Y','Polycarbonate enclosures  24-48 diameter used at early SCIGN sites (CHIL CMP9 CLAR LEEP)','RadÃ´me en polycarbonate de 24-48 pouces de diamÃ¨tre utilisÃ© dans les vieux sites SCIGN (CHIL, CMP9, CLAR, LEEP)'),(34,'UNAV','Y','UNAVCO    clear spherical antenna dome','RadÃ´me sphÃ©rique clair de l\'UNAVCO. Ring Cap'),(35,'unkn','Y','Use for historic data periods only when radome status was not accurately recorded',NULL),(36,'CHCD','Y','CHC   hemispherical  long life dome for CHCC220GR',NULL);
 /*!40000 ALTER TABLE `radome_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -407,80 +407,10 @@ CREATE TABLE `station` (
   `networks` varchar(2000) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
-  `station_edit_permission_id` int(3) unsigned DEFAULT NULL,
+  `nominal_sample_interval` float DEFAULT NULL,
   PRIMARY KEY (`station_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `station`
---
-
-LOCK TABLES `station` WRITE;
-/*!40000 ALTER TABLE `station` DISABLE KEYS */;
-/*!40000 ALTER TABLE `station` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `station_edit_permission`
---
-
-DROP TABLE IF EXISTS `station_edit_permission`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `station_edit_permission` (
-  `station_edit_permission_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `station_edit_permission_description` varchar(80) NOT NULL,
-  PRIMARY KEY (`station_edit_permission_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `station_edit_permission`
---
-
-LOCK TABLES `station_edit_permission` WRITE;
-/*!40000 ALTER TABLE `station_edit_permission` DISABLE KEYS */;
-INSERT INTO `station_edit_permission` VALUES (1,'NO edits allowed of station information by db operator'),(2,'edits allowed of station information by db operator');
-/*!40000 ALTER TABLE `station_edit_permission` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `station_session`
---
-
-DROP TABLE IF EXISTS `station_session`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `station_session` (
-  `station_session_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
-  `station_id` int(6) unsigned NOT NULL,
-  `session_start_date` datetime NOT NULL,
-  `session_end_date` datetime NOT NULL,
-  `receiver_type_id` int(5) unsigned NOT NULL,
-  `receiver_firmware_version_id` int(5) unsigned NOT NULL,
-  `receiver_serial_number` varchar(20) NOT NULL,
-  `antenna_type_id` int(5) unsigned NOT NULL,
-  `antenna_serial_number` varchar(20) NOT NULL,
-  `antenna_offset_up` float NOT NULL,
-  `antenna_offset_north` float NOT NULL,
-  `antenna_offset_east` float NOT NULL,
-  `radome_type_id` int(5) unsigned NOT NULL,
-  `sample_interval` float DEFAULT NULL,
-  `antenna_HtCod` char(5) DEFAULT NULL,
-  `satellite_system` varchar(60) DEFAULT NULL,
-  PRIMARY KEY (`station_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=150 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `station_session`
---
-
-LOCK TABLES `station_session` WRITE;
-/*!40000 ALTER TABLE `station_session` DISABLE KEYS */;
-/*!40000 ALTER TABLE `station_session` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `station_style`
@@ -493,7 +423,7 @@ CREATE TABLE `station_style` (
   `station_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `station_style_name` varchar(20) NOT NULL,
   PRIMARY KEY (`station_style_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -502,7 +432,7 @@ CREATE TABLE `station_style` (
 
 LOCK TABLES `station_style` WRITE;
 /*!40000 ALTER TABLE `station_style` DISABLE KEYS */;
-INSERT INTO `station_style` VALUES (1,'GPS/GNSS Campaign'),(2,'GPS/GNSS Continuous'),(3,'GPS/GNSS Mobile'),(4,'DORIS'),(5,'Seismic'),(6,'SLR'),(7,'Strainmeter'),(8,'Tiltmeter'),(9,'VLBI');
+INSERT INTO `station_style` VALUES (1,'GPS/GNSS Campaign'),(2,'GPS/GNSS Continuous'),(3,'GPS/GNSS Mobile'),(4,'DORIS'),(5,'Seismic'),(6,'SLR'),(7,'Strainmeter'),(8,'Tiltmeter'),(9,'VLBI'),(10,'GPS/GNSS Episodic');
 /*!40000 ALTER TABLE `station_style` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -515,4 +445,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-01-16  9:17:09
+-- Dump completed on 2014-01-30  9:27:47
