@@ -679,8 +679,17 @@ public class PrototypeSiteManager extends SiteManager {
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); // or getLong
-        int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
+
+        int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
+        /* FIX other code to deal with this 
+        if (1== access_permission_id ) {
+            System.err.println("   GSAC found station with no access permission (no public views allowed) " +fourCharId);
+            GsacSite site = new GsacSite();
+            return site;
+        }
+        */
+
          
         /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
@@ -1187,7 +1196,7 @@ public class PrototypeSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-        //  FIX LOOK finish   error check: if found no ant or rcv session times: fff
+        // FIX finish error check: if found no ant or rcv session times: which becomes: 
         // FIX LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
         if ( rcvstartDates.size() == 0 ) { 
               System.err.println("  NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
