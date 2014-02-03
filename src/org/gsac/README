@@ -4,7 +4,7 @@ GSAC Installation
 
 README, Part 1.  Creating an initial GSAC server at your repository
 
-22 Jan. 2014.  SKW UNAVCO
+ 3 Feb. 2014.  SKW UNAVCO
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
@@ -12,6 +12,8 @@ The UNAVCO GSAC home page is at http://facility.unavco.org/data/gsacws/gsacws.ht
 
 This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.  
 This README file is "Part 1" of two GSAC README files for installation, and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
+
+This README file uses for examples a hypothetical "Boulder" agency running a GPS network called "BoulderNet." You will use you own names for these.
 
 ################################################################################
 
@@ -164,18 +166,18 @@ The file macros.properties has:
     ##
 
     ## To name the repository (spaces are allowed); can use any character string such as The My Repo GPS GSAC Repository
-    target.name=Demo GSAC Repository
+    target.name=Boulder GPS Repository
 
-    ## This is used to create the jar and war release file names; replace the 'demo' part, making for example gsacmyrepo. No spaces.
-    target.basename=gsacdemo
+    ## This is used to create the jar and war release file names; replace the 'demo' part, making for example bouldergsac. No spaces.
+    target.basename=bouldergsac
 
     ## A standard Java package name.  Replace the 'agency' part, making for example org.nasa.gsac.  This also controls making and naming the new directory path to hold your GSAC installations's code.
-    target.package=org.agency.gsac
+    target.package=org.boulder.gsac
     ## If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.
 
     ## All of the new Java .java files and .class files for your GSAC installation will have the following prefix for their names.
-    ## Replace Demo with a short name for your data repository, something like Myrepo.  Use no spaces, and with only the first letter in upper case, to match Java class naming conventions.
-    target.prefix=Demo
+    ## Replace Demo with a short name for your data repository, something like Boulder.  Use no spaces, and with only the first letter in upper case, to match Java class naming conventions.
+    target.prefix=Boulder
 
     ## Choose which Java database driver (in GSAC) to read the database your GSAC code will read.  Choose (uncomment) one of these three:
     target.dbdriver=mysql.jar
@@ -190,10 +192,10 @@ The new file name does not matter.
 
 Edit the new properties file to set values for your repository GSAC.  For example, new values something like these:
 
-    target.name=The Agency GNSS GSAC Repository  
-    target.basename=gsacmyrepo     
-    target.package=org.myagency.gsac  [If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.]
-    target.prefix=Myrepo           
+    target.name=The Boulder GNSS Repository  
+    target.basename=bouldergsac     
+    target.package=org.boulder.gsac  [If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.]
+    target.prefix= Boulder          
     target.dbdriver=mysql.jar     
 
 Then
@@ -206,20 +208,20 @@ Then run a command like this, with the new properties file name in place of myma
 ant -propertyfile template/mymacros.properties makerepository   
 
 Screen output should be like this:
-gsac-code/src/org/gsac > ant -propertyfile template/myrepomacros.properties makerepository
+gsac-code/src/org/gsac > ant -propertyfile template/mymacros.properties makerepository
 Buildfile: build.xml
 init:
 makerepository:
-     [echo] dir = org/myrepo/gsac
+     [echo] dir = org/boulder/gsac
      [echo] dots = ../../../..
-    [mkdir] Created dir: /home/GSAC/gsac-code/src/org/myrepo/gsac
-     [copy] Copying 16 files to /home/GSAC/gsac-code/src/org/myrepo/gsac
+    [mkdir] Created dir: /home/GSAC/gsac-code/src/org/boulder/gsac
+     [copy] Copying 16 files to /home/GSAC/gsac-code/src/org/boulder/gsac
 init:
 copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
+     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/boulder/gsac
 init:
 copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/myrepo/gsac
+     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/boulder/gsac
 ...
      [echo] Repository source package has been created
 BUILD SUCCESSFUL
@@ -228,13 +230,13 @@ Look to be sure no errors occur.
 
 This process creates a new code area and new Java files for your GSAC installation, beginning with a new folder, such as
 
-~/GSAC/gsac-code/src/org/myrepo/ 
+~/GSAC/gsac-code/src/org/boulder/ 
 
 and populates it with some initial and all-new directories and files for your GSAC repository's code.
 
 cd to the just-made new directory with new GSAC code just for your repository, such as 
 
-cd ~/GSAC/gsac-code/src/org/myrepo/gsac/ 
+cd ~/GSAC/gsac-code/src/org/boulder/gsac/ 
 
 Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
@@ -299,6 +301,6 @@ package.html
 
 end of README Part 1 for GSAC installation.
 
-Copyright (C) 2013 UNAVCO.
+Copyright (C) 2014 UNAVCO.
 
 ################################################################################
