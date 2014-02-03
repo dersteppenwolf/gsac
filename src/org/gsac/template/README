@@ -483,6 +483,8 @@ The contents of a home page of a GSAC repository web site is contained in an ind
 In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/gsac/htdocs/).
 Into @MACRO.PREFIX@/gsac/htdocs copy the template file index.html from src/org/prototype/gsac/htdocs/index.html.
 
+Into @MACRO.PREFIX@/gsac/htdocs also copy from src/org/prototype/gsac/htdocs/ the files GSAC_logo2.jpg, GSAC_logo2_short.jpg, and GSAC_logo2_small.jpg.
+
 Edit your htdocs/index.html file to create your GSAC home page contents.  Put image files used on the web main page  in the directory htdocs.
 Note that the index page does  not have a complete set of HTML lines, found on a typical web page, 
 including <html> and more at the beginning, or the final </html>, since the index contents
