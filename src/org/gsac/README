@@ -4,7 +4,7 @@ GSAC Installation
 
 README, Part 1.  Creating an initial GSAC server at your repository
 
- 3 Feb. 2014.  SKW UNAVCO
+ 4 Feb. 2014.  SKW UNAVCO
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
@@ -14,6 +14,13 @@ This README file describes the first steps in GSAC installation, and is the firs
 This README file is "Part 1" of two GSAC README files for installation, and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
 
 This README file uses for examples a hypothetical "Boulder" agency running a GPS network called "BoulderNet." You will use you own names for these.
+
+GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and error-prone behavior of using several different formats.
+Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.
+Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with
+Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number part of an ISO 8601 value.  GSAC does not expect times
+in the database to be in any time zone other than UTC.
 
 ################################################################################
 
