@@ -3,9 +3,9 @@
 
 				    Tables and Field Definitions and Notes.
 
-					           January 30, 2013          
+					             4 Feb 2014          
 
-					       UNAVCO, Boulder Colorado.
+					      UNAVCO, Boulder Colorado.
 
 
 GSAC is UNAVCO's Geodesy Seamless Archive Code package, supplying web services for geodesy archives.
@@ -22,6 +22,13 @@ GSAC does not do database maintenance.  GSAC is not content management software;
 UNAVCO provides a prototype GSAC database design (schema) and code in GSAC to read from such a database.
 Use of this schema makes a database which GSAC can use with Prototype GSAC Java code supplied by UNAVCO,
 simplifying GSAC installation.  
+
+GSAC tries to use all date and time values in the ISO 8601 format, to avoid the complexities and error-prone behavior of using several different formats.
+Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.
+Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with
+Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number part of an ISO 8601 value.  GSAC does not expect times 
+in the database to be in any time zone other than UTC.  
 
 This document uses MySQL forms, but essentially the same database schema can be used in Postgres and Oracle 
 to make a GSAC database -- if you use the exact same name for tables and fields, since the GSAC classes 
