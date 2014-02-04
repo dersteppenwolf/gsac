@@ -11,13 +11,17 @@
 GSAC is UNAVCO's Geodesy Seamless Archive Code package, supplying web services for geodesy archives.
 For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 
+GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
+GSAC itself.  
+
+Creation, population, and maintenance of the database is the reponsibility of a GNSS data center.  
+GSAC does not do database maintenance. GSAC does not and can not check or insure that values in a database are "correct."
+GSAC is not content management software; GSAC is web services.
+
+
 GSAC is designed with the concept of sites(stations or monuments), at precisely known positions, with instruments recording 
 data files of signals for geophysics, such as GNSS antennas or tiltmeters.  Sites are stationary 
 while each data file is created. Sites have antennas (detectors) and receivers (data loggers).
-
-GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
-GSAC itself.  Creation, population, and maintenance of the database is the reponsibility of a GNSS data center.  
-GSAC does not do database maintenance.  GSAC is not content management software; GSAC is web services.
 
 UNAVCO provides a prototype GSAC database design (schema) and code in GSAC to read from such a database.
 Use of this schema makes a database which GSAC can use with Prototype GSAC Java code supplied by UNAVCO,
@@ -244,6 +248,8 @@ Table  gnss_data_file;
 Table gnss_data_file describes each GNSS instrument data file on your FTP or HTTP server and potentially
 offered for download by GSAC, subject to values of access_permission and/or embargo values for each file or station.
 Supplying a URL to download the file is required for GSAC to let users download files.
+If you simply poplutate your database with the complete  file_url value for downloading files, your GSAC server will work properly.
+You may leave the other fields file_url_protocol, file_url_ip_domain, file_url_folders, and file_url_filename as null in that case.
 Start and end times for data in the file (date and time in UTC) is also required for correct basic GSAC operations.
 Use end time = start time if the data is for one time only.
 Field access_permission_id controls whether access is allowed for this file. See access_permission table.
@@ -252,7 +258,7 @@ Field embargo_duration_hours is a time interval length, in hours, preceding the 
 Any or all of access_permission_id, embargo_duration_hours, and embargo_after_date may be set.
 If any are set, the priority of checking is in that order.
 If access_permission_id and the embargo values are NOT set either here for one file,  and also NOT set for the
-   corresponding station which created the data file (in table station), public access is allowed for this file.
+corresponding station which created the data file (in table station), public access is allowed for this file.
 
 For file downloading, GSAC first checks for a non-null value for file_url. If it is non-null, GSAC supplies that
 value to the file search results, for users to use in downloading the file.
@@ -263,12 +269,18 @@ For example, the URL http://egelados.gein.noa.gr/services/GPS/GPS_DATA/2011/365/
    file_url_ip_domain is "egelados.gein.noa.gr" (no /)
    file_url_folders   is "/services/GPS/GPS_DATA/2011/365/"  (Note: folders contains all the "/" in the URL after domain name)
    file_url_filename  is "vlsm3650.11d.Z"
-GSAC will insert "://" as shown, but no other "/" characters.
-This approach to constructing the file_url is simply to allow changes in one of the parts without having to
-change the complete file_url, if you change how your data file server works.  If the complete URL value file_url is supplied, the other 4 url parts are not checked by GSAC.
+GSAC code will insert "://" as shown, but inserts no other "/" characters, or any other character.
+This approach to specifying the file_url is simply to allow changes in one of the parts without having to
+change the complete file_url, if you change how your data file server works.  
+If the complete URL value file_url is supplied, the other 4 url parts are not checked by GSAC.
+
 Field value file_MD5 may be used by GSAC users to check success of file downloads, if you supply MD5 check sum values for each file.
 Supplying MD5 check sum values is recommended but not required for GSAC operations.
 Field file_size is in integer bytes. Supplying file_size values is recommended but not required for GSAC operations.
+
+Published_date is when a file was made available on your download site.
+Revision_time allows you to note when a file was altered, perhaps after the published date; you can even have several version of the "same" file for download.
+
 
 
 Table monument_description;
