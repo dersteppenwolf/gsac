@@ -1,5 +1,5 @@
 
-					    Prototype GSAC Database Schema
+			      Prototype or Standard GSAC Database Schema
 
 				    Tables and Field Definitions and Notes.
 
@@ -11,8 +11,7 @@
 GSAC is UNAVCO's Geodesy Seamless Archive Code package, supplying web services for geodesy archives.
 For more about GSAC see the UNAVCO GSAC web site, http://facility.unavco.org/data/gsacws/gsacws.html.
 
-GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of 
-GSAC itself.  
+GSAC requires access to a database about your GNSS data center's holdings, but the database is not part of GSAC itself.  
 
 Creation, population, and maintenance of the database is the reponsibility of a GNSS data center.  
 GSAC does not do database maintenance. GSAC does not and can not check or insure that values in a database are "correct."
@@ -23,31 +22,29 @@ GSAC is designed with the concept of sites(stations or monuments), at precisely 
 data files of signals for geophysics, such as GNSS antennas or tiltmeters.  Sites are stationary 
 while each data file is created. Sites have antennas (detectors) and receivers (data loggers).
 
-UNAVCO provides a prototype GSAC database design (schema) and code in GSAC to read from such a database.
+UNAVCO provides a prototype or standard GSAC database design (schema) and code in GSAC to read from such a database.
 Use of this schema makes a database which GSAC can use with Prototype GSAC Java code supplied by UNAVCO,
 simplifying GSAC installation.  
 
 GSAC tries to use all date and time values in the ISO 8601 format, to avoid the complexities and error-prone behavior of using several different formats.
 Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.
 Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with
-Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
-GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number part of an ISO 8601 value.  GSAC does not expect times 
-in the database to be in any time zone other than UTC.  
+    Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number as part of an ISO 8601 value.  
+GSAC does not expect times in the database to be in any time zone other than UTC.  
 
 This document uses MySQL forms, but essentially the same database schema can be used in Postgres and Oracle 
-to make a GSAC database -- if you use the exact same name for tables and fields, since the GSAC classes 
-PrototypeSiteManager and PrototypeFileManager use them; those classes connect the GSAC code to the
-database. Retain the supplied column values, such as the antenna types, in the same row order.
+to make a GSAC database -- if you use the exact same names for tables and fields, since the GSAC Java classes 
+PrototypeSiteManager and PrototypeFileManager use those names.  Those classes connect the GSAC code to the
+database.  Also be sure to retain all the supplied table rows, such as the file types and the antenna types, without changes.
 
 A MySQL dump file (.sql file) for this schema can be downloaded from the web site, on the installation page.
 The .sql file is also in the GSAC package from SourceForge, in gsac-code/src/org/prototype/gsac/Prototype_GSAC_Database.sql.
 The schema uses default character set of utf8, to permit non-latin characters, as in some European languages.
 
-Small distances are in meters.  Dates with times are in ISO 8601 format, in UTC time zone only. Numerical data are
-stored with numerical data types in the database, and date and time values are stored with date and time data types,
+Numerical data are stored with numerical data types in the database, and date and time values are stored with date and time data types,
 to reduce data entry errors.
 
-show tables;
 
 +-----------------------------------+
 | Tables_in_Prototype_GSAC_Database |
@@ -69,7 +66,7 @@ show tables;
 | station_style                     |
 +-----------------------------------+
 
-Table access_permission;
+Table access_permission:
 +-------------------------------+-----------------+------+-----+---------+----------------+
 | Field                         | Type            | Null | Key | Default | Extra          |
 +-------------------------------+-----------------+------+-----+---------+----------------+
@@ -88,7 +85,7 @@ Values are:
 +----------------------+---------------------------------------------------------------------------------+
 For consistency in GSAC operations, the permissions above and their id numbers are "standard" and should be the same across all GSAC operations.
 
-Table agency;
+Table agency:
 +--------------------+-----------------+------+-----+---------+----------------+
 | Field              | Type            | Null | Key | Default | Extra          |
 +--------------------+-----------------+------+-----+---------+----------------+
@@ -134,7 +131,7 @@ Table antenna_type;
 | igs_defined       | char(1)         | NO   |     | N       |                |
 +-------------------+-----------------+------+-----+---------+----------------+
 Table antenna_type lists particular models of GNSS antennas, and can be used for other types of detectors such as tiltmeters.  
-This table has IGS-defined GNSS antenna type names in the GSAC prototype database. 
+This table has IGS-defined GNSS antenna type names in the GSAC prototype or standard database. 
 If a station detects signals other than GNSS, such as tilt data, add a new row to this table for the corresponding 
 tiltmeter; the value of igs_defined is N.  Use one of these for each antenna (detector) at your stations, or   
 you may add new values (rows) at the end of this table for other types of station operations and / or instruments.
@@ -398,13 +395,13 @@ Table receiver_type;
 | igs_defined        | char(1)         | NO   |     | N       |                |
 +--------------------+-----------------+------+-----+---------+----------------+
 Table receiver_type lists particular models of GNSS receivers, or other data loggers.  
-This table is supplied with IGS-defined GNSS receiver type names in the GSAC prototype database. 
+This table is supplied with IGS-defined GNSS receiver type names in the GSAC prototype or standard database. 
 If a station detects signals other than GNSS, such as tilt data, add a new row to this table for the corresponding 
 tiltmeter data logger; the value of igs_defined is N.  
 Use one of these for each receiver (data logger) at your stations, or   
 you may add new values (rows) at the end of this table for other types of station operations.
 Do not change the row order to insure that all GSACs have a common interface.
-The GSAC-supplied values of GNSS receiver_type_name in the prototype database are like these:  
+The GSAC-supplied values of GNSS receiver_type_name in the prototype or standard database are like these:  
 select * from receiver_type;
 +------------------+----------------------+-------------+
 | receiver_type_id | receiver_type_name   | igs_defined |
