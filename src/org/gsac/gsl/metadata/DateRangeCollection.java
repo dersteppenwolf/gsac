@@ -89,7 +89,7 @@ public class DateRangeCollection extends GsacMetadata {
             max = Math.max(max, tuple[1]);
         }
 
-        System.err.println("# date ranges:" + dateRanges.size());
+        //System.err.println("# date ranges:" + dateRanges.size());
         int rowWidth = 1000;
 
         //        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] {
