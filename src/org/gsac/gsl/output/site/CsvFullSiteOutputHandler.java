@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013; 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -67,6 +67,7 @@ import javax.servlet.http.*;
  * @author  SK Wier   Nov 30, 2012; Dec 7, 2012; 
  * revised, new name to avoid conflict with another similar class now reinstituted. Feb. 25 2013. SKW.
  * @author  SK Wier   Nov 15, 2013 ; 21 Nov 2013 added sample interval and SwVer to output.
+ * added code to clobber fcvr firmware version name  commas which ruins csv format Feb 6 2014, as with  firmvers.replaceAll(",", " ");
  */
 public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
@@ -307,10 +308,19 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
             if (equipment.hasReceiver()) {
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+
                 rectype=equipment.getReceiver() ;
+                rectype=rectype.replaceAll(",", " ");
+
                 recsn=equipment.getReceiverSerial();
+                recsn=recsn.replaceAll(",", " ");
+
                 swVer=equipment.getSwVer();
+                swVer=swVer.replaceAll(",", " ");
+
                 firmvers=equipment.getReceiverFirmware();
+                firmvers=firmvers.replaceAll(",", " ");
+
                 sampInt=equipment.getSampleInterval();
                 sampIntstr=""+sampInt;
             }
