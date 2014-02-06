@@ -121,6 +121,7 @@ public abstract class FileManager extends GsacResourceManager {
      * @throws Exception On badness
      */
     public GsacFile makeFile(ResultSet results) throws Exception {
+        System.err.println(  "  make File returns null");
         return null;
     }
 
