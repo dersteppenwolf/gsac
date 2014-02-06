@@ -2856,7 +2856,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String resourceUrl = makeResourceViewUrl(resource);
             catSB.append(HtmlUtil.href(resourceUrl,
                                        HtmlUtil.img(iconUrl,
-                                           "Click to view resource")));
+                                           "Click to view station info")));
             catSB.append(HtmlUtil.space(1));
             double lat = resource.getLatitude();
             double lon =
