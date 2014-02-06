@@ -231,7 +231,7 @@ if (param.equals(ARG_SITE_TYPE)) {
         }
         pw.append(    " site country:                "+ getNonNullString(plm.getCountry())  + "\n");
         pw.append(    " site state or province:      "+ getNonNullString(plm.getState()  ) + "\n");
-        pw.append(    " site city:                   "+ getNonNullString(plm.getCity()) + "\n");
+        pw.append(    " site city/place:             "+ getNonNullString(plm.getCity()) + "\n");
         EarthLocation el = site.getEarthLocation();
         pw.append(    " site latitude:               "+ formatLocation(el.getLatitude())  + "" + "\n");
         pw.append(    " site longitude:              "+ formatLocation(el.getLongitude()) + "" + "\n");
