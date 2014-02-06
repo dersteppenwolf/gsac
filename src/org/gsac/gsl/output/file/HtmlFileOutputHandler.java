@@ -357,12 +357,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     String[] labels = null;
                     if (  relatedLabel != null)
                     { 
-                       // unavco gsac server has this case (pre-Nov 2013)
+                       // unavco gsac server has this case (pre-Nov 2013); since lacks the file values easily available for the prototype GSAC code
                        labels = new String[] {
-                           (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Date"), msg("File size")
+                           (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Pub. Date"), msg("File size")
                            };
                     }
-                    else {  // for prototype gsac 
+                    else {  // for prototype GSAC:
                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
                     }
 
