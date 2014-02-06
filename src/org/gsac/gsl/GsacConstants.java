@@ -30,19 +30,16 @@ import org.gsac.gsl.output.site.HtmlSiteOutputHandler;
  * Interface description
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version        Enter version here..., Wed, May 19, 2010
+ * @author         Jeff McWhirter
  */
 public interface GsacConstants extends GsacArgs {
-
-
 
     /** The top-level url path */
     public static final String URL_BASE = "/gsacapi";
 
     /** _more_ */
     public static final String URL_STATS_BASE = URL_BASE + "/stats";
-
 
     /** Url path for site queries */
     public static final String URL_SITE_BASE = URL_BASE + "/site";
@@ -55,7 +52,6 @@ public interface GsacConstants extends GsacArgs {
 
     /** _more_ */
     public static final String URL_SUFFIX_VIEW = "/view";
-
 
     /** _more_ */
     public static final String URL_SITE_SEARCH = URL_SITE_BASE + "/search";
@@ -78,18 +74,14 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String URL_FILE_VIEW = URL_FILE_BASE + "/view";
 
-
     /** _more_ */
     public static final String URL_BROWSE_BASE = URL_BASE + "/browse";
-
 
     /** Url path for repository queries */
     public static final String URL_REPOSITORY_BASE = URL_BASE + "/repository";
 
-
     /** _more_ */
-    public static final String URL_REPOSITORY_VIEW = URL_REPOSITORY_BASE
-                                                     + "/view";
+    public static final String URL_REPOSITORY_VIEW = URL_REPOSITORY_BASE + "/view";
 
     /** _more_ */
     public static final String URL_HTDOCS_BASE = URL_BASE + "/htdocs";
@@ -97,22 +89,17 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String URL_HELP = URL_BASE + "/help";
 
-
     /** _more_ */
     public static final String OUTPUT_XML = "xml";
 
     /** _more_ */
     public static final String OUTPUT_GSACXML = "gsacxml";
 
-
-
     /** _more_ */
     public static final int DEFAULT_LIMIT = 1000;
 
-    /** _more_ */
-    public static final int MAX_LIMIT = 20000;
-
-
+    /**  FIX: need short MAX_LIMIT in case file downloads (maybe 500);  but need large limit (maybe 50000) for simple file csv file metadata search results */
+    public static final int MAX_LIMIT = 50000;
 
     /** _more_ */
     public static final String TAG_CAPABILITIES = "capabilities";
@@ -147,9 +134,6 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String HEADER_INFO = "header.info";
 
-
-
-
     /** _more_ */
     public static final String RESULT_SITE = "result.site";
 
@@ -158,7 +142,6 @@ public interface GsacConstants extends GsacArgs {
 
     /** _more_ */
     public static final String RESULT_BROWSE = "result.browse";
-
 
     /** _more_ */
     public static final String OUTPUT_GROUP_BROWSE = "output.browse";
