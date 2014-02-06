@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					             4 Feb 2014          
+					             6 Feb 2014          
 
 					      UNAVCO, Boulder Colorado.
 
@@ -18,8 +18,8 @@ GSAC does not do database maintenance. GSAC does not and can not check or insure
 GSAC is not content management software; GSAC is web services.
 
 
-GSAC is designed with the concept of sites(stations or monuments), at precisely known positions, with instruments recording 
-data files of signals for geophysics, such as GNSS antennas or tiltmeters.  Sites are stationary 
+GSAC is designed with the concept of sites (stations, or 'monuments'), at precisely known positions on the Earth, with instruments recording 
+data files of signals for geophysics, such as GNSS antennas, or tiltmeters.  Sites are stationary and have a fixed latitude, longitude, and height
 while each data file is created. Sites have antennas (detectors) and receivers (data loggers).
 
 UNAVCO provides a prototype or standard GSAC database design (schema) and code in GSAC to read from such a database.
@@ -28,8 +28,7 @@ simplifying GSAC installation.
 
 GSAC tries to use all date and time values in the ISO 8601 format, to avoid the complexities and error-prone behavior of using several different formats.
 Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.
-Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with
-    Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects.
 GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number as part of an ISO 8601 value.  
 GSAC does not expect times in the database to be in any time zone other than UTC.  
 
@@ -43,7 +42,7 @@ The .sql file is also in the GSAC package from SourceForge, in gsac-code/src/org
 The schema uses default character set of utf8, to permit non-latin characters, as in some European languages.
 
 Numerical data are stored with numerical data types in the database, and date and time values are stored with date and time data types,
-to reduce data entry errors.
+to reduce errors when handling these kinds of data values.
 
 
 +-----------------------------------+
@@ -227,6 +226,7 @@ Table  gnss_data_file;
 | file_type_id           | int(3) unsigned  | NO   |     | NULL    |                |
 | data_start_time        | datetime         | NO   |     | NULL    |                |
 | data_stop_time         | datetime         | NO   |     | NULL    |                |
+| file_sample_interval   | float            | YES  |     | NULL    |                |
 | data_year              | int(4) unsigned  | YES  |     | NULL    |                |
 | data_day_of_year       | int(3) unsigned  | YES  |     | NULL    |                |
 | published_date         | datetime         | NO   |     | NULL    |                |
