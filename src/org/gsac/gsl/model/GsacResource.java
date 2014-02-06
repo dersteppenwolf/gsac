@@ -36,6 +36,7 @@ import java.util.List;
  *
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Enter your name here...
+ * @author         added new value, sampleInterval   SK Wier UNAVCO 3 Feb 2014
  */
 public abstract class GsacResource implements GsacArgs, GsacConstants {
 
@@ -86,24 +87,8 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private Date modificationDate;
 
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    public Date getModificationDate() {
-        return modificationDate;
-    }
-
-    /**
-     * _more_
-     *
-     * @param modificationDate _more_
-     */
-    public void setModificationDate(Date modificationDate) {
-        this.modificationDate = modificationDate;
-    }
+    /** _more_ */
+    private float sampleInterval;
 
     /**
      * ctor
@@ -139,8 +124,7 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      * @param shortName _more_
      * @param longName _more_
      */
-    public GsacResource(String id, ResourceType type, String shortName,
-                        String longName) {
+    public GsacResource(String id, ResourceType type, String shortName, String longName) {
         this.id        = id;
         this.type      = type;
         this.shortName = shortName;
@@ -191,6 +175,24 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
         return getResourceClass().getName() + "." + ARG_SUFFIX_ID;
     }
 
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    /**
+     * _more_
+     *
+     * @param modificationDate _more_
+     */
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
 
     /**
      * Set the Id property.
@@ -210,6 +212,24 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
         return id;
     }
 
+
+    /**
+     * Set the sampleInterval property.
+     *
+     * @param value the new value for sampleInterval 
+     */
+    public void setSampleInterval(float value) {
+        sampleInterval = value;
+    }
+
+    /**
+     * Get the sampleInterval property.
+     *
+     * @return the sampleInterval 
+     */
+    public float getSampleInterval() {
+        return sampleInterval;
+    }
 
     /**
      * _more_
