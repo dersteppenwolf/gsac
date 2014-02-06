@@ -259,7 +259,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         connectionProps.put("user", userName);
         connectionProps.put("password", password);
 
-        //        System.err.println("GSAC: full jdbc url:" + jdbcUrl+":");
+                //System.err.println("    jdbcUrl:_" + jdbcUrl+"_");
         //        System.err.println("GSAC: user name:" + userName+":");
         //        System.err.println("GSAC: password:" + password+":");
 
@@ -396,11 +396,22 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      */
     public Connection getConnection() throws Exception {
         Connection connection;
-        //TODO: lets try out not using the connection pooling
-        connection = DriverManager.getConnection(jdbcUrl, connectionProps);
-        //        connection = dataSource.getConnection();
-        incrConnectionCount();
 
+        // shows getConnection jdbcUrl:_jdbc:mysql://localhost:3306/IsCGPS_GSAC_database_
+
+        // original JMcW code
+        //TODO: lets try out not using the connection pooling
+        connection = DriverManager.getConnection(jdbcUrl, connectionProps);  
+        //        connection = dataSource.getConnection();
+        
+        // TRY to get non-latin or non-ascii charcters from a mysql query for station names, want to do
+        //      like     DriverManager.getConnection( "jdbc:mysql://"+host+"/"+dbName+"?useUnicode=true&characterEncoding=UTF-8",user,pass);
+        //  System.err.println("     getConnection jdbcUrl:_" + jdbcUrl);
+        //         gives         getConnection jdbcUrl:_jdbc:mysql://localhost:3306/IsCGPS_GSAC_database
+        //connection = DriverManager.getConnection(jdbcUrl+"?useUnicode=true&characterEncoding=UTF-8", connectionProps);  
+        // no change!!!!!  still gives bad chars in station names from iceland db, which are correct Icelandic letters in the mysql database
+
+        incrConnectionCount();
         //        System.err.println ("open:" + connectionCnt);
         return connection;
     }
