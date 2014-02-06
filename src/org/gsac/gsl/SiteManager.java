@@ -103,7 +103,6 @@ public abstract class SiteManager extends GsacResourceManager {
         String              help = HtmlOutputHandler.stringSearchHelp;
         Capability          siteCode;
         Capability          siteName;
-        List<ResourceGroup> siteGroups = doGetResourceGroups();
 
         Capability[]        dflt       = {
             siteCode = initCapability(new Capability(ARG_SITE_CODE,
@@ -126,13 +125,6 @@ public abstract class SiteManager extends GsacResourceManager {
                     ARG_SITE_STATUS, "Site Status", new ArrayList<IdLabel>(),
                     true), CAPABILITY_GROUP_ADVANCED, "", "",
                            makeVocabulary(ARG_SITE_STATUS)),
-            ((siteGroups.size() == 0)
-             ? null
-             : initCapability(
-                 new Capability(
-                     makeUrlArg(ARG_SUFFIX_GROUP), "Site Group",
-                     IdLabel.toList(siteGroups),
-                     true), CAPABILITY_GROUP_ADVANCED, null)),
             initCapability(new Capability(ARG_BBOX, "Bounds",
                 Capability.TYPE_SPATIAL_BOUNDS), CAPABILITY_GROUP_SITE_QUERY,
                     "Spatial bounds within which the site lies")
