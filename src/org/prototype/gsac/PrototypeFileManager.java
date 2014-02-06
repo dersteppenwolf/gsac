@@ -56,7 +56,7 @@ import java.util.Calendar;
  * This FileManager.java uses the prototype GSCA db table gnss_data_file;
  *
  * @author  Jeff McWhirter 2011  minimal function template file (made from gsac/fsl/template/Filemanager.java) without any code for any database variables.
- * @author  S K Wier Nov. 6, 14, 2013
+ * @author  S K Wier Nov. 6, 14, 2013, ... 4 Feb 2014, ...
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -75,7 +75,7 @@ public class PrototypeFileManager extends FileManager {
     /**
      *  Enable what file-related items are used in searches (database queries) for geoscience data files to download from this particular data repository.  
      *  These items can be used for searches: date range of files; file type, etc.
-     *  This also shows the station search itemss on the file search page so the user can, for example, limit files found to one or a few stations.
+     *  This also shows the station search items on the web site file search page so the user can, for example, limit files found to one or a few stations.
      *
      *  In GSAC, "Capabilities" are the things to search (query) on. 
      *
@@ -89,18 +89,16 @@ public class PrototypeFileManager extends FileManager {
         Capability   cap;
         String [] values; 
 
-        // search on data file types; 
-        //get all the file type names from the database
+        // search on data file types; original: get the file type names from the database
         /* 
         try {
              values = getDatabaseManager().readDistinctValues( Tables.FILE_TYPE.NAME, Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
           } catch (Exception exc) {
                throw new RuntimeException(exc);
         }
-        //Arrays.sort(values);  if you sort these from the gsac prototype db, the Borehole strainmeter type shows first on the web page, but is of no interest for early GSAC-s
+        Arrays.sort(values);  if you sort these from the gsac prototype db, the Borehole strainmeter type shows first on the web page, but is of no interest for early GSAC-s
         */
-        // LOOK improvment: only get the file types in this data archive to offer here
-        // get only file type names from this data center.
+        // an improvement: only get the file types in this data archive to offer here
         ResultSet results;
         ArrayList<String> avalues = new ArrayList<String>();
         List<Clause> clauses = new ArrayList<Clause>();
@@ -173,9 +171,10 @@ public class PrototypeFileManager extends FileManager {
 
     /**
      * Handle the search request.   
-     * 1. Compose a db query select clause for the requests' values, and make the select query on the GSAC db.
-     * 2. Do the database search as specified by the user's search for files in the web site forms or via the API, (contained in input object "request")
-     *    and put an array of the results, with one or more GSAC_file objects, into the container object "GsacResponse response."
+     *  Compose a db query select clause for the requests' values, and make the select query on the GSAC db.
+     *
+     *  Does the database search as specified by the user's search for files in the web site forms or via the API, (contained in input object "request")
+     *  and puts an array of the results, with one or more GsacFile objects, into the container object "GsacResponse response."
      *
      * @param request    The request [from the api or web search forms] what to search with
      * @param response   one or more GSACFile objects, in a "GsacResponse"
@@ -192,7 +191,6 @@ public class PrototypeFileManager extends FileManager {
         //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_CODE_4CHAR_ID, clauses);
         
-
         // FROM SiteManager: circa line 371
         String latCol  = Tables.STATION.COL_LATITUDE_NORTH;
         String lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
@@ -219,7 +217,6 @@ public class PrototypeFileManager extends FileManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
         // end FROM SiteManager:
-
 
         // make query clause for the  file type
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
@@ -263,7 +260,6 @@ public class PrototypeFileManager extends FileManager {
  
         Clause mainClause = Clause.and(clauses);
 
-
         // for the SQl select clause: WHAT to select (row values returned):
         String cols=SqlUtil.comma(new String[]{
              Tables.GNSS_DATA_FILE.COL_STATION_ID,
@@ -303,6 +299,7 @@ public class PrototypeFileManager extends FileManager {
 
         // do sql query type "select distinct " columns:
         String distinctCols= getDatabaseManager().distinct(cols);   // adds " distinct " before the list of columns
+
         Statement statement = getDatabaseManager().select(distinctCols,  tables,  mainClause, " order by " + Tables.GNSS_DATA_FILE.COL_DATA_START_TIME+", "+Tables.STATION.COL_CODE_4CHAR_ID, -1);
 
         try {
@@ -315,13 +312,14 @@ public class PrototypeFileManager extends FileManager {
             // process each line (row) returned by the select query: 
             while ((results = iter.getNext()) != null) {
                // get an individual file's  values from each single row returned in the array "results"
-               String siteID = results.getString(Tables.STATION.COL_CODE_4CHAR_ID);
-               int station_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_STATION_ID);
-               int file_type_id  = results.getInt(Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID);
+               String siteID = results.getString     (Tables.STATION.COL_CODE_4CHAR_ID);
+               int station_id  = results.getInt      (Tables.GNSS_DATA_FILE.COL_STATION_ID);
+               int file_type_id  = results.getInt    (Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID);
 
                String start_time  = results.getString(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
-               String stop_time  = results.getString(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
-               String pub_time  = results.getString(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE) ;
+               String stop_time  = results.getString (Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
+               String pub_time  = results.getString  (Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE) ;
+
                // make sure they are in format "yyyy-MM-dd HH:mm:ss" - LOOK may need more code here
                start_time= start_time.substring(0,19);
                stop_time= stop_time.substring(0,19);
@@ -330,24 +328,26 @@ public class PrototypeFileManager extends FileManager {
                Date data_stop_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time);
                Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
 
-               String file_md5 = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
-               long file_size= results.getInt          (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
+               String file_md5 = results.getString (Tables.GNSS_DATA_FILE.COL_FILE_MD5);
+               long file_size= results.getInt      (Tables.GNSS_DATA_FILE.COL_FILE_SIZE);
 
                String file_url = results.getString       (Tables.GNSS_DATA_FILE.COL_FILE_URL);
-               // if this gsac does not supply the complete FILE_URL, try to compose it from all the parts of a complete url found in the database
+
+               // if this database row does not supply the complete FILE_URL, try to compose it from all the parts of a complete url found in the same database row
                if (file_url==null || file_url.length()< 13 )   // error check for say ftp://a.b.c/d has length of 13
-                   {
+               {
                    String file_url_protocol = results.getString  (Tables.GNSS_DATA_FILE.COL_FILE_URL_PROTOCOL);
                    String file_url_ip_domain = results.getString (Tables.GNSS_DATA_FILE.COL_FILE_URL_IP_DOMAIN);
                    String file_url_folders = results.getString   (Tables.GNSS_DATA_FILE.COL_FILE_URL_FOLDERS);
                    String file_url_filename = results.getString  (Tables.GNSS_DATA_FILE.COL_FILE_URL_FILENAME);
 
                    file_url =file_url_protocol + "://" + file_url_ip_domain + file_url_folders + file_url_filename;
+               }
 
-                   }
                if (file_url==null || file_url.length()< 13 )   // if still no good url
                {
-                  continue; // no way to download this file so do not show it in GSAC results
+                  ; //continue; // no way to download this file so do not show it in GSAC results
+                  // OK proceed with showing results for this data file, with null for url, or short url
                }
 
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
@@ -422,8 +422,8 @@ public class PrototypeFileManager extends FileManager {
                fileinfo.setSampleInterval(sample_interval);
 
                // make and populate a GsacFile object for this file, used by other parts of GSAC for output handling.
-               GsacFile gsacFile = new GsacFile(siteID, fileinfo, null, published_date, data_start_time, data_stop_time, rt);
-               // from Gsac File(String          repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
+               GsacFile gsacFile = new GsacFile(siteID, fileinfo,                                   null, published_date,  data_start_time, data_stop_time, rt);
+               // from Gsac File(String   repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime,   ResourceType type)
 
                // collect all the GsacFile objects made; this is the array of results from the GSAC file search:
                response.addResource(gsacFile);
