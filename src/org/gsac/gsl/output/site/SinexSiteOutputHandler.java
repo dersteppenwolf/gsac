@@ -546,8 +546,25 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
                 pw.append( setStringLengthRight( equipment.getReceiver(),20) +" ");
-                pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
-                pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
+
+                // was pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
+                    // handle case of value 'unknown' or 'not provided'
+                    String answer = equipment.getReceiverSerial();
+                    answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
+                       answer="N/A";
+                    }
+                    pw.append( setStringLength(answer,5)                            +" " );
+
+                // was pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
+                    // handle case of value 'unknown' or 'not provided'
+                    answer = equipment.getReceiverFirmware();
+                    answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
+                       answer="N/A";
+                    }
+                    pw.append( setStringLength(answer,11)                                 );
+
                 pw.append("\n");
             }
 /*
@@ -634,7 +651,14 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                     pw.append( starttime+ " ");
                     pw.append( stoptime+ " ");
                     pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
-                    pw.append( setStringLength( equipment.getAntennaSerial(),5) );
+                    // handle case of value 'unknown' or 'not provided'
+                    String answer = equipment.getAntennaSerial();
+                    answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
+                       answer="N/A";
+                    }
+                    pw.append( setStringLength(answer,5) );
+                    // was pw.append( setStringLength( equipment.getAntennaSerial(),5) );
                     pw.append("\n");
                 }
             }
