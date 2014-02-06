@@ -58,6 +58,9 @@ public class FileInfo {
     /** _more_ */
     private String md5="";
 
+    /** _more_ */
+    private String station4charId="";
+
     /**  sample rate in seconds of instrument making this geodesy data file */
     private float sample_interval=0.0f;
 
@@ -93,6 +96,18 @@ public class FileInfo {
      * @param url _more_
      * @param fileSize _more_
      * @param md5 _more_
+     */
+    public FileInfo(String url, long fileSize, String md5, String station4charId) {
+        this(url, fileSize, md5, CLASS_FILE);
+        this.station4charId = station4charId;
+    }
+
+    /**
+     * _more_
+     *
+     * @param url _more_
+     * @param fileSize _more_
+     * @param md5 _more_
      * @param type _more_
      */
     public FileInfo(String url, long fileSize, String md5, int type) {
@@ -118,6 +133,25 @@ public class FileInfo {
         this.localFile = localFile;
     }
 
+
+    /**
+     * _more_
+     *
+     * @param url _more_
+     * @param fileSize _more_
+     * @param md5 _more_
+     * @param type _more_
+     * @param localFile _more_
+     * @param  _more_
+     */
+    public FileInfo(String url, long fileSize, String md5, int type, File localFile, String station4charId) {
+        this.url       = url;
+        this.fileSize  = fileSize;
+        this.md5       = md5;
+        this.type      = type;
+        this.localFile = localFile;
+        this.station4charId = station4charId;
+    }
 
     /**
      * _more_
@@ -198,7 +232,7 @@ public class FileInfo {
     }
 
     /**
-     *  Get the property.
+     *  Get the sample_interval property.
      *
      *  @return the 
      */
@@ -214,7 +248,6 @@ public class FileInfo {
     public void setMd5(String value) {
         md5 = value;
     }
-
     /**
      *  Get the Md5 property.
      *
@@ -225,9 +258,26 @@ public class FileInfo {
     }
 
     /**
+     *  Set the station4charId property.
+     *
+     *  @param value The new value for station4charId 
+     */
+    public void setStation4charId(String id) {
+        station4charId = id;
+    }
+    /**
+     *  Get the Md5 property.
+     *
+     *  @return The Md5
+     */
+    public String getStation4charId() {
+        return station4charId;
+    }
+
+    /**
      *  Set the Type property.
      *
-     *  @param value The new value for Type
+     *  @param value The new value for type
      */
     public void setType(int value) {
         type = value;
