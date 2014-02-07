@@ -154,11 +154,12 @@ public abstract class SiteManager extends GsacResourceManager {
         super.initOutputHandlers();
 
         /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  */
+
         /* For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) new TextSiteLogOutputHandler(getRepository(), getResourceClass()); */
         /* However you are encouraged to allow all these, to show consistent results from all GSAC repositories. */
-        /* There is no harm in offering all the choices, even if you do not use one or more.  Others may be using them.*/
+        /* There is no harm in offering all the choices, even if you do not use one or more.  Others may be using them. Nor not. It has no effect if here and not used. */
 
-        // in approximate order of expected popularity of use.
+        // in approximate order of expected popularity of use, and with one shift for policy reasons.
 
         // results put in HTML, for web pages and other HTML uses:
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
@@ -172,35 +173,32 @@ public abstract class SiteManager extends GsacResourceManager {
         // for SOPAC XMP site log format  (and,  what format is XmlSiteOutputHandler(getRepository(), getResourceClass()); ?)
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
-        // for Google Earth KMZ and KML
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());  
-
-        // JSON.  this output format this is used by Scott Baker's geodesy aggregator search tool, so has real and current use.
+        // JSON.  this GSAC output format is used during 2013 by Scott Baker's geodesy aggregator search tool, so has real and current use.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         
-
-        // some good but less-used formats
-
         // the GSAC "plain text format" used to visually check what is available for sites' info.  Not for computer processing. 
         new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
-        // the GSAC "full csv" format
+        // the GSAC "Full Csv" format
         new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for full csv formatted file of site metadata
 
+        // for Google Earth KMZ and KML
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  
 
-        // relics and other formats of no apparent use for geodecists.
+        // Relics and other formats of possibly limited apparent use for geodecists.
 
         // the GSAC "short csv format, an old legacy short csv formatted file of limited contents, an old minor format kept only for backward compatibility in case anyone ever used it:
         new TextSiteOutputHandler   (getRepository(), getResourceClass());   
 
         // other IT formats; not yet providing anything useful but someome may wish to complete them, or use these formats.
         new AtomSiteOutputHandler(getRepository(), getResourceClass());
+
         new RssSiteOutputHandler(getRepository(), getResourceClass());
         
-        //  GSAC (short) XML , different from XmlSiteLogOutputHandler  for SOPAC XML.  Not at all clear why we need this.  
+        //  Not for Google Earth KML, and not the XmlSiteLogOutputHandler making SOPAC XML. For the different GSAC XML from circa 2010, a legacy format.
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        // not yet implemented: IGS site log; FIX SiteLogOutputHandler gives empty file. Do we want to encourage this format? Only if users demand it.
+        // not yet implemented: to make a IGS site log; SiteLogOutputHandler gives empty file.
         //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
     }
 
