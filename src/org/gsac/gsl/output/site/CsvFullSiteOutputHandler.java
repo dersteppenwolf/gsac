@@ -49,25 +49,31 @@ import javax.servlet.http.*;
 
 
 /* 
- * Class description: formats GSAC query results to write a csv file format, with a long list of geodesy parameters.
+ * Class description: makes site and instrument information in the "GSAC Full CSV" format.
  *
- * This is a "Standard CSV File Format" ; see http://facility.unavco.org/data/gsacws/docs/UNAVCO_standard_CSV_format.html 
- * and http://ramadda.org/repository/entry/show/Home/RAMADDA+Information/Development/CF+for+CSV?entryid=23652828-c6f4-482b-bb2f-041dae14542e
+ * The format convention is the "Standard CSV File Format" ; see http://facility.unavco.org/data/gsacws/docs/UNAVCO_standard_CSV_format.html 
+ * and see  http://ramadda.org/repository/entry/show/Home/RAMADDA+Information/Development/CF+for+CSV?entryid=23652828-c6f4-482b-bb2f-041dae14542e
  *
- * This GSAC Full csv format file has values for:
+ * This GSAC Full Csv format file has values for:
  * ID,station name,latitude,longitude,ellip. height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,sample interval, SwVer, site count
  * The fields are separated with commas. Leading and trailing space-characters adjacent to comma field separators are ignored.
  * NO commas are allowed here inside a field value; this usually pertains to only site descriptions in geodesy data. Any commas in such a field are replaced with " ".
+ *
+ * others possible:
+ * agency , city/place, region, country
+ * pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
+ * pw.append(EQUIP_ANTENNACABLETYPE, "",
+ * pw.append(EQUIP_ANTENNACABLELENGTH,
  * 
- *      To conform with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
- *      handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
- *      GSAC code changes in this case into GSAC without consulting UNAVCO.
- *      For bug reports and suggested improvments please contact UNAVCO.
+ * To conform with other GSAC repositories we ask you not to revise this format.  You are very welcome to make a new similar but altered 
+ * handler .java class for your use.  Add its call to the class file SiteManager.java and rebuild GSAC.  Do not commit your core 
+ * GSAC code changes in this case into GSAC without consulting UNAVCO.
+ * For bug reports and suggested improvments please contact UNAVCO.
  *
  * @author  SK Wier   Nov 30, 2012; Dec 7, 2012; 
  * revised, new name to avoid conflict with another similar class now reinstituted. Feb. 25 2013. SKW.
  * @author  SK Wier   Nov 15, 2013 ; 21 Nov 2013 added sample interval and SwVer to output.
- * added code to clobber fcvr firmware version name  commas which ruins csv format Feb 6 2014, as with  firmvers.replaceAll(",", " ");
+ * revised: added code to remove commas in char String values, which ruins csv formatting. Feb 6,7 2014.
  */
 public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
@@ -126,10 +132,8 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     public CsvFullSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_FULL_CSV,
-                                      "GSAC station info, csv (full)", "/fullsites.csv", true)); 
-        // note with  .csv extension, some browswers want to show the results in Excel or other packages which is  the reverse of useful for geodesy.
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_FULL_CSV, "GSAC Sites info, Full csv", "/fullsites.csv", true)); 
+        // note with  .csv extension, some browsers want to show the results in Excel or other packages which is  the reverse of useful for geodesy.
     }
 
     /**
@@ -298,8 +302,6 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
         List<GsacMetadata> equipmentMetadata = site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
              
-        // System.out.println("  site  "+ id +"   "+name);
-
         // get equip details
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
@@ -309,18 +311,32 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
 
-                rectype=equipment.getReceiver() ;
-                rectype=rectype.replaceAll(",", " ");
+                // for rectype, handle case of value 'unknown' or 'not provided'
+                    String answer = equipment.getReceiver();
+                    answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
+                       answer="N/A";
+                    }
+                rectype = answer;
 
-                recsn=equipment.getReceiverSerial();
-                recsn=recsn.replaceAll(",", " ");
+                // for recsn, handle case of value 'unknown' or 'not provided'
+                    answer = equipment.getReceiverSerial();
+                    answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
+                       answer="N/A";
+                    }
+                recsn= answer;
+
+                // for firmvers, handle case of value 'unknown' or 'not provided'
+                    answer = equipment.getReceiverFirmware();
+                    answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
+                       answer="N/A";
+                    }
+                firmvers = answer;
 
                 swVer=equipment.getSwVer();
                 swVer=swVer.replaceAll(",", " ");
-
-                firmvers=equipment.getReceiverFirmware();
-                firmvers=firmvers.replaceAll(",", " ");
-
                 sampInt=equipment.getSampleInterval();
                 sampIntstr=""+sampInt;
             }
@@ -337,15 +353,18 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 if (ante.equals("0")) { ante = "0.0000"; }
                 if (ante == null) { ante = "0.0000"; }
                 anttype=getNonNullString(equipment.getAntenna());
-                antsn  =getNonNullString(equipment.getAntennaSerial());
+                //antsn  =getNonNullString(equipment.getAntennaSerial());
+                // for antsn, handle case of value 'unknown' or 'not provided'
+                    String answer = equipment.getAntennaSerial();
+                    //answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
+                       answer="N/A";
+                    }
+                antsn = answer;
+
                 dome = getNonNullString(equipment.getDome());
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
-                /* others possible
-                pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
-                pw.append(EQUIP_ANTENNACABLETYPE, "",
-                pw.append(EQUIP_ANTENNACABLELENGTH,
-                */
             }
 
            // construct the csv file line for this session at a site:

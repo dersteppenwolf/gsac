@@ -41,27 +41,16 @@ import java.text.DecimalFormat;
  *
  * This produces a SHORT report with few values. FB wants to keep it (legacy issue).   Noted Feb 25 2013.
  *
- * 26 feb 2013: output shows huge number of digits in latitude and longitude. Reformatted same.
+ * 26 Feb 2013: output shows huge number of digits in latitude and longitude. Reformatted same.
  * 20 Nov 2013:
  * 1. first column in output removed: in the unavco gsac is such as "13922_AHUP_268"  an internal identifier in the UNAVCO GSAC code, and of no use to any geodesy user
- * or simply repeats second column in prototype gsac
+ *      or simply repeats second column in prototype gsac
  * 2. replace top header line with standard csv format style.
  *
- * sample of formatted results:
- * old:  
-    #site.id,site.code,site.name,site.latitude,site.longitude,site.elevation
-    13922_AHUP_268,AHUP,Ahua,19.3791,-155.2661,1104.8471
-    17048_AINP_467,AINP,Ainapo,19.3727,-155.458,1568.1289
-    18823_ALAL_937,ALAL,Alala Lava Flow,19.3815,-155.5915,3203.6935
-    18380_ALEP_678,ALEP,ALEA Permanent,19.5412,-155.6441,2922.0759
-    18825_ANIP_938,ANIP,Anipeahi,19.3956,-155.5173,2599.3176 
- * new:
+ * Note the "elevation" value should be the site's ellipsoid height, depending in the metadata available.
  *
- * 
- *      Note the "elevation" value is in fact  ellipsoid height, depending in the metadata available.
- *
- * @author  Jeff McWhirter
- * @author SK Wier 26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits. 20 Nov 2013; see above.
+ * @author Jeff McWhirter 2010
+ * @author SK Wier 26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits. 20 Nov 2013; see above. 6 feb 2104 to change GUI choice label.
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
     String latitude ="";
@@ -78,7 +67,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public static final String OUTPUT_SITE_CSV = "site.csv";
 
     /**
-     * ctor; provides label in GSAC GUI "Output:" box, and output file name extension for this class.
+     * ctor; provides label in GSAC web page to search for sites, the GUI Results [+] -> Output:" box, and also the output file name extension for this class.
      *
      * @param gsacRepository _more_
      * @param resourceClass _more_
@@ -86,8 +75,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public TextSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV,
-                                      "GSAC station info, csv (short)", "/sites.csv", true));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, short csv", "/sites.csv", true));
     }
 
 

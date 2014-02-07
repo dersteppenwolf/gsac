@@ -280,8 +280,15 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
             if (equipment.hasReceiver()) {
                 rectype=equipment.getReceiver() ;
-                recsn=equipment.getReceiverSerial();
-                firmvers=equipment.getReceiverFirmware();
+                //recsn=equipment.getReceiverSerial();
+                // for firmvers, handle case of value 'unknown' or 'not provided'
+                    String answer = equipment.getReceiverFirmware();
+                    //answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
+                       answer= "--------------------";
+                    }
+                firmvers = answer;
+
                 swVer=equipment.getSwVer();
                 starttime= getNonNullGamitString(dateTimeFormat_ISO8601( equipment.getFromDate()));
                 starttime = getGamitTimeFormat(starttime, equipment.getFromDate());
@@ -293,7 +300,14 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
             if (equipment.hasAntenna()) {
                 
                 anttype=getNonNullGamitString(equipment.getAntenna());
-                antsn  =getNonNullGamitString(equipment.getAntennaSerial());
+                //antsn  =getNonNullGamitString(equipment.getAntennaSerial());
+                // for antsn, handle case of value 'unknown' or 'not provided'
+                    String answer = equipment.getAntennaSerial();
+                    //answer = answer.replaceAll(",", " ");
+                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
+                       answer = "--------------------"; 
+                    }
+                antsn = answer;
 
                 String dt = equipment.getDome();
                 //     System.out.println(" site info: new dome =_"+dt+"_");

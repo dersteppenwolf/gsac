@@ -547,12 +547,13 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 pw.append( stoptime+ " ");
                 pw.append( setStringLengthRight( equipment.getReceiver(),20) +" ");
 
+
                 // was pw.append( setStringLength( equipment.getReceiverSerial(),5) +" ");
                     // handle case of value 'unknown' or 'not provided'
                     String answer = equipment.getReceiverSerial();
                     answer = answer.replaceAll(",", " ");
                     if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
-                       answer="N/A";
+                       answer="-----------";
                     }
                     pw.append( setStringLength(answer,5)                            +" " );
 
@@ -561,9 +562,10 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                     answer = equipment.getReceiverFirmware();
                     answer = answer.replaceAll(",", " ");
                     if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
-                       answer="N/A";
+                       answer="-----------";
                     }
                     pw.append( setStringLength(answer,11)                                 );
+
 
                 pw.append("\n");
             }
@@ -655,7 +657,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                     String answer = equipment.getAntennaSerial();
                     answer = answer.replaceAll(",", " ");
                     if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
-                       answer="N/A";
+                       answer="-----------";
                     }
                     pw.append( setStringLength(answer,5) );
                     // was pw.append( setStringLength( equipment.getAntennaSerial(),5) );

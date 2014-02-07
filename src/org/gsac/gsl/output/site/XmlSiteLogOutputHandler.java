@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -108,6 +109,10 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter pw = response.getPrintWriter();
         pw.append(XmlUtil.XML_HEADER + "\n");
+
+        Date now = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+        System.out.println("GSAC: request for SOPAC XML log file output format, at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
         //Add the open tag with all of the namespaces
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_IGSSITELOG,
@@ -494,7 +499,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         /* synchronized (dateTimeFormat) {
             return dateTimeFormat.format(date);
         } */
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         return formatter.format(date);
     }
 

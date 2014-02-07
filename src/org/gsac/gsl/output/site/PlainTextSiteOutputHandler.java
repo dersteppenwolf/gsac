@@ -93,7 +93,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_PLAIN,
-                                      "GSAC Plain text", "/plainsites.txt", true));
+                                      "GSAC Sites info, Plain text", "/plainsites.txt", true));
     }
 
 /*
