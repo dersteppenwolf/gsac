@@ -602,11 +602,12 @@ public class GsacRepository implements GsacConstants {
             }
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
-                //System.out.println("GSAC new request is: "+request.toString()  + "  originating IP: "+request.getOriginatingIP() );
+                
+                // import java.text.SimpleDateFormat;
                 Date now = new Date();
                 SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss"); //  SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
-                //SimpleDateFormat ft = new SimpleDateFormat ("dd MM yyyy hh:mm:ss"); //  SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
                 System.out.println("GSAC: new request "+request.toString() + ", time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
+
                 //System.out.println("  originating IP: "+request.getOriginatingIP() + "   request IP: "+request.getRequestIP());
                 int resourceCnt = -1;
                 if (response != null) {
