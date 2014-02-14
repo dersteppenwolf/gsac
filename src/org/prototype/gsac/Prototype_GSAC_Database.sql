@@ -153,7 +153,7 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
-INSERT INTO `country` VALUES (0,'unknown');
+INSERT INTO `country` VALUES (0,' ');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,7 +177,7 @@ CREATE TABLE `file_type` (
 
 LOCK TABLES `file_type` WRITE;
 /*!40000 ALTER TABLE `file_type` DISABLE KEYS */;
-INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'position time series plot image file'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'),(26,'BINEX'),(27,'GNSS observation QC file (teqc \'S\' file)');
+INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'time series plot image'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'),(26,'BINEX'),(27,'GNSS observation QC file (teqc \'S\' file)');
 /*!40000 ALTER TABLE `file_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,7 +266,7 @@ CREATE TABLE `province_region_state` (
 
 LOCK TABLES `province_region_state` WRITE;
 /*!40000 ALTER TABLE `province_region_state` DISABLE KEYS */;
-INSERT INTO `province_region_state` VALUES (0,'unknown');
+INSERT INTO `province_region_state` VALUES (0,' ');
 /*!40000 ALTER TABLE `province_region_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -404,6 +404,7 @@ CREATE TABLE `station` (
   `station_removed_date` datetime DEFAULT NULL,
   `iers_domes` varchar(9) DEFAULT NULL,
   `station_photo_URL` varchar(100) DEFAULT NULL,
+  `time_series_image_URL` varchar(100) DEFAULT NULL,
   `agency_id` int(3) unsigned DEFAULT NULL,
   `networks` varchar(2000) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
@@ -420,43 +421,6 @@ CREATE TABLE `station` (
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `station_session`
---
-
-DROP TABLE IF EXISTS `station_session`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `station_session` (
-  `station_session_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
-  `station_id` int(6) unsigned NOT NULL,
-  `session_start_date` datetime NOT NULL,
-  `session_end_date` datetime NOT NULL,
-  `receiver_type_id` int(5) unsigned NOT NULL,
-  `receiver_firmware_version_id` int(5) unsigned NOT NULL,
-  `receiver_serial_number` varchar(20) NOT NULL,
-  `antenna_type_id` int(5) unsigned NOT NULL,
-  `antenna_serial_number` varchar(20) NOT NULL,
-  `antenna_offset_up` float NOT NULL,
-  `antenna_offset_north` float NOT NULL,
-  `antenna_offset_east` float NOT NULL,
-  `radome_type_id` int(5) unsigned NOT NULL,
-  `sample_interval` float DEFAULT NULL,
-  `antenna_HtCod` char(5) DEFAULT NULL,
-  `satellite_system` varchar(60) DEFAULT NULL,
-  PRIMARY KEY (`station_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `station_session`
---
-
-LOCK TABLES `station_session` WRITE;
-/*!40000 ALTER TABLE `station_session` DISABLE KEYS */;
-/*!40000 ALTER TABLE `station_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -492,4 +456,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-02-06 12:04:55
+-- Dump completed on 2014-02-13 10:57:24

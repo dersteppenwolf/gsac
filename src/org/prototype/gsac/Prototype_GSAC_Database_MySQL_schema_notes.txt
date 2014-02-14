@@ -444,11 +444,12 @@ Table station;
 | station_removed_date     | datetime        | YES  |     | NULL    |                |
 | iers_domes               | varchar(9)      | YES  |     | NULL    |                |
 | station_photo_URL        | varchar(100)    | YES  |     | NULL    |                |
+| time_series_image_URL    | varchar(100)    | YES  |     | NULL    |                |
 | agency_id                | int(3) unsigned | YES  |     | NULL    |                |
 | networks                 | varchar(2000)   | YES  |     | NULL    |                |
 | embargo_duration_hours   | int(6) unsigned | YES  |     | NULL    |                |
 | embargo_after_date       | datetime        | YES  |     | NULL    |                |
-| station_edit_permission_id |int(3) unsigned| YES  |     | NULL    |                |
+| nominal_sample_interval  | float           | YES  |     | NULL    |                |
 +--------------------------+-----------------+------+-----+---------+----------------+
 Table station specifies one instrumented station, site, or monument.
 Contains access permissions controls for ALL gnss data files from this station on your FTP or HTTP server and potentially
@@ -468,14 +469,16 @@ Field networks is a comma-separated list in one character string, such as "PBO, 
 of the named groups of stations this station belongs to. It may be omitted, or have one network such as "PBO".
 About station_edit_permission_id, see the notes for table station_edit_permission below.  You need not set values 
 for station_edit_permission_id in the station table for GSAC to work properly; this is an optional item.
+Field time_series_image_URL may be null; if you have an image of a plot of time series data online, you can put its URL here to show in a site page.
+Field nominal_sample_interval may be null.  The preferred value of sample interval at any time is in the receiver_session table.
 
 
 Table station_session
-The station session table was used in GSAC prior to fall 2013.  It merged data values already present in the
+The station session table was used in GSAC prior to late fall 2013.  It merged data values already present in the
 tables antenna-session and receiver_session.  This practice is hard to maintain and easily leads to errors in the database.
-GSAC no longer needs or uses the table station_session.  If your GSAC database has the station session table, update to new GSAC code and 
+GSAC no longer needs or uses the table station_session.  If your GSAC database has the station session table, update to new GSAC Java code and 
 remove that table from the database.  You may leave the table in the database until after you know if is no longer called
-by your GSAC code.  (Search your GSAC code for calls on this table with the command grep STATION_SESS *.java).
+by your GSAC code.  (Search your GSAC code for calls on this table with the Linux command "grep STATION_SESS *.java" ).
 
 
 Table station_style;
