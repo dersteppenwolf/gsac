@@ -153,7 +153,6 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
-INSERT INTO `country` VALUES (0,' ');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,7 +167,7 @@ CREATE TABLE `file_type` (
   `file_type_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `file_type_name` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`file_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -177,7 +176,7 @@ CREATE TABLE `file_type` (
 
 LOCK TABLES `file_type` WRITE;
 /*!40000 ALTER TABLE `file_type` DISABLE KEYS */;
-INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'time series plot image'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'),(26,'BINEX'),(27,'GNSS observation QC file (teqc \'S\' file)');
+INSERT INTO `file_type` VALUES (1,'instrument raw binary file'),(2,'RINEX GPS navigation file'),(3,'RINEX meteorological file'),(4,'RINEX observation file'),(5,'RINEX GLONASS navigation file'),(6,'RINEX Galileo navigation file'),(7,'RINEX QZSS navigation file'),(8,'RINEX COMPASS navigation file'),(9,'position time series PBO cvs format'),(10,'position time series PBO pos format'),(11,'SOPAC XML site log'),(12,'SINEX'),(13,'station.info GAMIT'),(14,'IGS format site log'),(15,'BSM (borehole strainmeter) Raw'),(16,'BSM (borehole strainmeter) Processed'),(17,'BSM (borehole strainmeter) Notes'),(18,'BSM (borehole strainmeter) time series plots'),(19,'Tiltmeter Raw ASCII Data'),(20,'Tiltmeter Plots'),(21,'Seismometer data'),(22,'time series plot image'),(23,'SLR data'),(24,'VLBI data'),(25,'DORIS data'),(26,'BINEX'),(27,'GNSS observation QC file (teqc \'S\' file)'),(28,'tide gauge data');
 /*!40000 ALTER TABLE `file_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -242,7 +241,6 @@ CREATE TABLE `monument_description` (
 
 LOCK TABLES `monument_description` WRITE;
 /*!40000 ALTER TABLE `monument_description` DISABLE KEYS */;
-INSERT INTO `monument_description` VALUES (0,'');
 /*!40000 ALTER TABLE `monument_description` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,7 +264,6 @@ CREATE TABLE `province_region_state` (
 
 LOCK TABLES `province_region_state` WRITE;
 /*!40000 ALTER TABLE `province_region_state` DISABLE KEYS */;
-INSERT INTO `province_region_state` VALUES (0,' ');
 /*!40000 ALTER TABLE `province_region_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -456,4 +453,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-02-13 10:57:24
+-- Dump completed on 2014-02-18  8:39:50
