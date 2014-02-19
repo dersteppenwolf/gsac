@@ -3,11 +3,11 @@
 */
 
 /*  set zoom control for Google Maps map of GSAC sites; zoom level 3 is about 10000 km wide; 4 is about 3900 km wide. */
-var defaultZoomLevel = 4;
+var defaultZoomLevel = 3;
 
 /*  set center of GSAC site map, with longitude east (west is negative), latitude north, and set zoom level */
-/*  example: center of Caribbean area */
-var defaultLocation = new OpenLayers.LonLat(-77.0, 16.00);
+/*  example: Europe */
+var defaultLocation = new OpenLayers.LonLat(15.00, 50.00);
 
 
 var mapLayers = null;
