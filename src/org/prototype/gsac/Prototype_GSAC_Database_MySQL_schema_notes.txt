@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					             6 Feb 2014          
+					             18 Feb 2014          
 
 					      UNAVCO, Boulder Colorado.
 
@@ -208,8 +208,10 @@ Table file_type;
 |           25 | DORIS data                                   |
 |           26 | BINEX                                        |
 |           27 | GNSS observation QC file (teqc 'S' file)     |
+|           28 | tide gauge data                              |
++--------------+----------------------------------------------+
 If needed, you can add a new type in a new row to this table in your database, if you offer geoscience data files of another type for downloading.
-That is all you need to do to allow your GSAC service to handle a new kind of data file, that and having the correct file_type_id in each file's db row in the gnss_data_file table.
+Use the correct file_type_id in each file's db row in the gnss_data_file table.
 For consistency in GSAC operations, the file types named above and their file_type_id numbers are a GSAC "standard" and should be the same across all GSAC operations.
 
 GSAC recommends the two PBO formats for GPS position time series files, as found in these sample files: 
