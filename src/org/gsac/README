@@ -1,26 +1,29 @@
 ################################################################################
 
-GSAC Installation
+                           GSAC Installation
 
-README, Part 1.  Creating an initial GSAC server at your repository
+   README, Part 1.  Creating an initial GSAC server at your Data Center 
 
- 4 Feb. 2014.  SKW UNAVCO
+                  19 Feb. 2014.  Stuart Wier, UNAVCO
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can quickly offer a set of complete, 
-consistent, modern web services for remote users to query the data center about stations and instruments, and download data files. 
+consistent, modern web services for remote users to query the data center about stations and instruments, and download data files make by the instruments, and product files such as plots. 
 The UNAVCO GSAC home page is at http://facility.unavco.org/data/gsacws/gsacws.html. 
 
-This README file describes the first steps in GSAC installation, and is the first of two README files detailing GSAC installation.  
-This README file is "Part 1" of two GSAC README files for installation, and is in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge as described below.
+This README file describes the first steps in GSAC installation, and is the first, Part 1, of two README files detailing GSAC installation.  
+This README file is found in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge, as described below.
 
 This README file uses for examples a hypothetical "Boulder" agency running a GPS network called "BoulderNet." You will use you own names for these.
+
+Time Formats
 
 GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and error-prone behavior of using several different formats.
 Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.
 Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with
-Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
-GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number part of an ISO 8601 value.  GSAC does not expect times
-in the database to be in any time zone other than UTC.
+   Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+
+GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number in an ISO 8601 value.  
+GSAC does not expect times in the database to be in any time zone other than UTC.  You may if you wish enter such times but that is discouraged.
 
 ################################################################################
 
@@ -28,49 +31,53 @@ Installing GSAC Web Services -- System Requirements
 
 You can install GSAC web services for a data repository when you have:
 
-    a database with complete metadata about your data center's holdings, including metadata about sites (stations or monuments) and their instruments, and about their data files (if any). GSAC can read Oracle, Postgres, or MySQL. You can use an existing database you have, with no changes to it, but new Java code for GSAC code will be needed to read the database. Or you can make a new database using the Prototype  GSAC database schema, populating it with your data values, which allows you to use GSAC code with very few changes. See more in the GSAC Database section, below. 
+    a database, with complete metadata about sites (stations or monuments), their instruments, and their data files (if any). See more details in A Database for GSAC, below. You can use an existing database you have, with no changes to it, but new Java code for GSAC code must be written to read the database, which requires some use of the GSAC core classes. Or you can make a new database using the GSAC prototype database schema as described below, populating it with your data values, which allows you to use GSAC code with few changes.
 
-    a web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its included application server, Jetty. 
+    A web server for GSAC web pages. Running GSAC with the Tomcat application server is common, but Tomcat is optional. GSAC can use its own included application server, Jetty.
 
-    usually GNSS data files from instruments for remote users to download. GSAC can provide discovery and download of geodesy data files like RINEX files. This is optional. 
+    To offer data file downloads, GNSS data files from the instruments, for remote users to download. GSAC can provide discovery and download of geodesy data files like RINEX files. This is optional.
 
-    Also, if you want to offer data file downloads, an FTP / HTTP download server the data files. GSAC does not download files. GSAC tells users how and where to download files via a URL to the file.  GSAC itself can run on a web server different from the server(s) for downloads, a benefit. 
+    To offer data file downloads, an FTP / HTTP download server for the data files. GSAC itself can run on a different web server from the server(s) for downloads, a benefit. (GSAC does not download files; GSAC tells users how and where to download files, a URL for the FTP/HTTP server and the file.)
 
-    A Linux system for the initial installation and tests of your GSAC web site, with related software tools bash, Java JDK 1.6 or 1.7, subversion ("svn"), and ant, and with access to your GSAC database. 
+    A Linux system (see below for details) for the initial installation and test of GSAC, with related software tools bash, Java JDK 1.6 or 1.7, subversion ("svn"), and ant, and with access to your GSAC database.
+    the GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package from SourceForge.
 
-    the GSAC software package provided by UNAVCO. GSAC is free and open source code in the GSAC package on SourceForge (http://sourceforge.net/projects/gsac).
+    About Linux Systems
 
-A typical Linux system for the initial installation and test of GSAC could be Ubuntu, version 11, 12 or 13. Use the bash shell.  Ubuntu with bash has very simple installation of the software tools you need. Debian Linux should work well; Mac may also use these tools.
+        GSAC uses standard Linux operating system features and utilities. Your Linux will need the utilities ant, bash, svn, and Java development support. 
+        GSAC experience is not yet extensive enough to recommend one OS, or to discourage use of any. GSAC has been installed on Debian, Ubuntu, Mac OS, and Free BSD. UNAVCO will test GSAC on CentOS in early 2014.
 
-Java version 1.6 or 1.7 works. Ubuntu may come with Java JDK which is all you need for GSAC builds. If your system lacks Java, or to upgrade to Java (JDK) 1.7, do:
-sudo apt-get install openjdk-7-jdk
-sudo update-alternatives --config java       Choose the item for the Java version you want.
-In ~/.bashrc, add
-export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386
-and do command source ~/.bashrc
+        About Debian, Ubuntu, CentOS, and Fedora
 
-To install ant on Ubuntu (and probably on Debian), do command 
+        A typical Linux system for GSAC operations could use Debian, with the bash shell. Debian with bash has simple installation of the software tools you need using apt-get. 
+        Ubuntu, Fedora, and CentOS Linux are similar, but Debian is recommended for stable and secure operations.
 
-sudo apt-get install ant
+        Java JDK, version 1.6 or 1.7. Most Linux Os-s come with a Java JDK which probably will be OK for GSAC builds. Try commands "java -version" and "javac - version" to see your Java versions.
 
-To install subversion ("svn") on Ubuntu (and probably on Debian), do command i
+        To install ant, do command sudo apt-get install ant
 
-sudo apt-get install subversion
+        To install subversion ("svn"), do command sudo apt-get install subversion
 
-If you elect to use MySQL (see below), versions 5.1 to 5.5 are known to work properly.  i
-To install MySQL on Ubuntu (and probably on Debian), do the command 
+        If you elect to use MySQL, versions 5.1 to 5.6 are know to work. Do the command sudo apt-get install mysql-server This requests you to enter 
+        the "root" password, which is a new root password for MySQL, not your Linux system root password.
 
-sudo apt-get install mysql-server
 
-This requests a you to enter a new so-called "root" password for MySQL use, which is a new password, not your Linux system root password.
+        About Mac OS
+        On a MacBook Air, this configuration works:
+            Mac OS X Ver 10.9.1 (Mavericks)
+            5.6.14 MySQL Server Version
+            JDK 7 Update 09 (build 1.7.0_09-b05)
+            svn, version 1.8.5 (r1542147)
+            ant, Apache Ant version 1.9.3 (version 1.8.1 fails)
+                setenv JAVA_HOME /Library/Java/JavaVirtualMachines/jdk1.7.0_09.jdk/Contents/Home
+                setenv ANT_HOME /sw/lib/ant 
 
-In principle you may be able to install GSAC on a Mac. It may be more difficult than using Linux.  
-The Mac OS does not come with svn but it can use svn.  Instructions about how to install svn on the Mac are online (for example http://www.wikihow.com/Install-Subversion-on-Mac-OS-X).  
-
+        About Free BSD
+        There may be various technical issues concerning the jdk7 as installed on FreeBSD (via the port system), and ant, one GSAC operator reports. More details when we get them. 
 
 ################################################################################
 
-The GSAC Database
+A Database for GSAC
 
 An essential part of GSAC installation and operations, which is not available from online resources, is a database which you create and maintain, about sites (stations), their instruments, and their data files (if any). The GSAC database contains the information about stations which you wish to offer online, and about stations' data files which you wish to offer for download. The database must contain up-to-date, complete, and correct information if GSAC services are to represent your data repository correctly. (The GSAC database is also a good way to manage contents of your data repository, aside from GSAC operations, if it is well designed. To manage a data center, a well-designed database is much less error prone, and much more suited to computer operations, than text files such as IGS site logs or SINEX files.)
 
@@ -101,18 +108,23 @@ You need to populate the database with the information about your stations, inst
 
 UNAVCO can aid and advise about GSAC installations and operations. UNAVCO has a responsibility to ensure that GSAC itself installs properly. UNAVCO can help install GSAC, in some cases including providing a provisional working database with some of your data center's information, if some conditions are met including your use of the provisional database schema. UNAVCO will populate the provisional database with an initial but incomplete set of data, just enough to ensure that GSAC is working.
 
-Completely populating your database, and maintaining it, is necessary to operate GSAC, but doing so is entirely outside of GSAC -- see the diagram on the home page of the GSAC web site -- and is your responsibility. 
+Completely populating your database, and maintaining it, is necessary to operate GSAC, but doing so is not part of GSAC. 
+
+Correctly populating and maintaining the database used by GSAC is the responsibility of the GSAC operator. 
 
 Also, GSAC does not check data values, GNSS file quality, or otherwise manage a data archive. GSAC can not update your database. GSAC is web services, not a content management system. 
-And GSAC is intentionally designed to *not* "know" (much) about geodesy, to keep it adapable to a wide range of services and to 
-simplify adding new, and as yet unknown, features. 
+GSAC is intentionally designed to *not* know about geodesy or other domains, to keep it adapable to a wide range of services and to simplify adding new types of data file and new GSAC features. 
+
 
 ################################################################################    ################################################################################
 
 Installing the GSAC Web Services Software Package for a Data Repository, Part 1.
 
  
-Creating the initial GSAC Server at your repository
+GSAC has a set of core Java code (the "GSAC Service Layer," or GSL), and related code.  
+
+You download the GSAC code from SourceForge, and compile it without making any changes to it.  (Then you will create a set of code for your particular data center, which calls the core code.)
+
 
 Get GSAC from SourceForge
 
@@ -123,14 +135,16 @@ mkdir ~/GSAC/
 cd    ~/GSAC/
 
 Check out the GSAC code from SourceForge by entering this command:
-(to get this command, go to https://sourceforge.net/projects/gsac/ and click on the 'Code' menu item in the 'Summary Files ...' menu line)
+(To find this command at SourceForge, go to https://sourceforge.net/projects/gsac/ and click on the 'Code' menu item in the 'Summary Files ...' menu line.)
 
 svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
-(svn export simply downloads all the files for the project, with no revision control permission required. It also does not litter each directory with .svn directories.
-svn checkout is used if you will plan to check in new code to GSAC on SourceForge.)
+(svn export simply downloads all the files for the project, with no revision control permission required.  svn checkout is used if you have a developer's role, to check in new code to GSAC on SourceForge.)
 
-The svn export creates a new folder gsac-code and many folders and files in it.
+The svn export creates a new folder named gsac-code, and many folders and files in it.
+
+
+Building GSAC core code.
 
 cd gsac-code/
 
@@ -138,12 +152,36 @@ Do an initial ant build with the command:
 
 ant
 
-Look for any error messages.
+Look for any error messages.  If there are none, you have completed the GSAC core code.  This process makes a Java jar a file GSAC/gsac-code/lib/gsacws.jar, about 5 MB.
+Your data center's Java code for GSAC will use this GSAC to make a complete GSAC.
 
 
-Beginning to make your GSAC
+/// --------------------------------------------------------------------------------- ///
 
-Edit  the file
+Updating GSAC to get new core code from SourceForge.
+
+Running 'ant' in GSAC/gsac-code/ (or wherever you put GSAC on your system) builds the core GSAC code, as just described.
+
+This step (but not the SOurceForge svn export step) is also used from time to time when GSAC developers have checked in new code to SourceForge.
+To update your GSAC with that new code, first do svn update to get the bew source code files.  Usually you do 
+
+cd GSAC/gsac-code/src/org/gsac
+
+svn update
+
+cd gsac-code/
+
+ant
+
+and then agqain build your GSAC code in your GSAC code area, with ant, as described below.
+
+/// --------------------------------------------------------------------------------- ///
+
+
+Begin to make your GSAC.
+
+
+Set Map Area.
 
 gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
 
@@ -152,14 +190,17 @@ to set the longitude, latitude, and map zoom level for the center of the map GSA
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
   var defaultZoomLevel = 5;
 
-The value defaultZoomLevel = 4 will show all of western Europe; 6 will show an area about 1200 km wide by 800 km high. 
+The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
+
+The repositorymap.js from SourceForge shows Europe.  If your data is from Europe, you not not have to revise this file.
 
 
-Rebuild the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
+
+Again build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
 You may find the screen messages interesting to show the process of a GSAC build. 
 
 
-Next
+Begin your data center's GSAC code.
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
@@ -195,7 +236,7 @@ Copy that file macros.properties to a temporary working file (any new name), suc
 
 cp macros.properties mymacros.properties  
 
-The new file name does not matter.
+The new file name does not matter. You only use this file one time.
 
 Edit the new properties file to set values for your repository GSAC.  For example, new values something like these:
 
@@ -208,7 +249,8 @@ Edit the new properties file to set values for your repository GSAC.  For exampl
 Then
 
 cd ../   
-(i.e. cd to ~/GSAC/gsac-code/src/org/gsac/)
+
+(i.e. cd to GSAC/gsac-code/src/org/gsac/)
 
 Then run a command like this, with the new properties file name in place of mymacros.properties:
 
@@ -235,7 +277,7 @@ BUILD SUCCESSFUL
 
 Look to be sure no errors occur.  
 
-This process creates a new code area and new Java files for your GSAC installation, beginning with a new folder, such as
+This process creates a new code area (new folders), and new Java files for your GSAC installation, beginning with a new folder, such as
 
 ~/GSAC/gsac-code/src/org/boulder/ 
 
@@ -254,7 +296,8 @@ Follow the README file there to complete your GSAC installation. That is README 
 
 To Build a Federated GSAC
 
-(not a GSAC to offer web services for a local data repository)
+This section is only preliminary and is incomplete.  Complete instructions will be supplied on the UNAVCO GSAC web site by UNAVCO, in 2014.  Also you can email UNAVCO for help.
+
 
 Two or more GSAC repositories may choose to collaborate to offer a single "federated" GSAC repository which, while maintaining the independence of each individual GSAC repository, allows for merged or joint searches of all the collaborating GSACs at once.
 
