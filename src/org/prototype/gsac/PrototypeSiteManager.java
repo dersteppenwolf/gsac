@@ -38,7 +38,7 @@ import org.gsac.gsl.output.HtmlOutputHandler;
 import ucar.unidata.util.Misc;
 
 // older version (before Oct 2013) had import ucar.unidata.sql.Clause;
-//                   import ucar.unidata.sql.SqlUtil;
+//                                     import ucar.unidata.sql.SqlUtil;
 import org.ramadda.sql.Clause;
 import org.ramadda.sql.SqlUtil;
 
@@ -120,6 +120,10 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * (Perhaps a call  to this method goes before makeCapabilities call, so regular site search form appears before advanced search?)
      *
+     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
+     *
+     * LOOK - this method appears to be called twice at server start-up.
+     *
      * CHANGEME if you have other things to search on, or different db table or field names for the items to search on.
      *
      * @return site search capabilities
@@ -182,24 +186,14 @@ public class PrototypeSiteManager extends SiteManager {
             String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
             //  FROM which tables (for a table join)
             tables.add(Tables.STATION.NAME);
-            Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            //  LOOK? need no clauses get all networks values in rows: 
+            //Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            Statement statement = getDatabaseManager().select(cols,  tables,  null,  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query
                while ((results = iter.getNext()) != null) {
                    String networks= results.getString(Tables.STATION.COL_NETWORKS); // comma sep list of names of networks
-
-                   /* old way 
-                   int notfound=1;
-                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                      if ( avalues.get(vi).equals(networks) ) {
-                         notfound=0;
-                         break;
-                         }
-                   }
-                   if (notfound==1) {
-                   ...
-                   */
           
                    if (networks.length()>0) {
                          //System.err.println("      station has network(s) _"+networks+"_");
@@ -216,7 +210,6 @@ public class PrototypeSiteManager extends SiteManager {
                             }
                          }
                    }
-
                }
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
@@ -447,7 +440,7 @@ public class PrototypeSiteManager extends SiteManager {
         // query for the station's networks; "group" is GSAC jargon for gnss network
         if (request.defined(ARG_SITE_GROUP)) {
             List<String> values = (List<String>) request.get(ARG_SITE_GROUP, new ArrayList());
-            clauses.add(Clause.or(getNetworkClauses(values, msgBuff)));
+            clauses.add(Clause.or(getNetworkClauses(values, msgBuff)));  // see method def getNetworkClauses () below
         }
 
         // query for the station's place name 
@@ -522,7 +515,11 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for radome " + values.get(0)) ;
         }
 
-        //System.err.println("   SiteManager: getResourceClauses gives " + clauses) ;
+        // NOTE: the following shows a line like
+        //    SiteManager: getResourceClauses gives [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
+        // which creates, later, the sql based query or API to GSAC:
+        //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
+        // System.err.println("   SiteManager: getResourceClauses gives " + clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -549,7 +546,7 @@ public class PrototypeSiteManager extends SiteManager {
         // compose the complete select SQL phrase; apply the select clause to the table(s) given. see select ( ) in gsl/database/GsacDatabaseManager.java
         //                                                 DB  .select( what to find (fields),     from which tables,      where clause, )  
         // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
-        // and this works OK:
+        // and this also has ordering :
         Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_CODE_4CHAR_ID, -1);
 
         //  to test site or file searches: System.err.println("   SiteManager: station select query is " +statement);
@@ -653,25 +650,16 @@ public class PrototypeSiteManager extends SiteManager {
         if (null!=staname) {
                  staname       =   new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
         }
-        //System.err.println("   station " +staname);
 
         String     city        =     results.getString(Tables.STATION.COL_CITY);
         if (null!= city) {
                     city =  new String( results.getBytes(Tables.STATION.COL_CITY), "UTF-8");
         }
-        //System.err.println("   city = " +city);
 
-        //String iersdomes =   new String( results.getBytes(Tables.STATION.COL_IERS_DOMES), "UTF-8");//results.getString(Tables.STATION.COL_IERS_DOMES);
-        //String station_photo_URL = new String( results.getBytes(Tables.STATION.COL_STATION_PHOTO_URL), "UTF-8");//results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
-        //String networks  =   new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");//results.getString(Tables.STATION.COL_NETWORKS);
-        // these very probably are latin characters:
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
-
-
         String fourCharId    =  results.getString(Tables.STATION.COL_CODE_4CHAR_ID);  // not a var char so does not work 
-
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_ELLIPSOIDAL_HEIGHT);
@@ -680,16 +668,15 @@ public class PrototypeSiteManager extends SiteManager {
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); // or getLong
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
-
+        String ts_image_URL = " "; // = results.getString(Tables.STATION.COL_TIMESERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
-        /* FIX other code to deal with this 
+        /* 
         if (1== access_permission_id ) {
             System.err.println("   GSAC found station with no access permission (no public views allowed) " +fourCharId);
             GsacSite site = new GsacSite();
             return site;
         }
         */
-
          
         /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
@@ -808,20 +795,47 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
         
-        // add URL(s) of image(s) here; will appear on web page of one station results
+        // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
-        if ( station_photo_URL != null) {
+        if ( station_photo_URL != null || ts_image_URL.length()>8 ) { //ts_image_URL!=null ) {
+
             if (imagesGroup == null) {
                 site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
             }
-            // add one image to the group:
-            imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
-            // or in some cases could do like this to make the first arg value: "http://facility.unavco.org/data/images/station_images/" + fourCharId + ".jpg", 
+
+            if ( station_photo_URL != null ) {
+                // add  site photo image to the group:
+                imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+            }
+
+            if (ts_image_URL.length()>8 ) { //(ts_image_URL!=null) ) {
+                // add image of a time series data plot to the images group:
+                imagesGroup.add( new ImageMetadata(ts_image_URL, "Time Series Data Plot"));
+            }
         }
 
-        //  set site "Type" aka site.type also called "station style" in the database
-        // hard coded, using values in the GSAC prototype db:
+        //  set site "Type" aka site.type corresponding to "station style" in the database
+        // Not clear where or how this is used by GSAC code.
         // CHANGEME if you alter the GSAC prototype db schema.
+        // hard coded, using values in the GSAC prototype db:
+        /*
+        select * from station_style;
+        +------------------+---------------------+
+        | station_style_id | station_style_name  |
+        +------------------+---------------------+
+        |                1 | GPS/GNSS Campaign   |
+        |                2 | GPS/GNSS Continuous |
+        |                3 | GPS/GNSS Mobile     |
+        |                4 | DORIS               |
+        |                5 | Seismic             |
+        |                6 | SLR                 |
+        |                7 | Strainmeter         |
+        |                8 | Tiltmeter           |
+        |                9 | VLBI                |
+        |               10 | GPS/GNSS Episodic   |
+        |               11 | Tide Gauge          |
+        +------------------+---------------------+
+        */
         if (1 == station_style_id ) {
            site.setType(new ResourceType("gnss.site.campaign"));
         }
@@ -831,8 +845,21 @@ public class PrototypeSiteManager extends SiteManager {
         else if (3 == station_style_id ) {
            site.setType(new ResourceType("gnss.site.mobile"));
         }
+        else if (4  == station_style_id ) {
+           site.setType(new ResourceType("doris.site"));
+        }
+        // more station styles ... FIX 
+        else if (8  == station_style_id ) {
+           site.setType(new ResourceType("tiltmeter.site"));
+        }
+        else if (10 == station_style_id ) {
+           site.setType(new ResourceType("gnss.site.episodic"));
+        }
+        else if (11 == station_style_id ) {
+           site.setType(new ResourceType("tidegauge.site"));
+        }
 
-        // CHANGEME if you need this; sample code is below in this file.
+        // CHANGEME: implement this, if you need this; sample code is below in this file.
         // readFrequencyStandardMetadata(site);
 
         return site;
@@ -956,8 +983,9 @@ public class PrototypeSiteManager extends SiteManager {
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
-                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "Monument description", 
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "monument", 
                      results.getString(Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION) );
+                // arg "monument" appears as a label in the HTML page about one station.
                 //Only read the first row of db query results returned
                 break;
             }
@@ -1199,14 +1227,14 @@ public class PrototypeSiteManager extends SiteManager {
         // FIX finish error check: if found no ant or rcv session times: which becomes: 
         // FIX LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
         if ( rcvstartDates.size() == 0 ) { 
-              System.err.println("  NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
-              // OK to return from this method call with empty results:
+              //System.err.println("  NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
+              // it's OK to return from this method call with empty results:
               GnssEquipmentGroup equipmentGroup = null;
               gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
               return;
         }
         if ( antstartDates.size()==  0 ) { 
-              System.err.println("  NO antenna sessions in GSAC database for station "+gsacResource.getId()); 
+              //System.err.println("  NO antenna sessions in GSAC database for station "+gsacResource.getId()); 
               GnssEquipmentGroup equipmentGroup = null;
               gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
               return;
@@ -1629,12 +1657,8 @@ public class PrototypeSiteManager extends SiteManager {
                 // the label on the web page or results
                 // the db column name 
             while ((results = iter.getNext()) != null) {
-                addPropertyMetadata(
-                    gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD,
-                    "Clock",
-                    results.getString(
-                        Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
-
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "Clock", 
+                                      results.getString(Tables.SITELOG_FREQUENCYSTANDARD.COL_STANDARDTYPE));
                 break;
             }
         } finally {
@@ -1664,6 +1688,7 @@ public class PrototypeSiteManager extends SiteManager {
                 }
                 for (String tok : commaDelimitedList.split(",")) {
                     tok = tok.trim();
+                    System.err.println("       doGetResourceGroups(): network _"+tok+"_");
                     if (seen.contains(tok)) {
                         continue;
                     }
@@ -1673,6 +1698,7 @@ public class PrototypeSiteManager extends SiteManager {
             }
             Collections.sort(groups);
             return groups;
+
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
@@ -1694,11 +1720,27 @@ public class PrototypeSiteManager extends SiteManager {
         // "Handle the 4 cases to find the argument in the csv list of groups in the DB"
         int cnt = 0;
         for (String group : groupIds) {
+            //System.err.println("       getNetworkClauses(): search for network or group name _"+group+"_");  // shows correct result
             appendSearchCriteria(msgBuff, ((cnt++ == 0) ? "Site Group=" : ""), group);
+            // original simple equality :   which does not work where a station has more than one network names in comma separated list
+            //Clause cl_one = new Clause();
+            //cl_one = Clause.eq(col, group);
+            //System.err.println("          clause one ="+cl_one);  // shows this: station.networks='BOULDER GNSS'
             groupClauses.add(Clause.eq(col, group));
-            groupClauses.add(Clause.like(col, SqlUtil.wildCardBefore(", " + group)));
-            groupClauses.add(Clause.like(col, SqlUtil.wildCardAfter(group + ",")));
-            groupClauses.add(Clause.like(col, SqlUtil.wildCardBoth(", " + group + ",")));
+
+            // need clause where the string 'group' is IN the col result
+
+            // try Clause cl_2 = new Clause();
+            //cl_2 = Clause.like(col, group);
+            //System.err.println("          clause two ="+cl_2);  // shows this: station.networks LIKE 'BOULDER GNSS'
+            //groupClauses.add(cl_2); which does not succeed in sql query
+
+            groupClauses.add(Clause.like(col, SqlUtil.wildCardBoth(group)));
+
+            // other cases which are no help here:
+            //groupClauses.add(Clause.like(col, SqlUtil.wildCardBefore("," + group)));
+            //groupClauses.add(Clause.like(col, SqlUtil.wildCardAfter(group + ",")));
+            //groupClauses.add(Clause.like(col, SqlUtil.wildCardBoth("," + group + ",")));
         }
         return groupClauses;
     }
