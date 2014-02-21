@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010,2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -66,8 +66,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /** date formatter */
-    private SimpleDateFormat dateTimeFormat =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z"); // ISO 8601
 
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
@@ -111,7 +110,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.XML_HEADER + "\n");
 
         Date now = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
         System.out.println("GSAC: request for SOPAC XML log file output format, at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
         //Add the open tag with all of the namespaces
@@ -486,7 +485,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * _more_
+     * ISO 8601 date time format
      *
      * @param date _more_
      *
@@ -517,7 +516,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         /*synchronized (dateFormat) {
             return dateFormat.format(date);
         }*/
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         return formatter.format(date);
     }
 
