@@ -92,16 +92,20 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             }
 
             String id = file.getId();
-            String stationid = "";
-            //System.out.println("   file csv handler processResource(): file.getId ="+id+"_" );
-            /*
+            // see what this is... System.out.println("   file csv handler processResource(): file.getId ="+id+"_" );
+
+            
             String pairid="";
             if (getRepository().isRemoteResource(file)) {
                 String[] pair = getRepository().decodeRemoteId(id);
                 pairid = pair[0] + ":" + pair[1];
                 System.out.println("   file csv handler processResource(): pairid ="+pairid+"_" );
             }
-            */
+            
+ 
+            // get the 4 character site code, and the site name in some cases
+            String stationid = "";
+            String sitename =""; 
             if (id.length() == 4) {
                 stationid = id;
             }
@@ -109,8 +113,9 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             {
                 List<GsacResource> relatedResources = file.getRelatedResources();
                 if (relatedResources.size() == 1) {
+                    sitename= relatedResources.get(0).getLongName();
                     stationid = relatedResources.get(0).getId();
-                    // extract the actual 4 char code from this thing, such as ABMF from 23477_ABMF_5649_
+                    // extract the actual 4 character site code from this thing, such as ABMF from 23477_ABMF_5649_
                     int i1=0;
                     int i2=stationid.length();
                     if (i2>4) {
@@ -118,9 +123,9 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                       i2=i1+4;
                       stationid= stationid.substring(i1,i2); 
                     }
+                    System.out.println("   file csv handler processResource(): data file stationid="+stationid+"_   station name=+"+sitename+"_" );
                 } 
             }
-            //System.out.println("   file csv handler processResource(): stationid="+stationid+"_" );
             pw.print(stationid + ",");
             
             String dtype = file.getType().getLabel();
@@ -174,7 +179,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                 pw.print  ("," ); // add , at end of previous value even if missing to complete cvs formatting.
             }
 
-            // final value, at end of line:
+            // add sample interval:
             float sif = resource.getSampleInterval();
             if ( sif >0.0f) {
                      //System.out.println("   file csv handler processResource(): samp interval ="+sif+"_" );
@@ -182,6 +187,11 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
              } else {
                 pw.print  (",0.0");
              }
+
+            // this happens if the input fileinfo oject has a GsacSite for the relatedResource, as in the UNAVCO GSAC
+            if ( sitename != "" && sitename.length() >=1 ) {
+                pw.print  ("," + sitename);
+            }
   
             // add end of line return \n:
             pw.print("\n");
