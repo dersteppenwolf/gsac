@@ -79,6 +79,8 @@ public class PrototypeFileManager extends FileManager {
      *
      *  In GSAC, "Capabilities" are the things to search (query) on. 
      *
+     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
+     *
      * @return  List of GSAC "Capabilities"  objects
      */
     public List<Capability> doGetQueryCapabilities() {
@@ -89,7 +91,7 @@ public class PrototypeFileManager extends FileManager {
         Capability   cap;
         String [] values; 
 
-        // search on data file types; original: get the file type names from the database
+        // search on data file types; original: get ALL the file type names from the database
         /* 
         try {
              values = getDatabaseManager().readDistinctValues( Tables.FILE_TYPE.NAME, Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
@@ -99,6 +101,7 @@ public class PrototypeFileManager extends FileManager {
         Arrays.sort(values);  if you sort these from the gsac prototype db, the Borehole strainmeter type shows first on the web page, but is of no interest for early GSAC-s
         */
         // an improvement: only get the file types in this data archive to offer here
+        int gpsfcnt=0;
         ResultSet results;
         ArrayList<String> avalues = new ArrayList<String>();
         List<Clause> clauses = new ArrayList<Clause>();
@@ -113,9 +116,11 @@ public class PrototypeFileManager extends FileManager {
         Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+           //System.err.println("  queried db table GNSS_DATA_FILE for all file type names" ) ;
            // process each line in results of db query  
            while ((results = iter.getNext()) != null) {
                String ftype= results.getString(Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
+               gpsfcnt +=1;
                // save distinct values
                int notfound=1;
                for (int vi= 0; vi<avalues.size(); vi+=1 ) {
@@ -126,15 +131,16 @@ public class PrototypeFileManager extends FileManager {
                    }
                    if (notfound==1) {
                          avalues.add(ftype);
-                         //System.err.println(" this data center has file type  " + ftype ) ;
+                         //System.err.println("  this data center has GNSS data files of type '" + ftype +"'" ) ;
                    }
                }
         } finally {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
+        //System.err.println("  there are "+gpsfcnt+"  files in the db for file types" ) ;
         String[] itemArray = new String[avalues.size()];
         values = avalues.toArray(itemArray);
-        // sort by alphabet: Arrays.sort(values);
+        // sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way.
 
 
         Capability[] dflt = { 
@@ -191,7 +197,7 @@ public class PrototypeFileManager extends FileManager {
         //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_CODE_4CHAR_ID, clauses);
         
-        // FROM SiteManager: circa line 371
+        // FROM SiteManager: 
         String latCol  = Tables.STATION.COL_LATITUDE_NORTH;
         String lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
              // query for the station's name string  
@@ -216,9 +222,9 @@ public class PrototypeFileManager extends FileManager {
             clauses.add( Clause.ge( lonCol, request.get(ARG_WEST, 0.0)));
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
-        // end FROM SiteManager:
+        // end FROM SiteManager
 
-        // make query clause for the  file type
+        // make query clause for the  file type  fff
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
             clauses.add( Clause.or( Clause.makeStringClauses( Tables.FILE_TYPE.COL_FILE_TYPE_NAME, values)));
