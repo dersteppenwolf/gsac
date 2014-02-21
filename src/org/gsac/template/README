@@ -72,18 +72,27 @@ Setting and Hiding DB account information: the "GSAC DB Properties" File.
 You code the file, @MACRO.SRCDIR@/dbresources/gsacdb_test.properties, to hold the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
 
-gsac.db.username=db-gsac-username
-gsac.db.password=db-gsac-password
-gsac.db.jdbcurl=jdbc:mysql://boulderdev.mydomain.org:3080/boulderdb
+        ## This is the file dbresources/gsacdb_test.properties, which specifies the database used by GSAC, and the db account to use.
+
+        gsac.db.username=db-gsac-username
+        gsac.db.password=gsac-password
+
+        gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Boulder_GSAC_Database_with_data?useUnicode=yes&characterEncoding=UTF-8
+
+        #gsac.db.jdbcurl=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>
+
+        #gsac.db.jdbcurl=jdbc:postgresql://<hostname>/<database>
+        ##
+
 
 The database host (like boulderdev.mydomain.org), port (3080), account user name and account password are all given here.  
-The database must have an account GSAC can use to read from the database. GSAC does not write to any database.
-When the GSL assembles the JDBC URL it finds the user name and password from here.
+When the GSL assembles the JDBC URL it finds the user name and password from here.  The database must have an account GSAC can use to read from the database. 
+GSAC does not write to any database.
 
-One MySQL example which may work running both the db and GSAC on your computer is 
+One MySQL example which may work running both the db and GSAC locally on your computer, for testing, is 
 gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
 
-The Oracle and Postgres have different syntax for the 'jdbc' line in this file.  For postgres the form is 
+The Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  Also for Postgres the form is 
 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
@@ -93,16 +102,15 @@ One Oracle JDBC URL is of the form:
    e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-(The file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties is not used now. It can be empty.)
+
 
 If you have GSAC SourceForge write access, do not do 'svn add' or 'svn commit' this file, or your database account details will become public.
+(The file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties is not used now. It can be empty.)
 
 Everytime you do "ant" to build your repository, the file @MACRO.SRCDIR@/dbresources/gsacdb_test.properties is copied to the file @MACRO.SRCDIR@/resources/gsacdb.properties, 
 and to the file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties.
 Also the file @MACRO.SRCDIR@/resources/gsacserver_test.properties is copied to @MACRO.SRCDIR@/resources/gsacserver.properties. 
 This can be confusing if you attempt to keep track of the several properties files.
-
-The properties files in these two sections are the only ones you need to look at to make a working GSAC.
 
 ########################################################################
 Initial compile of GSAC in your new GSAC code area
