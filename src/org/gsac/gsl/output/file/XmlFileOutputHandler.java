@@ -78,8 +78,8 @@ public class XmlFileOutputHandler extends GsacOutputHandler {
             throws Exception {
         // import java.text.SimpleDateFormat;
         Date now = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss"); 
-        System.out.println("GSAC: request for file XML output, time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss"); // IS0 8601 
+        System.out.println("GSAC: request for GSACs own format 'file XML output;'  time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
         response.startResponse(GsacResponse.MIME_XML);
         PrintWriter pw  = response.getPrintWriter();
         String      xml = getRepository().encodeObject(response.getFiles());
