@@ -274,40 +274,43 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         extraSB.append(formBuffer);
 
         extraSB.append(HtmlUtil.p());
-        extraSB.append(getHeader(msg("Search Links")));
+
+        // original and ambiguous meaning to many:
+        //extraSB.append(getHeader(msg("Search Links")));
+        extraSB.append(getHeader(msg("Result Output Formats")));
+
         extraSB.append(HtmlUtil.insetLeft(searchLinks.toString(), 10));
 
         tabTitles.add(msg("Search Again"));
         tabContents.add(formBuffer.toString());
 
-        tabTitles.add(msg("Search Links"));
+        // original and ambiguous meaning to many: tabTitles.add(msg("Search Links"));
+        tabTitles.add(msg("Result Output Formats"));
+
         tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
 
         StringBuffer tabs = new StringBuffer();
         makeTabs(tabs, tabTitles, tabContents);
 
+        /* pw.append(HtmlUtil.makeShowHideBlock(msg("Search Info"), tabs.toString(), false)); */
 
-        /*        pw.append(HtmlUtil.makeShowHideBlock(msg("Search Info"),
-                                             tabs.toString(),
-                                             false));
-        */
         pw.append(HtmlUtil.h2(msg("Search Results")));
         makeNextPrevHeader(request, response, pw);
-
 
         StringBuffer listSB = new StringBuffer();
         makeSiteHtmlTable(request, listSB, sites);
         resultsContents.add(listSB.toString());
         resultsTitles.add(msg("Sites"));
 
-        // create map for Search Results site search results web page
+        // make a tab title to create map for Search Results site search results web page
         // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
-        String js = 
-           createMap(request, (List<GsacResource>) new ArrayList(sites),         resultsTitles,          resultsContents,       600,        400, false,             true);
+        String js = createMap(request, (List<GsacResource>) new ArrayList(sites),         resultsTitles,          resultsContents,       600,        400, false,             true);
 
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
-        resultsTitles.add(msg("Search Info"));
+        // make a tab title to show the site search forms when click this tag:
+        resultsTitles.add(msg("Search Form"));
+
         resultsContents.add(extraSB.toString());
 
         makeTabs(pw, resultsTitles, resultsContents);
