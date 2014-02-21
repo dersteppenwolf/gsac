@@ -47,7 +47,7 @@ import java.util.List;
  * Handles all of the file related repository requests
  *
  *
- * @author  Jeff McWhirter
+ * @author  Jeff McWhirter 2010
  */
 public abstract class FileManager extends GsacResourceManager {
 
@@ -64,16 +64,17 @@ public abstract class FileManager extends GsacResourceManager {
 
     /**
      * Create the default output handlers for this resource
+     * order of the cstrs here fixes the order of the itmes in the web site choice box for file search results output type.  Revised 11 Feb 2104 to show most used choices in order.
      *
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
         new HtmlFileOutputHandler(getRepository(), getResourceClass());
-        new CsvFileOutputHandler(getRepository(), getResourceClass());
-        new DownloaderFileOutputHandler(getRepository(), getResourceClass());
         new WgetFileOutputHandler(getRepository(), getResourceClass());
         new UrlFileOutputHandler(getRepository(), getResourceClass());
+        new CsvFileOutputHandler(getRepository(), getResourceClass());
+        new DownloaderFileOutputHandler(getRepository(), getResourceClass());
         new JsonFileOutputHandler(getRepository(), getResourceClass());
         new ZipFileOutputHandler(getRepository(), getResourceClass());
         new RssFileOutputHandler(getRepository(), getResourceClass());
