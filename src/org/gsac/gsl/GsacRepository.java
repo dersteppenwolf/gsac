@@ -605,7 +605,7 @@ public class GsacRepository implements GsacConstants {
                 
                 // import java.text.SimpleDateFormat;
                 Date now = new Date();
-                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss"); //  SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
+                SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss"); // ISO 8601 
                 System.out.println("GSAC: new request "+request.toString() + ", time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
                 //System.out.println("  originating IP: "+request.getOriginatingIP() + "   request IP: "+request.getRequestIP());
@@ -2790,12 +2790,12 @@ public class GsacRepository implements GsacConstants {
             ids.append(id + ARG_SOUTH_SUFFIX + "<br>");
             ids.append(id + ARG_EAST_SUFFIX + "<br>");
             message.append(
-                "Use any of the spatial bounds arguments. Longitude in degrees east. e.g.<br>");
+                "Use any of the spatial bounds arguments. Longitudes are in degrees east. e.g.<br>");
             for (String[] tuple : new String[][] {
-                { id + ARG_NORTH_SUFFIX + "=40.0", " latitude&le;40.0" },
-                { id + ARG_SOUTH_SUFFIX + "=30.0", " latitude&ge;40.0" },
-                { id + ARG_EAST_SUFFIX + "=-100.0", " longitude&le;-100.0" },
-                { id + ARG_WEST_SUFFIX + "=-110.0", " longitude&ge;-110.0" }
+                { id + ARG_NORTH_SUFFIX + "= 40.0", "   most northerly latitude" },
+                { id + ARG_SOUTH_SUFFIX + "=30.0",  "   most southerly latitude" },
+                { id + ARG_EAST_SUFFIX + "=100.0",  "  most easterly longitude" },
+                { id + ARG_WEST_SUFFIX + "=-110.0", "  most westerly longitude" }
             }) {
                 message.append(HtmlUtil.href(url + "?" + tuple[0], tuple[0]));
                 message.append(tuple[1]);
