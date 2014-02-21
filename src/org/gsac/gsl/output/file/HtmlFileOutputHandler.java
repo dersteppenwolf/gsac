@@ -305,10 +305,11 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 tabContents.add(message);
             }
 
-            tabTitles.add(msg("Search Again"));
+            tabTitles.add(msg("Search Form"));
             tabContents.add(formBuffer.toString());
 
-            tabTitles.add(msg("Search Links"));
+            // original, with ambiguous meaning to many: tabTitles.add(msg("Search Links"));
+            tabTitles.add(msg("Result Formats"));
             tabContents.add(HtmlUtil.insetLeft(searchLinks.toString(), 10));
 
 
