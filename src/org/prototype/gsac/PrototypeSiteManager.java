@@ -181,7 +181,7 @@ public class PrototypeSiteManager extends SiteManager {
             List<Clause> clauses = new ArrayList<Clause>();
             List<String> tables = new ArrayList<String>();
 
-            // get network(s) names found in all stations:
+            // get network(s) names found in each station:
             //  WHERE
             String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
             //  FROM which tables (for a table join)
@@ -194,9 +194,17 @@ public class PrototypeSiteManager extends SiteManager {
                // process each line in results of db query
                while ((results = iter.getNext()) != null) {
                    String networks= results.getString(Tables.STATION.COL_NETWORKS); // comma sep list of names of networks
+                   //String code= results.getString(Tables.STATION.COL_STATION_NAME); 
+                   /* for tests; show all network names, from each single site, found when GSAC server starts 
+                   if (networks  != null ) {
+                     System.err.println("      station as network(s) _"+networks+"_");
+                   }
+                   else {
+                     System.err.println("      station has networks value null in the database.");
+                   }
+                   */
           
-                   if (networks.length()>0) {
-                         //System.err.println("      station has network(s) _"+networks+"_");
+                   if (networks  != null && networks.length()>0) {
                          // split at commas to get each network name
                          String[] parts = networks.split(",");
                          if  (parts.length>0) {
