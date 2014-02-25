@@ -99,7 +99,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             if (getRepository().isRemoteResource(file)) {
                 String[] pair = getRepository().decodeRemoteId(id);
                 pairid = pair[0] + ":" + pair[1];
-                System.out.println("   file csv handler processResource(): pairid ="+pairid+"_" );
+                //System.out.println("   file csv handler processResource(): pairid ="+pairid+"_" );
             }
             
  
@@ -123,7 +123,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                       i2=i1+4;
                       stationid= stationid.substring(i1,i2); 
                     }
-                    System.out.println("   file csv handler processResource(): data file stationid="+stationid+"_   station name=+"+sitename+"_" );
+                    //System.out.println("   file csv handler processResource(): data file stationid="+stationid+"_   station name=+"+sitename+"_" );
                 } 
             }
             pw.print(stationid + ",");
