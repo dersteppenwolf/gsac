@@ -1,91 +1,169 @@
 <table width=100%><tr><td><a href="siteresults.html">Previous</a></td>
 <td align=right><a href="downloader.html">Next</a></td></tr></table>
 
-<h2>GSAC File Searches and Results</h2>
-
-The Search Files form lets you search for instrument data files using several parameters.  
-<br>You can also select on sites which have the files you want.
-</p>
-
-<p>
-Here is part of a typical GSAC Search Files form. In this example the 
-<b>Data Date</b> range is for the first day in October 2012, and the <b>Site Query</b> option is 
-used to search for files from a station named PALM.
-Most search choices are optional; use the ones which suit your needs.
-</p>
-
-<p>
-<img src="images/file-query-1.png">
-</p>
-
-<p>
-There are several output formats for the results of the search.  Click open the 
-<p>
-<b>Results
-<br> &nbsp; &nbsp; Output:</b>
-<P>
-option box, located below the <b>Site Query</b> area. The choices are 
-
-<br>
-<img src="images/file-output-types.png">
-<br>
-By default the results are a web page ("File HTML"). 
-</p>
-
-<p>
-A web page of file search results looks like:
-</p>
-
-<img src="images/file-results-2.png">
-
-<p>
-Clicking on an item in the <b>File</b> column gives a new page like this,
-with some information about one file:
-<ul>
-<img src="images/file-results-3.png">
-
-<p>
-Clicking on the <b>Site:</b> name brings up the normal page of information about this site from GSAC.
-</p>
-
-<p>
-Clicking on the <b>URL:</b> does the normal response to clicking on a URL in your browser; it may show a page of text or may
-prompt for a file download from the URL.
-
-<p>
-Note that you must have FTP server running on your web site with complete information about the file location in
-your database for GSAC and FTP access.
-</ul>
-</p>
-
-<p>
-Back on the main file results table, clicking on a name in the <b>Site</b> column brings up the normal page of information about this site from GSAC.
-</p>
-
-<p>
-On the main file results table, clicking on 
-<b>Wget Script</b> gives you a shell file "gascwget.sh" which has one or more lines, each line a wget command to download 
-the files in the results table you are looking at.  Such as
-<br>
-wget ftp://data-out.unavco.org/pub/rinex/qc/2012/274/palm2740.12S
-<br>
-wget ftp://data-out.unavco.org/pub/rinex/obs/2012/274/palm2740.12d.Z
-<br>
-wget ftp://data-out.unavco.org/pub/rinex/nav/2012/274/palm2740.12n.Z
-</p>
-
-<p>
-Note this wget script file will download <i>all</i> the files in the output page, which for some searches is hundreds of files.
-One line from the wget script file will download one file.
-</p>
-
-
-<p>
-On the main file results table, clicking on 
-<b>Download files</b> gives you a  file "files.jnlp" to download all the files using Java Webstart.
-<br>
-See the <b>GSAC File Downloader</b> Help page, 
-
+<H2 CLASS="western" STYLE="font-style: normal; page-break-before: always">
+<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"> Search Files</FONT></FONT></H2>
+<P><A NAME="__DdeLink__14272_1998753682"></A><FONT SIZE=2 STYLE="font-size: 11pt">The
+<FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><B>Search Files</B></FONT></FONT>
+web page has the form to query about instrumental data files and
+products from sites, available with this GSAC server.  You can search
+for instrument data files and products by date range of data,  by
+data type, from particular sites, and with other choices.   </FONT>
+</P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_3b253837.png" NAME="graphics24" ALIGN=LEFT WIDTH=682 HEIGHT=377 BORDER=0><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The <FONT FACE="Arial, sans-serif">Data
+Date Range</FONT> entry boxes work the same way as in the site search
+page, to select for instrument data files and products by date range
+of data.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Check one or more boxes in
+the <FONT FACE="Arial, sans-serif">File Type</FONT> area to limit
+files found to those types.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Click on the<FONT FACE="Arial, sans-serif">
+[+] </FONT>under <FONT FACE="Arial, sans-serif">Site Query</FONT> to
+see all the same controls by site you see in the site search page;
+likewise you can open the <FONT FACE="Arial, sans-serif">Advanced
+Site Query</FONT> choices with its <FONT FACE="Arial, sans-serif">[+]</FONT>.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The <FONT FACE="Arial, sans-serif">Results
+[+]</FONT> shows the <FONT FACE="Arial, sans-serif">O</FONT><FONT FACE="Arial, sans-serif">utput</FONT>
+(format) choices for file searches:</FONT></P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_m2e57b534.png" NAME="graphics3" ALIGN=LEFT WIDTH=553 HEIGHT=237 BORDER=0><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The</FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">O</FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">utput</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+box provides a choice of formats for the query results.  Choices
+include, for example, HTML (for </FONT><FONT SIZE=2 STYLE="font-size: 11pt">a
+table in </FONT><FONT SIZE=2 STYLE="font-size: 11pt">web page</FONT><FONT SIZE=2 STYLE="font-size: 11pt">s</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+of results), a CSV list,</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+of files, a Linux </FONT><FONT SIZE=2 STYLE="font-size: 11pt">wget
+script</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> for one or more
+data files</FONT><FONT SIZE=2 STYLE="font-size: 11pt">, and </FONT><FONT SIZE=2 STYLE="font-size: 11pt">simple
+list of data f</FONT><FONT SIZE=2 STYLE="font-size: 11pt">ile URLs</FONT><FONT SIZE=2 STYLE="font-size: 11pt">,</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+ </FONT><FONT SIZE=2 STYLE="font-size: 11pt">and a </FONT><FONT SIZE=2 STYLE="font-size: 11pt">Zip
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">f</FONT><FONT SIZE=2 STYLE="font-size: 11pt">ile</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+containing one or more data files</FONT><FONT SIZE=2 STYLE="font-size: 11pt">.
+ </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The HTML table </FONT><FONT SIZE=2 STYLE="font-size: 11pt">of
+results from a file search </FONT><FONT SIZE=2 STYLE="font-size: 11pt">looks
+like:</FONT></P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_5594b6f4.png" NAME="graphics26" ALIGN=LEFT WIDTH=682 HEIGHT=90 BORDER=0><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Note the time range of the
+data, the file size, and the file's MD5 check sum value may be shown.
+ </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">You can click on a file name
+below </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">File
+for Download</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt"> to
+download that one file.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Click on the </FONT><FONT SIZE=2 STYLE="font-size: 11pt">tab
+</FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2><B>Wget Script for
+FTP download</B></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+to download a file called gsacwget.sh, with lines like </FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">wget
+http://egelados.gein.noa.gr/services/GPS/GPS_DATA/2013/001/orid1430.13n.Z
+</FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">wget
+http://egelados.gein.noa.gr/services/GPS/GPS_DATA/2013/001/orid1430.13d.Z
+</FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">wget
+http://egelados.gein.noa.gr/services/GPS/GPS_DATA/2013/002/orid0020.13n.Z
+</FONT>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">These lines can be used </FONT><FONT SIZE=2 STYLE="font-size: 11pt">as
+a script </FONT><FONT SIZE=2 STYLE="font-size: 11pt">in Linux to
+download all the </FONT><FONT SIZE=2 STYLE="font-size: 11pt">data
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">files</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+and product files</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> </FONT><FONT SIZE=2 STYLE="font-size: 11pt">listed
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">in the table</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+of file search results.</FONT><FONT SIZE=2 STYLE="font-size: 11pt">  </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">If you have Java Webstart
+installed, you may be able to download all the files in the table by
+clicking on the tab </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2><B>Download
+Files via Webstart</B></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">.
+ This relies on code outside of UNAVCO development, and U</FONT><FONT SIZE=2 STYLE="font-size: 11pt">NA</FONT><FONT SIZE=2 STYLE="font-size: 11pt">VCO
+cannot assure that it will function or function properly.</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+ This feature is offered for Windows users as an alternative to the
+one-step Linux zip file method.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Other choice of formats in
+the Search Files page include</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Files
+URLs list</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">, a
+simple list of complete URL</FONT><FONT SIZE=2 STYLE="font-size: 11pt">s</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+for </FONT><FONT SIZE=2 STYLE="font-size: 11pt">data </FONT><FONT SIZE=2 STYLE="font-size: 11pt">files
+from the FTP or HTTP server</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+associated with the GSAC</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+(GSAC itself does not download files). The </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Wget
+Script for FTP download</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">choice </FONT><FONT SIZE=2 STYLE="font-size: 11pt">is
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">the same as the tab in
+the file search results table, as is the </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2>Download
+Files via Webstart</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+choice.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">File
+CSV</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt"> search result</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+file</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> more information
+about each file,</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> in a csv
+formatted file, like</FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">#fields=site_4char_ID[type='string'],Data_Type[type='string'],MD5[type='string'],FileSize,PublishDate[type='date'
+format='yyyy-MM-dd
+HH:mm:ss'],URL[type='string'],dataStartTime[type='date'
+format='yyyy-MM-dd HH:mm:ss'],dataStopTime[type='date'
+format='yyyy-MM-dd HH:mm:ss'],sampleInterval </FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt"># 
+ Generated by UNAVCO GSAC Repository on 2014-02-12 19:52:27 +0000 </FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">MOPR,GNSS
+RINEX Observation QC
+Report,a257dd2929e8bb9d157be332612ddace,19918,2011-06-15
+00:00:00,ftp://data-out.unavco.org/pub/rinex/qc/2009/197/mopr1970.09S,2009-07-16
+00:00:00,2009-07-16 23:59:45,0.0,Mona Island Puerto Rico 1HZ </FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">MOPR,GNSS
+RINEX Observation (Hatanaka  Unix
+Compressed),87e462886411b2e9c9af26b4b70370ec,634297,2011-06-15
+00:00:00,ftp://data-out.unavco.org/pub/rinex/obs/2009/197/mopr1970.09d.Z,2009-07-16
+00:00:00,2009-07-16 23:59:45,15.0,Mona Island Puerto Rico 1HZ </FONT>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">The
+choice</FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Zip
+Files</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt"> should make
+one new file called gsacresults.zip which contains all the data </FONT><FONT SIZE=2 STYLE="font-size: 11pt">files
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">listed </FONT><FONT SIZE=2 STYLE="font-size: 11pt">in
+the table</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> of file search
+results, zipped together, which you can download.  If your list of
+files found is not too long, this is a fast way to get a collection
+of data files.</FONT><FONT SIZE=2 STYLE="font-size: 11pt">  Caution:
+before using this result, make your search with a web page </FONT><FONT SIZE=2 STYLE="font-size: 11pt">table
+of results to see the total size of the files found, listed at the
+bottom of the table </FONT><FONT SIZE=2 STYLE="font-size: 11pt">of
+results from a file search</FONT><FONT SIZE=2 STYLE="font-size: 11pt">.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">At the top of the </FONT><FONT SIZE=2 STYLE="font-size: 11pt">table
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">of results from a file
+search is a </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">[+]
+Search Information</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">.
+ Click on it to see all the result output format choices. Clicking on
+one w</FONT><FONT SIZE=2 STYLE="font-size: 11pt">ill repeat </FONT><FONT SIZE=2 STYLE="font-size: 11pt">your
+most recent search, </FONT><FONT SIZE=2 STYLE="font-size: 11pt">only
+now making</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> a new output
+format.</FONT></P>
 
 <a href="downloader.html">Next</a>.
 

@@ -1,101 +1,64 @@
 <table width=100%><tr><td><a href="install.html">Previous</a></td>
 <td align=right><a href="siteresults.html">Next</a></td></tr></table>
 
-<h2>Search Sites </h2>
 
+<H1 CLASS="western" STYLE="page-break-before: always"><FONT FACE="Times New Roman, serif">
+The Browser User Interface</FONT></H1>
+<P ALIGN=JUSTIFY><FONT SIZE=2 STYLE="font-size: 11pt">Use GSAC web
+page tools to start learning about GSAC.  GSAC provides forms on web
+pages to search and retrieve information and data files from a data
+repository.</FONT></P>
+<P ALIGN=JUSTIFY><FONT SIZE=2 STYLE="font-size: 11pt">The GSAC web
+user interface has most of the GSAC features.  GSAC tools can also be
+called with programmatic interactions, command line requests or
+computer program actions, but first learning GSAC with the web pages
+gives a good understanding of what GSAC can do.  You learn the
+concepts about what GSAC provides; later you can decide which way to
+call GSAC is best for your needs.  </FONT>
+</P>
+<P ALIGN=JUSTIFY><FONT SIZE=2 STYLE="font-size: 11pt">Most of the
+power of GSAC services can be achieved by the use of web page forms. 
+For access to large numbers of results, such as information about
+hundreds of stations or to download<FONT COLOR="#000000"> hundreds of
+fil</FONT>es, use of GSAC by  programmatic requests is very
+effective.</FONT></P>
+<P ALIGN=JUSTIFY><FONT SIZE=2 STYLE="font-size: 11pt">This section
+shows examples from standard or &quot;Prototype&quot; GSAC
+implementations.  Try using an online GSAC service to learn about
+GSAC.  See the UNAVCO GSAC web site (facility.unavco.org/data/
+gsacws/) to find a list of active GSAC-enabled data repositories. 
+The GSAC servers at CDDIS, SOPAC, and UNAVCO have special features
+not included in the standard or &quot;Prototype&quot; GSAC
+implementations, but you can also use them for learning GSAC.  These
+three GSACs serve repositories with very large and complex data
+collections, and their GSACs were modified and extended to provide
+extra controls. </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The top of each GSAC web page
+has this list of links to key sections of the GSAC web site:</FONT></P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_3fe2d4ff.png" NAME="graphics18" ALIGN=LEFT WIDTH=434 HEIGHT=27 BORDER=0><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Click on one of these to </FONT>
+</P>
+<P STYLE="margin-left: 0.49in"><FONT SIZE=2 STYLE="font-size: 11pt">search
+for information about sites (stations or monuments) and about
+instruments at the sites</FONT></P>
+<P STYLE="margin-left: 0.49in"><FONT SIZE=2 STYLE="font-size: 11pt">find
+and download instrument data files from the sites, such as RINEX
+files and product files</FONT></P>
+<P STYLE="margin-left: 0.49in"><FONT SIZE=2 STYLE="font-size: 11pt">browse
+for information by a single item</FONT></P>
+<P STYLE="margin-left: 0.49in"><FONT SIZE=2 STYLE="font-size: 11pt">see
+information about this particular GSAC server's capabilities (API)</FONT></P>
+<P STYLE="margin-left: 0.49in"><FONT SIZE=2 STYLE="font-size: 11pt">see
+a synopsis of help using GSAC.  </FONT>
+</P>
 
-The Search Sites form  lets you search for sites with instruments, using several parameters.
-You can search for sites by name, in a latitude-longitude bounding box, dates, and with many other choices.  The items to query on are chosen when a new GSAC is implemented, from among fields (columns) in the database which the GSAC reads.
-</p>
-
-<p>
-Here is part of a typical GSAC  Search Sites form. 
-
-<p>
-<img src="images/sites-search-form.png">
-</p>
-
-
-<p>
-The free form text search fields (e.g., &quot;4 Char ID&quot;,  &quot;Site Name&quot;) support wildcarding with &quot;*&quot;. So, for example, in the above image the search will result in any sites that begin with &quot;P&quot;.
-You can of course search for a single site, by name.
-If you wish to search for all sites, leave the 4 Char ID box empty; do not use the "*" character alone.
-</p>
-
-<p>
-You can search with other search criteria, including typically date ranges and  geographic bounds. The bounds are specified with a north latitude / west longitude / east longitude / south latitude. West Longitude may be negative, or may be simply a smaller positive longitude than the east latitude.
-</p>
-
-<p>
-You can easily switch to the Search Files form. Click on the "File Search Form" icon. All site search criteria
-specified to Search Sites will be  included in the  Search Files form.
-
-
-<p>
-<h3>Advanced Site Query (Search)</h3>
-The Advanced Site Query or search options can be opened to select other search criteria.
-Here are some (not all) from the UNAVCO GSAC:
-
-<p>
-<img src="images/sites-search-advanced-bits-form.png">
-</p>
-
-
-<h3>Result Format</h3>
-<p>
-There are several output formats for the results of the search.  Click open the
-<p>
-<b>Results
-<br> &nbsp; &nbsp; Output:</b>
-<P>
-option box, located below the <b>Advanced Site Query</b> area. The choices are
-
-<br>
-<img src="images/gsac-site-search-result-formats.png">
-<br>
-By default the results are a web page  ("Site HTML") with a table of sites' information.
-
-<p>Other GSAC output formats include:
-<ul>
-<li>SOPAC XML Site Log format.  See http://sopac.ucsd.edu/projects/xml/. 
-<li>SINEX format is described in the IERS SINEX Format page, 
-http://www.iers.org/nn_324882/IERS/EN/Organization/AnalysisCoordinator/SinexFormat/sinex.html?__nnn=true . 
-<li>GAMIT station.info file, described in the GAMIT documents page, http://www.gpsg.mit.edu/~simon/gtgk/docs.htm.
-<li>GSAC Plain text, a file in ASCII text format with with geodesy parameter values for a site. This format was created by UNAVCO solely for GSAC use, only for a quick visual check of what is available. The plain text file is not for computer processing and UNAVCO GSAC may alter its format at any time without notification.
-<li>GSAC Full CSV: a file in csv (comma separated value) format, with several geodesy parameter values for a site.
-<li>GSAC Short CSV: a file in csv (comma separated value) format, with a few parameters for a site.
-<li>ATOM
-<li>JSON
-<li>RSS
-<li>Google Earth KML
-<li>Google Earth KMZ
-</ul>
-</p>
-
-<p>
-<br>
-The table of site search results on a web page looks like:
-</p>
-<p>
-<img src="images/search-results-sites.png">
-
-<p>
-Clicking on an item in the  <b>4 Char ID</b> column brings up a web page about that site.
-Here is  a web page for one site: 
-
-<p>
-<img src="images/search-results-site-details1.png">
-<img src="images/search-results-site-details2.png">
-</p>
-
-<p>
-<hr>
-
-<p>
-Clicking on the  <b>Search Info</b> tab  
-just under    <b>Search Results</b>  
-
-on the first web page from a site search lets you see the search results in any of the other output formats.
+<!-- //////////////////////////////////////////////////// 
+                          //////////////////////////////////////////////////// 
+-->
 
 <p>
 <table width=100%><tr><td><a href="install.html">Previous</a></td>

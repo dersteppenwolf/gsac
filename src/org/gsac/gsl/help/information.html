@@ -1,78 +1,363 @@
 <table width=100%><tr><td><a href="browse.html">Previous</a></td>
 <td align=right><a href="client.html">Next</a></td></tr></table>
 
-<h2>GSAC Information</h2>
 
-<p>
-The GSAC <b> 
-<font color="#6666cc">Information</font></b>
- page has links for information needed to access a repository via the GSAC server.  In a way this is a collection of capabilities for this particular server.  These are something like a WSDL (Web Services Description Language) document, an XML format file for describing network services, but not a true WSDL.  The specific items listed here are shared across all GSACs and all them to inter-operate when needed.
-</p>
-
-<hr>
-<ul>
-<p>
-The <b>
-<font color="#aa66aa">Repository information XML</font></b> link shows something like:
-</p>
-
-<p>
-<img src="images/repository-info-readout.png">
-</p>
-
-
-<p>
-This is a list in XML format of all  the items in the database underlying a particular GSAC, which that GSAC has implemented for searches.  
-</p>
-
-<p>
-
-In a row like
-</p>
-
-<p>
-<capability id="site.state" type="enumeration" label="State" group="Advanced Site Query" columns="30" allowMultiples="true">
-</p>
-
-<p>
-The 'id-s' in the "Repository information xml" are GSAC's internal names for parameters and these names are common to all GSAC repositories.  These are also listed as the "URL argument" in the Information pages sections  <b>Site Query, File Query, Misc Arguments, Output Types, and Vocabularies</b>.  
-</p>
-
-<p>
-The XML also shows all allowed values for enumerated types of data in the database, such as the Site Group values (names) in the XML file fragment shown above.
-</p>
-
-<p>
-The "Repository information XML"  is used by federated GSAC repositories to find how to interact with other GSAC respositories.
-</p>
-
-<p>
-You can see a complete "Repository information XML" at 
-http://facility.unavco.org/gsacws/gsacapi/repository/view?output=XML.
-</p>
-</ul>
-
-<hr>
-<p>
-<b>Base URL:</b> gives  the first part of the URL for this particular GSAC-enabled repository; For example the UNAVCO GSAC repository has base URL  http://facility.unavco.org/gsacws.  The remainder of the URL is the same for all GSAC repositories.   See the Help: API section for examples.
-</p>
-
-
-<hr>
-<p>
-The information available under <b>Site Query</b> shows all the parameter names (GSAC 'URL arguments'), data types ('Type') and meaning of the data parameters ('Values') you can query on in a GSAC implementation, for example, this partial list from the UNAVCO GSAC:
-</p>
-
-<p>
-<img src="images/site-query-types.png">
-</p>
-
-<p>
-Similarly, the information in the links <b>File Query, Misc Arguments, Output Types, and Vocabularies</b> is used in the GSAC API.  See the  Help: API section .
-
-
-
-
+<H2 CLASS="western" STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif">
+Information, Browse, and Help </FONT></FONT>
+</H2>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The </FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>Information</B></FONT></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+page </FONT><FONT SIZE=2 STYLE="font-size: 11pt">(from that link on
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">top of </FONT><FONT SIZE=2 STYLE="font-size: 11pt">every
+GSAC web page) </FONT><FONT SIZE=2 STYLE="font-size: 11pt">has
+information needed to access a repository via the GSAC server. </FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+ The page</FONT><FONT SIZE=2 STYLE="font-size: 11pt"> looks like</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+this example from the UNAVCO GSAC:</FONT></P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_m752d7e99.png" NAME="graphics27" ALIGN=LEFT WIDTH=355 HEIGHT=335 BORDER=0><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P> 
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in"><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Base
+URL</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>
+</B></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">is t</FONT><FONT SIZE=2 STYLE="font-size: 11pt">he
+first part of </FONT><FONT SIZE=2 STYLE="font-size: 11pt">a</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+URL for this particular GSAC-enabled repository</FONT><FONT SIZE=2 STYLE="font-size: 11pt">.</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+For example the UNAVCO GSAC repository has base</FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+URL </FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacw</FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">s.</FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You
+use the base URL in composing queries to the web page, and command
+line queries as described in section 4.</FONT></FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The <FONT COLOR="#000000"><FONT FACE="Bitstream Charter, serif"><SPAN STYLE="font-weight: normal">link</SPAN></FONT></FONT><FONT FACE="Bitstream Charter, serif"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT><FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif">
+</FONT><FONT FACE="Times New Roman, serif">shows a collection of
+capabilities for this particular server.  These are something like a
+WSDL (Web Services Description Language) document, an XML format</FONT><FONT FACE="Times New Roman, serif">ted</FONT><FONT FACE="Times New Roman, serif">
+file for describing network services, but not a true WSDL.  </FONT><FONT FACE="Times New Roman, serif">See
+more details below.</FONT></FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">This
+XML file list</FONT><FONT FACE="Times New Roman, serif">s</FONT><FONT FACE="Times New Roman, serif">
+&quot;capabilites&quot; of its GSAC server, which are named
+parameters that can be used to query GSAC. The &quot;site.&quot;
+values after  each &quot;capability  id=&quot; gives the names used
+in queries to this GSAC using HTTP (RESTful) queries, with command
+line commands, with the GSAC client program, and from Federated GSAC
+servers.</FONT></FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">Some
+</FONT><FONT FACE="Times New Roman, serif">examples of </FONT><FONT FACE="Times New Roman, serif">capabilities
+in </FONT><FONT FACE="Times New Roman, serif">a</FONT><FONT FACE="Times New Roman, serif">
+standard GSAC are</FONT></FONT></P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.name&quot;  type=&quot;string&quot;  label=&quot;Site
+Name&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.code&quot;  type=&quot;string&quot;  label=&quot;Code
+(4 character ID)&quot; </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;bbox&quot;  type=&quot;spatial_bounds&quot;  label=&quot;Lat-Lon
+Bounding Box&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.date.from&quot;  type=&quot;date_range&quot; 
+label=&quot;Site Includes Dates in Range&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.group&quot;  type=&quot;enumeration&quot; 
+label=&quot;Network&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.type&quot;  type=&quot;enumeration&quot;  label=&quot;Site
+Type&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.antenna&quot;  type=&quot;enumeration&quot; 
+label=&quot;Antenna type&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;site.dome&quot;  type=&quot;enumeration&quot; 
+label=&quot;Radome type&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt">&lt;capability
+ id=&quot;file.type&quot;  type=&quot;enumeration&quot;  label=&quot;File
+Type&quot;  </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">These
+should be the same in all </FONT><FONT FACE="Times New Roman, serif">standard
+GSAC</FONT><FONT FACE="Times New Roman, serif">s, so that
+interactions with all GSACs are consistent.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">On
+the </FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><B>Information</B></FONT></FONT><FONT FACE="Times New Roman, serif">
+page, the</FONT><FONT FACE="Times New Roman, serif"> </FONT><FONT FACE="Times New Roman, serif">link</FONT><FONT FACE="Times New Roman, serif">
+</FONT><FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif">
+</FONT><FONT FACE="Times New Roman, serif">begins </FONT><FONT FACE="Times New Roman, serif">like:</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_38738ad0.png" NAME="graphics28" ALIGN=LEFT WIDTH=682 HEIGHT=364 BORDER=0><BR><BR>
+</P>
+<P STYLE="font-style: normal; font-weight: normal"><FONT SIZE=2 STYLE="font-size: 11pt">In
+a row like</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&lt;</SPAN></SPAN><FONT COLOR="#ff00ff"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">capability</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+id=&quot;site.state&quot; type=&quot;enumeration&quot; label=&quot;State&quot;
+group=&quot;Advanced Site Query&quot; columns=&quot;30&quot;
+allowMultiples=&quot;true&quot;&gt;</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+ </SPAN></SPAN></FONT>
+</P>
+<P ALIGN=JUSTIFY><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">t</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">he</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+value of the</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+'</SPAN></SPAN><FONT COLOR="#ff00ff"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">capability</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+id' in the</SPAN></SPAN> <FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif">
+</FONT>a<SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">re
+GSAC's internal names for </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">API
+</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">parameters</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">,</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+and </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">many</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+names </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">are
+</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">(usually)</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">common
+to all </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">standard</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">GSAC
+repositories.  These are also listed as the &quot;URL argument&quot;
+in the Information page sections </SPAN></SPAN><FONT FACE="Arial, sans-serif">Site
+Query, File Query, Misc. Arguments, </FONT><FONT FACE="Times New Roman">and</FONT><FONT FACE="Arial, sans-serif">
+</FONT><FONT FACE="Arial, sans-serif">Output Types</FONT> described
+just below.  <SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">The
+</SPAN></SPAN><FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></SPAN></SPAN></FONT></FONT><FONT COLOR="#800080"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: transparent">
+</SPAN></SPAN></SPAN></FONT></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+also shows </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">supplied
+(or </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">meaningful</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">)</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+values for enumerated types of data in the database, such as the
+'</SPAN></SPAN><FONT COLOR="#ff00ff"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">capability</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+id</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">=</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">site.antenna</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">'</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">name</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+value</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">s
+in the XML file above.</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+ You can search for any value of a capability; if the archive has no
+such data</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">,
+then</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+no results will be found.  The enumerated values</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+such as </SPAN></SPAN><FONT COLOR="#6b0094"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&quot;</SPAN></SPAN></FONT><FONT COLOR="#0099ff"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">AS10</SPAN></SPAN></FONT><FONT COLOR="#6b0094"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&quot;</SPAN></SPAN></FONT><FONT COLOR="#0099ff"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">
+</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">show
+values where there are holdings in the archive.</SPAN></SPAN></FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">You can see a complete
+</FONT><FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></FONT></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+page </FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">at </FONT><FONT SIZE=2 STYLE="font-size: 11pt">any
+online GSAC, in the</FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>Information</B></FONT></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+page.</FONT></P>
+<P STYLE="margin-bottom: 0.04in"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in"><FONT SIZE=2 STYLE="font-size: 11pt">The
+information available under </FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>Information</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">page
+sections </SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Site
+Query, File Query, Misc. Arguments</SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">,</SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+and </SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Output
+types (Results formats) </SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">is
+more suitable for human use.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.04in"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in; font-weight: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">Note
+that GSAC does not read data files or product files to find metadata
+about  data files or product files.  GSAC reads from a database with
+information about data files and product files.   This design
+approach allows GSAC to be very generalized: GSAC does not need to
+know anything about the data files or product files it offers for
+download, such as knowing how to read some type of file.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.04in; font-weight: normal"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in; font-weight: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">It
+is the responsibility of the GSAC operator to ensure that the
+information available to GSAC, in the database, is correct.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.04in; font-weight: normal"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in; font-weight: normal"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in; font-weight: normal"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.04in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman"><SPAN STYLE="font-weight: normal">The
+sections </SPAN></FONT><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">Site
+Query</SPAN></FONT><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">,
+ File Query, Misc. Arguments</SPAN></FONT><FONT FACE="Times New Roman"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">,
+and </SPAN></SPAN></FONT><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">Output
+Types</SPAN></FONT> show the API parameter names ('<FONT FACE="Arial, sans-serif">URL
+argument</FONT>'), value types ('<FONT FACE="Arial, sans-serif">Type</FONT>'),
+the meaning of each parameter ('<FONT FACE="Arial, sans-serif">What</FONT>'),
+and details of possible values ('<FONT FACE="Arial, sans-serif">Values</FONT>')
+that you can use to query on in a GSAC implementation.  Here is part
+of a <FONT FACE="Arial, sans-serif"><B>Site Query</B></FONT> section:</FONT></P>
+<P><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_m38066f34.png" NAME="graphics15" ALIGN=LEFT WIDTH=682 HEIGHT=472 BORDER=0><BR><BR>
+</P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">See
+section 4, the API,  below for how this is used.</FONT></FONT></P>
+<P><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Similarly, th</FONT><FONT SIZE=2 STYLE="font-size: 11pt">e
+parameter</FONT><FONT SIZE=2 STYLE="font-size: 11pt">s in the
+</FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>Information</B></FONT></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT><FONT SIZE=2 STYLE="font-size: 11pt">section</FONT><FONT SIZE=2 STYLE="font-size: 11pt">s
+</FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">File
+Query, Misc. Arguments</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">,
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">and
+</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Output
+Types</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+are used in the GSAC API.  </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Here
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">are
+complete</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+examples of</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Misc.
+Arguments</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">,
+and </SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Output
+Types</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+sections:</SPAN></FONT></FONT></P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_m53019f35.png" NAME="graphics16" ALIGN=LEFT WIDTH=295 HEIGHT=519 BORDER=0><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">The
+'limit' parameter </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">in
+</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Misc
+Arguments</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">is
+useful when exploring a GSAC repository with the web forms, to avoid
+long tables of results</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">,
+and to limit how many files to download from one file search.</SPAN></FONT></FONT></P>
+<P>The <FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Output
+Types</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+(Results formats)</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">shows
+the many</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">formats
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">of
+results </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">available
+from GSAC f</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">rom</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+searches about sites, and from</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+file </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+searches to retrieve instrumental data files and product files.</SPAN></FONT></FONT></P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Each
+GSAC web page has a</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>Help</B></FONT></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">link
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">which
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">shows
+how to use a GSAC repository. </SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">The</SPAN></FONT></FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>
+Help</B></FONT></FONT></FONT><FONT COLOR="#83caff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">pages</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">'
+contents</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+are</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">derived
+from and </SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">similar
+to this user guide. </SPAN></FONT></FONT>
+</P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Each
+GSAC web page has a</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT COLOR="#9999ff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><B>Browse</B></FONT></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">link
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">which
+</SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">lets
+you find sites with a single parameter value:</SPAN></FONT></FONT></P>
+<P STYLE="font-weight: normal"><IMG SRC="UNAVCO_GSAC_User_Guide_contents_html_m407ac11d.png" NAME="graphics4" ALIGN=LEFT WIDTH=497 HEIGHT=178 BORDER=0><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-weight: normal"><BR><BR>
+</P>
+<P STYLE="font-style: normal; page-break-before: always"><BR><BR>
+</P>
 <p>
 <table width=100%><tr><td><a href="browse.html">Previous</a></td>
 <td align=right><a href="client.html">Next</a></td></tr></table>

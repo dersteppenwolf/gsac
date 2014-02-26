@@ -2,60 +2,329 @@
 <td align=right><a href="browse.html">Next</a></td></tr></table>
 
 
-
-<h2>File Downloads from a GSAC Repository</h2>
-
-<p>
-One of the key services of a GSAC-enabled data repository is providing downloads of files of instrumental observation data files.  GSAC relies on the agency running GSAC to provide the IT infrastructure (FTP) to serve file downloads, and to provide GSAC with the information about how to download files, typically a URL for each FTP file download.
-</p>
-<p>
-A common case is, if you search a GSAC-enabled data repository for files (using the web page UI, the API, or the GSAC client) and specify result output format of  "file.url," you will get a list of one or more URLs like this:
-
-</p>
-<p>
-ftp://data-out.unavco.org/pub/rinex/obs/2012/158/palm1580.12d.Z
-
-</p>
-<p>
-This is of course a URL which can be used to download a file with FTP from the given server.  In the simplest case, the GSAC gets this complete URL as one field from the database.   (In more complex cases, the information in the database is insufficient but the complete URL can be constructed from known information by GSAC.  Such a case will require new Java coding to tell GSAC how to assemble disparate values into the appropriate URL for a file.
-</p>
-<p>
-
-If you use output of  "file.wget" the result is a file called "gsacwget.sh," a script file, with lines such as
-</p>
-<p>
-
-wget ftp://data-out.unavco.org/pub/rinex/obs/2012/158/palm1580.12d.Z 
-</p>
-<p>
-
-Each line is a  wget command to download one file with "wget"  from the given server.  GSAC constructs the wget lines using the FTP URLs.
-</p>
-<p>
-
-
-
-<h3>Java Webstart File Downloader</h3>
-<p>
-An optional  file download mechanism uses  a Java Webstart based application
-that is used to download to your computer the results of
-a GSAC files query. 
-It lists the FTP URLS and will download each file and place it in the
-specified Destination Directory.
-
-<center class="gsac-helpimg"><img src="images/downloader.jpg"></center>
-
-<h3>Make local directories</h3>
-Checking the Make local directories checkbox
-results in the downloader making subdirectories
-under the Destination Directory that
-correspond to the directory paths in the FTP URLs.
-
-<h3>Overwrite files</h3>
-Normally, if a file already exists on your computer then
-the downloader will not fetch a new one. You
-can control this behavior with the Overwrite files option.
-
+<H1 CLASS="western" STYLE="page-break-before: always"><FONT FACE="Times New Roman">
+The API </FONT>
+</H1>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+GSAC Repository supports a RESTful web API (application interface).  
+You compose a URL to do queries and choose a format for the results,
+without using the GSAC UI web page forms. </FONT></FONT>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">For
+use of the GSAC API, first see section 3.3 which introduces arguments
+to GSAC queries.  The GSAC URL API and the GSAC client (section 5)
+use the same arguments.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Any
+API URL begins with the base URL or root path of the repository,
+listed in its web site<FONT FACE="Courier 10 Pitch"> </FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><B>Information</B></FONT></FONT><FONT FACE="Courier 10 Pitch">
+</FONT>page as the <FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">Base
+URL</SPAN></FONT>, e.g. <FONT FACE="Courier 10 Pitch">http://facility.unavco.org/gsacws/gsacapi.</FONT></FONT></FONT></P>
+<H2 CLASS="western" STYLE="margin-top: 0in; margin-bottom: 0.08in"></H2>
+<H2 CLASS="western" STYLE="margin-top: 0in; margin-bottom: 0.08in; font-style: normal">
+<FONT FACE="Times New Roman">4.1 Site Queries</FONT></H2>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">For
+GSAC queries you add more to the base URL, such as for a site query
+by &quot;site.code&quot;  for site code P210</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=SSIA&amp;site.name=Ilopang__SLV2007</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">Enter
+that in a browser, which searches the UNAVCO GSAC archive for all
+sites with code SSIA and name <FONT FACE="Times New Roman">Ilopang__SLV2007</FONT>.</FONT></FONT></P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">This query results in the default format for a site query, HTML, which makes a new page in the browser.  </FONT></FONT>
+<FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">For other site query result output formats you append &quot;<FONT FACE="Courier 10 Pitch">output=</FONT>,&quot; such as </FONT></FONT></PRE><P STYLE="margin-bottom: 0.08in">
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P210&amp;output=site.snx</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">which
+returns a SINEX-format file, or to return a site log in SOPAC XML
+Site Log format, use <FONT FACE="Courier 10 Pitch">output=site.</FONT><FONT FACE="Courier 10 Pitch">xmllog</FONT><FONT FACE="Times New Roman">.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">Note
+that the &amp; character is glue between search name-value pairs, and
+quotations marks are not allowed.  In a site name like for name St
+Helena use the string <FONT FACE="Courier 10 Pitch">St+Helena</FONT>
+in the URL for the <FONT FACE="Courier 10 Pitch">site.name=</FONT>
+search.</FONT></FONT></P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0.08in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman">All
+</FONT><FONT FACE="Times New Roman">terms for an </FONT><FONT FACE="Times New Roman">GSAC
+</FONT><FONT FACE="Times New Roman">API query at a particular GSAC
+repository are listed on its web site </FONT><FONT COLOR="#0084d1"><FONT FACE="Times New Roman"><B>Information</B></FONT></FONT><FONT FACE="Times New Roman">
+page, under </FONT><FONT FACE="Arial, sans-serif"><B>Site Query</B></FONT><FONT FACE="Times New Roman">
+for sites, and under </FONT><FONT FACE="Arial, sans-serif"><B>File
+Query</B></FONT><FONT FACE="Times New Roman"> for files. </FONT><FONT FACE="Times New Roman">
+File searches can also use all site selection choices. </FONT><FONT FACE="Times New Roman">
+</FONT><FONT FACE="Times New Roman, serif">All the valid terms for
+return formats for site queries are listed on the web site's</FONT><FONT FACE="Courier 10 Pitch">
+</FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><B>Information</B></FONT></FONT><FONT FACE="Courier 10 Pitch">
+</FONT><FONT FACE="Times New Roman, serif">page, under </FONT><FONT FACE="Arial, sans-serif"><B>Output
+types -&gt; Site Outputs</B></FONT><FONT FACE="Times New Roman, serif">.</FONT></FONT></P>
+<H3><FONT FACE="Times New Roman, serif"><FONT SIZE=3 STYLE="font-size: 13pt">4.1.1
+Linux curl GSAC commands</FONT></FONT></H3>
+<P STYLE="margin-bottom: 0.08in"><FONT SIZE=2 STYLE="font-size: 11pt">Any
+valid GSAC HTTP URL can be invoked from a Linux command with the
+Linux 'curl' utility.  For example this command adds curl to a site
+searrch with SINEX output:</FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P210&amp;output=site.snx&quot;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">To
+see if you have curl, use the command </FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">which</FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl</FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">,
+normally returning something  </FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">like
+/usr/bin/curl.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">Note
+that the url in a curl command is inside quotation marks &quot; &quot;.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">Here
+are some more examples of site searches </FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">using
+Linux commands with the curl utility.  </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">)</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">The
+URL in each command can be used in a browser for the same query and
+result.</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">)</SPAN></FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">
+The 'arguments' in the command follow the &quot;?&quot; and the &quot;&amp;&quot;.
+</FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The command: </FONT>
+</P>
+<P STYLE="font-weight: normal"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/site/search/sites?output=site.snx\&amp;site.code=P30*&quot;</FONT></FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">will list on your terminal a
+SINEX file for all GNSS stations whose code (ID) begins with &quot;P30&quot;
+(ten stations in this case). </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">For several distinct stations
+by each code(ID): </FONT>
+</P>
+<P STYLE="font-weight: normal"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P123&amp;site.code=MTWO&amp;site.code=AB04&amp;output=site.snx&quot;
+</FONT></FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Or both ways, by individual
+names and with a search for IDs like AB0*: </FONT>
+</P>
+<P STYLE="font-weight: normal"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P120&amp;site.code=MTWO&amp;site.code=AB0*&amp;output=site.snx&quot;
+</FONT></FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">GSAC correctly merges the
+information from all stations found into one SINEX file. </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">To get results in GAMIT
+station.info format, use argument <FONT FACE="Courier 10 Pitch">output=site.station.info</FONT>:
+</FONT>
+</P>
+<P STYLE="font-weight: normal"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/site/search/sites?output=site.station.info\&amp;site.code=p123&quot;
+</FONT></FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">To make results in the &quot;SOPAC
+XML log file&quot; format, use output=site.xmllog; for JSON use
+output=site.json; for a CSV file use output=site.csv.full; and for a
+plain text for easy reading use output=site.plaintext. </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">To get stations inside a
+latitude-longitude bounding box (region), use these spatial bounding
+arguments: <BR>bbox.north=40.0 for latitudes ≤40.0, the north side
+of the box is at 40 north latitude; <BR>bbox.south=30.0 for latitudes
+≥30.0 <BR>bbox.east=-100.0 for longitudes ≤-100.0, the east side
+of the box is at longitude -100 (100 west longitude or 260 east
+longitude) <BR>bbox.west=-110.0 for longitudes ≥-110.0 <BR>Longitude
+is in positive degrees east. </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Also you can limit the
+station count returned with the argument limit=[some number], such as
+limit=25. </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">For example: </FONT>
+</P>
+<P STYLE="font-weight: normal"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/site/search/sites?output=site.station.info\&amp;bbox.north=41.0\&amp;bb.east=-104.0\&amp;bb.south=37.0\&amp;bb.west=-112.0\&amp;limit=25&quot;
+</FONT></FONT>
+</P>
+<P ALIGN=JUSTIFY><FONT SIZE=2 STYLE="font-size: 11pt">Add &quot;<FONT FACE="Courier 10 Pitch">&gt;
+demo_station.info</FONT>&quot; to the end of the command to put the
+results in a local file named demo_station.info. Lacking the
+limit=25, this command returns 575 lines of information in
+station.info format. The same search, with results in SOPAC XML site
+log format, returns 31736 lines. </FONT>
+</P>
+<H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman">4.2
+File Queries</FONT></H2>
+<P STYLE="margin-bottom: 0.08in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">For
+querying files you use an API URL beginning with the </FONT><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">Base
+URL</SPAN></FONT><FONT FACE="Times New Roman">,</FONT><FONT FACE="Times New Roman">
+like for site searches.</FONT><FONT FACE="Times New Roman">  </FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">File
+queries are very much like site queries, but begin with, for example,</SPAN></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in; font-weight: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">curl
+&quot;http://facility.unavco.org/gsacws/gsacapi/file/search? </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0.08in; font-weight: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">before
+the API arguments.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in; font-weight: normal"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Here
+is a URL to get metadata about data files in a given time range from
+stations in the network &quot;COCONet&quot; and whose sampling rate
+is &quot;normal.&quot;  The API choice <FONT FACE="Courier 10 Pitch">site.interval=interval.normal</FONT>
+is distinctive to the UNAVCO GSAC. The output format is GSAC Full
+CSV.  The output is redirected with the Linux &gt; to a file.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in; font-weight: normal"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/file/search?site.group=COCONet&amp;output=file.csv&amp;file.datadate.from=2013-11-01&amp;file.datadate.to=2014-01-31&amp;site.interval=interval.normal&amp;limit=50000&quot;
+&gt; coconet_2013Nov-thru2014Jan_data_files_normrate_info.csv</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">The
+search is limited to 50</SPAN></FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">,</SPAN></FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">000
+lines of file metadata.  </SPAN></FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">This
+query found information 29,942 files.</SPAN></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">Some
+file queries return actual data files.  </SPAN></FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">B</SPAN></FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">e
+cautions since a single GNSS file may be</SPAN></FONT><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">,
+say, 8 MB.</SPAN></FONT></FONT></P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.08in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">All the valid terms for a file query at a particular GSAC repository are listed on its web site</FONT><FONT FACE="Courier 10 Pitch"> </FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><B>Information</B></FONT></FONT><FONT FACE="Courier 10 Pitch"> </FONT><FONT FACE="Times New Roman, serif">page, under </FONT><FONT FACE="Arial, sans-serif"><B>File Query</B></FONT><FONT FACE="Times New Roman, serif">.  </FONT><FONT FACE="Times New Roman, serif">The results can be returned in a variety of output formats using the &quot;</FONT><FONT FACE="Courier 10 Pitch">&amp;output=</FONT><FONT FACE="Times New Roman, serif">&quot; URL term plus a value, such  </FONT><FONT FACE="Courier 10 Pitch">&amp;output=file.zip.  </FONT><FONT FACE="Times New Roman, serif">All the valid output arguments for return formats for file queries are listed on the web site's</FONT><FONT FACE="Courier 10 Pitch"> </FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><B>Information</B></FONT></FONT><FONT FACE="Courier 10 Pitch"> </FONT><FONT FACE="Times New Roman, serif">page, under  </FONT><FONT FACE="Arial, sans-serif"><B>Output types -&gt; File Outputs</B></FONT><FONT FACE="Times New Roman, serif"><B>.</B></FONT></FONT></PRE><H2 CLASS="western" STYLE="font-style: normal">
+<FONT FACE="Times New Roman"><FONT SIZE=4><B><SPAN STYLE="background: #ffffff">4.3
+More Query Help</SPAN></B></FONT></FONT></H2>
+<P STYLE="margin-bottom: 0.08in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">In
+th</SPAN></SPAN><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">e</SPAN></SPAN><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">
+</SPAN></SPAN><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><B><SPAN STYLE="background: #ffffff">Information</SPAN></B></FONT></FONT><FONT COLOR="#9999ff"><FONT FACE="Courier 10 Pitch"><B><SPAN STYLE="background: #ffffff">
+</SPAN></B></FONT></FONT><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">page
+you find additional API query terms, such as</SPAN></SPAN><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">
+in sections </SPAN></SPAN><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">
+</SPAN></SPAN><FONT FACE="Arial, sans-serif"><B><SPAN STYLE="background: #ffffff">M</SPAN></B></FONT><FONT FACE="Arial, sans-serif"><B>isc.
+Arguments</B></FONT><SPAN STYLE="font-weight: normal"> and</SPAN><FONT FACE="Arial, sans-serif"><B>
+Vocabularies.</B></FONT><FONT FACE="Times New Roman"><SPAN STYLE="font-weight: normal">
+ </SPAN></FONT><FONT FACE="Times New Roman"><SPAN STYLE="font-weight: normal">See
+section 3.</SPAN></FONT></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">To
+learn more about GSAC API use,  try some site and file queries with
+GSAC API arguments using a browser and a working GSAC repository</FONT></FONT><FONT SIZE=2 STYLE="font-size: 11pt">,
+such as the UNAVCO GSAC Repository at http://facility.unavco.org
+/data/gsacws.</FONT></P>
+<H3><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">4.3.1
+Repository Information</FONT></FONT></H3>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-style: normal">To
+get the GSAC API capabilities programatically, you can query any GSAC
+for its repository information.  </SPAN></FONT></FONT>The &quot;Repository
+Information&quot; for a GSAC web site lists all of the API arguments.
+ You can see this information in  a GSAC <FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><B>Information</B></FONT></FONT>
+page, at the  <FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></FONT></FONT> link, or retrieve it with a
+command like this:</FONT></FONT></P>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/repository/view?output=xml
+</FONT></FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">for the UNAVCO GSAC.</FONT></P>
+<H3><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">4.3.2
+URL Argument Types</FONT></FONT></H3>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">We have tried to be flexible
+with how URL arguments are used. In this section &quot;arg&quot;
+stands for one of the API's URL arguments such as &quot;site.code.&quot;</FONT></P>
+<UL>
+	<LI><P><A NAME="string"></A><FONT SIZE=2 STYLE="font-size: 11pt">string
+	- There may be none, one, or more of a URL string argument: </FONT>
+	</P>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><A NAME="string1"></A>    <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch">arg=p123&amp;arg=p456</FONT></FONT></PRE><P>
+	<A NAME="string2"></A><FONT SIZE=2 STYLE="font-size: 11pt">Each
+	argument may be a semi-colon delimited list of argument values: </FONT>
+	</P>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><A NAME="string3"></A>    <FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch">arg=p123;p456</FONT></FONT></PRE><P>
+	<A NAME="string4"></A><FONT SIZE=2 STYLE="font-size: 11pt">Wild
+	cards are supported: </FONT>
+	</P>
+	<PRE CLASS="western"><A NAME="string5"></A><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">arg=p12*  - find values that begin with P12</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">arg=*123 - find values that end with P12</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">arg=*12* - find values that contain P12</FONT></FONT></PRE><P>
+	<A NAME="string6"></A><FONT SIZE=2 STYLE="font-size: 11pt">As well
+	as negation: </FONT>
+	</P>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><A NAME="string7"></A><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">arg=!p123 do not show results from station P123</FONT></FONT></PRE><P>
+	<A NAME="string8"></A><FONT SIZE=2 STYLE="font-size: 11pt">Also, one
+	can specify the string search type with the &lt;arg&gt;.searchtype
+	argument. This can take on the values: </FONT>
+	</P>
+	<PRE CLASS="western"><A NAME="string9"></A><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;arg&gt;.searchtype=exact</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;arg&gt;.searchtype=beginswith</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;arg&gt;.searchtype=endswith</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">&lt;arg&gt;.searchtype=contains</FONT></FONT></PRE>
+	<LI><P STYLE="margin-bottom: 0in"><A NAME="enumeration"></A><A NAME="boolean"></A>
+	<FONT SIZE=2 STYLE="font-size: 11pt">enumeration - Just like the
+	string type but without the wildcard capabilities. </FONT>
+	</P>
+	<LI><P STYLE="margin-bottom: 0in"><A NAME="boolean1"></A><A NAME="date_range"></A>
+	<FONT SIZE=2 STYLE="font-size: 11pt">boolean - A boolean argument
+	may be undefined, &quot;true&quot; or &quot;false&quot;. </FONT>
+	</P>
+	<LI><P><A NAME="date_range1"></A><FONT SIZE=2 STYLE="font-size: 11pt">date_range
+	- There are 2 arguments that may specified: &quot;&lt;arg&gt;.from&quot;
+	and &quot;&lt;arg&gt;.to&quot;. There may be none, one or both of
+	these. If specified the logic is: </FONT>
+	</P>
+	<PRE CLASS="western"><A NAME="date_range2"></A><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">date value ≥ arg.from</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">date value ≤ arg.to</FONT></FONT></PRE><P>
+	<A NAME="date_range3"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+	date string can be any of the following forms. See </FONT></FONT><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">here</FONT></FONT></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+	for information. </FONT></FONT>
+	</P>
+	<PRE CLASS="western"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-doy  - year and 3 digit day of year</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-ddTHH:mm:ss Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyyMMddTHHmmss Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy/MM/dd HH:mm:ss Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-dd HH:mm:ss Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">EEE MMM dd HH:mm:ss Z yyyy</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-ddTHH:mm:ss</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyyMMddTHHmmss</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy/MM/dd HH:mm:ss</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-dd HH:mm:ss</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-ddTHH:mm Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyyMMddTHHmm Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy/MM/dd HH:mm Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-dd HH:mm Z</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-ddTHH:mm</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyyMMddTHHmm</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy/MM/dd HH:mm</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-dd HH:mm</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM-dd</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy/MM/dd</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyyMMdd</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy-MM</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyyMM</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy/MM</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">yyyy</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">now</FONT></FONT></PRE><P>
+	<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">If
+	a timezone is not specified then the date/time is assumed to be in
+	UTC. </FONT></FONT>
+	</P>
+	<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You
+	can also specify a date value that is relative to the other date: </FONT></FONT>
+	</P>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">-1 week, +3 days, -1 month, etc.</FONT></FONT></PRE><P>
+	<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">For
+	example, to find the last 2 weeks of data from current time you
+	would use: </FONT></FONT>
+	</P>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">arg.from=-2 weeks&amp;arg.to=now</FONT></FONT></PRE><P>
+	<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">If
+	you wanted to search 3 days into the future: </FONT></FONT>
+	</P>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">arg.from=now&amp;arg.to=+3 days</FONT></FONT></PRE>
+	<LI><P><A NAME="number_range"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">number_range
+	- There are 2 arguments that may specified: &quot;&lt;arg&gt;.min&quot;
+	and &quot;&lt;arg&gt;.max&quot;. There may be none, one or both of
+	these. If specified the logic is: </FONT></FONT>
+	</P>
+	<PRE CLASS="western"><A NAME="number_range1"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">value ≥ arg.min</FONT></FONT>
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">value ≤ arg.max</FONT></FONT></PRE>
+	<LI><P><A NAME="spatial_bounds"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">spatial_bounds
+	- There are 4 arguments that may specified: </FONT></FONT>
+	</P>
+	<PRE CLASS="western"><A NAME="spatial_bounds1"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch">&lt;arg&gt;.north</FONT>  [most northerly]</FONT></FONT>
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch">&lt;arg&gt;.south</FONT><FONT FACE="Courier 10 Pitch"> </FONT>[most southerly]</FONT></FONT>
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch">&lt;arg&gt;.east</FONT><FONT FACE="Courier 10 Pitch">  </FONT>[most easterly]</FONT></FONT>
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch">&lt;arg&gt;.west</FONT><FONT FACE="Courier 10 Pitch"> </FONT>  [most westerly]</FONT></FONT></PRE><P>
+	<A NAME="spatial_bounds2"></A><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+	values are assumed to be in degrees north (for latitude) and degrees
+	east (for longitude). Not all arguments are needed. If specified the
+	logic is: </FONT></FONT>
+	</P>
+	<PRE CLASS="western"><A NAME="spatial_bounds3"></A><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">site location latitude ≤ arg.north</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">site location latitude ≥ arg.south</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">site location longitude ≤ arg.east</FONT></FONT>
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">site location longitude ≥ arg.west</FONT></FONT></FONT></PRE>
+</UL>
+<PRE CLASS="western" STYLE="margin-bottom: 0.2in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">Latitude and longitude values are in decimal degrees in GSAC.</FONT></FONT></FONT></PRE>
+<UL>
+	<PRE CLASS="western" STYLE="margin-bottom: 0.2in; font-style: normal">
+</PRE>
+</UL>
 <p>
 <table width=100%><tr><td><a href="files.html">Previous</a></td>
 <td align=right><a href="browse.html">Next</a></td></tr></table>

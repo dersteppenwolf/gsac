@@ -1,17 +1,478 @@
 <table width=100%><tr><td><a href="downloader.html">Previous</a></td>
 <td align=right><a href="information.html">Next</a></td></tr></table>
 
-<h3>Browsing</h3>
 
-<p>
-Some GSAC repositories support 
-<a href="${urlroot}/browse">browsing</a> of both sites and files based on
-parameters enabled for searching in that particular repository.
-Some of the browse capabilities are based on 
-browsing by the first letter of the given field (e.g., site code). 
-Other browsing is done by the different values in a field.
-You can also select a number of the field values with the given checkboxes and perform a search.
+<H1 CLASS="western" STYLE="page-break-before: always"><FONT FACE="Times New Roman, serif">
+The GSAC Client Program</FONT></H1>
+<P STYLE="margin-bottom: 0.08in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">There
+is a GSAC client program (gsacclient.jar) for programmatic searches
+of a GSAC repository and to download files. The GSAC client is
+available as part of the GSAC package.  This program is an
+alternative on Windows for the use of 'curl' commands on Linux, and
+the client may be run on Linux as well as Windows.</FONT></FONT></FONT></P>
+<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">First
+review sections 3 and 4 about the GSAC API for basic  concepts and
+API information.  </FONT></FONT></FONT>
+</P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+GSAC client makes site and file queries of any GSAC repository, and
+gets the results returned in a variety of formats.  The client uses
+the GSAC RESTful web API (application interface).  You run the GSAC
+client program on your own terminal's command line to do programmatic
+searches of a GSAC repository, and download files.  In some cases
+this is more efficient than using the web page search forms.</FONT></FONT></P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">To
+run the GSAC client you need Java 1.6 or higher.  If needed, install
+Java on your machine. </FONT></FONT>
+</P>
+<H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman, serif">5.1
+Download the Client</FONT></H2>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">The GSAC command line client
+is available for download as part of the GSAC package at SourceForge.
+ </FONT>
+</P>
+<P><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Download
+the </FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">GSAC
+client code from SourceForge.  On
+</SPAN></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">http://sourceforge.net/projects/gsac/</SPAN></FONT></FONT></FONT></P>
+<P><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">click
+&quot;Download  gsacclient.zip.&quot;  The file is about 4 MB.</SPAN></FONT></FONT></FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Once downloaded, simply unzip
+the file </FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.zip
+</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">(Linux):</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>unzip
+gsacclient.zip </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>Archive:
+ gsacclient.zip </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">   <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>creating:
+gsacclient/ </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">   <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>creating:
+gsacclient/lib/ </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>inflating:
+gsacclient/lib/gsacclient.jar  </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>inflating:
+gsacclient/gsacclient.sh  </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>inflating:
+gsacclient/README       </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in">  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>inflating:
+gsacclient/gsac.properties  </FONT></FONT>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">This will create a directory
+(folder) called </FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">gsacclient,
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">which
+includes, among other items, the file </SPAN></FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">gsacclient.sh</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">
+and the Java file</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 10pt"><SPAN STYLE="font-style: normal">
+</SPAN></FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 10pt"><SPAN STYLE="font-style: normal">gsacclient/lib/gsacclient.jar</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">,
+which is the executable client.  Since it is in Java it should run on
+any platform with Java 1.6.</SPAN></FONT></FONT></P>
+<H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman">5.2
+Running the Client</FONT></H2>
+<P STYLE="margin-bottom: 0.1in"><FONT SIZE=2 STYLE="font-size: 11pt">The
+client program is the Java archive file<FONT FACE="Courier 10 Pitch">
+</FONT><FONT FACE="Courier 10 Pitch"><SPAN STYLE="font-style: normal">gsacclien</SPAN></FONT><FONT FACE="Courier 10 Pitch">t/lib/gsacclient.jar.
+</FONT>You can run the GSAC client on LINUX or Mac using either the
+shell file, <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.sh</FONT></FONT>:</FONT></P>
+<PRE CLASS="western" STYLE="margin-left: 0.49in; margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>cd <FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">gsacclien</SPAN></FONT><FONT SIZE=2 STYLE="font-size: 11pt">t/</FONT></FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.sh &lt;arguments&gt; </FONT></FONT></PRE><P STYLE="margin-bottom: 0.1in">
+<FONT SIZE=2 STYLE="font-size: 11pt">or directly using Java and the
+jar file:</FONT></P>
+<PRE CLASS="western" STYLE="margin-left: 0.49in; margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>java -jar <FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-style: normal">gsacclien</SPAN></FONT><FONT SIZE=2 STYLE="font-size: 11pt">t/lib/</FONT>gsacclient.jar &lt;arguments&gt;</FONT></FONT></PRE><P STYLE="margin-bottom: 0.08in">
+<FONT COLOR="#4c4c4c"><FONT FACE="Nimbus Sans L, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">You
+first may need to  change file permissions; for example, by:</SPAN></FONT></STRONG></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT COLOR="#4c4c4c"><FONT FACE="Nimbus Sans L, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><STRONG><FONT FACE="Courier 10 Pitch"><SPAN STYLE="font-weight: normal">chmod
+744 gsacclient/gsacclient.sh</SPAN></FONT></STRONG></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT COLOR="#4c4c4c"><FONT FACE="Nimbus Sans L, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">The
+examples shown here below should work if you try them in your
+terminal.</SPAN></FONT></STRONG></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.08in"><FONT COLOR="#4c4c4c"><FONT FACE="Nimbus Sans L, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">On
+Windows, since the gsacclient is a command line tool, it must be run
+from the </SPAN></FONT></STRONG><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">terminal,
+running the &quot;jar&quot; file</SPAN></FONT></STRONG><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">.
+ </SPAN></FONT></STRONG><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">In
+Windows, the terminal is the </SPAN></FONT></STRONG><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">Command
+Prompt </SPAN></FONT></STRONG><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">application.
+ C</SPAN></FONT></STRONG><STRONG><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-weight: normal">lick
+on Start, and then Run, and in the Run window type cmd, and click on
+OK to bring up a DOS emulation window where you can enter command
+lines.</SPAN></FONT></STRONG></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT SIZE=2 STYLE="font-size: 11pt">The
+client uses the GSAC API arguments and also its own arguments.  To
+see the client's  command line arguments run the client with -help,
+such as</FONT></P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.sh -help</FONT></FONT>
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">which shows</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-properties &lt;properties file to load&gt; </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-server  http://examplegsacrepository.edu/someprefixpath, e.g. </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		http://facility.unavco.org/gsacws </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-info  fetch and print to stdout the remote GSAC repository's information, </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		including available arguments </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-download &lt;destination directory&gt; Do a file search and download the files to </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		the given directory </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-keep_paths &lt;true|false&gt; When doing the download, do we maintain the directory </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		structure of the ftp urls?  Default is true </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-query site  or -site means do a site query (and add other arguments). </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-query file  or -file means do a file query (and add other arguments). </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-out &lt;outputfile&gt;  Write the output to the specified file </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-output  specify the format of the query results (such as 'site.xmllog' or </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		'file.url' ) </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-url &lt;url to fetch&gt; &lt;optional filename to write to&gt; act like wget </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	 After above gsaclient arguments you can add any number of query arguments, </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	 e.g.: </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-site.code P12*</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-bbox west-longi south-lati east-longi north-lati, such as bbox -120.0 30.5 </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		-117.0 33.0</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	Note: for any of the arguments you can specify a file that contains extra </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		arguments, e.g.: </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		-site.code file:site_queries.txt </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	where sites_queries.txt contains site query codes and values, one per line.</FONT></FONT>
 
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>-server</FONT></FONT>  argument is essential to query a remote GSAC-enabled repository.  For the server address of a particular GSAC installation, use the<SPAN STYLE="font-weight: normal"> </SPAN><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">Base URL</SPAN></FONT><SPAN STYLE="font-weight: normal"> </SPAN>shown in the GSAC'S site<FONT COLOR="#ccccff"><FONT FACE="Arial, sans-serif"> </FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif">Information</FONT></FONT> page.   </FONT></FONT></PRE><H2 CLASS="western" STYLE="font-style: normal">
+<FONT FACE="Times New Roman">5.3 Listing Repository Information</FONT></H2>
+<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You can get information (including gsacclient arguments) about a GSAC repository with for example</FONT></FONT></PRE><P>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh
+-server http://facility.unavco.org/gsacws -info</FONT></FONT></P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Similar
+and more complete information is on the GSAC repository's</FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Information
+</FONT></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">page;
+click on  </FONT></FONT><FONT COLOR="#800080"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: transparent">Repository
+information xml</SPAN></FONT></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+.  That list will also show allowed values for enumerated fields in
+the GSAC database.</FONT></FONT></P>
+<H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman">5.4
+Site searches</FONT></H2>
+<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">A sample query for one GPS site is:</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE1</FONT></FONT>
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Spaces separate arguments in the gsacclient command line.  Do <I>not </I>have a &quot;/&quot; at the end of the server URL.</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">The<FONT FACE="Times New Roman, serif"> results are sent to your terminal, from the remote GSAC web service, in the short csv format with header line:</FONT></FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=ADE1&amp;out put=site.csv </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">#site.id,site.code,site.name,site.latitude,site.longitude,site.elevation </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">23478_ADE1_5650,ADE1,Australia NGA collocated,-34.729,138.6473,38.1548 </FONT></FONT>
+</PRE><P STYLE="margin-bottom: 0in">
+<FONT SIZE=2 STYLE="font-size: 11pt">The results sent to your screen
+begin with a line (&quot;http...&quot;) showing the GSAC URL which is
+equivalent to the gsacclient query, in this case:</FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=ADE1&amp;output=site.csv
+</FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">This
+helps to learn or demo use of the GSAC API in browser requests.  You
+can try this URL query request in a browser. Note that &quot;&amp;&quot;
+is the glue to connect different arguments in the URL query, and &quot;?&quot;
+begins the arguments after the address.  This is typical use of  &quot;&amp;&quot;
+and &quot;?&quot; in web services. No spaces are used.</FONT></P>
+<PRE CLASS="western">
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You can get results in other formats using the argument &quot;-output,&quot;, such as SOPAC XML Site Log format:</FONT></FONT>
+
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient/gsacclient.sh -server http://facility.unavco.org/gsacws -site.code &quot;ADE1&quot; -output site.xmllog</FONT></FONT>
+</PRE><P STYLE="margin-bottom: 0.1in">
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">All
+the possible  choices of formats of results from  site queries are
+listed in the GSAC'S site</FONT></FONT><FONT COLOR="#ccccff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Information</FONT></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+page, in the</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Output
+Types -&gt; Site Outputs  URL</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">section.
+  For example, for </FONT></FONT><FONT FACE="Times New Roman, serif">HTML
+(web page) output use site.html; XML Site Log (SOPAC)
+output=site.xmllog; SINEX output=site.snx; GAMIT station.info
+output=site.station.info; csv file output=site.csv; and plain text
+output=site.plaintext.</FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">This
+command </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient/gsacclient.sh
+-server http://facility.unavco.org/gsacws -site.code ADE*</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">finds
+three sites, all beginning with &quot;ADE&quot;; a wild card search.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">That
+command, plus  </FONT><FONT FACE="Courier 10 Pitch">-output
+site.xmllog </FONT><FONT FACE="Times New Roman, serif">will send
+three SOPAC XML Site Logs to your terminal.  </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You
+can direct any gsacclient results, such as all those site logs in XML
+format, to a file:</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient/gsacclient.sh
+-server http://facility.unavco.org/gsacws -site.code ADE* -output
+site.xmllog -out ADE_site_logs.xml</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+command argument format for a latitude-longitude bounding box search
+i,s for example:</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">-site
+-bbox -120.0 30.5 -117.0 33.0</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">The
+'</FONT>bbox' <FONT FACE="Times New Roman, serif">values are
+longitudes and latitudes: </FONT><FONT FACE="Times New Roman, serif">the
+most </FONT><FONT FACE="Times New Roman, serif">west</FONT><FONT FACE="Times New Roman, serif">erly</FONT><FONT FACE="Times New Roman, serif">,
+</FONT><FONT FACE="Times New Roman, serif">the most </FONT><FONT FACE="Times New Roman, serif">south</FONT><FONT FACE="Times New Roman, serif">erly</FONT><FONT FACE="Times New Roman, serif">,
+</FONT><FONT FACE="Times New Roman, serif">the most </FONT><FONT FACE="Times New Roman, serif">east</FONT><FONT FACE="Times New Roman, serif">erly</FONT><FONT FACE="Times New Roman, serif">,
+and </FONT><FONT FACE="Times New Roman, serif">the most </FONT><FONT FACE="Times New Roman, serif">north</FONT><FONT FACE="Times New Roman, serif">erly.
+Be sure to note that</FONT> bbox <FONT FACE="Times New Roman, serif">is
+preceded by </FONT>-site<FONT FACE="Times New Roman, serif">.</FONT></FONT></FONT></P>
+<H2 CLASS="western" STYLE="margin-top: 0in; margin-bottom: 0.1in; font-style: normal">
+<FONT FACE="Times New Roman"><FONT SIZE=4>5.5 GSAC Client Properties
+File</FONT></FONT></H2>
+<P STYLE="margin-bottom: 0.1in"><FONT SIZE=2 STYLE="font-size: 11pt">You
+can specify one or more gsacclient arguments to always use when
+running the client. Just edit the <FONT FACE="Courier 10 Pitch">gsac.properties</FONT>
+file in the gsacclient/ directory. For example, use the line: </FONT>
+</P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">server=http://facility.unavco.org/gsacws</FONT></FONT></PRE><P STYLE="margin-bottom: 0.1in">
+<FONT SIZE=2 STYLE="font-size: 11pt">to query the UNAVCO GSAC with
+every gsacclient call.  To make every command a site query, add the
+line</FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">query=site</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT SIZE=2 STYLE="font-size: 11pt">You
+can also create and use several different properties files (in the
+same format). For example:</FONT></P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh -properties </FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"> </FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsac_client_3.properties.</FONT></FONT></PRE><P>
+<FONT SIZE=2 STYLE="font-size: 11pt">Will do queries using the
+arguments in <FONT FACE="Courier 10 Pitch">gsac_client_3.properties</FONT>.
+ Any gsacclient arguments may be entered in a properties file. For
+example, if you want to get more than the default 1000 results,  add
+-limit &lt;count&gt;, e.g.: </FONT>
+</P>
+<PRE CLASS="western"><FONT FACE="Courier 10 Pitch">gsacclient.sh  -site -limit 1500</FONT></PRE><H2 CLASS="western" STYLE="font-style: normal">
+<FONT FACE="Times New Roman">5.6 File searches</FONT></H2>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">A site.code search to get all
+the files for site P123 (caution, this returns 1001 file names):</FONT></P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><FONT FACE="Courier 10 Pitch">gsacclient.sh  -file -site.code p123</FONT></PRE><P>
+<FONT SIZE=2 STYLE="font-size: 11pt">Results in this case are a list
+of information about all files available from site P123, like this,
+not data files' contents:</FONT></P>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">3233505,GNSS
+RINEX Observation (Hatanaka, Unix
+Compressed),739030c019ab4169acc66a317daead0a,638221,2007-03-06,ftp://data-out.unavco.org/pub/rinex/obs/2007/064/p1230640.07d.Z
+</FONT></FONT>
+</P>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">3258729,GNSS
+Navigation,74787c121b5fb8344240ee05c3927a33,32805,2007-02-15,ftp://data-out.unavco.org/pub/rinex/nav/2006/279/p1232790.06n.Z
+</FONT></FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Other example gsacclient file
+queries:</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Absolute time range file
+search for p123 </FONT>
+</P>
+<PRE CLASS="western"><FONT FACE="Courier 10 Pitch">gsacclient.sh  -file site.code p123 </FONT>
+               <FONT FACE="Courier 10 Pitch">-file.datadate.from 2010-09-01  -file.datadate.to 2010-09-15</FONT></PRE><P>
+<FONT SIZE=2 STYLE="font-size: 11pt">which gets back 46 files.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">Absolute time range file
+search for p123, and return FTP URLs for data files:</FONT></P>
+<PRE CLASS="western"><FONT FACE="Courier 10 Pitch">gsacclient.sh  -file site.code p123 </FONT>
+               <FONT FACE="Courier 10 Pitch">-file.datadate.from 2010-09-01 </FONT>
+               <FONT FACE="Courier 10 Pitch">-file.datadate.to 2010-09-15 	-output file.url</FONT></PRE><P>
+<FONT SIZE=2 STYLE="font-size: 11pt">Time relative file search for
+P123 :</FONT></P>
+<PRE CLASS="western"><FONT FACE="Courier 10 Pitch">gsacclient.sh  -file site.code p123 </FONT>
+               <FONT FACE="Courier 10 Pitch">-file.datadate.from &quot;-1 month&quot; </FONT>
+               <FONT FACE="Courier 10 Pitch">-file.datadate.to now</FONT></PRE><P>
+<FONT SIZE=2 STYLE="font-size: 11pt">Both the date 'from' and 'to'
+arguments must be used together.  You could use </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>-file.datadate.to
+&quot;-1 month&quot;</FONT></FONT>.</FONT></P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">You can search on file <I>type</I>;
+for example,  to get RINEX obs files :</FONT></P>
+<PRE CLASS="western"><FONT FACE="Courier 10 Pitch">gsacclient.sh -file -output url site.code p123 </FONT>
+              <FONT FACE="Courier 10 Pitch">-file.datadate.from 2010-09-01 </FONT>
+              <FONT FACE="Courier 10 Pitch">-file.datadate.to 2010-09-15 </FONT>
+              <FONT FACE="Courier 10 Pitch">-file.type </FONT>gnss.data.rinex.observation</PRE><P STYLE="margin-bottom: 0.2in">
+<FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">File
+type choices for a particular GSAC repository are listed in the
+GSAC'S site<FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif">
+Information</FONT></FONT><FONT COLOR="#0084d1"> </FONT>page, in the<SPAN STYLE="font-weight: normal">
+</SPAN><FONT FACE="Arial, sans-serif"><SPAN STYLE="font-weight: normal">File
+Query -&gt; File Type</SPAN></FONT><SPAN STYLE="font-weight: normal">
+</SPAN>section.   Click on the [+] before &quot;Enumeration values,&quot;
+if there is one.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">File
+Output </SPAN></FONT></FONT><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">formats</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">are
+also selectable, and </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+listed in the GSAC'S site</FONT></FONT><FONT COLOR="#ccccff"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Information</FONT></FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
+</FONT></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">page,
+in the</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">
+</SPAN></FONT></FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="font-weight: normal">Output
+Types -&gt; File Outputs </SPAN></FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">section.
+  This choice can get information about a file, in several formats,
+or download the file itself (-</FONT></FONT><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">output
+file.download</FONT></FONT><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">).
+ You can also find FTP URLs and wget scripts.</FONT></FONT></P>
+<H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman">5.7
+File Downloads with the GSAC Client</FONT></H2>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">This query will do a file
+query and download some files into  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>destination_directory</FONT></FONT>.
+ You need first to make the directory <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>destination_directory</FONT></FONT>.
+ There is a limit of four files in this command.  Some sites ahve
+hundreds of files so be sure to use the &quot;limit&quot; option.</FONT></P>
+<PRE CLASS="western" STYLE="margin-bottom: 0.2in"><FONT FACE="Courier 10 Pitch">gsacclient.sh -file -download destination_directory  -site.code p123  -limit 4</FONT></PRE><P>
+<FONT SIZE=2 STYLE="font-size: 11pt">That <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.sh</FONT></FONT>
+ command maintains the original directory file paths from the remote
+GSAC server, and cretes the same path on your machine.  For example
+if your local destination directory is data-dir/, you may find the
+data files in a path such as <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>data-dir/pub/rinex/obs/</FONT></FONT>,
+where the /<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>pub/rinex/obs/</FONT></FONT><FONT SIZE=2>
+</FONT>part mimics the full FTP directory path to the files on the
+remote GSAC repository.  In GSAC client terminology, this is argument
+ </FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">&quot;-keep_paths true.&quot;
+</FONT>
+</P>
+<P><FONT SIZE=2 STYLE="font-size: 11pt">To have all of the files
+dowmloaded into a single directory, set the the -keep_paths argument
+to false: </FONT>
+</P>
+<PRE CLASS="western"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh  -file -download destination_directory  </FONT></FONT></PRE><P ALIGN=JUSTIFY STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><SPAN STYLE="background: #ffffff">             
+ <FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">-site.code
+p123  -limit 4   -keep_paths false </SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">To
+search for metadata about instrument data files (using the the gsac
+client, the web page UI, or the API) </SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">gsacclient.sh
+-file site.code Palm -limit 15</SPAN></FONT></FONT></FONT></P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">you
+can for example specify &quot;</SPAN></SPAN></SPAN></FONT></FONT>output&quot;
+(format of result) of  &quot;file.url,&quot; </FONT>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in"><BR>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh
+-file site.code Palm -limit 15 output file.url</FONT></FONT></P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in"><BR>
+</P>
+<P ALIGN=JUSTIFY STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt">and
+you will get a list of URLS like this:</FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in"><BR>
+</P>
+<PRE CLASS="western" STYLE="font-style: normal; font-weight: normal; text-align: left"><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">ftp://data-out.unavco.org/pub/rinex/obs/2012/158/palm1580.12d.Z</SPAN></FONT></FONT></FONT></PRE><P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">This
+is of course a URL which can be used to download a file with FTP from
+the given server. </SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">As
+always, the gscacclient shows you first the equivalent one-line API
+URL:</SPAN></FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">Processing
+file query: </SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">http://facility.unavco.org/gsacws/gsacapi/file/search?site.code=Palm&amp;limit=15&amp;output=file.url</SPAN></FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">If
+you use &quot;output&quot; of  &quot;</SPAN></SPAN></SPAN></FONT></FONT>file.wget&quot;<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><SPAN STYLE="background: #ffffff">
+(using the the gsac client, the web page UI, or the API) </SPAN></SPAN></SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">gsacclient.sh
+-file site.code Palm -limit 15 output file.wget</SPAN></FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">the
+result returned is one or more lines such as</SPAN></FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">wget
+ftp://data-out.unavco.org/pub/rinex/obs/2012/158/palm1580.12d.Z </SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
+<BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.2in; font-style: normal; font-weight: normal">
+<FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">which
+are wget commands to download a file with &quot;wget&quot;  from the
+given server. </SPAN></FONT></FONT></FONT>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.2in; font-style: normal; font-weight: normal">
+<BR><BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.2in; font-style: normal; font-weight: normal">
+<BR><BR>
+</P>
+<H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman">5.8
+Using Linux with the GSAC Client</FONT></H2>
+<P>You can use gsac client calls as part of Linux commands, such as 
+</P>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.sh -server
+http://facility.unavco.org/gsacws -site.code ADE* -output site.xmllog
+| grep receiverType</FONT></FONT></P>
+<P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">which
+lists the reciever types for sites beginning with ADE:</FONT></FONT></P>
+<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;gnssReceiver&gt;&lt;equip:receiverType&gt;&lt;![CDATA[ASHTECH
+Z-XII3]]&gt;&lt;/equip:receiverType&gt; </FONT></FONT></FONT>
+</P>
+<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;gnssReceiver&gt;&lt;equip:receiverType&gt;&lt;![CDATA[ASHTECH
+Z-XII3]]&gt;&lt;/equip:receiverType&gt; </FONT></FONT></FONT>
+</P>
+<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;gnssReceiver&gt;&lt;equip:receiverType&gt;&lt;![CDATA[TRIMBLE
+5700]]&gt;&lt;/equip:receiverType&gt; </FONT></FONT></FONT>
+</P>
+<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You
+can write results in a new file ADE_receiver_list: </FONT></FONT></FONT>
+</P>
+<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh
+-server http://facility.unavco.org/gsacws -site.code ADE* -output
+site.xmllog | grep receiverType &gt;&gt; ADE_receiver_list</FONT></FONT></FONT></P>
+<P STYLE="font-style: normal"><BR><BR>
+</P>
+<P STYLE="font-style: normal"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">You
+can get the GSAC API (URL) for any query submitted through the GSAC
+client.  The API URL is the first line returned from any query.  See
+examples of GSAC client use in the section titled The GSAC Command
+Line Client.</FONT></FONT></P>
 
 
 <p>
