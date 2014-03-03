@@ -1056,6 +1056,7 @@ public class PrototypeSiteManager extends SiteManager {
         SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 
         //System.err.println("\n  --------------------------------------------------------------- get times of equip sessions at station "+gsacResource.getId());
+        //System.err.println("\n  --------------------------------------------------------------- readEquipmentMetadata at "+gsacResource.getId());
 
         // get antenna session time intervals
         // mysql> select antenna_session.antenna_installed_date,antenna_session.antenna_removed_date from station,antenna_session  where ( (station.code_4char_ID like "%ORID%") and station.   
@@ -1091,13 +1092,13 @@ public class PrototypeSiteManager extends SiteManager {
                    sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
                 } catch (Exception exc) {
                     //System.err.println("   BAD antenna results.getString  "); 
+                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid ANTENNA_INSTALLED_DATE");
                     continue;  //throw new RuntimeException(exc);
                 }
-               //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
 
                // trap missing installed date
                if  (  sdt == null ) {
-                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
+                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
                    continue;
                }
                // if returned time has this precision: 2008-11-04 20:00:00.0
@@ -1105,32 +1106,28 @@ public class PrototypeSiteManager extends SiteManager {
                else if (sdt.length() == 19) {sdt = sdt +".000"; } //  if got like 2008-11-04 20:00:00
                else if (sdt.length() == 16) {sdt = sdt +":00.000"; } //  if got like 2008-11-04 20:00
                indate = formatter.parse(sdt); 
+               //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
 
                String odt=null;
-               //String outdate;
-               try {
-                       odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
-               } catch (Exception exc) {
-                        continue;  //throw new RuntimeException(exc);
-               }
+               //System.err.println("   get antenna sdt outdate string  "); //bbb
                Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
                if (null == test) { 
+                   //System.err.println("   get antenna sdt outdate null  "); //bbb
                    outdate = new Date();  // ie now
                } 
-               else { 
-                  //odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
-                  if (odt.length() == 21) {odt = odt +"00"; } // extend .0 tenth seconds to .000 ms value
-                  else if (odt.length() == 19) {odt = odt +".000"; } //  if got like 2008-11-04 20:00:00
-                  else if (odt.length() == 16) {odt = odt +":00.000"; } //  if got like 2008-11-04 20:00
-                  //System.err.println("        odt  string = "+odt); // CORRECT with time of day
-                  outdate = formatter.parse(odt); 
+               else {
+                  odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
+                  //System.err.println("        not null odt  string = "+odt); // CORRECT with time of day
+                  outdate = formatter.parse(odt);
                }
                // these value are CORRECT and include hours minutes and seconds:
                //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
                //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
-
+               //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
                startDates.add(indate);
                stopDates.add(outdate) ;
+
+
                antstartDates.add(indate);
                if (null!=indate && null!=outdate && indate.after(outdate)) {
                     System.err.println("   GSAC DB values ERROR:  Dates of antenna session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +"  end time: "+ outdate);
@@ -1160,32 +1157,6 @@ public class PrototypeSiteManager extends SiteManager {
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
-               /*
-               String sdt=null;
-               System.err.println("   get receiver indate string  "); //bbb
-               try {
-                   sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
-                } catch (Exception exc) {
-                    //System.err.println("   BAD rcv results.getString  "); 
-                    continue;  //throw new RuntimeException(exc);
-                }
-               System.err.println("              indate string = "+sdt); // CORRECT with time of day
-
-               // String sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE);
-               //System.err.println("   sdt indate string = "+sdt); // CORRECT with time of day
-               sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
-               indate = formatter.parse(sdt); 
-               Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
-               if (null == test) { 
-                   outdate = new Date();  // ie now
-               } 
-               else { 
-                  String odt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE)+"00";
-                  //System.err.println("        odt  string = "+odt); // CORRECT with time of day
-                  outdate = formatter.parse(odt); 
-               }
-               */
-               // code to get CORRECT times with hours mins and seconds:
 
                String sdt=null;
                //System.err.println("   get rcvr  sdt indate string  "); //bbb
@@ -1193,13 +1164,14 @@ public class PrototypeSiteManager extends SiteManager {
                    sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE);
                 } catch (Exception exc) {
                     //System.err.println("   BAD rcvr results.getString  "); 
+                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid RECEIVER_INSTALLED_DATE");
                     continue;  //throw new RuntimeException(exc);
                 }
                //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
 
                // trap missing installed date
                if  (  sdt == null ) {
-                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero rcvr INSTALLED_DATE");
+                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has no or zero rcvr INSTALLED_DATE");
                    continue;
                }
                sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
@@ -1208,6 +1180,7 @@ public class PrototypeSiteManager extends SiteManager {
 
                Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
                if (null == test) { 
+                   // normal end data case of 0, ie now. System.err.println("   rcvr odt null (0) results.getString  "); 
                    outdate = new Date();  // ie now
                } 
                else { 
@@ -1232,21 +1205,16 @@ public class PrototypeSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-        // FIX finish error check: if found no ant or rcv session times: which becomes: 
-        // FIX LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
-        if ( rcvstartDates.size() == 0 ) { 
-              //System.err.println("  NO receiver sessions in GSAC database for station "+gsacResource.getId()); 
+        // final error check: if found no ant or rcv session times:
+        if ( rcvstartDates.size() == 0 || antstartDates.size()==  0) { 
               // it's OK to return from this method call with empty results:
               GnssEquipmentGroup equipmentGroup = null;
               gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
               return;
         }
-        if ( antstartDates.size()==  0 ) { 
-              //System.err.println("  NO antenna sessions in GSAC database for station "+gsacResource.getId()); 
-              GnssEquipmentGroup equipmentGroup = null;
-              gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
-              return;
-        }
+        // FIX above: LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
+        // else {      System.err.println("  NO equipment sessions in GSAC database for station "+gsacResource.getId()); 
+        // }
 
         Collections.sort(startDates);
         Collections.sort(stopDates);
@@ -1583,16 +1551,14 @@ public class PrototypeSiteManager extends SiteManager {
                      getDatabaseManager().closeAndReleaseConnection(statement);
                }
 
-               // have gotten all equip session info for this station:
-               //System.err.println("    dateRange "+dateRange[0]+"-"+dateRange[1]+"  ant type "+anttype+" ant sn "+antenna_serial+"  delta z nor east "+zoffset+" "+dnorth+" "+deast+"  radome type "+radometype+"  antenna type "+ anttype);
-               //System.err.println("      rcvr type"+               rcvrtype+"  rcvr sn "+        receiver_serial+ " receiverFirmware "+       rcvrfw );
+            // have gotten all equipment sessions' information for this station:
+            //System.err.println("    dateRange "+dateRange[0]+"-"+dateRange[1]+
+            // "  ant type "+anttype+" ant sn "+antenna_serial+"  delta z nor east "+zoffset+" "+dnorth+" "+deast+"  radome type "+radometype+"  antenna type "+ anttype);
+            //System.err.println("      rcvr type"+               rcvrtype+"  rcvr sn "+        receiver_serial+ " receiverFirmware "+       rcvrfw );
 
-
-            // CCCC
             // construct a "GnssEquipment" object with these values:
-            //  public GnssEquipment(Date[] dateRange, String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
-            GnssEquipment equipment =
-                new GnssEquipment( dateRange, anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
+            //  public GnssEquipment(Date[] dateRange,     String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
+            GnssEquipment equipment=new GnssEquipment( dateRange, anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
 
             equipment.setSwVer(swver);
             equipment.setSampleInterval(sampInt);
@@ -1614,8 +1580,6 @@ public class PrototypeSiteManager extends SiteManager {
             }
             equipmentGroup.add(an_equipment);
         }
-
-
     }  // end of read equip metadata ()
 
 
@@ -1730,19 +1694,14 @@ public class PrototypeSiteManager extends SiteManager {
         for (String group : groupIds) {
             //System.err.println("       getNetworkClauses(): search for network or group name _"+group+"_");  // shows correct result
             appendSearchCriteria(msgBuff, ((cnt++ == 0) ? "Site Group=" : ""), group);
+
             // original simple equality :   which does not work where a station has more than one network names in comma separated list
             //Clause cl_one = new Clause();
             //cl_one = Clause.eq(col, group);
-            //System.err.println("          clause one ="+cl_one);  // shows this: station.networks='BOULDER GNSS'
+
             groupClauses.add(Clause.eq(col, group));
 
             // need clause where the string 'group' is IN the col result
-
-            // try Clause cl_2 = new Clause();
-            //cl_2 = Clause.like(col, group);
-            //System.err.println("          clause two ="+cl_2);  // shows this: station.networks LIKE 'BOULDER GNSS'
-            //groupClauses.add(cl_2); which does not succeed in sql query
-
             groupClauses.add(Clause.like(col, SqlUtil.wildCardBoth(group)));
 
             // other cases which are no help here:
