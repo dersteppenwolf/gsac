@@ -55,7 +55,7 @@ import java.util.GregorianCalendar;
  * especially sinex_v201_appendix1.pdf and sinex_v201_introduction.pdf or more recent version of those files.
  * You can get recent examples of SINEX files from http://sopac.ucsd.edu/processing/sinex/.
  *
- * Note unknown fields in SINEX are filled with - characters. No field is left blank.
+ * Note unknown fields in SINEX are filled with - characters. No field is left blank.  Any missing IERS DOMES values should have an M or S (only).
  * Firmware version characters are left justified.  So are all "DESCRIPTION" items.
  * 
  *      To conform with SINEX and with other GSAC repositories we ask you not to revise this Java file.  You are very welcome to make a new similar but altered 
@@ -219,17 +219,17 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      */
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
+        // from GsacSite site
+        String id = site.getShortName();
+        String name = site.getLongName();
+        
+
         pw.append(" "+ setStringLength(site.getShortName(),4) +"  A");
         pw.append(" "+ setStringLength( (getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") ),9) +" P");
 
-        /*
-        from GsacSite site
-        String id = site.getShortName();
-        String name = site.getLongName();
-        */
-        String name = site.getLongName();
-        //System.out.println("  sinex staname =" +name);
+        //System.out.println("  for site id="+id+"    sinex staname =" +name +";  iers domes="+(getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") )+"_"   );
         // shows correct Icelandic characters
+
         pw.append(" "+ setStringLengthRight(name,22));
 
         EarthLocation el = site.getEarthLocation();
@@ -640,6 +640,18 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
                 stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
+
+                
+                String dt = equipment.getDome();
+                System.out.println(" addSiteEquipmentAntenna(): initial dome value=_"+dt+"_");
+                if (dt.length()<4 || dt==null || dt=="" || dt== " " || dt== "  " || dt== "   " ) {
+                   dt="    "; 
+                }
+                else if ( dt!=null && dt!="" && dt != " " && !dt.contains("   ") ) {
+                   dt = getNonNullDomeString(dt);
+                }
+                
+
                 if (starttime.equals(prevAntStartTime) ) {
                     ; //  why two antenna sessions with same times?
                     // don't reprint the same line
@@ -649,11 +661,17 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                     prevAntStopTime = stoptime;
                     // for testing ONLY: 
                     //pw.append("         ANT SESSION "+sescount+  "\n ");
+
                     pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
+
                     pw.append( starttime+ " ");
                     pw.append( stoptime+ " ");
-                    pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
-                    // handle case of value 'unknown' or 'not provided'
+
+                    // for DESCRIPTION use antenna type name plus dome type name(4 char only)
+                    // orig pw.append( setStringLengthRight( equipment.getAntenna(),20) +" ");
+                    pw.append( setStringLengthRight( equipment.getAntenna(),16) + dt +" ");
+                    // FIX above: handle case of values from UNAVCO db of 'unknown' or 'not provided'
+
                     String answer = equipment.getAntennaSerial();
                     answer = answer.replaceAll(",", " ");
                     if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
@@ -905,6 +923,24 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             return "------------";
         }
         return s;
+    }
+
+    /**
+     *  if 's' is null return "    "  value; else return  the input String's', but 4 chars only.
+     *
+     * @param s  input String object
+     *
+     * @return  a string
+     */
+    private String getNonNullDomeString(String s) {
+        if (s == null) {
+            return "    ";
+        }
+        String s2         = s; 
+        if (s2.length() >5) {
+         s2 = s.substring(0,4);        
+        }
+        return s2;
     }
 
 
