@@ -179,7 +179,7 @@ public class PrototypeFileManager extends FileManager {
      * Handle the search request.   
      *  Compose a db query select clause for the requests' values, and make the select query on the GSAC db.
      *
-     *  Does the database search as specified by the user's search for files in the web site forms or via the API, (contained in input object "request")
+     *  Does the database search for data files as specified by the user's search for files in the web site forms or via the API, (contained in input object "request")
      *  and puts an array of the results, with one or more GsacFile objects, into the container object "GsacResponse response."
      *
      * @param request    The request [from the api or web search forms] what to search with
@@ -270,6 +270,7 @@ public class PrototypeFileManager extends FileManager {
         String cols=SqlUtil.comma(new String[]{
              Tables.GNSS_DATA_FILE.COL_STATION_ID,
              Tables.GNSS_DATA_FILE.COL_FILE_TYPE_ID,
+             Tables.GNSS_DATA_FILE.COL_FILE_SAMPLE_INTERVAL, 
              Tables.GNSS_DATA_FILE.COL_DATA_START_TIME,
              Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME,
              Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE,
@@ -350,18 +351,23 @@ public class PrototypeFileManager extends FileManager {
                    file_url =file_url_protocol + "://" + file_url_ip_domain + file_url_folders + file_url_filename;
                }
 
-               if (file_url==null || file_url.length()< 13 )   // if still no good url
+               /*
+               if (file_url==null || file_url.length()< 13)   // still no good url; can't even have more than ftp://a.b/c
                {
                   ; //continue; // no way to download this file so do not show it in GSAC results
-                  // OK proceed with showing results for this data file, with null for url, or short url
+                  // CHANGE: to proceed with showing results for this data file, even with null for url, or short url
                }
+               */
 
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
-               float sample_interval = 9999.0f; // static value for test until get from db 
-               sample_interval = results.getFloat (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
 
-               //System.err.println("  file info for site id " + siteID+" times "+start_time+" to" + stop_time);
-               //System.err.println("  FileHandler:handleRequest(): file for site " + siteID+"  url = "+file_url);
+               String sample_interval; 
+               sample_interval = results.getString (Tables.GNSS_DATA_FILE.COL_FILE_SAMPLE_INTERVAL);
+               if (null == sample_interval) {
+                  sample_interval = results.getString (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
+               }
+
+               //System.err.println("   sample interval ="+sample_interval+"_");
 
                // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
@@ -422,10 +428,11 @@ public class PrototypeFileManager extends FileManager {
                // make and populate a FileInfo object for this file, used by other parts of GSAC for output handling.
                FileInfo fileinfo = new FileInfo(file_url);
                String sizestr = ""+file_size;
-               String sistr = ""+ sample_interval;
                fileinfo.setMd5(file_md5);
                fileinfo.setFileSize(file_size);
-               fileinfo.setSampleInterval(sample_interval);
+               //String sampintstr = ""+ sample_interval;
+               float sampint = Float.parseFloat(sample_interval);
+               fileinfo.setSampleInterval(sampint);
 
                // make and populate a GsacFile object for this file, used by other parts of GSAC for output handling.
                GsacFile gsacFile = new GsacFile(siteID, fileinfo,                                   null, published_date,  data_start_time, data_stop_time, rt);
