@@ -18,9 +18,9 @@
  *   
  */
 
-/* Prototype GSAC SiteManager.java file to use in your GSAC code set. See README part 2.
-   You will revise this file, changing two instances of "prototype" (in next two lines) to match your package name,
-   and changing three instances of "Prototype" in lines 72-79 to your Java file prefix. */
+/* a prototype GSAC SiteManager.java file to use in your GSAC code set. See README part 2.
+   You will revise this file, changing two instances of "org.prototype" (in next two lines) to match your package name,
+   and changing three instances of "Prototype" near lines 84 to your Java file prefix. */
 package org.prototype.gsac;
 import  org.prototype.gsac.database.*;
 /* CHANGEME -  above, make sure that both lines show your GSAC package name */
@@ -30,15 +30,11 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.*;
-
-
 import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 
 import ucar.unidata.util.Misc;
 
-// older version (before Oct 2013) had import ucar.unidata.sql.Clause;
-//                                     import ucar.unidata.sql.SqlUtil;
 import org.ramadda.sql.Clause;
 import org.ramadda.sql.SqlUtil;
 
@@ -1123,12 +1119,11 @@ public class PrototypeSiteManager extends SiteManager {
                // these value are CORRECT and include hours minutes and seconds:
                //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
                //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
-               //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
                startDates.add(indate);
                stopDates.add(outdate) ;
 
-
                antstartDates.add(indate);
+
                if (null!=indate && null!=outdate && indate.after(outdate)) {
                     System.err.println("   GSAC DB values ERROR:  Dates of antenna session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +"  end time: "+ outdate);
                     continue;
@@ -1189,8 +1184,6 @@ public class PrototypeSiteManager extends SiteManager {
                   outdate = formatter.parse(odt); 
                }
                // these value are CORRECT and include hours minutes and seconds:
-               //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
-               //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
                //System.err.println("   receiver session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
                startDates.add(indate);
                stopDates.add(outdate) ;
