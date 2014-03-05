@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -49,7 +49,7 @@ import java.util.GregorianCalendar;
 
 
 /**
- * Output handler for results for users' site queries, formatted in SINEX.  Conforms to SINEX specifications.
+ * Output handler for results for users' site queries, formatted in SINEX.  The GSAC SINEX output files should conform to SINEX specifications.
  *
  * See SINEX v 2.01 specs from http://www.iers.org/nn_10910/IERS/EN/Organization/AnalysisCoordinator/SinexFormat/sinex__cont.html?__nnn=true
  * especially sinex_v201_appendix1.pdf and sinex_v201_introduction.pdf or more recent version of those files.
@@ -63,7 +63,7 @@ import java.util.GregorianCalendar;
  *      Do not commit changes in GSAC code into GSAC without consulting UNAVCO.
  *      For bug reports and suggested improvments please contact UNAVCO.
  *
- * @version     initial Nov 21, 2012; revised Nov 30-Dec 4, 2012; June 10, 2013.  
+ * @version     initial Nov 21, 2012; revised Nov 30-Dec 4, 2012; June 10, 2013; ... 5 Mar 2014.  
  * @author      SKW UNAVCO
  */
 public class SinexSiteOutputHandler extends GsacOutputHandler {
@@ -617,7 +617,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             GnssEquipment equipment = (GnssEquipment) metadata;
             sescount +=1;
 
-/*
+            /*
             if (equipment.hasReceiver()) {
                 // for testing ONLY: 
                 //pw.append("         REC SESSION "+sescount+  "\n ");
@@ -633,7 +633,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 pw.append( setStringLengthRight( equipment.getReceiverFirmware(),11));
                 pw.append("\n");
             }
-*/
+              */
 
             if (equipment.hasAntenna()) {
                 starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
@@ -643,7 +643,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
 
                 
                 String dt = equipment.getDome();
-                System.out.println(" addSiteEquipmentAntenna(): initial dome value=_"+dt+"_");
+                //System.out.println(" addSiteEquipmentAntenna(): initial dome value=_"+dt+"_");
                 if (dt.length()<4 || dt==null || dt=="" || dt== " " || dt== "  " || dt== "   " ) {
                    dt="    "; 
                 }
