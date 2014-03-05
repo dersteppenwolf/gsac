@@ -672,7 +672,7 @@ public class PrototypeSiteManager extends SiteManager {
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); // or getLong
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
-        String ts_image_URL = " "; // = results.getString(Tables.STATION.COL_TIMESERIES_IMAGE_URL);
+        String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
         /* 
         if (1== access_permission_id ) {
