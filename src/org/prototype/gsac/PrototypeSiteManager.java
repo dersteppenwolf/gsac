@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -21,6 +21,7 @@
 /* a prototype GSAC SiteManager.java file to use in your GSAC code set. See README part 2.
    You will revise this file, changing two instances of "org.prototype" (in next two lines) to match your package name,
    and changing three instances of "Prototype" near lines 84 to your Java file prefix. */
+
 package org.prototype.gsac;
 import  org.prototype.gsac.database.*;
 /* CHANGEME -  above, make sure that both lines show your GSAC package name */
@@ -75,7 +76,7 @@ import java.text.DateFormat;
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
  * @author  Jeff McWhirter 2011 template without code for any particular database variable names.
- * @author  S K Wier, UNAVCO; PrototypeSiteManager 23 Jan 2014.
+ * @author  S K Wier, UNAVCO; PrototypeSiteManager 23 Jan 2014, 5 Mar 2014.
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -126,6 +127,7 @@ public class PrototypeSiteManager extends SiteManager {
      */
     public List<Capability> doGetQueryCapabilities() {
         try {
+
             // order of adding to capabilities here specifies order on html site search page
             List<Capability> capabilities = new ArrayList<Capability>();
 
@@ -375,6 +377,7 @@ public class PrototypeSiteManager extends SiteManager {
             //  omit for now LOOK - search on data sampling interval ; float value in seconds per sample as 30 or 0.1 or 0.01
             // get value from receiver session table
 
+
             return capabilities;
         } catch (Exception exc) {
             throw new RuntimeException(exc);
@@ -395,6 +398,7 @@ public class PrototypeSiteManager extends SiteManager {
      * @return list of clauses for selecting sites
      */
     public List<Clause> getResourceClauses(GsacRequest request, GsacResponse response, List<String> tableNames, StringBuffer msgBuff) {
+
 
         /* which tables in the db to search on; the 'from' part of a db query, in this case the station table in the prototype database. */
         tableNames.add(Tables.STATION.NAME);
@@ -525,6 +529,8 @@ public class PrototypeSiteManager extends SiteManager {
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
         // System.err.println("   SiteManager: getResourceClauses gives " + clauses) ;
 
+
+
         return clauses;
     } // end of getResourceClauses
 
@@ -544,6 +550,8 @@ public class PrototypeSiteManager extends SiteManager {
      * @throws Exception on badness
      */
     public GsacResource getResource(String resourceId) throws Exception {
+
+
         // the SQL search clause: select where a column value COL_CODE_4CHAR_ID  = the "resourceId" which is some site 4 char ID entered by the user in the api or search form
         Clause clause = Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, resourceId);
 
@@ -566,6 +574,8 @@ public class PrototypeSiteManager extends SiteManager {
             // make a GsacSite object when a query is made, from db query results (row) ( but not yet made a web page or return anything for an API rquest)
             GsacSite site = (GsacSite) makeResource(results);
             results.close();
+
+
             return site;
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
@@ -587,6 +597,8 @@ public class PrototypeSiteManager extends SiteManager {
     public List<Clause> getDateRangeClause(GsacRequest request, StringBuffer msgBuff, String fromArg, String toArg,
                                            String argTxt, String colStart, String colEnd) 
                         throws Exception {
+
+
         List<Clause> clauses = new ArrayList<Clause>();
         // TODO: check the logic of the date range search
         Date[] dateRange = request.getDateRange(fromArg, toArg, null, null);
@@ -643,8 +655,9 @@ public class PrototypeSiteManager extends SiteManager {
      * @throws Exception on badness
      */
     @Override
-    public GsacResource makeResource(ResultSet results) 
-        throws Exception {
+    public GsacResource makeResource(ResultSet results) throws Exception {
+
+
         // depends on 'station' table in the database
 
         // access values by name of field in database row: 
@@ -674,6 +687,7 @@ public class PrototypeSiteManager extends SiteManager {
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
+
         /* 
         if (1== access_permission_id ) {
             System.err.println("   GSAC found station with no access permission (no public views allowed) " +fourCharId);
@@ -703,9 +717,14 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: station " +fourCharId+ " installed to-date was NULL; now is "+toDate);
             }
 
+
+
         // set these additional values in the site object.
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value), probably
         site.setToDate(toDate);
+
+
+
 
         //Add the network(s) for this station, in alphabetical order,  to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
@@ -749,6 +768,9 @@ public class PrototypeSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
+
+
+
         // get name of province or state     
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
@@ -769,12 +791,14 @@ public class PrototypeSiteManager extends SiteManager {
                //      System.err.println("   did get state name"+state);
                break;
            }
-            } finally {
+         } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
-            }
+         }
 
         // add all three aboce items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
+
+
 
         // following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
@@ -785,6 +809,8 @@ public class PrototypeSiteManager extends SiteManager {
         cols=SqlUtil.comma(new String[]{Tables.AGENCY.COL_AGENCY_NAME});
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.AGENCY.NAME);
+
+
         statement = //select            what    from      where
            getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //System.err.println("   SiteManager: province query is " +statement);
@@ -799,24 +825,32 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
         
+
+
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
-        if ( station_photo_URL != null || ts_image_URL.length()>8 ) { //ts_image_URL!=null ) {
 
+        if ( station_photo_URL != null  )    {
             if (imagesGroup == null) {
                 site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
             }
-
             if ( station_photo_URL != null ) {
                 // add  site photo image to the group:
                 imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
             }
-
-            if (ts_image_URL.length()>8 ) { //(ts_image_URL!=null) ) {
-                // add image of a time series data plot to the images group:
+        }
+        if (ts_image_URL!=null )    {
+            if (imagesGroup == null) {
+                site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
+            }
+            if (ts_image_URL.length()>8 ) { 
+                // add a valid image URL of a time series data plot to the images group:
                 imagesGroup.add( new ImageMetadata(ts_image_URL, "Time Series Data Plot"));
             }
         }
+
+
+
 
         //  set site "Type" aka site.type corresponding to "station style" in the database
         // Not clear where or how this is used by GSAC code.
@@ -852,8 +886,19 @@ public class PrototypeSiteManager extends SiteManager {
         else if (4  == station_style_id ) {
            site.setType(new ResourceType("doris.site"));
         }
-        // more station styles ... FIX 
+        else if (5  == station_style_id ) {
+           site.setType(new ResourceType("seismic.site"));
+        }
+        else if (6 == station_style_id ) {
+           site.setType(new ResourceType("slr.site"));
+        }
+        else if (7 == station_style_id ) {
+           site.setType(new ResourceType("strainmeter.site"));
+        }
         else if (8  == station_style_id ) {
+           site.setType(new ResourceType("tiltmeter.site"));
+        }
+        else if (9  == station_style_id ) {
            site.setType(new ResourceType("tiltmeter.site"));
         }
         else if (10 == station_style_id ) {
@@ -919,6 +964,8 @@ public class PrototypeSiteManager extends SiteManager {
      */
    private void readIdentificationMetadata(GsacResource gsacResource)
             throws Exception {
+
+
 
         ResultSet results;
 
@@ -997,6 +1044,8 @@ public class PrototypeSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
+
+
     }
 
 
@@ -1011,6 +1060,8 @@ public class PrototypeSiteManager extends SiteManager {
     private void readEquipmentMetadata(GsacResource gsacResource)
             throws Exception {
                
+
+
         int station_sess_id=0;
         int receiverid=0;
         int receiver_firmware_id=0;
@@ -1573,6 +1624,8 @@ public class PrototypeSiteManager extends SiteManager {
             }
             equipmentGroup.add(an_equipment);
         }
+
+
     }  // end of read equip metadata ()
 
 
@@ -1640,6 +1693,8 @@ public class PrototypeSiteManager extends SiteManager {
      * @return site group list
      */
     public List<ResourceGroup> doGetResourceGroups() {
+
+
         try {
             HashSet<String>     seen   = new HashSet<String>();
             List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
@@ -1653,7 +1708,7 @@ public class PrototypeSiteManager extends SiteManager {
                 }
                 for (String tok : commaDelimitedList.split(",")) {
                     tok = tok.trim();
-                    System.err.println("       doGetResourceGroups(): network _"+tok+"_");
+                    //System.err.println("       doGetResourceGroups(): network _"+tok+"_");
                     if (seen.contains(tok)) {
                         continue;
                     }
@@ -1682,6 +1737,8 @@ public class PrototypeSiteManager extends SiteManager {
     private List<Clause> getNetworkClauses(List<String> groupIds, StringBuffer msgBuff) {
         List<Clause> groupClauses = new ArrayList<Clause>();
         String  col = Tables.STATION.COL_NETWORKS;
+
+
         // "Handle the 4 cases to find the argument in the csv list of groups in the DB"
         int cnt = 0;
         for (String group : groupIds) {
@@ -1715,6 +1772,8 @@ public class PrototypeSiteManager extends SiteManager {
      * @param value _more_
      */
     private void addPropertyMetadata(GsacResource gsacResource, String id, String label, String value) {
+
+
         if ((value != null) && (value.length() > 0)) {
             gsacResource.addMetadata(new PropertyMetadata(id, value, label));
         }
