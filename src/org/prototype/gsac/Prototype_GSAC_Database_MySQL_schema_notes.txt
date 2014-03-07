@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					             18 Feb 2014          
+					             7 Mar 2014          
 
 					      UNAVCO, Boulder Colorado.
 
@@ -90,7 +90,7 @@ Table agency:
 +--------------------+-----------------+------+-----+---------+----------------+
 | agency_id          | int(4) unsigned | NO   | PRI | NULL    | auto_increment |
 | agency_name        | varchar(100)    | NO   |     | NULL    |                |
-| mailing_address    | varchar(100)    | YES  |     | NULL    |                |
+| mailing_address    | varchar(200)    | YES  |     | NULL    |                |
 | agency_url         | varchar(100)    | YES  |     | NULL    |                |
 | prime_contact_name | varchar(100)    | YES  |     | NULL    |                |
 | prime_telephone    | varchar(50)     | YES  |     | NULL    |                |
@@ -109,7 +109,7 @@ Table antenna_session;
 | antenna_type_id        | int(5) unsigned | NO   |     | NULL    |                |
 | antenna_serial_number  | varchar(20)     | NO   |     | NULL    |                |
 | antenna_installed_date | datetime        | NO   |     | NULL    |                |
-| antenna_removed_date   | datetime        | NO   |     | NULL    |                |
+| antenna_removed_date   | datetime        | YES  |     | NULL    |                |
 | antenna_offset_up      | float           | NO   |     | NULL    |                |
 | antenna_offset_north   | float           | NO   |     | NULL    |                |
 | antenna_offset_east    | float           | NO   |     | NULL    |                |
