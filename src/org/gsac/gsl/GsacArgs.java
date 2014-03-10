@@ -230,58 +230,36 @@ public interface GsacArgs {
                                                     + "datadate";
 
 
-
-    /** _more_ */
-    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + "filesize";
-
-    /** _more_ */
+    /** file size in bytes; why these 3 whcih appear to duplicate the next three items. */
+    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + ".filesize";
     public static final String ARG_FILE_SIZEMAX = ARG_FILE_SIZE + ".max";
-
-
-    /** file size min */
     public static final String ARG_FILE_SIZEMIN = ARG_FILE_SIZE + ".min";
 
-    /** _more_ */
-    public static final String ARG_FILE_FILESIZE = ARG_FILE_PREFIX
-                                                   + "filesize";
-
-    /** file size max */
-    public static final String ARG_FILESIZE_MAX = ARG_FILE_FILESIZE + ".max";
-
-    /** file size min */
-    public static final String ARG_FILESIZE_MIN = ARG_FILE_FILESIZE + ".min";
 
 
-    /** _more_ */
-    public static final String ARG_FILE_PUBLISHDATE = ARG_FILE_PREFIX
-                                                      + "publishdate";
+    /** file size in bytes; used in FileManager.java code*/
+    public static final String ARG_FILE_FILESIZE       = ARG_FILE_PREFIX + ".filesize";
+    public static final String ARG_FILESIZE_MAX        = ARG_FILE_FILESIZE + ".max";
+    public static final String ARG_FILESIZE_MIN        = ARG_FILE_FILESIZE + ".min";
 
+    /** instrumental sampling rate in seconds for the data in a file, and the search range limiting values: */
+    public static final String ARG_FILE_SAMPLEINT      = ARG_FILE_PREFIX          + "sampleinterval";
+    public static final String ARG_FILE_SAMPLEINT_MAX  = ARG_FILE_SAMPLEINT + ".max";
+    public static final String ARG_FILE_SAMPLEINT_MIN  = ARG_FILE_SAMPLEINT + ".min";
 
     /** publish date for files */
-    public static final String ARG_FILE_PUBLISHDATE_FROM =
-        ARG_FILE_PUBLISHDATE + ".from";
+    public static final String ARG_FILE_PUBLISHDATE =     ARG_FILE_PREFIX + "publishdate";
+    public static final String ARG_FILE_PUBLISHDATE_FROM =ARG_FILE_PUBLISHDATE + ".from";
+    public static final String ARG_FILE_PUBLISHDATE_TO =  ARG_FILE_PUBLISHDATE + ".to";
 
+    /** data dates for files */
+    public static final String ARG_FILE_DATADATE =       ARG_FILE_PREFIX + "datadate";
+    public static final String ARG_FILE_DATADATE_FROM =  ARG_FILE_DATADATE + ".from";
+    public static final String ARG_FILE_DATADATE_TO =    ARG_FILE_DATADATE + ".to";
 
-    /** publish date for files */
-    public static final String ARG_FILE_PUBLISHDATE_TO = ARG_FILE_PUBLISHDATE
-                                                         + ".to";
-
-    /** publish date for files */
-    public static final String ARG_FILE_DATADATE = ARG_FILE_PREFIX
-                                                   + "datadate";
-
-
-    /** publish date for files */
-    public static final String ARG_FILE_DATADATE_FROM = ARG_FILE_DATADATE
-                                                        + ".from";
-
-    /** data date for files */
-    public static final String ARG_FILE_DATADATE_TO = ARG_FILE_DATADATE
-                                                      + ".to";
 
     /** _more_ */
     public static final String ARG_FILE_TYPE = ARG_FILE_PREFIX + "type";
-
 
 
     /** _more_ */
