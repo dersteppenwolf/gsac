@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * 
  */
 
-/* CHANGEME - use the correct name of package: */
+/* CHANGEME - use the correct name of package, replacing 'prototype': */
 package org.prototype.gsac;
 import  org.prototype.gsac.database.*;
 
@@ -41,7 +41,6 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.Calendar;
-//import java.text.DateFormat;
 
 
 /**
@@ -53,10 +52,10 @@ import java.util.Calendar;
  * A GSAC FileManager class composes what file-related items are provided for SEARCHES for files in the API and web site.
  * A GSAC FileManager class composes what items are provided returned in the RESULTS when a search finds something.
  *
- * This FileManager.java uses the prototype GSCA db table gnss_data_file;
+ * This FileManager.java uses the prototype GSAC db and tables gnss_data_file, and others.
  *
  * @author  Jeff McWhirter 2011  minimal function template file (made from gsac/fsl/template/Filemanager.java) without any code for any database variables.
- * @author  S K Wier Nov. 6, 14, 2013, ... 4 Feb 2014, ...
+ * @author  S K Wier Nov. 6, 14, 2013, ... 4 Feb 2014, ... 1-7 Mar 2014; 
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -73,34 +72,28 @@ public class PrototypeFileManager extends FileManager {
     }
 
     /**
-     *  Enable what file-related items are used in searches (database queries) for geoscience data files to download from this particular data repository.  
-     *  These items can be used for searches: date range of files; file type, etc.
-     *  This also shows the station search items on the web site file search page so the user can, for example, limit files found to one or a few stations.
+     *  Define and enable what file-related items are are offered for search choices (database queries) for geoscience data files to download from this particular data repository.  
+     *  This sets the search forms on the web site file search page.
      *
-     *  In GSAC, "Capabilities" are the things to search (query) on. 
+     *  In GSAC, "Capabilities" are things to search (query) on. 
      *
      * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
      *
      * @return  List of GSAC "Capabilities"  objects
      */
     public List<Capability> doGetQueryCapabilities() {
-        // addDefaultCapabilities(capabilities);
+
+        // addDefaultCapabilities(capabilities); // why not used here?
+
         try {
 
         List<Capability> capabilities = new ArrayList<Capability>();
         Capability   cap;
         String [] values; 
 
-        // search on data file types; original: get ALL the file type names from the database
-        /* 
-        try {
-             values = getDatabaseManager().readDistinctValues( Tables.FILE_TYPE.NAME, Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
-          } catch (Exception exc) {
-               throw new RuntimeException(exc);
-        }
-        Arrays.sort(values);  if you sort these from the gsac prototype db, the Borehole strainmeter type shows first on the web page, but is of no interest for early GSAC-s
-        */
-        // an improvement: only get the file types in this data archive to offer here
+        // Find the types of files in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE)) {" below in another method.)
+        // Note this code has to read all the file entries in the database.
+        //    (originally, code here found *all* the possible file type names in the database file_type table, many types not in most data centers; which is merely misleading)
         int gpsfcnt=0;
         ResultSet results;
         ArrayList<String> avalues = new ArrayList<String>();
@@ -137,35 +130,41 @@ public class PrototypeFileManager extends FileManager {
         } finally {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
-        //System.err.println("  there are "+gpsfcnt+"  files in the db for file types" ) ;
+        //System.err.println("  GSAC: there are "+gpsfcnt+" types of instrumental data files in the database." ) ;
         String[] itemArray = new String[avalues.size()];
         values = avalues.toArray(itemArray);
-        // sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way.
+        // sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
 
-
+        // the following search choices do not need or have any pre-defined values or enumerated lists of allowed choices:
         Capability[] dflt = { 
 
-              initCapability(new Capability(ARG_FILE_DATADATE, "Data Date Range", Capability.TYPE_DATERANGE),            "File Query", "Date the data was collected"),
+              // parms like "ARG_FILE_..." are declared in core code GsacArgs.java.
 
-              //  capabilities.add(new Capability(GsacArgs.ARG_FILE_TYPE, "File Type", values, true, CAPABILITY_GROUP_SITE_QUERY) );
-              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE, "File Type", values, true, Capability.TYPE_FILETYPE ),"File Query", "Data file type" ),
+              initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",         Capability.TYPE_DATERANGE), "File Query", "Date the data was collected"),
 
-              // search on "Publish Date" is when a repository first made a file available.
-              //initCapability(new Capability(ARG_FILE_PUBLISHDATE, "Publish Date",
-              //    Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
-              // LLOK could also search on revision_time in gsac prototype database
+              // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
+              initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
 
-              // search on file size.  Not now regarded as useful. Nov. 2013.
-              //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability .TYPE_NUMBERRANGE), "File Query", "File size") 
+              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "File Type", values, true, Capability.TYPE_FILETYPE ), "File Query", "Data file type" ),
+
+              // Note, for a case using Capability.TYPE_NUMBERRANGE, as for FILESIZE, 
+              // the special parm name, ARG_FILE_SAMPLEINT, declared in GsacArgs.java, must have two more related corresponding parm names there with magic name extensions .max and .min
+              // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not real numbers.  FIX this code to allow fraction of seconds:
+              initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval") 
+
+              // LOOK could also search on revision_time in gsac prototype database
+
+              // Could also search on file size.  Not now regarded as useful. Nov. 2013.
+              //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
+              // can use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
         };
-        // use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
 
         for (Capability capability : dflt) {
             capabilities.add(capability);
         }
 
         // Also add all the station-related search choices into the file search web page form, so you can select files from particular sites
-        // (gets all the site searches from the related SiteManager class)
+        // (gets choices from the related SiteManager class)
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
@@ -177,7 +176,8 @@ public class PrototypeFileManager extends FileManager {
 
     /**
      * Handle the search request.   
-     *  Compose a db query select clause for the requests' values, and make the select query on the GSAC db.
+     *  Compose a database query or select clause for the requests' values, and make the select query on the GSAC db.
+     *  (do a file search in the database)
      *
      *  Does the database search for data files as specified by the user's search for files in the web site forms or via the API, (contained in input object "request")
      *  and puts an array of the results, with one or more GsacFile objects, into the container object "GsacResponse response."
@@ -224,15 +224,39 @@ public class PrototypeFileManager extends FileManager {
         }
         // end FROM SiteManager
 
-        // make query clause for the  file type  fff
+        /*
+        if (request.defined(ARG_FILESIZE_MIN)) {
+            int size = request.get(ARG_FILESIZE_MIN, 0);
+            appendSearchCriteria(msgBuff, "Filesize&gt;=",
+                                 "" + request.get(ARG_FILESIZE_MIN, 0));
+        }
+        if (request.defined(ARG_FILESIZE_MAX)) {
+            int size = request.get(ARG_FILESIZE_MAX, 0);
+            appendSearchCriteria(msgBuff, "Filesize&lt;=",
+                                 "" + request.get(ARG_FILESIZE_MAX, 0));
+        }
+        */
+
+        // make query clause for the file type ; search with OR on the list of file type names in 'values':
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
-            List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
+             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
+             //System.err.println("  FileHandler:handleRequest(): search on file types "+ values.toString() );
             clauses.add( Clause.or( Clause.makeStringClauses( Tables.FILE_TYPE.COL_FILE_TYPE_NAME, values)));
         }
-        
+
+        //float intrange1 = Float.parseFloat(stri); // java atof
+
+        // sample interval code:
+        if (request.defined(ARG_FILE_SAMPLEINT_MAX)) {
+            float intrange1 = request.get(ARG_FILE_SAMPLEINT_MIN, 0);
+            float intrange2 = request.get(ARG_FILE_SAMPLEINT_MAX,0);
+            //System.err.println("  FileHandler:handleRequest(): search on sample int from "+ intrange1 +"  to "+ intrange2);
+            clauses.add(Clause.ge(Tables.GNSS_DATA_FILE.COL_FILE_SAMPLE_INTERVAL, intrange1));
+            clauses.add(Clause.le(Tables.GNSS_DATA_FILE.COL_FILE_SAMPLE_INTERVAL, intrange2));
+        }
+            
         // get values of the data date range requested by the user, from the input from web search form / API:
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
-
         if (dataDateRange[0] != null) {
             // wrangle the data start time into a format you can use in a SQL query
             Calendar cal = Calendar.getInstance();
@@ -243,7 +267,6 @@ public class PrototypeFileManager extends FileManager {
             clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlStartDate));
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
         }
-
         if (dataDateRange[1] != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(dataDateRange[1]);
@@ -257,6 +280,8 @@ public class PrototypeFileManager extends FileManager {
             clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
+
+
 
         // to get file info, join these db tables:
         // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
@@ -500,7 +525,7 @@ public class PrototypeFileManager extends FileManager {
                String file_type_name  = results.getString(Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
                String file_url = results.getString(Tables.GNSS_DATA_FILE.COL_FILE_URL);
                String siteID = ""+station_id;
-               // LOOK the following are defective because java.sql.Date objects "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
+               // LOOK the following are perhaps somewhat defective because java.sql.Date objects "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
                Date data_start_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_START_TIME);
                Date data_stop_time  = results.getDate(Tables.GNSS_DATA_FILE.COL_DATA_STOP_TIME);
                Date published_date  = results.getDate(Tables.GNSS_DATA_FILE.COL_PUBLISHED_DATE);
