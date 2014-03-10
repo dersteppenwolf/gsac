@@ -3,7 +3,7 @@
 
 				    Tables and Field Definitions and Notes.
 
-					             7 Mar 2014          
+					             10 March 2014          
 
 					      UNAVCO, Boulder Colorado.
 
@@ -74,7 +74,7 @@ Table access_permission:
 +-------------------------------+-----------------+------+-----+---------+----------------+
 Table access_permission is a static table with values describing the level of access permitted for one (or more) data files from stations.
 Used by tables station and gnss_data_file. See use details below under those tables' descriptions.
-Values are:
+Supplied values: 
 +----------------------+---------------------------------------------------------------------------------+
 | access_permission_id | access_permission_description                                                   |
 +----------------------+---------------------------------------------------------------------------------+
@@ -136,6 +136,7 @@ tiltmeter; the value of igs_defined is N.  Use one of these for each antenna (de
 you may add new values (rows) at the end of this table for other types of station operations and / or instruments.
 Do not change the row order to insure that all GSACs have a common interface.
 select * from antenna_type;
+Supplied values: 
 +-----------------+-------------------+-------------+
 | antenna_type_id | antenna_type_name | igs_defined |
 +-----------------+-------------------+-------------+
@@ -176,8 +177,8 @@ Note that file type does not specify if there is any compression of files, such 
 GSAC does not check or know what is actually in a file. This allows a GSAC server to handle most any data file format.
 One file type name may cover several related formats.  For example, "RINEX observation file" can refers to ".d" files, "o.Z" files, and "d.Z" files.  
 It is up to the file user to know how to work with files received from file download URLs supplied by GSAC. 
-At the moment, file_types are:
 Table file_type;
+Supplied values: 
 +--------------+----------------------------------------------+
 | file_type_id | file_type_name                               |
 +--------------+----------------------------------------------+
@@ -312,7 +313,7 @@ Table radome_type
 | description_IGS_English | varchar(150)    | YES  |     | NULL    |                |
 | description_RENAG       | varchar(150)    | YES  |     | NULL    |                |
 +-------------------------+-----------------+------+-----+---------+----------------+
-values in radome_type:
+Supplied values: 
 +----------------+------------------+-------------+------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 | radome_type_id | radome_type_name | igs_defined | description_IGS_English                                                                              | description_RENAG                                                                                                        |
 +----------------+------------------+-------------+------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
@@ -404,6 +405,7 @@ Use one of these for each receiver (data logger) at your stations, or
 you may add new values (rows) at the end of this table for other types of station operations.
 Do not change the row order to insure that all GSACs have a common interface.
 The GSAC-supplied values of GNSS receiver_type_name in the prototype or standard database are like these:  
+Supplied values: 
 select * from receiver_type;
 +------------------+----------------------+-------------+
 | receiver_type_id | receiver_type_name   | igs_defined |
@@ -434,7 +436,9 @@ Table station;
 | longitude_east           | double          | NO   |     | NULL    |                |
 | ellipsoidal_height       | float           | YES  |     | NULL    |                |
 | station_installed_date   | datetime        | NO   |     | NULL    |                |
+| station_removed_date     | datetime        | YES  |     | NULL    |                |
 | station_style_id         | int(3) unsigned | NO   |     | NULL    |                |
+| station_status_id        | int(3) unsigned | YES  |     | NULL    |                |
 | access_permission_id     | int(3) unsigned | YES  |     | NULL    |                |
 | monument_description_id  | int(5) unsigned | NO   |     | NULL    |                |
 | country_id               | int(5) unsigned | NO   |     | NULL    |                |
@@ -455,7 +459,7 @@ Table station;
 +--------------------------+-----------------+------+-----+---------+----------------+
 Table station specifies one instrumented station, site, or monument.
 Contains access permissions controls for ALL gnss data files from this station on your FTP or HTTP server and potentially
-offered for download by GSAC, according to the values of access_permission and/or either of the embargo values .
+offered for download by GSAC, according to the values of access_permission and/or either of the embargo values.
 Field embargo_after_date is a date after which no access is allowed for all files from this station.
 Value of access_permission simply allows or denys all access to files from this station.  Files from this station will *not* 
 appear in results of file searches using GSAC if access is denied with access_permission.
@@ -475,12 +479,36 @@ Field time_series_image_URL may be null; if you have an image of a plot of time 
 Field nominal_sample_interval may be null.  The preferred value of sample interval at any time is in the receiver_session table.
 
 
+
 Table station_session
+GSAC no longer needs or uses the table station_session.  
 The station session table was used in GSAC prior to late fall 2013.  It merged data values already present in the
 tables antenna-session and receiver_session.  This practice is hard to maintain and easily leads to errors in the database.
-GSAC no longer needs or uses the table station_session.  If your GSAC database has the station session table, update to new GSAC Java code and 
+If your GSAC database has the station session table, update to new GSAC Java code and 
 remove that table from the database.  You may leave the table in the database until after you know if is no longer called
-by your GSAC code.  (Search your GSAC code for calls on this table with the Linux command "grep STATION_SESS *.java" ).
+by your GSAC code.  (Or, search your GSAC code for calls on this table with the Linux command "grep STATION_SESS *.java" ).
+
+
+
+Table station_status;
+desc station_status;
++----------------------------+-----------------+------+-----+---------+----------------+
+| Field                      | Type            | Null | Key | Default | Extra          |
++----------------------------+-----------------+------+-----+---------+----------------+
+| station_status_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_status_description | varchar(80)     | NO   |     | NULL    |                |
++----------------------------+-----------------+------+-----+---------+----------------+
+Supplied values: 
++-------------------+----------------------------+
+| station_status_id | station_status_description |
++-------------------+----------------------------+
+|                 1 | Active                     |
+|                 2 | Inactive                   |
+|                 3 | Decomissioned              |
++-------------------+----------------------------+
+Table station_status may be used to denote stations in the station table that are no longer operational.
+Null values for station_status_id in the station table means that station is not excluded in searches by station status value.
+
 
 
 Table station_style;
@@ -491,7 +519,7 @@ Table station_style;
 | station_style_name | varchar(20)     | NO   |     | NULL    |                |
 +--------------------+-----------------+------+-----+---------+----------------+
 Station_style specifies nature of station operations and / or instruments; used by table station. Values are static and include:
-values supplied in from station_style:
+Supplied values: 
 +------------------+---------------------+
 | station_style_id | station_style_name  |
 +------------------+---------------------+
@@ -504,9 +532,11 @@ values supplied in from station_style:
 |                7 | Strainmeter         |
 |                8 | Tiltmeter           |
 |                9 | VLBI                |
+|               10 | GPS/GNSS Episodic   | 
+|               11 | tide gauge          |
 +------------------+---------------------+
-The intention is to use broad catagories. Particular instruments, as in 'receiver' and 'antenna' types,
-and types of data files, indicate more details about a site's data types detected and instruments in use. 
+The intention is to use broad catagories. Particular instruments, as described in the receiver- and antenna- type tables,
+and types of data files, indicate more details about a site's data types, and instruments in use. 
 You may add new rows at the end of this table for other types of station operations and / or instruments.
 For consistency in GSAC operations, the names above and their id numbers are "standard" and should be the same across all GSAC operations.
 These values are selected in the GSAC Search Sites interface as 'site type' values.
@@ -519,7 +549,7 @@ Table station_edit_permission;
 | station_edit_permission_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | station_edit_permission_description | varchar(80)     | NO   |     | NULL    |                |
 +-------------------------------------+-----------------+------+-----+---------+----------------+
-values supplied in station_edit_permission:
+Supplied values: 
 +----------------------------+--------------------------------------------------------+
 | station_edit_permission_id | station_edit_permission_description                    |
 +----------------------------+--------------------------------------------------------+

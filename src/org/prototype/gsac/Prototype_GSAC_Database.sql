@@ -389,7 +389,9 @@ CREATE TABLE `station` (
   `longitude_east` double NOT NULL,
   `ellipsoidal_height` float DEFAULT NULL,
   `station_installed_date` datetime NOT NULL,
+  `station_removed_date` datetime DEFAULT NULL,
   `station_style_id` int(3) unsigned NOT NULL,
+  `station_status_id` int(3) unsigned DEFAULT NULL,
   `access_permission_id` int(3) unsigned DEFAULT NULL,
   `monument_description_id` int(5) unsigned NOT NULL,
   `country_id` int(5) unsigned NOT NULL,
@@ -398,7 +400,6 @@ CREATE TABLE `station` (
   `x` double DEFAULT NULL,
   `y` double DEFAULT NULL,
   `z` double DEFAULT NULL,
-  `station_removed_date` datetime DEFAULT NULL,
   `iers_domes` varchar(9) DEFAULT NULL,
   `station_photo_URL` varchar(100) DEFAULT NULL,
   `time_series_image_URL` varchar(100) DEFAULT NULL,
@@ -421,6 +422,30 @@ LOCK TABLES `station` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `station_status`
+--
+
+DROP TABLE IF EXISTS `station_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `station_status` (
+  `station_status_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
+  `station_status_description` varchar(80) NOT NULL,
+  PRIMARY KEY (`station_status_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `station_status`
+--
+
+LOCK TABLES `station_status` WRITE;
+/*!40000 ALTER TABLE `station_status` DISABLE KEYS */;
+INSERT INTO `station_status` VALUES (1,'Active'),(2,'Inactive'),(3,'Decomissioned');
+/*!40000 ALTER TABLE `station_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `station_style`
 --
 
@@ -430,7 +455,6 @@ DROP TABLE IF EXISTS `station_style`;
 CREATE TABLE `station_style` (
   `station_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `station_style_name` varchar(20) NOT NULL,
-  `station_style_test_int` int(3) DEFAULT NULL,
   PRIMARY KEY (`station_style_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -441,7 +465,7 @@ CREATE TABLE `station_style` (
 
 LOCK TABLES `station_style` WRITE;
 /*!40000 ALTER TABLE `station_style` DISABLE KEYS */;
-INSERT INTO `station_style` VALUES (1,'GPS/GNSS Campaign',NULL),(2,'GPS/GNSS Continuous',NULL),(3,'GPS/GNSS Mobile',NULL),(4,'DORIS',NULL),(5,'Seismic',NULL),(6,'SLR',NULL),(7,'Strainmeter',NULL),(8,'Tiltmeter',NULL),(9,'VLBI',NULL),(10,'GPS/GNSS Episodic',NULL),(11,'tide gauge',NULL);
+INSERT INTO `station_style` VALUES (1,'GPS/GNSS Campaign'),(2,'GPS/GNSS Continuous'),(3,'GPS/GNSS Mobile'),(4,'DORIS'),(5,'Seismic'),(6,'SLR'),(7,'Strainmeter'),(8,'Tiltmeter'),(9,'VLBI'),(10,'GPS/GNSS Episodic'),(11,'tide gauge');
 /*!40000 ALTER TABLE `station_style` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -454,4 +478,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-07 11:01:42
+-- Dump completed on 2014-03-10 13:43:17
