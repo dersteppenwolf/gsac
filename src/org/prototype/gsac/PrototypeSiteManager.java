@@ -135,10 +135,9 @@ public class PrototypeSiteManager extends SiteManager {
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* some mouse over help text */
             // search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*
-            //        Capability args:                                          "web page label"
-            //                                      (? what for)                           " mouse over help text" + other help
+            //            args:(                             "web page label"                     capab type ),      capab group name,       mouse over help text,  other help text)
             Capability siteCode =
-                initCapability(     new Capability(ARG_SITE_CODE, "Code (4 character ID)", Capability.TYPE_STRING), 
+                initCapability( new Capability(ARG_SITE_CODE, "Code (4 character ID)", Capability.TYPE_STRING), 
                       CAPABILITY_GROUP_SITE_QUERY, "Code (4 character ID) of the station", "Code (4 character ID) of the station. " + help);
             siteCode.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteCode);
@@ -151,7 +150,7 @@ public class PrototypeSiteManager extends SiteManager {
             siteName.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteName);
 
-            // site search for latitude-longitude bounding boxi; 4 boxes; not in browse service
+            // site search for latitude-longitude bounding box; 4 boxes; not in browse service
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
@@ -192,7 +191,7 @@ public class PrototypeSiteManager extends SiteManager {
                // process each line in results of db query
                while ((results = iter.getNext()) != null) {
                    String networks= results.getString(Tables.STATION.COL_NETWORKS); // comma sep list of names of networks
-                   //String code= results.getString(Tables.STATION.COL_STATION_NAME); 
+                   //String sname = results.getString(Tables.STATION.COL_STATION_NAME); 
                    /* for tests; show all network names, from each single site, found when GSAC server starts 
                    if (networks  != null ) {
                      System.err.println("      station as network(s) _"+networks+"_");
@@ -271,6 +270,11 @@ public class PrototypeSiteManager extends SiteManager {
             // sort by alphabet:
             // Arrays.sort(values);
             capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
+
+            // search on site status (3 static values possible)
+            values = getDatabaseManager().readDistinctValues( Tables.STATION_STATUS.NAME, Tables.STATION_STATUS.COL_STATION_STATUS_DESCRIPTION);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // search on antenna types: get antenna type names used by stations in this database, only.
             // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
@@ -492,6 +496,14 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for style " + values.get(0)) ;
         }
         
+        if (request.defined(GsacArgs.ARG_SITE_STATUS)) {
+            List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_STATUS);
+            tableNames.add(Tables.STATION_STATUS.NAME);
+            clauses.add(Clause.join(Tables.STATION.COL_STATION_STATUS_ID, Tables.STATION_STATUS.COL_STATION_STATUS_ID));
+            clauses.add(Clause.eq(Tables.STATION_STATUS.COL_STATION_STATUS_DESCRIPTION, values.get(0)));
+            //System.err.println("   SiteManager: query for STATUS " + values.get(0)) ;
+        }
+        
         // FIX next three queries are buggy - return > 1 result per correct result
         if (request.defined(GsacExtArgs.ARG_RECEIVER)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_RECEIVER);
@@ -551,7 +563,6 @@ public class PrototypeSiteManager extends SiteManager {
      */
     public GsacResource getResource(String resourceId) throws Exception {
 
-
         // the SQL search clause: select where a column value COL_CODE_4CHAR_ID  = the "resourceId" which is some site 4 char ID entered by the user in the api or search form
         Clause clause = Clause.eq(Tables.STATION.COL_CODE_4CHAR_ID, resourceId);
 
@@ -560,8 +571,7 @@ public class PrototypeSiteManager extends SiteManager {
         // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
         // and this also has ordering :
         Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_CODE_4CHAR_ID, -1);
-
-        //  to test site or file searches: System.err.println("   SiteManager: station select query is " +statement);
+        //  for testing: System.err.println("   SiteManager: station select query is " +statement);
 
         try {
             // do the SQL query, and get results
@@ -572,7 +582,7 @@ public class PrototypeSiteManager extends SiteManager {
                 return null;
             }
             // make a GsacSite object when a query is made, from db query results (row) ( but not yet made a web page or return anything for an API rquest)
-            GsacSite site = (GsacSite) makeResource(results);
+            GsacSite site = (GsacSite) makeResource(results);  // aka makeSite
             results.close();
 
 
@@ -647,6 +657,7 @@ public class PrototypeSiteManager extends SiteManager {
      * Create a single 'site':  make a GsacSite object which has site metadata (for display in web page, or to send to user as 'results' in some form determined by an OutputHandler class).
      * input "results" is one row got from the db query, a search on stations.
      * Previous code to this call did a db select clause to get one (or more?) rows in the db station table for one (or more?) site ids
+     * cf. makeSite in UNAVCO_GSAC code.
      *
      * @param results db results
      *
@@ -656,51 +667,52 @@ public class PrototypeSiteManager extends SiteManager {
      */
     @Override
     public GsacResource makeResource(ResultSet results) throws Exception {
-
-
-        // depends on 'station' table in the database
-
+        // "results" is from sql select query on 'station' table in the database.
         // access values by name of field in database row: 
 
-        // to fix busted java-jdbc reading of names in Icelandic or other non-latin characters which are correct in the mysql db:
+        // to fix bad java-jdbc reading of names in Icelandic or other non-latin characters which are correct in the mysql db:
         String    staname  =                  results.getString(Tables.STATION.COL_STATION_NAME);
         if (null!=staname) {
                  staname       =   new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
         }
-
         String     city        =     results.getString(Tables.STATION.COL_CITY);
         if (null!= city) {
                     city =  new String( results.getBytes(Tables.STATION.COL_CITY), "UTF-8");
         }
+        String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
+        if (null!= networks) {
+                    networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
+        }
 
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
-        String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
-        String fourCharId    =  results.getString(Tables.STATION.COL_CODE_4CHAR_ID);  // not a var char so does not work 
+        String fourCharId    =  results.getString(Tables.STATION.COL_CODE_4CHAR_ID);  
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_ELLIPSOIDAL_HEIGHT);
         int station_style_id = results.getInt(Tables.STATION.COL_STATION_STYLE_ID);
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
-        int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); // or getLong
+        int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
-
-        /* 
+        //String station_status_id    = results.getString(Tables.STATION.COL_STATION_STATUS_ID);             // may be null; is String of an int
+        //System.err.println("   SiteManager: station " +fourCharId+ " has status id="+station_status_id+"_");
+         
         if (1== access_permission_id ) {
             System.err.println("   GSAC found station with no access permission (no public views allowed) " +fourCharId);
             GsacSite site = new GsacSite();
             return site;
         }
-        */
          
         /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
-         * the so-called elevation, but actually GSAC like GNSS data, uses height above reference ellipsoid, not elevation which is height above some geoid model surface.
+         * The so-called elevation, in GSAC like GNSS data, should be height above reference ellipsoid.  Not elevation which is height above some (unknown) geoid model surface.
         */
         GsacSite site = new GsacSite(fourCharId, fourCharId, staname, latitude, longitude, ellipsoid_hgt);
+
+        // Set additional values in the site object:
 
         // handle search on date range:
         Date fromDate=readDate(results,  Tables.STATION.COL_STATION_INSTALLED_DATE);
@@ -716,15 +728,8 @@ public class PrototypeSiteManager extends SiteManager {
             toDate = new Date(); // "now" ie still operating
             //System.err.println("   SiteManager: station " +fourCharId+ " installed to-date was NULL; now is "+toDate);
             }
-
-
-
-        // set these additional values in the site object.
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value), probably
         site.setToDate(toDate);
-
-
-
 
         //Add the network(s) for this station, in alphabetical order,  to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
@@ -768,9 +773,6 @@ public class PrototypeSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-
-
-
         // get name of province or state     
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
@@ -795,10 +797,8 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
          }
 
-        // add all three aboce items to site as "PoliticalLocationMetadata":
+        // add all three above items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
-
-
 
         // following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
@@ -810,10 +810,11 @@ public class PrototypeSiteManager extends SiteManager {
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.AGENCY.NAME);
 
-
-        statement = //select            what    from      where
+        statement = 
            getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        //System.err.println("   SiteManager: province query is " +statement);
+        //                      select  what   from     where
+        //System.err.println("   SiteManager: select query is " +statement);
+
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
@@ -824,8 +825,6 @@ public class PrototypeSiteManager extends SiteManager {
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-        
-
 
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
@@ -848,9 +847,6 @@ public class PrototypeSiteManager extends SiteManager {
                 imagesGroup.add( new ImageMetadata(ts_image_URL, "Time Series Data Plot"));
             }
         }
-
-
-
 
         //  set site "Type" aka site.type corresponding to "station style" in the database
         // Not clear where or how this is used by GSAC code.
@@ -1057,10 +1053,7 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * @throws Exception _more_
      */
-    private void readEquipmentMetadata(GsacResource gsacResource)
-            throws Exception {
-               
-
+    private void readEquipmentMetadata(GsacResource gsacResource) throws Exception {
 
         int station_sess_id=0;
         int receiverid=0;
@@ -1105,7 +1098,7 @@ public class PrototypeSiteManager extends SiteManager {
         //System.err.println("\n  --------------------------------------------------------------- get times of equip sessions at station "+gsacResource.getId());
         //System.err.println("\n  --------------------------------------------------------------- readEquipmentMetadata at "+gsacResource.getId());
 
-        // get antenna session time intervals
+        // get antenna session operational date range
         // mysql> select antenna_session.antenna_installed_date,antenna_session.antenna_removed_date from station,antenna_session  where ( (station.code_4char_ID like "%ORID%") and station.   
         //   station_id=antenna_session.station_id and (antenna_installed_date < antenna_session.antenna_removed_date OR antenna_removed_date="0000-00-00 00:00:00" )
         //   and antenna_installed_date is not null ) order by antenna_session.antenna_installed_date;
@@ -1135,38 +1128,54 @@ public class PrototypeSiteManager extends SiteManager {
 
                String sdt=null;
                //System.err.println("   get antenna sdt indate string  "); //bbb
+               Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
+               if (null == test) { 
+                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid ANTENNA_INSTALLED_DATE");
+                   indate = new Date();  //  for lack of better
+               } 
+               else {
+                  sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE)+"00";
+                  indate = formatter.parse(sdt);
+               }
+               /*
                try {
                    sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
                 } catch (Exception exc) {
                     //System.err.println("   BAD antenna results.getString  "); 
-                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid ANTENNA_INSTALLED_DATE");
+                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid ANTENNA_INSTALLED_DATE");
                     continue;  //throw new RuntimeException(exc);
+                    //sdt="0000-00-00 00:00:00";
                 }
-
                // trap missing installed date
-               if  (  sdt == null ) {
-                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has zero ANTENNA_INSTALLED_DATE");
+               if  (sdt == null) {
+                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has null or zero ANTENNA_INSTALLED_DATE");
+                   //sdt="0000-00-00 00:00:00";
                    continue;
                }
                // if returned time has this precision: 2008-11-04 20:00:00.0
                if (sdt.length() == 21) {sdt = sdt +"00"; } // extend .0 tenth seconds to .000 ms value
                else if (sdt.length() == 19) {sdt = sdt +".000"; } //  if got like 2008-11-04 20:00:00
                else if (sdt.length() == 16) {sdt = sdt +":00.000"; } //  if got like 2008-11-04 20:00
-               indate = formatter.parse(sdt); 
-               //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
+               System.err.println("              ant sdt string = "+sdt); 
+               indate=null;
+               if (sdt != "0000-00-00 00:00:00") {
+                  indate = formatter.parse(sdt); 
+               }
+               */
 
                String odt=null;
                //System.err.println("   get antenna sdt outdate string  "); //bbb
-               Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
+               test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
                if (null == test) { 
                    //System.err.println("   get antenna sdt outdate null  "); //bbb
-                   outdate = new Date();  // ie now
+                   outdate = new Date();  // ie now; we presume htis is correct and the instrument is still active.
                } 
                else {
                   odt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE)+"00";
                   //System.err.println("        not null odt  string = "+odt); // CORRECT with time of day
                   outdate = formatter.parse(odt);
                }
+
                // these value are CORRECT and include hours minutes and seconds:
                //System.err.println("   antenna session times = "+ sdt +"   | "+ odt );
                //System.err.println("   antenna session times = "+ ft.format(indate) +"   | "+ft.format(outdate) );
@@ -1185,8 +1194,7 @@ public class PrototypeSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-
-        // get receiver session time intervals
+        // get receiver session operational date range
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
         // WHERE  this station is id-ed by its 4 char id:
@@ -1206,25 +1214,44 @@ public class PrototypeSiteManager extends SiteManager {
 
                String sdt=null;
                //System.err.println("   get rcvr  sdt indate string  "); //bbb
+               Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE);
+               if (null == test) { 
+                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid RECEIVER_INSTALLED_DATE");
+                   indate = new Date();  
+               } 
+               else { 
+                  sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE)+"00";
+                  //System.err.println("        sdt  string = "+odt); 
+                  indate = formatter.parse(sdt); 
+               }
+               /*
                try {
                    sdt = results.getString(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE);
                 } catch (Exception exc) {
                     //System.err.println("   BAD rcvr results.getString  "); 
                     System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid RECEIVER_INSTALLED_DATE");
-                    continue;  //throw new RuntimeException(exc);
+                    //continue;  //throw new RuntimeException(exc);
+                    sdt="0000-00-00 00:00:00";
                 }
-               //System.err.println("              sdt indate string = "+sdt); // CORRECT with time of day
 
                // trap missing installed date
                if  (  sdt == null ) {
-                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has no or zero rcvr INSTALLED_DATE");
-                   continue;
+                   System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has null or zero RECEIVER_INSTALLED_DATE");
+                   //continue;
+                   sdt="0000-00-00 00:00:00";
                }
-               sdt = sdt +"00";// extend .0 tenth seconds to .000 ms value; LOOK check for other strings of time
-               String odt = null;
-               indate = formatter.parse(sdt); 
+               if (sdt.length() == 21) {sdt = sdt +"00"; } // extend .0 tenth seconds to .000 ms value
+               else if (sdt.length() == 19) {sdt = sdt +".000"; } //  if got like 2008-11-04 20:00:00
+               else if (sdt.length() == 16) {sdt = sdt +":00.000"; } //  if got like 2008-11-04 20:00
+               System.err.println("              rcv sdt string = "+sdt); 
+               indate=null;
+               if (sdt != "0000-00-00 00:00:00") {
+                  indate = formatter.parse(sdt); 
+               }
+               */
 
-               Date test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
+               String odt = null;
+               test = readDate( results, Tables.RECEIVER_SESSION.COL_RECEIVER_REMOVED_DATE);
                if (null == test) { 
                    // normal end data case of 0, ie now. System.err.println("   rcvr odt null (0) results.getString  "); 
                    outdate = new Date();  // ie now
@@ -1254,6 +1281,7 @@ public class PrototypeSiteManager extends SiteManager {
               // it's OK to return from this method call with empty results:
               GnssEquipmentGroup equipmentGroup = null;
               gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup());
+              System.err.println("   GSAC DB values ERROR: station "+gsacResource.getId()+" has null or zero antenna or receiver installed date, so no equipment seesion is made.");
               return;
         }
         // FIX above: LOOK if receiver data only, just use that to make an equip session; ditto for antenna only
