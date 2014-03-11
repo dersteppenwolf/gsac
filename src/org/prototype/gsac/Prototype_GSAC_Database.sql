@@ -390,9 +390,9 @@ CREATE TABLE `station` (
   `ellipsoidal_height` float DEFAULT NULL,
   `station_installed_date` datetime NOT NULL,
   `station_removed_date` datetime DEFAULT NULL,
-  `station_style_id` int(3) unsigned NOT NULL,
-  `station_status_id` int(3) unsigned DEFAULT NULL,
-  `access_permission_id` int(3) unsigned DEFAULT NULL,
+  `station_style_id` int(3) unsigned DEFAULT NULL,
+  `station_status_id` int(3) unsigned NOT NULL DEFAULT '1',
+  `access_permission_id` int(3) unsigned NOT NULL DEFAULT '2',
   `monument_description_id` int(5) unsigned NOT NULL,
   `country_id` int(5) unsigned NOT NULL,
   `province_region_state_id` int(5) unsigned DEFAULT NULL,
@@ -432,7 +432,7 @@ CREATE TABLE `station_status` (
   `station_status_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `station_status_description` varchar(80) NOT NULL,
   PRIMARY KEY (`station_status_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -441,7 +441,7 @@ CREATE TABLE `station_status` (
 
 LOCK TABLES `station_status` WRITE;
 /*!40000 ALTER TABLE `station_status` DISABLE KEYS */;
-INSERT INTO `station_status` VALUES (1,'Active'),(2,'Inactive'),(3,'Decomissioned');
+INSERT INTO `station_status` VALUES (1,'Active'),(2,'Inactive'),(3,'Decomissioned'),(4,'pending');
 /*!40000 ALTER TABLE `station_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -478,4 +478,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-10 13:43:17
+-- Dump completed on 2014-03-11 10:54:10
