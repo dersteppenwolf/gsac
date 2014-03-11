@@ -437,9 +437,9 @@ Table station;
 | ellipsoidal_height       | float           | YES  |     | NULL    |                |
 | station_installed_date   | datetime        | NO   |     | NULL    |                |
 | station_removed_date     | datetime        | YES  |     | NULL    |                |
-| station_style_id         | int(3) unsigned | NO   |     | NULL    |                |
-| station_status_id        | int(3) unsigned | YES  |     | NULL    |                |
-| access_permission_id     | int(3) unsigned | YES  |     | NULL    |                |
+| station_style_id         | int(3) unsigned | NO   |     | 2       |                |
+| station_status_id        | int(3) unsigned | YES  |     | 1       |                |
+| access_permission_id     | int(3) unsigned | YES  |     | 2       |                |
 | monument_description_id  | int(5) unsigned | NO   |     | NULL    |                |
 | country_id               | int(5) unsigned | NO   |     | NULL    |                |
 | province_region_state_id | int(5) unsigned | YES  |     | NULL    |                |
@@ -505,6 +505,7 @@ Supplied values:
 |                 1 | Active                     |
 |                 2 | Inactive                   |
 |                 3 | Decomissioned              |
+|                 4 | Pending                    |
 +-------------------+----------------------------+
 Table station_status may be used to denote stations in the station table that are no longer operational.
 Null values for station_status_id in the station table means that station is not excluded in searches by station status value.
