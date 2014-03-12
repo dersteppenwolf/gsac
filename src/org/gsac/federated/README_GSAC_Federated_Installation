@@ -8,7 +8,10 @@ Installing a federated GSAC is much simpler than installing GSAC for a data repo
 You do not use a database for a federated GSAC.  Do not refer to the automtically-generated 
 default file README in src/org/gsac/federated/, which is incorrect.
 
-If you have not already installed GSAC in any way, do the following step 1. Otherwise go to step 2.
+If you have not already installed GSAC in any way, do the following step 1. 
+
+Otherwise do svn update for your GSAC again (unless you have done an svn update after 12 Mar 2014), 
+to get corrected code for federated GSACs, and then go to step 2.
 
 ###########################################   ###########################################
 
@@ -71,20 +74,22 @@ Edit the file resources/gsacserver_test.properties to specify the values for the
     gsac.server.hostname=facdev.unavco.org
     gsac.server.port=80
 
-    # For the remote GSACs to connect to, specify;
-    #gsac.federated.servers= plus a comma-separated list of the remote GSACs (your own names, for use in this file only)
-    #gsac.federated.<id>.url= a known URL for a remote GSAC, or the "Base URL" from the Infomation page on each remote GSAC web site (which can in some cases be incorrect).
-    #gsac.federated.<id>.name=name of remote GSAC repository 
-    #gsac.federated.<id>.icon=url to a small icon for that remote repository. Will be used inside web page tables of results, so a height < 50 pixels is good.
+    # For the remote GSACs to connect to, specify:
+    #gsac.federated.servers=                                     A comma-separated list of the remote GSACs (your own names, for use in this file only)
+    #gsac.federated.<id>.url=                                    A known URL for a remote GSAC, or the "Base URL" from the Infomation page on each remote GSAC web site (which can in some cases be incorrect).
+    #gsac.federated.<id>.name=name                               To show this name on your federated GSAC, a name for a remote GSAC repository 
+    #gsac.federated.<id>.icon=url                                To link to small icon for that remote repository. Will be used inside web page tables of results, so a height < 50 pixels is good.
+
+    # examples (URLS shown are non-working):
 
     gsac.federated.servers=geoazur,noanet
 
-    gsac.federated.geoazur.url=http://epos.unice.fr/renagbgsac  # non-working example url
+    gsac.federated.geoazur.url=http://epos.unice.fr/renagbgsac
     gsac.federated.geoazur.name=Geoazur GPS Repository
     gsac.federated.geoazur.icon=https://geoazur.oca.eu/IMG/png/OCA.png
 
-    gsac.federated.noanet.url=http://gsac-hp-workstation-xw6200/gsacnoanet # non-working example url
-    gsac.federated.noanet.name=NOANET GSAC Repository
+    gsac.federated.noanet.url=http://gsac-hp-workstation-xw6200/gsacnoanet
+    gsac.federated.noanet.name=NOANET GPS Repository
     gsac.federated.noanet.icon=http://www.gein.noa.gr/services/GPS/NOA_GPS/noa_gps_files/images/temp/sample-post-1.jpg
 
 Ignore the file resources/gsacserver_production.properties.
@@ -105,7 +110,7 @@ any java files in gsac/federated/.
 
 ###########################################   ###########################################
 
-4. Build and deploy GSAC.
+4. Build and Deploy GSAC.
 
 To build  your federated GSAC, do
 
@@ -130,4 +135,13 @@ Copy the gsacfederated.war file to your Tomcat server area, such as
 If you use HotDeploy the new GSAC server will be deployed and the federated GSAC will be available.
 Without Hotdeploy you will need to restart the Tomcat service.
 
+Your federated GSAC URL will have a Base URL something like http://www.boulder.org/gsacfederated.
+
+
+The customary GSAC test command "amt runserver" will usually fail becasue it cannot connect to remote GSACs.
+You must deploy the federated GSAC on a web server to test it.
+
+end of README
+
+###########################################   ###########################################
 
