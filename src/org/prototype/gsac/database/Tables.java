@@ -4,7 +4,6 @@ package org.prototype.gsac.database;
 
 import org.ramadda.sql.SqlUtil;
 
-//J-
 public abstract class Tables {
     public abstract String getName();
     public abstract String getColumns();
@@ -153,12 +152,13 @@ public abstract class Tables {
         public static final String COL_FILE_URL_IP_DOMAIN =  NAME + ".file_url_ip_domain";
         public static final String COL_FILE_URL_FOLDERS =  NAME + ".file_url_folders";
         public static final String COL_FILE_URL_FILENAME =  NAME + ".file_url_filename";
+        public static final String COL_FILE_SAMPLE_INTERVAL =  NAME + ".file_sample_interval";
         public static final String COL_ACCESS_PERMISSION_ID =  NAME + ".access_permission_id";
         public static final String COL_EMBARGO_AFTER_DATE =  NAME + ".embargo_after_date";
         public static final String COL_EMBARGO_DURATION_HOURS =  NAME + ".embargo_duration_hours";
 
         public static final String[] ARRAY = new String[] {
-            COL_FILE_ID,COL_STATION_ID,COL_FILE_TYPE_ID,COL_DATA_START_TIME,COL_DATA_STOP_TIME,COL_PUBLISHED_DATE,COL_REVISION_TIME,COL_FILE_SIZE,COL_FILE_MD5,COL_FILE_URL,COL_FILE_URL_PROTOCOL,COL_FILE_URL_IP_DOMAIN,COL_FILE_URL_FOLDERS,COL_FILE_URL_FILENAME,COL_ACCESS_PERMISSION_ID,COL_EMBARGO_AFTER_DATE,COL_EMBARGO_DURATION_HOURS
+            COL_FILE_ID,COL_STATION_ID,COL_FILE_TYPE_ID,COL_DATA_START_TIME,COL_DATA_STOP_TIME,COL_PUBLISHED_DATE,COL_REVISION_TIME,COL_FILE_SIZE,COL_FILE_MD5,COL_FILE_URL,COL_FILE_URL_PROTOCOL,COL_FILE_URL_IP_DOMAIN,COL_FILE_URL_FOLDERS,COL_FILE_URL_FILENAME,COL_FILE_SAMPLE_INTERVAL,COL_ACCESS_PERMISSION_ID,COL_EMBARGO_AFTER_DATE,COL_EMBARGO_DURATION_HOURS
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
@@ -299,7 +299,9 @@ public abstract class Tables {
         public static final String COL_LONGITUDE_EAST =  NAME + ".longitude_east";
         public static final String COL_ELLIPSOIDAL_HEIGHT =  NAME + ".ellipsoidal_height";
         public static final String COL_STATION_INSTALLED_DATE =  NAME + ".station_installed_date";
+        public static final String COL_STATION_REMOVED_DATE =  NAME + ".station_removed_date";
         public static final String COL_STATION_STYLE_ID =  NAME + ".station_style_id";
+        public static final String COL_STATION_STATUS_ID =  NAME + ".station_status_id";
         public static final String COL_ACCESS_PERMISSION_ID =  NAME + ".access_permission_id";
         public static final String COL_MONUMENT_DESCRIPTION_ID =  NAME + ".monument_description_id";
         public static final String COL_COUNTRY_ID =  NAME + ".country_id";
@@ -308,16 +310,16 @@ public abstract class Tables {
         public static final String COL_X =  NAME + ".x";
         public static final String COL_Y =  NAME + ".y";
         public static final String COL_Z =  NAME + ".z";
-        public static final String COL_STATION_REMOVED_DATE =  NAME + ".station_removed_date";
         public static final String COL_IERS_DOMES =  NAME + ".iers_domes";
         public static final String COL_STATION_PHOTO_URL =  NAME + ".station_photo_URL";
+        public static final String COL_TIME_SERIES_IMAGE_URL =  NAME + ".time_series_image_URL";
         public static final String COL_AGENCY_ID =  NAME + ".agency_id";
         public static final String COL_NETWORKS =  NAME + ".networks";
         public static final String COL_EMBARGO_DURATION_HOURS =  NAME + ".embargo_duration_hours";
         public static final String COL_EMBARGO_AFTER_DATE =  NAME + ".embargo_after_date";
 
         public static final String[] ARRAY = new String[] {
-            COL_STATION_ID,COL_CODE_4CHAR_ID,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_ELLIPSOIDAL_HEIGHT,COL_STATION_INSTALLED_DATE,COL_STATION_STYLE_ID,COL_ACCESS_PERMISSION_ID,COL_MONUMENT_DESCRIPTION_ID,COL_COUNTRY_ID,COL_PROVINCE_REGION_STATE_ID,COL_CITY,COL_X,COL_Y,COL_Z,COL_STATION_REMOVED_DATE,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_AGENCY_ID,COL_NETWORKS,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
+            COL_STATION_ID,COL_CODE_4CHAR_ID,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_ELLIPSOIDAL_HEIGHT,COL_STATION_INSTALLED_DATE,COL_STATION_REMOVED_DATE,COL_STATION_STYLE_ID,COL_STATION_STATUS_ID,COL_ACCESS_PERMISSION_ID,COL_MONUMENT_DESCRIPTION_ID,COL_COUNTRY_ID,COL_PROVINCE_REGION_STATE_ID,COL_CITY,COL_X,COL_Y,COL_Z,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_TIME_SERIES_IMAGE_URL,COL_AGENCY_ID,COL_NETWORKS,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
@@ -326,34 +328,20 @@ public abstract class Tables {
 
 
 
-    public static class STATION_SESSION extends Tables {
-        public static final String NAME = "station_session";
+    public static class STATION_STATUS extends Tables {
+        public static final String NAME = "station_status";
 
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
-        public static final String COL_STATION_SESSION_ID =  NAME + ".station_session_id";
-        public static final String COL_STATION_ID =  NAME + ".station_id";
-        public static final String COL_SESSION_START_DATE =  NAME + ".session_start_date";
-        public static final String COL_SESSION_END_DATE =  NAME + ".session_end_date";
-        public static final String COL_RECEIVER_TYPE_ID =  NAME + ".receiver_type_id";
-        public static final String COL_RECEIVER_FIRMWARE_VERSION_ID =  NAME + ".receiver_firmware_version_id";
-        public static final String COL_RECEIVER_SERIAL_NUMBER =  NAME + ".receiver_serial_number";
-        public static final String COL_ANTENNA_TYPE_ID =  NAME + ".antenna_type_id";
-        public static final String COL_ANTENNA_SERIAL_NUMBER =  NAME + ".antenna_serial_number";
-        public static final String COL_ANTENNA_OFFSET_UP =  NAME + ".antenna_offset_up";
-        public static final String COL_ANTENNA_OFFSET_NORTH =  NAME + ".antenna_offset_north";
-        public static final String COL_ANTENNA_OFFSET_EAST =  NAME + ".antenna_offset_east";
-        public static final String COL_RADOME_TYPE_ID =  NAME + ".radome_type_id";
-        public static final String COL_SAMPLE_INTERVAL =  NAME + ".sample_interval";
-        public static final String COL_ANTENNA_HTCOD =  NAME + ".antenna_HtCod";
-        public static final String COL_SATELLITE_SYSTEM =  NAME + ".satellite_system";
+        public static final String COL_STATION_STATUS_ID =  NAME + ".station_status_id";
+        public static final String COL_STATION_STATUS_DESCRIPTION =  NAME + ".station_status_description";
 
         public static final String[] ARRAY = new String[] {
-            COL_STATION_SESSION_ID,COL_STATION_ID,COL_SESSION_START_DATE,COL_SESSION_END_DATE,COL_RECEIVER_TYPE_ID,COL_RECEIVER_FIRMWARE_VERSION_ID,COL_RECEIVER_SERIAL_NUMBER,COL_ANTENNA_TYPE_ID,COL_ANTENNA_SERIAL_NUMBER,COL_ANTENNA_OFFSET_UP,COL_ANTENNA_OFFSET_NORTH,COL_ANTENNA_OFFSET_EAST,COL_RADOME_TYPE_ID,COL_SAMPLE_INTERVAL,COL_ANTENNA_HTCOD,COL_SATELLITE_SYSTEM
+            COL_STATION_STATUS_ID,COL_STATION_STATUS_DESCRIPTION
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
-    public static final STATION_SESSION table  = new  STATION_SESSION();
+    public static final STATION_STATUS table  = new  STATION_STATUS();
     }
 
 
