@@ -280,7 +280,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
             if (equipment.hasReceiver()) {
                 rectype=equipment.getReceiver() ;
-                //recsn=equipment.getReceiverSerial();
+                recsn=equipment.getReceiverSerial();
                 // for firmvers, handle case of value 'unknown' or 'not provided'
                     String answer = equipment.getReceiverFirmware();
                     //answer = answer.replaceAll(",", " ");
