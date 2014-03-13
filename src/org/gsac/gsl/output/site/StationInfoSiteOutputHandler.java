@@ -142,7 +142,7 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * 'print' a GAMIT station.info file header for this case.
+     *  add the GAMIT station.info file header lines for this case (append to output object).
      *
      * @param pw _more_
      */
@@ -440,11 +440,14 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
 
         } // end for loop on GSAC equipment items , NOT gamit station.info sessions
 
-       // print out final visit
+       // print out final session 
        starttime= getNonNullGamitString(dateTimeFormat_ISO8601(block_startDate) );
        starttime = getGamitTimeFormat(starttime,block_startDate );
        stoptime= getNonNullGamitString(dateTimeFormat_ISO8601(block_stopDate) );
        stoptime = getGamitTimeFormat(stoptime,block_stopDate );
+       // for testing:
+       // System.out.println("  final session; starttime ="+starttime); 
+       // System.out.println("  final session; stoptime ="+stoptime); 
        pw.append(" "+  setStringLength(id,4)+"  " +setStringLengthRight(name,16)+"  " +setStringLength(starttime,17)+"  " +setStringLength(stoptime,17)+"  "
           +setStringLength(vantht,7)+"  " +setStringLength(htcod,5)+"  " +setStringLength(vantn,7)+"  " +setStringLength(vante,7)+"  "
           +setStringLengthRight(vrectype,20)+"  " +setStringLengthRight(vfirmvers,20)+"  " +setStringLength(vswVer,5)+"  " +setStringLengthRight(vrecsn,20)+"  "
@@ -496,6 +499,9 @@ private String getNonNullGamitString(String s) {
 */
 public static String setStringLength(String s, int desiredLength) {
 String padString = " ";
+if (s==null) {                              // new 13 Mar
+   s="-------------------------";           // new 13 Mar
+}                                           // new 13 Mar
 if (s.length() > desiredLength) {
     s =  s.substring(0,desiredLength);
 }
