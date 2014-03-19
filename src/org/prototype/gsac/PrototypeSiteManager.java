@@ -276,7 +276,7 @@ public class PrototypeSiteManager extends SiteManager {
             Arrays.sort(values);
             capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // search on antenna types: get antenna type names used by stations in this database, only.
+            // search on antenna types: get antenna type names used by station equipment sessions in this database, only.
             // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
@@ -315,6 +315,43 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
 
 
+            // search on receiver types: get receiver type names used by station equipment sessions in this database, only.
+            // Since the protoype db has many IGS receiver names, more than 200, show only the ones at stations in this repository .
+            avalues = new ArrayList<String>();
+            clauses = new ArrayList<Clause>();
+            //  WHERE 
+            clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
+            //  SELECT what to 
+            cols=SqlUtil.comma(new String[]{Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME});
+            //  FROM   
+            tables = new ArrayList<String>();
+            tables.add(Tables.RECEIVER_SESSION.NAME);
+            tables.add(Tables.RECEIVER_TYPE.NAME);
+            statement =
+               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            try {
+               SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+               // process each line in results of db query  
+               while ((results = iter.getNext()) != null) {
+                   String rcvtype= results.getString(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME);
+                   int notfound=1;
+                   for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                      if ( avalues.get(vi).equals(rcvtype) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(rcvtype);
+                   }
+               }
+            } finally {
+               getDatabaseManager().closeAndReleaseConnection(statement);
+            }
+            itemArray = new String[avalues.size()];
+            values = avalues.toArray(itemArray);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
 
 
             /* get all radome type names in the db 
@@ -512,7 +549,7 @@ public class PrototypeSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.RECEIVER_SESSION.COL_STATION_ID));
             clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
             clauses.add(Clause.eq(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME, values.get(0)));
-            //System.err.println("   SiteManager: query for rcvr " + values.get(0)) ;
+            //System.err.println("   SiteManager: query for rcvr type " + values.get(0)) ;
         }
         
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
@@ -540,8 +577,6 @@ public class PrototypeSiteManager extends SiteManager {
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
         // System.err.println("   SiteManager: getResourceClauses gives " + clauses) ;
-
-
 
         return clauses;
     } // end of getResourceClauses
