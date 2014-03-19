@@ -246,7 +246,7 @@ public class PrototypeFileManager extends FileManager {
 
         //float intrange1 = Float.parseFloat(stri); // java atof
 
-        // sample interval code:
+        // sample interval code: // FIX handle case if database has null values for GNSS_DATA_FILE.COL_FILE_SAMPLE_INTERVAL
         if (request.defined(ARG_FILE_SAMPLEINT_MAX)) {
             float intrange1 = request.get(ARG_FILE_SAMPLEINT_MIN, 0);
             float intrange2 = request.get(ARG_FILE_SAMPLEINT_MAX,0);
@@ -377,19 +377,20 @@ public class PrototypeFileManager extends FileManager {
                }
 
                /*
-               if (file_url==null || file_url.length()< 13)   // still no good url; can't even have more than ftp://a.b/c
-               {
-                  ; //continue; // no way to download this file so do not show it in GSAC results
-                  // CHANGE: to proceed with showing results for this data file, even with null for url, or short url
-               }
+               if (file_url==null || file_url.length()< 13)   proceed with showing results for this data file, even with null for url, or short url
                */
 
                String file_type_name = results.getString (Tables.FILE_TYPE.COL_FILE_TYPE_NAME);
 
-               String sample_interval; 
+               String sample_interval = "0.0"; 
                sample_interval = results.getString (Tables.GNSS_DATA_FILE.COL_FILE_SAMPLE_INTERVAL);
                if (null == sample_interval) {
+                  //System.err.println("  file sample interval is null");
                   sample_interval = results.getString (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
+                  if (null == sample_interval) {
+                     //System.err.println("  rcvr sample interval is null");
+                     sample_interval = "0.0"; // some output formats change this to 'unknown'
+                  }
                }
 
                //System.err.println("   sample interval ="+sample_interval+"_");
