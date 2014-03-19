@@ -96,10 +96,10 @@ public interface GsacConstants extends GsacArgs {
     public static final String OUTPUT_GSACXML = "gsacxml";
 
     /** _more_ */
-    public static final int DEFAULT_LIMIT = 1000;
+    public static final int DEFAULT_LIMIT = 500;
 
-    /**  FIX: need short MAX_LIMIT in case file downloads (maybe 500);  but need large limit (maybe 50000) for simple file csv file metadata search results */
-    public static final int MAX_LIMIT = 50000;
+    /**  FIX: need short MAX_LIMIT in case file downloads (maybe 500);  but may need large limit (maybe 50000) for testing file csv file metadata search results */
+    public static final int MAX_LIMIT = 500;
 
     /** _more_ */
     public static final String TAG_CAPABILITIES = "capabilities";
