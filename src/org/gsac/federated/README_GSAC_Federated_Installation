@@ -114,16 +114,16 @@ Ignore the file resources/gsacserver_production.properties.
 
 ###########################################   ###########################################
 
-3. Edit files for your federated GSAC.
+3. Edit HTML files for your federated GSAC web pages.
 
-Edit federated/resources/header.html to create your GSAC web pages headers.
+Edit federated/resources/header.html to create your GSAC web page header.
 Images are kept in federated/resources/htdocs.
 
 There is a good default file federated/resources/footer.html, for your GSAC web pages.
 You may change it, if you wish to.
 
-The FederatedSiteManager.java and FederatedResourceManager.java files should NOT be changed. Make no changes to
-any java files in gsac/federated/.
+The FederatedSiteManager.java and FederatedResourceManager.java files should NOT be changed. 
+Make no changes to any java files in gsac/federated/.
 
 
 ###########################################   ###########################################
@@ -138,15 +138,20 @@ in gsac/federated/.
 
 This ant command will copy resources/gsacserver_test.properties to resources/gsacserver.properties.
 
-The ant build makes a new Tomcat war file in your gsac dist/ directory, such as:
+
+The customary GSAC installation testing command "ant runserver" will usually fail becasue it cannot connect to remote GSACs.
+
+You can deploy the federated GSAC on a web server to test it.
+
+The ant build makes a Tomcat war file in your GSAC dist/ directory, such as:
 
 GSAC/gsac-code/dist/gsacfederated.war
 
 To see the exact path, look in the ant build screen output for a line like this:
 
-    [war] Building war: /home/devel/GSAC/gsac-code/dist/gsacfederated.war
+    [war] Building war: /home/dev/GSAC/gsac-code/dist/gsacfederated.war
 
-Copy the gsacfederated.war file to your Tomcat server area, such as
+Copy the gsacfederated.war file to your Tomcat server, in the Tomcat area, such as
 
 /usr/local/apachetomcat/webapps/
 
@@ -156,10 +161,7 @@ Without Hotdeploy you will need to restart the Tomcat service.
 Your federated GSAC URL will have a Base URL something like http://www.boulder.org/gsacfederated.
 
 
-The customary GSAC test command "amt runserver" will usually fail becasue it cannot connect to remote GSACs.
-You must deploy the federated GSAC on a web server to test it.
-
-end of README
+end of README_GSAC_Federated_Installation
 
 ###########################################   ###########################################
 
