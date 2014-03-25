@@ -1,62 +1,80 @@
 
           How to install a Federated GSAC web services server
-                        12 March 2014
+                        25 March 2014
 
-To learn about what are GSAC web services and federated GSACs, see the UNAVCO GSAC web site.
+To learn about what are GSAC web services and federated GSACs, see the UNAVCO GSAC web site
+at http://facility.unavco.org/data/gsacws/gsacws.html.
 
 Installing a federated GSAC is much simpler than installing GSAC for a data repository. 
-You do not use a database for a federated GSAC.  Do not refer to the automtically-generated 
-default file README in src/org/gsac/federated/, which is incorrect.
+You do not use a database for a federated GSAC.  
+(Do not refer to the default file README in src/org/gsac/federated/.)
 
-If you have not already installed GSAC in any way, do the following step 1. 
+If you have not already installed GSAC in any way, do "1.  Install the GSAC package" below. 
 
-Otherwise do svn update for your GSAC again (unless you have done an svn update after 12 Mar 2014), 
-to get corrected code for federated GSACs, and then go to step 2.
+Otherwise do svn update for your GSAC again, unless you just did step 1 or did a GSAC svn update after 12 Mar 2014, 
+to get the most recent code for federated GSACs.
+
+Then go to step 2.
 
 ###########################################   ###########################################
 
 1.  Install the GSAC package.
 
 First Read "Installing GSAC Web Services -- System Requirements" in the UNAVCO GSAC web site.
+Installation uses Linux OSs, Java compilation, subversion (svn) and 'ant' the Java build tool.
 
 Install GSAC core code, as described in the GSAC web site, repeated here:
 
-    GSAC has a set of core Java code (the "GSAC Service Layer," or GSL), and related code.
+    GSAC has a set of core Java code (the "GSAC Service Layer," or GSL) and related files.
 
-    You download the GSAC code from SourceForge, and compile it without making any changes to it.  
+    You download the GSAC code package from SourceForge, and compile it without making any changes to it.  
 
-    Get GSAC from SourceForge
+    Get GSAC from SourceForge:
 
     Choose or make a top-level working directory for GSAC, and go there. For example:
 
-    mkdir ~/GSAC/
+mkdir ~/GSAC/
 
-    cd    ~/GSAC/
+cd    ~/GSAC/
 
     Check out the GSAC code from SourceForge by entering this command:
+
+svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
+
     (to find this command at SourceForge, go to https://sourceforge.net/projects/gsac/,
       and click on the 'Code' menu item in the 'Summary Files ...' menu line.)
 
-    svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
+    (svn *export* simply downloads all the files for the project, with no revision control permission required.  
+     svn checkout is used if you have a developer's role, to check in new code to GSAC on SourceForge.)
 
-    (svn export    simply downloads all the files for the project, with no revision control permission required.  
-     svn checkout  is used if you have a developer's role, to check in new code to GSAC on SourceForge.)
-
-    The svn export creates a new folder named gsac-code, and many folders and files in it.
+    The svn command creates a new folder named gsac-code, and many folders files in it, and downloads about   files from GSAC at SourceForge.
 
     Build the GSAC core code.
 
-    cd gsac-code/
+cd ~/GSAC/gsac-code/
 
     Do an initial ant build with the command:
 
-    ant
+ant
+
+    This process sends information to the screen, like "gsl: Building GSL", and takes about 30 to 60 seconds.
+    The final lines from a successful build are like:
+
+localinit:
+init:
+war:
+   [copy] Copying 1 file to /home/dev/GSAC/gsac-code/dist
+   [delete] Deleting:       /home/dev/GSAC/gsac-code/dist/gsacea1.0/servlet-api.jar
+   [war] Building war:      /home/dev/GSAC/gsac-code/dist/gsacea.war
+BUILD SUCCESSFUL
+Total time: 36 seconds
 
     Look for any error messages.  If there are none, you have completed the GSAC core code.  
-    This process makes a Java jar file, named gsacws.jar, in GSAC/gsac-code/lib/, with size about 5 MB.
-    This file contains the executable GSAC core code, in effect.  This jar file will be used to build your final Java jar file for your complete GSAC server code.
 
-End of installation of GSAC core code.
+    This process makes a Java jar file, named gsacws.jar, in GSAC/gsac-code/lib/, with size about 5 MB.
+    This file "contains" the built and executable GSAC core code, in effect.  This jar file will be used to build your final Java jar file for your complete GSAC server code.
+
+    End of part 1, installation of GSAC core code.
 
 ###########################################   ###########################################
 
