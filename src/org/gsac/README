@@ -147,7 +147,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
     (svn *export* simply downloads all the files for the project, with no revision control permission required.
      svn checkout is used if you have a developer's role, to check in new code to GSAC on SourceForge.)
 
-    The svn command creates a new folder named gsac-code, and many folders files in it, and downloads about   files from GSAC at SourceForge.
+    The svn command creates a new folder named gsac-code, and many folders in it, and downloads about 650 or 700 files from GSAC at SourceForge.
 
     Build the GSAC core code.
 
