@@ -74,10 +74,9 @@
     <target name="test_build">
         <property name="build" value="test"/>
         <antcall target="build"/>
-        <echo message="********************************"/>
-        <echo message="To run the server run:"/>
-        <echo message="ant runserver"/>
-        <echo message="********************************"/>
+        <echo message="************************************************************************************************"/>
+        <echo message="To run the server, copy the new .war file .../gsac-code/dist/gsacfederated.war to your Tomcat application server, as in /usr/local/apachetomcat/webapps/ "/>
+        <echo message="************************************************************************************************"/>
     </target>
 
     <target name="production_build">
