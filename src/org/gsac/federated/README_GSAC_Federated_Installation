@@ -119,11 +119,13 @@ Ignore the file resources/gsacserver_production.properties.
 Edit gsac/federated/resources/header.html to create your GSAC web page header.
 Images are kept in gsac/federated/resources/htdocs.
 
-There is a good default file gsac/federated/resources/footer.html, for your GSAC web pages.
+Edit the file gsac/federated/htdocs/index.html, which has contents of the web site home page.
+
+There is a default HTML footer file gsac/federated/resources/footer.html, for your GSAC web pages.
 You may change it, if you wish to.
 
 The FederatedSiteManager.java and FederatedResourceManager.java files should NOT be changed. 
-Make no changes to any java files in gsac/federated/.
+Make no changes to any Java files in gsac/federated/.
 
 
 ###########################################   ###########################################
