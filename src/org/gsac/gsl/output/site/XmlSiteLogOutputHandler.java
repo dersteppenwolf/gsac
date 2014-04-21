@@ -89,7 +89,7 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_XMLLOG,
-                                      "XML Site Log (SOPAC)", "/site.xml", true));
+                                      "SOPAC XML Site Log", "/site.xml", true));
     }
 
 

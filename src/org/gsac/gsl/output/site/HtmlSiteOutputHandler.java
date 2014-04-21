@@ -46,8 +46,9 @@ import javax.servlet.http.*;
  * Class description
  *
  *
- * @version        2013; see svn logs
- * @author         J McWhirter, SKW
+ * @version        
+ * @author         J McWhirter
+ * @author         revised by SKW
  */
 public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
@@ -304,6 +305,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         // make a tab title to create map for Search Results site search results web page
         // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
+        // "Map" label is hidden somewhere here.
         String js = createMap(request, (List<GsacResource>) new ArrayList(sites),         resultsTitles,          resultsContents,       600,        400, false,             true);
 
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));

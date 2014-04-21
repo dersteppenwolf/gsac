@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -20,33 +20,58 @@
 
 package org.gsac.gsl.output.site;
 
-
-
-
-
 import org.gsac.gsl.*;
+import org.gsac.gsl.metadata.*;
+import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
+import org.gsac.gsl.util.*;
+
+import ucar.unidata.util.HtmlUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
-
-import java.text.DateFormat;
-
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Hashtable;
+import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 
 /**
- * Class description
- *
- *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * Creates the GSAC XML site search results (not the "SOPAC XML site log").
+ * Far more complete than original GSAC XML, but modified from GSAC file XmlSiteLogOutputHandler.java, to: 
+ * 1. change 'elevation' to ellipsoid height; 2. add network(s) name; 
+ * 3. remove items with no information in the UNAVCO or GSAC prototype database such as 'DISTANCE_ACTIVITY';
+ * 4. add 
+ * Apr 2014 S K Wier
  */
 public class XmlSiteOutputHandler extends GsacOutputHandler {
 
     /** output id */
     public static final String OUTPUT_SITE_XML = "site.gsacxml";
+
+    /** date formatter */
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    /** date formatter */
+    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z"); // ISO 8601
+
+    /** _more_          */
+    private DecimalFormat latLonFormat = new DecimalFormat("####0.####");
+
+    /** _more_          */
+    private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
+
+    /** _more_          */
+    private DecimalFormat offsetFormat = new DecimalFormat("####0.####");
 
 
     /**
@@ -56,10 +81,10 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
      * @param resourceClass _more_
      */
     public XmlSiteOutputHandler(GsacRepository gsacRepository,
-                                ResourceClass resourceClass) {
+                                   ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_XML,
+        getRepository().addOutput(getResourceClass(), 
+                                  new GsacOutput(this, OUTPUT_SITE_XML, 
                                       "GSAC Site XML", "/gsacsites.xml", true));
     }
 
@@ -67,9 +92,8 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
     /**
      * handle the request
      *
-     *
      * @param request the request
-     * @param response the response
+     * @param response the response to write to
      *
      *
      * @throws Exception on badness
@@ -77,23 +101,484 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
-        PrintWriter pw  = response.getPrintWriter();
-        // FIX this works for the UNAVCO GSAC but fails for RING GSAC: String      xml = getRepository().encodeObject(response.getSites());
-        // see gsl/GsacRepository.java for encodeObject
-        String      xml = getRepository().encodeObject(response.getSites());
-/*
+        PrintWriter pw = response.getPrintWriter();
+        pw.append(XmlUtil.XML_HEADER + "\n");
 
-        try {
-                    String      xml = getRepository().encodeObject(response.getSites());
-                    System.err.println("   XmlSiteOutputHandler string of sites xml=" + xml); 
-        } catch {
+        Date now = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
+
+        System.out.println("GSAC: request for GSAC sites XML output, at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
+
+        //Add the open tag with all of the namespaces
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GSACXML,
+                                  XmlUtil.attrs(new String[] {
+            XmlSiteLog.ATTR_XMLNS_REALTIME, XmlSiteLog.XMLNS_XMLNS_REALTIME,
+            XmlSiteLog.ATTR_XMLNS_EQUIP, XmlSiteLog.XMLNS_XMLNS_EQUIP,
+            XmlSiteLog.ATTR_XMLNS_XSI, XmlSiteLog.XMLNS_XMLNS_XSI,
+            XmlSiteLog.ATTR_XMLNS_MI, XmlSiteLog.XMLNS_XMLNS_MI,
+            XmlSiteLog.ATTR_XMLNS_LI, XmlSiteLog.XMLNS_XMLNS_LI,
+            XmlSiteLog.ATTR_XMLNS_CONTACT, XmlSiteLog.XMLNS_XMLNS_CONTACT
+        })));
+        //System.out.println(" GSAC XML log 1"  );
+        
+        //Add everything else in the file
+        //We can have any number of sites here. Need to figure out how to handle multiple sites
+        List<GsacSite> sites = response.getSites();
+        for (GsacSite site : sites) {
+            //Call this to ensure that all of the metadata is added to the site
+            getRepository().doGetFullMetadata(-1, site);
+            //  System.out.println(" GSAC XML log 2 got site metadata"  );
+            //Add the various content areas
+            addFormInformation(pw);
+            addSiteIdentification(pw, site);
+            addSiteLocation(pw, site);
+            addSiteEquipment(pw, site);
+            addSiteStream(pw, site);
+        }
+
+        pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GSACXML));
+        
+        response.endResponse();
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     */
+    private void addFormInformation(PrintWriter pw) {
+        /*
+          <formInformation>
+          <mi:preparedBy>Scripps Orbit and Permanent Array</mi:preparedBy>
+          <mi:datePrepared>2011-07-01</mi:datePrepared>
+          <mi:reportType>DYNAMIC</mi:reportType>
+          </formInformation>
+               \n
+        */
+        pw.append(
+            XmlUtil.tag(
+                XmlSiteLog.TAG_FORMINFORMATION, "",
+                XmlUtil.tag(
+                    XmlSiteLog.TAG_PREPAREDBY, "", getRepository().getRepositoryName()) 
+                    + XmlUtil.tag( XmlSiteLog.TAG_DATEPREPARED, "", myFormatDate(new Date())) 
+                    + XmlUtil.tag(XmlSiteLog.TAG_REPORTTYPE, "", "DYNAMIC")));
+        pw.append("\n");
+    }
+
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteIdentification(PrintWriter pw, GsacSite site)
+            throws Exception {
+        /*
+          <siteIdentification>
+          <mi:siteName>TresPiedraNM2006</mi:siteName>
+          <mi:fourCharacterID>P123</mi:fourCharacterID>
+          <mi:monumentInscription/>
+          <mi:iersDOMESNumber/>
+          <mi:cdpNumber/>
+          <mi:monumentDescription>DEEP-DRILLED BRACED</mi:monumentDescription>
+          <mi:heightOfTheMonument> (m)</mi:heightOfTheMonument>
+          <mi:monumentFoundation/>
+          <mi:foundationDepth> (m)</mi:foundationDepth>
+          <mi:markerDescription>NONE</mi:markerDescription>
+          <mi:dateInstalled>2006-02-27T00:00:00Z</mi:dateInstalled>
+          <mi:geologicCharacteristic/>
+          <mi:bedrockType/>
+          <mi:bedrockCondition/>
+          <mi:fractureSpacing/>
+          <mi:faultZonesNearby/>
+          <mi:distance-Activity/>
+          <mi:notes/>
+          </siteIdentification>
+        */
+
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_SITENAME, "",
+                              // site.getLongName())); can fail if name has a "&" or a /
+                              removeAndSymbol(site.getLongName ()) )   );
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_FOURCHARACTERID, "",
+                              removeAndSymbol(site.getShortName()) )   );
+        Date date = site.getFromDate();
+        if (date != null) {
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_DATEINSTALLED, "",
+                                  myFormatDateTime(date)));
+        }
+
+        //from site a GsacSite a GsacResource in org.gsac.gsl.model.*,  can get the list of networks : List<ResourceGroup> getResourceGroups()
+        List<ResourceGroup> networks = site.getResourceGroups();
+
+        //pw.append(XmlUtil.tag(XmlSiteLog.TAG_MONUMENTINSCRIPTION, "", ""));
+
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_IERSDOMESNUMBER, "",
+                              getProperty(site,
+                                          GsacExtArgs.SITE_METADATA_IERDOMES,
+                                          "")));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_CDPNUMBER, "",
+                              getProperty(site,
+                                          GsacExtArgs.SITE_METADATA_CDPNUM,
+                                          "")));
+        pw.append(
+            XmlUtil.tag(
+                XmlSiteLog.TAG_MONUMENTDESCRIPTION, "",
+                getProperty(
+                    site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION,
+                    "")));
+        /*
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_HEIGHTOFTHEMONUMENT, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MONUMENTFOUNDATION, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FOUNDATIONDEPTH, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_MARKERDESCRIPTION, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_GEOLOGICCHARACTERISTIC, "",
+                              ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_BEDROCKTYPE, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_BEDROCKCONDITION, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FRACTURESPACING, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_FAULTZONESNEARBY, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_DISTANCE_ACTIVITY, "", ""));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_NOTES, "", ""));
+        */
+        pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
+    }
+
+    /**
+     * replace any  "&" in the input string 's' with "and" to prevent contamination of the XML
+     *
+     * @param s  string to remove & from
+     *
+     * @return the fixed string 
+     */
+    private String removeAndSymbol(String s) {
+        s = s.replaceAll("&", "and");
+        return s;
+    }
+
+
+
+    /**
+     * _more_
+     *
+     * @param site _more_
+     * @param propertyId _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
+    private String getProperty(GsacResource site, String propertyId,
+                               String dflt) {
+        List<GsacMetadata> propertyMetadata =
+            (List<GsacMetadata>) site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(PropertyMetadata.class));
+        for (int i = 0; i < propertyMetadata.size(); i++) {
+            PropertyMetadata metadata =
+                (PropertyMetadata) propertyMetadata.get(i);
+            if (metadata.getName().equals(propertyId)) {
+                return metadata.getValue();
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteLocation(PrintWriter pw, GsacSite site)
+            throws Exception {
+        /*
+          <siteLocation>
+          <mi:city>Tres Piedras</mi:city>
+          <mi:state>New Mexico</mi:state>
+          <mi:country>United States</mi:country>
+          <mi:tectonicPlate>North America</mi:tectonicPlate>
+          <mi:approximatePositionITRF>
+          <mi:xCoordinateInMeters>-1405300.44</mi:xCoordinateInMeters>
+          <mi:yCoordinateInMeters>-4929803.00</mi:yCoordinateInMeters>
+          <mi:zCoordinateInMeters>3786420.59</mi:zCoordinateInMeters>
+          <mi:latitude-North>+363813.92</mi:latitude-North>
+          <mi:longitude-East>-1055460.00</mi:longitude-East>
+          <mi:elevation-m_ellips>2411.2</mi:elevation-m_ellips>
+          </mi:approximatePositionITRF>
+          <mi:notes/>
+          </siteLocation>
+        */
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_SITELOCATION));
+
+        List<GsacMetadata> politicalMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(
+                    PoliticalLocationMetadata.class));
+        PoliticalLocationMetadata plm = null;
+
+        //Just use the first one
+        if (politicalMetadata.size() > 0) {
+            plm = (PoliticalLocationMetadata) politicalMetadata.get(0);
+        }
+        if (plm == null) {
+            plm = new PoliticalLocationMetadata();
+        }
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_COUNTRY, "",
+                              getNonNullString(plm.getCountry())));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_STATE, "",
+                              removeAndSymbol(getNonNullString(plm.getState()))  ));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_CITY, "",
+                              getNonNullString(plm.getCity())));
+
+        EarthLocation el = site.getEarthLocation();
+
+        pw.append(XmlUtil.openTag(XmlSiteLog.TAG_APPROXIMATEPOSITIONITRF));
+
+        if (el.hasXYZ()) {
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_XCOORDINATEINMETERS, "", el.getX() + ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_YCOORDINATEINMETERS, "", el.getY() + ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_ZCOORDINATEINMETERS, "", el.getZ() + ""));
+        } else {
+            //What should we do here? Add empty tags?
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_XCOORDINATEINMETERS, "",  6371000.0 +""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_YCOORDINATEINMETERS, "",  0.0 + ""));
+            pw.append(XmlUtil.tag(XmlSiteLog.TAG_ZCOORDINATEINMETERS, "",  0.0 + ""));
+        }
+
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_LATITUDE_NORTH, "", formatLocation(el.getLatitude())));
+
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_LONGITUDE_EAST, "", formatLocation(el.getLongitude())));
+
+        // should be ellipsoidal height:
+        // not elevation above a geoid, not true ellipsoid height:
+        //pw.append(XmlUtil.tag(XmlSiteLog.TAG_MI_ELEVATION_M_ELLIPS, "", elevationFormat.format(el.getElevation())));
+        pw.append(XmlUtil.tag(XmlSiteLog.TAG_ELLIPS_HGT, "", elevationFormat.format( 0.0 )));
+
+        pw.append( XmlUtil.closeTag(XmlSiteLog.TAG_APPROXIMATEPOSITIONITRF));
+
+        pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITELOCATION));
+    }
+
+    /**
+     * _more_
+     *
+     * @param v _more_
+     *
+     * @return _more_
+     */
+    private String formatLocation(double v) {
+        v = (double) Math.round(v * 10000) / 10000;
+        String s = latLonFormat.format(v);
+
+        return s;
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteEquipment(PrintWriter pw, GsacSite site)
+            throws Exception {
+        /*
+          <gnssReceiver>
+          <equip:receiverType>TRIMBLE NETRS</equip:receiverType>
+          <equip:satelliteSystem>GPS</equip:satelliteSystem>
+          <equip:serialNumber>4545260798</equip:serialNumber>
+          <equip:firmwareVersion>1.1-2 19 Apr 2005</equip:firmwareVersion>
+          <equip:elevationCutoffSetting>0 deg</equip:elevationCutoffSetting>
+          <equip:dateInstalled>2006-02-28T00:00:00.000Z</equip:dateInstalled>
+          <equip:dateRemoved>2010-07-08T20:53:00.000Z</equip:dateRemoved>
+          <equip:temperatureStabilization/>
+          <equip:notes/>
+          </gnssReceiver>
+        */
+        List<GsacMetadata> equipmentMetadata = site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
+        for (GsacMetadata metadata : equipmentMetadata) {
+            GnssEquipment equipment = (GnssEquipment) metadata;
+            if (equipment.hasReceiver()) {
+                pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSRECEIVER));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_RECEIVERTYPE, "", equipment.getReceiver()));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "", equipment.getReceiverSerial()));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_FIRMWAREVERSION, "", equipment.getReceiverFirmware()));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "", myFormatDateTime(equipment.getFromDate())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "", myFormatDateTime(equipment.getToDate())));
+
+                String satelliteSystem = equipment.getSatelliteSystem(); 
+                if (satelliteSystem.length() == 0) {
+                    satelliteSystem = "GPS";
+                }
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "", satelliteSystem));
+
+                pw.append( makeTag( XmlSiteLog.TAG_EQUIP_ELEVATIONCUTOFFSETTING, "", ""));
+                /*
+                pw.append( makeTag( XmlSiteLog.TAG_EQUIP_TEMPERATURESTABILIZATION, "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_NOTES, "", ""));
+                */
+
+                pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSRECEIVER));
+            }
+
+            if (equipment.hasAntenna()) {
+                pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GNSSANTENNA));
+
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNATYPE, "", getNonNullString(equipment.getAntenna())));
+
+                pw.append( makeTag( XmlSiteLog.TAG_EQUIP_SERIALNUMBER, "", getNonNullString(equipment.getAntennaSerial())));
+
+                double[] xyz = equipment.getXyzOffset();
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", offsetFormat.format(xyz[2])));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC, "", offsetFormat.format(xyz[1])));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "", offsetFormat.format(xyz[0])));
+
+                pw.append( makeTag( XmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH, "", ""));
+
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "", getNonNullString(equipment.getDome())));
+
+                pw.append( makeTag( XmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "", getNonNullString(equipment.getDomeSerial())));
+
+                /*pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "", ""));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH, "", ""));
+                */
+
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEINSTALLED, "", myFormatDateTime(equipment.getFromDate())));
+                pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "", myFormatDateTime(equipment.getToDate())));
+
+                pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GNSSANTENNA));
+
+            }
+
 
         }
-*/
-        // List<GsacSite> sites = response.getSites();
 
-        pw.print(xml);
-        response.endResponse();
+    }
+
+
+    /**
+     * ISO 8601 date time format
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    private String myFormatDateTime(Date date) {
+        if (date == null) {
+            return "";
+        }
+        /* synchronized (dateTimeFormat) {
+            return dateTimeFormat.format(date);
+        } */
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(date);
+    }
+
+    /**
+     * _more_
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    private String myFormatDate(Date date) {
+        if (date == null) {
+            return "";
+        }
+        /*synchronized (dateFormat) {
+            return dateFormat.format(date);
+        }*/
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(date);
+    }
+
+    /**
+     * _more_
+     *
+     * @param tag _more_
+     * @param attrs _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    private String makeTag(String tag, String attrs, String contents) {
+        if (contents == null || contents.length() == 0) {
+            contents = "";
+            return XmlUtil.tag(tag, attrs, contents);
+        }
+
+        return XmlUtil.tag(tag, attrs, XmlUtil.getCdata(contents));
+    }
+
+
+
+
+    /**
+     * This adds xml for the real time stream metadata. Only the Unavco GSAC creates that kind of metadata. This comes from the PBO real time stream info._
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addSiteStream(PrintWriter pw, GsacSite site)
+            throws Exception {
+        GsacMetadata.debug = true;
+        //System.err.println("XmlSiteOutputHandler:addSiteStream() ... Finding metadata");
+        List<GsacMetadata> streamMetadata =
+            site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(StreamMetadata.class));
+        GsacMetadata.debug = false;
+        int cnt = 0;
+        for (GsacMetadata metadata : streamMetadata) {
+            StreamMetadata stream = (StreamMetadata) metadata;
+            if (cnt == 0) {
+                pw.append(
+                    XmlUtil.openTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
+            }
+            cnt++;
+            stream.encode(pw, this, "xmlsitelog");
+        }
+        if (cnt > 0) {
+            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_REALTIME_DATASTREAMS));
+        }
+
+    }
+
+    /**
+     * _more_
+     *
+     * @param tag _more_
+     * @param contents _more_
+     *
+     * @return _more_
+     */
+    private String makeTag(String tag, String contents) {
+        return makeTag(tag, "", contents);
+    }
+
+
+    /**
+     * _more_
+     *
+     * @param s _more_
+     *
+     * @return _more_
+     */
+    private String getNonNullString(String s) {
+        if (s == null) {
+            return "";
+        }
+
+        return s;
     }
 
 
