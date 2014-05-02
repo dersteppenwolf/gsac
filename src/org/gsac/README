@@ -4,7 +4,7 @@
 
                                        README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                                        9 April 2014.  Stuart Wier, UNAVCO
+                                                        10 April 2014.  Stuart Wier, UNAVCO
                                                              Copyright (C) 2014 UNAVCO.
 
 Introduction
@@ -17,17 +17,15 @@ This README file describes the first steps in GSAC installation, and is Part 1 o
 in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge, as described below.
 
 These instructions apply both to installing GSAC services for a data repository, and to installing a Federated GSAC which merges GSAC services from several 
-separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README file, except the section Create GSAC configuration 
-files and make your initial GSAC,  and then follow the section "To Build a Federated GSAC" below.
+separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README file except the section 
+"Create GSAC configuration files and make your initial GSAC,"  and then follow the section "To Build a Federated GSAC".
 
 These instructions use a hypothetical "Boulder" agency and data repository, running a GPS network called "BoulderNet." You will use other words in place of these.
 
-Time Formats
+About Time Formats in GSAC
 
-GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and error-prone behavior of using several different formats.
-Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.
-Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with this line:
-Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and error-prone behavior of using several different formats. Internally GSAC avoids use of character strings for time.  Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.  Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with this line:
+   Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
 
 GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number in an ISO 8601 value.  
 GSAC does not expect times in the database to be in any time zone other than UTC.  You may if you wish enter such times but that is discouraged.
