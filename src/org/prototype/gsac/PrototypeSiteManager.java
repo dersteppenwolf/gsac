@@ -178,7 +178,7 @@ public class PrototypeSiteManager extends SiteManager {
             List<Clause> clauses = new ArrayList<Clause>();
             List<String> tables = new ArrayList<String>();
 
-            // get network(s) names found in each station:
+            // to provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station:
             //  WHERE
             String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
             //  FROM which tables (for a table join)
@@ -222,6 +222,7 @@ public class PrototypeSiteManager extends SiteManager {
             String[] itemArray = new String[avalues.size()];
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
+            // add search on network names:
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
 
 
@@ -385,7 +386,6 @@ public class PrototypeSiteManager extends SiteManager {
                    }
                    if (notfound==1) {
                          avalues.add(dometype);
-                         //System.err.println("      in this network a listed radome type  is " +dometype);
                    }
                }
             } finally {
@@ -395,7 +395,6 @@ public class PrototypeSiteManager extends SiteManager {
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_DOME, "Radome type", values, true, CAPABILITY_GROUP_ADVANCED));
-
 
             // search on country, province/state, and city
 
@@ -413,10 +412,6 @@ public class PrototypeSiteManager extends SiteManager {
             values = getDatabaseManager().readDistinctValues( Tables.STATION.NAME, Tables.STATION.COL_CITY);  // get all the city (place) names in GSAC's database.
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place / City", values, true, CAPABILITY_GROUP_ADVANCED));
-
-            // better move this to data file search:
-            //  omit for now LOOK - search on data sampling interval ; float value in seconds per sample as 30 or 0.1 or 0.01
-            // get value from receiver session table
 
 
             return capabilities;
@@ -541,7 +536,18 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for STATUS " + values.get(0)) ;
         }
         
-        // FIX next three queries are buggy - return > 1 result per correct result
+        if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
+            List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
+            tableNames.add(Tables.ANTENNA_SESSION.NAME);
+            tableNames.add(Tables.ANTENNA_TYPE.NAME);
+            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.ANTENNA_SESSION.COL_STATION_ID));
+            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
+            // LOOK maybe here is where do an OR for antenna type; values .get ( >0 )
+            clauses.add(Clause.eq(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME, values.get(0)));
+            //System.err.println("   SiteManager: query for antenna " + values.get(0)) ;
+        }
+        
+        // FIX next one or two queries are buggy - return > 1 result per correct result
         if (request.defined(GsacExtArgs.ARG_RECEIVER)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_RECEIVER);
             tableNames.add(Tables.RECEIVER_SESSION.NAME);
@@ -550,16 +556,6 @@ public class PrototypeSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_RECEIVER_TYPE_ID, Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_ID));
             clauses.add(Clause.eq(Tables.RECEIVER_TYPE.COL_RECEIVER_TYPE_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for rcvr type " + values.get(0)) ;
-        }
-        
-        if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
-            List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
-            tableNames.add(Tables.ANTENNA_SESSION.NAME);
-            tableNames.add(Tables.ANTENNA_TYPE.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.ANTENNA_SESSION.COL_STATION_ID));
-            clauses.add(Clause.join(Tables.ANTENNA_SESSION.COL_ANTENNA_TYPE_ID, Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_ID));
-            clauses.add(Clause.eq(Tables.ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME, values.get(0)));
-            //System.err.println("   SiteManager: query for antenna " + values.get(0)) ;
         }
         
         if (request.defined(GsacExtArgs.ARG_DOME)) {
@@ -576,7 +572,7 @@ public class PrototypeSiteManager extends SiteManager {
         //    SiteManager: getResourceClauses gives [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
-        // System.err.println("   SiteManager: getResourceClauses gives " + clauses) ;
+        //System.err.println("   SiteManager: getResourceClauses gives created clauses="+clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -732,11 +728,11 @@ public class PrototypeSiteManager extends SiteManager {
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
-        //String station_status_id    = results.getString(Tables.STATION.COL_STATION_STATUS_ID);             // may be null; is String of an int
-        //System.err.println("   SiteManager: station " +fourCharId+ " has status id="+station_status_id+"_");
+        String station_status_id    = results.getString(Tables.STATION.COL_STATION_STATUS_ID);             // may be null; is String of an int
+        //System.err.println("GSAC: new request     SiteManager: station " +fourCharId+ " has status id="+station_status_id+"_");
          
         if (1== access_permission_id ) {
-            System.err.println("   GSAC found station with no access permission (no public views allowed) " +fourCharId);
+            System.err.println("GSAC: new request      GSAC found station with no access permission (no public views allowed) " +fourCharId);
             GsacSite site = new GsacSite();
             return site;
         }
@@ -971,6 +967,7 @@ public class PrototypeSiteManager extends SiteManager {
 
     /**
      * Get metadata for the given site. 
+     * NOTE: who calls this?  What is "level"?
      *
      * @param level _more_
      * @param gsacResource resource
@@ -985,8 +982,9 @@ public class PrototypeSiteManager extends SiteManager {
     }
 
     /**
-     * Get station metadata for the given site; this called when user clicks on a site name in the sites' search results table on the table web page (and when other output demand is made possibly).
-     * sets values in some GsacExtArgs.
+     * Get station metadata for the given site; this called when user clicks on a site name in the 
+     * sites' search results table on the table web page (and when other output demand is made possibly).
+     * Then sets values in some GsacExtArgs.
      * This method adds new items and text to, at least, the HTML page of results.
      *
      * @param gsacResource resource
@@ -996,14 +994,18 @@ public class PrototypeSiteManager extends SiteManager {
    private void readIdentificationMetadata(GsacResource gsacResource)
             throws Exception {
 
-
-
         ResultSet results;
 
         /* make a db query statement to find the site corresponding to the current site or "gsacResource"; the CODE_4CHAR_ID is stored as the resource's Id, from gsacResource.getId()  */
+        /* note that this gets ALL the columns of fields from the table "station" (on the row matching the select Clause.eq item) */
         Statement statement = getDatabaseManager().select( Tables.STATION.COLUMNS, Tables.STATION.NAME,
                 Clause.eq( Tables.STATION.COL_CODE_4CHAR_ID, gsacResource.getId()), (String) null, -1);
-        //System.err.println("   SiteManager: readIdentificationMetadata select query is " +statement);
+        
+        // System.err.println("   SiteManager: readIdentificationMetadata select query is " +statement);
+        /* a single station query from this is
+        SELECT station.station_id,station.code_4char_ID,station.station_name,station.latitude_north,station.longitude_east,station.ellipsoidal_height,station.station_installed_date,station.station_removed_date,station.station_style_id,station.station_status_id,station.access_permission_id,station.monument_description_id,station.country_id,station.province_region_state_id,station.city,station.x,station.y,station.z,station.iers_domes,station.station_photo_URL,station.time_series_image_URL,station.agency_id,station.networks,station.embargo_duration_hours,station.embargo_after_date FROM station 
+        WHERE (station.code_4char_ID = 'ATAL')
+        */
 
         // make the db query to find the row of info about this station
         try {
@@ -1039,11 +1041,10 @@ public class PrototypeSiteManager extends SiteManager {
                    { idn = " " ; }
                 else if ( idn == null ) 
                    { idn = " " ; }
-                // note an empty string idn="" will NOT make a line in the web page output, so use " " so you know there is missing information about iers domes value.
-                // add value to results from GSAC searches:
+                
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
 
-                // only red the first row of db query results returned
+                // did only the first row of db query results returned
                 break;
             }
         } finally {
@@ -1067,6 +1068,7 @@ public class PrototypeSiteManager extends SiteManager {
             while ((results = iter.getNext()) != null) {
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "monument", 
                      results.getString(Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION) );
+                //System.err.println("\n  --------------------------- set monu desc "+results.getString(Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION));
                 // arg "monument" appears as a label in the HTML page about one station.
                 //Only read the first row of db query results returned
                 break;
@@ -1074,8 +1076,6 @@ public class PrototypeSiteManager extends SiteManager {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-
-
 
     }
 
@@ -1097,7 +1097,7 @@ public class PrototypeSiteManager extends SiteManager {
         int radomeid=0;
         float dnorth=0.0f;
         float deast=0.0f;
-        float sampInt=0.0f;
+        float sampleinterval=0.0f;
         Double zoffset=0.0;
         String antenna_serial=" ";
         String receiver_serial=" ";
@@ -1469,8 +1469,6 @@ public class PrototypeSiteManager extends SiteManager {
                             dnorth = results.getFloat(Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_NORTH);
                             deast= results.getFloat(Tables.ANTENNA_SESSION.COL_ANTENNA_OFFSET_EAST);
                             radomeid = results.getInt(Tables.ANTENNA_SESSION.COL_RADOME_TYPE_ID);
-                            //sampInt= results.getFloat(Tables.ANTENNA_SESSION.COL_SAMPLE_INTERVAL);
-                            //satellitesys = results.getString(Tables.ANTENNA_SESSION.COL_SATELLITE_SYSTEM);
 
                             // get value of ANTENNA_TYPE.COL_ANTENNA_TYPE_NAME
                             anttype = null;
@@ -1609,6 +1607,7 @@ public class PrototypeSiteManager extends SiteManager {
                             receiver_firmware_id = results.getInt(Tables.RECEIVER_SESSION.COL_RECEIVER_FIRMWARE_VERSION_ID);
                             receiver_serial = results.getString  (Tables.RECEIVER_SESSION.COL_RECEIVER_SERIAL_NUMBER);
                             satellitesys = results.getString     (Tables.RECEIVER_SESSION.COL_SATELLITE_SYSTEM);
+                            sampleinterval = results.getFloat    (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL);
 
                             // get value of RECEIVER_TYPE_NAME
                             ArrayList<String> avalues =  new ArrayList<String>();
@@ -1668,7 +1667,7 @@ public class PrototypeSiteManager extends SiteManager {
             GnssEquipment equipment=new GnssEquipment( dateRange, anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
 
             equipment.setSwVer(swver);
-            equipment.setSampleInterval(sampInt);
+            equipment.setSampleInterval(sampleinterval);
             equipmentList.add(equipment);
 
             //equip_sessions.put(dateRange[0], equipment);
@@ -1757,8 +1756,8 @@ public class PrototypeSiteManager extends SiteManager {
      */
     public List<ResourceGroup> doGetResourceGroups() {
 
-
         try {
+            System.err.println("       doGetResourceGroups(): ");
             HashSet<String>     seen   = new HashSet<String>();
             List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
             //                       select          what    from      where
@@ -1801,8 +1800,6 @@ public class PrototypeSiteManager extends SiteManager {
         List<Clause> groupClauses = new ArrayList<Clause>();
         String  col = Tables.STATION.COL_NETWORKS;
 
-
-        // "Handle the 4 cases to find the argument in the csv list of groups in the DB"
         int cnt = 0;
         for (String group : groupIds) {
             //System.err.println("       getNetworkClauses(): search for network or group name _"+group+"_");  // shows correct result
@@ -1835,8 +1832,6 @@ public class PrototypeSiteManager extends SiteManager {
      * @param value _more_
      */
     private void addPropertyMetadata(GsacResource gsacResource, String id, String label, String value) {
-
-
         if ((value != null) && (value.length() > 0)) {
             gsacResource.addMetadata(new PropertyMetadata(id, value, label));
         }
