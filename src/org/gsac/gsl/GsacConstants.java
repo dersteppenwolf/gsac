@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -98,8 +98,8 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final int DEFAULT_LIMIT = 500;
 
-    /**  FIX: need short MAX_LIMIT in case file downloads (maybe 500);  but may need large limit (maybe 50000) for testing file csv file metadata search results */
-    public static final int MAX_LIMIT = 500;
+    /**  Fran says to use 5000. */
+    public static final int MAX_LIMIT = 5000;
 
     /** _more_ */
     public static final String TAG_CAPABILITIES = "capabilities";
