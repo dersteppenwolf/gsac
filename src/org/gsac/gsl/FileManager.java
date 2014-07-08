@@ -155,8 +155,10 @@ public abstract class FileManager extends GsacResourceManager {
                 break;
             }
         }
+
         long t2 = System.currentTimeMillis();
-        //      System.err.println("Time:" + (t2-t1));
+        System.err.println("GSAC: new request;     read the files for the given statement in " + (t2-t1) + " ms");
+
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
 
