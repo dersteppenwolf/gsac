@@ -42,26 +42,20 @@ import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
 import java.io.InputStream;
-
 import java.lang.management.*;
-
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-
+import java.util.TimeZone;
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-
 import java.util.zip.*;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -74,9 +68,10 @@ import javax.servlet.http.*;
  * The repository has one or more GsacResourceManager-s. Each of these handle
  * a certain ResourceClass of resources (e.g., GsacSite.CLASS_SITE, GsacFile.CLASS_FILE).
  * The resourceManager creates a set of GsacOutputHandler-s. These
- * do t he work of encoding the results (e.g., into HTML, XML, CSV, etc).
+ * do the work of encoding the results (e.g., into HTML, XML, CSV, etc).
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
+ * @version SK Wier improve date-time string formats so not in local time zone
  */
 public class GsacRepository implements GsacConstants {
 
@@ -322,7 +317,7 @@ public class GsacRepository implements GsacConstants {
 
             for (File catalinaConfFile : catalinaConfFiles) {
                 if (catalinaConfFile.exists()) {
-                    System.err.println("GSAC: loading " + catalinaConfFile);
+                    //System.err.println("GSAC: loading tomcat environment configuration file" + catalinaConfFile);
                     properties.load(new FileInputStream(catalinaConfFile));
                 }
             }
@@ -332,41 +327,32 @@ public class GsacRepository implements GsacConstants {
         String dir = getProperty(PROP_GSACDIRECTORY, (String) null);
         if (dir != null) {
             gsacDirectory = new File(dir);
-            System.err.println("GSAC: gsacDirectory from properties file: "
-                               + gsacDirectory);
+            //System.err.println("GSAC: gsacDirectory to write the logs to, from properties file: " + gsacDirectory);
         } else {
             String userHome = System.getProperty("user.home");
-            System.err.println(
-                "GSAC: attempting to set gsacDirectory from user.home system property: "
-                + userHome);
+            //System.err.println( "GSAC: attempting to set gsacDirectory from user.home system property: " + userHome);
             if (userHome != null) {
                 File localDir = new File(userHome + "/.gsac");
                 if (localDir.exists()) {
                     gsacDirectory = localDir;
-                    System.err.println(
-                        "GSAC: gsacDirectory from userHome/.gsac: "
-                        + gsacDirectory);
+                    //System.err.println( "GSAC: gsacDirectory from userHome/.gsac: " + gsacDirectory);
                 } else {
-                    System.err.println(
-                        "GSAC: userHome/.gsac directory does not exist: "
-                        + userHome + "/.gsac; no gsacDirectory set");
+                    //System.err.println( "GSAC: userHome/.gsac directory does not exist: " + userHome + "/.gsac; no gsacDirectory set");
                 }
             } else {
-                System.err.println(
-                    "GSAC: user.home system property is null, no gsacDirectory set");
+                System.err.println( "GSAC: user.home system property is null, no gsacDirectory set");
             }
         }
 
 
         if (gsacDirectory != null) {
-            System.err.println("GSAC: using gsac directory: "
-                               + gsacDirectory);
+            //System.err.println("GSAC: using gsac directory: " + gsacDirectory);
             getLogManager().initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
                                            + "/gsac.properties");
-            System.err.println("GSAC: looking for: " + localPropertiesFile);
+            //System.err.println("GSAC: looking for: " + localPropertiesFile);
             if (localPropertiesFile.exists()) {
-                System.err.println("GSAC: loading " + localPropertiesFile);
+                //System.err.println("GSAC: loading " + localPropertiesFile);
                 properties.load(new FileInputStream(localPropertiesFile));
             }
         }
@@ -504,6 +490,13 @@ public class GsacRepository implements GsacConstants {
     }
 
 
+    public static String getUTCnowString() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format(new Date());
+        return utcTime;
+    }
+
 
     /**
      * Main entry point for incoming requests
@@ -515,6 +508,8 @@ public class GsacRepository implements GsacConstants {
      */
     public void handleRequest(GsacRequest request)
             throws IOException, ServletException {
+
+        // makes many on each cycle System.out.println("GSAC: start time to handleRequest is "+getUTCnowString() );
 
         String uri   = request.getRequestURI();
         int    index = uri.indexOf("?");
@@ -535,13 +530,18 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-
         //TODO: What to do with a head request
         if (request.getMethod().toUpperCase().equals("HEAD")) {
-            System.err.println("GSAC: got a  head request:" + uri);
-
+            //System.err.println("GSAC: got a  head request:" + uri);
             return;
         }
+
+        // import java.text.SimpleDateFormat;
+        //Date now = new Date();
+        //SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z"); // ISO 8601
+        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //String utcTime = sdf.format(new Date());
 
         try {
             //We either have service requests or /htdocs requests
@@ -590,25 +590,26 @@ public class GsacRepository implements GsacConstants {
                 handleRequestHtdocs(request);
             } else if (uri.endsWith(URL_BASE) || uri.equals(getUrlBase())) {
                 //This is for /gsacws/gsacpi top level requests. It just lists the index page.
-                handleRequestIndex(request,
-                                   response = new GsacResponse(request));
+                handleRequestIndex(request, response = new GsacResponse(request));
             } else if (uri.indexOf(URL_REPOSITORY_VIEW) >= 0) {
                 //Repository information
-                handleRequestView(request,
-                                  response = new GsacResponse(request));
+                handleRequestView(request, response = new GsacResponse(request));
             } else {
                 throw new UnknownRequestException("");
                 //getLogManager().logError("Unknown request:" + uri, null);
             }
+
             //Only log the access if it is actually a service request (as opposed to htdocs requests)
             if (serviceRequest) {
                 
-                // import java.text.SimpleDateFormat;
-                Date now = new Date();
-                SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss"); // ISO 8601 
-                System.out.println("GSAC: new request "+request.toString() + ", time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
+                String reqstr=request.toString();
+                System.out.println    ("GSAC: new request was "+reqstr+", at time "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
+                //System.out.println("GSAC: end time   to handleRequest is "+getUTCnowString() );
 
-                //System.out.println("  originating IP: "+request.getOriginatingIP() + "   request IP: "+request.getRequestIP());
+                if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
+                    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
+                }
+
                 int resourceCnt = -1;
                 if (response != null) {
                     resourceCnt = response.getNumResources();
@@ -616,20 +617,18 @@ public class GsacRepository implements GsacConstants {
                 getLogManager().logAccess(request, what, resourceCnt);
             }
         } catch (UnknownRequestException exc) {
-            System.out.println                                 ("GSAC unknown request is: "+request.toString());
-            getLogManager().logError                           ("GSAC unknown request is: " + uri + "?" + request.getUrlArgs(), null);
-            request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC unknown request is: " + uri);
+            System.out.println                                 ("GSAC: new request is unrecognized: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            getLogManager().logError                           ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
+            request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC: unknown request is: " + uri);
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection
         } catch (Exception exc) {
             //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
-            System.out.println                                 ("Error processing request: "+request.toString());
+            System.out.println                                 ("GSAC: new request Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
             getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
             try {
-                request.sendError(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "An error occurred:" + thr);
+                request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
             } catch (Exception ignoreThisOne) {}
         }
 
@@ -951,11 +950,9 @@ public class GsacRepository implements GsacConstants {
                     goodList.add(info);
                 } catch (Exception exc) {
                     anyErrors = true;
-                    System.err.println("Initializing remote repository:"
-                                       + info + " " + exc);
+                    // System.err.println("GSAC: Initializing remote repository:" + info + " " + exc);
                     exc.printStackTrace();
-                    getLogManager().logError(
-                        "Initializing remote repository:" + info, exc);
+                    getLogManager().logError( "Initializing remote repository:" + info, exc);
                 }
             }
             //If there were any errors then reset the ttl for the list holder
@@ -3174,7 +3171,7 @@ public class GsacRepository implements GsacConstants {
         if ( !shouldPrintVocabularies()) {
             return;
         }
-        System.err.println("printing  vocabularies");
+        //System.err.println("GSAC: printing  vocabularies");
         //        File f = new File("vocabulary");
         File     f = null;
         String[] s = new String[] { "" };
@@ -3198,7 +3195,7 @@ public class GsacRepository implements GsacConstants {
      * @param values _more_
      */
     public void printVocabulary(File dir, String what, List values) {
-        System.err.println("    printing vocab:" + what);
+        //System.err.println("GSAC: printing vocab:" + what);
         try {
             String           tail  = what + ".local.properties";
             File             f     = (dir == null)
