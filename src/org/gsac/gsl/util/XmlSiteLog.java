@@ -58,10 +58,12 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String ATTR_XSI_SCHEMALOCATION = "xsi:schemaLocation";
+
     public static final String ATTR_GSAC_SCHEMALOCATION = "schemaLocation";
     /** _more_ */
     public static final String VALUE_XSI_SCHEMALOCATION =
         "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd";
+
     public static final String VALUE_GSAC_SCHEMALOCATION = "";
 
     /** _more_ */
@@ -85,7 +87,17 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String TAG_IGSSITELOG = "igsSiteLog";
-    public static final String TAG_GSACXML = "GsacXmlSiteLog";
+
+    /** for GSAC XML formatting */
+    public static final String TAG_GSACOPSXML       = "GsacOpsXmlSiteInfo";
+    public static final String TAG_DATEINSTALLED    = "FromDate"; //dateInstalled;
+    public static final String TAG_PUBLISHDATE      = "PublishDate";
+    public static final String TAG_MODDATE          = "ModificationDate";  // from the archive db gps3 value "Site modify date" in MV_DAI_PRO.COL_LAST_UPDATED
+    public static final String TAG_TODATE           = "ToDate"; // most recent operational date; usually  yesterday (when data was received?) 
+    public static final String TAG_SAMPLEINTERVAL   = "SampleInterval";
+    public static final String TAG_NETWORK          = "network";
+    public static final String TAG_LASTARCHIVEDATE  = "latestArchiveDate";
+    public static final String TAG_SITESTATUS       = "Status";
 
     /** _more_ */
     public static final String TAG_FORMINFORMATION = "formInformation";
@@ -107,11 +119,13 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String TAG_MI_SITENAME = "mi:siteName";
-    public static final String TAG_SITENAME = "siteName";
+    public static final String TAG_SITENAME = "Name"; // used by OpsXML output to mimic web page labels for one site
+
+    public static final String TAG_SITETYPE = "Type";
 
     /** _more_ */
     public static final String TAG_MI_FOURCHARACTERID = "mi:fourCharacterID";
-    public static final String TAG_FOURCHARACTERID = "fourCharacterID";
+    public static final String TAG_FOURCHARACTERID = "Site"; // used by OpsXML output to mimic web page labels for one site
 
     /** _more_ */
     public static final String TAG_MI_MONUMENTINSCRIPTION = "mi:monumentInscription";
@@ -119,7 +133,9 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String TAG_MI_IERSDOMESNUMBER = "mi:iersDOMESNumber";
-    public static final String TAG_IERSDOMESNUMBER = "iersDOMESNumber";
+    public static final String TAG_IERSDOMESNUMBER = "IERSDOMES";
+
+    public static final String TAG_DATAARCHIVEDATE = "latestDataArchiveDate";
 
     /** _more_ */
     public static final String TAG_MI_CDPNUMBER = "mi:cdpNumber";
@@ -127,7 +143,7 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String TAG_MI_MONUMENTDESCRIPTION = "mi:monumentDescription";
-    public static final String TAG_MONUMENTDESCRIPTION = "monumentDescription";
+    public static final String TAG_MONUMENTDESCRIPTION = "MonumentStyle"; // used by OpsXML output to mimic web page labels for one site
 
     /** _more_ */
     public static final String TAG_MI_HEIGHTOFTHEMONUMENT = "mi:heightOfTheMonument";
@@ -143,8 +159,7 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String TAG_MI_DATEINSTALLED = "mi:dateInstalled";
-    public static final String TAG_DATEINSTALLED = "dateInstalled";
-
+    
     /** _more_ */
     public static final String TAG_MI_GEOLOGICCHARACTERISTIC = "mi:geologicCharacteristic";
 
@@ -169,17 +184,23 @@ public class XmlSiteLog {
     /** _more_ */
     public static final String TAG_SITELOCATION = "siteLocation";
 
+
+    public static final String TAG_SITEQUALITY = "siteQuality";
+
     /** _more_ */
     public static final String TAG_MI_CITY = "mi:city";
-    public static final String TAG_CITY = "place_city";
+
+    public static final String TAG_CITY =    "city_or_place";
 
     /** _more_ */
     public static final String TAG_MI_STATE = "mi:state";
-    public static final String TAG_STATE = "province_region_state";
+
+    public static final String TAG_STATE =    "state_or_province";
 
     /** _more_ */
     public static final String TAG_MI_COUNTRY = "mi:country";
-    public static final String TAG_COUNTRY = "country";
+
+    public static final String TAG_COUNTRY =    "country";
 
     /** _more_ */
     public static final String TAG_MI_TECTONICPLATE = "mi:tectonicPlate";
@@ -210,13 +231,16 @@ public class XmlSiteLog {
 
     /** _more_ */
     public static final String TAG_MI_ELEVATION_M_ELLIPS = "mi:elevation-m_ellips";
-    public static final String TAG_ELLIPS_HGT = "ellipsoid_hgt";
+
+    public static final String TAG_ELEVATION_M_ELLIPS = "ellipsoid_height";
 
     /** _more_ */
     public static final String TAG_GNSSRECEIVER = "gnssReceiver";
 
     /** _more_ */
     public static final String TAG_EQUIP_RECEIVERTYPE = "equip:receiverType";
+
+    public static final String TAG_EQUIP_SAMPLEINTERVAL = "equip:sampleInterval";
 
     /** _more_ */
     public static final String TAG_EQUIP_SATELLITESYSTEM = "equip:satelliteSystem";
@@ -252,20 +276,16 @@ public class XmlSiteLog {
     public static final String TAG_EQUIP_ANTENNAREFERENCEPOINT = "equip:antennaReferencePoint";
 
     /** _more_ */
-    public static final String TAG_EQUIP_MARKER_ARPUPECC = 
-        "equip:marker-arpUpEcc";
+    public static final String TAG_EQUIP_MARKER_ARPUPECC = "equip:marker-arpUpEcc";
 
     /** _more_ */
-    public static final String TAG_EQUIP_MARKER_ARPNORTHECC =
-        "equip:marker-arpNorthEcc";
+    public static final String TAG_EQUIP_MARKER_ARPNORTHECC = "equip:marker-arpNorthEcc";
 
     /** _more_ */
-    public static final String TAG_EQUIP_MARKER_ARPEASTECC =
-        "equip:marker-arpEastEcc";
+    public static final String TAG_EQUIP_MARKER_ARPEASTECC = "equip:marker-arpEastEcc";
 
     /** _more_ */
-    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH = 
-        "equip:alignmentFromTrueNorth";
+    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH = "equip:alignmentFromTrueNorth";
 
     /** _more_ */
     public static final String TAG_EQUIP_ANTENNARADOMETYPE = 
