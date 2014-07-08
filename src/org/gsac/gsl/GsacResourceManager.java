@@ -479,7 +479,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         if (getDatabaseManager() == null) {
             return;
         }
-        //long         t1         = System.currentTimeMillis();
+
+        long         t1         = System.currentTimeMillis();
+
         List<String> tableNames = new ArrayList<String>();
         Clause       clause = getResourceClause(request, response, tableNames);
         //        System.err.println("Resource clauses:" + clause);
@@ -489,6 +491,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
         processStatement(request, response, statement, request.getOffset(),
                          request.getLimit());
+
+        long t2 = System.currentTimeMillis();
+        System.err.println("GSAC: request timing:  handled one Search Site request in " + (t2 - t1) + " ms");
     }
 
 
@@ -510,7 +515,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     public int processStatement(GsacRequest request, GsacResponse response,
                                 Statement statement, int offset, int limit)
             throws Exception {
-        //long t1 = System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
 
         //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
@@ -528,10 +533,10 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         }
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
-        //long t2 = System.currentTimeMillis();
 
-        //        System.err.println("read " + iter.getCount() + " resources in "
-        //                           + (t2 - t1) + "ms");
+        //long t2 = System.currentTimeMillis();
+        //System.err.println("GSAC: request timing:  handled data for " + iter.getCount() + " sites in " + (t2 - t1) + " ms");
+
         return iter.getCount();
     }
 
