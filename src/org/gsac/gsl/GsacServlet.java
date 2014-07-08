@@ -148,13 +148,12 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
      * @throws javax.servlet.ServletException On badness
      */
     public void init() throws javax.servlet.ServletException {
-        System.err.println("GsacServlet.init");
+        //System.err.println("GSAC: GsacServlet.init");
         super.init();
         try {
             initServlet();
         } catch (Exception exc) {
-            System.err.println("GsacServlet.init: error " + exc);
-
+            System.err.println("GSAC: GsacServlet.init: error " + exc);
             throw new RuntimeException(exc);
         }
     }
@@ -223,12 +222,9 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
             gsacRepository = createRepositoryViaReflection();
         }
 
+        //getRepository().logInfo("GSAC: GsacServlet: running repository:" + gsacRepository.getClass().getName());
 
-        getRepository().logInfo("GsacServlet: running repository:"
-                                + gsacRepository.getClass().getName());
-        getRepository().logInfo(
-            "GsacServlet: url:"
-            + getAbsoluteUrl(gsacRepository.getUrl(URL_BASE)));
+        //getRepository().logInfo("GSAC: GsacServlet: url:" + getAbsoluteUrl(gsacRepository.getUrl(URL_BASE)));
     }
 
 
@@ -251,11 +247,10 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         if (className == null) {
             className = DFLT_REPOSITORY_CLASS;
             System.err.println(
-                "No repository class name defined. Using the Example repository.\nTo use your own repository set the system property:\n"
-                + " java -D" + GsacRepository.PROP_REPOSITORY_CLASS
-                + "=your.gsac.repository.class");
+                "GSAC: No repository class name defined. Using the Example repository.\nTo use your own repository set the system property:\n"
+                + " java -D" + GsacRepository.PROP_REPOSITORY_CLASS + "=your.gsac.repository.class");
         }
-        System.err.println("GsacServlet:initServlet: making repository:"
+        System.err.println("GSAC: GsacServlet:initServlet: making repository:" 
                            + className);
         Class c = Class.forName(className);
         this.gsacRepository = (GsacRepository) c.newInstance();
@@ -502,10 +497,14 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
     public static void main(String[] args) throws Exception {
         GsacServlet servlet = new GsacServlet();
 
-        // to force numerical output to use points (periods) before the fractional part of float numbers, 
+        // JM 2010: to force numerical output to use points (periods) before the fractional part of float numbers, 
         // a  drastic solution is to set your Locale early in the main().
-        Locale.setDefault(new Locale("en", "US"));
-
+        // Locale.setDefault(new Locale("en", "US"));
+        // In worldwide use, this is perhaps not so good.  SKW 21 May 2014.
+        // Locale api in http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html;
+        // language codes in http://www.loc.gov/standards/iso639-2/php/English_list.php
+        // country codes are in http://www.davros.org/misc/iso3166.txt
+        Locale.setDefault(new Locale("fr", "FR"));
     }
 
 
