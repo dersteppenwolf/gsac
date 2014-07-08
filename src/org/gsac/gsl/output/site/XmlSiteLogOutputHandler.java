@@ -109,9 +109,9 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
         PrintWriter pw = response.getPrintWriter();
         pw.append(XmlUtil.XML_HEADER + "\n");
 
-        Date now = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
-        System.out.println("GSAC: request for SOPAC XML log file output format, at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
+        //Date now = new Date();
+        //SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
+        //System.out.println("GSAC: request for SOPAC XML log file output format, at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
         //Add the open tag with all of the namespaces
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_IGSSITELOG,
