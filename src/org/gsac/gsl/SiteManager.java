@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010; 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -48,10 +48,10 @@ import java.util.List;
  * This class has a default implementation of handleSiteRequest. To use this you need to
  * implement a number of other methods for creating the search clause, etc. See the
  * docs for {@link #handleSiteRequest}
+ * revised Feb. 25 2013; Mar 4, 2013; July 8, 2014.  New choices and ordering of OutputHandlers; see method public void initOutputHandlers().
  *
  *
  * @author Jeff McWhirter mcwhirter@unavco.org
- * revised Feb. 25 2013; Mar 4, 2013.  New choices and ordering of OutputHandlers; see method public void initOutputHandlers().
  */
 public abstract class SiteManager extends GsacResourceManager {
 
@@ -59,8 +59,7 @@ public abstract class SiteManager extends GsacResourceManager {
     public static final String CAPABILITY_GROUP_SITE_QUERY = "Site Query";
 
     /** name for the advanced group of site query capabilities */
-    public static final String CAPABILITY_GROUP_ADVANCED =
-        "Advanced Site Query";
+    public static final String CAPABILITY_GROUP_ADVANCED   = "Advanced Site Query";
 
     /**
      * ctor
@@ -141,65 +140,64 @@ public abstract class SiteManager extends GsacResourceManager {
 
 
     /**
-     * Create the output handlers for this resource, which handles (formats) the query results.
+     * Create the output handlers for this GSAC repository's services, which handles (formats) the query results.
      *
-     * Order here is order presented to the user, in the GSAC site search form menu, and in information page:
+     * Order of handlers below is the order presented to the user, in the GSAC site search form menu, and in information page.
      *
-     * FIX bug: it seems that whichever handler is first in order below gets called when the web site search page (the from page, not a real search) is first called for, 
+     * a minor bug: it seems that whichever handler is first in order below gets called when the web site search page 
+     * (the from page, not a real search) is first called for, 
      * BEFORE any query is made, which for some handlers can cause a failure and error to browser and no site search results shown. 
      * But the HTML handler seems to always work OK.
+     * So always list the HTML handler first.
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
 
-        /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  */
+        /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  
+         For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) 
+               new TextSiteLogOutputHandler(getRepository(), getResourceClass());  */
 
-        /* For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) new TextSiteLogOutputHandler(getRepository(), getResourceClass()); */
-        /* However you are encouraged to allow all these, to show consistent results from all GSAC repositories. */
-        /* There is no harm in offering all the choices, even if you do not use one or more.  Others may be using them. Nor not. It has no effect if here and not used. */
+        // In approximate order of apparent popularity of use.
+        // Reordered on 15 May 2014 after doing usage survey of UNAVCO GSAC since July 2013.
 
-        // in approximate order of expected popularity of use, and with one shift for policy reasons.
-
-        // results put in HTML, for web pages and other HTML uses:
+        // 1. results put in HTML, for GSAC web pages
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
+
+        // for SOPAC XML site log format  
+        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
+
+        // for Google Earth KMZ 
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  
+
+        // for the GSAC JSON site info format. This GSAC output format is used a supersites aggregator tool or web site.
+        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        
+        // for GAMIT's station.info format  
+        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for GAMIT's station.info format  
-        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
+        // for the GSAC Ops XML site info format; new on 22 May 2014; only requested by UNAVCO operations.
+        //new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for SOPAC XMP site log format  (and,  what format is XmlSiteOutputHandler(getRepository(), getResourceClass()); ?)
-        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-
-        // JSON.  this GSAC output format is used during 2013 by Scott Baker's geodesy aggregator search tool, so has real and current use.
-        new JsonSiteOutputHandler(getRepository(), getResourceClass());
-        
-        // the GSAC "plain text format" used to visually check what is available for sites' info.  Not for computer processing. 
-        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
-
-        // the GSAC "Full Csv" format
-        new CsvFullSiteOutputHandler(getRepository(), getResourceClass());   // for full csv formatted file of site metadata
-
-        // for Google Earth KMZ and KML
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());  
-
-        // Relics and other formats of possibly limited apparent use for geodecists.
-
-        // the GSAC "short csv format, an old legacy short csv formatted file of limited contents, an old minor format kept only for backward compatibility in case anyone ever used it:
-        new TextSiteOutputHandler   (getRepository(), getResourceClass());   
-
-        // other IT formats; not yet providing anything useful but someome may wish to complete them, or use these formats.
-        new AtomSiteOutputHandler(getRepository(), getResourceClass());
-
-        new RssSiteOutputHandler(getRepository(), getResourceClass());
-        
-        //  Not for Google Earth KML, and not the XmlSiteLogOutputHandler making SOPAC XML. For the different GSAC XML from circa 2010, a legacy format.
+        //  for the 2010 GSAC XML site info format
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        // not yet implemented: to make a IGS site log; SiteLogOutputHandler gives empty file.
-        //new SiteLogOutputHandler(getRepository(), getResourceClass()); 
+        // the 2010 GSAC short csv format
+        new TextSiteOutputHandler(getRepository(), getResourceClass());   
+
+        // for  the 2013 GSAC "Full Csv" format
+        new CsvFullSiteOutputHandler(getRepository(), getResourceClass());
+
+        // the GSAC "plain text format" used to visually check what is available for sites' info.  Not for computer processing. 
+        // Never used in 10 months, so deprecate
+        //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+
+        // Never used in 10 months new AtomSiteOutputHandler(getRepository(), getResourceClass());
+
+        // Never used in 10 months new RssSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 
