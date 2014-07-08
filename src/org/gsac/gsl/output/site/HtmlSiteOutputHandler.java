@@ -235,9 +235,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
      * @throws IOException on badness
      * @throws ServletException on badness
      */
-    public void handleSiteList(GsacRequest request, GsacResponse response,
-                               Appendable pw)
-            throws IOException, ServletException {
+    public void handleSiteList(GsacRequest request, GsacResponse response, Appendable pw) throws IOException, ServletException {
+
         StringBuffer formBuffer      = new StringBuffer();
         List<String> tabContents     = new ArrayList<String>();
         List<String> tabTitles       = new ArrayList<String>();
@@ -250,7 +249,6 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         List<GsacSite> sites = response.getSites();
         if (sites.size() == 0) {
             pw.append(
-                /* language  getRepository().makeInformationDialog(msg("No sites found / Nessun sito trovato"))); */
                 getRepository().makeInformationDialog(msg("No sites found")));
             pw.append(formBuffer);
 
@@ -263,8 +261,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             tabContents.add(message);
         }
 
-        StringBuffer searchLinks = makeOutputLinks(request,
-                                       getResourceClass());
+        StringBuffer searchLinks = makeOutputLinks(request, getResourceClass());
 
         StringBuffer extraSB = new StringBuffer();
 
@@ -272,12 +269,12 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             extraSB.append(getHeader(msg("Search Criteria")));
             extraSB.append(message);
         }
+
         extraSB.append(formBuffer);
 
         extraSB.append(HtmlUtil.p());
 
-        // original and ambiguous meaning to many:
-        //extraSB.append(getHeader(msg("Search Links")));
+        // original page heading extraSB.append(getHeader(msg("Search Links")));
         extraSB.append(getHeader(msg("Result Output Formats")));
 
         extraSB.append(HtmlUtil.insetLeft(searchLinks.toString(), 10));
@@ -323,6 +320,5 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
     }
 
-
-
 }
+
