@@ -129,8 +129,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         try {
             Class.forName(getDriverClassName());
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not load the jdbc driver:"
-                                       + getDriverClassName());
+            throw new RuntimeException(" GSAC: Could not load the jdbc driver:" + getDriverClassName());
         }
         //        System.err.println("DB: Creating data source");
         makeNewDataSource();
@@ -218,8 +217,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             properties.load(propertiesIS);
             //                System.err.println("properties:" + properties);
         } catch (Exception exc) {
-            throw new IllegalArgumentException("Could not load properties:"
-                    + propertiesFile);
+            throw new IllegalArgumentException("GSAC: Could not load properties:" + propertiesFile);
         }
     }
 
@@ -343,7 +341,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             return driver;
         }
         String jdbcUrl = getDatabaseProperty(PROP_GSAC_DB_JDBCURL);
-        System.err.println("JDBC:" + jdbcUrl);
+        //System.err.println("GSAC: JDBC:" + jdbcUrl);
         if (jdbcUrl == null) {
             return null;
         }
@@ -798,7 +796,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             pw.append("\n");
             pw.append(sp2 + "public String getName() {return NAME;}\n");
             pw.append(sp2 + "public String getColumns() {return COLUMNS;}\n");
-            System.out.println("processing " + TABLENAME);
+            //System.out.println("processing " + TABLENAME);
 
             String  tableVar = null;
             List    colVars  = new ArrayList();
