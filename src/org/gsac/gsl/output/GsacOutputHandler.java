@@ -218,13 +218,13 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
         getRepository().processRequest(type, gsacRequest, gsacResponse);
 
-        // long t2 = System.currentTimeMillis();
+        //long t2 = System.currentTimeMillis();
 
         handleResult(gsacRequest, gsacResponse);
 
-        //long t3 = System.currentTimeMillis();
-        //System.err.println("GSAC.handleRequest time to read:" + (t2 - t1) + " time to encode:" + (t3 - t2) + 
-        //  " #resources:" + gsacResponse.getResources().size());
+        // a trifle of total time demand: long t3 = System.currentTimeMillis();
+        //System.err.println("GSAC: new request;     time to read:" + (t2 - t1) + " ms;  time to encode:" + (t3 - t2) + 
+        //  " ms;  count of resources:" + gsacResponse.getResources().size());
     }
 
 
