@@ -119,14 +119,10 @@ public class DateRangeCollection extends GsacMetadata {
                 buff.append("</td>");
             }
             lastTime = tuple[1];
-            System.err.println(from + " " + to + " width:" + width + " %:"
-                               + percentOfTimeRange);
+            //System.err.println(from + " " + to + " width:" + width + " %:" + percentOfTimeRange);
             buff.append("<td bgcolor=red>");
-            buff.append(
-                HtmlUtil.img(
-                    repository.iconUrl("/blank.gif"), "",
-                    HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "" + width)
-                    + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")));
+
+            buff.append( HtmlUtil.img( repository.iconUrl("/blank.gif"), "", HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "" + width) + HtmlUtil.attr(HtmlUtil.ATTR_HEIGHT, "10")));
 
             buff.append("</td>");
             //            buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] { from,
