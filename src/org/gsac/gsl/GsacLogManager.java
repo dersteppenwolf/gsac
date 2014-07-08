@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010; 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -30,14 +30,16 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
 import java.io.*;
-
 import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 
 /**
  * Handles logging
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
+ * @author SKW improved time tags and messages    8 Jul 2014
  */
 public class GsacLogManager extends GsacManager {
 
@@ -106,15 +108,13 @@ public class GsacLogManager extends GsacManager {
      */
     public void initLogDir(File gsacDir) {
         logDirectory = new File(gsacDir.toString() + "/logs");
-        System.err.println("GSAC: Logging to:" + logDirectory);
+        System.err.println("GSAC: logging to " + logDirectory + "/gsac.log, and/or /usr/local/apachetomcat/logs/catalina.out");
         if ( !logDirectory.exists()) {
             System.err.println("GSAC: Making log dir:" + logDirectory);
             logDirectory.mkdir();
             if ( !logDirectory.exists()) {
-                System.err.println("GSAC: failed to created log directory:"
-                                   + logDirectory);
+                System.err.println("GSAC: failed to created log directory:" + logDirectory);
                 System.err.println("GSAC: are permissions OK?");
-
                 return;
             }
         }
@@ -149,8 +149,7 @@ public class GsacLogManager extends GsacManager {
         String uri       = request.getRequestURI();
         String method    = request.getMethod();
         String userAgent = request.getUserAgent("none");
-        String time      = GsacOutputHandler.makeDateFormat(
-                          "dd/MMM/yyyy:HH:mm:ss Z").format(new Date());
+        String time      = GsacOutputHandler.makeDateFormat("dd/MMM/yyyy:HH:mm:ss Z").format(new Date());
         int response = 200;  // always set to this in GsacResponse.startResponse()
         String requestPath = method + " " + uri + " "
                              + request.getHttpServletRequest().getProtocol();
@@ -228,10 +227,17 @@ public class GsacLogManager extends GsacManager {
         if (logDirectory != null) {
             getErrorLogger().info(message);
         } else {
-            System.err.println("GSAC INFO: " + getDTTM() + ": " + message);
+            System.err.println("GSAC: Starting this GSAC server, at " + getUTCnowString() );
         }
     }
 
+
+    public static String getUTCnowString() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format(new Date());
+        return utcTime;
+    }
 
 
     /**
@@ -242,9 +248,6 @@ public class GsacLogManager extends GsacManager {
     public String getLogTemplate() {
         return LOG_TEMPLATE;
     }
-
-
-
 
 
 
@@ -260,6 +263,7 @@ public class GsacLogManager extends GsacManager {
 
         return LOG;
     }
+
 
     /**
      * _more_
