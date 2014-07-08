@@ -42,7 +42,6 @@ public interface GsacExtArgs {
 
     /** HtCod is for GAMIT station.info format */
     public static final String ARG_ANTENNA_HTCOD = GsacArgs.ARG_SITE_PREFIX + "antenna.htcod";
-    
 
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
@@ -74,7 +73,6 @@ public interface GsacExtArgs {
     /** Name of station's tectonic plate.  */
     public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX + "tectonicplate";
 
-    /**  */
     public static final String SITE_METADATA_MONUMENTINSCRIPTION = "site.metadata.monumentinscription";
 
     public static final String SITE_METADATA_IDENTIFICATIONMONUMENT = "site.metadata.identificationmonument";
@@ -83,7 +81,6 @@ public interface GsacExtArgs {
 
     public static final String SITE_METADATA_IERDOMES = "site.metadata.ierdomes";
 
-    /** not used yet (?) */
     public static final String SITE_METADATA_INDIVIDUALCALIBRATION = "site.metadata.calibration";
 
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
@@ -94,7 +91,7 @@ public interface GsacExtArgs {
 
     public static final String SITE_PHOTO_URL = "site.metadata.photoURL";
 
-    /**  the x,y,z coordinate values of a location in a terrestrila reference frame: */
+    /**  the x,y,z coordinate values of a location in a geodetic reference frame: */
     public static final String SITE_TRF_X = "site.metadata.x";
     public static final String SITE_TRF_Y = "site.metadata.y";
     public static final String SITE_TRF_Z = "site.metadata.z";
