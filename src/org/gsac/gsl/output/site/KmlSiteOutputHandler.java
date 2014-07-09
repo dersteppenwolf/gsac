@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -20,8 +20,6 @@
 
 package org.gsac.gsl.output.site;
 
-
-
 import org.gsac.gsl.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.model.*;
@@ -31,31 +29,29 @@ import org.w3c.dom.*;
 
 import ucar.unidata.data.gis.KmlUtil;
 import ucar.unidata.util.HtmlUtil;
-
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
-
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.*;
-
 import java.util.ArrayList;
-
 import java.util.Hashtable;
 import java.util.List;
 import java.util.zip.*;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
-
 
 /**
  * Class description
  *
+ * Make a KMZ file for Google Earth, of stations.
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version        Wed, May 19, '10
+ * @author         J McWhirter
+ *
+ * @version        4 June 2014 
+ * @author         S K Wier; revise contents of the site balloons in Google Earth.  And begin to add some comments.
  */
 public class KmlSiteOutputHandler extends HtmlOutputHandler {
 
@@ -74,15 +70,11 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
     public KmlSiteOutputHandler(GsacRepository gsacRepository,
                                 ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_KML,
-                                      "Google Earth KML", "/sites.kml",
-                                      true));
 
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_KMZ,
-                                      "Google Earth KMZ", "/sites.kmz",
-                                      true));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_KMZ, "Google Earth KMZ", "/sites.kmz", true));
+
+        // 2014 usage survey of UNAVCO GSAC shows this output choice, for a KML file, is never used, so do not offer it.
+        //getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_KML, "Google Earth KML", "/sites.kml", true));
     }
 
 
@@ -111,7 +103,8 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                               GsacResponse response)
             throws Exception {
         String path = request.getRequestURI();
-        //If the path does not end with .kml then send a redirect
+
+        //If the path does not end with .kmz then send a redirect
 
         boolean kmz = request.get(ARG_OUTPUT, "").equals(OUTPUT_SITE_KMZ);
 
@@ -124,31 +117,25 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
             return;
         }
 
-
         if ( !path.endsWith(".kml") && !path.endsWith(".kmz")) {
             path = path + "/sites.kml";
             String redirectUrl = path + "?" + request.getUrlArgs();
             response.sendRedirect(redirectUrl);
             response.endResponse();
-
             return;
         }
 
         boolean      kml = path.endsWith(".kml");
 
-
         StringBuffer sb  = new StringBuffer();
-        response.startResponse(kml
-                               ? GsacResponse.MIME_KML
-                               : GsacResponse.MIME_KMZ);
+        response.startResponse(kml ? GsacResponse.MIME_KML : GsacResponse.MIME_KMZ);
         getRepository().processRequest(getResourceClass(), request, response);
         Element root   = KmlUtil.kml("Site Search");
         Element doc    = KmlUtil.document(root, "GSAC Google Earth Stations", true);
         Element folder = doc;
         //        Element folder = KmlUtil.folder(doc, "Site Groups", false);
         List<GsacSite>             sites    = response.getSites();
-        Hashtable<String, Element> groupMap = new Hashtable<String,
-                                                  Element>();
+        Hashtable<String, Element> groupMap = new Hashtable<String, Element>();
         Hashtable<String, Element> iconMap = new Hashtable<String, Element>();
         for (GsacSite site : sites) {
             String       href = makeResourceViewHref(site);
@@ -161,8 +148,7 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                 ResourceGroup firstGroup = groups.get(0);
                 groupElement = groupMap.get(firstGroup.getId());
                 if (groupElement == null) {
-                    groupElement = KmlUtil.folder(folder,
-                            firstGroup.getName(), false);
+                    groupElement = KmlUtil.folder(folder, firstGroup.getName(), false);
                     groupMap.put(firstGroup.getId(), groupElement);
                 }
             }
@@ -186,7 +172,6 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         }
         //      System.err.println("xml:" +  XmlUtil.toString(root));
 
-
         if (kml) {
             PrintWriter pw = response.getPrintWriter();
             XmlUtil.toString(root, pw);
@@ -204,8 +189,5 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
         }
         response.endResponse();
     }
-
-
-
 
 }
