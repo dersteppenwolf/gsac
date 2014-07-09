@@ -39,7 +39,7 @@ import java.text.DecimalFormat;
 /**
  * Class description: formats query results to write a csv file format, with only name and location.
  *
- * This produces a SHORT report with few values. FB wants to keep it (legacy issue).   Noted Feb 25 2013.
+ * This produces a SHORT report with few values. 
  *
  * 26 Feb 2013: output shows huge number of digits in latitude and longitude. Reformatted same.
  * 20 Nov 2013:
@@ -75,7 +75,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public TextSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, short csv", "/sites.csv", true));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, csv", "/sites.csv", true));
     }
 
 
