@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -82,6 +83,7 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
     /** date and time formatter; looks like ISO 8601 standard */
     private SimpleDateFormat sdf2 =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+    // replace with iso8601UTC function 
 
     /**
      * ctor
@@ -127,6 +129,25 @@ public class SiteLogOutputHandler extends GsacOutputHandler {
         //        pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_IGSSITELOG));
         //Done
         response.endResponse();
+    }
+
+
+    /**
+     *  make this date-time in UTC, in ISO 8601 format
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    private String iso8601UTCDateTime(Date date) {
+        if (date == null) { return ""; }
+        /*synchronized (dateTimeFormatnoT) {
+            return dateTimeFormatnoT.format(date); } */
+        // make this date-time in UTC, in ISO 8601 format 
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format( date );
+        return utcTime;
     }
 
 
