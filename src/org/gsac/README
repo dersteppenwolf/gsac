@@ -1,40 +1,46 @@
-########################################################################### ############################################################################
+##############################################################c################################################################
 
-                                                                  GSAC Installation
+                                                     GSAC Installation
 
-                                       README, Part 1.  Creating an Initial GSAC server at your Data Center 
+                            README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                                        10 April 2014.  Stuart Wier, UNAVCO
-                                                             Copyright (C) 2014 UNAVCO.
+                                           7 July 2014.  Stuart Wier, UNAVCO
+                                               Copyright (C) 2014 UNAVCO.
 
 Introduction
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can offer a set of complete, 
-consistent, modern web services for remote users to query the data center about stations and instruments, and download data files make by the instruments, 
-and product files such as plots.  The UNAVCO GSAC home page is at http://facility.unavco.org/data/gsacws/gsacws.html. 
+consistent, modern web services for remote users to query the data center about stations and instruments, and download data 
+files make by the instruments, and product files such as plots.  The UNAVCO GSAC home page is at 
+http://facility.unavco.org/data/gsacws/gsacws.html. 
 
-This README file describes the first steps in GSAC installation, and is Part 1 of two README files detailing GSAC installation.  This file is found 
-in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge, as described below.
+This README file describes the first steps in GSAC installation, and is Part 1 of two README files detailing GSAC installation.  
+This file is found in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge, as described below.
 
-These instructions apply both to installing GSAC services for a data repository, and to installing a Federated GSAC which merges GSAC services from several 
-separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README file except the section 
-"Create GSAC configuration files and make your initial GSAC,"  and then follow the section "To Build a Federated GSAC".
+These instructions apply both to installing GSAC services for a data repository, and to installing a Federated GSAC which merges 
+GSAC services from several separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README 
+file except the section "Create GSAC configuration files and make your initial GSAC,"  and then follow the section "To Build a 
+Federated GSAC".
 
-These instructions use a hypothetical "Boulder" agency and data repository, running a GPS network called "BoulderNet." You will use other words in place of these.
+These instructions use a hypothetical "Boulder" agency and data repository, running a GPS network called "BoulderNet." You will 
+use other words in place of these.
 
 About Time Formats in GSAC
 
-GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and error-prone behavior of using several different formats. Internally GSAC avoids use of character strings for time.  Date and time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' native datetime objects.  Date and time values in the ISO 8601 format as character strings may be easily converted into Java Date objects with this line:
-   Date dateobj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeString);
+GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and 
+error-prone behavior of using several different formats. Internally GSAC avoids use of character strings for time.  Date and 
+time values in the ISO 8601 format as character strings may be easily entered into and extracted from databases as databases' 
+native datetime objects.  Date and time values in the ISO 8601 format as character strings may be easily converted into Java 
+Date objects.
 
 GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number in an ISO 8601 value.  
-GSAC does not expect times in the database to be in any time zone other than UTC.  You may if you wish enter such times but that is discouraged.
+GSAC does not expect times in the database to be in any time zone other than UTC.  You may if you wish enter such times but 
+that is discouraged.
 
-########################################################################### ############################################################################
+##############################################################c################################################################
 
 
 Installing the GSAC Web Services Software Package for a Data Repository, Part 1.
-
 
 First review these sections in the UNAVCO GSAC web site, "GSAC Installation" page:
 
@@ -44,11 +50,11 @@ Local Repository Implementation Code
 
 A Database for GSAC
 
+The web site is at http://www.unavco.org/software/data-management/gsac/gsac.html, or simply Google "UNAVCO GSAC" to find the 
+UNAVCO GSAC web site.
 
-Google "UNAVCO GSAC" to find the UNAVCO GSAC web site.
 
-
-########################################################################### ############################################################################
+##############################################################c################################################################
 
 Install the GSAC core code
 
@@ -68,12 +74,14 @@ cd    ~/GSAC/
 
 svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
-    (to find this command at SourceForge, go to https://sourceforge.net/projects/gsac/, and click on the 'Code' menu item in the 'Summary Files ...' menu line.)
+    (to find this command at SourceForge, go to https://sourceforge.net/projects/gsac/, and click on the 'Code' menu item
+        in the 'Summary Files ...' menu line.)
 
     (svn *export* simply downloads all the files for the project, with no revision control permission required.  
      svn checkout is used if you have a developer's role, to check in new code to GSAC on SourceForge.)
 
-    The svn command creates a new folder named gsac-code, and many folders in it, and downloads about 650 or 700 files from GSAC at SourceForge.
+    The svn command creates a new folder named gsac-code, and many folders in it, and downloads about 650 or 700 files 
+    from GSAC at SourceForge.
 
     Build the GSAC core code.
 
@@ -98,22 +106,24 @@ Total time: 36 seconds
     Look for any error messages.  If there are none, you have completed the GSAC core code.
 
     This process makes a Java jar file, named gsacws.jar, in GSAC/gsac-code/lib/, with size about 5 MB.
-    This file "contains" the built and executable GSAC core code, in effect.  This jar file will be used to build your final Java jar file for your complete GSAC server code.
+    This file "contains" the built and executable GSAC core code, in effect.  This jar file will be used to build your final
+    Java jar file for your complete GSAC server code.
 
     End of part 1, installation of GSAC core code.
 
 
-################################################################################ ################################################################################
+##############################################################c################################################################
 
 
 Updating GSAC to get new core code from SourceForge.
 
-After you are operating a GSAC service, you may wish to update your core GSAC code, to use new features, or corrections, added to GSAC 
-after you first installed GSAC.
+After you are operating a GSAC service, you may wish to update your core GSAC code, to use new features, or corrections, added
+to GSAC after you first installed GSAC.
 
 Running 'ant' in GSAC/gsac-code/ (or wherever you put GSAC on your system) builds the core GSAC code, as just described.
 
-This step (but not the SourceForge svn export step) is also used from time to time when GSAC developers have checked in new code to SourceForge.
+This step (but not the SourceForge svn export step) is also used from time to time when GSAC developers have checked in new code
+to SourceForge.
 
 To update your GSAC with that new code, first do svn update to get the bew source code files.
 
@@ -130,7 +140,7 @@ ant
 and then again build your local GSAC code in your GSAC code area, with ant, as described below.
 
 
-################################################################################ ################################################################################
+##############################################################c################################################################
 
 Create GSAC configuration files and make your initial GSAC.
 
@@ -139,14 +149,16 @@ Set Map Area:
 
 Use the file ~/GSAC/gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
 
-to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  For example:
+to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  
+For example:
 
   var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
   var defaultZoomLevel = 5;
 
 The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
 
-The unchanged file repositorymap.js from SourceForge shows Europe.  If your data is from Europe, you not not have to revise this file.
+The unchanged file repositorymap.js from SourceForge shows Europe.  If your data is from Europe, you not not have to revise this 
+file.
 
 
 Again build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
@@ -171,7 +183,8 @@ cd  ~/GSAC/gsac-code/src/org/gsac/template/
     target.package=org.boulder.gsac
 
     ## All of the new Java .java files and .class files for your GSAC installation will have the following prefix for their names.
-    ## Replace Demo with a short name for your data repository, something like Boulder.  Use no spaces, and with only the first letter in upper case, to match Java class naming conventions.
+    ## Replace Demo with a short name for your data repository, something like Boulder.  Use no spaces, and with only the first 
+    ## letter in upper case, to match Java class naming conventions.
     target.prefix=Boulder
 
     ## Choose which Java database driver (in GSAC) to read the database your GSAC code will read.  Choose (uncomment) one of these three:
@@ -240,8 +253,8 @@ Follow the README file there to complete your GSAC installation. That is README 
 End of GSAC basic installation section of README Part 1.
 
 
-################################################################################ ################################################################################
-################################################################################ ################################################################################
+##############################################################c################################################################
+##############################################################c################################################################
 
 To Build a Federated GSAC
 
@@ -257,8 +270,9 @@ If you have not already installed GSAC in any way, do step 1 below.
 Otherwise do svn update for your GSAC core code again (unless you did svn update after 12 Mar 2014), 
 to get the original working code for federated GSACs, and then go to step 2.
 
-The installation instructions for federated GSACs are also included in the GSAC package from SourceForge, in the file  README_GSAC_Federated_Installation, 
-for example in ~/GSAC/gsac-code/src/org/gsac/federated/README_GSAC_Federated_Installation.  (ignore the file 'README there)
+The installation instructions for federated GSACs are also included in the GSAC package from SourceForge, in the file  
+README_GSAC_Federated_Installation, for example in ~/GSAC/gsac-code/src/org/gsac/federated/README_GSAC_Federated_Installation. 
+(ignore the file 'README there)
 
 ###########################################   ###########################################
 
@@ -301,21 +315,23 @@ Install GSAC core code, as described in the GSAC web site, repeated here:
 
     Look for any error messages.  If there are none, you have completed the GSAC core code.  
     This process makes a Java jar file, named gsacws.jar, in ~/GSAC/gsac-code/lib/, with size about 5 MB.
-    This file contains the executable GSAC core code, in effect.  This jar file will be used to build your final Java .jar file, and Tomcat .war file, for your complete GSAC server code.
+    This file contains the executable GSAC core code, in effect.  This jar file will be used to build your final Java .jar file, 
+    and Tomcat .war file, for your complete GSAC server code.
 
 ###########################################   ###########################################
 
 2. Specify connections to remote GSACs.
 
-Federated GSACs use the services provided by other GSAC installations, usually at remote locations. Federated GSACs do not use a local data repository.
+Federated GSACs use the services provided by other GSAC installations, usually at remote locations. Federated GSACs do not 
+use a local data repository.
 
 You must tell your federated GSAC about the other GSACs to use.
 
 Go to the gsac/federated/ directory in your GSAC package, for example, something like  ~/GSAC/gsac-code/src/org/gsac/federated/.  
 The files to make a federated GSAC are here.
 
-Edit the file ~/GSAC/gsac-code/src/org/gsac/federated/resources/gsacserver_test.properties to specify the values for the remote GSACs to use.  
-Lines beginning with '#' are comments.  Here is an example of the complete file:
+Edit the file ~/GSAC/gsac-code/src/org/gsac/federated/resources/gsacserver_test.properties to specify the values for the remote 
+GSACs to use.  Lines beginning with '#' are comments.  Here is an example of the complete file:
 
     # For a federated GSAV, specify remote GSACs to use, and your GSAC's host.
     # (This file gsacserver_test.properties gets copied to gsacserver.properties when you do ant.)
@@ -325,10 +341,12 @@ Lines beginning with '#' are comments.  Here is an example of the complete file:
     gsac.server.port=80
 
     # For the remote GSACs to connect to, specify:
-    #gsac.federated.servers=                                     A comma-separated list of the remote GSACs (your own names, for use in this file only)
-    #gsac.federated.<id>.url=                                    A known URL for a remote GSAC, or the "Base URL" from the Infomation page on each remote GSAC web site (which can in some cases be incorrect).
-    #gsac.federated.<id>.name=name                               To show this name on your federated GSAC, a name for a remote GSAC repository 
-    #gsac.federated.<id>.icon=url                                To link to small icon for that remote repository. Will be used inside web page tables of results, so a height < 50 pixels is good.
+    #gsac.federated.servers=        A comma-separated list of the remote GSACs (your own names, for use in this file only)
+    #gsac.federated.<id>.url=       A known URL for a remote GSAC, or the "Base URL" from the Infomation page on each remote 
+                                    # GSAC web site (which can in some cases be incorrect).
+    #gsac.federated.<id>.name=name  To show this name on your federated GSAC, a name for a remote GSAC repository 
+    #gsac.federated.<id>.icon=url   To link to small icon for that remote repository. Will be used inside web page tables of results,
+                                    # so a height < 50 pixels is good.
 
     # examples (URLS shown are non-working):
 
@@ -370,7 +388,8 @@ do
 
 ant
 
-This ant command builds a .jar file and a .war file, and copies resources/gsacserver_test.properties to resources/gsacserver.properties.
+This ant command builds a .jar file and a .war file, and copies resources/gsacserver_test.properties 
+to resources/gsacserver.properties.
 
 The customary GSAC test command "ant runserver" will usually fail because it cannot connect to remote GSACs.
 You must deploy the federated GSAC on a web server, typically with Tomcat, to test it.
@@ -395,13 +414,10 @@ Your federated GSAC URL will have a Base URL something like http://www.boulder.o
 
 end of README for installing a federated GSAC.
 
-###########################################   ###########################################
-
-
-################################################################################
+##############################################################c################################################################
 
 end of README Part 1 for GSAC installation.
 
 Copyright (C) 2014 UNAVCO.
 
-################################################################################
+##############################################################c################################################################
