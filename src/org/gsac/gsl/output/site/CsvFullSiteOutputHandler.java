@@ -38,6 +38,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,13 +56,13 @@ import javax.servlet.http.*;
  * and see  http://ramadda.org/repository/entry/show/Home/RAMADDA+Information/Development/CF+for+CSV?entryid=23652828-c6f4-482b-bb2f-041dae14542e
  *
  * This GSAC Full Csv format file has values for:
- * ID,station name,latitude,longitude,ellip. height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,sample interval, SwVer, site count
+ * ID,station name,latitude,longitude,ellip. height,monument description,IERSDOMES,db record start date,db record stop date,antenna type,dome type,antenna SN,Ant dZ,Ant dN,Ant dE,receiver type, firmware version,receiver SN,sample interval, site count
  * The fields are separated with commas. Leading and trailing space-characters adjacent to comma field separators are ignored.
  * NO commas are allowed here inside a field value; this usually pertains to only site descriptions in geodesy data. Any commas in such a field are replaced with " ".
  *
  * others possible:
  * agency , city/place, region, country
- * pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
+ * and pw.append( _ALIGNMENTFROMTRUENORTH, "", ""));
  * pw.append(EQUIP_ANTENNACABLETYPE, "",
  * pw.append(EQUIP_ANTENNACABLELENGTH,
  * 
@@ -76,6 +77,7 @@ import javax.servlet.http.*;
  * revised, new name to avoid conflict with another similar class now reinstituted. Feb. 25 2013. SKW.
  * @author  SK Wier   Nov 15, 2013 ; 21 Nov 2013 added sample interval and SwVer to output.
  * revised: added code to remove commas in char String values, which ruins csv formatting. Feb 6,7 2014.
+ * revised: SKW revised 23 May 2014.
  */
 public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
@@ -98,7 +100,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
     int sitecount=0;
 
     /** output id */
-    public static final String OUTPUT_SITE_FULL_CSV = "site.csv.full";
+    public static final String OUTPUT_SITE_FULL_CSV = "sitefull.csv";
 
     /** date formatter  note NO "T", and we do not know if it is UTC time or what.*/
     /* somehow the Z here results in a value like "2001-07-11 00:00:00 -0600" with no Z */
@@ -134,7 +136,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     public CsvFullSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_FULL_CSV, "GSAC Sites info, Full csv", "/fullsites.csv", true)); 
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_FULL_CSV, "GSAC Sites info full csv", "/fullsites.csv", true)); 
         // note with  .csv extension, some browsers want to show the results in Excel or other packages which is  the reverse of useful for geodesy.
     }
 
@@ -148,15 +150,15 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
-        //This sets output mime type (how browser handles it; text lets user see query results in a browser, and can also get form the gsac client with file name sites.csv)
-        // BUT  in this case where file extesion is ".csv"  the browser probably would ignore this 'text' value and try to load the file in some doc processor like Excel.
+        // The next line sets output mime type (how browser handles it; text lets user see query results in a browser, and can also get form the gsac client with file name sitesfull.csv)
+        // But in this case where file extension is ".csv"  the browser may probably ignore this 'text' value and try to load the file in some doc processor like Excel.
         response.startResponse("text");
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
         //Get all the sites in the results (response) from the GSAC site query made by the user: 
         List<GsacSite> sites = response.getSites();
         sitecount=0;
-        //For each site actually each equipment session at each site:
+        //For each site, get and append the information :
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
@@ -174,9 +176,12 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      * @param pw _more_
      */
     private void addHeader (PrintWriter pw) {
-        pw.append    ("#fields=ID[type='string'],station name[type='string'],latitude,longitude,ellip. height[unit='m'],monument description[type='string'],IERSDOMES[type='string'],start time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],stop time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna type[type='string'],dome type[type='string'],antenna SN[type='string'],Ant dZ,Ant dN,Ant dE,receiver type[type='string'], firmware version[type='string'],receiver SN[type='string'],sample interval,SwVer,site count\n");
-        pw.append(  "#   Generated by "+ getRepository().getRepositoryName()  + " on "+ myFormatDateTime(new Date()) + " \n");
-        pw.append(  "#   Missing times (no characters) may mean 'not removed' or 'no change.' \n");
+        // with SwVer: pw.append("#fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,receiver_type[type='string'],firmware_version[type='string'],receiver_SN[type='string'],sample_interval,SwVer,site_count\n");
+        pw.append("#fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,receiver_type[type='string'],firmware_version[type='string'],receiver_SN[type='string'],receiver_sample_interval,site_count\n");
+        pw.append("#   Generated by "+ getRepository().getRepositoryName()  + " on "+ iso8601UTCDateTime(new Date()) + " \n");
+        pw.append("#   Missing times (no characters) may mean 'not removed' or 'no change.' \n");
+        pw.append("#   The CSV convention for point data is CF for CSV; see http://facility.unavco.org/data/gsacws/docs/UNAVCO_standard_CSV_format.html \n");
+        // and see  http://ramadda.org/repository/entry/show/Home/RAMADDA+Information/Development/CF+for+CSV?entryid=23652828-c6f4-482b-bb2f-041dae14542e
     }
 
     /**
@@ -196,12 +201,13 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
             oldname = id;
         }
         name = cleanString( site.getLongName() ); // cleanString removes unwanted commas in the station name which mess up the csv line
-        mondesc =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
-        iersdomes =getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "");
-        // these next two often missing and not printed out below
-        cdpnum =getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "");
-        Date date = site.getFromDate();
-        if (date != null) { indate = myFormatDateTime(date); }
+        mondesc =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, ""); // LOOK FIX gets nothing
+        iersdomes =getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, ""); // LOOK FIX gets nothing
+
+        // these next two are not printed out below
+        //cdpnum =getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "");
+        // Date date = site.getFromDate(); // when station started; will use equip session start date instead
+        // if (date != null) { indate = iso8601UTCDateTime(date); }
     }
 
     /**
@@ -307,14 +313,14 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
             gotsession=1;
 
             if (equipment.hasReceiver()) {
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
 
                 // for rectype, handle case of value 'unknown' or 'not provided'
                     String answer = equipment.getReceiver();
                     answer = answer.replaceAll(",", " ");
                     if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
-                       answer="N/A";
+                       answer="";
                     }
                 rectype = answer;
 
@@ -322,15 +328,15 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                     answer = equipment.getReceiverSerial();
                     answer = answer.replaceAll(",", " ");
                     if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
-                       answer="N/A";
+                       answer="";
                     }
                 recsn= answer;
 
                 // for firmvers, handle case of value 'unknown' or 'not provided'
                     answer = equipment.getReceiverFirmware();
                     answer = answer.replaceAll(",", " ");
-                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
-                       answer="N/A";
+                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("none given") || answer.equals(" ") ) {
+                       answer="";
                     }
                 firmvers = answer;
 
@@ -352,50 +358,51 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 if (ante.equals("0")) { ante = "0.0000"; }
                 if (ante == null) { ante = "0.0000"; }
                 anttype=getNonNullString(equipment.getAntenna());
-                //antsn  =getNonNullString(equipment.getAntennaSerial());
                 // for antsn, handle case of value 'unknown' or 'not provided'
-                    String answer = equipment.getAntennaSerial();
-                    answer = answer.replaceAll(",", " ");
-                    if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("") || answer.equals(" ")) {
-                       answer="N/A";
-                    }
+                String answer = equipment.getAntennaSerial();
+                answer = answer.replaceAll(",", " ");
+                if ( answer.contains("unknown") || answer.contains("not provided") || answer.equals("none given") || answer.equals(" ")) {
+                       answer="";
+                }
                 antsn = answer;
-
                 dome = getNonNullString(equipment.getDome());
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
             }
 
            // construct the csv file line for this session at a site:
            pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
-               starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sampIntstr+","+swVer+","+sitecount+"\n");
+               starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sampIntstr+","+sitecount+"\n");
+               // with SWVer: starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sampIntstr+","+swVer+","+sitecount+"\n");
 
         } // end get equip details
 
         // construct the csv file line  if lacking session info:
         if ( 0 == gotsession) {
            pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
-               starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sampIntstr+","+swVer+","+sitecount+"\n");
+               starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sampIntstr+","+sitecount+"\n");
+               // with SwVer: starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +firmvers+"," +recsn+","+sampIntstr+","+swVer+","+sitecount+"\n");
         }
 
     }     // end addSiteEquipment
 
 
     /**
-     * _more_
+     *  make this date-time in UTC, in ISO 8601 format
      *
      * @param date _more_
      *
      * @return _more_
      */
-    private String myFormatDateTime(Date date) {
+    private String iso8601UTCDateTime(Date date) {
         if (date == null) { return ""; }
         /*synchronized (dateTimeFormatnoT) {
-            return dateTimeFormatnoT.format(date);
-        } */
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return formatter.format(date);
-
+            return dateTimeFormatnoT.format(date); } */
+        // make this date-time in UTC, in ISO 8601 format 
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format( date );
+        return utcTime;
     }
 
     /**
