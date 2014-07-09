@@ -39,6 +39,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Hashtable;
 import java.util.List;
 import javax.servlet.*;
@@ -196,7 +197,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
      */
     private void addHeader (PrintWriter pw) {
         String now;
-        now = getNonNullString(myFormatDateTime( new Date()));
+        now = getNonNullString(iso8601UTCDateTime( new Date()));
         now = getSinexTimeFormat(now, new Date());
         // need this at top of page <meta charset='utf-8'>
         pw.append(  "%=SNX 2.01 " + getRepository().getRepositoryName() + " "+ now + "\n"); 
@@ -539,9 +540,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 // for testing ONLY: 
                 //pw.append("         REC SESSION "+sescount+  "\n ");
                 pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
@@ -571,9 +572,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             }
 /*
             else if (equipment.hasAntenna()) {
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 if (starttime.equals(prevAntStartTime) ) {
                     ; //  why two antenna sessions with same times?
@@ -622,9 +623,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 // for testing ONLY: 
                 //pw.append("         REC SESSION "+sescount+  "\n ");
                 pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 pw.append( starttime+ " ");
                 pw.append( stoptime+ " ");
@@ -636,9 +637,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
               */
 
             if (equipment.hasAntenna()) {
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
 
                 
@@ -712,9 +713,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
             if (equipment.hasAntenna()) {
-                starttime= getNonNullString(myFormatDateTime( equipment.getFromDate()));
+                starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
-                stoptime= getNonNullString(myFormatDateTime( equipment.getToDate()));
+                stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 if (starttime.equals(prevAntStartTime) ) {
                     ; //  why two antenna sessions with same times?  // don't reprint the same line
@@ -772,22 +773,25 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         return formatter.format(date);
     }
 
+
     /**
-     * _more_
+     *  make this date-time in UTC, in ISO 8601 format
      *
      * @param date _more_
      *
      * @return _more_
      */
-    private String myFormatDate(Date date) {
+    private String iso8601UTCDateTime(Date date) {
         if (date == null) { return ""; }
-        /*synchronized (dateFormat) {
-            return dateFormat.format(date);
-        } 
-          */
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return formatter.format(date);
+        /*synchronized (dateTimeFormatnoT) {
+            return dateTimeFormatnoT.format(date); } */
+        // make this date-time in UTC, in ISO 8601 format 
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format( date );
+        return utcTime;
     }
+
 
 
   /**
@@ -890,7 +894,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
           String ddd  = "" + calendar.get(calendar.DAY_OF_YEAR);
           if (ddd.length() == 1) { ddd="0"+ddd; }
           if (ddd.length() == 2) { ddd="0"+ddd; }
-          String time =myFormatDateTime( gd ); // such as 2009-03-30T00:00:00 -0600
+          String time =iso8601UTCDateTime( gd ); // such as 2009-03-30T00:00:00 -0600
           time=time.substring(11,19); 
           // for HHMMSS 
           time = time.replaceAll(":","");
