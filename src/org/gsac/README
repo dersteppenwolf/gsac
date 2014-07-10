@@ -43,18 +43,15 @@ that is discouraged.
 Installing the GSAC Web Services Software Package for a Data Repository, Part 1.
 
 First review these sections in the UNAVCO GSAC web site, "GSAC Installation" page:
+http://www.unavco.org/software/data-management/gsac/installation/installation.html, 
+or simply Google "UNAVCO GSAC" to find the UNAVCO GSAC web site.
 
-System Requirements
+    System Requirements
 
-Local Repository Implementation Code
+    Local Repository Implementation Code
 
-A Database for GSAC
+    A Database for GSAC
 
-The web site is at http://www.unavco.org/software/data-management/gsac/gsac.html, or simply Google "UNAVCO GSAC" to find the 
-UNAVCO GSAC web site.
-
-
-##############################################################c################################################################
 
 Install the GSAC core code
 
@@ -115,96 +112,49 @@ Total time: 36 seconds
 ##############################################################c################################################################
 
 
-Updating GSAC to get new core code from SourceForge.
-
-After you are operating a GSAC service, you may wish to update your core GSAC code, to use new features, or corrections, added
-to GSAC after you first installed GSAC.
-
-Running 'ant' in GSAC/gsac-code/ (or wherever you put GSAC on your system) builds the core GSAC code, as just described.
-
-This step (but not the SourceForge svn export step) is also used from time to time when GSAC developers have checked in new code
-to SourceForge.
-
-To update your GSAC with that new code, first do svn update to get the bew source code files.
-
-Usually you do these 4 commands: 
-
-cd ~/GSAC/gsac-code/src/org/gsac
-
-svn update
-
-cd ~/GSAC/gsac-code/
-
-ant
-
-and then again build your local GSAC code in your GSAC code area, with ant, as described below.
-
-
-##############################################################c################################################################
-
 Create GSAC configuration files and make your initial GSAC.
-
 
 Set Map Area:
 
-Use the file ~/GSAC/gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
+    Edit the file ~/GSAC/gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
+    to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  
 
-to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  
-For example:
+    For example:
 
-  var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
-  var defaultZoomLevel = 5;
+var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);
+var defaultZoomLevel = 5;
 
-The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
+    The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
 
-The unchanged file repositorymap.js from SourceForge shows Europe.  If your data is from Europe, you not not have to revise this 
-file.
-
-
-Again build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
-You may find the screen messages interesting to show the process of a GSAC build. 
+    Again build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
+    You may find the screen messages interesting to show the process of a GSAC build. 
 
 
-Use "ant makerepository" to create your initial set of local implementation files:
+The command "ant makerepository" creates your initial set of local implementation files:
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
-    The file macros.properties hasm for example:
-
-    ## To name the repository (spaces are allowed); can use any character string such as The Boulder GPS GSAC Repository
-    target.name=Boulder GPS Repository
-
-    ## This is used to create the jar and war release file names; replace the 'demo' part, making for example bouldergsac. No spaces.
-    target.basename=bouldergsac
-
-    ## A standard Java package name.  Replace the 'agency' part, making for example org.nasa.gsac.  
-    ## This also controls making and naming the new directory path to hold your GSAC installations's code.
-    ## If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.
-    target.package=org.boulder.gsac
-
-    ## All of the new Java .java files and .class files for your GSAC installation will have the following prefix for their names.
-    ## Replace Demo with a short name for your data repository, something like Boulder.  Use no spaces, and with only the first 
-    ## letter in upper case, to match Java class naming conventions.
-    target.prefix=Boulder
-
-    ## Choose which Java database driver (in GSAC) to read the database your GSAC code will read.  Choose (uncomment) one of these three:
-    target.dbdriver=mysql.jar
-    #target.dbdriver=oracleDriver.jar
-    #target.dbdriver=postgres.jar
-
-    Copy the file macros.properties to a temporary working file (any new name), such as  
-
-cp macros.properties mymacros.properties  
-
-    The new file name does not matter. You only use this file one time.
-
+    Copy the file macros.properties to a new properties file such as my.properties.  The new file name does not matter. You only use this file one time.
     Edit the new properties file to set values for your repository GSAC.  For example, new values something like these:
 
     target.name=The Boulder GNSS Repository  
+    ## To name the repository. Spaces are allowed.
+
     target.basename=bouldergsac     
+    ## For .jar file and .war file names
+
     target.package=org.boulder.gsac  [If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.]
+    ## A standard Java package name.  This controls making and naming the new directory path to hold your local GSAC installation code.
+    ## If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.
+
     target.prefix= Boulder          
+    ## a prefix for filenames for the new Java .java files and .class files for your GSAC installation. No spaces.
+
     target.dbdriver=mysql.jar     
+    ## Choose which Java database driver (in GSAC) to read the database your GSAC code will read.  Choose (uncomment) one of these three:
+    #target.dbdriver=oracleDriver.jar
+    #target.dbdriver=postgres.jar
+
 
     Then
 
@@ -243,18 +193,48 @@ BUILD SUCCESSFUL
    beginning with a new folder, such as ~/GSAC/gsac-code/src/org/boulder/ 
    and populates it with some initial and all-new directories and files for your GSAC repository's code.
 
+
    cd to the just-made new directory with new GSAC code just for your repository, such as 
 
 cd ~/GSAC/gsac-code/src/org/boulder/gsac/ 
 
+   Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
-Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
-End of GSAC basic installation section of README Part 1.
+                                   End of basic GSAC installation section 
 
 
 ##############################################################c################################################################
 ##############################################################c################################################################
+
+
+Updating GSAC to get new core code from SourceForge.
+
+After you are operating a GSAC service, you may wish to update your core GSAC code, to use new features, or corrections, added
+to GSAC after you first installed GSAC.
+
+Running 'ant' in GSAC/gsac-code/ (or wherever you put GSAC on your system) builds the core GSAC code, as just described.
+
+This step (but not the SourceForge svn export step) is also used from time to time when GSAC developers have checked in new code
+to SourceForge.
+
+To update your GSAC with that new code, first do svn update to get the bew source code files.
+
+Usually you do these 4 commands: 
+
+cd ~/GSAC/gsac-code/src/org/gsac
+
+svn update
+
+cd ~/GSAC/gsac-code/
+
+ant
+
+and then again build your local GSAC code in your GSAC code area, with ant, as described below.
+
+##############################################################c################################################################
+##############################################################c################################################################
+
 
 To Build a Federated GSAC
 
@@ -278,7 +258,15 @@ README_GSAC_Federated_Installation, for example in ~/GSAC/gsac-code/src/org/gsac
 
 1.  Install the GSAC package.
 
-First read "GSAC System Requirements" above or in the UNAVCO GSAC web site.
+First review these sections in the UNAVCO GSAC web site, "GSAC Installation" page:
+http://www.unavco.org/software/data-management/gsac/installation/installation.html, 
+or simply Google "UNAVCO GSAC" to find the UNAVCO GSAC web site.
+
+    System Requirements
+
+    Local Repository Implementation Code
+
+    A Database for GSAC
 
 Install GSAC core code, as described in the GSAC web site, repeated here:
 
