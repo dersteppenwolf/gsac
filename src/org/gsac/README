@@ -22,9 +22,6 @@ GSAC services from several separate data repository GSACs.  To install a Federat
 file except the section "Create GSAC configuration files and make your initial GSAC,"  and then follow the section "To Build a 
 Federated GSAC".
 
-These instructions use a hypothetical "Boulder" agency and data repository, running a GPS network called "BoulderNet." You will 
-use other words in place of these.
-
 About Time Formats in GSAC
 
 GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss", to avoid the complexities and 
@@ -51,6 +48,9 @@ or simply Google "UNAVCO GSAC" to find the UNAVCO GSAC web site.
     Local Repository Implementation Code
 
     A Database for GSAC
+
+
+The following instructions use a hypothetical "Boulder" data repository. 
 
 
 Install the GSAC core code
