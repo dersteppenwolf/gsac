@@ -142,23 +142,23 @@ public abstract class SiteManager extends GsacResourceManager {
     /**
      * Create the output handlers for this GSAC repository's services, which handles (formats) the query results.
      *
-     * Order of handlers below is the order presented to the user, in the GSAC site search form menu, and in information page.
+     * Order of handlers below is the order presented to the user, in the GSAC site search forms, and in information page.
      *
-     * a minor bug: it seems that whichever handler is first in order below gets called when the web site search page 
-     * (the from page, not a real search) is first called for, 
-     * BEFORE any query is made, which for some handlers can cause a failure and error to browser and no site search results shown. 
-     * But the HTML handler seems to always work OK.
-     * So always list the HTML handler first.
+     * Always list the HTML handler first.
+     * due to this: it seems that whichever handler is first in order below gets called when the web site search page 
+     * (not a real search) is first called for, before any query is made, which for some handlers can cause a failure 
+     * and error to browser and no site search results shown. The HTML handler always works.
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
 
         /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  
-         For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) 
-               new TextSiteLogOutputHandler(getRepository(), getResourceClass());  */
+           For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) 
+           new TextSiteLogOutputHandler(getRepository(), getResourceClass());  */
 
-        // In approximate order of apparent popularity of use.
+        // In order of apparent popularity of use.
+
         // Reordered on 15 May 2014 after doing usage survey of UNAVCO GSAC since July 2013.
 
         // 1. results put in HTML, for GSAC web pages
@@ -179,7 +179,7 @@ public abstract class SiteManager extends GsacResourceManager {
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for the GSAC Ops XML site info format; new on 22 May 2014; only requested by UNAVCO operations.
+        // for the GSAC Ops XML site info format; new on 22 May 2014; requested for UNAVCO operations.
         //new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
         //  for the 2010 GSAC XML site info format
@@ -191,7 +191,6 @@ public abstract class SiteManager extends GsacResourceManager {
         // for  the 2013 GSAC "Full Csv" format
         new CsvFullSiteOutputHandler(getRepository(), getResourceClass());
 
-        // the GSAC "plain text format" used to visually check what is available for sites' info.  Not for computer processing. 
         // Never used in 10 months, so deprecate
         //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
