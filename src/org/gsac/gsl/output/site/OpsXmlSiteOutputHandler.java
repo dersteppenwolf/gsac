@@ -1,5 +1,5 @@
 /*
- * Copyright 2010,2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -50,7 +50,7 @@ import javax.servlet.http.*;
  * Creates GSAC's OpsXmlSiteOutputHandler formatted site search results.
  * This is more complete and more compact than the original 2010 GSAC XML, XmlSiteOutputHandler.java.  It is for support of fields ops.
  *
- * Designed for the UNAVCO GSAC, not especially any other GSAC implementation.  Should not of course fail when used with any GSAC!
+ * Designed for the UNAVCO GSAC, not especially any other GSAC implementation. 
  *
  * When viewing a xml file made here in a browser you get the message at top:
  * "This XML file does not appear to have any style information associated with it."
