@@ -155,33 +155,27 @@ public abstract class SiteManager extends GsacResourceManager {
 
         /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  
            For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) 
-           new TextSiteLogOutputHandler(getRepository(), getResourceClass());  */
+           new TextSiteLogOutputHandler(getRepository(), getResourceClass());
+        */
 
-        // In order of apparent popularity of use.
-
-        // Reordered on 15 May 2014 after doing usage survey of UNAVCO GSAC since July 2013.
-
-        // 1. results put in HTML, for GSAC web pages
+        // 1. results in HTML format, for GSAC web pages
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
-
-        // for SOPAC XML site log format  
-        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
-
-        // for Google Earth KMZ 
-        new KmlSiteOutputHandler(getRepository(), getResourceClass());  
-
-        // for the GSAC JSON site info format. This GSAC output format is used a supersites aggregator tool or web site.
-        new JsonSiteOutputHandler(getRepository(), getResourceClass());
-        
-        // for GAMIT's station.info format  
-        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for the GSAC Ops XML site info format; new on 22 May 2014; requested for UNAVCO operations.
-        //new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
+        // for GAMIT's station.info format  
+        new StationInfoSiteOutputHandler(getRepository(), getResourceClass());
 
+        // for Google Earth KMZ 
+        new KmlSiteOutputHandler(getRepository(), getResourceClass());  
+
+        // for SOPAC XML site log format  
+        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
+
+        // for the GSAC JSON site info format. This GSAC output format is used a supersites aggregator tool or web site.
+        new JsonSiteOutputHandler(getRepository(), getResourceClass());
+        
         //  for the 2010 GSAC XML site info format
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
@@ -191,8 +185,13 @@ public abstract class SiteManager extends GsacResourceManager {
         // for  the 2013 GSAC "Full Csv" format
         new CsvFullSiteOutputHandler(getRepository(), getResourceClass());
 
-        // Never used in 10 months, so deprecate
-        //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+        // for the GSAC Ops XML site info format; new on 22 May 2014; requested for UNAVCO field engineering operations.
+        new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
+
+        // for  the 2013 GSAC plain text format
+        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+
+        // Never used in 10 months, so deprecate these three:
 
         // Never used in 10 months new AtomSiteOutputHandler(getRepository(), getResourceClass());
 
