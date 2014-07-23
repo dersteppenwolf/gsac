@@ -103,6 +103,9 @@ public class XmlSiteLog {
     public static final String TAG_FORMINFORMATION = "formInformation";
 
     /** _more_ */
+    public static final String TAG_SITEBLOCK = "site";
+
+    /** _more_ */
     public static final String TAG_MI_PREPAREDBY = "mi:preparedBy";
     public static final String TAG_PREPAREDBY = "preparedBy";
 
@@ -184,17 +187,19 @@ public class XmlSiteLog {
     /** _more_ */
     public static final String TAG_SITELOCATION = "siteLocation";
 
-
+    /** _more_ */
     public static final String TAG_SITEQUALITY = "siteQuality";
 
     /** _more_ */
     public static final String TAG_MI_CITY = "mi:city";
 
+    /** _more_ */
     public static final String TAG_CITY =    "city_or_place";
 
     /** _more_ */
     public static final String TAG_MI_STATE = "mi:state";
 
+    /** _more_ */
     public static final String TAG_STATE =    "state_or_province";
 
     /** _more_ */
