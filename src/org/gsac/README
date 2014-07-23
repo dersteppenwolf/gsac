@@ -4,7 +4,7 @@
 
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                           7 July 2014.  Stuart Wier, UNAVCO
+                                           22 July 2014.  Stuart Wier, UNAVCO
                                                Copyright (C) 2014 UNAVCO.
 
 Introduction
@@ -126,11 +126,12 @@ var defaultZoomLevel = 5;
 
     The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
 
-    Again build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
-    You may find the screen messages interesting to show the process of a GSAC build. 
+    Build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
 
 
-The command "ant makerepository" creates your initial set of local implementation files:
+Use the command "ant makerepository" to create your initial set of local implementation files:
+
+First make the macros template file.
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
@@ -158,43 +159,25 @@ cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
     Then
 
-cd ../   
-
-    (i.e. cd to ~/GSAC/gsac-code/src/org/gsac/)
+cd ../          (i.e. cd to ~/GSAC/gsac-code/src/org/gsac/)
 
     Then run a command like this, with the new properties file name in place of mymacros.properties:
 
 ant -propertyfile template/mymacros.properties makerepository   
 
-    Screen output should be like this:
+    The last two lines of screen output should be like this:
 
-ant -propertyfile template/mymacros.properties makerepository
-
-Buildfile: build.xml
-init:
-makerepository:
-     [echo] dir = org/boulder/gsac
-     [echo] dots = ../../../..
-    [mkdir] Created dir: /home/GSAC/gsac-code/src/org/boulder/gsac
-     [copy] Copying 16 files to /home/GSAC/gsac-code/src/org/boulder/gsac
-init:
-copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/boulder/gsac
-init:
-copyjava:
-     [copy] Copying 1 file to /home/GSAC/gsac-code/src/org/boulder/gsac
-...
-     [echo] Repository source package has been created
+[echo] Repository source package has been created
 BUILD SUCCESSFUL
 
-   Look to be sure no errors occur.  
+   Look to be sure no errors occured.  
 
-   This process creates a new code area (new folders), and new Java files for your GSAC installation, i
+   This process creates a new code area (new folders), and new Java files for your GSAC installation, 
    beginning with a new folder, such as ~/GSAC/gsac-code/src/org/boulder/ 
    and populates it with some initial and all-new directories and files for your GSAC repository's code.
 
 
-   cd to the just-made new directory with new GSAC code just for your repository, such as 
+   cd to the just-made new directory with new GSAC code for your repository, such as 
 
 cd ~/GSAC/gsac-code/src/org/boulder/gsac/ 
 
