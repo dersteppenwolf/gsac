@@ -480,7 +480,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             return;
         }
 
-        long         t1         = System.currentTimeMillis();
+        //long         t1         = System.currentTimeMillis();
 
         List<String> tableNames = new ArrayList<String>();
         Clause       clause = getResourceClause(request, response, tableNames);
@@ -489,11 +489,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                   clause.getTableNames(tableNames), clause,
                                   getResourceSelectSuffix(request), -1);
 
-        processStatement(request, response, statement, request.getOffset(),
-                         request.getLimit());
+        processStatement(request, response, statement, request.getOffset(), request.getLimit());
 
-        long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: request timing:  handled one Search Site request in " + (t2 - t1) + " ms");
+        // not every site search request comes here, so not much use:
+        //long t2 = System.currentTimeMillis();
+        //System.err.println("GSAC: handelRequest timing: " + (t2 - t1) + " ms");
     }
 
 
