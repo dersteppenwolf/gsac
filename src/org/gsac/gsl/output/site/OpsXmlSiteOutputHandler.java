@@ -48,9 +48,10 @@ import javax.servlet.http.*;
 
 /**
  * Creates GSAC's OpsXmlSiteOutputHandler formatted site search results.
- * This is more complete and more compact than the original 2010 GSAC XML, XmlSiteOutputHandler.java.  It is for support of fields ops.
+ * This is a new additional GSAC XML format, and more complete and more compact than the original 2010 GSAC XML, XmlSiteOutputHandler.java.  It is for support of fields ops.
  *
- * Designed for the UNAVCO GSAC, not especially any other GSAC implementation. 
+ * Designed for the UNAVCO GSAC, not especially for any other GSAC implementation. 
+ * usually the call to OpsXmlSiteOutputHandler in gsl/output/Site.java is commented out for use outside of UNAVCO, though anyone may use it.
  *
  * When viewing a xml file made here in a browser you get the message at top:
  * "This XML file does not appear to have any style information associated with it."
@@ -58,7 +59,7 @@ import javax.servlet.http.*;
  * Which is not the case for the intended or primary use of this XML file.
  *
  * @author S K Wier.
- * @version original version of OpsXmlSiteOutputHandler;  12 May 2014;
+ * @version original version of OpsXmlSiteOutputHandler;  12 May 2014; Mods June, July 2014.
  */
 public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
 
@@ -81,7 +82,7 @@ public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
     public OpsXmlSiteOutputHandler(GsacRepository gsacRepository,
                                    ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_OPSXML, "GSAC Site Ops XML", "/siteops.xml", true));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_OPSXML, "GSAC Sites info, Ops XML", "/siteops.xml", true));
     }
 
     /**
@@ -121,8 +122,8 @@ public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
         //Add the first open tag and the 'equip' namespace
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_GSACOPSXML, XmlUtil.attrs(new String[] { XmlSiteLog.ATTR_XMLNS_EQUIP, XmlSiteLog.XMLNS_XMLNS_EQUIP, })));
 
-        /* about SCHEMALOCATION (not used here): The Java XML parser will read the schemaLocation values and try to load them from the internet, in order to validate the XML file. */
-        /* there is no unavco gsac xml or app xml schema document */
+        /* in general, about SCHEMALOCATION (not used here): The Java XML parser will read the schemaLocation values and try to load them from the internet, in order to validate the XML file. */
+        /* But there is no unavco gsac xml or app xml schema document */
 
         //Add file contents:
         List<GsacSite> sites = response.getSites();
@@ -130,11 +131,13 @@ public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
             //  Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
             //  Add the various content areas
+            pw.append(XmlUtil.openTag (XmlSiteLog.TAG_SITEBLOCK)); // new request by Chad Pyatt July 18 2014, this tag.
             addFormInformation(pw);
             addSiteIdentification(pw, site);
             addSiteLocation(pw, site);
             addSiteEquipment(pw, site);
             addSiteStream(pw, site);
+            pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITEBLOCK));
         }
 
         pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_GSACOPSXML));
@@ -151,8 +154,8 @@ public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
     private void addFormInformation(PrintWriter pw) {
         /* such as
           <formInformation>
-          <mi:preparedBy>Scripps Orbit and Permanent Array</mi:preparedBy>
-          <mi:datePrepared>2011-07-01</mi:datePrepared>
+             <preparedBy>Scripps Orbit and Permanent Array</preparedBy>
+             <datePrepared>2011-07-01</datePrepared>
           </formInformation>
         */
         pw.append( XmlUtil.tag( XmlSiteLog.TAG_FORMINFORMATION, "", XmlUtil.tag( XmlSiteLog.TAG_PREPAREDBY, "",
@@ -171,6 +174,7 @@ public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
     private void addSiteIdentification(PrintWriter pw, GsacSite site)
             throws Exception {
         pw.append(XmlUtil.openTag(XmlSiteLog.TAG_SITEIDENTIFICATION));
+        // pairs with pw.append(XmlUtil.closeTag(XmlSiteLog.TAG_SITEIDENTIFICATION)); below
 
         pw.append(XmlUtil.tag(XmlSiteLog.TAG_FOURCHARACTERID, "", removeAndSymbol(site.getShortName()) )   );
 
@@ -502,7 +506,7 @@ public class OpsXmlSiteOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * This adds xml for the real time stream metadata. Only the Unavco GSAC creates that kind of metadata. This comes from the PBO real time stream info._
+     * This adds xml for the real time stream metadata. Only the Unavco GSAC creates that kind of metadata. This comes from the PBO real time stream info.
      *
      * @param pw _more_
      * @param site _more_
