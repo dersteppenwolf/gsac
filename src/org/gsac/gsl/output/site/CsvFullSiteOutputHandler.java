@@ -136,7 +136,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     public CsvFullSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_FULL_CSV, "GSAC Sites info full csv", "/fullsites.csv", true)); 
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_FULL_CSV, "GSAC Sites info, full csv", "/fullsites.csv", true)); 
         // note with  .csv extension, some browsers want to show the results in Excel or other packages which is  the reverse of useful for geodesy.
     }
 
