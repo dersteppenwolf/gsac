@@ -96,7 +96,7 @@ CREATE TABLE `antenna_session` (
   `antenna_HtCod` char(5) DEFAULT NULL,
   `radome_type_id` int(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`antenna_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +144,7 @@ CREATE TABLE `country` (
   `country_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `country_name` varchar(70) NOT NULL,
   PRIMARY KEY (`country_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -209,7 +209,7 @@ CREATE TABLE `gnss_data_file` (
   `embargo_after_date` datetime DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   PRIMARY KEY (`file_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=74919 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -255,7 +255,7 @@ CREATE TABLE `province_region_state` (
   `province_region_state_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `province_region_state_name` varchar(70) NOT NULL,
   PRIMARY KEY (`province_region_state_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -306,7 +306,7 @@ CREATE TABLE `receiver_firmware_version` (
   `receiver_firmware_version_name` varchar(20) NOT NULL,
   `SwVer` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`receiver_firmware_version_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -337,7 +337,7 @@ CREATE TABLE `receiver_session` (
   `receiver_sample_interval` float DEFAULT NULL,
   `satellite_system` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`receiver_session_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=276 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,7 +361,7 @@ CREATE TABLE `receiver_type` (
   `receiver_type_name` varchar(20) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`receiver_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=613 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=612 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -409,7 +409,7 @@ CREATE TABLE `station` (
   `embargo_after_date` datetime DEFAULT NULL,
   `nominal_sample_interval` float DEFAULT NULL,
   PRIMARY KEY (`station_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
