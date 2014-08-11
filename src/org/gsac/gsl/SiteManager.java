@@ -189,7 +189,7 @@ public abstract class SiteManager extends GsacResourceManager {
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // for  the 2013 GSAC plain text format
-        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+        //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
         // Never used in 10 months, so deprecate these three:
 
