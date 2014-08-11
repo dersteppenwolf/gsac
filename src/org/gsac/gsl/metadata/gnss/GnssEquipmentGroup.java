@@ -191,7 +191,8 @@ public class GnssEquipmentGroup extends MetadataGroup {
         else if(name.length() == 0) name =  "-";
         buff.append(name);
         if (serial != null&& serial.length()>0) {
-            buff.append("<br><i>SN" + serial + "</i>");
+            buff.append("<br><i>" + serial + "</i>");
+            //buff.append("<br><i>SN" + serial + "</i>");
         }
         buff.append("&nbsp;</td>");
 
