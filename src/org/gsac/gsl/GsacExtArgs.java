@@ -70,6 +70,9 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_STATE = GsacArgs.ARG_SITE_PREFIX + "state";
 
+    /** _more_ GsacExtArgs.ARG_NETWORK */
+    public static final String ARG_NETWORK = GsacArgs.ARG_SITE_PREFIX + "network";
+
     /** Name of station's tectonic plate.  */
     public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX + "tectonicplate";
 
