@@ -1,0 +1,678 @@
+#######################################################################/
+
+GSAC_WS Installation     
+
+README, Part 2. 
+
+For UANVCO Dataworks GSAC instances.
+
+ 11 August 2014.   SKW  UNAVCO
+
+This file describes how to complete your new Dataworks GSAC-WS Web Services suite,
+to provide web service access to site-located data in a geoscience data repository.
+
+You should have first read and followed the installation instructions in the first README file ("Part 1"), 
+in the main GSAC code area, gsac-code/src/org/gsac/.
+
+This README file sometimes uses for examples code for a hypothetical "Boulder" agency running a GPS network called "BoulderNet." You will use you own names for these.
+
+Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
+the design of data repositories or what data values and files are available or are of interest for you to
+offer online.  New code is needed to adapt GSAC to your database and possibly to other system features at your 
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation.
+Contact UNAVCO at gsac-ws@unavco.org to request software support.
+
+This README file is automatically generated when you do the command 'ant makerepository' during GSAC installation, but the file creation may have an error.
+Some file names such as gsacrBoulder.properties or gsacDataworks.properties in this README file, may have one or more upper case letters.                  
+The cooresponding actual GSAC files on disk lack upper case in their names.
+Java class file names may have upper case letters, such as UnavcoSiteManager.java.         
+Do not change actual filenames of files made by GSAC to match any uppercase letters shown in this README file.
+
+########################################################################
+
+Hopefully you've managed to generate the initial repository source package using README Part 1.
+
+This README (Part 2) file is located in your new GSAC package in org/dataworks/gsac/ (ignore the README file in org/dataworks/gsac/release).
+
+Now, change the working directory to your local GSAC code area, at org/dataworks/gsac .
+
+
+Adding Your Repository's Details: The "GSAC Resources Properties" File.
+
+The file org/dataworks/gsac/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
+gsac.baseurl will be part of the full URL for your GSAC repository.
+
+Some values were created in the initial ant build you just made.
+
+    An example, a file boulder/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
+
+    gsac.baseurl = /gsacboulder
+    #Your repository name
+    gsac.repository.name=Boulder GPS Repository
+    #Your repository description
+    gsac.repository.description=The Boulder GPS Repository 
+
+Change the items for your GSAC repository.
+
+The  gsac.baseurl is used in a URL to a GSAC server such as the "gsacws" in  http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
+You can use 'gsacws', or this baseurl can have an acronym for identification of your agency, for example 'acrogsac'.
+(The later parts of a GSAC URL  such as 'gsacapi/site/form' are always part (of a site search) and you do not enter them anywhere while installing GSAC.)
+
+The items repository.name and repository.description are used as labels on the web site.
+
+You optionally add this line showing the  maximum size allowed when zipping up files, e.g. 100 MB, in bytes:
+
+    file.zip.maxsize=100000000
+
+
+########################################################################
+Connecting to the Database used by GSAC
+########################################################################
+
+Setting and Hiding DB account information: the "GSAC DB Properties" File.
+
+You code the file, org/dataworks/gsac/dbresources/gsacdb_test.properties, to hold the database account details,
+to permit the GSAC web server process to read from the geodesy database.  The contents are like:
+
+        ## This is the file dbresources/gsacdb_test.properties, which specifies the database used by GSAC, and the db account to use.
+
+        gsac.db.username=db-gsac-username
+        gsac.db.password=gsac-password
+
+        gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Boulder_GSAC_Database_with_data?useUnicode=yes&characterEncoding=UTF-8
+
+        #gsac.db.jdbcurl=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>
+
+        #gsac.db.jdbcurl=jdbc:postgresql://<hostname>/<database>
+        ##
+
+
+The database host (like boulderdev.mydomain.org), port (3080), account user name and account password are all given here.  
+When the GSL assembles the JDBC URL it finds the user name and password from here.  The database must have an account GSAC can use to read from the database. 
+GSAC does not write to any database.
+
+One MySQL example which may work running both the db and GSAC locally on your computer, for testing, is 
+gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
+
+The Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  Also for Postgres the form is 
+
+=jdbc:postgresql://<hostname>:<port>/<database>.  
+
+One Oracle JDBC URL is of the form:
+
+=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
+   e.g:
+=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
+
+
+If you have GSAC SourceForge write access, do not do 'svn add' or 'svn commit' this file, or your database account details will become public.
+
+The file org/dataworks/gsac/dbresources/gsacdb_production.properties is not used now. It can be empty.
+
+
+Note, that everytime you do "ant" to build your repository, the file
+   myrepo/gsac/dbresources/gsacdb_test.properties
+is copied to the file
+   myrepo/gsac/resources/gsacdb.properties
+This can be a little confusing if you attempt to keep track of the several properties files.
+
+
+########################################################################
+Initial compile of GSAC in your new GSAC code area
+########################################################################
+
+Check that the file build.xml, in your location org/dataworks/gsac, has these lines. 
+Note that the value represneted by 'gsacdataworks' below may have an upper case letter in Dataworks where the actual word in build.xml has lower case which is correct.
+(The uppercase is only an artifact of the automatic generation of this README file.)
+
+    <target name="localinit">
+        <!-- base name for build products -->
+        <property name="basename" value="dataworksgsac"/>
+
+          or
+
+        <property name="basename" value="Dataworksgsac"/>
+
+No changes are needed here unless something went wrong.  This target will be used by ant build process to make your GSAC server.  
+
+Do the command 'ant' in org/dataworks/gsac:
+
+ant 
+
+When the ant command succeeds you will see output to the screen something like this
+
+compile:
+    [javac] Compiling 6 source files
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+gsacjar:
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder1.0.jar
+and including
+war:
+     [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/gsac-code/dist
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder.war
+     [echo] ********************************
+     [echo] To run the server run:
+     [echo] ant runserver
+     [echo] ********************************
+BUILD SUCCESSFUL
+Total time: 8 seconds
+
+This 'ant' build will take about 5 to 10 seconds.
+
+The source Java (.java) files compiled are like these in org/dataworks/gsac:
+
+-rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 BoulderRepository.class
+-rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 BoulderFileManager.class
+-rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 BoulderServer.class
+-rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 BoulderTest.class
+-rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 BoulderDatabaseManager.class
+-rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 BoulderSiteManager.class
+
+This ant command builds GSAC for your repository, using code in org/dataworks/gsac.  
+
+It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If you change core GSAC code,
+as if you do an svn update to get new core code from SourceForge for GSAC,
+you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in org/dataworks/gsac.
+
+Your ant build also creates a new Tomcat "war" file, named something like gsacboulder.war, located in gsac-code/dist/, 
+which will be used as the servlet (application) container for your public web site, if you use Tomcat. 
+
+
+If you happen to use two or more GSACs, doing one for one removes the .class files for the others.  So you
+must do ant again for another GSAC to do ant runserver there, after doing ant in this GSAC area.
+Doing ant in the core GSAC code area removes all local GSAC .class files.
+
+########################################################################
+Automatic Code Generation for Java reading from the Database 
+########################################################################
+
+Now run this command in org/dataworks/gsac:
+
+ant tables
+
+Output from the ant tables command may include lines to the screen something like this:
+
+Buildfile: build.xml
+localinit:
+init:
+tables:
+     [java] JVM args ignored when same JVM is used.
+     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
+     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
+     [java] processing ACCESS_PERMISSION
+     [java] processing AGENCY
+     [java] processing ANTENNA_SESSION
+     ...
+Each 'processing' line corresponds to a named table in your database.
+
+and should show:
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+
+
+This makes a new Java file, org/dataworks/gsac/Tables.java. This file defines Java 'Tables' classes
+with complete specifications for your GSAC database, using GSAC Java code.
+
+The package name in Tables.java (at or near line 3) should be edited to end with .database: 
+package org.Dataworks.gsac.database;
+
+  not the supplied value:
+package org.Dataworks.gsac;
+
+Edit that line in the Tables.java file to add ".database" in that line.  Do not make other changes to the file.
+
+
+Make a new org/dataworks/gsac/database subdirectory:
+
+mkdir database
+
+Move the Tables.java file down into org/dataworks/gsac/database:
+
+mv Tables.java database/
+
+Do not leave a copy of Tables.java in org/dataworks/gsac/.
+
+
+Build GSAC again, with 'ant' in org/dataworks/gsac.  This time you should see 
+
+compile:
+    [javac] Compiling 7 source files
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+and
+BUILD SUCCESSFUL
+Total time: 5 seconds
+ 
+This time ant compiles the six java files in org/dataworks/gsac/, and also compiles the new Java class file Tables.java in org/dataworks/gsac/database/.
+(You can check for some new Tables*.class files in org/dataworks/gsac/database/.)  
+
+The Tables classes provide a link between your database and your GSAC code.  
+
+Names of items (Java variables) in the class files made from Tables.java to identify your database tables and columns (fields)
+in GSAC Java code.  For example, one table name may be, in GSAC code, Tables.STATION, and a column (field) in that table might be 
+Tables.STATION.COL_LATITUDE or COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
+
+CAUTION:
+If you later do "svn update" in your GSAC code area, svn will put a copy of the Tables.java file in org/dataworks/gsac/ where it does not belong.
+If you then try "ant" in org/dataworks/gsac/ a compile error is made.  Remove the Tables.java file from org/dataworks/gsac/ and do "ant" again.
+Tables.java must be ONLY in org/dataworks/gsac/database.
+
+
+########################################################################
+Run a local test of your GSAC server
+########################################################################
+
+Now test the new, more complete, GSAC web server with the command:
+
+ant runserver
+
+This command runs a gsac Dataworks GSAC, on your local desktop where you are developing your GSAC.  
+
+Screen output of th ant command includes a line like
+
+GSAC INFO: Tue Aug 28 14:33:59 EDT 2013: GsacServlet: url:http://mycpuname:8080/dataworksigsac/gsacapi
+ or 
+     [java] Running stand-alone GSAC server at: http://localhost:8080/bouldergsac
+
+This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
+running ant runserver.  If you already use 8080 for another purpose, enter a different value in build.xml.  It is 
+also in the gsacrepository.sh for when running stand-alone.
+
+In a browser on your desktop where you are developing your GSAC, look at that URL, like 
+
+http://mycpuname:8080/dataworksgsac/gsacapi.  
+
+You should see a new web page with minimal content:
+
+                    Search Sites | Search Files | Browse | Infomation | Help
+    Welcome to the GSAC Repository
+
+This shows that all the core GSAC code runs on your system.  You can look at the GSAC informational pages, such as the Information and Help links.
+The 'Search' links won't do much yet.
+
+Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
+
+Stop the 'ant runserver' process with CTRL-c.  
+
+This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP server and Java servlet container.  
+The Jetty servlet is for local testing, which saves the trouble of deploying a .war file to a Tomcat implementation 
+(and may avoid restarting Tomcat for every test of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
+
+You have made an operational GSAC server which has complete core GSAC code, but which lacks specific details about your repository,
+that is, where to find station and instrument metadata, and geodesy file info, in your database.
+Now you need to specify those important parts of your data repository for GSAC.
+
+
+########################################################################
+Using Your Database by means of the Tables.java
+########################################################################
+
+GSAC must identify the tables and columns (fields) in your database,
+which will be used in database queries generated by the GSAC web form searches, and by incoming requests of the GSAC API.
+The Java class (in the file called Tables.java) holds all of the database table names and the tables' column (field) names.  
+
+The Java class Tables has methods, such as the next (hypothetical) code block for a table about GPS receivers, 
+with methods getName() which gives the table name, and getColumns() which returns names for fields 
+in that table about GPS receivers, and which defines new String variables.
+
+     public static class STATION_IDENTIFICATION extends Tables {
+        public static final String NAME = "Station_Identification";
+        public String getName() {return NAME;}
+        public String getColumns() {return COLUMNS;}
+        public static final String COL_MARKERNAME =  NAME + ".MarkerName";
+        public static final String ORA_MARKERNAME =  "MarkerName";
+        public static final String COL_MARKERNUMBER = NAME + ".MarkerNumber";
+        public static final String ORA_MARKERNUMBER = "MarkerNumber";
+        public static final String COL_LATITUDE =  NAME + ".Latitude";
+        public static final String ORA_LATITUDE =  "Latitude";
+        public static final String COL_LONGITUDE =  NAME + ".Longitude";
+        public static final String ORA_LONGITUDE =  "Longitude";
+        public static final String COL_CITY =  NAME + ".City";
+        public static final String ORA_CITY =  "City";
+        public static final String COL_COUNTRY =  NAME + ".Country";
+        public static final String ORA_COUNTRY =  "Country";
+        public static final String[] ARRAY = new String[] {
+            COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY, ...
+        };
+
+You will recognize the correspondence between your database's specific table names, such as Station Identification, and your field names, such as latitude,
+with the names GSAC uses internally, in Tables.java, such as STATION.COL_LATITUDE.  
+
+The GSAC forms of table and field (column) names from Tables.java will be used in new methods needed to implement your GSAC server, described below.
+
+########################################################################
+Extending Java Classes: Essential new Java Classes for your GSAC.
+########################################################################
+
+NOTE: The files DataworksSiteManager.java and DataworkssFileManager.java are implemented.
+
+To complete your GSAC server, you need new Java code to specify particular details of your data repository.
+Files in org/dataworks/gsac/ have new Java code for your repository, which is the bridge between your database on one hand and GCAC core code on the other. 
+
+It is not possible for GSAC core code to anticipate the design of data repositories, or what data types  and files are available, or what is of interest for you to
+offer online in GSAC.  New code is needed to adapt GSAC to your database and possibly to other system features at your
+data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
+from UNAVCO at gsac-ws@unavco.org.
+
+The files DataworksSiteManager.java and DataworkssFileManager.java
+(at least these files) must implement database queries (about geodesy data files and stations)
+to your GSAC database, used by your GSAC web form searches and by the GSAC API.
+
+The initial or template files for these Java classes automatically created in your local GSAC area of course
+lack any database details (since the Tables class you just made was unknown).
+
+########################################################################
+ Using the Prototype GSAC db design
+########################################################################
+
+NOTE: the GSAC Dataworks instance from the svn export has completely coded versions of the files DataworksSiteManager.java and DataworkssFileManager.java.  No work is needed here.
+
+
+If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes prototype Java files which will probably make a working GSAC installation with little Java coding.
+
+Replace your new files DataworksSiteManager.java and DataworkssFileManager.java with these two "Prototype" files,  from in your GSAC package:
+
+gsac-code/src/org/prototype/gsac/PrototypeSiteManager.java
+gsac-code/src/org/prototype/gsac/PrototypeFileManager.java
+
+Change them to fit into your GSAC code:
+- rename them both, replacing Prototype in the file names with with your file name part, something like Boulder.
+- in the files change all uses of Prototype in Java class and method names using your file name part to replace Boulder.
+- replace the lines
+package org.prototype.gsac;
+import  org.prototype.gsac.database.*;
+with
+package org.myrep.gsac;
+import  org.myrep.gsac.database.*;
+using whatever your short name is, in place of myrep.
+
+Also see notes below about SiteManager.java and FileManager.java.
+
+Then test your new GSAC, using the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
+try your GSAC on your local development platform. (You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
+no errors in the compile step.)
+
+Stop ant runserver with CTRL-C.
+
+If the ant build has errors they will hopefully show where is the disconnect between your database (represented by Tables classes) and
+your new  PrototypeSiteManager.java and PrototypesFileManager.java files, by naming variable names in the Java code (like COL_NETWORKS) not found in your Tables classes and java file.
+
+########################################################################
+ Using Other Databases
+########################################################################
+
+If you are using your own database schema, first compare its schema to the prototype GSAC database schema.
+Then modify copies of the files PrototypeSiteManager.java and PrototypesFileManager.java
+to get GSAC to work with your database. You will be changing, at least, database names of tables and fields: see the Java file Tables.java you made.
+Probably you will rewrite the SQL queries, and how query results are habdled for GSAC use. This will be the most demanding part of GSAC installation.
+
+########################################################################
+
+The file DataworksRepository.java 
+
+The DataworksRepository class is the main entry point. 
+
+Above the import lines, be sure there is correct new Java package name, something like this:
+
+package org.Dataworks.gsac; 
+
+which is of course dependent on your choice of name for your Java GSAC pacakge.
+
+In the method initResourceManagers(), make the choice if you want your GSAC repository to
+search on sites (stations or monuments), for data files, or for both:
+ 
+  public void initResourceManagers() {
+        // Use this line to search on BOTH sites and data files in the metadata.
+        super.initResourceManagers();
+
+        // If you only want searches for sites,  uncomment this
+        //getResourceManager(GsacSite.CLASS_SITE);
+
+        // If you only want searches for files,  uncomment this
+        // getResourceManager(GsacFile.CLASS_FILE);
+    }
+
+                     ########################################################################
+
+The file DataworksSiteManager.java  
+
+This file specifies how GSAC searches for sites, and what information is returned to the user.  
+
+You will see a template file for DataworksSiteManager.java which was initially created automatically by the GSAC build process.
+
+A GSAC programmer needs to know Java and have an understanding of database concepts and queries, and in the process of
+writing new code for GSAC will learn about GSAC core code.
+
+First, above the "import" lines, check the new Java package name, in this form:
+package org.Dataworks.gsac;
+such as package org.igs.gsac;  which is in the IgsSiteManager.java.
+
+Make sure you have a line like
+import org.Dataworks.gsac.database.*;  
+such as import org.igs.gsac.database.*;
+
+Most of the work is in created the methods 
+
+    public List<Capability> doGetQueryCapabilities()
+
+    public GsacResource getResource(String resourceId)
+
+    public List<Clause> getResourceClauses ()
+
+You write Java code to specify which database items you will query on in the GSAC search forms, and Java code to do  queries to extract
+addtitional values from the database, values not used in queries but required for the GSAC results, such as receiver firmware version number.
+
+
+                     ########################################################################
+
+The file DataworksFileManager.java 
+
+This file specifies how GSAC searches for data files, and what is returned to the user.  
+
+You will see a template file for DataworksFileManager.java which was initially created automatically by the GSAC build process.
+
+You need not modify this file if you do not supply a data file download service.  In that case, 
+in DataworksRepository.java use only getResourceManager(GsacSite.CLASS_SITE) in initResourceManagers().
+
+Above the import lines, be sure the Java package name is correct, in this form:
+
+package org.Dataworks.gsac;
+
+(You may have other top level package name than org.)
+
+You need to include your database classes:
+
+import org.Dataworks.gsac.database.*;
+
+GSAC FileManagers usually allow searches for files associated with sites where files were recorded. The FileManager uses help from the SiteManager 
+class to do this.
+
+
+########################################################################
+Web Site Page Contents, Header, Footer, and Images 
+########################################################################
+
+Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
+You can add more to this file for a larger page, using normal HTML.  You can also create HTML code for a header and a footer 
+which will be used at the top and bottom of all the web pages in your GSAC site.
+
+The contents of an initial home page of your dataworks GSAC repository web site is contained in 
+src/org/dataworks/gsac/htdocs/index.html.
+
+Edit your htdocs/index.html file to create your GSAC home page contents.  
+Note that the index page does  not have a complete set of HTML lines, found on a typical web page, 
+including <html> and more at the beginning, or the final </html>, since the index contents
+are wrapped inside the GSAC header and footer HTML files, mentioned next.
+
+The files footer.html and header.html, in the directory org/dataworks/gsac/resources/, specify the top and bottom of the 
+GSAC web pages at your locations, and provide web page layout and decoration surrounding  the GSAC forms and results. 
+These files may be as simple, or fully developed, such as using css. To include an image in the header and footer html files
+use <img  src="${htdocs}/home-page-header_1.jpg" >.    
+
+Include an email address for Contact or Support in your header or footer.  If persons using your GSAC have
+questions, they need an easy way to reach you.  This will help your GSAC service be responsive, and not frustrating.
+
+The GSAC web pages with search forms, and pages with static GSAC information such as the GSAC Help pages,
+are complete and provided by GSAC installation. They also use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
+with Java programming in the core GSAC code, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
+other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
+
+
+########################################################################
+GSAC's Format Choices for Query Results
+########################################################################
+
+GSAC offers several choices for formats of the results of queries.  For example, on any GSAC web site, 
+either open the Information page's Output types list - click on [+] - or in a Search form, open the Results [+] area
+and then the Output: menu.
+
+The choices of what to show in GSAC are set in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
+GSAC offers results in these formats:
+
+HTML                    output=site.html (for the GSAC web pages of results)
+XML Site Log (SOPAC)    output=site.xmllog
+SINEX                   output=site.snx
+GAMIT station.info      output=site.station.info
+GSAC Plain text         output=site.plaintext
+GSAC Full Site CSV      output=site.csv.full
+GSAC Short Site CSV     output=site.csv
+GSAC Site JSON          output=site.json
+Google Earth KML        output=site.kml
+Google Earth KMZ        output=site.kmz
+
+(The terms output=... are the result format arguments in GSAC API queries.)
+
+If you are satisfied with your GSAC repository offering these formats, 
+you need do nothing about output format choices. Go to the next topic.
+
+You may very easily NOT offer some formats, if you don't want to offer them.  Comment out lines for handlers, in gsac/gsl/SiteManager.java not  wanted in your GSAC-WS repository.
+
+However you are encouraged to allow all the GSAC format choices, to show consistent results with other GSACs and in Federated GSAC collections.
+There is no harm in offering all the choices .  Even if you do not see much use in some format, others may be expecting it from a GSAC service.
+To conform with other GSAC repositories it may be good not to revise any GSAC-supplied output format.  
+
+GSAC does not promote, endorse, deprecate or modify file formats except for changes to GSAC's own formats.  
+If there is another format which you think GSAC should offer, you can contact UNAVCO to add it to GSAC code.  
+
+You can create a new "OutputHandler" Java class and use it yourself or submit it to UNAVCO to add to GSAC.
+You create a new kind of format by writing a new Java class, similar to any of the above output handlers.
+The Java output handler source files are in gsac-code/src/org/gsac/gsl/output/site/.  You can use the current output handler classes as
+guides to what is needed in a similar Java class.  Remember to call it in gsl/SiteManager.java and rebuild everything.
+
+########################################################################
+Dealing with Elevation and Ellipsoid Height
+########################################################################
+
+GSAC code assumes station height values are ellipsoid heights above a geoid model surface, 
+the heights for locations in terrestrial reference frames, including GNSS positions.
+
+If your location values have elevations instread of ellipsoid heights, you can change these lines in these files in core GSAC code to 
+change output labels with "ellipsoid height" to "elevation":
+
+Look for lines in the files with "// About ellipsoidal height:"
+
+gsl/output/GsacOutputHandler.java:               // About ellipsoidal height:
+gsl/output/HtmlOutputHandler.java:            // About ellipsoidal height:
+gsl/output/site/CsvFullSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/PlainTextSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
+gsl/output/site/XmlSiteLogOutputHandler.java:        // About ellipsoidal height:
+
+Then rebuild core GSAC with command ant in gsac-code/, and rebuild your GSAC instance with ant in your boulder/gsac/ file area.
+
+Note that the geodesy formats SINEX, GAMIT station.info, and SOPAC XML Site Log do not have a choice of two labels to 
+distinguish ellipsoid height from elevation. In those cases you may need to force zero for ellipsoid heights if you lack that data.
+
+For example SINEX has a parameter "_APP_H_" and SOPAC XML Site Log has a parameter "<mi:elevation-m_ellips> </mi:elevation-m_ellips>".
+
+Due to conventions in geodesy, ellipsoid heights are better than elevations for GSAC.
+
+########################################################################
+Building and Running the GSAC server
+########################################################################
+
+Once you have made the additions to the Java code, to build your GSAC, in org/dataworks/gsac, run simply:
+
+ ant 
+
+The ant target builds a .zip of a stand-alone gsac server in gsac-code/dist/  
+and generates a Tomcat war file  gsac-code/dist/dataworksgsac.war.
+
+To run the server, do:
+
+ ant runserver
+
+This will run a test or demo version of your GSAC on your desktop, with Jetty doing the web page management.
+
+To see the new GSAC, in the runserver screen output is a line such as
+
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacboulder/gsacapi
+
+Enter the "http:/hostname:8080/gsacboulder/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
+
+The display is handled by Jetty.
+
+
+########################################################################
+Hiding DB account info
+########################################################################
+
+If you have some database authentication you need to use (or any other properties), 
+but don't want to check in with the properties files (into SourceForge or other svn), 
+you can create a org/dataworks/gsac/dbresources/dataworksgsac.properties file. The contents are two lines:
+gsac.db.username=your-db-account-name
+gsac.db.password=your-db-account-password
+
+The ant runserver command implicitly uses this property file as a command line argument.
+When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
+So, for example, for a 'gsacboulder' server,  it looks for a gsacboulder.properties file. 
+Put the authentication information in that properties file so it's not checked into any svn.
+
+
+########################################################################
+Running the new GSAC web site with Tomcat
+########################################################################
+
+Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
+
+Building GSAC (in the src/org/demo/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
+
+ gsac-code/dist/gsacDemo.war.   
+
+Copy this file to the Tomcat folder for .war file folder on your web server host.  For example, 
+on the Tomcat server, do something like
+
+cp gsacDemo.war /usr/local/apachetomcat/webapps
+
+The GSAC server web should be available in a few seconds if you are using "hot deploy," without a restart of Tomcat.
+    
+You can see the log of Tomcat actions by doing for example,
+
+ tail -f /usr/local/apachetomcat/logs/catalina.out
+    
+If for some reason Tomcat and hotdeploy are misbehaving, or to restart Tomcat, you can do:
+
+sudo /etc/init.d/tomcatdev stop
+sudo /etc/init.d/tomcatdev start
+
+to restart tomcat  and force a read of the .war files.
+
+The Tomcat's servlet reads the properties file:
+/usr/local/apachetomcatdev/conf/gsacigs.properties
+which contains the database authentication info. This is in the .war file.
+
+
+########################################################################
+Installing a Federated GSAC
+########################################################################
+
+To be supplied...
+
+########################################################################
+########################################################################
+
