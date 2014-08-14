@@ -30,11 +30,12 @@ Do not change actual filenames of files made by GSAC to match any uppercase lett
 
 ########################################################################
 
-Hopefully you've managed to generate the initial repository source package using README Part 1.
 
-This README (Part 2) file is located in your new GSAC package in org/dataworks/gsac/ (ignore the README file in org/dataworks/gsac/release).
+You built the initial GSAC following the instructions in README Part 1.
 
-Now, change the working directory to your local GSAC code area, at org/dataworks/gsac .
+This README (Part 2) file is located in your new GSAC package in src/org/dataworks/gsac/.   (ignore the README file in org/dataworks/gsac/release).
+
+cd to your local GSAC code area, at src/org/dataworks/gsac/.
 
 
 Adding Your Repository's Details: The "GSAC Resources Properties" File.
@@ -69,7 +70,7 @@ You optionally add this line showing the  maximum size allowed when zipping up f
 Connecting to the Database used by GSAC
 ########################################################################
 
-Setting and Hiding DB account information: the "GSAC DB Properties" File.
+Setting and MySQL database account information: the "GSAC DB Properties" File.
 
 You code the file, org/dataworks/gsac/dbresources/gsacdb_test.properties, to hold the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
@@ -79,7 +80,7 @@ to permit the GSAC web server process to read from the geodesy database.  The co
         gsac.db.username=db-gsac-username
         gsac.db.password=gsac-password
 
-        gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Boulder_GSAC_Database_with_data?useUnicode=yes&characterEncoding=UTF-8
+        gsac.db.jdbcurl=jdbc:mysql://localhost:3080/Boulder_GSAC_Database_with_data?useUnicode=yes&characterEncoding=UTF-8
 
         #gsac.db.jdbcurl=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>
 
@@ -92,13 +93,14 @@ When the GSL assembles the JDBC URL it finds the user name and password from her
 GSAC does not write to any database.
 
 One MySQL example which may work running both the db and GSAC locally on your computer, for testing, is 
+
 gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
 
-The Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  Also for Postgres the form is 
+The Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  For Postgres the form is 
 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
-One Oracle JDBC URL is of the form:
+One Oracle JDBC URL is:
 
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
    e.g:
@@ -118,8 +120,8 @@ This can be a little confusing if you attempt to keep track of the several prope
 
 
 ########################################################################
+
 Initial compile of GSAC in your new GSAC code area
-########################################################################
 
 Check that the file build.xml, in your location org/dataworks/gsac, has these lines. 
 Note that the value represneted by 'gsacdataworks' below may have an upper case letter in Dataworks where the actual word in build.xml has lower case which is correct.
@@ -272,15 +274,15 @@ ant runserver
 
 This command runs a gsac Dataworks GSAC, on your local desktop where you are developing your GSAC.  
 
-Screen output of th ant command includes a line like
+Screen output of the ant runserver command includes a line like
 
-GSAC INFO: Tue Aug 28 14:33:59 EDT 2013: GsacServlet: url:http://mycpuname:8080/dataworksigsac/gsacapi
- or 
      [java] Running stand-alone GSAC server at: http://localhost:8080/bouldergsac
 
 This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
 running ant runserver.  If you already use 8080 for another purpose, enter a different value in build.xml.  It is 
 also in the gsacrepository.sh for when running stand-alone.
+
+If 8080 is otherwise in use on your system, change 8080 in build.xml to 9090 or some other value and do ant again.
 
 In a browser on your desktop where you are developing your GSAC, look at that URL, like 
 
@@ -348,7 +350,7 @@ The GSAC forms of table and field (column) names from Tables.java will be used i
 Extending Java Classes: Essential new Java Classes for your GSAC.
 ########################################################################
 
-NOTE: The files DataworksSiteManager.java and DataworkssFileManager.java are implemented.
+NOTE: The files DataworksSiteManager.java and DataworkssFileManager.java are already implemented, when you exported GSAC with svn.
 
 To complete your GSAC server, you need new Java code to specify particular details of your data repository.
 Files in org/dataworks/gsac/ have new Java code for your repository, which is the bridge between your database on one hand and GCAC core code on the other. 
@@ -366,7 +368,7 @@ The initial or template files for these Java classes automatically created in yo
 lack any database details (since the Tables class you just made was unknown).
 
 ########################################################################
- Using the Prototype GSAC db design
+ Using the UNAVCO Dataworks GSAC Database schema
 ########################################################################
 
 NOTE: the GSAC Dataworks instance from the svn export has completely coded versions of the files DataworksSiteManager.java and DataworkssFileManager.java.  No work is needed here.
@@ -374,23 +376,7 @@ NOTE: the GSAC Dataworks instance from the svn export has completely coded versi
 
 If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes prototype Java files which will probably make a working GSAC installation with little Java coding.
 
-Replace your new files DataworksSiteManager.java and DataworkssFileManager.java with these two "Prototype" files,  from in your GSAC package:
-
-gsac-code/src/org/prototype/gsac/PrototypeSiteManager.java
-gsac-code/src/org/prototype/gsac/PrototypeFileManager.java
-
-Change them to fit into your GSAC code:
-- rename them both, replacing Prototype in the file names with with your file name part, something like Boulder.
-- in the files change all uses of Prototype in Java class and method names using your file name part to replace Boulder.
-- replace the lines
-package org.prototype.gsac;
-import  org.prototype.gsac.database.*;
-with
-package org.myrep.gsac;
-import  org.myrep.gsac.database.*;
-using whatever your short name is, in place of myrep.
-
-Also see notes below about SiteManager.java and FileManager.java.
+see notes below about SiteManager.java and FileManager.java.
 
 Then test your new GSAC, using the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. (You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
