@@ -34,7 +34,7 @@ GSAC treats all time values as UTC times, and does not expect the optional Z or 
 GSAC does not expect times in the database to be in any time zone other than UTC.  You may if you wish enter such times but 
 that is discouraged.
 
-##############################################################c################################################################
+                    ##########################################
 
 
 Installing the GSAC Web Services Software Package for a Data Repository, Part 1.
@@ -49,9 +49,9 @@ or simply Google "UNAVCO GSAC" to find the UNAVCO GSAC web site.
 
     A Database for GSAC
 
-
 The following instructions use a hypothetical "Boulder" data repository. 
 
+                    ##########################################
 
 Install the GSAC core code
 
@@ -106,15 +106,13 @@ Total time: 36 seconds
     This file "contains" the built and executable GSAC core code, in effect.  This jar file will be used to build your final
     Java jar file for your complete GSAC server code.
 
-    End of part 1, installation of GSAC core code.
 
-
-##############################################################c################################################################
+                    #########################################
 
 
 Create GSAC configuration files and make your initial GSAC.
 
-Set Map Area:
+    Set Map Area:
 
     Edit the file ~/GSAC/gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
     to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  
@@ -129,9 +127,9 @@ var defaultZoomLevel = 5;
     Build the GSAC core code with command 'ant', executed in ~/GSAC/gsac-code/.  
 
 
-Use the command "ant makerepository" to create your initial set of local implementation files:
+    Use the command "ant makerepository" to create your initial set of local implementation files:
 
-First make the macros template file.
+    First make the macros template file.
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
@@ -148,7 +146,7 @@ cd  ~/GSAC/gsac-code/src/org/gsac/template/
     ## A standard Java package name.  This controls making and naming the new directory path to hold your local GSAC installation code.
     ## If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.
 
-    target.prefix= Boulder          
+    target.prefix=Boulder          
     ## a prefix for filenames for the new Java .java files and .class files for your GSAC installation. No spaces.
 
     target.dbdriver=mysql.jar     
@@ -237,7 +235,7 @@ The installation instructions for federated GSACs are also included in the GSAC 
 README_GSAC_Federated_Installation, for example in ~/GSAC/gsac-code/src/org/gsac/federated/README_GSAC_Federated_Installation. 
 (ignore the file 'README there)
 
-###########################################   ###########################################
+                           ###########################################
 
 1.  Install the GSAC package.
 
@@ -289,7 +287,7 @@ Install GSAC core code, as described in the GSAC web site, repeated here:
     This file contains the executable GSAC core code, in effect.  This jar file will be used to build your final Java .jar file, 
     and Tomcat .war file, for your complete GSAC server code.
 
-###########################################   ###########################################
+                        ###########################################
 
 2. Specify connections to remote GSACs.
 
@@ -333,7 +331,8 @@ GSACs to use.  Lines beginning with '#' are comments.  Here is an example of the
 
 Ignore the file resources/gsacserver_production.properties.
 
-###########################################   ###########################################
+                           ###########################################
+
 
 3. Edit files for your federated GSAC's web page header and footer.
 
@@ -347,7 +346,7 @@ The FederatedSiteManager.java and FederatedResourceManager.java files should NOT
 any java files in gsac/federated/.
 
 
-###########################################   ###########################################
+                           ###########################################
 
 4. Build and Deploy the Federated GSAC.
 
