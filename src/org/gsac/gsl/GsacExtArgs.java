@@ -62,15 +62,14 @@ public interface GsacExtArgs {
     public static final String ARG_HAS_METPACK = GsacArgs.ARG_SITE_PREFIX + "hasmetpack";
 
     /** _more_ */
-    public static final String ARG_COUNTRY = GsacArgs.ARG_SITE_PREFIX + "country";
+    public static final String ARG_CITY = GsacArgs.ARG_SITE_PREFIX + "city";
 
     /** _more_ */
-    public static final String ARG_CITY = GsacArgs.ARG_SITE_PREFIX + "city";
+    public static final String ARG_COUNTRY = GsacArgs.ARG_SITE_PREFIX + "country";
 
     /** _more_ */
     public static final String ARG_STATE = GsacArgs.ARG_SITE_PREFIX + "state";
 
-    /** _more_ GsacExtArgs.ARG_NETWORK */
     public static final String ARG_NETWORK = GsacArgs.ARG_SITE_PREFIX + "network";
 
     /** Name of station's tectonic plate.  */
@@ -94,7 +93,7 @@ public interface GsacExtArgs {
 
     public static final String SITE_PHOTO_URL = "site.metadata.photoURL";
 
-    /**  the x,y,z coordinate values of a location in a geodetic reference frame: */
+    /**  the x,y,z coordinate values of a location in a geodetic terrestrial reference frame (TRF): */
     public static final String SITE_TRF_X = "site.metadata.x";
     public static final String SITE_TRF_Y = "site.metadata.y";
     public static final String SITE_TRF_Z = "site.metadata.z";
