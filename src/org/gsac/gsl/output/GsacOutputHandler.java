@@ -570,8 +570,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
     }
 
     /**
-     * compose (latitude, longitude, elevation) and separate the values of lat, long, and ellipsoid height with &nbsp; spaces for HTML output.
+     * compose (latitude, longitude, ellipsoid height) and separate the values of lat, long, and ellipsoid height with &nbsp; spaces for HTML output.
      * to avoid confusion in Europe where latLonFormat uses commas for decimal points.
+     * Note that in most GPS data, height values are ellipsoid heights, not geographic elevation, although much GSAC code uses the word 'elevation' for this value.
      *
      * so far, this used only in HTML site page
      *
@@ -582,7 +583,7 @@ public abstract class GsacOutputHandler implements GsacConstants {
         // output  (latitude, longitude, elevation) :
         // About ellipsoidal height: // use this label: //+ formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
         return "latitude "+formatLatLon(resource.getLatitude()) + "  &nbsp; &nbsp; longitude "
-               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; elevation(ellip. hgt) "
+               + formatLatLon(resource.getLongitude()) + " &nbsp; &nbsp; ellipsoid height "
                + resource.getElevation();
     }
 
