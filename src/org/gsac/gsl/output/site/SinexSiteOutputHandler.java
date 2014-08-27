@@ -109,9 +109,9 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     public SinexSiteOutputHandler(GsacRepository gsacRepository,
                                    ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_SINEX, "SINEX", "/sites.snx", true));
-        // "SINEX" is a label for the Results choice box in site search form on web page.
-        // the sites.snx is used for names of files of results.  
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_SINEX, "SINEX sites info", "/sites.snx", true));
+        // "SINEX sites info" is a label for the Results choice box in site search form on web page.
+        // And "sites.snx" is used for names of files of results.  
     }
 
 
