@@ -315,6 +315,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                                     + URL_HTDOCS_BASE + "/CalendarPopup.js"));
         */
 
+        // to verify or show the value of the baseurl in the file gsac.properties
+        // resources/gsac.properties, such as gsac.baseurl = /dataworks
+        //System.err.println("     HtmlOutputHandler.java baseUrl: " + getRepository().getUrlBase() );
+        // note that this may not be the same string as used for the tomcat .war file name.
+
         getSearchForm(request, pw, resourceClass);
         getRepositorySelect(request, pw);
 
@@ -2277,10 +2282,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
             // use either this label:
-            //labels.add(msg("Location") + " (latitude, longitude, elevation)");
+            //labels.add(msg("Location") + " (latitude, longitude, elevation)"); // original 2010
             // OR this (preferred):
-            labels.add(msg("Location") + " (latitude, longitude, ellips. hgt.)");
-            // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 10 meters or more. A very big deal to our users.
+            //labels.add(msg("Location") + " (latitude, longitude, ellips. hgt.)"); // mid 2013
+            labels.add(msg(" ") + " Latitude, Longitude, Ellipsoid hgt.");
+            // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
             sortValues.add("");
             if (doDateRange) {
