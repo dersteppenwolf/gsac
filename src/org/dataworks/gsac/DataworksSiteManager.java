@@ -1192,16 +1192,25 @@ public class DataworksSiteManager extends SiteManager {
 
                //System.err.println("\n   GSAC equip config session at station "+gsacResource.getId()+"from start time: "+ indate +"  to stop time: "+ outdate);
 
-                int antid  = results.getInt(colCnt++);
-                String ant_serial_number  = results.getString(colCnt++);
-                double antenna_height = results.getFloat(colCnt++);
+                /* some problem with the column-counting way to get values of returned fields:  int antid  = results.getInt(colCnt++);
+                  String ant_serial_number  = results.getString(colCnt++);
+                  double antenna_height = results.getFloat(colCnt++);
+                  antenna_height = Double.valueOf(fourptForm.format(antenna_height));
+                  int domeid  = results.getInt(colCnt++);
+                */
+
+                int antid  = results.getInt(Tables.EQUIP_CONFIG.COL_ANTENNA_ID);
+                //System.err.println("\n   GSAC got antenna key id number "+antid+"  for station "+gsacResource.getId() );
+
+                String ant_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_ANTENNA_SERIAL_NUMBER);
+                double antenna_height = results.getFloat(Tables.EQUIP_CONFIG.COL_ANTENNA_HEIGHT);
                 antenna_height = Double.valueOf(fourptForm.format(antenna_height));
-                int domeid  = results.getInt(colCnt++);
-                String dome_serial_number  = results.getString(colCnt++);
-                int recid  = results.getInt(colCnt++);
-                String rec_firmware_vers  = results.getString(colCnt++);
-                String rec_serial_number  = results.getString(colCnt++);
-                String sat_system  = results.getString(colCnt++);
+                int domeid  = results.getInt(Tables.EQUIP_CONFIG.COL_RADOME_ID);
+                String dome_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_RADOME_SERIAL_NUMBER);
+                int recid  = results.getInt(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID);
+                String rec_firmware_vers  = results.getString(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_VERS);
+                String rec_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_RECEIVER_SERIAL_NUMBER);
+                String sat_system  = results.getString(Tables.EQUIP_CONFIG.COL_SATELLITE_SYSTEM);
 
                 ArrayList<String> avalues = new ArrayList<String>();
 
@@ -1219,13 +1228,16 @@ public class DataworksSiteManager extends SiteManager {
                 avalues =  new ArrayList<String>();
                 clauses =  new ArrayList<Clause>();
                 tables =   new ArrayList<String>();
+                //System.err.println("      ant id = "+ antid);
                 clauses.add(Clause.eq(Tables.ANTENNA.COL_ANTENNA_ID, antid) );
                 cols=SqlUtil.comma(new String[]{Tables.ANTENNA.COL_ANTENNA_NAME});
                 tables.add(Tables.ANTENNA.NAME);
                 statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+                //System.err.println("    get  ant stm = "+ statement);
                 try {
                    SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
                    while ((results = iter2.getNext()) != null) {
+                       // System.err.println("      while ant type= "+ ant_type);
                        ant_type = results.getString(Tables.ANTENNA.COL_ANTENNA_NAME);
                    }
                 } finally {
@@ -1233,7 +1245,7 @@ public class DataworksSiteManager extends SiteManager {
                 } 
                 //System.err.println("      ant type= "+ ant_type);
 
-                /* get dome type name */
+                /* get dome type name dddd */
                 String dome_type="";
                 avalues =  new ArrayList<String>();
                 clauses =  new ArrayList<Clause>();
@@ -1278,7 +1290,7 @@ public class DataworksSiteManager extends SiteManager {
                 } finally {
                        getDatabaseManager().closeAndReleaseConnection(statement);
                 } 
-                //System.err.println("      rec type= "+ rcvr_type);
+                //System.err.println("      receiver type= "+ rcvr_type);
 
                // construct a GSAC "GnssEquipment" object with these values:
                //  public GnssEquipment(Date[] dateRange, String antennatype, String antennaSN, String dometype, String domeSerial, String receiver, String receiverSerial, 
