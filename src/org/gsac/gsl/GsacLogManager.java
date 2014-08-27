@@ -200,7 +200,7 @@ public class GsacLogManager extends GsacManager {
                 getErrorLogger().error(message);
             }
         } else {
-            System.err.println("GSAC ERROR: " + getDTTM() + ": " + message);
+            // now done elsewhere System.err.println("GSAC ERROR: " + getDTTM() + ": " + message);
             if (exc != null) {
                 System.err.println("<stack>");
                 exc.printStackTrace();
