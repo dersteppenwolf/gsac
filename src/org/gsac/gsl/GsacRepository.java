@@ -603,7 +603,7 @@ public class GsacRepository implements GsacConstants {
             if (serviceRequest) {
                 
                 String reqstr=request.toString();
-                System.out.println    ("GSAC: new request was "+reqstr+", at time "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
+                System.out.println    ("GSAC: new request completed: "+reqstr+", at time "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
                 //System.out.println("GSAC: end time   to handleRequest is "+getUTCnowString() );
 
                 if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
@@ -625,7 +625,7 @@ public class GsacRepository implements GsacConstants {
         } catch (Exception exc) {
             //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
-            System.out.println                                 ("GSAC: new request Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            System.out.println                                 ("GSAC: new request with Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
             getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
             try {
                 request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
