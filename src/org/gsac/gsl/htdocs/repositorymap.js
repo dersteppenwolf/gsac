@@ -1,26 +1,32 @@
 /*
  * GSAC map controls.
+ * Note the code for Google maps and Yahoo maps is all defunct as of Aug 2014 due to their changes.
+ * Need to revise code here to reactivate Google Maps.
 */
 
-/*  set zoom control for Google Maps map of GSAC sites; zoom level 3 is about 10000 km wide; 4 is about 3900 km wide. */
-var defaultZoomLevel = 3;
+/*  set zoom level for map of GSAC sites; zoom level 3 is about 10,000 km wide; 4 is about 4000 km wide. */
+var defaultZoomLevel = 4;
 
-/*  set center of GSAC site map, with longitude east (west is negative), latitude north, and set zoom level */
-/*  example: Europe */
-var defaultLocation = new OpenLayers.LonLat(15.00, 50.00);
-
+/*  set center of GSAC site map, with longitude east (west is negative), latitude north */
+/* var defaultLocation = new OpenLayers.LonLat(-76.00, 16.00);   Caribbean Sea area */
+var defaultLocation = new OpenLayers.LonLat(15.00, 45.00);  /* Europe */
 
 var mapLayers = null;
+
+var map_yahoo     = "yahoo";
+
 var map_google_terrain = "google.terrain";
 var map_google_streets = "google.streets";
 var map_google_hybrid = "google.hybrid";
 var map_google_satellite = "google.satellite";
+
 var map_ms_shaded = "ms.shaded";
 var map_ms_hybrid = "ms.hybrid";
 var map_ms_aerial = "ms.aerial";
-var map_yahoo = "yahoo";
+
 var map_wms_topographic = "wms:Topo Maps,http://terraservice.net/ogcmap.ashx,DRG";
 var map_wms_openlayers = "wms:OpenLayers WMS,http://vmap0.tiles.osgeo.org/wms/vmap0,basic";
+
 
 function loadjscssfile(filename, filetype){
     if (filetype=="js") { 
@@ -42,12 +48,13 @@ function loadjscssfile(filename, filetype){
 
 /*
 var yahooJS= "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers";
+loadjscssfile(yahooJS, "js")
+
 var msJS= "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1";
 var googleJS= "http://maps.google.com/maps/api/js?v=3.2&sensor=false";
 
-loadjscssfile(yahooJS, "js")
-//loadjscssfile(msJS, "js")
-//loadjscssfile(googleJS, "js")
+loadjscssfile(msJS, "js")
+loadjscssfile(googleJS, "js")
 */
 
 
@@ -72,29 +79,27 @@ function RepositoryMap (mapId, params) {
     this.addBaseLayers = function() {
         if(!this.mapLayers) {
 
-/* some of these layers no longer work in 2013:
+            /* the first in this list is the layer shown first; others available with (+) button on map */
+            /* this.mapLayers = [map_wms_topographic, map_yahoo, map_wms_openlayers ]; */
+            this.mapLayers = [map_wms_openlayers ]; /* all others defunct as of August 2014 */
+
+            /* some of these layers no longer work in 2013:
             this.mapLayers = [
                          map_wms_openlayers,
                          map_yahoo,
                          map_wms_topographic,
+
                          map_ms_shaded,
-                         //map_ms_hybrid,
+                         map_ms_hybrid,
                          map_ms_aerial,
+
                          map_google_terrain,
-                         //map_google_streets,
+                         map_google_streets,
                          map_google_hybrid,
                          map_google_satellite
                          ];
-*/
+              */
 
-            /* the first in this list is the layer shown first; others available with (+) button on map */
-            this.mapLayers = [
-                         map_yahoo, // good map background with lots of details
-                         map_wms_openlayers 
-                         // it seems that new libs in Oct or earlier 2103 with this google item cause all maps to be blank map_google_terrain,
-                         // ditto map_google_hybrid,
-                         // ditto map_google_satellite
-                         ];
         }
             
         for (i = 0; i < this.mapLayers.length; i++) {
@@ -108,19 +113,13 @@ function RepositoryMap (mapId, params) {
             } else if(mapLayer == map_google_satellite) {
                 this.map.addLayer(new OpenLayers.Layer.Google("Google Satellite",{type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}));
             } else if(mapLayer == map_yahoo) {
-                this.map.addLayer(new OpenLayers.Layer.Yahoo( "Yahoo"));
+                this.map.addLayer(new OpenLayers.Layer.Yahoo("Yahoo"));
             } else if(mapLayer == map_ms_shaded) {
-                this.map.addLayer(new OpenLayers.Layer.VirtualEarth("Virtual Earth - Shaded", {
-                            type: VEMapStyle.Shaded
-                        }));
+                this.map.addLayer(new OpenLayers.Layer.VirtualEarth("Virtual Earth - Shaded", { type: VEMapStyle.Shaded }));
             } else if(mapLayer == map_ms_hybrid) {
-                this.map.addLayer(OpenLayers.Layer.VirtualEarth("Virtual Earth - Hybrid", {
-                            type: VEMapStyle.Hybrid
-                        }));
+                this.map.addLayer(OpenLayers.Layer.VirtualEarth("Virtual Earth - Hybrid", { type: VEMapStyle.Hybrid }));
             } else if(mapLayer == map_ms_aerial) {
-                this.map.addLayer(new OpenLayers.Layer.VirtualEarth("Virtual Earth - Aerial", {
-                            type: VEMapStyle.Aerial
-                        }));
+                this.map.addLayer(new OpenLayers.Layer.VirtualEarth("Virtual Earth - Aerial", { type: VEMapStyle.Aerial }));
             } else {
                 var match = /wms:(.*),(.*),(.*)/.exec(mapLayer);
                 if(!match) {
@@ -155,16 +154,18 @@ function RepositoryMap (mapId, params) {
             displayProjection: new OpenLayers.Projection("EPSG:4326"),
             units: "m",
             maxResolution: 156543.0339,
-            maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34,
-                                             20037508.34, 20037508.34)
-,            controls: [mousecontrols]
+            maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34), 
+            controls: [mousecontrols]
         };
+
         var options = {
             //            projection: new OpenLayers.Projection("EPSG:900913"),
             //            displayProjection: new OpenLayers.Projection("EPSG:4326")
         };
+
         //        this.map = new OpenLayers.Map( this.mapDivId, options );
         this.map = new OpenLayers.Map( this.mapDivId);
+
         //        this.map.minResolution = 0.0000001;
         //        this.map.minScale = 0.0000001;
         this.vectors = new OpenLayers.Layer.Vector("Drawing");
@@ -178,27 +179,21 @@ function RepositoryMap (mapId, params) {
 
         /*
         var options = {featureAdded:     
-                       function(feature) {
-                           theMap.drawingFeatureAdded(feature);
+                       function(feature) { theMap.drawingFeatureAdded(feature);
                        }
         }; 
 
         controls = {
-            point: new OpenLayers.Control.DrawFeature(this.vectors,
-                                                      OpenLayers.Handler.Point, options)
-                        line: new OpenLayers.Control.DrawFeature(this.vectors,
-                                                     OpenLayers.Handler.Path),
-            polygon: new OpenLayers.Control.DrawFeature(this.vectors,
-                                                        OpenLayers.Handler.Polygon),
-                                                        drag: new OpenLayers.Control.DragFeature(this.vectors)
-            
+            point: new OpenLayers.Control.DrawFeature(this.vectors, OpenLayers.Handler.Point, options) line: new OpenLayers.Control.DrawFeature(this.vectors, OpenLayers.Handler.Path),
+            polygon: new OpenLayers.Control.DrawFeature(this.vectors, OpenLayers.Handler.Polygon), drag: new OpenLayers.Control.DragFeature(this.vectors)
         };
        for(var key in controls) {
             //            this.map.addControl(controls[key]);
         }
-//        var control = controls["point"];
-//        control.activate();
+        //        var control = controls["point"];
+        //        control.activate();
         */
+
         //        var draw = new OpenLayers.Control.DrawFeature(this.drawingLayer,
         //                                                      OpenLayers.Handler.Point);
        if(forSelection) {
