@@ -44,13 +44,15 @@ import java.text.DecimalFormat;
  * 26 Feb 2013: output shows huge number of digits in latitude and longitude. Reformatted same.
  * 20 Nov 2013:
  * 1. first column in output removed: in the unavco gsac is such as "13922_AHUP_268"  an internal identifier in the UNAVCO GSAC code, and of no use to any geodesy user
- *      or simply repeats second column in prototype gsac
  * 2. replace top header line with standard csv format style.
  *
  * Note the "elevation" value should be the site's ellipsoid height, depending in the metadata available.
  *
  * @author Jeff McWhirter 2010
- * @author SK Wier 26 Feb 2013.  Format lat longi height to avoid huge number of non-significant digits. 20 Nov 2013; see above. 6 feb 2104 to change GUI choice label.
+ * @version SK Wier 26 Feb 2013 Re-format lat longi height to avoid huge number of non-significant digits.  
+ * @version SK Wier 20 Nov 2013 see above.
+ * @version SK Wier  6 Feb 2014 to change GUI choice label to "GSAC Sites info, csv".
+ * @version SK Wier 27 Aug 2014 to change GUI choice label to "GSAC Sites info, short csv" to parallel other full csv choice label. API arg value site.csv never changes.
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
     String latitude ="";
@@ -75,7 +77,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public TextSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, csv", "/sites.csv", true));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, short csv", "/sites.csv", true));
     }
 
 
