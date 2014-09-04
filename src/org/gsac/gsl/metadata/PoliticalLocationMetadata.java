@@ -84,13 +84,13 @@ public class PoliticalLocationMetadata extends GsacMetadata {
 
         if (state != null) {
             pw.append(outputHandler.formEntry(request,
-                    //outputHandler.msgLabel("Province/State"), state)); // or LOOK for other forms of GSAC
-                    outputHandler.msgLabel("Locale"), state)); // LOOK:  for dataworks GSAC, use locale as name for province / state
+                    outputHandler.msgLabel("Province/State"), state)); 
         }
 
         if (city != null) {
             pw.append(outputHandler.formEntry(request,
-                    outputHandler.msgLabel("Place/city"), city)); 
+                    //outputHandler.msgLabel("Place/City"), city)); 
+                    outputHandler.msgLabel("City/Locale"), city)); // LOOK:  for dataworks GSAC, use locale as name for province 
         }
 
         return true;
