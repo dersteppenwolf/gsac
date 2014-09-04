@@ -239,7 +239,7 @@ public class DataworksSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
             */
 
-            // search on antenna types: get antenna type names used by station equipment sessions  ["EQUIP_CONFIG"]
+            // to enable the search on antenna types: get antenna type names used by station equipment sessions  ["EQUIP_CONFIG"]
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
@@ -281,7 +281,7 @@ public class DataworksSiteManager extends SiteManager {
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
-            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER.COL_RECEIVER_FIRMWARE_ID));
+            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_ID, Tables.RECEIVER.COL_RECEIVER_ID));
             //  SELECT what to 
             cols=SqlUtil.comma(new String[]{Tables.RECEIVER.COL_RECEIVER_NAME});
             //  FROM   
@@ -294,16 +294,16 @@ public class DataworksSiteManager extends SiteManager {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
-                   String anttype= results.getString(Tables.RECEIVER.COL_RECEIVER_NAME);
+                   String type= results.getString(Tables.RECEIVER.COL_RECEIVER_NAME);
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                      if ( avalues.get(vi).equals(anttype) ) { 
+                      if ( avalues.get(vi).equals(type) ) { 
                          notfound=0;
                          break;
                          }
                    }
                    if (notfound==1) {
-                         avalues.add(anttype);
+                         avalues.add(type);
                    }
                }
             } finally {
@@ -331,16 +331,16 @@ public class DataworksSiteManager extends SiteManager {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
-                   String anttype= results.getString(Tables.RADOME.COL_RADOME_NAME);
+                   String type= results.getString(Tables.RADOME.COL_RADOME_NAME);
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                      if ( avalues.get(vi).equals(anttype) ) { 
+                      if ( avalues.get(vi).equals(type) ) { 
                          notfound=0;
                          break;
                          }
                    }
                    if (notfound==1) {
-                         avalues.add(anttype);
+                         avalues.add(type);
                    }
                }
             } finally {
@@ -359,14 +359,13 @@ public class DataworksSiteManager extends SiteManager {
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nation", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // add box to choose by state or province aka locale
-            // LOOK for dataworks only , in gsac core code chane in this file gsl/metadata/PoliticalLocationMetadata.java
-            // the line      outputHandler.msgLabel("Province"), city));
+            // add box to choose by locale
+            // LOOK for dataworks only , in gsac core code change in this file gsl/metadata/PoliticalLocationMetadata.java
             // to               outputHandler.msgLabel("Locale"), city));
-            // NOTE: if no such values in the db, no list is made and shown.
+            // NOTE: if no such values in the db, none is shown.
             values = getDatabaseManager().readDistinctValues( Tables.LOCALE.NAME, Tables.LOCALE.COL_LOCALE_INFO);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Locale", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "City/Locale", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // disabled: provide a SEARCH on type of momument
             //values = getDatabaseManager().readDistinctValues( Tables.MONUMENT_STYLE.NAME, Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION);
@@ -484,6 +483,7 @@ public class DataworksSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for stattion status " + values.get(0)) ;
         }
         
+        // LOOK FIX return distinct station:
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
             tableNames.add(Tables.EQUIP_CONFIG.NAME);
@@ -509,7 +509,7 @@ public class DataworksSiteManager extends SiteManager {
             tableNames.add(Tables.EQUIP_CONFIG.NAME);
             tableNames.add(Tables.RECEIVER.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.EQUIP_CONFIG.COL_STATION_ID));
-            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER.COL_RECEIVER_FIRMWARE_ID));
+            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_ID, Tables.RECEIVER.COL_RECEIVER_ID));
             clauses.add(Clause.eq(Tables.RECEIVER.COL_RECEIVER_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for receiver type name " + values.get(0)) ;
         }
@@ -522,16 +522,16 @@ public class DataworksSiteManager extends SiteManager {
             clauses.add(Clause.eq(Tables.COUNTRY.COL_COUNTRY_NAME, values.get(0)));
         }
         
-        // for Dataworks 'locale,' formerly called state or region.
-        if (request.defined(GsacExtArgs.ARG_STATE)) {
-            List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_STATE);
+        // for Dataworks 'locale,' formerly called city
+        if (request.defined(GsacExtArgs.ARG_CITY)) {
+            List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_CITY);
             tableNames.add(Tables.LOCALE.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_LOCALE_ID, Tables.LOCALE.COL_LOCALE_ID));
             clauses.add(Clause.eq(Tables.LOCALE.COL_LOCALE_INFO, values.get(0)));
             //System.err.println("   SiteManager: query for locale " + values.get(0)) ;
         }
 
-        // for testing, use 
+        // for testing: 
         // System.err.println("   SiteManager: getResourceClauses gives created clauses="+clauses) ;
         // to show clauses like
         //  [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
@@ -762,14 +762,14 @@ public class DataworksSiteManager extends SiteManager {
 
         // get names of country, province or state, and agency from their id numbers 
 
-        // country name
+        // get name of country
         String country = "";
         cols="";
         tables = new ArrayList<String>();
         clauses = new ArrayList<Clause>();
-        // get name of country
         //  WHERE the test part in the select statement 
         clauses.add(Clause.join(Tables.STATION.COL_COUNTRY_ID, Tables.COUNTRY.COL_COUNTRY_ID));
+        clauses.add(Clause.eq(Tables.COUNTRY.COL_COUNTRY_ID, countryid));
         //  SELECT what to get from the db (result in rows returned):
         cols=SqlUtil.comma(new String[]{Tables.COUNTRY.COL_COUNTRY_NAME});
         //  FROM   the select from which tables part 
@@ -790,8 +790,8 @@ public class DataworksSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-        // get name of locale; was called province or state     
-        String state = "";
+        // get name of locale;  aka city
+        String locale = "";
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
         cols="";
@@ -806,9 +806,9 @@ public class DataworksSiteManager extends SiteManager {
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
-               //      System.err.println("   get state name");
-               state = new String( qresults.getBytes(Tables.LOCALE.COL_LOCALE_INFO), "UTF-8"); // qresults.getString(Tables.LOCALE.COL_LOCALE_INFO);
-               //      System.err.println("   did get state name"+state);
+               //      System.err.println("   get locale name");
+               locale = new String( qresults.getBytes(Tables.LOCALE.COL_LOCALE_INFO), "UTF-8"); // qresults.getString(Tables.LOCALE.COL_LOCALE_INFO);
+               //      System.err.println("   did get "+locale);
                break;
            }
          } finally {
@@ -816,9 +816,9 @@ public class DataworksSiteManager extends SiteManager {
          }
 
         // add above items to site as "PoliticalLocationMetadata":
-        // ... city name is not provided by the Dataworks database; and state is now the variable for dataworks' value 'locale'
-        String city=null;
-        site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
+        String state =null;
+        String city = locale;
+        site.addMetadata(new PoliticalLocationMetadata(country , state , city ));  
 
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
@@ -1015,14 +1015,14 @@ public class DataworksSiteManager extends SiteManager {
                 // Note if you add similar but new and different parameters to your data base, you also need to
                 // add to the file gsac/trunk/src/org/gsac/gsl/GsacExtArgs.java to declare similar new variables.
                 // The var names "Tables..." comes from the Tables.java file made when you built with ant maketables with your new database.
-                String xstr = results.getString(Tables.STATION.COL_X);
-                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_X, "X", xstr);
 
+                /*String xstr = results.getString(Tables.STATION.COL_X);
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_X, "X", xstr);
                 String ystr = results.getString(Tables.STATION.COL_Y);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Y, "Y", ystr);
-
                 String zstr = results.getString(Tables.STATION.COL_Z);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Z, "Z", zstr);
+                */
 
                 // get, check, and save value for IERS DOMES. 
                 String idn= results.getString(Tables.STATION.COL_IERS_DOMES);
@@ -1145,7 +1145,7 @@ public class DataworksSiteManager extends SiteManager {
          Tables.EQUIP_CONFIG.COL_ANTENNA_HEIGHT, 
          Tables.EQUIP_CONFIG.COL_RADOME_ID,
          Tables.EQUIP_CONFIG.COL_RADOME_SERIAL_NUMBER,
-         Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID,
+         Tables.EQUIP_CONFIG.COL_RECEIVER_ID,
          Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_VERS,
          Tables.EQUIP_CONFIG.COL_RECEIVER_SERIAL_NUMBER ,
          Tables.EQUIP_CONFIG.COL_SATELLITE_SYSTEM
@@ -1207,7 +1207,7 @@ public class DataworksSiteManager extends SiteManager {
                 antenna_height = Double.valueOf(fourptForm.format(antenna_height));
                 int domeid  = results.getInt(Tables.EQUIP_CONFIG.COL_RADOME_ID);
                 String dome_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_RADOME_SERIAL_NUMBER);
-                int recid  = results.getInt(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID);
+                int recid  = results.getInt(Tables.EQUIP_CONFIG.COL_RECEIVER_ID);
                 String rec_firmware_vers  = results.getString(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_VERS);
                 String rec_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_RECEIVER_SERIAL_NUMBER);
                 String sat_system  = results.getString(Tables.EQUIP_CONFIG.COL_SATELLITE_SYSTEM);
@@ -1278,7 +1278,7 @@ public class DataworksSiteManager extends SiteManager {
                 avalues =  new ArrayList<String>();
                 clauses =  new ArrayList<Clause>();
                 tables =   new ArrayList<String>();
-                clauses.add(Clause.eq(Tables.RECEIVER.COL_RECEIVER_FIRMWARE_ID, recid) );
+                clauses.add(Clause.eq(Tables.RECEIVER.COL_RECEIVER_ID, recid) );
                 cols=SqlUtil.comma(new String[]{Tables.RECEIVER.COL_RECEIVER_NAME});
                 tables.add(Tables.RECEIVER.NAME);
                 statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
