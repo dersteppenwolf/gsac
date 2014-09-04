@@ -498,13 +498,14 @@ public class GsacServlet extends HttpServlet implements GsacConstants {
         GsacServlet servlet = new GsacServlet();
 
         // JM 2010: to force numerical output to use points (periods) before the fractional part of float numbers, 
-        // a  drastic solution is to set your Locale early in the main().
-        // Locale.setDefault(new Locale("en", "US"));
-        // In worldwide use, this is perhaps not so good.  SKW 21 May 2014.
+        // a drastic solution is to set your Locale early in the main().
+        Locale.setDefault(new Locale("en", "US"));
+
         // Locale api in http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html;
         // language codes in http://www.loc.gov/standards/iso639-2/php/English_list.php
         // country codes are in http://www.davros.org/misc/iso3166.txt
-        Locale.setDefault(new Locale("fr", "FR"));
+
+        //Locale.setDefault(new Locale("fr", "FR"));
     }
 
 
