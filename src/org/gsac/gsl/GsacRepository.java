@@ -2789,10 +2789,10 @@ public class GsacRepository implements GsacConstants {
             message.append(
                 "Use any of the spatial bounds arguments. Longitudes are in degrees east. e.g.<br>");
             for (String[] tuple : new String[][] {
-                { id + ARG_NORTH_SUFFIX + "= 40.0", "   most northerly latitude" },
-                { id + ARG_SOUTH_SUFFIX + "=30.0",  "   most southerly latitude" },
-                { id + ARG_EAST_SUFFIX + "=100.0",  "  most easterly longitude" },
-                { id + ARG_WEST_SUFFIX + "=-110.0", "  most westerly longitude" }
+                { id + ARG_NORTH_SUFFIX + "= 40.0", "  most northerly latitude (valid range -90.0 to 90.0)" },
+                { id + ARG_SOUTH_SUFFIX + "=30.0",  "  most southerly latitude (valid range -90.0 to 90.0)" },
+                { id + ARG_EAST_SUFFIX + "=100.0",  "  most easterly longitude (-180 to 180)" },
+                { id + ARG_WEST_SUFFIX + "=-110.0", "  most westerly longitude (-180 to 180)" }
             }) {
                 message.append(HtmlUtil.href(url + "?" + tuple[0], tuple[0]));
                 message.append(tuple[1]);
