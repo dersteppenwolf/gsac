@@ -530,7 +530,7 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        //TODO: What to do with a head request
+        //TODO: what to do with a head request
         if (request.getMethod().toUpperCase().equals("HEAD")) {
             //System.err.println("GSAC: got a  head request:" + uri);
             return;
@@ -2688,7 +2688,7 @@ public class GsacRepository implements GsacConstants {
                     pw.append(HtmlUtil.p());
                     pw.append(getHeader(msg(collection.getName())));
                     sb.append(
-                        "<table width=100% cellspacing=10><tr><td><b>What</b></td><td><b>URL Argument</b></td><td><b>Type</b></td><td></td><td><b>Values</b></td></tr>");
+                        "<table width=100% cellspacing=10><tr><td><b>Item</b></td><td><b>API/URL Argument</b></td><td><b>Type</b></td><td></td><td><b>Description or values</b></td></tr>");
                 }
                 showCapabilityInfo(sb, capability, collection.getUrl());
             }
