@@ -99,20 +99,20 @@ public class DataworksFileManager extends FileManager {
         ArrayList<String> avalues = new ArrayList<String>();
         List<Clause> clauses = new ArrayList<Clause>();
         //  WHERE 
-        clauses.add(Clause.join(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID));
+        clauses.add(Clause.join(Tables.DATAFILE.COL_DATAFILE_TYPE_ID, Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_ID));
         //  SELECT what column values to find
-        String cols=SqlUtil.comma(new String[]{Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME});
+        String cols=SqlUtil.comma(new String[]{Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME});
         //  FROM   
         List<String> tables = new ArrayList<String>();
         tables.add(Tables.DATAFILE.NAME);
-        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        tables.add(Tables.DATAFILE_TYPE.NAME);
         Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            //System.err.println("  queried db table DATAFILE for all file type names" ) ;
            // process each line in results of db query  
            while ((results = iter.getNext()) != null) {
-               String ftype= results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               String ftype= results.getString(Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME);
                gpsfcnt +=1;
                // save distinct values
                int notfound=1;
@@ -239,7 +239,7 @@ public class DataworksFileManager extends FileManager {
         if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
              List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
              //System.err.println("  FileHandler:handleRequest(): search on file types "+ values.toString() );
-            clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME, values)));
+            clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME, values)));
         }
 
         //float intrange1 = Float.parseFloat(stri); // java atof
@@ -283,14 +283,14 @@ public class DataworksFileManager extends FileManager {
         // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
         clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
         // // from prototype gsac clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
-        clauses.add(Clause.join(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE.COL_DATAFILE_FORMAT_ID )) ;
+        clauses.add(Clause.join(Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_ID, Tables.DATAFILE.COL_DATAFILE_TYPE_ID )) ;
  
         Clause mainClause = Clause.and(clauses);
 
         // for the SQl select clause: WHAT to select (row values returned):
         String cols=SqlUtil.comma(new String[]{
              Tables.DATAFILE.COL_STATION_ID,
-             Tables.DATAFILE.COL_DATAFILE_FORMAT_ID,
+             Tables.DATAFILE.COL_DATAFILE_TYPE_ID,
              Tables.DATAFILE.COL_SAMPLE_INTERVAL, 
              Tables.DATAFILE.COL_DATAFILE_START_TIME,
              Tables.DATAFILE.COL_DATAFILE_STOP_TIME,
@@ -306,15 +306,15 @@ public class DataworksFileManager extends FileManager {
              Tables.STATION.COL_ACCESS_ID,
              // not yet in dataworks database  Tables.STATION.COL_EMBARGO_DURATION_HOURS,
              // not yet in dataworks database  Tables.STATION.COL_EMBARGO_AFTER_DATE,
-             Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID,
-             Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME             // last item has no final ,
+             Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_ID,
+             Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME             // last item has no final ,
              });
 
         //  for the sql select FROM clause, which tables to select from
         List<String> tables = new ArrayList<String>();
         tables.add(Tables.DATAFILE.NAME);
         tables.add(Tables.STATION.NAME);
-        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        tables.add(Tables.DATAFILE_TYPE.NAME);
 
         //System.err.println("  FileHandler:handleRequest(): select FROM "+tables+" WHERE "+mainClause);
 
@@ -335,7 +335,7 @@ public class DataworksFileManager extends FileManager {
                // get an individual file's  values from each single row returned in the array "results"
                String siteID = results.getString     (Tables.STATION.COL_FOUR_CHAR_NAME);
                int station_id  = results.getInt      (Tables.DATAFILE.COL_STATION_ID);
-               int file_type_id  = results.getInt    (Tables.DATAFILE.COL_DATAFILE_FORMAT_ID);
+               int file_type_id  = results.getInt    (Tables.DATAFILE.COL_DATAFILE_TYPE_ID);
 
                String start_time  = results.getString(Tables.DATAFILE.COL_DATAFILE_START_TIME);
                String stop_time  = results.getString (Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
@@ -371,7 +371,7 @@ public class DataworksFileManager extends FileManager {
                if (file_url==null || file_url.length()< 13)   proceed with showing results for this data file, even with null for url, or short url
                */
 
-               String file_type_name = results.getString (Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               String file_type_name = results.getString (Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME);
 
                String sample_interval = "0.0"; 
                sample_interval = results.getString (Tables.DATAFILE.COL_SAMPLE_INTERVAL);
@@ -493,11 +493,11 @@ public class DataworksFileManager extends FileManager {
         List<Clause> clauses = new ArrayList<Clause>();
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.DATAFILE.NAME);
-        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        tables.add(Tables.DATAFILE_TYPE.NAME);
         // clauses: WHERE this station is id-ed by its 4 char id:, and join other tables
         clauses.add(Clause.eq(Tables.STATION.COL_FOUR_CHAR_NAME, resourceId));
         clauses.add(Clause.join(Tables.DATAFILE.COL_STATION_ID, Tables.STATION.COL_STATION_ID));
-        clauses.add(Clause.join(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE.COL_DATAFILE_FORMAT_ID )) ;
+        clauses.add(Clause.join(Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_ID, Tables.DATAFILE.COL_DATAFILE_TYPE_ID )) ;
         //  and for the mysql SELECT clause: make a list of what to get (row values returned):
         String cols=SqlUtil.comma(new String[]{
              Tables.DATAFILE.COL_STATION_ID,
@@ -505,18 +505,18 @@ public class DataworksFileManager extends FileManager {
              Tables.DATAFILE.COL_DATAFILE_STOP_TIME,
              Tables.DATAFILE.COL_PUBLISHED_TIME,
              Tables.DATAFILE.COL_URL_PATH,
-             Tables.DATAFILE.COL_DATAFILE_FORMAT_ID,
+             Tables.DATAFILE.COL_DATAFILE_TYPE_ID,
              Tables.STATION.COL_FOUR_CHAR_NAME,
              Tables.STATION.COL_STATION_ID,
-             Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME
+             Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME
              });
         Statement statement =  getDatabaseManager().select(cols,  tables, Clause.and(clauses));
         try {
             ResultSet results = statement.getResultSet();
             while (results.next()) {
                int station_id  = results.getInt(Tables.DATAFILE.COL_STATION_ID);
-               int file_type_id  = results.getInt(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID);
-               String file_type_name  = results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               int file_type_id  = results.getInt(Tables.DATAFILE.COL_DATAFILE_TYPE_ID);
+               String file_type_name  = results.getString(Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME);
                String file_url = results.getString(Tables.DATAFILE.COL_URL_PATH);
                String siteID = ""+station_id;
                // LOOK the following are perhaps somewhat defective because java.sql.Date objects 
