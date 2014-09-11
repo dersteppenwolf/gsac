@@ -281,20 +281,20 @@ public class DataworksSiteManager extends SiteManager {
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
-            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_ID, Tables.RECEIVER.COL_RECEIVER_ID));
+            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE_ID));
             //  SELECT what to 
-            cols=SqlUtil.comma(new String[]{Tables.RECEIVER.COL_RECEIVER_NAME});
+            cols=SqlUtil.comma(new String[]{Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME});
             //  FROM   
             tables = new ArrayList<String>();
             tables.add(Tables.EQUIP_CONFIG.NAME);
-            tables.add(Tables.RECEIVER.NAME);
+            tables.add(Tables.RECEIVER_FIRMWARE.NAME);
             statement =
                getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
-                   String type= results.getString(Tables.RECEIVER.COL_RECEIVER_NAME);
+                   String type= results.getString(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME);
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
                       if ( avalues.get(vi).equals(type) ) { 
@@ -507,10 +507,10 @@ public class DataworksSiteManager extends SiteManager {
         if (request.defined(GsacExtArgs.ARG_RECEIVER)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_RECEIVER);
             tableNames.add(Tables.EQUIP_CONFIG.NAME);
-            tableNames.add(Tables.RECEIVER.NAME);
+            tableNames.add(Tables.RECEIVER_FIRMWARE.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.EQUIP_CONFIG.COL_STATION_ID));
-            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_ID, Tables.RECEIVER.COL_RECEIVER_ID));
-            clauses.add(Clause.eq(Tables.RECEIVER.COL_RECEIVER_NAME, values.get(0)));
+            clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE_ID));
+            clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for receiver type name " + values.get(0)) ;
         }
         
@@ -1123,7 +1123,6 @@ public class DataworksSiteManager extends SiteManager {
         | radome_id               | int(3)      | NO   | MUL | NULL    |                |
         | radome_serial_number    | varchar(20) | NO   |     | NULL    |                |
         | receiver_firmware_id    | int(3)      | NO   | MUL | NULL    |                |
-        | receiver_firmware_vers  | varchar(20) | NO   |     | NULL    |                |
         | receiver_serial_number  | varchar(20) | NO   |     | NULL    |                |
         | satellite_system        | varchar(60) | YES  |     | NULL    |                |
         +-------------------------+-------------+------+-----+---------+----------------+
@@ -1145,8 +1144,7 @@ public class DataworksSiteManager extends SiteManager {
          Tables.EQUIP_CONFIG.COL_ANTENNA_HEIGHT, 
          Tables.EQUIP_CONFIG.COL_RADOME_ID,
          Tables.EQUIP_CONFIG.COL_RADOME_SERIAL_NUMBER,
-         Tables.EQUIP_CONFIG.COL_RECEIVER_ID,
-         Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_VERS,
+         Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID,
          Tables.EQUIP_CONFIG.COL_RECEIVER_SERIAL_NUMBER ,
          Tables.EQUIP_CONFIG.COL_SATELLITE_SYSTEM
          });
@@ -1207,8 +1205,8 @@ public class DataworksSiteManager extends SiteManager {
                 antenna_height = Double.valueOf(fourptForm.format(antenna_height));
                 int domeid  = results.getInt(Tables.EQUIP_CONFIG.COL_RADOME_ID);
                 String dome_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_RADOME_SERIAL_NUMBER);
-                int recid  = results.getInt(Tables.EQUIP_CONFIG.COL_RECEIVER_ID);
-                String rec_firmware_vers  = results.getString(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_VERS);
+                int recid  = results.getInt(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID);
+                
                 String rec_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_RECEIVER_SERIAL_NUMBER);
                 String sat_system  = results.getString(Tables.EQUIP_CONFIG.COL_SATELLITE_SYSTEM);
 
@@ -1264,37 +1262,39 @@ public class DataworksSiteManager extends SiteManager {
                 } 
                 //System.err.println("      dome type= "+ dome_type);
 
-                /* get value of receiver_name from the db table 'receiver' via key value 'receiver_firmware_id'
-                mysql> desc receiver; aaa
+                /* get value of receiver_name  and rec_firmware_vers from the db table 'receiver_firmware' via key value 'receiver_firmware_id'
+                mysql> desc receiver_firmware; 
                 +----------------------+-------------+------+-----+---------+----------------+
                 | Field                | Type        | Null | Key | Default | Extra          |
                 +----------------------+-------------+------+-----+---------+----------------+
                 | receiver_firmware_id | int(5)      | NO   | PRI | NULL    | auto_increment |
                 | receiver_name        | varchar(20) | NO   |     | NULL    |                |
+                | receiver_firmware    | varchar(20) | NO   |     | NULL    |                |
                 | igs_defined          | char(1)     | NO   |     | N       |                |
                 +----------------------+-------------+------+-----+---------+----------------+
                 */
                 String rcvr_type="";
+                String rec_firmware_vers = "";
                 avalues =  new ArrayList<String>();
                 clauses =  new ArrayList<Clause>();
                 tables =   new ArrayList<String>();
-                clauses.add(Clause.eq(Tables.RECEIVER.COL_RECEIVER_ID, recid) );
-                cols=SqlUtil.comma(new String[]{Tables.RECEIVER.COL_RECEIVER_NAME});
-                tables.add(Tables.RECEIVER.NAME);
+                cols=SqlUtil.comma(new String[]{     Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME, Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE});
+                tables.add(Tables.RECEIVER_FIRMWARE.NAME);
+                clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE_ID, recid) );
                 statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
                 try {
                    SqlUtil.Iterator iter2 = getDatabaseManager().getIterator(statement);
                    while ((results = iter2.getNext()) != null) {
-                       rcvr_type = results.getString(Tables.RECEIVER.COL_RECEIVER_NAME);
+                       rcvr_type = results.getString(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME);
+                       rec_firmware_vers = results.getString(                                    Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE);
                    }
                 } finally {
                        getDatabaseManager().closeAndReleaseConnection(statement);
                 } 
-                //System.err.println("      receiver type= "+ rcvr_type);
 
                // construct a GSAC "GnssEquipment" object with these values:
-               //  public GnssEquipment(Date[] dateRange, String antennatype, String antennaSN, String dometype, String domeSerial, String receiver, String receiverSerial, 
-               //                                                                                                                                     String receiverFirmware,  double zoffset)  
+               // public GnssEquipment(Date[] dateRange, String antennatype, String antennaSN, String dometype, String domeSerial, String receiver, String receiverSerial, 
+               //                       String receiverFirmware,  double zoffset)  
                GnssEquipment equipment_session =
                    new GnssEquipment(dateRange, ant_type, ant_serial_number, dome_type, dome_serial_number, rcvr_type, rec_serial_number, rec_firmware_vers,antenna_height);  
 
