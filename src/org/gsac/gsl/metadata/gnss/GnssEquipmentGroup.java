@@ -128,12 +128,16 @@ public class GnssEquipmentGroup extends MetadataGroup {
             }
 
             buff.append(dateString);
-            buff.append("&nbsp;</td>");
-            equipmentRow(buff, getValue(equipment.getAntenna(), values,0),
-                         getValue(equipment.getAntennaSerial(), values,1));
-            equipmentRow(buff, getValue(equipment.getDome(), values,2),
-                         getValue(equipment.getDomeSerial(), values, 3));
+
+            buff.append("<br> &nbsp; &nbsp; &nbsp; &nbsp; serial numbers: &nbsp; </td>");
+
+            equipmentRow(buff, getValue(equipment.getAntenna(), values,0), getValue(equipment.getAntennaSerial(), values,1));
+
+            equipmentRow(buff, getValue(equipment.getDome(), values,2), getValue(equipment.getDomeSerial(), values, 3));
+
             buff.append("<td>&nbsp;");
+
+            // code to show X, Y, Z values:
             //                buff.append(equipment.getXyzOffset()[0] + "/"
             //                            + equipment.getXyzOffset()[1] + "/"
             //                            + equipment.getXyzOffset()[2]);
