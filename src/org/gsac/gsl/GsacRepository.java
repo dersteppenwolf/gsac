@@ -523,9 +523,7 @@ public class GsacRepository implements GsacConstants {
         //Check for bots
         if (repelRobots()) {
             if (request.isSpider()) {
-                request.sendError(HttpServletResponse.SC_FORBIDDEN,
-                                  "No bots for now");
-
+                request.sendError(HttpServletResponse.SC_FORBIDDEN, "No bots for now"); 
                 return;
             }
         }
@@ -603,7 +601,9 @@ public class GsacRepository implements GsacConstants {
             if (serviceRequest) {
                 
                 String reqstr=request.toString();
-                System.out.println    ("GSAC: new request completed: "+reqstr+", at time "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
+
+                System.out.println    ("GSAC: new request (completed): "+reqstr+", at time "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
+
                 //System.out.println("GSAC: end time   to handleRequest is "+getUTCnowString() );
 
                 if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
@@ -626,6 +626,7 @@ public class GsacRepository implements GsacConstants {
             //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
             System.out.println                                 ("GSAC: new request with Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            System.out.println                                 ("GSAC:         the error's Java exception is: \n"+thr.toString() );
             getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
             try {
                 request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
