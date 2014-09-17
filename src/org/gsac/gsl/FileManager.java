@@ -144,20 +144,20 @@ public abstract class FileManager extends GsacResourceManager {
     public int processStatement(GsacRequest request, GsacResponse response,
                                 Statement statement, int offset, int limit)
             throws Exception {
-        long             t1   = System.currentTimeMillis();
+
+        // for log print line below     long t1   = System.currentTimeMillis();
+
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
         while (iter.getNext() != null) {
-            //      makeFile(iter.getResults());
             response.addResource(makeFile(iter.getResults()));
             if ( !iter.countOK()) {
                 response.setExceededLimit();
-
                 break;
             }
         }
 
-        long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: new request;     read the files for the given statement in " + (t2-t1) + " ms");
+        // long t2 = System.currentTimeMillis();
+        //System.err.println("GSAC: new request;     read the files for the given statement in " + (t2-t1) + " ms");
 
         iter.close();
         getDatabaseManager().closeAndReleaseConnection(statement);
