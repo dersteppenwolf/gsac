@@ -179,11 +179,11 @@ public class PrototypeSiteManager extends SiteManager {
             List<String> tables = new ArrayList<String>();
 
             // to provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station:
-            //  WHERE
+            // select 
             String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
             //  FROM which tables (for a table join)
             tables.add(Tables.STATION.NAME);
-            //  LOOK? need no clauses get all networks values in rows: 
+            //  LOOK need no clauses get all networks values in rows: 
             //Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             Statement statement = getDatabaseManager().select(cols,  tables,  null,  (String) null,  -1);
             try {
@@ -191,7 +191,7 @@ public class PrototypeSiteManager extends SiteManager {
                // process each line in results of db query
                while ((results = iter.getNext()) != null) {
                    String networks= results.getString(Tables.STATION.COL_NETWORKS); // comma sep list of names of networks
-                   //String sname = results.getString(Tables.STATION.COL_STATION_NAME); 
+
                    /* for tests; show all network names, from each single site, found when GSAC server starts 
                    if (networks  != null ) {
                      System.err.println("      station as network(s) _"+networks+"_");
@@ -460,7 +460,7 @@ public class PrototypeSiteManager extends SiteManager {
         // query for the station's name string  
         if (request.defined(ARG_SITE_NAME)) {
             addStringSearch(request, ARG_SITE_NAME, " ", msgBuff, "Site Name", Tables.STATION.COL_STATION_NAME, clauses);  
-            //System.err.println("   SiteManager: query for name " + ARG_SITE_NAME ) ;
+            System.err.println("   SiteManager: query for name " + ARG_SITE_NAME ) ;
         }
         
         // query for the station's  location inside a latitude-longitude box
@@ -602,7 +602,8 @@ public class PrototypeSiteManager extends SiteManager {
         // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
         // and this also has ordering :
         Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_CODE_4CHAR_ID, -1);
-        //  for testing: System.err.println("   SiteManager: station select query is " +statement);
+        //  for testing: 
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is " +statement);
 
         try {
             // do the SQL query, and get results
@@ -615,7 +616,6 @@ public class PrototypeSiteManager extends SiteManager {
             // make a GsacSite object when a query is made, from db query results (row) ( but not yet made a web page or return anything for an API rquest)
             GsacSite site = (GsacSite) makeResource(results);  // aka makeSite
             results.close();
-
 
             return site;
         } finally {
@@ -729,7 +729,8 @@ public class PrototypeSiteManager extends SiteManager {
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
         String station_status_id    = results.getString(Tables.STATION.COL_STATION_STATUS_ID);             // may be null; is String of an int
-        //System.err.println("GSAC: new request     SiteManager: station " +fourCharId+ " has status id="+station_status_id+"_");
+
+        //System.err.println("GSAC: SiteManager: site search found station " +fourCharId);
          
         if (1== access_permission_id ) {
             System.err.println("GSAC: new request      GSAC found station with no access permission (no public views allowed) " +fourCharId);
@@ -810,6 +811,7 @@ public class PrototypeSiteManager extends SiteManager {
         cols="";
         clauses.add(Clause.join(Tables.STATION.COL_PROVINCE_REGION_STATE_ID, Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_ID));
         clauses.add(Clause.eq(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_ID, stateid));
+        //System.err.println("   SiteManager: clauses is >>>" +clauses+"<<<");
         cols=SqlUtil.comma(new String[]{Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME});
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.PROVINCE_REGION_STATE.NAME);
@@ -1111,7 +1113,7 @@ public class PrototypeSiteManager extends SiteManager {
         Date outdate=null;
         Date[] dateRange=null;
 
-        Hashtable<Date, GnssEquipment> equip_sessions = new Hashtable<Date, GnssEquipment>();
+        // no longer used Hashtable<Date, GnssEquipment> equip_sessions = new Hashtable<Date, GnssEquipment>();
         List<GnssEquipment> equipmentList = new ArrayList<GnssEquipment>();
         Statement           statement;
         ResultSet           results;
@@ -1131,7 +1133,7 @@ public class PrototypeSiteManager extends SiteManager {
         SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 
         //System.err.println("\n  --------------------------------------------------------------- get times of equip sessions at station "+gsacResource.getId());
-        //System.err.println("\n  --------------------------------------------------------------- readEquipmentMetadata at "+gsacResource.getId());
+        //System.err.println("\n  --------------------------------------------------------------- read EquipmentMetadata at "+gsacResource.getId());
 
         // get antenna session operational date range
         // mysql> select antenna_session.antenna_installed_date,antenna_session.antenna_removed_date from station,antenna_session  where ( (station.code_4char_ID like "%ORID%") and station.   
@@ -1666,13 +1668,12 @@ public class PrototypeSiteManager extends SiteManager {
             //  public GnssEquipment(Date[] dateRange,     String antenna, String antennaSerial, String dome, String domeSerial, String receiver, String receiverSerial, String receiverFirmware,  double zoffset)  
             GnssEquipment equipment=new GnssEquipment( dateRange, anttype,       antenna_serial, radometype,  " ",               rcvrtype,        receiver_serial,       rcvrfw,                     zoffset);  
 
-            equipment.setSwVer(swver);
-            equipment.setSampleInterval(sampleinterval);
-            equipmentList.add(equipment);
-
             //equip_sessions.put(dateRange[0], equipment);
 
+            equipment.setSwVer(swver);
+            equipment.setSampleInterval(sampleinterval);
             equipment.setSatelliteSystem(satellitesys);  
+            equipmentList.add(equipment);
 
         } // end loop on all equip sessions
 
