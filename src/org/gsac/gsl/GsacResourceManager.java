@@ -484,10 +484,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
         List<String> tableNames = new ArrayList<String>();
         Clause       clause = getResourceClause(request, response, tableNames);
-        //        System.err.println("Resource clauses:" + clause);
+        //        System.err.println("     GsacResourceManager: handleRequest: get cols:" + columns);
+        //        System.err.println("     GsacResourceManager: handleRequest: where clauses:" + clause);
+        //        System.err.println("     GsacResourceManager: handleRequest: suffix:       "+request.getsqlwheresuffix());
         Statement statement = getDatabaseManager().select(columns,
                                   clause.getTableNames(tableNames), clause,
-                                  getResourceSelectSuffix(request), -1);
+                                  request.getsqlwheresuffix(), -1 );                       
+                                  // orig: getResourceSelectSuffix(request), -1);
 
         processStatement(request, response, statement, request.getOffset(), request.getLimit());
 
@@ -558,6 +561,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         List<Clause> clauses = getResourceClauses(request, response,
                                    tableNames, msgBuff);
         setSearchCriteriaMessage(response, msgBuff);
+        //System.err.println("GSAC: did    GRM getResourceClause");
 
         return Clause.and(clauses);
     }
@@ -584,12 +588,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return the sql suffix
      */
     public String getResourceSelectSuffix(GsacRequest request) {
-        return getResourceOrder(request);
+        // original: return getResourceOrder(request); // which is next, ie return null, a big help.
+        return request.getsqlwheresuffix();
     }
 
 
     /**
-     * Get the order by sql directive when doing resource queries
+     * Get the order by sql directive when doing resource queries [NOTE: not implemented]
      *
      * @param request the request
      *
