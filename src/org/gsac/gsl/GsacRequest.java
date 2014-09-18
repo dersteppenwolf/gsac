@@ -94,9 +94,11 @@ public class GsacRequest implements GsacConstants {
     /** _more_ */
     private boolean isMobile = false;
 
-
     /** _more_ */
     private Hashtable httpHeader = new Hashtable();
+
+    /** _more_ */
+    private String sqlwheresuffix="";
 
 
     /**
@@ -166,6 +168,24 @@ public class GsacRequest implements GsacConstants {
      */
     public boolean getUseVocabulary() {
         return useVocabulary;
+    }
+
+    /**
+     *  Set the sqlwheresuffix 
+     *
+     *  @param value set a new value for sqlwheresuffix
+     */
+    public void setsqlwheresuffix(String value) {
+        sqlwheresuffix= value;
+    }
+
+    /**
+     *  Get the sqlwheresuffix
+     *
+     *  @return  sqlwheresuffix
+     */
+    public String getsqlwheresuffix() {
+        return sqlwheresuffix;
     }
 
 
