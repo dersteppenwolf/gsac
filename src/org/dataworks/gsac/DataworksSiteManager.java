@@ -32,7 +32,7 @@ import org.gsac.gsl.output.HtmlOutputHandler;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
-// this refers to the rammadda jar file included with GSAC,
+// The ramadda imports refer to the rammadda jar file included with GSAC,
 // not necessarily the latest thing from rammadda.org
 import org.ramadda.sql.Clause;
 import org.ramadda.sql.SqlUtil;
@@ -55,10 +55,10 @@ import java.text.DecimalFormat;
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  *
- * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/dataworks/gsac/MygsacSiteManager.java.
+ * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/dataworks/gsac/DataworksSiteManager.java.
  *
  * For the Dataworks GSAC.
- * Code in this SiteManager class is highly dependent on the db schema and its names for tables and columns in tables, in src/org/dataworks/gsac/database/Tables.java
+ * Code in this SiteManager class is highly dependent on the db schema code and its names for tables and columns in tables, in src/org/dataworks/gsac/database/Tables.java
  * This instance of the SiteManager class uses the GSAC Dataworks database schema.
  *
  * This class is one major part of making a new GSAC server instance; it allows a particular GSAC to query its database, and handles the results from queries:
@@ -66,7 +66,7 @@ import java.text.DecimalFormat;
  * - what metadata may be queried on, that is used for searches or selections, in this GSAC repository (see method doGetQueryCapabilities below)
  *   either by the web page forms or via the API URL arguments, 
  *
- * - how to query the database for such request (see method getResourceClauses below), and 
+ * - how to query the database for such request, make SQL phrases, (see method get ResourceClauses below), which is called by GSAC/gsac-code/src/org/gsac/gsl/GsacResourceManager.java
  *
  * - how to package up the results from the query (method makeResource below) into a java object for further use, such as for the HTML pages of
  *   search results on the GSAC web site, and the items in other result formats like SINEX.
@@ -74,8 +74,8 @@ import java.text.DecimalFormat;
  * See NETWORKS for alternate code to allow two or more network names per site; this code is commented out to match the initial Dataworks specification of one network per site.
  * The database schema is simpler for more than one netowrk.  More than one network per station may be enable using this code.
  * 
- * @author  Jeff McWhirter, 2011. A short template without code for querying a database.
- * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014.
+ * @author  Jeff McWhirter, 2011. A short template for any SiteManager.java, without code for querying a database.
+ * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014 - 18 Sep 2014
  */
 public class DataworksSiteManager extends SiteManager {
 
@@ -100,6 +100,7 @@ public class DataworksSiteManager extends SiteManager {
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
         super.handleRequest(request, response);
+        // which is in GSAC/gsac-code/src/org/gsac/gsl/GsacResourceManager.java
     }
 
     /** do we get the data ranges */
@@ -113,12 +114,12 @@ public class DataworksSiteManager extends SiteManager {
      * searches from either web site or url api args)
      *
      * A capability here which for example is tied to the value GsacExtArgs.ARG_ANTENNA has corresponding code
-     * in the method getResourceClauses which creates a query with it when user does so.
+     * in the method get ResourceClauses which creates a query with it when user does so.
      *
      * (Perhaps the call to this method goes before makeCapabilities call, so regular site search form appears before advanced search?)
      *
-     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
-     *
+     * Must restart the GSAC server to find new field values in the database only read once here at startup, such as gnss file types.
+     * This method is called only once, at GSAC server start-up.  
      * LOOK - this method appears to be called twice at server start-up.
      *
      * CHANGEME if you have other things to search on, or different db table or field names for the items to search on.
@@ -134,17 +135,15 @@ public class DataworksSiteManager extends SiteManager {
             // Essential search items 
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* some mouse over help text */
-            // search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*
-            //            args:(                             "web page label"                     capab type ),      capab group name,       mouse over help text,  other help text)
-            Capability siteCode =
-                initCapability( new Capability(ARG_SITE_CODE, "Code (4 character ID)", Capability.TYPE_STRING), 
+            // search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*. Hover cursor on any GSAC entry box.
+            // args:( "web page label" capab type ), capab group name,   mouse over help text,  other help text)
+            Capability siteCode = initCapability( new Capability(ARG_SITE_CODE, "Code (4 character ID)", Capability.TYPE_STRING), 
                       CAPABILITY_GROUP_SITE_QUERY, "Code (4 character ID) of the station", "Code (4 character ID) of the station. " + help);
             siteCode.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteCode);
-            // search with site full name or partial name
+            // cursor hover text: search with site full name or partial name
             help="Full name of the site, such as Marshall, or part or name plus wildcard(*) such as Mar*";
-            Capability siteName =
-                initCapability(     new Capability(ARG_SITE_NAME, "Site Name",             Capability.TYPE_STRING), 
+            Capability siteName = initCapability(     new Capability(ARG_SITE_NAME, "Site Name",             Capability.TYPE_STRING), 
                        CAPABILITY_GROUP_SITE_QUERY, "Name of the site",                    "Name of site.   " + help);
             siteName.setBrowse(true); 
             capabilities.add(siteName);
@@ -180,13 +179,14 @@ public class DataworksSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // search on type of station (only a few static values possible)
-            // LOOK: this query choice is disabled due to  "GPS/GNSS Campaign GPS/GNSS Continuous GPS/GNSS Mobile " not applicable to COCONet
+            // LOOK: this query choice is disabled due to  "GPS/GNSS Campaign GPS/GNSS Continuous GPS/GNSS Mobile " not applicable to Dataworks (so far).
             //     get all values of this type from its table
             //values = getDatabaseManager().readDistinctValues( Tables.STATION_STYLE.NAME, Tables.STATION_STYLE.COL_STATION_STYLE_DESCRIPTION);
             //Arrays.sort(values);
             //capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // NETWORKS : alternate code to allow two or more network names per site.
+            // LOOK: this query choice is disabled due to  only one network name allowed in the db station table in Dataworks (so far).
+            // NETWORKS: code to allow two or more network names per site.
             //   a change is needed for the db schema; see working example in the GSAC Prototype schema.
             //   get all values of this type from its table 
             //values = getDatabaseManager().readDistinctValues( Tables.NETWORK.NAME, Tables.NETWORK.COL_NETWORK_NAME);
@@ -239,7 +239,7 @@ public class DataworksSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
             */
 
-            // to enable the search on antenna types: get antenna type names used by station equipment sessions  ["EQUIP_CONFIG"]
+            // to enable the search on antenna types, first get antenna type names used by station equipment sessions
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
@@ -257,15 +257,16 @@ public class DataworksSiteManager extends SiteManager {
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
                    String anttype= results.getString(Tables.ANTENNA.COL_ANTENNA_NAME);
+                   // System.err.println("   SiteManager: an allowed antenna type for searches is " + anttype) ;
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
                       if ( avalues.get(vi).equals(anttype) ) { 
-                         notfound=0;
-                         break;
-                         }
+                          notfound=0;
+                          break;
+                          }
                    }
                    if (notfound==1) {
-                         avalues.add(anttype);
+                      avalues.add(anttype);
                    }
                }
             } finally {
@@ -277,7 +278,7 @@ public class DataworksSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
 
 
-            // search on  receiver NAMES (not firmware version numbers)
+            // to allow a search on receiver NAMES (not firmware version numbers)
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
@@ -314,7 +315,8 @@ public class DataworksSiteManager extends SiteManager {
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // search on radome types: get radome type names used by station equipment sessions 
+
+            // to allow a search on radome types: get radome type names used by station equipment sessions 
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
@@ -483,15 +485,20 @@ public class DataworksSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for stattion status " + values.get(0)) ;
         }
         
-        // LOOK FIX return distinct station:
+        // LOOK FIX return distinct stations, not duplicate stations:
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
+            //System.err.println("      DW SiteManager: search for sites with antenna "+GsacExtArgs.ARG_ANTENNA);
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
             tableNames.add(Tables.EQUIP_CONFIG.NAME);
             tableNames.add(Tables.ANTENNA.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.EQUIP_CONFIG.COL_STATION_ID));
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_ANTENNA_ID, Tables.ANTENNA.COL_ANTENNA_ID));
             clauses.add(Clause.eq(Tables.ANTENNA.COL_ANTENNA_NAME, values.get(0)));
-            //System.err.println("   SiteManager: query for antenna type name " + values.get(0)) ;
+            //System.err.println("   DW SiteManager: query for antenna type name " + values.get(0) + " with where clauses "+clauses) ;
+            // query for antenna type name AOAD/M_T with where clauses 
+            // [station.station_id join 'equip_config.station_id', equip_config.antenna_id join 'antenna.antenna_id', antenna.antenna_name = 'AOAD/M_T']
+            // the sql query is done by iGsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
+            request.setsqlwheresuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
         if (request.defined(GsacExtArgs.ARG_DOME)) {
@@ -502,6 +509,7 @@ public class DataworksSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RADOME_ID, Tables.RADOME.COL_RADOME_ID));
             clauses.add(Clause.eq(Tables.RADOME.COL_RADOME_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for antenna dome type name " + values.get(0)) ;
+            request.setsqlwheresuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
         if (request.defined(GsacExtArgs.ARG_RECEIVER)) {
@@ -512,6 +520,7 @@ public class DataworksSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE_ID));
             clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for receiver type name " + values.get(0)) ;
+            request.setsqlwheresuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
         // query for country
@@ -532,7 +541,7 @@ public class DataworksSiteManager extends SiteManager {
         }
 
         // for testing: 
-        // System.err.println("   SiteManager: getResourceClauses gives created clauses="+clauses) ;
+        // System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
         // to show clauses like
         //  [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
         // which creates, later, the sql based query or API to GSAC:
@@ -546,7 +555,9 @@ public class DataworksSiteManager extends SiteManager {
     /**
      * Create and return GSAC's internal "resource" (a "site object") identified by the given resource id in this case the CODE_4CHAR_ID; see Tables.java.
      *
-     * What is returned as a result from a query
+     * This is called only on a site search by 4 char ID; not for example by antenna type.
+     *
+     * do the sql search query and make the 'resource', what is returned as a result from a query
      * Appears to be called when you click on a particular site in the table of sites found, after a search for sites.
      * For composing an HTML page to show about one site.
      *
@@ -565,9 +576,11 @@ public class DataworksSiteManager extends SiteManager {
         //                                                 DB  .select( what to find (fields),     from which tables,      where clause, )  
         // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
         // and this also has ordering :
-        Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_FOUR_CHAR_NAME, -1);
-        //  for testing:, this gives useful sql query string 
-        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is " +statement);
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is for " + getResourceSelectColumns()  );
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query where clause is " + clause  );
+        String suffixSql = " order by " + Tables.STATION.COL_FOUR_CHAR_NAME;
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query suffix is " + suffixSql  );
+        Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause, suffixSql, -1);
 
         try {
             // do the SQL query, and get results
@@ -587,6 +600,7 @@ public class DataworksSiteManager extends SiteManager {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
+          
     }  // end of getResource
 
 
@@ -991,13 +1005,13 @@ public class DataworksSiteManager extends SiteManager {
 
         // make a db query statement to find the site corresponding to the current site or "gsacResource"; the CODE_4CHAR_ID is stored as the resource's Id, from gsacResource.getId()  
         // note that this gets ALL the columns of fields from the table "station" (on the row matching the select Clause.eq item) 
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is for " + getResourceSelectColumns()  );
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query where clause is " + clause  );
         Statement statement = getDatabaseManager().select( Tables.STATION.COLUMNS, Tables.STATION.NAME,
                 Clause.eq( Tables.STATION.COL_FOUR_CHAR_NAME, gsacResource.getId()), (String) null, -1);
         
-        // System.err.println("   SiteManager: readIdentificationMetadata select query is " +statement);
         // a single station query from this is
-        //SELECT station.station_id,station.code_4char_ID,station.station_name,station.latitude_north,station.longitude_east,station.ellipsoidal_height,station.station_installed_date,station.station_removed_date,station.station_style_id,station.station_status_id,station.access_permission_id,station.monument_description_id,station.country_id,station.province_region_state_id,station.city,station.x,station.y,station.z,station.iers_domes,station.station_photo_URL,station.time_series_image_URL,station.agency_id,station.networks,station.embargo_duration_hours,station.embargo_after_date FROM station 
-        //WHERE (station.code_4char_ID = 'ATAL')
+        //SELECT station.station_id,station.code_4char_ID,station.station_name,station.latitude_north,station.longitude_east,station.ellipsoidal_height,station.station_installed_date,station.station_removed_date,station.station_style_id,station.station_status_id,station.access_permission_id,station.monument_description_id,station.country_id,station.province_region_state_id,station.city,station.x,station.y,station.z,station.iers_domes,station.station_photo_URL,station.time_series_image_URL,station.agency_id,station.networks,station.embargo_duration_hours,station.embargo_after_date FROM station WHERE (station.code_4char_ID = 'ATAL')
 
         // make the db query to find the row of info about this station
         try {
@@ -1151,8 +1165,9 @@ public class DataworksSiteManager extends SiteManager {
         // FROM these tables
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.EQUIP_CONFIG.NAME);
+        System.err.println("GSAC:  SiteManager:getResource() equip sql query is for " + cols  );
+        System.err.println("GSAC:  SiteManager:getResource() equip sql query where clause is " + clauses  );
         statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME, -1);
-        //        System.err.println("      read EquipmentMetadata() sql query statement= "+statement);
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
@@ -1230,6 +1245,8 @@ public class DataworksSiteManager extends SiteManager {
                 clauses.add(Clause.eq(Tables.ANTENNA.COL_ANTENNA_ID, antid) );
                 cols=SqlUtil.comma(new String[]{Tables.ANTENNA.COL_ANTENNA_NAME});
                 tables.add(Tables.ANTENNA.NAME);
+                //System.err.println("GSAC:  SiteManager:getResource()  sql query is for " + cols  );
+                //System.err.println("GSAC:  SiteManager:getResource()  sql query where clause is " + clauses  );
                 statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
                 //System.err.println("    get  ant stm = "+ statement);
                 try {
