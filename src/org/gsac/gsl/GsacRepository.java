@@ -617,16 +617,18 @@ public class GsacRepository implements GsacConstants {
                 getLogManager().logAccess(request, what, resourceCnt);
             }
         } catch (UnknownRequestException exc) {
-            System.out.println                                 ("GSAC: new request is unrecognized: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
-            getLogManager().logError                           ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
+            System.out.println         ("GSAC: new request is unrecognized: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            getLogManager().logError   ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
             request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC: unknown request is: " + uri);
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection
         } catch (Exception exc) {
             //Get the actual exception
             Throwable thr = LogUtil.getInnerException(exc);
-            System.out.println                                 ("GSAC: new request with Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
-            System.out.println                                 ("GSAC:         the error's Java exception is: \n"+thr.toString() );
+            System.out.println         ("GSAC: new request with Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            System.out.println         ("GSAC:         the error's Java exception is: \n"+thr.toString() );
+            System.out.println         ("GSAC:         the stacktrace is " );
+            exc.printStackTrace(System.out);
             getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
             try {
                 request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
