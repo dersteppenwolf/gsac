@@ -1165,8 +1165,8 @@ public class DataworksSiteManager extends SiteManager {
         // FROM these tables
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.EQUIP_CONFIG.NAME);
-        System.err.println("GSAC:  SiteManager:getResource() equip sql query is for " + cols  );
-        System.err.println("GSAC:  SiteManager:getResource() equip sql query where clause is " + clauses  );
+        //System.err.println("GSAC:  SiteManager:getResource() equip sql query is for " + cols  );
+        //System.err.println("GSAC:  SiteManager:getResource() equip sql query where clause is " + clauses  );
         statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME, -1);
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
@@ -1187,8 +1187,8 @@ public class DataworksSiteManager extends SiteManager {
                String odt=null;
                test = readDate( results, Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_STOP_TIME);
                if (null == test) { 
-                   //System.err.println("   equip session stop time null  "); 
-                   outdate = new Date();  // ie now; we presume this is correct and the instrument is still active.
+                   //System.err.println("   the equip session stop time is null, undefined.  "); 
+                   outdate = new Date();  // i.e., now: we presume this is correct and the instrument is still active.
                } 
                else {
                   odt = results.getString(Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_STOP_TIME)+"00";
