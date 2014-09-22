@@ -82,6 +82,7 @@ public class PoliticalLocationMetadata extends GsacMetadata {
                     outputHandler.msgLabel("Nation"), country));
         }
 
+        // for COCONet and Dataworks, use of state is not allowed, as per requirements.
         if (state != null) {
             pw.append(outputHandler.formEntry(request,
                     outputHandler.msgLabel("Province/State"), state)); 
@@ -89,8 +90,8 @@ public class PoliticalLocationMetadata extends GsacMetadata {
 
         if (city != null) {
             pw.append(outputHandler.formEntry(request,
-                    //outputHandler.msgLabel("Place/City"), city)); 
-                    outputHandler.msgLabel("City/Locale"), city)); // LOOK:  for dataworks GSAC, use locale as name for province 
+                    //outputHandler.msgLabel("Place/City"), city)); // for Europe and international use; ithe word place is more recognized than locale
+                    outputHandler.msgLabel("City/Locale"), city)); // LOOK:  for COCONet GSAC, use locale as name for place, as per requirements.
         }
 
         return true;
