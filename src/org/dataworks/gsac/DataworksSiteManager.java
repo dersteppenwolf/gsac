@@ -498,7 +498,7 @@ public class DataworksSiteManager extends SiteManager {
             // query for antenna type name AOAD/M_T with where clauses 
             // [station.station_id join 'equip_config.station_id', equip_config.antenna_id join 'antenna.antenna_id', antenna.antenna_name = 'AOAD/M_T']
             // the sql query is done by iGsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
-            request.setsqlwheresuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
+            request.setsqlWhereSuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
         if (request.defined(GsacExtArgs.ARG_DOME)) {
@@ -509,7 +509,7 @@ public class DataworksSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RADOME_ID, Tables.RADOME.COL_RADOME_ID));
             clauses.add(Clause.eq(Tables.RADOME.COL_RADOME_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for antenna dome type name " + values.get(0)) ;
-            request.setsqlwheresuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
+            request.setsqlWhereSuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
         if (request.defined(GsacExtArgs.ARG_RECEIVER)) {
@@ -520,7 +520,7 @@ public class DataworksSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE_ID));
             clauses.add(Clause.eq(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for receiver type name " + values.get(0)) ;
-            request.setsqlwheresuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
+            request.setsqlWhereSuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
         // query for country
