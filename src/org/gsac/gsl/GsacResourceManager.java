@@ -472,6 +472,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      */
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
+        //System.err.println("     GsacResourceManager: handleRequest: ");
         String columns = getResourceSelectColumns();
         if (columns == null) {
             return;
@@ -484,13 +485,28 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
         List<String> tableNames = new ArrayList<String>();
         Clause       clause = getResourceClause(request, response, tableNames);
+
+        String suffix=getResourceSelectSuffix(request);
+        // getResourceSelectSuffix is coded below to always return string ""
+
+        //System.err.println("     GsacResourceManager: handleRequest: old suffix:       "+ suffix );
+
+        // LOOK oddly this can get for example
+        //  handleRequest: old suffix:        GROUP BY MV_DAI_PRO.MON_STATION_CODE,MV_DAI_PRO.MON_ID,MV_DAI_PRO.PERM_STATION_ID,MV_DAI_PRO.MON_STATION_NAME,MV_DAI_PRO.MON_LAT_NUM,MV_DAI_PRO.MON_LON_NUM,MV_DAI_PRO.MON_ELEV,MV_DAI_PRO.STATION_TYPE,MV_DAI_PRO.OPERATIONAL,MV_DAI_PRO.NETWORK_CAMPAIGN,MV_DAI_PRO.PHOTO,MV_DAI_PRO.TIME_SERIES_GIF,MV_DAI_PRO.MET,MV_DAI_PRO.NOMINAL_SAMPLE_INTERVAL,MV_DAI_PRO.MONUMENT_STYLE  ORDER BY  MV_DAI_PRO.MON_STATION_CODE ASC 
+
+        // how does it DO that?
+
+        if ("" == suffix) {
+            // new 
+            suffix = request.getsqlWhereSuffix();
+            //System.err.println("     GsacResourceManager: handleRequest: new suffix:       "+ suffix );
+        }
         //        System.err.println("     GsacResourceManager: handleRequest: get cols:" + columns);
         //        System.err.println("     GsacResourceManager: handleRequest: where clauses:" + clause);
-        //        System.err.println("     GsacResourceManager: handleRequest: suffix:       "+request.getsqlwheresuffix());
+
         Statement statement = getDatabaseManager().select(columns,
                                   clause.getTableNames(tableNames), clause,
-                                  request.getsqlwheresuffix(), -1 );                       
-                                  // orig: getResourceSelectSuffix(request), -1);
+                                  suffix, -1 );                       
 
         processStatement(request, response, statement, request.getOffset(), request.getLimit());
 
@@ -588,8 +604,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return the sql suffix
      */
     public String getResourceSelectSuffix(GsacRequest request) {
-        // original: return getResourceOrder(request); // which is next, ie return null, a big help.
-        return request.getsqlwheresuffix();
+        // newreturn request.getsqlwheresuffix();
+        // original: 
+        return getResourceOrder(request); // which is next, not implemented
     }
 
 
