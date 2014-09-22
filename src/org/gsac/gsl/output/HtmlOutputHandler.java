@@ -50,7 +50,7 @@ import javax.servlet.http.*;
 /**
  * Class description
  *
- *
+ * author J McWhirter 2011
  */
 public class HtmlOutputHandler extends GsacOutputHandler {
 
@@ -311,13 +311,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         buttons.append("</tr></table>");
         pw.append(buttons.toString());
 
-        /*        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
-                                    + URL_HTDOCS_BASE + "/CalendarPopup.js"));
-        */
+        /*        pw.append(HtmlUtil.importJS(getRepository().getUrlBase() + URL_HTDOCS_BASE + "/CalendarPopup.js")); */
 
-        // to verify or show the value of the baseurl in the file gsac.properties
+        // SW: to verify or show the value of the baseurl in the file gsac.properties
         // resources/gsac.properties, such as gsac.baseurl = /dataworks
-        //System.err.println("     HtmlOutputHandler.java baseUrl: " + getRepository().getUrlBase() );
+        // System.err.println("     HtmlOutputHandler.java baseUrl: " + getRepository().getUrlBase() );
         // note that this may not be the same string as used for the tomcat .war file name.
 
         getSearchForm(request, pw, resourceClass);
@@ -336,8 +334,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         pw.append(buttons.toString());
 
 
-        /*        pw.append(HtmlUtil.importJS(getRepository().getUrlBase()
-                                    + URL_HTDOCS_BASE + "/chosen/chosen.jquery.js"));
+        /*        pw.append(HtmlUtil.importJS(getRepository().getUrlBase() + URL_HTDOCS_BASE + "/chosen/chosen.jquery.js"));
         pw.append("<script type=\"text/javascript\"> jQuery(\".chzn-select\").chosen(); </script>");
         */
 
