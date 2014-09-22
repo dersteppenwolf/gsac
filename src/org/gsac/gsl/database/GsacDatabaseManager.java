@@ -647,8 +647,8 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      * @param what What to select
      * @param tables The tables to select from
      * @param clause The where clause. May be null
-     * @param suffixSql select suffix. e.g., order by, group by. May be numm
-     * @param max Max count. -1 means all. This may not actuall work on the particular jdbc connection
+     * @param suffixSql select suffix. e.g., order by, group by. May be null.
+     * @param max Max count. -1 means all. This may not actually work on the particular jdbc connection
      *
      * @return The statement
      *
