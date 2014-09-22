@@ -85,7 +85,7 @@ CREATE TABLE `antenna` (
   `antenna_name` varchar(15) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`antenna_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,7 +108,7 @@ CREATE TABLE `country` (
   `country_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `country_name` varchar(70) NOT NULL,
   PRIMARY KEY (`country_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,6 +117,7 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
+INSERT INTO `country` VALUES (1,'not specified');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +150,7 @@ CREATE TABLE `datafile` (
   CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `datafile_type_id` FOREIGN KEY (`datafile_type_id`) REFERENCES `datafile_type` (`datafile_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +184,7 @@ CREATE TABLE `datafile_type` (
 
 LOCK TABLES `datafile_type` WRITE;
 /*!40000 ALTER TABLE `datafile_type` DISABLE KEYS */;
-INSERT INTO `datafile_type` VALUES (1,'instrument data file','','Any type or format of native, raw, or binary file '),(2,'RINEX observation file','','RINEX obs file of any type: o, d, .zip, d.zip, etc'),(3,'RINEX GPS navigation file','',''),(4,'RINEX Galileo navigation file','',''),(5,'RINEX GLONASS navigation file','',''),(6,'RINEX meteorology file','','');
+INSERT INTO `datafile_type` VALUES (1,'instrument data file','','Any type or format of native, raw, or binary file '),(2,'RINEX observation file','','RINEX obs file'),(3,'RINEX GPS navigation file','','an n file'),(4,'RINEX Galileo navigation file','',''),(5,'RINEX GLONASS navigation file','',' a g file'),(6,'RINEX meteorology file','','');
 /*!40000 ALTER TABLE `datafile_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,22 +233,21 @@ CREATE TABLE `equip_config` (
   `metpack_serial_number` varchar(20) DEFAULT NULL,
   `radome_id` int(3) unsigned NOT NULL,
   `radome_serial_number` varchar(20) NOT NULL,
-  `receiver_id` int(3) unsigned NOT NULL,
+  `receiver_firmware_id` int(3) unsigned NOT NULL,
   `receiver_serial_number` varchar(20) NOT NULL,
-  `receiver_firmware_vers` varchar(20) NOT NULL,
   `satellite_system` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`equip_config_id`),
   KEY `station_id_idx` (`station_id`),
   KEY `antenna_id_idx` (`antenna_id`),
   KEY `metpack_id_idx` (`metpack_id`),
-  KEY `receiver_id_idx` (`receiver_id`),
+  KEY `receiver_firmware_id_idx` (`receiver_firmware_id`),
   KEY `radome_id_idx` (`radome_id`),
   CONSTRAINT `antenna_id` FOREIGN KEY (`antenna_id`) REFERENCES `antenna` (`antenna_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `metpack_id` FOREIGN KEY (`metpack_id`) REFERENCES `metpack` (`metpack_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `radome_id` FOREIGN KEY (`radome_id`) REFERENCES `radome` (`radome_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `receiver_id` FOREIGN KEY (`receiver_id`) REFERENCES `receiver` (`receiver_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `receiver_firmware_id` FOREIGN KEY (`receiver_firmware_id`) REFERENCES `receiver_firmware` (`receiver_firmware_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -270,7 +270,7 @@ CREATE TABLE `locale` (
   `locale_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `locale_info` varchar(70) NOT NULL,
   PRIMARY KEY (`locale_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,6 +279,7 @@ CREATE TABLE `locale` (
 
 LOCK TABLES `locale` WRITE;
 /*!40000 ALTER TABLE `locale` DISABLE KEYS */;
+INSERT INTO `locale` VALUES (1,'not specified');
 /*!40000 ALTER TABLE `locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,7 +294,7 @@ CREATE TABLE `metpack` (
   `metpack_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `metpack_name` varchar(15) NOT NULL,
   PRIMARY KEY (`metpack_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -302,7 +303,7 @@ CREATE TABLE `metpack` (
 
 LOCK TABLES `metpack` WRITE;
 /*!40000 ALTER TABLE `metpack` DISABLE KEYS */;
-INSERT INTO `metpack` VALUES (1,'not specified'), (2,'no metpack');
+INSERT INTO `metpack` VALUES (1,'not specified'),(2,'no metpack');
 /*!40000 ALTER TABLE `metpack` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -317,7 +318,7 @@ CREATE TABLE `monument_style` (
   `monument_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `monument_style_description` varchar(70) NOT NULL,
   PRIMARY KEY (`monument_style_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -350,6 +351,7 @@ CREATE TABLE `network` (
 
 LOCK TABLES `network` WRITE;
 /*!40000 ALTER TABLE `network` DISABLE KEYS */;
+INSERT INTO `network` VALUES (1,'');
 /*!40000 ALTER TABLE `network` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -365,7 +367,7 @@ CREATE TABLE `radome` (
   `radome_name` varchar(15) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`radome_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -379,28 +381,28 @@ INSERT INTO `radome` VALUES (1,'not specified','N');
 UNLOCK TABLES;
 
 --
--- Table structure for table `receiver`
+-- Table structure for table `receiver_firmware`
 --
 
-DROP TABLE IF EXISTS `receiver`;
+DROP TABLE IF EXISTS `receiver_firmware`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `receiver` (
-  `receiver_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `receiver_firmware` (
+  `receiver_firmware_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `receiver_name` varchar(20) NOT NULL,
+  `receiver_firmware` varchar(20) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
-  PRIMARY KEY (`receiver_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`receiver_firmware_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `receiver`
+-- Dumping data for table `receiver_firmware`
 --
 
-LOCK TABLES `receiver` WRITE;
-/*!40000 ALTER TABLE `receiver` DISABLE KEYS */;
-INSERT INTO `receiver` VALUES (1,'not specified','N');
-/*!40000 ALTER TABLE `receiver` ENABLE KEYS */;
+LOCK TABLES `receiver_firmware` WRITE;
+/*!40000 ALTER TABLE `receiver_firmware` DISABLE KEYS */;
+/*!40000 ALTER TABLE `receiver_firmware` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -453,7 +455,7 @@ CREATE TABLE `station` (
   CONSTRAINT `operator_agency_id` FOREIGN KEY (`operator_agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -522,4 +524,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-09-04 11:27:16
+-- Dump completed on 2014-09-22 13:08:53
