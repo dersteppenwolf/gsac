@@ -98,7 +98,7 @@ public class GsacRequest implements GsacConstants {
     private Hashtable httpHeader = new Hashtable();
 
     /** _more_ */
-    private String sqlwheresuffix="";
+    private String sqlWhereSuffix="";
 
 
     /**
@@ -171,21 +171,21 @@ public class GsacRequest implements GsacConstants {
     }
 
     /**
-     *  Set the sqlwheresuffix 
+     *  Set the sqlWhereSuffix 
      *
-     *  @param value set a new value for sqlwheresuffix
+     *  @param value set a new value for sqlWhereSuffix
      */
-    public void setsqlwheresuffix(String value) {
-        sqlwheresuffix= value;
+    public void setsqlWhereSuffix(String value) {
+        sqlWhereSuffix= value;
     }
 
     /**
-     *  Get the sqlwheresuffix
+     *  Get the sqlWhereSuffix
      *
-     *  @return  sqlwheresuffix
+     *  @return  sqlWhereSuffix
      */
-    public String getsqlwheresuffix() {
-        return sqlwheresuffix;
+    public String getsqlWhereSuffix() {
+        return sqlWhereSuffix;
     }
 
 
