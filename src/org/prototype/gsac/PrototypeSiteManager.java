@@ -877,7 +877,7 @@ public class PrototypeSiteManager extends SiteManager {
             }
             if (ts_image_URL.length()>8 ) { 
                 // add a valid image URL of a time series data plot to the images group:
-                imagesGroup.add( new ImageMetadata(ts_image_URL, "Time Series Data Plot"));
+                imagesGroup.add( new ImageMetadata(ts_image_URL, "Position Timeseries"));
             }
         }
 
