@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
+-- MySQL dump 10.13  Distrib 5.1.73, for redhat-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: Dataworks_GSAC
 -- ------------------------------------------------------
--- Server version	5.1.69-0ubuntu0.10.04.1
+-- Server version	5.1.73
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -85,7 +85,7 @@ CREATE TABLE `antenna` (
   `antenna_name` varchar(15) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`antenna_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,6 +94,7 @@ CREATE TABLE `antenna` (
 
 LOCK TABLES `antenna` WRITE;
 /*!40000 ALTER TABLE `antenna` DISABLE KEYS */;
+INSERT INTO `antenna` VALUES (1,'not specified','N');
 /*!40000 ALTER TABLE `antenna` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,6 +134,7 @@ CREATE TABLE `datafile` (
   `station_id` int(6) unsigned NOT NULL,
   `equip_config_id` int(6) unsigned NOT NULL,
   `datafile_name` varchar(120) NOT NULL,
+  `original_datafile_name` varchar(100) DEFAULT NULL,
   `datafile_type_id` int(3) unsigned NOT NULL,
   `sample_interval` float NOT NULL,
   `datafile_start_time` datetime NOT NULL,
@@ -147,9 +149,9 @@ CREATE TABLE `datafile` (
   KEY `station_id_idx` (`station_id`),
   KEY `equip_config_id_idx` (`equip_config_id`),
   KEY `datafile_type_id_idx` (`datafile_type_id`),
-  CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `datafile_type_id` FOREIGN KEY (`datafile_type_id`) REFERENCES `datafile_type` (`datafile_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `datafile_type_id` FOREIGN KEY (`datafile_type_id`) REFERENCES `datafile_type` (`datafile_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -270,7 +272,7 @@ CREATE TABLE `locale` (
   `locale_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `locale_info` varchar(70) NOT NULL,
   PRIMARY KEY (`locale_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,7 +344,7 @@ CREATE TABLE `network` (
   `network_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `network_name` varchar(50) NOT NULL,
   PRIMARY KEY (`network_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,7 +353,6 @@ CREATE TABLE `network` (
 
 LOCK TABLES `network` WRITE;
 /*!40000 ALTER TABLE `network` DISABLE KEYS */;
-INSERT INTO `network` VALUES (1,'');
 /*!40000 ALTER TABLE `network` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -524,4 +525,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-09-22 13:08:53
+-- Dump completed on 2014-09-23 13:35:05
