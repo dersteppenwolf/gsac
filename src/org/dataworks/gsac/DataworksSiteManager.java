@@ -852,7 +852,7 @@ public class DataworksSiteManager extends SiteManager {
             }
             if (time_series_plot_image_URL.length()>8 ) { 
                 // add a valid image URL of a time series data plot to the images group:
-                imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Time Series Data Plot"));
+                imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));
             }
         }
 
