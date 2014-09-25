@@ -51,6 +51,9 @@ import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 
+import java.net.URL;
+import java.net.HttpURLConnection;
+import java.io.OutputStream;
 
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
@@ -839,20 +842,40 @@ public class DataworksSiteManager extends SiteManager {
 
         if ( station_photo_URL != null  )    {
             if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
             }
-            if ( station_photo_URL != null ) {
-                // add  site photo image to the group:
-                imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+            if ( station_photo_URL.length()>8 ) {
+                   URL u = new URL(station_photo_URL); 
+                   HttpURLConnection huc = (HttpURLConnection)u.openConnection(); 
+                   huc.setDoOutput(true);
+                   huc.setRequestMethod("GET"); 
+                   huc.connect() ; 
+                   OutputStream os = huc.getOutputStream(); 
+                int ucode = huc.getResponseCode(); 
+                //System.err.println("       station_photo_URL   get ucode = "+ucode);
+                // add  a real site photo image to the group:
+                if (200==ucode) {
+                   imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+                }
             }
         }
         if (time_series_plot_image_URL!=null )    {
             if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
             }
             if (time_series_plot_image_URL.length()>8 ) { 
-                // add a valid image URL of a time series data plot to the images group:
-                imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));
+                   URL u = new URL( time_series_plot_image_URL); 
+                   HttpURLConnection huc = (HttpURLConnection)u.openConnection(); 
+                   huc.setDoOutput(true);
+                   huc.setRequestMethod("GET"); 
+                   huc.connect() ; 
+                   OutputStream os = huc.getOutputStream(); 
+                int ucode = huc.getResponseCode(); 
+                //System.err.println("       time seris plot file get ucode = "+ucode);
+                // add  a real  image to the group:
+                if (200==ucode) {
+                   imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));
+                }
             }
         }
 
