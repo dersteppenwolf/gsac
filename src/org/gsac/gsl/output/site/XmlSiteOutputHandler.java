@@ -36,10 +36,10 @@ import java.util.List;
 /**
  * Class description
  *
- * make the GSAC XML site search results output (Not SOPAC XML output)
+ * makes UNAVCO's GSAC XML site search results output (Not SOPAC XML output)
  *
  * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @author         Enter your name here... Jeff McWhirter
  */
 public class XmlSiteOutputHandler extends GsacOutputHandler {
 
@@ -79,14 +79,15 @@ public class XmlSiteOutputHandler extends GsacOutputHandler {
 
         // see gsl/GsacRepository.java for encodeObject
         String      xml = getRepository().encodeObject(response.getSites());
-/*
+
+        /*
         try {
                     String      xml = getRepository().encodeObject(response.getSites());
                     System.err.println("   XmlSiteOutputHandler string of sites xml=" + xml); 
         } catch {
               ;
         }
-*/
+        */
 
         pw.print(xml);
         response.endResponse();
