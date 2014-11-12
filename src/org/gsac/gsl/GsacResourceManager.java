@@ -510,10 +510,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         Statement statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
 
         //System.err.println("GSAC: GsacResourceManager, handleRequest() db query SQL is " + statement.toString() 
-        //       + "; at time "+getUTCnowString()  ); // DEBUG.   LOOK toString fails for oracle jbdc ; OK for mysql
+        //       + "; at time "+getUTCnowString()  ); // DEBUG.   LOOK toString  for oracle jbdc ; OK for mysql
 
-        // for oracle, since oracle jdbc statement.toString() does nothing DEBUG
-        //System.err.println("      GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+  clause.getTableNames(tableNames) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
+        // for oracle (and other db-s), since oracle jdbc statement.toString() does nothing DEBUG
+        String fromtables= (clause.getTableNames(tableNames)).toString();
+        System.err.println("      GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+ fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
 
         long t1 = System.currentTimeMillis();
 
