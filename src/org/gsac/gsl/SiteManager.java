@@ -144,8 +144,8 @@ public abstract class SiteManager extends GsacResourceManager {
      *
      * Order of handlers below is the order presented to the user, in the GSAC site search forms, and in information page.
      *
-     * Always list the HTML handler first.
-     * due to this: it seems that whichever handler is first in order below gets called when the web site search page 
+     * Always list the HTML handler first,
+     * because it seems that whichever handler is first in order below gets called when the web site search page 
      * (not a real search) is first called for, before any query is made, which for some handlers can cause a failure 
      * and error to browser and no site search results shown. The HTML handler always works.
      */
@@ -191,7 +191,7 @@ public abstract class SiteManager extends GsacResourceManager {
         // for  the 2013 GSAC plain text format
         //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
-        // Never used in 10 months, so deprecate these three:
+        // Never used in 10 months, so deprecate these
 
         // Never used in 10 months new AtomSiteOutputHandler(getRepository(), getResourceClass());
 
