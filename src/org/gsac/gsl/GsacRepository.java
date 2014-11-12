@@ -46,10 +46,10 @@ import java.lang.management.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -87,11 +87,8 @@ public class GsacRepository implements GsacConstants {
     /** gsac java package path to the resources dir */
     public static final String GSAC_PATH_RESOURCES = GSAC_PATH_ROOT
                                                      + "/resources";
-
     /** property for the repository class to instantiate */
-    public static final String PROP_REPOSITORY_CLASS =
-        "gsac.repository.class";
-
+    public static final String PROP_REPOSITORY_CLASS = "gsac.repository.class";
 
     /** property for the base url, e.g., /gsacws */
     public static final String PROP_BASEURL = "gsac.baseurl";
@@ -106,8 +103,7 @@ public class GsacRepository implements GsacConstants {
     public static final String PROP_REPOSITORY_ICON = "gsac.repository.icon";
 
     /** property name for the repository description */
-    public static final String PROP_REPOSITORY_DESCRIPTION =
-        "gsac.repository.description";
+    public static final String PROP_REPOSITORY_DESCRIPTION = "gsac.repository.description";
 
     /**
      * property for host name. This is the external host name that is used for things like kml, etc,
@@ -174,17 +170,14 @@ public class GsacRepository implements GsacConstants {
      */
     private String urlBase;
 
-
     /** This repositories information */
     private GsacRepositoryInfo myInfo;
-
 
     /** Keeps track of the number of service requests for the stats page */
     private int numServiceRequests = 0;
 
     /** for the stats page */
     private Date startDate = new Date();
-
 
     /** reference to html output handler */
     private HtmlOutputHandler htmlOutputHandler;
@@ -509,7 +502,8 @@ public class GsacRepository implements GsacConstants {
     public void handleRequest(GsacRequest request)
             throws IOException, ServletException {
 
-        // makes many on each cycle System.out.println("GSAC: start time to handleRequest is "+getUTCnowString() );
+        // DEBUG System.out.println    ("GSAC: Start GsacRepository:handleRequest()  at time "+getUTCnowString()) ;  //+", from IP "+request.getOriginatingIP() );
+        // makes many on each new gsac deploy om tomcat
 
         String uri   = request.getRequestURI();
         int    index = uri.indexOf("?");
@@ -561,6 +555,9 @@ public class GsacRepository implements GsacConstants {
                     GsacOutputHandler outputHandler =
                         getOutputHandler(resourceManager.getResourceClass(),
                                          request);
+                     
+                    //System.out.println    ("GSAC: ResourceClass ="+ (resourceManager.getResourceClass()).toString() ); // DEBUG gets "site"
+                    //System.out.println    ("GSAC: request  ="+ (request).toString() ); // DEBUG
                     response = outputHandler.handleRequest(
                         resourceManager.getResourceClass(), request);
                     isResourceRequest = true;
@@ -602,12 +599,8 @@ public class GsacRepository implements GsacConstants {
                 
                 String reqstr=request.toString();
 
-                System.out.println    ("GSAC: new request (completed): "+reqstr+", at time "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
-
-                //System.out.println("GSAC: end time   to handleRequest is "+getUTCnowString() );
-
                 if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
-                    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() );
+                    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() ); // DEBUG
                 }
 
                 int resourceCnt = -1;
@@ -615,6 +608,9 @@ public class GsacRepository implements GsacConstants {
                     resourceCnt = response.getNumResources();
                 }
                 getLogManager().logAccess(request, what, resourceCnt);
+
+                System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from IP "+request.getOriginatingIP()); // +"  resourceCnt ="+resourceCnt ); // DEBUG
+
             }
         } catch (UnknownRequestException exc) {
             System.out.println         ("GSAC: new request is unrecognized: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
