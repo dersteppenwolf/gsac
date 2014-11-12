@@ -31,15 +31,16 @@ import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 
+
 import java.io.*;
-
 import java.util.ArrayList;
-
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -58,6 +59,13 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     /** _more_ */
     private String flexigridTemplate;
 
+    public static String getUTCnowString() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format(new Date());
+        return utcTime;
+    }
+
 
     /**
      * ctor
@@ -68,9 +76,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
     public HtmlSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_HTML,
-                                      "HTML"));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_HTML, "HTML"));
         //        getRepository().addOutput(getResourceClass(), new GsacOutput(this,
         //                OUTPUT_SITE_DEFAULT, "Site Default"));
     }
@@ -92,6 +98,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                               GsacResponse response)
             throws Exception {
 
+        long t1 = System.currentTimeMillis();
+
         StringBuffer sb = new StringBuffer();
         try {
             handleRequestInner(request, response, sb);
@@ -104,6 +112,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             handleSearchForm(request, response, sb);
             finishHtml(request, response, sb);
         }
+
+        long t2 = System.currentTimeMillis();
+        System.err.println("GSAC:     finished making output (HTML site info file), in "+ (t2-t1)+" ms" ); // DEBUG
     }
 
     /**
@@ -134,14 +145,14 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
                            msg("Site Search Results"))) {
                 return;
             }
-            long t1 = System.currentTimeMillis();
+            //long t1 = System.currentTimeMillis();
             getRepository().processRequest(getResourceClass(), request,
                                            response);
-            long t2 = System.currentTimeMillis();
+            //long t2 = System.currentTimeMillis();
             checkMessage(request, response, sb);
             handleSiteList(request, response, sb);
-            long t3 = System.currentTimeMillis();
-            //            System.err.println("html site request:" + (t2 - t1) + " " + (t3 - t2));
+            //long t3 = System.currentTimeMillis();
+            //            System.err.println("html site request took:" + (t2 - t1) + " ms or " + (t3 - t2)); //DEBUG
         } else if (request.defined(ARG_SITE_ID)) {
             if ( !initHtml(request, response, sb, msg("Site View"))) {
                 return;
