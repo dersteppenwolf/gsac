@@ -31,7 +31,10 @@ import java.text.DateFormat;
 import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
-
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  *  To format GSAC query results as JSON.
@@ -42,11 +45,12 @@ import javax.servlet.http.*;
  *  see the other  ---OutputHandler.java files in /gsac/trunk/src/org/gsac/gsl/output/site/.
  *
  * @version        version 1 2012.
- * @author         Jeff McW.
+ * @author         Jeff McWhirter
  */
 public class JsonSiteOutputHandler extends GsacOutputHandler {
 
     /** output id */
+    // name the magic word site.json for use in the GSAC api to request this output format:
     public static final String OUTPUT_SITE_JSON = "site.json";
 
 
@@ -59,9 +63,17 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
     public JsonSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_SITE_JSON,
-                                      "GSAC Sites info, JSON", "/sites.json", true));
+
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_JSON, 
+           "GSAC Sites info, JSON", "/sites.json", true));
+    }
+
+
+    public static String getUTCnowString() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format(new Date());
+        return utcTime;
     }
 
 
@@ -77,6 +89,7 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+        //long t1 = System.currentTimeMillis();
         response.startResponse(GsacResponse.MIME_JSON);
         PrintWriter pw          = response.getPrintWriter();
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -87,10 +100,11 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         Gson           gson  = gsonBuilder.create();
         List<GsacSite> sites = response.getSites();
         String         json  = gson.toJson(sites);
-        //        System.out.println(json);
-        //        System.out.println("size:" + json.length() + " #:" + sites.size());
         pw.print(json);
         response.endResponse();
+
+        //long t2 = System.currentTimeMillis();
+        //System.err.println("GSAC:     finished making output (json site info file) for " + sites.size()+" sites, in "+ (t2-t1)+" ms" ); // DEBUG
     }
 
 
