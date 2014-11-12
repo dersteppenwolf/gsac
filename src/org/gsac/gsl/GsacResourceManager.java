@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -39,9 +39,11 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -87,6 +89,17 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         urlPrefix          = getRepository().getUrlBase() + URL_BASE + "/"
                     + getResourceClass().getName();
 
+    }
+
+    /**
+     * _more_
+     *
+     */
+    public static String getUTCnowString() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format(new Date());
+        return utcTime;
     }
 
 
@@ -470,9 +483,10 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
-        //System.err.println("     GsacResourceManager: handleRequest: ");
+    public void handleRequest(GsacRequest request, GsacResponse response) throws Exception {
+
+        System.err.println("GSAC: new request received by GsacResourceManager at time "+getUTCnowString() );
+
         String columns = getResourceSelectColumns();
         if (columns == null) {
             return;
@@ -481,38 +495,32 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             return;
         }
 
-        //long         t1         = System.currentTimeMillis();
-
         List<String> tableNames = new ArrayList<String>();
         Clause       clause = getResourceClause(request, response, tableNames);
 
         String suffix=getResourceSelectSuffix(request);
-        // getResourceSelectSuffix is coded below to always return string ""
 
-        //System.err.println("     GsacResourceManager: handleRequest: old suffix:       "+ suffix );
+        //System.err.println("GSAC: GsacResourceManager: handleRequest:getResourceSelectSuffix(request) gives "+ suffix );
 
-        // LOOK oddly this can get for example
-        //  handleRequest: old suffix:        GROUP BY MV_DAI_PRO.MON_STATION_CODE,MV_DAI_PRO.MON_ID,MV_DAI_PRO.PERM_STATION_ID,MV_DAI_PRO.MON_STATION_NAME,MV_DAI_PRO.MON_LAT_NUM,MV_DAI_PRO.MON_LON_NUM,MV_DAI_PRO.MON_ELEV,MV_DAI_PRO.STATION_TYPE,MV_DAI_PRO.OPERATIONAL,MV_DAI_PRO.NETWORK_CAMPAIGN,MV_DAI_PRO.PHOTO,MV_DAI_PRO.TIME_SERIES_GIF,MV_DAI_PRO.MET,MV_DAI_PRO.NOMINAL_SAMPLE_INTERVAL,MV_DAI_PRO.MONUMENT_STYLE  ORDER BY  MV_DAI_PRO.MON_STATION_CODE ASC 
-
-        // how does it DO that?
-
-        if ("" == suffix) {
-            // new 
+        if ("" == suffix) { // LOOK why need this?
             suffix = request.getsqlWhereSuffix();
             //System.err.println("     GsacResourceManager: handleRequest: new suffix:       "+ suffix );
         }
-        //        System.err.println("     GsacResourceManager: handleRequest: get cols:" + columns);
-        //        System.err.println("     GsacResourceManager: handleRequest: where clauses:" + clause);
 
-        Statement statement = getDatabaseManager().select(columns,
-                                  clause.getTableNames(tableNames), clause,
-                                  suffix, -1 );                       
+        Statement statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
 
-        processStatement(request, response, statement, request.getOffset(), request.getLimit());
+        //System.err.println("GSAC: GsacResourceManager, handleRequest() db query SQL is " + statement.toString() 
+        //       + "; at time "+getUTCnowString()  ); // DEBUG.   LOOK toString fails for oracle jbdc ; OK for mysql
 
-        // not every site search request comes here, so not much use:
-        //long t2 = System.currentTimeMillis();
-        //System.err.println("GSAC: handelRequest timing: " + (t2 - t1) + " ms");
+        // for oracle, since oracle jdbc statement.toString() does nothing DEBUG
+        //System.err.println("      GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+  clause.getTableNames(tableNames) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
+
+        long t1 = System.currentTimeMillis();
+
+        int nr = processStatement(request, response, statement, request.getOffset(), request.getLimit());
+
+        long t2 = System.currentTimeMillis();
+        //System.err.println("      GsacResourceManager: processStatement() completed and got "+nr+" rows in " + (t2 - t1) + " ms; at time "+getUTCnowString()); // DEBUG
     }
 
 
@@ -531,32 +539,51 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      *
      * @throws Exception On badness
      */
-    public int processStatement(GsacRequest request, GsacResponse response,
-                                Statement statement, int offset, int limit)
-            throws Exception {
+    public int processStatement(GsacRequest request, GsacResponse response, Statement statement, int offset, int limit) throws Exception {
         long t1 = System.currentTimeMillis();
+        long t0=t1;
+        long totalms=0;
 
         //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
+
+        long t2 = System.currentTimeMillis();
+        totalms += (t2 - t1); 
+        //System.err.println      ("      processStatement():SqlUtil.getIterator() completed in " + (t2 - t1) + " ms"); // DEBUG
+
         while (iter.getNext() != null) {
+            //t1 = System.currentTimeMillis();
+
             GsacResource resource = makeResource(request, iter.getResults());
+
+            t2 = System.currentTimeMillis();
+            totalms += (t2 - t1) ;
+            //System.err.println("         processStatement():makeResource() completed in " + (t2 - t1) + " ms;  total = "+totalms+" ms "  ); // DEBUG
+
             if (resource == null) {
                 continue;
             }
+
+            //t1 = System.currentTimeMillis();
             response.addResource(resource);
+            //t2 = System.currentTimeMillis();
+            // about 0 ms System.err.println  ("         processStatement():addResource()  completed in " + (t2 - t1) + " ms"); // DEBUG
+
             if ( !iter.countOK()) {
                 response.setExceededLimit();
-
                 break;
             }
         }
         iter.close();
+
         getDatabaseManager().closeAndReleaseConnection(statement);
 
-        //long t2 = System.currentTimeMillis();
-        //System.err.println("GSAC: request timing:  handled data for " + iter.getCount() + " sites in " + (t2 - t1) + " ms");
+        int itcount=iter.getCount();
 
-        return iter.getCount();
+        //t2 = System.currentTimeMillis();
+        //System.err.println("      GsacResourceManager, processStatement() took "+ (t2-t1)+ " ms"); // DEBUG
+
+        return itcount;
     }
 
 
@@ -604,14 +631,12 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @return the sql suffix
      */
     public String getResourceSelectSuffix(GsacRequest request) {
-        // newreturn request.getsqlwheresuffix();
-        // original: 
-        return getResourceOrder(request); // which is next, not implemented
+        return getResourceOrder(request); 
     }
 
 
     /**
-     * Get the order by sql directive when doing resource queries [NOTE: not implemented]
+     * Get the order by sql directive when doing resource queries; implement by child classes
      *
      * @param request the request
      *
@@ -623,7 +648,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
 
     /**
-     * Get the list of clauses when querying resources
+     * Get the list of clauses when querying resources; implement by child classes
      *
      * @param request the request
      * @param response the response
