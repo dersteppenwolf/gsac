@@ -230,12 +230,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String[][] tuples = new String[][] {
             { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
             { SORT_SITE_CODE, msg("Site Code") },
-            { SORT_SITE_NAME, msg("Name") }, { SORT_SITE_TYPE, msg("Type") }
+            { SORT_SITE_NAME, msg("Name") } 
+            //{ SORT_SITE_TYPE, msg("Type") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
-        String valueWidget        = HtmlUtil.select(ARG_SITE_SORT_VALUE, tfos,
-                                             request.get(ARG_SITE_SORT_VALUE,
-                                                 ARG_UNDEFINED_VALUE), "");
+
+        String valueWidget        = HtmlUtil.select(ARG_SITE_SORT_VALUE, tfos, request.get(ARG_SITE_SORT_VALUE, ARG_UNDEFINED_VALUE), "");
 
         String orderWidget = "";
         if (orderCapable) {
@@ -279,9 +279,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         //        pw.append(HtmlUtil.cssLink(makeHtdocsUrl("/chosen/chosen.css")));
 
-        String blankImg = iconUrl("/blank.gif");
         //Put a blank image submit input here so any Enter key pressed does not
         //default to a submit button search
+        String blankImg = iconUrl("/blank.gif");
         pw.append(HtmlUtil.submitImage(blankImg, ARG_SEARCH));
 
         StringBuffer buttons = new StringBuffer("<table width=100%><tr>");
@@ -1748,8 +1748,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 //HtmlUtil.img(imageMetadata.getUrl(), "", HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0") + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "600"));
                 // reduce image width so that it  takes up less of page
                 HtmlUtil.img(imageMetadata.getUrl(), "", HtmlUtil.attr(HtmlUtil.ATTR_BORDER, "0") + HtmlUtil.attr(HtmlUtil.ATTR_WIDTH, "300"));
-            img = HtmlUtil.href(imageMetadata.getUrl(), img,
-                                " rel=\"lightbox\" ");
+
+            img = HtmlUtil.href(imageMetadata.getUrl(), img, " rel=\"lightbox\" ");
             pw.append(img);
 
             return;
@@ -2274,14 +2274,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add(SORT_SITE_CODE);
             labels.add(msg("Name"));
             sortValues.add(SORT_SITE_NAME);
-            labels.add(msg("Type"));
-            sortValues.add(SORT_SITE_TYPE);
+
+            //labels.add(msg("Type"));
+            //sortValues.add(SORT_SITE_TYPE);
 
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
-            // use either this label:
             //labels.add(msg("Location") + " (latitude, longitude, elevation)"); // original 2010
-            // OR this (preferred):
-            //labels.add(msg("Location") + " (latitude, longitude, ellips. hgt.)"); // mid 2013
+            // use this (preferredi since gps instr locations are in geodetic coordinates, without elevation):
             labels.add(msg(" ") + " Latitude, Longitude, Ellipsoid hgt.");
             // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
@@ -2340,23 +2339,24 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</tr></table></td>\n");
 
             // show Site Code, the 4 char ID
-            // FIX may be bad values for special letters in German Swedish Icelandic, etc.
+            // look may be bad values for special letters in German Swedish Icelandic, etc.
             sb.append(HtmlUtil.col(href));
 
             // show full station name
-            // FIX gives bad values for special letters in German Swedish Icelandic, etc.
+            // look may gives bad values for special letters in German Swedish Icelandic, etc.
             sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ", clickEvent));
-            // FIX the next shows the longName is a bad value:
+            // the next shows if the longName is a bad value:
             //System.err.println("     HtmlOutputHandler.java getLongName: " + resource.getLongName() );
             //                         HtmlOutputHandler.java getLongName: InntakshÃºs KÃ¡rahnjÃºkavirkjunar viÃ° HÃ¡lslÃ³n
-            // OK, so where is longName set?
 
-            //show Type of site, OK since values are supplied by prototype GSAC database in most cases, with plain latin letters.
+            //show Type in col 3, of site, OK since values are supplied by prototype GSAC database in most cases, with plain latin letters.
+            /*
             if (resource.getType() != null) {
                 sb.append(HtmlUtil.col(resource.getType().getName(), clickEvent));
             } else {
                 sb.append(HtmlUtil.col("&nbsp;", clickEvent));
             }
+            */
 
             sb.append("<td " + clickEvent + ">");
 
