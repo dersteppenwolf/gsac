@@ -87,7 +87,9 @@ public interface GsacExtArgs {
 
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
 
-    public static final String SITE_METADATA_NAMEAGENCY = "site.metadata.nameagency";
+    public static final String SITE_METADATA_NAMEAGENCY  = "site.metadata.nameagency";
+
+    public static final String SITE_METADATA_NAMEMETPACK = "site.metadata.namemetpack";
 
     public static final String SITE_METADATA_FREQUENCYSTANDARD = "metadata.frequencystandard";
 
