@@ -514,7 +514,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
         // for oracle (and other db-s), since oracle jdbc statement.toString() does nothing DEBUG
         String fromtables= (clause.getTableNames(tableNames)).toString();
-        System.err.println("      GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+ fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
+        System.err.println("GSAC: GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+ fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
 
         long t1 = System.currentTimeMillis();
 
