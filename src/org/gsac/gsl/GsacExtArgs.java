@@ -91,6 +91,8 @@ public interface GsacExtArgs {
 
     public static final String SITE_METADATA_NAMEMETPACK = "site.metadata.namemetpack";
 
+    public static final String SITE_METADATA_METPACKSN = "site.metadata.metpackSN";
+
     public static final String SITE_METADATA_FREQUENCYSTANDARD = "metadata.frequencystandard";
 
     public static final String SITE_PHOTO_URL = "site.metadata.photoURL";
