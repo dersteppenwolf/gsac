@@ -70,11 +70,13 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
     public ZipFileOutputHandler(GsacRepository gsacRepository,
                                 ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
+        //System.err.println("GSAC:     ZipFileOutputHandler started"); 
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_FILE_ZIP,
                                       "Zip Files", "/files.zip", true,
                                       null /*"Zip Files"*/));
 
+        //System.err.println("GSAC:     ZipFileOutputHandler ended") ;
     }
 
 
@@ -89,6 +91,8 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+
+        System.err.println("GSAC:     ZipFileOutputHandler handleResult started. ") ;
 
         //Check the size
         long totalSize = 0;
@@ -113,6 +117,7 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
 
         response.startResponse(GsacResponse.MIME_ZIP);
         response.setReturnFilename("gsacresults.zip");
+        System.err.println("GSAC:     ZipFileOutputHandler do ZipOutputStream zos = new ZipOutputStream: ") ;
         ZipOutputStream zos = new ZipOutputStream(
                                   new BufferedOutputStream(
                                       request.getOutputStream(), 10000));
@@ -147,6 +152,8 @@ public class ZipFileOutputHandler extends HtmlOutputHandler {
         }
         IOUtil.close(zos);
         response.endResponse();
-    }
+    
+        System.err.println("GSAC:     ZipFileOutputHandler handleResult ended. ") ;
+    } // end handleRequest
 
 }
