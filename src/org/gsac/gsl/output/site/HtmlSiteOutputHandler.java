@@ -100,15 +100,13 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         long t1 = System.currentTimeMillis();
 
+
         StringBuffer sb = new StringBuffer();
         try {
             handleRequestInner(request, response, sb);
         } catch (IllegalArgumentException iae) {
             getRepository().getLogManager().logError("Error handling site request", iae);
-            sb.append(
-                getRepository().makeErrorDialog(
-                    "An error has occurred:<br>" + iae.getMessage()));
-
+            sb.append( getRepository().makeErrorDialog( "An error has occurred:<br>" + iae.getMessage()));
             handleSearchForm(request, response, sb);
             finishHtml(request, response, sb);
         }
@@ -132,7 +130,6 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         if (checkFormSwitch(request, response, getResourceClass())) {
             return;
         }
-
 
         if (request.isGsacUrl(URL_SITE_FORM)) {
             if ( !initHtml(request, response, sb, msg("Site Search Form"))) {
@@ -309,8 +306,10 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         StringBuffer listSB = new StringBuffer();
         makeSiteHtmlTable(request, listSB, sites);
         resultsContents.add(listSB.toString());
+
         resultsTitles.add(msg("Sites"));
 
+        // for tab "Map"
         // make a tab title to create map for Search Results site search results web page
         // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
         // "Map" label is hidden somewhere here.
@@ -320,8 +319,13 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         // make a tab title to show the site search forms when click this tag:
         resultsTitles.add(msg("Search Form"));
-
         resultsContents.add(extraSB.toString());
+
+        String reqstr=request.toString();
+        resultsTitles.add(msg("API request"));
+        resultsContents.add("GSAC URL domain + "+reqstr );
+
+
 
         makeTabs(pw, resultsTitles, resultsContents);
 
