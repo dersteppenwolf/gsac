@@ -226,6 +226,11 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         //cdpnum =getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "");
         // Date date = site.getFromDate(); // when station started; will use equip session start date instead
         // if (date != null) { indate = iso8601UTCDateTime(date); }
+        Float siv = new Float(sampIntstr);
+        if (siv > 0.0)  { 
+            System.out.println("   CsvFullSiteOutputHandler() site "+id+" sample interval is set as "+sampIntstr);
+        }
+
     }
 
     /**
@@ -315,13 +320,10 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         String rectype ="";
         String firmvers ="";
         String recsn ="";
-        //String swVer ="";
-        float  sampInt;
-        //int    gotsession=0;
 
         List<GsacMetadata> equipmentMetadata = site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
              
-        // get equip details
+        // get equip details for one session (one site, one time interval, the instrumentation details:
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
             //gotsession=1;
@@ -357,9 +359,17 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 //swVer=equipment.getSwVer();
                 //swVer=swVer.replaceAll(",", " ");
 
-                sampInt=equipment.getSampleInterval();
-                if (null==sampIntstr || sampIntstr=="") { sampIntstr=""+sampInt; } // replace value if not got from GsacExtArgs etc.
+                // select the var sampIntstr to use in the output line:
+                float esi=equipment.getSampleInterval(); // a float value
+                if (esi > 0.0)  { 
+                   String siStr= ""+esi ;
+                   sampIntstr= siStr; 
+                   System.out.println("    but session sample interval at site "+id+"  is = "+sampIntstr);
+                }
+                // else use old value for site's sampIntstr
+                //if (null==sampIntstr || sampIntstr=="") { sampIntstr=""+sampInt; } // replace value if not got from GsacExtArgs etc.
             }
+
 
             if (equipment.hasAntenna()) {
                 double[] xyz = equipment.getXyzOffset();
@@ -385,13 +395,10 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
             }
 
-
-        // construct the csv file line for this equipment session at this site:   cccc
-        // there are OFTEN MORE THAN ONE EQUIPMENT SESSION AT A SITE
+        // Finally, compose the csv file line for this equipment session at this site:   
         pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
                starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +
                firmvers+"," +recsn+","+sampIntstr+","+city+","+state+","+country+","+Xstr+","+Ystr+","+Zstr+","+agencyname+","+metpackname+","+metpackSN+","+sitecount+"\n");
-               //firmvers+"," +recsn+","+sampIntstr+","+city+","+state+","+country+","+Xstr+","+Ystr+","+Zstr+","+sitecount+"\n");
 
         } // end get equip details for this session 
 
