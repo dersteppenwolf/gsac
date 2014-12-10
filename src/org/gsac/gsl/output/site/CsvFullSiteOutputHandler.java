@@ -141,8 +141,10 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
     public CsvFullSiteOutputHandler (GsacRepository gsacRepository, ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
         getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_FULL_CSV, "GSAC Sites info, full csv", "/fullsites.csv", true)); 
-        // note with  .csv extension, some browsers want to show the results in Excel or other packages which is  the reverse of useful for geodesy.
+
+        // note with  .csv extension, some browsers want to show the results in Excel or other packages which is NOT ! useful for geodesy.
     }
+
 
     /**
      * handle the request: format the sites' information in  csv lines per site and per equipment session
@@ -156,7 +158,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
             throws Exception {
         // The next line sets output mime type (how browser handles it; text lets user see query results in a browser, and can also get form the gsac client with file name sitesfull.csv)
         // But in this case where file extension is ".csv"  the browser may probably ignore this 'text' value and try to load the file in some doc processor like Excel.
-        response.startResponse("text");
+        response.startResponse(GsacResponse.MIME_CSV);
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
         //Get all the sites in the results (response) from the GSAC site query made by the user: 
@@ -207,6 +209,12 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
         mondesc    =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, ""); 
         sampIntstr =getProperty(site, GsacExtArgs.ARG_SAMPLE_INTERVAL, "");  // station not datafile sample interval
+        /*  if ( sampIntstr==null ) {
+             ; //sampIntstr ="";
+        }
+        else {
+           ; //System.out.println("   CsvFullSiteOutputHandler() site "+id+" sample interval is as "+sampIntstr);
+        } */
         city       =getProperty(site, GsacExtArgs.ARG_CITY, ""); 
         state      =getProperty(site, GsacExtArgs.ARG_STATE, ""); 
         country    =getProperty(site, GsacExtArgs.ARG_COUNTRY, ""); 
@@ -214,22 +222,19 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         Ystr       =getProperty(site, GsacExtArgs.SITE_TRF_Y, ""); 
         Zstr       =getProperty(site, GsacExtArgs.SITE_TRF_Z, ""); 
         agencyname =getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, ""); 
+
         metpackname=getProperty(site, GsacExtArgs.SITE_METADATA_NAMEMETPACK, ""); 
         metpackSN  =getProperty(site, GsacExtArgs.SITE_METADATA_METPACKSN, ""); 
+        //System.out.println("GSAC:     CsvFullSiteOutputHandler() for site "+id+" metpack name="+metpackname+"  metpack SN="+metpackSN);
 
-        // LOOK must have done like in MySiteManager.java:
-        // site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ))
-        iersdomes =getProperty(site,                  GsacExtArgs.SITE_METADATA_IERDOMES, "");
+        //  must have first set this value in MySiteManager.java:
+        //  as with site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ))
+        iersdomes =getProperty(site,  GsacExtArgs.SITE_METADATA_IERDOMES, "");
 
-
-        // these next two are not used (put in results output file) yet.
+        // these next two are not put in results output file yet.
         //cdpnum =getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "");
         // Date date = site.getFromDate(); // when station started; will use equip session start date instead
         // if (date != null) { indate = iso8601UTCDateTime(date); }
-        Float siv = new Float(sampIntstr);
-        if (siv > 0.0)  { 
-            System.out.println("   CsvFullSiteOutputHandler() site "+id+" sample interval is set as "+sampIntstr);
-        }
 
     }
 
@@ -400,8 +405,9 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                starttime+"," +stoptime+","+anttype+"," +dome+"," +antsn+"," +antht+"," +antn+"," +ante+"," +rectype+"," +
                firmvers+"," +recsn+","+sampIntstr+","+city+","+state+","+country+","+Xstr+","+Ystr+","+Zstr+","+agencyname+","+metpackname+","+metpackSN+","+sitecount+"\n");
 
-        } // end get equip details for this session 
+        //System.out.println("GSAC:     CsvFullSiteOutputHandler() wrote line with site "+id+"  start="+starttime+"  stop="+stoptime+" metpackname="+metpackname+" metpackSN="+metpackSN);
 
+        } // end get equip details for this session 
 
     }     // end addSiteEquipment
 
