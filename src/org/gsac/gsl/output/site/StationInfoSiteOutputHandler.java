@@ -127,7 +127,8 @@ public class StationInfoSiteOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         //This sets output mime type (how browser handles it)
-        response.startResponse("text");
+        response.startResponse(GsacResponse.MIME_TEXT);
+        //response.  startResponse("text");
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
         //Get all the sites in the results from the GSAC site query by the user: 

@@ -128,7 +128,7 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         // set mime type for browser's display actions:
-        response.startResponse("text");
+        response.startResponse(GsacResponse.MIME_TEXT);
         PrintWriter pw = response.getPrintWriter();
         addHeader(pw);
 
@@ -642,17 +642,16 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                 stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
 
-                
                 String dt = equipment.getDome();
                 //System.out.println(" addSiteEquipmentAntenna(): initial dome value=_"+dt+"_");
-                if (dt.length()<4 || dt==null || dt=="" || dt== " " || dt== "  " || dt== "   " ) {
+                // is supposed to be a 4 char id as per IGS
+                if (dt==null || dt.length()<4 || dt=="" || dt== " " || dt== "  " || dt== "   " ) {
                    dt="    "; 
                 }
                 else if ( dt!=null && dt!="" && dt != " " && !dt.contains("   ") ) {
                    dt = getNonNullDomeString(dt);
                 }
                 
-
                 if (starttime.equals(prevAntStartTime) ) {
                     ; //  why two antenna sessions with same times?
                     // don't reprint the same line

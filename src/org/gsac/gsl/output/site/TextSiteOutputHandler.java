@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -39,18 +39,15 @@ import java.text.DecimalFormat;
 /**
  * Class description: formats query results to write a csv file format, with only name and location.
  *
- * This produces a SHORT report with few values. 
- *
- * 26 Feb 2013: output shows huge number of digits in latitude and longitude. Reformatted same.
- * 20 Nov 2013:
- * 1. first column in output removed: in the unavco gsac is such as "13922_AHUP_268"  an internal identifier in the UNAVCO GSAC code, and of no use to any geodesy user
- * 2. replace top header line with standard csv format style.
+ * This produces a SHORT report with few values for each station: code, lati, longi, height 
  *
  * Note the "elevation" value should be the site's ellipsoid height, depending in the metadata available.
  *
  * @author Jeff McWhirter 2010
  * @version SK Wier 26 Feb 2013 Re-format lat longi height to avoid huge number of non-significant digits.  
- * @version SK Wier 20 Nov 2013 see above.
+ * @version SK Wier 20 Nov 2013:
+ * 1. first column in output removed: in the unavco gsac is such as "13922_AHUP_268"  an internal identifier in the UNAVCO GSAC code, and of no use to any geodesy user
+ * 2. replace top header line with standard csv format style.
  * @version SK Wier  6 Feb 2014 to change GUI choice label to "GSAC Sites info, csv".
  * @version SK Wier 27 Aug 2014 to change GUI choice label to "GSAC Sites info, short csv" to parallel other full csv choice label. API arg value site.csv never changes.
  */
@@ -77,6 +74,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public TextSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
+        // set web entry form GUI choice label to "GSAC Sites info, csv".
         getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, short csv", "/sites.csv", true));
     }
 
