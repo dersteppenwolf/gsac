@@ -111,8 +111,9 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
             finishHtml(request, response, sb);
         }
 
-        long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: finished making output (HTML file) in "+ (t2-t1)+" ms" ); // DEBUG
+        // DEBUG print to LOG the time to make HTML file of some kind
+        //long t2 = System.currentTimeMillis();
+        //System.err.println("GSAC: finished making output (HTML file) in "+ (t2-t1)+" ms" ); // DEBUG
     }
 
     /**
