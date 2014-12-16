@@ -89,7 +89,7 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
-        long t1 = System.currentTimeMillis();
+        //long t1 = System.currentTimeMillis();
         response.startResponse(GsacResponse.MIME_JSON);
         PrintWriter pw          = response.getPrintWriter();
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -102,8 +102,8 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         String         json  = gson.toJson(sites);
         pw.print(json);
         response.endResponse();
-        long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: made the json output file for " + sites.size()+" sites in "+ (t2-t1)+" ms" ); // DEBUG
+        //long t2 = System.currentTimeMillis();
+        // typically 500 ms for 6 sites System.err.println("GSAC: made the json output file for " + sites.size()+" sites in "+ (t2-t1)+" ms" ); // DEBUG
     }
 
 
