@@ -152,8 +152,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         pw.append("+SITE/RECEIVER\n");
         pw.append("*SITE PT SOLN T DATA_START__ DATA_END____ DESCRIPTION_________ S/N__ FIRMWARE___\n");
         for (GsacSite site : sites) {
-            // when testing only  
-            //pw.append("  CALL addSiteEquipmentAntenna -------------------------------------------------------------------------------------------- for site \n");
             addSiteEquipmentReceiver(pw, site);
         }
         pw.append("-SITE/RECEIVER\n");
@@ -672,13 +670,15 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
                     pw.append( setStringLengthRight( equipment.getAntenna(),16) + dt +" ");
                     // FIX above: handle case of values from UNAVCO db of 'unknown' or 'not provided'
 
+                    // get antennaSN, was pw.append( setStringLength( equipment.getAntennaSerial(),5) );
+                    // but need much more error handling
                     String answer = equipment.getAntennaSerial();
-                    answer = answer.replaceAll(",", " ");
-                    if ( answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") ) {
-                       answer="-----------";
+                    //System.out.println("GSAC: Sinex output. debug  antenna SN >"+answer+"<" );
+                    if ( answer==null || answer.contains("unknown") || answer.contains("not provided")  || answer.equals("") || answer.equals(" ") || answer.contains("N/A") ) {
+                       answer="-----";
                     }
+                    answer = answer.replaceAll(",", " ");
                     pw.append( setStringLength(answer,5) );
-                    // was pw.append( setStringLength( equipment.getAntennaSerial(),5) );
                     pw.append("\n");
                 }
             }
