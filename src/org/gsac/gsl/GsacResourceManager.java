@@ -512,15 +512,18 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //System.err.println("GSAC: GsacResourceManager, handleRequest() db query SQL is " + statement.toString() 
         //       + "; at time "+getUTCnowString()  ); // DEBUG.   LOOK toString  for oracle jbdc ; OK for mysql
 
-        // for oracle (and other db-s), since oracle jdbc statement.toString() does nothing DEBUG
-        String fromtables= (clause.getTableNames(tableNames)).toString();
-        System.err.println("GSAC: GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+ fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
+        // DEBUG
+        //    NOTE do this , for oracle (and other db-s), since oracle jdbc statement.toString() does nothing 
+        //String fromtables= (clause.getTableNames(tableNames)).toString();
+        // DEBUG LOOK print to LOG the SQL query made on the UNAVCO database gps3 (usually gps3) 
+        //System.err.println("GSAC: GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+ fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
 
-        long t1 = System.currentTimeMillis();
 
+        // DEBUG
+        //   long t1 = System.currentTimeMillis();
         int nr = processStatement(request, response, statement, request.getOffset(), request.getLimit());
-
-        long t2 = System.currentTimeMillis();
+        // DEBUG
+        //   long t2 = System.currentTimeMillis();
         //System.err.println("      GsacResourceManager: processStatement() completed and got "+nr+" rows in " + (t2 - t1) + " ms; at time "+getUTCnowString()); // DEBUG
     }
 
