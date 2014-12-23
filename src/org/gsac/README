@@ -140,17 +140,18 @@ cd  ~/GSAC/gsac-code/src/org/gsac/template/
     ## To name the repository. Spaces are allowed.
 
     target.basename=bouldergsac     
-    ## For .jar file and .war file names
+    ## For .jar file and Tomcat .war file names
 
-    target.package=org.boulder.gsac  [If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.]
-    ## A standard Java package name.  This controls making and naming the new directory path to hold your local GSAC installation code.
+    target.package=org.boulder.gsac  
+    ## to set your GSAC Java package name.  This controls making and naming the new directory path to hold your local GSAC installation code.
     ## If your agency is not an "org", use the appropriate value such as pt., fr., de., is., edu.
 
     target.prefix=Boulder          
-    ## a prefix for filenames for the new Java .java files and .class files for your GSAC installation. No spaces.
+    ## to set the prefix for filenames for the new Java .java files and .class files for your GSAC installation. Like BoulderSiteManager.java.   No spaces.
 
     target.dbdriver=mysql.jar     
-    ## Choose which Java database driver (in GSAC) to read the database your GSAC code will read.  Choose (uncomment) one of these three:
+    ## to choose which Java database driver is used in GSAC code to read the database your GSAC will read.  Choose (uncomment) one of these three:
+    #target.dbdriver=mysql.jar     
     #target.dbdriver=oracleDriver.jar
     #target.dbdriver=postgres.jar
 
@@ -184,6 +185,30 @@ cd ~/GSAC/gsac-code/src/org/boulder/gsac/
 
                                    End of basic GSAC installation section 
 
+
+##############################################################c################################################################
+
+Javax Security
+
+When you first run your complete GSAC on the web site to test it, if it fails with the error
+
+   security.AccessControlException: access denied ("javax.management.MBeanTrustPermission" "register")
+
+Then add the following two lines to your java.policy file in the 'grant' section, 
+which may be under $JAVA_HOME/lib/security/ or under $JRE_HOME/lib/security/.
+
+grant {
+
+    // JMX Java Management eXtensions
+    permission javax.management.MBeanTrustPermission "register";
+
+}; 
+
+For example in one case to edit the java.policy file:
+
+sudo vi /usr/lib/jvm/java-7-oracle/jre/lib/security/java.policy 
+
+This case needs sudo since the Java package is system level./
 
 ##############################################################c################################################################
 ##############################################################c################################################################
@@ -224,7 +249,7 @@ To learn about federated GSACs, see the UNAVCO GSAC web site.
 You can install a federated GSAC now, without installing GSAC server for data downloads as described in README Part 2.
 
 Installing a federated GSAC is much simpler than installing GSAC for a data repository. 
-You do not use a database for a federated GSAC.  
+You do not use a local (your own) database for a federated GSAC.  
 
 If you have not already installed GSAC in any way, do step 1 below. 
 
