@@ -330,8 +330,8 @@ public class NtripMetadata extends StreamMetadata {
             line.network       = cols.get(col++);
             line.country       = cols.get(col++);
             line.latitude      = Double.parseDouble(cols.get(col++));
-            line.longitude = ucar.unidata.geoloc.LatLonPointImpl.lonNormal(
-                Double.parseDouble(cols.get(col++)));
+            //line.longitude = ucar.unidata.geoloc.LatLonPointImpl.lonNormal( Double.parseDouble(cols.get(col++)));
+            line.longitude     = Double.parseDouble(cols.get(col++));
             line.nmea           = Integer.parseInt(cols.get(col++));
             line.solution       = Integer.parseInt(cols.get(col++));
             line.generator      = cols.get(col++);
