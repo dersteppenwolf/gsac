@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<!-- 
--->
-
-
 <project basedir="../../../../" default="all" name="GSAC">
 
     <target name="init">
 
         <property name="distdir" value="${basedir}/dist"/>
         <mkdir dir="${distdir}"/>
-
-
 
         <!-- Where to put the jar files -->
         <property name="jars_dest" value="${distdir}"/>
@@ -32,10 +26,16 @@
 
         <property name="gsacrelease" value="${jars_dest}/gsacrelease.zip"/>
 
+        <!--  
         <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
-        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
+        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/> 
+        -->
+        <property name="commons-pool.jar" value="commons-pool2-2.2.jar"/>
+        <property name="commons-dbcp.jar" value="commons-dbcp2-2.0.1.jar"/>
 
-        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/oracleDriver.jar:${libdir}/ramaddautil.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-1.6.2.jar"/>
+        <!-- Jetty 9 is based on the javax servlet container 3.0 version -->
+
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc7.jar:${libdir}/unidatautil.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-2.3.1.jar:${libdir}/joda-time-2.6.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
@@ -44,7 +44,7 @@
 
         <!-- You can concatenate the calling process' classpath to the end (the
         default) or use "ignore" to just use the classpath defined here. -->
-<!--        <property name="build.sysclasspath" value="last"/> -->
+        <!--        <property name="build.sysclasspath" value="last"/> -->
         <property name="build.sysclasspath"    value="ignore" />
 
         <!-- javac flags -->
@@ -54,7 +54,7 @@
         <property name="fileencoding" value="UTF-8" />
 
         <!-- Java source version -->
-        <property name="srcversion" value="1.6"/>
+        <property name="srcversion" value="1.7"/>
 
        <property name="downloaderjar" value="${srcdir}/org/gsac/gsl/htdocs/webstart/gsacdownloader.jar"/>
 
@@ -110,28 +110,22 @@
               <attribute name="Implementation-Vendor" value="UNAVCO"/>
               <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
 
-              <attribute name="Class-Path" value="gsacws.jar ramaddautil.jar unidatautil.jar  ${commons-dbcp.jar} log4j-1.2.15.jar oracleDriver.jar ${commons-pool.jar} jetty.jar jetty-util.jar  servlet-api.jar gson-1.5.jar joda-time-1.6.2.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar   ${commons-dbcp.jar} log4j-1.2.17.jar ${commons-pool.jar}  ojdbc7.jar jetty-all-9.2.6.v20141205.jar javax.servlet-api-3.1.0.jar gson-2.3.1.jar joda-time-2.6.jar"/>
             </manifest> 
         </jar>
         
          <copy failonerror="true"  file="${gsacserverjar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true"  file="${gsacwsjar}"  todir="${gsacserverdir}"/>
 
-         <copy failonerror="true" file="${libdir}/ramaddautil.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/unidatautil.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/log4j-1.2.15.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/oracleDriver.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/jetty.jar"  todir="${gsacserverdir}"/>
-
-         <copy failonerror="true" file="${libdir}/jetty-util.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/gson-1.5.jar"  todir="${gsacserverdir}"/>
-  		 
-	<!-- jlm -->
-   	<copy failonerror="true" file="${libdir}/joda-time-1.6.2.jar"  todir="${gsacserverdir}"/>
-
-         <copy failonerror="true" file="${libdir}/servlet-api.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/log4j-1.2.17.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/ojdbc7.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/jetty-all-9.2.6.v20141205.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/gson-2.3.1.jar"  todir="${gsacserverdir}"/>
+   	     <copy failonerror="true" file="${libdir}/joda-time-2.6.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/javax.servlet-api-3.1.0.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="false" file="${srcdir}/org/gsac/gsl/release/README.gsacserver"  todir="${gsacserverdir}"/>
 
         <zip  destfile="${gsacserverzip}" >
@@ -152,21 +146,16 @@
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/README.release" fullpath="gsacrelease/README"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/releasebuild.xml" fullpath="gsacrelease/build.xml"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/**/*"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/ramaddautil.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/unidatautil.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-dbcp.jar}"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-pool.jar}"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/log4j-1.2.15.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/oracleDriver.jar"  prefix="gsacrelease"/>
-
-            <zipfileset dir="${basedir}"  includes="lib/jetty.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/gson-1.5.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/jetty-util.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/servlet-api.jar"  prefix="gsacrelease"/>
-
-            <!-- jlm -->
-            <zipfileset dir="${basedir}"  includes="lib/joda-time-1.6.2.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/log4j-1.2.17.jar"         prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/ojdbc7.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/jetty-all-9.2.6.v20141205.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/gson-2.3.1.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/joda-time-2.6.jar"  prefix="gsacrelease"/>
         </zip>
    </target>
 
