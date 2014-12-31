@@ -9,7 +9,11 @@ var defaultZoomLevel = 4;
 
 /*  set center of GSAC site map, with (LONGITUDE, LATITUDE ) ; longitude east (west is negative), latitude north */
 /* var defaultLocation = new OpenLayers.LonLat(15.00, 45.00);        Europe */
-/* var defaultLocation = new OpenLayers.LonLat(-76.00, 16.00);       Caribbean Sea area */
+
+/*    Caribbean Sea area: use zoom 4 */
+/* var defaultLocation = new OpenLayers.LonLat(-76.00, 16.00);   
+*/
+
 var defaultLocation = new OpenLayers.LonLat(-115.00, 40.00);      /* western US; use zoom 4 */
 
 
@@ -47,17 +51,6 @@ function loadjscssfile(filename, filetype){
     }
 }
 
-
-/*
-var yahooJS= "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers";
-loadjscssfile(yahooJS, "js")
-
-var msJS= "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1";
-var googleJS= "http://maps.google.com/maps/api/js?v=3.2&sensor=false";
-
-loadjscssfile(msJS, "js")
-loadjscssfile(googleJS, "js")
-*/
 
 
 function RepositoryMap (mapId, params) {
