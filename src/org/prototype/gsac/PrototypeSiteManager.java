@@ -36,8 +36,11 @@ import org.gsac.gsl.output.HtmlOutputHandler;
 
 import ucar.unidata.util.Misc;
 
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
+//import org.ramadda.sql.Clause;
+//import org.ramadda.sql.SqlUtil;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
+
 
 import ucar.unidata.util.StringUtil;
 
@@ -864,7 +867,7 @@ public class PrototypeSiteManager extends SiteManager {
 
         if ( station_photo_URL != null  )    {
             if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
             }
             if ( station_photo_URL != null ) {
                 // add  site photo image to the group:
@@ -873,7 +876,7 @@ public class PrototypeSiteManager extends SiteManager {
         }
         if (ts_image_URL!=null )    {
             if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images", MetadataGroup.DISPLAY_TABS));
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
             }
             if (ts_image_URL.length()>8 ) { 
                 // add a valid image URL of a time series data plot to the images group:
@@ -1163,6 +1166,7 @@ public class PrototypeSiteManager extends SiteManager {
             while ((results = iter.getNext()) != null) {
                // code to get CORRECT times with hours mins and seconds:
 
+               /*
                String sdt=null;
                //System.err.println("   get antenna sdt indate string  "); //bbb
                Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
@@ -1174,6 +1178,18 @@ public class PrototypeSiteManager extends SiteManager {
                   sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE)+"00";
                   indate = formatter.parse(sdt);
                }
+               */
+
+               indate = null ; //formatter.parse(sdt);
+               String sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
+               //System.err.println("   sdt indate string = "+sdt); 
+               if (sdt.contains("0000")) {
+                  sdt = null;
+               }
+               else {
+                   indate = formatter.parse(sdt);
+               }
+               
                /*
                try {
                    sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE);
@@ -1202,7 +1218,7 @@ public class PrototypeSiteManager extends SiteManager {
 
                String odt=null;
                //System.err.println("   get antenna sdt outdate string  "); //bbb
-               test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
+               Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
                if (null == test) { 
                    //System.err.println("   get antenna sdt outdate null  "); //bbb
                    outdate = new Date();  // ie now; we presume htis is correct and the instrument is still active.
@@ -1436,12 +1452,19 @@ public class PrototypeSiteManager extends SiteManager {
                            //System.err.println("         Dates of equip session  "+(si+1)+"     "+ ft.format(astartDate) +"   -   "+ ft.format(astopDate));
 
                            // code to get CORRECT times with hours mins and seconds:
-                           String sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE)+"00";
-                           String odt = null;
-                           //System.err.println("   sdt antstart string = "+sdt); // CORRECT with time of day
-                           Date antstart = formatter.parse(sdt);
-                           Date antstop = new Date();  // ie now
 
+                           Date antstart = null ; //formatter.parse(sdt);
+                           String sdt = results.getString(Tables.ANTENNA_SESSION.COL_ANTENNA_INSTALLED_DATE)+"00";
+                           if (sdt.contains("0000")) {
+                              sdt = null;
+                           }
+                           else {
+                               antstart = formatter.parse(sdt);
+                           }
+                           //System.err.println("   sdt antstart string = "+sdt); // CORRECT with time of day
+
+                           String odt = null;
+                           Date antstop = new Date();  // ie now
                            Date test = readDate( results, Tables.ANTENNA_SESSION.COL_ANTENNA_REMOVED_DATE);
                            if (null == test) {
                               ;
