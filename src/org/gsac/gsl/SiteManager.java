@@ -27,8 +27,11 @@ import org.gsac.gsl.output.*;
 import org.gsac.gsl.output.site.*;
 import org.gsac.gsl.util.*;
 
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
+//import org.ramadda.sql.Clause;
+//import org.ramadda.sql.SqlUtil;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
+
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -154,8 +157,8 @@ public abstract class SiteManager extends GsacResourceManager {
         super.initOutputHandlers();
 
         /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  
-           For example if you do NOT want to provide the GSAC "Short csv" format, comment out (put // before) 
-           new TextSiteLogOutputHandler(getRepository(), getResourceClass());
+           For example if you do NOT want to provide sinex, comment out (put // before) its call:
+           // new SinexSiteOutputHandler(getRepository(), getResourceClass());
         */
 
         // 1. results in HTML format, for GSAC web pages
@@ -173,7 +176,7 @@ public abstract class SiteManager extends GsacResourceManager {
         // for SOPAC XML site log format  
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
-        // for the GSAC JSON site info format. This GSAC output format is used a supersites aggregator tool or web site.
+        // for the GSAC JSON site info format. This GSAC output  is used by a supersites aggregator tool or web site.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         
         //  for the 2010 GSAC XML site info format
@@ -188,14 +191,12 @@ public abstract class SiteManager extends GsacResourceManager {
         // for the GSAC Ops XML site info format; new on 22 May 2014; requested for UNAVCO field engineering operations.
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for  the 2013 GSAC plain text format
+        // the 2013 GSAC plain text format for human readability; no sign of any interest by users
         //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
-        // Never used in 10 months, so deprecate these
+        new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
 
         // Never used in 10 months new AtomSiteOutputHandler(getRepository(), getResourceClass());
-
-        // Never used in 10 months new RssSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 
