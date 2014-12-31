@@ -369,7 +369,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 if (esi > 0.0)  { 
                    String siStr= ""+esi ;
                    sampIntstr= siStr; 
-                   System.out.println("    but session sample interval at site "+id+"  is = "+sampIntstr);
+                   //System.out.println("    but session sample interval at site "+id+"  is = "+sampIntstr);
                 }
                 // else use old value for site's sampIntstr
                 //if (null==sampIntstr || sampIntstr=="") { sampIntstr=""+sampInt; } // replace value if not got from GsacExtArgs etc.
