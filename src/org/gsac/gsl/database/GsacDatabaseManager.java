@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -21,23 +21,32 @@
 package org.gsac.gsl.database;
 
 
-import org.apache.commons.dbcp.BasicDataSource;
+//import org.apache.commons.dbcp.BasicDataSource;
+//  new 2014: 
+import org.apache.commons.dbcp2.BasicDataSource;
 
+/*
+jar tf commons-dbcp2-2.0.1.jar  | grep BasicDataSource
+org/apache/commons/dbcp2/BasicDataSource.class
+org/apache/commons/dbcp2/BasicDataSource$1.class
+org/apache/commons/dbcp2/BasicDataSource$PaGetConnection.class
+org/apache/commons/dbcp2/BasicDataSourceFactory.class
+*/
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
+//import org.ramadda.sql.Clause;
+//import org.ramadda.sql.SqlUtil;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
-
 import java.io.*;
 import java.io.InputStream;
-
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -58,6 +67,7 @@ import java.util.Properties;
  * Provides basic database facilities including connection pooling.
  * Overwrite doMakeDataSource to implement
  *
+ * 2014: changes to update to org.apache.commons.dbcp2.BasicDataSource
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
  */
@@ -186,8 +196,8 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
      */
     public String getPoolStats() {
         return "#active:" + dataSource.getNumActive() + " #idle:"
-               + dataSource.getNumIdle() + " max active: "
-               + dataSource.getMaxActive() + " max idle:"
+               + dataSource.getNumIdle()  //+" max active: " // method not missing + dataSource.getMaxActive() i
+               + " max idle:"
                + dataSource.getMaxIdle();
 
     }
@@ -263,7 +273,9 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setMaxActive(100);
+        // v 1.4: dataSource.setMaxActive(100);
+        dataSource.setMaxTotal(100);
+
         dataSource.setMaxIdle(100);
         dataSource.setDriverClassName(getDriverClassName());
 
@@ -271,16 +283,21 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         dataSource.setPassword(password);
         dataSource.setUrl(jdbcUrl);
 
-        dataSource.setMaxWait(1L);
-        dataSource.setRemoveAbandoned(true);
+        // v 1.4 dataSource.setMaxWait(1L);
+        dataSource.setMaxWaitMillis(1L);
+
+        // v 1.4 dataSource.setRemoveAbandoned(true);
+        // now setRemoveAbandonedOnBorrow(bool or   setRemoveAbandonedOnMaintenance(bool)
+        dataSource.setRemoveAbandonedOnBorrow(true); // try this one
+
         //60 seconds
         dataSource.setRemoveAbandonedTimeout(60);
         dataSource.setLogWriter(new PrintWriter(System.err));
 
-        //TODO: For now log abandoned but we'll want to turn this off for performance sometime
+        //2010: TODO: For now log abandoned but we'll want to turn this off for performance sometime
+        //dataSource.setLogAbandoned(true);
+        // 2014:
         dataSource.setLogAbandoned(true);
-
-
 
         return dataSource;
     }
