@@ -2,7 +2,9 @@
 
 package org.prototype.gsac.database;
 
-import org.ramadda.sql.SqlUtil;
+//import org.ramadda.sql.SqlUtil;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
+//import org.gsac.gsl.ramadda.sql.Clause;
 
 public abstract class Tables {
     public abstract String getName();
