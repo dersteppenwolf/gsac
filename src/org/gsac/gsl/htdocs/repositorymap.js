@@ -8,13 +8,12 @@
 var defaultZoomLevel = 4;
 
 /*  set center of GSAC site map, with (LONGITUDE, LATITUDE ) ; longitude east (west is negative), latitude north */
-/* var defaultLocation = new OpenLayers.LonLat(15.00, 45.00);        Europe */
 
-/*    Caribbean Sea area: use zoom 4 */
-/* var defaultLocation = new OpenLayers.LonLat(-76.00, 16.00);   
-*/
+var defaultLocation = new OpenLayers.LonLat(-115.00, 40.00);         /* western US; use zoom 4 */
 
-var defaultLocation = new OpenLayers.LonLat(-115.00, 40.00);      /* western US; use zoom 4 */
+/* var defaultLocation = new OpenLayers.LonLat(15.00, 45.00); */     /* Europe */
+
+/* var defaultLocation = new OpenLayers.LonLat(-76.00, 16.00); */    /* Caribbean Sea area: use zoom 4 */
 
 
 var mapLayers = null;
