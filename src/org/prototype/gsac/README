@@ -35,7 +35,7 @@ Now, change the working directory to your local GSAC code area, at org/prototype
 
 Adding Your Repository's Details: The "GSAC Resources Properties" File.
 
-The file org/prototype/gsac/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
+The file org/prototype/gsac/resources/gsac.properties has a number of properties about your GSAC installation, for example, 
 gsac.baseurl will be part of the full URL for your GSAC repository.
 
 Some values were created in the initial ant build you just made.
