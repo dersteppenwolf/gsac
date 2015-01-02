@@ -74,7 +74,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
     public TextSiteOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        // set web entry form GUI choice label to "GSAC Sites info, csv".
+        // set web entry form GUI choice label , and default output file name
         getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_CSV, "GSAC Sites info, short csv", "/sites.csv", true));
     }
 

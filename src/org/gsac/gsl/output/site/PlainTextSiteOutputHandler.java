@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-3 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2012-2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -60,7 +60,7 @@ import javax.servlet.http.*;
  *      For bug reports and suggested improvments please contact UNAVCO.
  *
  *      initial version Nov 27-30, 2012, SKW UNAVCO.
- *      revised Dec 4,5,6,7 2012; 29 Aug 2013. SKW.   
+ *      revised Dec 4,5,6,7 2012; 29 Aug 2013. 2 Jan 2015.  SKW.   
  */
 public class PlainTextSiteOutputHandler extends GsacOutputHandler {
 
@@ -77,7 +77,7 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     /** _more_          */
     private DecimalFormat latLonFormat = new DecimalFormat("####0.#####");
 
-    /**  to format elevation, or the ellipsoidal height values sometimes called elevation in GSAC code.  */
+    /**  to format elevation above geoid, or the ellipsoidal height values .  */
     private DecimalFormat elevationFormat = new DecimalFormat("####0.##");
 
     /** for antenna offset values from instrument reference point.  */
@@ -92,9 +92,10 @@ public class PlainTextSiteOutputHandler extends GsacOutputHandler {
     public PlainTextSiteOutputHandler(GsacRepository gsacRepository,
                                    ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
+        // set web entry form GUI choice label , and default output file name
         getRepository().addOutput(getResourceClass(),
                                   new GsacOutput(this, OUTPUT_SITE_PLAIN,
-                                      "GSAC Sites info, Plain text", "/plainsites.txt", true));
+                                      "GSAC Sites info, text", "/plainsites.txt", true));
     }
 
 /*
@@ -170,17 +171,16 @@ if (param.equals(ARG_SITE_TYPE)) {
         pw.append(    " site continuous or campaign: "+ site.getType().getId() + "\n");
         pw.append(    " site agency:                 "+ getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "") + "\n");
         Date date = site.getFromDate();
-        if (date != null) { pw.append(" site installed date:         "+ iso8601UTCDateTime(date) + "\n"); }
-        else { pw.append(             " site installed date:          \n"); }
+        if (date != null) { pw.append  (" site installed date:         "+ iso8601UTCDateTime(date) + "\n"); }
+        else { pw.append(               " site installed date:          \n"); }
         Date todate = site.getToDate();
-        if (todate != null) { pw.append(" site most recent date:     "+ iso8601UTCDateTime(todate) + "\n"); }
-        else { pw.append(               " site most recent date:      \n"); }
-        String mond = getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
-        // works pw.append(    " site monument description:   "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
-        pw.append(    " site monument description:   "+                                                            mond      + "\n");
+        if (todate != null) { pw.append(" site most recent data:       "+ iso8601UTCDateTime(todate) + "\n"); }
+        else { pw.append(               " site most recent data:       \n"); }
+        //String mond = getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
+        pw.append(    " site monument description:   "+ getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "") + "\n");
         //System.err.println("  --------------------------------------------------- plain text output got  monu desc "+ mond);
-        pw.append(    " site frequency standard:     "+ getProperty(site, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "") + "\n");
         pw.append(    " site IERSDOMES:              "+ getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "") + "\n");
+        pw.append(    " site frequency standard:     "+ getProperty(site, GsacExtArgs.SITE_METADATA_FREQUENCYSTANDARD, "") + "\n");
         pw.append(    " site cdp number:             "+ getProperty(site, GsacExtArgs.SITE_METADATA_CDPNUM, "") + "\n");
     }
 
@@ -232,26 +232,27 @@ if (param.equals(ARG_SITE_TYPE)) {
         if (plm == null) {
             plm = new PoliticalLocationMetadata();
         }
-        pw.append(    " site country:                "+ getNonNullString(plm.getCountry())  + "\n");
-        pw.append(    " site state or province:      "+ getNonNullString(plm.getState()  ) + "\n");
-        pw.append(    " site city/place:             "+ getNonNullString(plm.getCity()) + "\n");
         EarthLocation el = site.getEarthLocation();
         pw.append(    " site latitude:               "+ formatLocation(el.getLatitude())  + "" + "\n");
         pw.append(    " site longitude:              "+ formatLocation(el.getLongitude()) + "" + "\n");
-        pw.append(    " site TRF or Datum name:      \n");  // LOOK need GSAC parameter for this item
-        pw.append(    " site ellipsoid height:       "+ elevationFormat.format(el.getElevation()) + "\n");
-        pw.append(    " site ellipsoid name:         \n");  // LOOK need GSAC parameter for this item
+        pw.append(    " site ellipsoid height:       "+ elevationFormat.format(el.getElevation()) + " m \n");
+        //pw.append(    " site TRF or Datum name:      \n");  // LOOK need GSAC parameter for this item
+        //pw.append(    " site ellipsoid name:         \n");  // LOOK need GSAC parameter for this item
         if (el.hasXYZ()) {
-            pw.append(" site X coordinate:           "+ el.getX() + "" + "\n");
-            pw.append(" site Y coordinate:           "+ el.getY() + "" + "\n");
-            pw.append(" site Z coordinate:           "+ el.getZ() + "" + "\n");
+            pw.append(" site TRF X coordinate:        "+ el.getX() + "" + "\n");
+            pw.append(" site TRF Y coordinate:        "+ el.getY() + "" + "\n");
+            pw.append(" site TRF Z coordinate:        "+ el.getZ() + "" + "\n");
         } else {
-            pw.append(" site X coordinate:           " + "\n");
-            pw.append(" site Y coordinate:           " + "\n");
-            pw.append(" site Z coordinate:           " + "\n");
+            pw.append(" site TRF X coordinate:        " + "\n");
+            pw.append(" site TRF Y coordinate:        " + "\n");
+            pw.append(" site TRF Z coordinate:        " + "\n");
         }
-        pw.append(    " site elevation:               (height above geoid model)\n");  // LOOK need GSAC db field, code parameter, etc.,  for this item 
-        pw.append(    " geoid model name:   \n");  // LOOK need GSAC parameter for this item
+        pw.append(    " site country:                "+ getNonNullString(plm.getCountry())  + "\n");
+        pw.append(    " site province/state:         "+ getNonNullString(plm.getState()  ) + "\n");
+        pw.append(    " site city/place:             "+ getNonNullString(plm.getCity()) + "\n");
+        // LOOK GSAC does not yet handle geoid model name or elevation value
+        //pw.append(    " site elevation:               (height above geoid model)\n");  // LOOK need GSAC db field, code parameter, etc.,  for this item 
+        //pw.append(    " geoid model name:   \n");  // LOOK need GSAC parameter for this item
     }
 
     /**
@@ -295,9 +296,9 @@ if (param.equals(ARG_SITE_TYPE)) {
                 pw.append("      receiver type:          "+ equipment.getReceiver() + "\n");
                 pw.append("      receiver SN:            "+ equipment.getReceiverSerial()  + "\n");
                 pw.append("      receiver firmware vers: "+ equipment.getReceiverFirmware() + "\n");
-                pw.append("      receiver firmware SwVer:"+ equipment.getSwVer() + "\n");
+                pw.append("      receiver firmware SwVer:"+ equipment.getSwVer() + ". (approximation) \n");
                 
-                pw.append("      receiver sample intervl:"+ (""+equipment.getSampleInterval()) + "\n");  // float to string trick
+                pw.append("      receiver sample intervl:"+ (""+equipment.getSampleInterval()) + " s \n");  // (""+equip ())   is the float to string trick
                 pw.append("      receiver installed date:"+ iso8601UTCDateTime(equipment.getFromDate()) + "\n");
                 pw.append("      receiver removed date:  "+ iso8601UTCDateTime(equipment.getToDate()) + "\n");
             }
@@ -307,14 +308,14 @@ if (param.equals(ARG_SITE_TYPE)) {
                 pw.append("      antenna type:           "+ getNonNullString(equipment.getAntenna()) + "\n");
                 pw.append("      antenna SN:             "+ getNonNullString(equipment.getAntennaSerial()) + "\n");
                 double[] xyz = equipment.getXyzOffset();
-                pw.append("      antenna offset Ht (up): "+ offsetFormat.format(xyz[2]) + "\n");
-                pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + "\n");
-                pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + "\n");
-                pw.append("      alignment from true N:  \n"); //                      _ALIGNMENTFROMTRUENORTH, "", ""));
+                pw.append("      antenna offset Ht (up): "+ offsetFormat.format(xyz[2]) + " m \n");
+                pw.append("      antenna offset North:   "+ offsetFormat.format(xyz[1]) + " m \n");
+                pw.append("      antenna offset East:    "+ offsetFormat.format(xyz[0]) + " m \n");
+                pw.append("      alignment from true N:  \n"); //  LOOK GSAC does not yet handle this value                    _ALIGNMENTFROMTRUENORTH, "", ""));
                 pw.append("      antenna installed date: "+ iso8601UTCDateTime(equipment.getFromDate()) + "\n");
                 pw.append("      antenna removed date:   "+ iso8601UTCDateTime(equipment.getToDate()) + "\n");
-                pw.append("      Dome type:              "+ getNonNullString(equipment.getDome()) + "\n");
-                pw.append("      Dome SN:                "+ getNonNullString(equipment.getDomeSerial()) + "\n");
+                pw.append("      Radome type:            "+ getNonNullString(equipment.getDome()) + "\n");
+                pw.append("      Radome SN:              "+ getNonNullString(equipment.getDomeSerial()) + "\n");
             }
         }
     }
