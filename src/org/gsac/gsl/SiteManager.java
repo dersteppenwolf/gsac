@@ -156,13 +156,16 @@ public abstract class SiteManager extends GsacResourceManager {
     public void initOutputHandlers() {
         super.initOutputHandlers();
 
-        /* Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  
-           For example if you do NOT want to provide sinex, comment out (put // before) its call:
-           // new SinexSiteOutputHandler(getRepository(), getResourceClass());
+        /* 
+           Comment out lines for handlers NOT wanted to be offered by your GSAC-WS repository.  
+           For example if you do NOT want to provide ATOM, comment out new AtomSiteOutputHandler(getRepository(), getResourceClass());
         */
 
-        // 1. results in HTML format, for GSAC web pages
+        // 1. results in HTML format, for GSAC web pages. The common first results for site searches.
+        //  Always list the HTML handler first,
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
+
+        // Order of handlers here below is the order presented to the user in the GSAC site search forms, and in information page.
 
         // for SINEX format  
         new SinexSiteOutputHandler(getRepository(), getResourceClass());
@@ -176,27 +179,27 @@ public abstract class SiteManager extends GsacResourceManager {
         // for SOPAC XML site log format  
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
-        // for the GSAC JSON site info format. This GSAC output  is used by a supersites aggregator tool or web site.
+        // for the GSAC JSON site info format. This GSAC output is used by a supersites aggregator tool or web site.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         
-        //  for the 2010 GSAC XML site info format
-        new XmlSiteOutputHandler(getRepository(), getResourceClass());
+        //  for the 2010 GSAC XML site info format; not used yet; and functionally replaced by the GSAC Ops XML site info format.
+        //new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // the 2010 GSAC short csv format
         new TextSiteOutputHandler(getRepository(), getResourceClass());   
 
-        // for  the 2013 GSAC "Full Csv" format
+        // for the new 2013 GSAC "Full Csv" format
         new CsvFullSiteOutputHandler(getRepository(), getResourceClass());
 
-        // for the GSAC Ops XML site info format; new on 22 May 2014; requested for UNAVCO field engineering operations.
+        // for the GSAC Ops XML site info format; new on 22 May 2014; creatted for UNAVCO field engineering operations.
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
-
-        // the 2013 GSAC plain text format for human readability; no sign of any interest by users
-        //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
         new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
 
-        // Never used in 10 months new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        // the 2013 GSAC plain text format for human readability; 
+        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+
+        // Never used in 10 months: new AtomSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 
