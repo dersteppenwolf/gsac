@@ -1,10 +1,10 @@
 #######################################################################/
 
-GSAC_WS Installation     
+                  GSAC_WS Installation     
 
-README, Part 2.
+                    README, Part 2.
 
-6 Mar 2014.   SKW  UNAVCO
+               5 Jan 2015.   SKW  UNAVCO
 
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -75,9 +75,9 @@ to permit the GSAC web server process to read from the geodesy database.  The co
         ## This is the file dbresources/gsacdb_test.properties, which specifies the database used by GSAC, and the db account to use.
 
         gsac.db.username=db-gsac-username
-        gsac.db.password=gsac-password
+        gsac.db.password=db-gsac-password
 
-        gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Boulder_GSAC_Database_with_data?useUnicode=yes&characterEncoding=UTF-8
+        gsac.db.jdbcurl=jdbc:mysql://localhost:8080/Boulder_GSAC_Database_with_data?useUnicode=yes&characterEncoding=UTF-8
 
         #gsac.db.jdbcurl=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>
 
@@ -85,12 +85,13 @@ to permit the GSAC web server process to read from the geodesy database.  The co
         ##
 
 
-The database host (like boulderdev.mydomain.org), port (3080), account user name and account password are all given here.  
-When the GSL assembles the JDBC URL it finds the user name and password from here.  The database must have an account GSAC can use to read from the database. 
+The database host (like boulderdev.mydomain.org), port (3080), account user name and account password are all given.  
+When the GSL assembles the JDBC URL it finds the user name and password from these.  
+The database must have an account GSAC can use to read from the database. 
 GSAC does not write to any database.
 
 One MySQL example which may work running both the db and GSAC locally on your computer, for testing, is 
-gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
+gsac.db.jdbcurl=jdbc:mysql://localhost:8080/your_database_name
 
 The Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  Also for Postgres the form is 
 
@@ -171,7 +172,6 @@ The source Java (.java) files compiled are like these in @MACRO.SRCDIR@:
 -rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 BoulderRepository.class
 -rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 BoulderFileManager.class
 -rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 BoulderServer.class
--rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 BoulderTest.class
 -rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 BoulderDatabaseManager.class
 -rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 BoulderSiteManager.class
 
@@ -187,7 +187,9 @@ which will be used as the servlet (application) container for your public web si
 
 If you happen to use two or more GSACs, doing one for one removes the .class files for the others.  So you
 must do ant again for another GSAC to do ant runserver there, after doing ant in this GSAC area.
-Doing ant in the core GSAC code area removes all local GSAC .class files.
+
+Doing ant in the core GSAC code area also removes all local GSAC .class files
+so you must do ant here again.
 
 ########################################################################
 Automatic Code Generation for Java reading from the Database 
@@ -204,8 +206,8 @@ localinit:
 init:
 tables:
      [java] JVM args ignored when same JVM is used.
-     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
-     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
+     [java] JDBC:jdbc:mysql://localhost:8080/MYREPO_GSAC_db
+     [java] JDBC:jdbc:mysql://localhost:8080/MYREPO_GSAC_db
      [java] processing ACCESS_PERMISSION
      [java] processing AGENCY
      [java] processing ANTENNA_SESSION
@@ -539,18 +541,29 @@ and then the Output: menu.
 
 GSAC now offers results in these formats:
 
-HTML                    output=site.html (for the GSAC web pages of results)
-XML Site Log (SOPAC)    output=site.xmllog
-SINEX                   output=site.snx
-GAMIT station.info      output=site.station.info
-GSAC Plain text         output=site.plaintext
-GSAC Full Site CSV      output=site.csv.full
-GSAC Short Site CSV     output=site.csv
-GSAC Site ATOM          output=site.gsacatom
-GSAC Site JSON          output=site.json
-GSAC Site RSS           output=site.gsacrss
-Google Earth KML        output=site.kml
-Google Earth KMZ        output=site.kmz
+Site Outputs
+HTML    output=site.html
+SINEX sites info    output=site.snx
+GAMIT station.info  output=site.station.info
+Google Earth KMZ    output=site.kmz
+SOPAC XML Site Log  output=site.xmllog
+GSAC Sites info, JSON   output=site.json
+GSAC Sites info, short csv  output=site.csv
+GSAC Sites info, full csv   output=sitefull.csv
+GSAC Sites info, Ops XML    output=siteops.xml
+GSAC Sites info, RSS    output=site.gsacrss
+GSAC Sites info, text   output=site.plaintext
+
+File Outputs
+File HTML   output=file.html
+Wget Script for FTP download    output=file.wget
+File URLs list  output=file.url
+File CSV    output=file.csv
+Download Files via Webstart output=file.download
+File JSON   output=file.json
+Zip Files   output=file.zip
+File GSAC RSS   output=file.gsacrss
+File GSAC XML   output=file.gsacxml
 
 (The terms output=... are the result format arguments in GSAC API queries.)
 
@@ -596,7 +609,9 @@ Dealing with Elevation and Ellipsoid Height
 GSAC code assumes station height values are ellipsoid heights above a geoid model surface, 
 the heights for locations in terrestrial reference frames, including GNSS positions.
 
-If your location values have elevations instread of ellipsoid heights, you can change these lines in these files in core GSAC code to 
+Usually you need do nothing to GSAC about "elevations" to handle your geodesy data.
+
+If your location values are true elevations instead of ellipsoid heights above a geodi model, you can change these lines in these files in core GSAC code to 
 change output labels with "ellipsoid height" to "elevation":
 
 Look for lines in the files with "// About ellipsoidal height:"
@@ -691,13 +706,6 @@ to restart tomcat  and force a read of the .war files.
 The Tomcat's servlet reads the properties file:
 /usr/local/apachetomcatdev/conf/gsacigs.properties
 which contains the database authentication info. This is in the .war file.
-
-
-########################################################################
-Installing a Federated GSAC
-########################################################################
-
-To be supplied...
 
 ########################################################################
 ########################################################################
