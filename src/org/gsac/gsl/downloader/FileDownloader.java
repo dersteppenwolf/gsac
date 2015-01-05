@@ -318,7 +318,7 @@ public class FileDownloader {
                                 continue;
                             }
 
-                            int numBytes = IOUtil.writeTo(
+                            int numBytes = (int)IOUtil.writeTo(
                                                is,
                                                new BufferedOutputStream(
                                                    new FileOutputStream(
