@@ -4,8 +4,8 @@
 
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                           2 January 2015.  Stuart Wier, UNAVCO
-                                               Copyright (C) 2014, 2015 UNAVCO.
+                                           5 January 2015.  Stuart Wier, UNAVCO
+                                          Copyright (C) 2013, 2014, 2015 UNAVCO.
 
 Introduction
 
@@ -53,7 +53,8 @@ You can install GSAC web services for a data repository when you have:
     usually, data files from observing instruments, for remote users to download. If you offer data file downloads, an FTP / HTTP download server is needed; it may be different from the server for the GSAC web application.
 
 Beginning in January 2015 GSAC requires Java 1.7. Earlier versions of GSAC used Java 1.5 or 1.6. If you have an earlier version of GSAC the simplest and best way to update GSAC is to make a complete, new, separate installation.
-You can use your existing local Java files, but your local build.html will need to be revised for new Java library (.jar) file names; see the new version of build.xml in the new GSAC src/org/prototype/gsac/ directory.
+You can use most of your existing local Java files unchanged, but your local build.html will need to be revised for new Java library (.jar) file names.
+See the new version of build.xml in the new GSAC src/org/prototype/gsac/ directory.
 You probably will also revise the import statments in your local Java files.
 
 To install and test preliminary working GSAC software, you do not need the web server, FTP server, or data files. You can implement and test your GSAC on a personal computer before dealing with web servers. GSAC will use Jetty on your desktop machine (included with GSAC). 
@@ -130,7 +131,7 @@ cd ~/GSAC/gsac-code/
 
 ant
 
-    This process sends information to the screen, like "gsl: Building GSL", and takes about 30 to 60 seconds.
+    This process sends information to the screen, like "gsl: Building GSL", and takes about 6 to 30 seconds.
     Some lines from a successful build are like:
 
 localinit:
@@ -144,8 +145,8 @@ Total time: 36 seconds
     Look for any error messages.  If there are none, you have compiled the GSAC core (GSL) code.
 
     This process makes a Java jar file, named gsacws.jar, in ~/GSAC/gsac-code/lib/, with size about 7 MB.
-    This file "contains" the built and executable GSAC core code, in effect.  This jar file will be used to build your final
-    Java jar file for your complete GSAC server code, and the Tomcat .war file, and to build any other GSAC using the GSL.
+    This file contains the compiled GSAC core GSL code.  This jar file will be used to build your final
+    Java jar file for your complete GSAC server executable, to build the Tomcat .war file, and to build any other GSAC using the GSL on your system, such as a federated GSAC.
 
 
                     #########################################
@@ -177,7 +178,7 @@ tries to call a Java class in a library which failed to be included.  A single c
 
 The Java library (.jar) files used byi GSAC are all in GSAC/gsac-code/lib/.
 
-The files as of 2 Jan 2015 are:
+The Java library files used by GSAC are, as of 5 Jan 2015:
 
   167962 2014-12-18 13:52 commons-dbcp2-2.0.1.jar
    61829 2014-12-31 13:38 commons-logging-1.2.jar
@@ -190,10 +191,16 @@ The files as of 2 Jan 2015 are:
   960374 2014-12-19 12:23 mysql-connector-java-5.1.34-bin.jar
  3397734 2014-12-22 11:31 ojdbc7.jar
   592322 2014-12-22 11:15 postgresql-9.3-1102.jdbc41.jar
-  384856 2014-12-30 13:40 unidatautil.jar
+  506575 2015-01-05 12:14 ucar_for_gsac.jar
+ 1367760 2015-01-05 09:09 xercesImpl-2.11.0.jar
+  220536 2015-01-05 09:45 xml-apis-2.10.0.jar
 
 The file GSAC/gsac-code/lib/README tells where to download the .jar files for general information, but they already are in the GSAC package.
 Future GSAC code changes may remove the need for the file unidatautil.jar, and perhaps add new .jar files.
+
+File ucar_for_gsac.jar was made by UNAVCO by selecting classes from the Unidata IDV v5 download, from the Unidata file idv.jar. 
+
+All other lib files are from public sources online.
 
 
                     #########################################
@@ -225,17 +232,19 @@ var defaultZoomLevel = 5;
 
   How to use the command "ant makerepository" to create your initial set of local implementation files:
 
-    First make the macros template file. Go to the template/ directory:
+    First make a new macros template file. Go to the template/ directory:
 
 cd  ~/GSAC/gsac-code/src/org/gsac/template/
 
     Copy the file macros.properties to a new properties file such as my.properties.  
 
-    cp  macros.properties  my.properties
+cp  macros.properties  my.properties
 
     The new file name does not matter. You only use this file one time, now.
 
     Edit the new properties file to set values for your repository GSAC.  For example, new values something like these:
+
+vi  my.properties
 
     target.name=The Boulder GNSS Repository  
     ## To name the repository. Spaces are allowed.
