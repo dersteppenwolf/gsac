@@ -155,7 +155,7 @@ About building GSAC with ant: the build.xml files
 
 Do not modify build.xml files to install GSAC.  This section is for information only.
 
-GSAC builds with ant use files named build.xml.  First ant reads the build.xml file in the directory where ant is run.
+GSAC builds with 'ant' use files named build.xml.  First ant reads the build.xml file in the directory where ant is run.
 Each build.xml has instructions about what ant does.  One ant run may call several build.xml files in the package.
 
 For example, in one case GSAC uses
@@ -201,6 +201,19 @@ Future GSAC code changes may remove the need for the file unidatautil.jar, and p
 File ucar_for_gsac.jar was made by UNAVCO by selecting classes from the Unidata IDV v5 download, from the Unidata file idv.jar. 
 
 All other lib files are from public sources online.
+
+
+Updating Java library files
+
+The versions of the files listed above are recent at the data shown.  In future new versions will be released of some of them,
+The new versions may be in days, months, or years.
+
+You are welcome to update these library files when you know of newer versions.  After an update you should do a new complete build of the 
+GSAC package and look for errors caused by code changes in the new libraries.  You may have to change lines of java, method calls, or 'import' lines
+in .java files, or other code.
+
+UNAVCO will attempt to update GSAC library files as they become available.  But UNAVCO checking in a new library file to the GSAC repository on 
+SourceForge will not of course automatically change your GSAC code.
 
 
                     #########################################
