@@ -63,11 +63,11 @@
  
         <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
         <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
-        <!-- <property name="classpath"     value="${srcdir}:${libdir}/ramadda.jar:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/unidatautil.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1jar"/>  -->
+        <!-- <property name="classpath"     value="${srcdir}:${libdir}/ramadda.jar:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1jar"/>  -->
 
-        <!-- <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/unidatautil.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> -->
+        <!-- <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> -->
 
-        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidatautil.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> 
+        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> 
 
 
         <property name="build.sysclasspath"    value="ignore" />
@@ -131,7 +131,7 @@
               <attribute name="Main-class" value="${serverclass}"/>
               <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
               <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
-              <attribute name="Class-Path" value="gsacws.jar  unidatautil.jar  jetty-all-9.2.6.v20141205.jar gson-2.3.1.jar javax.servlet-api-3.1.0.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar  ucar_for_gsac.jar  jetty-all-9.2.6.v20141205.jar gson-2.3.1.jar javax.servlet-api-3.1.0.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
             </manifest> 
         </jar>
     </target>
@@ -165,7 +165,7 @@
         <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
         <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
         <!-- <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramaddautil.jar"/> -->
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidatautil.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ucar_for_gsac.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-all-9.2.6.v20141205.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/gson-2.3.1.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/javax.servlet-api-3.1.0.jar"/>
