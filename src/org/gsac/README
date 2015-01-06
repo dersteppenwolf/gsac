@@ -22,7 +22,16 @@ GSAC services from several separate data repository GSACs.  To install a Federat
 file, except the section "Create GSAC configuration files and make your initial GSAC,"  
 and then follow the section "To Build a Federated GSAC".
 
-This file also has section 3. How to To Install a Federated GSAC.
+This file also has section 3, How to To Install a Federated GSAC.
+
+The GSAC package has these README files:
+starting at GSAC/gsac-code/, 
+README
+lib/README   [where library files are downloaded from]
+src/org/gsac/README           [part 1 of installation]
+src/org/[mygsac]/gsac/README  [part 2 of installation]
+src/org/gsac/federated/README
+
 
 
 About Time Formats in GSAC
