@@ -113,10 +113,7 @@ Everytime you do "ant" to build your repository, the file
    myrepo/gsac/dbresources/gsacdb_test.properties
 is copied to the file
    myrepo/gsac/resources/gsacdb.properties
-
-Also the file
-   myrepo/gsac/resources/gsacserver_test.properties
-is copied to
+and also copied to
    myrepo/gsac/resources/gsacserver.properties.
 
 This can be a little confusing if you attempt to keep track of the several properties files.
