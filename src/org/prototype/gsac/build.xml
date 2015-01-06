@@ -12,8 +12,9 @@
     The default build target is test_build. This copies the dbresources/gsacdb_test.properties file 
     to resources/gsacdb.properties and makes a .zip and .war in the dist dir
 
-    Once run you can run the server with:
+    Once GSAC is built, you can run the server with:
     ant runserver
+    This uses the Jetty application container for browser display.
 -->
 
 <project basedir="../../../.." default="test_build" name="GSAC Build">
@@ -52,23 +53,13 @@
         <property name="srcjarfile" value="${basename}${version}_src.jar"/>
         <property name="zipfile" value="${distdir}/${package}.zip"/>
 
-        <!--  
-        old <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
-        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/> 
-        -->
         <property name="commons-pool.jar" value="commons-pool2-2.2.jar"/>
         <property name="commons-dbcp.jar" value="commons-dbcp2-2.0.1.jar"/>
 
-        <!-- Jetty 9 is based on the javax servlet container 3.0 version -->
- 
         <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
-        <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
-        <!-- <property name="classpath"     value="${srcdir}:${libdir}/ramadda.jar:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1jar"/>  -->
+        <!-- for oracle in place of mysql,   use ojdbc7.jar i                   in place of mysql-connector-java-5.1.34-bin.jar --> 
 
-        <!-- <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> -->
-
-        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> 
-
+        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> 
 
         <property name="build.sysclasspath"    value="ignore" />
 
@@ -131,7 +122,7 @@
               <attribute name="Main-class" value="${serverclass}"/>
               <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
               <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
-              <attribute name="Class-Path" value="gsacws.jar  ucar_for_gsac.jar  jetty-all-9.2.6.v20141205.jar gson-2.3.1.jar javax.servlet-api-3.1.0.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar  unidata_idv.jar  jetty-all-9.2.6.v20141205.jar gson-2.3.1.jar javax.servlet-api-3.1.0.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
             </manifest> 
         </jar>
     </target>
@@ -164,8 +155,7 @@
         <mkdir dir="${reldirlib}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
         <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
-        <!-- <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramaddautil.jar"/> -->
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ucar_for_gsac.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidata_idv.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-all-9.2.6.v20141205.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/gson-2.3.1.jar"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/javax.servlet-api-3.1.0.jar"/>
@@ -252,7 +242,8 @@
             jarfile="${jardir}/${srcjarfile}">
 
             <include name="${repository_relative_dir}/**/*"/>
-<!-- don't include the production properties file since this has real passwords -->
+
+            <!-- don't include the production properties file in a release, since this has real passwords -->
             <exclude name="${repository_relative_dir}/dbresources/gsacdb_production.properties"/>
 
             <include name="org/unavco/database/**/*.java"/>
