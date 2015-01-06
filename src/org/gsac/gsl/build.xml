@@ -35,7 +35,7 @@
 
         <!-- Jetty 9 is based on the javax servlet container 3.0 version -->
 
-        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc7.jar:${libdir}/ucar_for_gsac.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-2.3.1.jar:${libdir}/joda-time-2.6.jar"/>
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc7.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-2.3.1.jar:${libdir}/joda-time-2.6.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
@@ -117,7 +117,7 @@
          <copy failonerror="true"  file="${gsacserverjar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true"  file="${gsacwsjar}"  todir="${gsacserverdir}"/>
 
-         <copy failonerror="true" file="${libdir}/ucar_for_gsac.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/unidata_idv.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/log4j-1.2.17.jar"  todir="${gsacserverdir}"/>
@@ -146,7 +146,7 @@
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/README.release" fullpath="gsacrelease/README"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/releasebuild.xml" fullpath="gsacrelease/build.xml"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/**/*"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/ucar_for_gsac.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/unidata_idv.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-dbcp.jar}"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-pool.jar}"  prefix="gsacrelease"/>
@@ -194,8 +194,8 @@ storetype="pkcs12"
 -->
         <signjar alias="idv" jar="${downloaderjar}" 
             keystore="${sign_keystore}" storepass="${sign_password}"/>
-	<copy file="${libdir}/ucar_for_gsac.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
-        <signjar alias="idv" jar="${srcdir}/org/gsac/gsl/htdocs/webstart/ucar_for_gsac.jar"
+	<copy file="${libdir}/unidata_idv.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
+        <signjar alias="idv" jar="${srcdir}/org/gsac/gsl/htdocs/webstart/unidata_idv.jar"
             keystore="${sign_keystore}" storepass="${sign_password}"/>
 
    </target>
