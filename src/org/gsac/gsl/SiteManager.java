@@ -197,7 +197,7 @@ public abstract class SiteManager extends GsacResourceManager {
         new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
 
         // the 2013 GSAC plain text format for human readability; 
-        new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+        //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
         // Never used in 10 months: new AtomSiteOutputHandler(getRepository(), getResourceClass());
     }
