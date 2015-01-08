@@ -20,7 +20,7 @@
 
     <target name="localinit">
 <!-- base name for build products -->
-        <property name="basename" value="dataworksgsac"/>
+        <property name="basename" value="upgradedwgsac"/>
 
 <!-- Where the main source dir is at (relative to the top level src dir) -->
         <property name="repository_relative_dir" value="org/dataworks/gsac"/>
@@ -55,14 +55,19 @@
         <property name="zipfile" value="${distdir}/${package}.zip"/>
 
 
-        <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
-        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
-        
-
-        <!-- <property name="classpath" value="${srcdir}:${libdir}/ramaddautil.jar:${libdir}/mysql.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/ramaddautil.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/> -->
-        <property name="classpath"     value="${srcdir}:${libdir}/ramadda.jar:${libdir}/mysql.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-   api.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
-
-
+        <property name="commons-pool.jar" value="commons-pool2-2.2.jar"/>
+        <property name="commons-dbcp.jar" value="commons-dbcp2-2.0.1.jar"/>
+        <property name="commons-logging.jar"  value="commons-logging-1.2.jar" />
+        <property name="gson.jar" value="gson-2.3.1.jar"  />
+	<property name="servlet-api.jar" value="javax.servlet-api-3.1.0.jar" />
+        <property name="jetty.jar" value="jetty-all-9.2.6.v20141205.jar" />
+        <property name="log4j.jar" value="log4j-1.2.17.jar" />
+        <property name="db-connector.jar" value="mysql-connector-java-5.1.34-bin.jar"  />
+	<property name="ucar-unidata.jar" value="unidata_idv.jar" />   
+ 
+<!--	<property name="classpath"     value="${srcdir}:${libdir}/ramadda.jar:${libdir}/mysql.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.15.jar:${libdir}/servlet-   api.jar:${libdir}/gsacws.jar:${libdir}/ramaddalib.jar:${libdir}/unidatautil.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/jetty-util.jar:${libdir}/gson-1.5.jar"/>
+-->
+	<property name="classpath"     value="${srcdir}:${libdir}/${db-connector.jar}:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/${log4j.jar}:${libdir}/${servlet-api.jar}:${libdir}/gsacws.jar:${libdir}/${ucar-unidata.jar}:${libdir}/${jetty.jar}:${libdir}/${gson.jar}"/>
 
         <property name="build.sysclasspath"    value="ignore" />
 
@@ -128,7 +133,11 @@
 <!--
               <attribute name="Class-Path" value="gsacws.jar ramaddautil.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-pool.jar} log4j-1.2.15.jar"/>
 -->
-              <attribute name="Class-Path" value="gsacws.jar ramadda.jar     ramaddalib.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-   pool.  jar} log4j-1.2.15.jar"/>
+<!--              <attribute name="Class-Path" value="gsacws.jar ramadda.jar     ramaddalib.jar unidatautil.jar  jetty.jar jetty-util.jar gson-1.5.jar servlet-api.jar mysql.jar ${commons-dbcp.jar} ${commons-   pool.  jar} log4j-1.2.15.jar"/>
+-->
+
+		<attribute name="Class-Path" value="gsacws.jar ${ucar-unidata.jar}  ${jetty.jar} ${gson.jar} ${servlet-api.jar} ${db-connector.jar} ${commons-dbcp.jar} ${commons-pool.jar} ${log4j.jar} "/>
+
 
             </manifest> 
         </jar>
@@ -147,7 +156,8 @@
             fork="${javac.fork}"
             encoding="${fileencoding}"
             memoryMaximumSize="${javac.maxmemory}"
-            target="1.5">
+            target="1.6"
+            source="1.6">
 
         <include name="${repository_relative_dir}/**/*.java"/>
         </javac>
@@ -161,16 +171,15 @@
         <mkdir dir="${reldirlib}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
         <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/ramaddautil.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidatautil.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-util.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/gson-1.5.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/servlet-api.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/mysql.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${ucar-unidata.jar}"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${jetty.jar}"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${gson.jar}"/>
+<!--        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${servlet-api.jar}"/>  -->
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${db-connector.jar}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-dbcp.jar}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-pool.jar}"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/log4j-1.2.15.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-logging.jar}"/>
+	<copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${log4j.jar}"/>
 
         <copy overwrite="true"  todir="${reldir}"  file="${repositorydir}/release/README"/>
         <copy overwrite="true"  todir="${reldir}"  file="${repositorydir}/gsacrepository.sh">
@@ -187,7 +196,7 @@
     <target name="runserver" depends="init">
       <java classname="org.gsac.gsl.GsacServer" maxmemory="512mb">
           <arg value="-port"/>
-          <arg value="8080"/>
+          <arg value="9090"/>
           <arg value="-Dgsac.repository.class=${repositoryclass}"/>
           <arg value="${basename.properties}"/>
           <classpath>

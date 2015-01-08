@@ -23,31 +23,19 @@ package org.dataworks.gsac;
 
 import org.gsac.gsl.*;
 
-import org.mortbay.jetty.*;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.HttpConnection;
-import org.mortbay.jetty.NCSARequestLog;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.Server;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConnection;
+import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
 
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.handler.*;
-import org.mortbay.jetty.handler.AbstractHandler;
-
-import org.mortbay.jetty.security.SslSocketConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-
-
+import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import java.io.*;
 import java.util.Properties;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 
 
 

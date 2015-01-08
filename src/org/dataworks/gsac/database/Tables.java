@@ -2,7 +2,7 @@
 
 package org.dataworks.gsac.database;
 
-import org.ramadda.sql.SqlUtil;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 public abstract class Tables {
     public abstract String getName();
@@ -173,7 +173,6 @@ public abstract class Tables {
         public static final String COL_RECEIVER_FIRMWARE_ID =  NAME + ".receiver_firmware_id";
         public static final String COL_RECEIVER_SERIAL_NUMBER =  NAME + ".receiver_serial_number";
         public static final String COL_SATELLITE_SYSTEM =  NAME + ".satellite_system";
-
         public static final String[] ARRAY = new String[] {
             COL_EQUIP_CONFIG_ID,COL_STATION_ID,COL_CREATE_TIME,COL_EQUIP_CONFIG_START_TIME,COL_EQUIP_CONFIG_STOP_TIME,COL_ANTENNA_ID,COL_ANTENNA_SERIAL_NUMBER,COL_ANTENNA_HEIGHT,COL_METPACK_ID,COL_METPACK_SERIAL_NUMBER,COL_RADOME_ID,COL_RADOME_SERIAL_NUMBER,COL_RECEIVER_FIRMWARE_ID,COL_RECEIVER_SERIAL_NUMBER,COL_SATELLITE_SYSTEM
         };
@@ -319,8 +318,8 @@ public abstract class Tables {
         public static final String COL_OPERATOR_AGENCY_ID =  NAME + ".operator_agency_id";
         public static final String COL_DATA_PUBLISHER_AGENCY_ID =  NAME + ".data_publisher_agency_id";
         public static final String COL_NETWORK_ID =  NAME + ".network_id";
-        public static final String COL_STATION_PHOTO_URL =  NAME + ".station_photo_URL";
-        public static final String COL_TIME_SERIES_PLOT_PHOTO_URL =  NAME + ".time_series_plot_photo_URL";
+        public static final String COL_STATION_PHOTO_URL =  NAME + ".station_image_URL";
+        public static final String COL_TIME_SERIES_PLOT_PHOTO_URL =  NAME + ".time_series_URL";
 
         public static final String[] ARRAY = new String[] {
             COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ABOVE_ELLIPSOID,COL_INSTALLED_DATE,COL_RETIRED_DATE,COL_STYLE_ID,COL_STATUS_ID,COL_ACCESS_ID,COL_MONUMENT_STYLE_ID,COL_COUNTRY_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_IERS_DOMES,COL_OPERATOR_AGENCY_ID,COL_DATA_PUBLISHER_AGENCY_ID,COL_NETWORK_ID,COL_STATION_PHOTO_URL,COL_TIME_SERIES_PLOT_PHOTO_URL

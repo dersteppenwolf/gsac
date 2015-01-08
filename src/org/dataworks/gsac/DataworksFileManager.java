@@ -25,8 +25,10 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
+// The ramadda imports refer to the rammadda jar file included with GSAC,
+// not necessarily the latest thing from rammadda.org
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.StringUtil;

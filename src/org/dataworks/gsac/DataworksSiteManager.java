@@ -34,8 +34,8 @@ import ucar.unidata.util.StringUtil;
 
 // The ramadda imports refer to the rammadda jar file included with GSAC,
 // not necessarily the latest thing from rammadda.org
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -292,8 +292,7 @@ public class DataworksSiteManager extends SiteManager {
             tables = new ArrayList<String>();
             tables.add(Tables.EQUIP_CONFIG.NAME);
             tables.add(Tables.RECEIVER_FIRMWARE.NAME);
-            statement =
-               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
@@ -330,8 +329,7 @@ public class DataworksSiteManager extends SiteManager {
             tables = new ArrayList<String>();
             tables.add(Tables.EQUIP_CONFIG.NAME);
             tables.add(Tables.RADOME.NAME);
-            statement =
-               getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
@@ -544,7 +542,7 @@ public class DataworksSiteManager extends SiteManager {
         }
 
         // for testing: 
-        // System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
+        //System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
         // to show clauses like
         //  [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
         // which creates, later, the sql based query or API to GSAC:
@@ -558,7 +556,7 @@ public class DataworksSiteManager extends SiteManager {
     /**
      * Create and return GSAC's internal "resource" (a "site object") identified by the given resource id in this case the CODE_4CHAR_ID; see Tables.java.
      *
-     * This is called only on a site search by 4 char ID; not for example by antenna type.
+     * This is called only on a SINGLE site search by 4 char ID; not for example by antenna type.  This is NOT the main site search call!
      *
      * do the sql search query and make the 'resource', what is returned as a result from a query
      * Appears to be called when you click on a particular site in the table of sites found, after a search for sites.
@@ -578,12 +576,15 @@ public class DataworksSiteManager extends SiteManager {
         // compose the complete select SQL phrase; apply the select clause to the table(s) given. see select ( ) in gsl/database/GsacDatabaseManager.java
         //                                                 DB  .select( what to find (fields),     from which tables,      where clause, )  
         // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is for " + getResourceSelectColumns()  ); // DEBUG
+        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query where clause is " + clause  ); //DEBUG
+
         // and this also has ordering :
-        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is for " + getResourceSelectColumns()  );
-        //System.err.println("GSAC:  SiteManager:getResource() Sites Search query where clause is " + clause  );
         String suffixSql = " order by " + Tables.STATION.COL_FOUR_CHAR_NAME;
         //System.err.println("GSAC:  SiteManager:getResource() Sites Search query suffix is " + suffixSql  );
         Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause, suffixSql, -1);
+
+        //System.err.println("   SiteManager: getResource sql statement =_"+statement.toString() +"_") ;  // DEBUG
 
         try {
             // do the SQL query, and get results
@@ -1083,7 +1084,8 @@ public class DataworksSiteManager extends SiteManager {
         // db query  to get MONUMENT_DESCRIPTION
         List<Clause> clauses = new ArrayList<Clause>();
         clauses.add(Clause.eq(Tables.STATION.COL_FOUR_CHAR_NAME, gsacResource.getId()));
-/*
+
+        /*
         // join the table with these 2 values:
         clauses.add(Clause.join  (Tables.STATION.COL_MONUMENT_DESCRIPTION_ID, Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION_ID));
         String cols=SqlUtil.comma(new String[]{  Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION});
@@ -1106,7 +1108,7 @@ public class DataworksSiteManager extends SiteManager {
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-*/
+        */
     }
 
 
