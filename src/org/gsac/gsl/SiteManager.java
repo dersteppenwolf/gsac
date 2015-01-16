@@ -194,12 +194,15 @@ public abstract class SiteManager extends GsacResourceManager {
         // for the GSAC Ops XML site info format; new on 22 May 2014; creatted for UNAVCO field engineering operations.
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
+        // defer; no indication anyone used this output format in 2014.
+        //new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
 
-        // the 2013 GSAC plain text format for human readability; 
-        //new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
+        // defer; no indication anyone used this output format in 2014.
+        //    the 2013 GSAC plain text format for human readability; 
+        //    new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
 
-        // Never used in 10 months: new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        // defer; no indication anyone used this output format in 2014.
+        // new AtomSiteOutputHandler(getRepository(), getResourceClass());
     }
 
 
