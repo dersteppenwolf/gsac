@@ -10,26 +10,18 @@
 
         <!-- Where to put the jar files -->
         <property name="jars_dest" value="${distdir}"/>
-
         <property name="srcdir" value="${basedir}/src"/>
-
         <property name="libdir" value="${basedir}/lib"/>
         <property name="gsldir" value="${basedir}/src/org/gsac/gsl"/>
         <property name="gsacwsjar" value="${libdir}/gsacws.jar"/>
-
         <property name="gsacserver" value="gsacserver"/>
         <property name="gsacserverdir" value="${distdir}/${gsacserver}"/>
+
         <mkdir dir="${gsacserverdir}"/>
 
         <property name="gsacserverjar" value="${gsacserverdir}/${gsacserver}.jar"/>
         <property name="gsacserverzip" value="${jars_dest}/${gsacserver}.zip"/>
-
         <property name="gsacrelease" value="${jars_dest}/gsacrelease.zip"/>
-
-        <!--  
-        <property name="commons-pool.jar" value="commons-pool-1.5.5.jar"/>
-        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/> 
-        -->
         <property name="commons-pool.jar" value="commons-pool2-2.2.jar"/>
         <property name="commons-dbcp.jar" value="commons-dbcp2-2.0.1.jar"/>
 
@@ -40,7 +32,6 @@
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
         <mkdir dir="${compiledir}"/>
-
 
         <!-- You can concatenate the calling process' classpath to the end (the
         default) or use "ignore" to just use the classpath defined here. -->
@@ -71,20 +62,21 @@
         <javac
             classpath="${classpath}"
             debug="true"
-            source="${srcversion}"
-            target="${srcversion}"
             deprecation="false" 
             destdir="${compiledir}"
             failonerror="${failonerror}" 
             srcdir="${srcdir}"
             fork="${fork}"
             memoryMaximumSize="${maxmemory}"
+            target="1.7"
+            source="1.6"  
             encoding="${fileencoding}"
         >
             <include name="org/gsac/gsl/**/*.java"/>
         </javac>
     </target>
 
+        <!--source="1.6"  this is supposed to let a Java 1.6 Tomcat run a Java 1.7 GSAC -->
 
    <target name="gsacjar" depends="init,compile">
      <echo message="Building jar: ${gsacwsjar}"/>
@@ -125,7 +117,16 @@
          <copy failonerror="true" file="${libdir}/jetty-all-9.2.6.v20141205.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/gson-2.3.1.jar"  todir="${gsacserverdir}"/>
    	     <copy failonerror="true" file="${libdir}/joda-time-2.6.jar"  todir="${gsacserverdir}"/>
+
+            <!-- 9 jan test - removing this next line; : 
+             with it  builds ok but deploy fails on facdev with error
+INFO: Deploying web application archive gsacws.war
+Jan 9, 2015 4:52:03 PM org.apache.catalina.loader.WebappClassLoader validateJarFile
+INFO: validateJarFile(/usr/local/apachetomcatdev/webapps/gsacws/WEB-INF/lib/javax.servlet-api-3.1.0.jar) - jar not loaded. See Servlet Spec 2.3, section 9.7.2. Offending class: javax/servlet/Servlet.class
+           -->
+
          <copy failonerror="true" file="${libdir}/javax.servlet-api-3.1.0.jar"  todir="${gsacserverdir}"/>
+
          <copy failonerror="false" file="${srcdir}/org/gsac/gsl/release/README.gsacserver"  todir="${gsacserverdir}"/>
 
         <zip  destfile="${gsacserverzip}" >
@@ -154,7 +155,8 @@
             <zipfileset dir="${basedir}"  includes="lib/ojdbc7.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/jetty-all-9.2.6.v20141205.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/gson-2.3.1.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/>
+            <!-- <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/>
+                -->
             <zipfileset dir="${basedir}"  includes="lib/joda-time-2.6.jar"  prefix="gsacrelease"/>
         </zip>
    </target>
@@ -164,8 +166,8 @@
         <javac
             classpath="${classpath}"
             debug="true"
-            source="${srcversion}"
-            target="${srcversion}"
+            target="1.7"
+            source="1.6"
             deprecation="false" 
             destdir="${compiledir}"
             failonerror="${failonerror}" 
@@ -189,9 +191,9 @@
         <property file="${keypassfile}"/>
         <available file="${keypassfile}" property="sign_password" value="${key.password}"/>
 	<echo message="signing jar"/>
-<!--
-storetype="pkcs12"
--->
+        <!--
+        storetype="pkcs12"
+        -->
         <signjar alias="idv" jar="${downloaderjar}" 
             keystore="${sign_keystore}" storepass="${sign_password}"/>
 	<copy file="${libdir}/unidata_idv.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
