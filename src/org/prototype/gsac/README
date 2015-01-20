@@ -26,33 +26,38 @@ Do not change actual filenames of files made by GSAC to match the uppercase lett
 
 ########################################################################
 
+
 Hopefully you've managed to generate the initial repository source package using README Part 1.
 
 This README (Part 2) file is found in your new GSAC package in org/prototype/gsac/ (ignore the README file in org/prototype/gsac/release).
 
-Now, change the working directory to your local GSAC code area, at org/prototype/gsac .
+Now, change the working directory to your local GSAC code area, like src/org/prototype/gsac/ or src/org/boulder/gsac/.
 
 
-Adding Your Repository's Details: The "GSAC Resources Properties" File.
+    ########################################################################
+    The resources/gsac.properties File. 
+    ########################################################################
+
 
 The file org/prototype/gsac/resources/gsac.properties has a number of properties about your GSAC installation, for example, 
 gsac.baseurl will be part of the full URL for your GSAC repository.
 
 Some values were created in the initial ant build you just made.
 
-    An example, a file myrepo/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
+An example, a file myrepo/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
 
-    gsac.baseurl = /gsacmyrepo
+    #Your baseurl
+    gsac.baseurl = /bouldergsac
     #Your repository name
-    gsac.repository.name=MyRepo GSAC Repository
+    gsac.repository.name=The Boulder GSAC Repository
     #Your repository description
-    gsac.repository.description=The MyRepo GSAC Repository 
+    gsac.repository.description=The Boulder GSAC Repository 
 
 Change the items for your GSAC repository.
 
 The  gsac.baseurl is used in a URL to a GSAC server such as the "gsacws" in  http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-You can use 'gsacws', or this baseurl can have an acronym for identification of your agency, for example 'acrogsac'.
-(The later parts of a GSAC URL  such as 'gsacapi/site/form' are always part (of a site search) and you do not enter them anywhere while installing GSAC.)
+It comes before '/gsacapi' in all GSACs.  You can use 'gsacws', or this baseurl can have an acronym for identification of your agency, for example 'bouldergsac'.
+(The later parts of a GSAC URL  such as '/site/form' are created automtically GSAC code.)
 
 The items repository.name and repository.description are used as labels on the web site.
 
@@ -61,25 +66,23 @@ You optionally add this line showing the  maximum size allowed when zipping up f
     file.zip.maxsize=100000000
 
 
-########################################################################
-Connecting to the Database used by GSAC
-########################################################################
+    ######################################################################################
+    Connecting to the Database used by GSAC; the dbresources/gsacdb_test.properties file.
+    #####################################################################################
 
-Setting and Hiding DB account information: the "GSAC DB Properties" File.
+You edit this file in your local code area, gsac/dbresources/gsacdb_test.properties, to hold the database account details
+to permit the GSAC web server process to read from your database.  The contents are like:
 
-You code the file, org/prototype/gsac/dbresources/gsacdb_test.properties, to hold the database account details,
-to permit the GSAC web server process to read from the geodesy database.  The contents are like:
-
-gsac.db.username=db-gsac-username
+gsac.db.username=db-gsac-account-name
 gsac.db.password=db-gsac-password
-gsac.db.jdbcurl=jdbc:mysql://myrepodev.mydomain.org:3080/myrepodb
+gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Prototype_GSAC_Database?useUnicode=yes&characterEncoding=UTF-8
 
-The database host (like myrepodev.mydomain.org), port (3080), account user name and account password are all given here.  
-The database must have an account GSAC can use to read from the database. GSAC does not write to any database.
-When the GSL assembles the JDBC URL it finds the user name and password from here.
+The database host (localhost), db port (3306), database user account name, and account password are all specified here.  
+The database account is the account for GSAC to read the database. (GSAC does not write to the database.)
+When the GSAC code assembles the JDBC URL it finds the database account name and password from here.
+The database names is, in this example, Prototype_GSAC_Database. Use your own database's name.
 
-One MySQL example which may work running both the db and GSAC on your computer is 
-gsac.db.jdbcurl=jdbc:mysql://localhost:3306/your_database_name
+The '?useUnicode=yes&characterEncoding=UTF-8' is part of GSAC code to allow use of the large UTF_8 character set, such as Icelandic characters.
 
 The Oracle and Postgres have different syntax for the 'jdbc' line in this file.  For postgres the form is 
 
@@ -89,38 +92,41 @@ One Oracle JDBC URL is of the form:
 
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
    e.g:
-=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
+=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:Prototype_GSAC_Database
 
 Copy the complete org/prototype/gsac/dbresources/gsacdb_test.properties to org/prototype/gsac/dbresources/gsacdb_production.properties.
 The two files with the same contents are a legacy from earlier GSAC code.
 
-'Caution': If you have GSAC SourceForge write access: 
-Do not do 'svn add' or 'svn commit' this file, or your database account details will be public!
+Caution: if you have GSAC SourceForge write access: do not do 'svn add' or 'svn commit' this file, or your database account details will be public.
 
-Everytime you do "ant" to build your repository, the file org/prototype/gsac/dbresources/gsacdb_test.properties is copied to the file org/prototype/gsac/resources/gsacdb.properties, 
-and to the file org/prototype/gsac/dbresources/gsacdb_production.propertiea.s
-Also the file org/prototype/gsac/resources/gsacserver_test.properties is copied to org/prototype/gsac/resources/gsacserver.properties. 
-This can be confusing if you attempt to keep track of the several properties files.
+Everytime you do "ant" to build your repository, the file 
+org/prototype/gsac/dbresources/gsacdb_test.properties 
+is copied to the file 
+org/prototype/gsac/resources/gsacdb.properties. 
 
-The properties files in these two sections are the only ones you need to look at to make a working GSAC.
+
+The resources/gsac.properties file and the dbresources/gsacdb_test.properties files are the only "properties" files you need to edit to make a working GSAC.
+
+(The files dbresources/gsacdb_production.properties, resources/gsacserver_production.properties, resources/gsacserver.properties and 
+ resources/gsacserver_test.properties are not used by GSAC now.)
+
 
 ########################################################################
-Verify that the build.xml file has your GSAC in it.
+Verify that the build.xml file has your basename.
 ########################################################################
 
 Check that the file build.xml, in your location org/prototype/gsac, has these lines. 
-Note that the value represneted by 'gsacPrototype' below may have an upper case letter in Prototype where the actual word in build.xml has lower case which is correct.
-(The uppercase is only an artifact of the automatic generation of this README file.)
+Note that the basename value should be lower case.
 
     <target name="localinit">
         <!-- base name for build products -->
-        <property name="basename" value="gsacPrototype"/>
-          or
-        <property name="basename" value="Prototypegsac"/>
+        <property name="basename" value="bouldergsac"/>
 
-No changes are needed here unless something went wrong.  This target will be used by ant build process to make your GSAC server.  
+You can use any basename you like; it can be the same as the resources/gsac.properties file value for gsac.baseurl.
+This target will be used by ant build process to make your GSAC server.  
 
 You have specified the basic information needed to run your full GSAC server.
+
 
 ########################################################################
 Initial compile of GSAC in your new GSAC code area
