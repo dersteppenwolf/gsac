@@ -4,7 +4,7 @@ GSAC_WS Installation
 
 README, Part 2.
 
-October 3, 2013.   SKW  UNAVCO
+21 Jan. 2015.   SKW  UNAVCO
 
 This file describes how to complete your new Prototype GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -35,9 +35,8 @@ Now, change the working directory to your local GSAC code area, like src/org/pro
 
 
     ########################################################################
-    The resources/gsac.properties File. 
-    ########################################################################
 
+    The resources/gsac.properties File. 
 
 The file org/prototype/gsac/resources/gsac.properties has a number of properties about your GSAC installation, for example, 
 gsac.baseurl will be part of the full URL for your GSAC repository.
@@ -65,24 +64,27 @@ You optionally add this line showing the  maximum size allowed when zipping up f
 
     file.zip.maxsize=100000000
 
-
     ######################################################################################
+
     Connecting to the Database used by GSAC; the dbresources/gsacdb_test.properties file.
-    #####################################################################################
 
 You edit this file in your local code area, gsac/dbresources/gsacdb_test.properties, to hold the database account details
 to permit the GSAC web server process to read from your database.  The contents are like:
 
 gsac.db.username=db-gsac-account-name
-gsac.db.password=db-gsac-password
+gsac.db.password=db-gsac-account-password
 gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Prototype_GSAC_Database?useUnicode=yes&characterEncoding=UTF-8
 
 The database host (localhost), db port (3306), database user account name, and account password are all specified here.  
-The database account is the account for GSAC to read the database. (GSAC does not write to the database.)
+You may need to use something other than "localhost" and "3306."
+"db-gsac-account-name" is a non-functional placeholder for your account for GSAC to read the database. 
+You must replace "db-gsac-account-name" and "db-gsac-account-password" in these two lines with a real database account name and password on your system.
+That database account need only have database read permission.  GSAC does not write to the database.
 When the GSAC code assembles the JDBC URL it finds the database account name and password from here.
-The database names is, in this example, Prototype_GSAC_Database. Use your own database's name.
+The database name is, in this example, Prototype_GSAC_Database. Use your own database's name.
 
 The '?useUnicode=yes&characterEncoding=UTF-8' is part of GSAC code to allow use of the large UTF_8 character set, such as Icelandic characters.
+Do not chahge that.
 
 The Oracle and Postgres have different syntax for the 'jdbc' line in this file.  For postgres the form is 
 
@@ -110,10 +112,9 @@ The resources/gsac.properties file and the dbresources/gsacdb_test.properties fi
 (The files dbresources/gsacdb_production.properties, resources/gsacserver_production.properties, resources/gsacserver.properties and 
  resources/gsacserver_test.properties are not used by GSAC now.)
 
+########################################################################
 
-########################################################################
 Verify that the build.xml file has your basename.
-########################################################################
 
 Check that the file build.xml, in your location org/prototype/gsac, has these lines. 
 Note that the basename value should be lower case.
