@@ -287,11 +287,12 @@ vi  my.properties
     #target.dbdriver=oracleDriver.jar
     #target.dbdriver=postgres.jar
 
-    Then
 
-cd ../          (or  cd  ~/GSAC/gsac-code/src/org/gsac/)
+   Next, change the working directory to the top of the GSAC core code, such as  
 
-    Then run a command like this, with your new properties file name in place of my.properties:
+cd  ~/GSAC/gsac-code/src/org/gsac/
+
+    Then run this command, with your new properties file name in place of my.properties:
 
 ant -propertyfile template/my.properties makerepository   
 
@@ -305,6 +306,32 @@ BUILD SUCCESSFUL
    This process creates a new code area (new folders), and new Java files for your GSAC installation, 
    beginning with a new folder, such as in this case ~/GSAC/gsac-code/src/org/boulder/ 
    and populates it with some new directories and files for your GSAC repository's code.
+
+
+##############################################################c################################################################
+
+Javax Security java.policy file
+
+Add the following line with 
+    permission ... "register" 
+to your java.policy file in the 'grant' section, which may be under $JAVA_HOME/lib/security/ or under $JRE_HOME/lib/security/.
+In some operating systems the java.policy file is in  /usr/lib/jvm/java-7-oracle/jre/lib/security/java.policy. 
+
+Inside the java.policy file:
+
+grant {
+
+    //   many other lines
+
+    // JMX Java Management eXtensions
+    permission javax.management.MBeanTrustPermission "register";
+
+}; 
+
+This may need some admin privilege.  If you do not do this the error is
+security.AccessControlException: access denied ("javax.management.MBeanTrustPermission" "register")
+
+##############################################################c################################################################
 
 
 End of GSAC installation, Part 1.
@@ -323,32 +350,6 @@ cd ~/GSAC/gsac-code/src/org/boulder/gsac/
 ##############################################################c################################################################
 ##############################################################c################################################################
 
-
-Javax Security
-
-When you first run your complete GSAC on the web site to test it, if it fails with the error
-
-   security.AccessControlException: access denied ("javax.management.MBeanTrustPermission" "register")
-
-Then add the following two lines to your java.policy file in the 'grant' section, 
-which may be under $JAVA_HOME/lib/security/ or under $JRE_HOME/lib/security/.
-
-grant {
-
-    // JMX Java Management eXtensions
-    permission javax.management.MBeanTrustPermission "register";
-
-}; 
-
-For example in one case to edit the java.policy file:
-
-sudo vi /usr/lib/jvm/java-7-oracle/jre/lib/security/java.policy 
-
-This case needs sudo since the Java package is system level.
-
-
-##############################################################c################################################################
-##############################################################c################################################################
 
 
 3. How to To Install a Federated GSAC
