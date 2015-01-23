@@ -849,15 +849,15 @@ public class DataworksSiteManager extends SiteManager {
                    URL u = new URL(station_photo_URL); 
                    HttpURLConnection huc = (HttpURLConnection)u.openConnection(); 
                    huc.setDoOutput(true);
-                   huc.setRequestMethod("GET"); 
-                   huc.connect() ; 
-                   OutputStream os = huc.getOutputStream(); 
-                int ucode = huc.getResponseCode(); 
-                //System.err.println("       station_photo_URL   get ucode = "+ucode);
-                // add  a real site photo image to the group:
-                if (200==ucode) {
-                   imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
-                }
+                   huc.setRequestMethod("GET");
+		   huc.setConnectTimeout(100);
+                   huc.connect() ;
+                   int ucode = huc.getResponseCode();
+                   if ( 200 == ucode ) {
+                      imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+                   } else {
+                        System.err.println("DataworksSiteManager.makeResource(): ERROR could not establish connection to "+station_photo_URL);
+                   }
             }
         }
         if (time_series_plot_image_URL!=null )    {
@@ -869,15 +869,15 @@ public class DataworksSiteManager extends SiteManager {
                    HttpURLConnection huc = (HttpURLConnection)u.openConnection(); 
                    huc.setDoOutput(true);
                    huc.setRequestMethod("GET"); 
-                   huc.connect() ; 
-                   OutputStream os = huc.getOutputStream(); 
-                int ucode = huc.getResponseCode(); 
-                //System.err.println("       time seris plot file get ucode = "+ucode);
-                // add  a real  image to the group:
-                if (200==ucode) {
-                   imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));
-                }
-            }
+		   huc.setConnectTimeout(100); 
+                   huc.connect() ;
+                   int ucode = huc.getResponseCode();
+                   if ( 200 == ucode ) {
+                      imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));                   
+                   } else {
+                        System.err.println("DataworksSiteManager.makeResource(): ERROR could not establish connection to "+time_series_plot_image_URL);
+                  }
+           }
         }
 
 
