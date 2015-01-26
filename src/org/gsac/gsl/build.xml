@@ -153,9 +153,9 @@
             <zipfileset dir="${basedir}"  includes="lib/${commons-pool.jar}"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/log4j-1.2.17.jar"         prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/ojdbc7.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/jetty-all-9.2.6.v20141205.jar"  prefix="gsacrelease"/>
+            <!-- <zipfileset dir="${basedir}"  includes="lib/jetty-all-9.2.6.v20141205.jar"  prefix="gsacrelease"/> dont need jetty for tomcat war file -->
             <zipfileset dir="${basedir}"  includes="lib/gson-2.3.1.jar"  prefix="gsacrelease"/>
-            <!-- <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/> dont need jetty for tomcat war file -->
+            <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/> 
             <zipfileset dir="${basedir}"  includes="lib/joda-time-2.6.jar"  prefix="gsacrelease"/>
         </zip>
    </target>
