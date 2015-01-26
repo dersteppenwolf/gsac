@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- GSAC's ant build.xml file for Java 1.7 GSAC core code in src/org/gsac/gsl/ -->
 
 <project basedir="../../../../" default="all" name="GSAC">
 
@@ -51,11 +52,14 @@
 
     </target>
 
+
+
    <target name="clean" depends="init" >
         <delete>
             <fileset dir="${compiledir}/org" includes="**/*.class"/>
         </delete>
     </target>
+
 
 
     <target name="compile" depends="init">
@@ -68,15 +72,21 @@
             srcdir="${srcdir}"
             fork="${fork}"
             memoryMaximumSize="${maxmemory}"
-            target="1.7"
-            source="1.6"  
+            target="1.7" 
+            source="1.7"
             encoding="${fileencoding}"
         >
             <include name="org/gsac/gsl/**/*.java"/>
         </javac>
     </target>
+    <!-- 
+    source: The version that your source code requires to compile.
+    target: The oldest JRE version you want to support.
+    Note that in most cases, the value of the -target option is the value of the -source option; in this example, you can omit the -target option.
+    and "You cannot have a newer version of source and lower version of target."
+    -->
+ 
 
-        <!--source="1.6"  this is supposed to let a Java 1.6 Tomcat run a Java 1.7 GSAC -->
 
    <target name="gsacjar" depends="init,compile">
      <echo message="Building jar: ${gsacwsjar}"/>
@@ -101,14 +111,11 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="UNAVCO"/>
               <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
-
               <attribute name="Class-Path" value="gsacws.jar   ${commons-dbcp.jar} log4j-1.2.17.jar ${commons-pool.jar}  ojdbc7.jar jetty-all-9.2.6.v20141205.jar javax.servlet-api-3.1.0.jar gson-2.3.1.jar joda-time-2.6.jar"/>
             </manifest> 
         </jar>
-        
-         <copy failonerror="true"  file="${gsacserverjar}"  todir="${gsacserverdir}"/>
-         <copy failonerror="true"  file="${gsacwsjar}"  todir="${gsacserverdir}"/>
-
+         <copy failonerror="true" file="${gsacserverjar}"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${gsacwsjar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/unidata_idv.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
@@ -117,16 +124,7 @@
          <copy failonerror="true" file="${libdir}/jetty-all-9.2.6.v20141205.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/gson-2.3.1.jar"  todir="${gsacserverdir}"/>
    	     <copy failonerror="true" file="${libdir}/joda-time-2.6.jar"  todir="${gsacserverdir}"/>
-
-            <!-- 9 jan test - removing this next line; : 
-             with it  builds ok but deploy fails on facdev with error
-INFO: Deploying web application archive gsacws.war
-Jan 9, 2015 4:52:03 PM org.apache.catalina.loader.WebappClassLoader validateJarFile
-INFO: validateJarFile(/usr/local/apachetomcatdev/webapps/gsacws/WEB-INF/lib/javax.servlet-api-3.1.0.jar) - jar not loaded. See Servlet Spec 2.3, section 9.7.2. Offending class: javax/servlet/Servlet.class
-           -->
-
          <copy failonerror="true" file="${libdir}/javax.servlet-api-3.1.0.jar"  todir="${gsacserverdir}"/>
-
          <copy failonerror="false" file="${srcdir}/org/gsac/gsl/release/README.gsacserver"  todir="${gsacserverdir}"/>
 
         <zip  destfile="${gsacserverzip}" >
@@ -135,11 +133,13 @@ INFO: validateJarFile(/usr/local/apachetomcatdev/webapps/gsacws/WEB-INF/lib/java
    </target>
 
 
+
     <target name="all" depends="init,clean,compile,gsacjar,gsacserver">
        <echo message="GSAC server has been built. To run:"/>
        <echo message="      cd ${distdir}/gsacserver"/>
        <echo message="      java -Xmx512m -jar gsacserver.jar"/>
     </target>
+
 
 
    <target  name="release" depends="init,clean">
@@ -155,11 +155,11 @@ INFO: validateJarFile(/usr/local/apachetomcatdev/webapps/gsacws/WEB-INF/lib/java
             <zipfileset dir="${basedir}"  includes="lib/ojdbc7.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/jetty-all-9.2.6.v20141205.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/gson-2.3.1.jar"  prefix="gsacrelease"/>
-            <!-- <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/>
-                -->
+            <!-- <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/> dont need jetty for tomcat war file -->
             <zipfileset dir="${basedir}"  includes="lib/joda-time-2.6.jar"  prefix="gsacrelease"/>
         </zip>
    </target>
+
 
 
    <target name="downloader" depends="init,clean">
@@ -167,7 +167,7 @@ INFO: validateJarFile(/usr/local/apachetomcatdev/webapps/gsacws/WEB-INF/lib/java
             classpath="${classpath}"
             debug="true"
             target="1.7"
-            source="1.6"
+            source="1.7"
             deprecation="false" 
             destdir="${compiledir}"
             failonerror="${failonerror}" 
@@ -190,16 +190,13 @@ INFO: validateJarFile(/usr/local/apachetomcatdev/webapps/gsacws/WEB-INF/lib/java
         <property name="keypassfile" value="${keydir}/.keypass"/>
         <property file="${keypassfile}"/>
         <available file="${keypassfile}" property="sign_password" value="${key.password}"/>
-	<echo message="signing jar"/>
-        <!--
-        storetype="pkcs12"
-        -->
+  	  <echo message="signing jar"/>
+        <!-- storetype="pkcs12" -->
         <signjar alias="idv" jar="${downloaderjar}" 
             keystore="${sign_keystore}" storepass="${sign_password}"/>
-	<copy file="${libdir}/unidata_idv.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
+	  <copy file="${libdir}/unidata_idv.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
         <signjar alias="idv" jar="${srcdir}/org/gsac/gsl/htdocs/webstart/unidata_idv.jar"
             keystore="${sign_keystore}" storepass="${sign_password}"/>
-
    </target>
 
 </project>
