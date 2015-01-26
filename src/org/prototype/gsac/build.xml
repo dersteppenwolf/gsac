@@ -203,7 +203,6 @@
      </java>
    </target>
 
-
     <target name="war" depends="init">
       <delete>
            <fileset file="${distdir}/${warfile}"/>
