@@ -44,7 +44,7 @@ import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 
-/** 2014 version for jetty 9 and javax servlet api 3.0, java 1.7, etc.  
+/** 2015 version for jetty 9 and javax servlet api 3.0, java 1.7, etc.  
  *
  *
  */

@@ -23,9 +23,9 @@
    and changing three instances of "Prototype" near lines 84 to your Java file prefix. */
 
 package org.prototype.gsac;
+
 import  org.prototype.gsac.database.*;
 /* CHANGEME -  above, make sure that both lines show your GSAC package name */
-
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
@@ -36,11 +36,8 @@ import org.gsac.gsl.output.HtmlOutputHandler;
 
 import ucar.unidata.util.Misc;
 
-//import org.ramadda.sql.Clause;
-//import org.ramadda.sql.SqlUtil;
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
-
 
 import ucar.unidata.util.StringUtil;
 
