@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- This is the top ant build.xml file for UNAVCO GSAC, in gsac-code/.  Used to build al the GSAC core code (GSL).             -->
+<!-- When javadoc target is omitted, appears to have no dependencies on Java version or on java library .jar files. -->
+
 <project basedir="." default="gsac" name="UNAVCO">
 
     <target name="init">
@@ -12,15 +15,49 @@
         <property name="lib" value="${basedir}/lib"/>
         <property name="srcdir" value="${basedir}/src"/>
 
-        <!-- used by the javadoc target -->
-        <property name="classpath" value="${lib}/javax.servlet-api-3.1.0.jar:${lib}/unidata_idv.jar:${lib}/idv.jar:${lib}/gson-2.3.1.jar:${lib}/commons-pool2-2.2.jar:${lib}/log4j-1.2.17.jar:${lib}/commons-dbcp2-2.0.1.jar"/>
-        
+        <!-- used by the javadoc target 
+        <property name="classpath" value="${lib}/javax.servlet-api-3.1.0.jar:${lib}/unidata_idv.jar:${lib}/gson-2.3.1.jar:${lib}/commons-pool2-2.2.jar:${lib}/log4j-1.2.17.jar:${lib}/commons-dbcp2-2.0.1.jar"/>
+        -->
     </target>
 
    <target name="release" depends="init,purge" >
         <antcall target="gsac"/>
    </target>
 
+   <target name="clean" depends="init" >
+        <delete>
+            <fileset dir="${srcdir}" includes="**/*.class"/>
+        </delete>
+    </target>
+
+   <target name="purge" depends="init,clean" >
+     <delete dir="${distdir}"/>
+    </target>
+
+    <target name="gsac" depends="init">
+      <antcall target="gsl"/>
+      <!-- <antcall target="federated"/> -->
+      <!-- <antcall target="client"/> -->
+      <!-- <antcall target="ramadda"/> -->
+      <!-- <antcall target="cddis"/> -->
+      <!-- <antcall target="iris"/> -->
+      <!-- <antcall target="igs"/> -->
+    </target>
+
+    <target name="gsl" depends="init">
+      <echo message="Building GSL"/>
+      <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
+    </target>
+
+    <!-- client is not yet upgraded to java7.   its lib .jar files may need to ne in gsac-code/dist/gsacserver/.  -->
+    <!--
+    <target name="client" depends="init">
+      <echo message="Building GSAC client"/>
+      <ant antfile="${srcdir}/org/gsac/client/build.xml" inheritAll="false"/>
+    </target>
+    -->
+
+    <!--
     <target name="javadoc" depends="init">
         <javadoc
             Author="true"
@@ -39,45 +76,14 @@
             <excludepackage name="org.gsac.template"/>
         </javadoc>
     </target>
-
-   <target name="clean" depends="init" >
-        <delete>
-            <fileset dir="${srcdir}" includes="**/*.class"/>
-        </delete>
-    </target>
-
-   <target name="purge" depends="init,clean" >
-     <delete dir="${distdir}"/>
-    </target>
-
-    <target name="gsac" depends="init">
-      <antcall target="gsl"/>
-      <!-- <antcall target="client"/> -->
-      <!-- <antcall target="cddis"/> -->
-      <!-- <antcall target="federated"/> -->
-      <!-- <antcall target="ramadda"/> -->
-      <!-- <antcall target="iris"/> -->
-      <!-- <antcall target="igs"/> -->
-    </target>
-
-    <target name="gsl" depends="init">
-      <echo message="Building GSL"/>
-      <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
-    </target>
-
-    <target name="client" depends="init">
-      <echo message="Building GSAC client"/>
-      <ant antfile="${srcdir}/org/gsac/client/build.xml" inheritAll="false"/>
-    </target>
-
+    -->
 
 <!--
     <target name="sopac" depends="init">
       <echo message="Building SOPAC"/>
       <ant antfile="${srcdir}/edu/ucsd/sopac/projects/gsac/repository/build.xml" inheritAll="false"/>
     </target>
--->
-<!--
+
     <target name="ramadda" depends="init">
       <echo message="Building GSAC RAMADDA"/>
       <ant antfile="${srcdir}/org/gsac/ramadda/build.xml" inheritAll="false"/>
