@@ -2,10 +2,10 @@
 
 <!-- GSAC's ant build.xml file for GSAC core code in gsac-code/src/org/gsac/gsl/ -->
 
-<!-- Java 1.7 version of build.xml -->
+<!-- Java 1.6 version of build.xml -->
 
-<!-- to build GSAC with Java 1.7, first do the command in gsac-code/src/org/gsac/gsl/ 
-     cp build.xml.Java7 build.xml
+<!-- to build GSAC with Java 1.6, first do the command in gsac-code/src/org/gsac/gsl/ 
+     cp build.xml.Java6 build.xml
   -->
 
 <project basedir="../../../../" default="all" name="GSAC">
@@ -29,17 +29,18 @@
         <property name="gsacserverjar" value="${gsacserverdir}/${gsacserver}.jar"/>
         <property name="gsacserverzip" value="${jars_dest}/${gsacserver}.zip"/>
         <property name="gsacrelease" value="${jars_dest}/gsacrelease.zip"/>
-        <property name="commons-pool.jar" value="commons-pool2-2.2.jar"/>
-        <property name="commons-dbcp.jar" value="commons-dbcp2-2.0.1.jar"/>
 
-        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc7.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-2.3.1.jar:${libdir}/joda-time-2.6.jar"/>
+        <property name="commons-pool.jar" value="commons-pool-1.6.jar"/> 
+        <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
+
+        <!-- old jetty  -->
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc6.jar:${libdir}/unidata_idv.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-2.6.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
         <mkdir dir="${compiledir}"/>
 
-        <!-- You can concatenate the calling process' classpath to the end (the
-        default) or use "ignore" to just use the classpath defined here. -->
+        <!-- You can concatenate the calling process' classpath to the end (the default) or use "ignore" to just use the classpath defined here. -->
         <!--        <property name="build.sysclasspath" value="last"/> -->
         <property name="build.sysclasspath"    value="ignore" />
 
@@ -49,8 +50,8 @@
         <property name="maxmemory" value="512m"/>
         <property name="fileencoding" value="UTF-8" />
 
-        <!-- Java source version -->
-        <property name="srcversion" value="1.7"/>
+        <!-- Java source version, was 1.7 -->
+        <property name="srcversion" value="1.6"/>
 
        <property name="downloaderjar" value="${srcdir}/org/gsac/gsl/htdocs/webstart/gsacdownloader.jar"/>
 
@@ -76,13 +77,14 @@
             srcdir="${srcdir}"
             fork="${fork}"
             memoryMaximumSize="${maxmemory}"
-            target="1.7" 
-            source="1.7"
+            target="1.6" 
+            source="1.6"
             encoding="${fileencoding}"
         >
             <include name="org/gsac/gsl/**/*.java"/>
         </javac>
     </target>
+    <!-- after source = 1.6 can add for very full output: verbose="true" -->
 
 
    <target name="gsacjar" depends="init,compile">
@@ -108,7 +110,7 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="UNAVCO"/>
               <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
-              <attribute name="Class-Path" value="gsacws.jar   ${commons-dbcp.jar} log4j-1.2.17.jar ${commons-pool.jar}  ojdbc7.jar jetty-all-9.2.6.v20141205.jar javax.servlet-api-3.1.0.jar gson-2.3.1.jar joda-time-2.6.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar   ${commons-dbcp.jar} log4j-1.2.17.jar ${commons-pool.jar}  ojdbc6.jar jetty.jar jetty-util.jar javax.servlet-api-3.1.0.jar gson-1.5.jar joda-time-2.6.jar"/>
             </manifest> 
         </jar>
          <copy failonerror="true" file="${gsacserverjar}"  todir="${gsacserverdir}"/>
@@ -117,11 +119,13 @@
          <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/log4j-1.2.17.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/ojdbc7.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/jetty-all-9.2.6.v20141205.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/gson-2.3.1.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/ojdbc6.jar"  todir="${gsacserverdir}"/>
    	     <copy failonerror="true" file="${libdir}/joda-time-2.6.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/javax.servlet-api-3.1.0.jar"  todir="${gsacserverdir}"/>
+
+         <copy failonerror="true" file="${libdir}/gson-1.5.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/jetty.jar"  todir="${gsacserverdir}"/> 
+         <copy failonerror="true" file="${libdir}/jetty-util.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="false" file="${srcdir}/org/gsac/gsl/release/README.gsacserver"  todir="${gsacserverdir}"/>
 
         <zip  destfile="${gsacserverzip}" >
@@ -144,27 +148,31 @@
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/README.release" fullpath="gsacrelease/README"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/gsl/release/releasebuild.xml" fullpath="gsacrelease/build.xml"/>
             <zipfileset dir="${basedir}" includes="src/org/gsac/**/*"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/unidata_idv.jar"  prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
+
             <zipfileset dir="${basedir}"  includes="lib/${commons-dbcp.jar}"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-pool.jar}"  prefix="gsacrelease"/>
+
+            <zipfileset dir="${basedir}"  includes="lib/unidata_idv.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/log4j-1.2.17.jar"         prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/ojdbc7.jar"  prefix="gsacrelease"/>
-            <!-- <zipfileset dir="${basedir}"  includes="lib/jetty-all-9.2.6.v20141205.jar"  prefix="gsacrelease"/> dont need jetty for tomcat war file -->
-            <zipfileset dir="${basedir}"  includes="lib/gson-2.3.1.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/> 
             <zipfileset dir="${basedir}"  includes="lib/joda-time-2.6.jar"  prefix="gsacrelease"/>
+
+            <!-- Java 1.6 version of these lines: -->
+            <zipfileset dir="${basedir}"  includes="lib/ojdbc6.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/gson-1.5.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/jetty.jar"  prefix="gsacrelease"/> 
+            <zipfileset dir="${basedir}"  includes="lib/jetty-util.jar"  prefix="gsacrelease"/> 
         </zip>
    </target>
-
 
 
    <target name="downloader" depends="init,clean">
         <javac
             classpath="${classpath}"
             debug="true"
-            target="1.7"
-            source="1.7"
+            target="1.6"
+            source="1.6"
             deprecation="false" 
             destdir="${compiledir}"
             failonerror="${failonerror}" 
