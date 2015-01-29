@@ -166,21 +166,6 @@ public class GsacServer {
     }
  
 
-        ServletHolder holderPwd = new ServletHolder("default", gsacServlet);
-
-        contexthandler.addServlet(holderPwd, "/*");
-
-        System.out.println( "Running stand-alone GSAC server at: http://localhost:" + port + gsacServlet.getRepository().getUrlBase());
-
-        server.setHandler(contexthandler); 
-
-        server.start(); 
-
-        server.join(); 
-
-    }
- 
-
     /**
      * factory method to make the servlet
      *
