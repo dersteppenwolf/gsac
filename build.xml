@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- This is the top ant build.xml file for UNAVCO GSAC, in gsac-code/.  Used to build al the GSAC core code (GSL).             -->
-<!-- When javadoc target is omitted, appears to have no dependencies on Java version or on java library .jar files. -->
+<!-- This is the main ant build.xml file for UNAVCO GSAC, in gsac-code/.  Used to build all the GSAC core code (GSL).               -->
+<!-- For BOTH Java 1.6 and Java 1.7 builds of GSAC -->
+<!-- When the javadoc target is omitted, this build.xml has no dependencies on Java version or on Java library .jar files. -->
+<!-- 28 Jan 2015. -->
 
 <project basedir="." default="gsac" name="UNAVCO">
 
@@ -16,7 +18,10 @@
         <property name="srcdir" value="${basedir}/src"/>
 
         <!-- used by the javadoc target 
+        Java 1.7 library files:
         <property name="classpath" value="${lib}/javax.servlet-api-3.1.0.jar:${lib}/unidata_idv.jar:${lib}/gson-2.3.1.jar:${lib}/commons-pool2-2.2.jar:${lib}/log4j-1.2.17.jar:${lib}/commons-dbcp2-2.0.1.jar"/>
+        for Java 1.6 use :
+        to be specified if needed
         -->
     </target>
 
@@ -36,12 +41,6 @@
 
     <target name="gsac" depends="init">
       <antcall target="gsl"/>
-      <!-- <antcall target="federated"/> -->
-      <!-- <antcall target="client"/> -->
-      <!-- <antcall target="ramadda"/> -->
-      <!-- <antcall target="cddis"/> -->
-      <!-- <antcall target="iris"/> -->
-      <!-- <antcall target="igs"/> -->
     </target>
 
     <target name="gsl" depends="init">
@@ -49,8 +48,8 @@
       <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
     </target>
 
-    <!-- client is not yet upgraded to java7.   its lib .jar files may need to ne in gsac-code/dist/gsacserver/.  -->
-    <!--
+
+    <!-- The GSAC client need only be built by UNAVCO.  Its lib files are in gsac-code/dist/gsacserver/, not in gsac-code/.  
     <target name="client" depends="init">
       <echo message="Building GSAC client"/>
       <ant antfile="${srcdir}/org/gsac/client/build.xml" inheritAll="false"/>
@@ -59,6 +58,7 @@
 
     <!--
     <target name="javadoc" depends="init">
+      <echo message="Building GSAC javadoc"/>
         <javadoc
             Author="true"
             Doctitle="GSAC/GSL"
@@ -77,39 +77,5 @@
         </javadoc>
     </target>
     -->
-
-<!--
-    <target name="sopac" depends="init">
-      <echo message="Building SOPAC"/>
-      <ant antfile="${srcdir}/edu/ucsd/sopac/projects/gsac/repository/build.xml" inheritAll="false"/>
-    </target>
-
-    <target name="ramadda" depends="init">
-      <echo message="Building GSAC RAMADDA"/>
-      <ant antfile="${srcdir}/org/gsac/ramadda/build.xml" inheritAll="false"/>
-    </target>
-
-    <target name="cddis" depends="init">
-      <echo message="Building GSAC CDDIS"/>
-      <ant antfile="${srcdir}/gov/nasa/cddis/gsac/build.xml" inheritAll="false"/>
-    </target>
-
-    <target name="iris" depends="init">
-      <echo message="Building GSAC IRIS"/>
-      <ant antfile="${srcdir}/org/iris/gsac/build.xml" inheritAll="false"/>
-    </target>
-
-    <target name="igs" depends="init">
-      <echo message="Building GSAC IGS"/>
-      <ant antfile="${srcdir}/org/igs/gsac/build.xml" inheritAll="false"/>
-      <echo message="Building GSAC EA"/>
-      <ant antfile="${srcdir}/org/igs/gsac/build.xml" inheritAll="false" target="gsacea"/>
-    </target>
-
-    <target name="federated" depends="init">
-      <echo message="Building GSAC Federated Repository"/>
-      <ant antfile="${srcdir}/org/gsac/federated/build.xml" inheritAll="false"/>
-    </target>
--->
 
 </project>
