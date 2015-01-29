@@ -29,7 +29,7 @@ import java.util.Properties;
 
 /*
  * 29 Jan 2015: merged version for either Java 1.6 or Java 1.7 GSAC build.
- * Look for " Java " here, and comment the lines for the Java version you use.
+ * Look for " Java " here, and un-comment the lines for the Java version you use.
 */ 
 
 import javax.servlet.*;
