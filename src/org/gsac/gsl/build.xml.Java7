@@ -92,10 +92,10 @@
             update="false"
             compress="true"
             jarfile="${gsacwsjar}">
-            <include name="org/**/*.class"/>
-            <include name="org/gsac/gsl/**/*"/>
+            <include name="org/**/*.class"/> 
         </jar>
    </target>
+            <!-- <include name="org/gsac/gsl/**/*"/> -->
 
 
    <target name="gsacserver" depends="init,gsacjar">
