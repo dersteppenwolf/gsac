@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,26 +18,29 @@
  * 
  */
 
+
 package org.gsac.gsl.database;
 
+/* ************************************************************
+ *
+ * To do Java 1.7  or Java 1.6 build of GSAC:
+ * Find comments in this file with " Java ", and
+ * uncomment the Java 1.7 or Java 1.7 code lines for the version needed.
+ * 
+ * See for example the next several lines.
+ *
+ *************************************************************
+ */
 
+//  Java 1.6 version: 
 //import org.apache.commons.dbcp.BasicDataSource;
-//  new 2014: 
-import org.apache.commons.dbcp2.BasicDataSource;
 
-/*
-jar tf commons-dbcp2-2.0.1.jar  | grep BasicDataSource
-org/apache/commons/dbcp2/BasicDataSource.class
-org/apache/commons/dbcp2/BasicDataSource$1.class
-org/apache/commons/dbcp2/BasicDataSource$PaGetConnection.class
-org/apache/commons/dbcp2/BasicDataSourceFactory.class
-*/
+//  Java 1.7 version: 
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 
-//import org.ramadda.sql.Clause;
-//import org.ramadda.sql.SqlUtil;
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
 
@@ -267,36 +270,36 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         connectionProps.put("user", userName);
         connectionProps.put("password", password);
 
-                //System.err.println("    jdbcUrl:_" + jdbcUrl+"_");
-        //        System.err.println("GSAC: user name:" + userName+":");
-        //        System.err.println("GSAC: password:" + password+":");
+        // debug database : log account
+        //System.err.println("    jdbcUrl:_" + jdbcUrl+"_");
+        //System.err.println("GSAC: user name:" + userName+":");
+        //System.err.println("GSAC: password:" + password+":");
 
         BasicDataSource dataSource = new BasicDataSource();
 
-        // v 1.4: dataSource.setMaxActive(100);
+        //  Java 1.6 version: 
+        //dataSource.setMaxActive(100);
+        //  Java 1.7 version: 
         dataSource.setMaxTotal(100);
 
         dataSource.setMaxIdle(100);
         dataSource.setDriverClassName(getDriverClassName());
-
         dataSource.setUsername(userName);
         dataSource.setPassword(password);
         dataSource.setUrl(jdbcUrl);
 
-        // v 1.4 dataSource.setMaxWait(1L);
+        //  Java 1.6 version: 
+        //dataSource.setMaxWait(1L);
+        //dataSource.setRemoveAbandoned(true);
+        //  Java 1.7 version: 
         dataSource.setMaxWaitMillis(1L);
-
-        // v 1.4 dataSource.setRemoveAbandoned(true);
-        // now setRemoveAbandonedOnBorrow(bool or   setRemoveAbandonedOnMaintenance(bool)
-        dataSource.setRemoveAbandonedOnBorrow(true); // try this one
+        dataSource.setRemoveAbandonedOnBorrow(true); 
 
         //60 seconds
         dataSource.setRemoveAbandonedTimeout(60);
         dataSource.setLogWriter(new PrintWriter(System.err));
 
-        //2010: TODO: For now log abandoned but we'll want to turn this off for performance sometime
-        //dataSource.setLogAbandoned(true);
-        // 2014:
+        //2010: LOOK TODO: For now log abandoned but we'll want to turn this off for performance sometime
         dataSource.setLogAbandoned(true);
 
         return dataSource;
