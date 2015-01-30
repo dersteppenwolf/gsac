@@ -136,7 +136,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
      To find this command at SourceForge, go to https://sourceforge.net/projects/gsac/, and click on the 'Code' menu item in the 'Summary Files ...' menu line.
      svn checkout is used if you have a developer's role, to check in new code for GSAC on SourceForge.)
 
-    This creates a new top level directory for all GSAC files, in a new directory called gsac-code/ in this example, and downloads all the files in the GSAC package.
+    This creates a new top level directory for all GSAC files, in a new directory called gsac-code/ and downloads all the files in the GSAC package.
 
     Your new directory need not be called gsac-code/, as in the example svn export command above.  But the GSAC installation guides use gsac-code/ so it is easier to use that, if you wish.
 
@@ -152,7 +152,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
    The GSAC package as and when exported from SourceForge is ready to build GSAC with Java 1.7.  Make sure your javac compiler is for Java 1.7, such as this example:
    /usr/lib/jvm/java-7-oracle/bin/javac.
 
-   The modify the GSAC package as exported from SourceForge to build with a Java 1.6 version of javac, do the following:
+   To modify files in the GSAC package from SourceForge to build with a Java 1.6 javac, do the following:
       a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
       b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the "import block for Java 1.6" and comment-out the "import block for Java 1.7"
       c. in gsac-code/src/org/gsac/gsl/database/ edit the GsacDatabaseManager.java to use the lines labeled "Java 1.6 version" and to comment-out the lines for "Java 1.7 version."
@@ -185,7 +185,7 @@ Total time: 36 seconds
 
     Look for any error messages.  If there are none, you have compiled the GSAC core (GSL) code.
 
-    This process makes a Java jar file, named gsacws.jar, in gsac-code/lib/, with size about 7 MB.
+    This process makes a Java jar file, named gsacws.jar, in gsac-code/lib/.
     This file contains the compiled GSAC core GSL code.  This jar file will be used to build your final
     Java jar file for your complete GSAC server executable, to build the Tomcat .war file, and to build any other GSAC using the GSL on your system, such as a federated GSAC.
 
@@ -234,6 +234,24 @@ in .java files, or other code.
 UNAVCO will attempt to update GSAC library files as they become available.  But UNAVCO checking in a new library file to the GSAC repository on 
 SourceForge will not of course automatically change your GSAC code.
 
+
+                    #########################################
+
+About building GSAC: the library files for database access
+
+GSAC uses library files to read from your database.  The library files in the GSAC package are (in gsac-code/lib/)
+
+ mysql-connector-java-5.1.34-bin.jar
+ ojdbc6.jar  (Java 1.6 and oracle 11)
+ ojdbc7.jar  (Java 1.7 and oracle 12)
+ oracleDriver.jar  (Java 1.5 ? and oracle 11?)
+ postgresql-9.3-1102.jdbc41.jar
+
+You may find your brand of database and its version and which Java it works with may not work with the library file in GSAC builds.
+See the library files in gsac/gsl/build.xml in particular.
+
+You may need to chose another library file from the one in the GSAC package, or another one from online.
+You may need to change some GSAC JAVA code to work with other libraries.
 
                     #########################################
 
@@ -362,7 +380,7 @@ cd to gsac-code/src/org/boulder/gsac/
 
 
 
-3. How to To Install a Federated GSAC
+4. How to To Install a Federated GSAC
 
 To learn about federated GSACs, see the UNAVCO GSAC web site.
 
@@ -382,7 +400,7 @@ README_GSAC_Federated_Installation, for example in gsac-code/src/org/gsac/federa
 
                            ###########################################
 
-3a.  Install the GSAC package.
+4a.  Install the GSAC package.
 
 First review these sections in the UNAVCO GSAC web site, "GSAC Installation" page:
 http://www.unavco.org/software/data-management/gsac/installation/installation.html, 
@@ -434,7 +452,7 @@ Install GSAC core code, as described in the GSAC web site, repeated here:
 
                         ###########################################
 
-3b. Specify connections to remote GSACs.
+4b. Specify connections to remote GSACs.
 
 Federated GSACs use the services provided by other GSAC installations, usually at remote locations. Federated GSACs do not 
 use a local data repository.
@@ -479,7 +497,7 @@ Ignore the file resources/gsacserver_production.properties.
                            ###########################################
 
 
-3c. Edit files for your federated GSAC's web page header and footer.
+4c. Edit files for your federated GSAC's web page header and footer.
 
 Edit federated/resources/header.html to create your GSAC web page header.
 Image files are kept in federated/resources/htdocs.
@@ -493,7 +511,7 @@ any java files in gsac/federated/.
 
                            ###########################################
 
-3d. Build and Deploy the Federated GSAC.
+4d. Build and Deploy the Federated GSAC.
 
 To build your federated GSAC, in gsac-code/src/org/gsac/federated/  do
 
