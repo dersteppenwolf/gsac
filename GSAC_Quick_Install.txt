@@ -1,0 +1,150 @@
+
+    GSAC Quick Installation
+    29 January 2015.  Stuart Wier, UNAVCO
+
+    This document is a short version of the material in the web page http://www.unavco.org/software/data-management/gsac/installation/installation.html
+    and also the material in the GSAC package file README Part 1 (except about installing federated GSACs). If this guide is unclear, look in those places.
+    This guide of 150 lines replaces about 600 lines.  After completing this guide, you will use the GSAC README part 2 which does not have a short version.
+    This document is in the GSAC package at gsac-code/.
+
+    You have a suitable Linux system, with Java JDK 1.6 or 1.7, the subversion ('svn') respository control tool, and 'ant' the Java compilation and build tool.
+    And a database for GSAC with complete metadata about sites (stations or monuments), their instruments, and their data files, as appropriate for your instruments and data files.
+
+    Beginning January 29, 2015, GSAC can be made with either Java 1.6 or Java 1.7.  The Java Library files were updated from the older GSAC code, for both cases.  
+    If you use Tomcat with Java JRE 1.6 you will need GSAC built with Java 1.6.
+
+    The following instructions use a hypothetical "Boulder" data repository.  GSAC has a set of core code (the "GSAC Service Layer," or GSL), 
+    used by all installations. You will also create some local Java code files (Boulderaaaaaaa.java).
+
+    Choose or make a top-level working directory for GSAC, and go there. For example:
+
+cd    ~/GSAC/
+
+    Check out the GSAC code from SourceForge by entering this command:
+
+svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
+
+    This creates a new top level directory for all GSAC files, a new directory called gsac-code/, and downloads all the files in the GSAC package.
+    Your new directory need not be called gsac-code/, as in the example svn export command above.  But the GSAC installation guides use gsac-code/ so it is easier to use that.
+
+    The GSAC package from SourceForge contains code for both Java 1.6 and 1.7.  The difference is entirely due to Java library files. GSAC's code is virtually unchanged. 
+    The Java 1.7 GSAC has recent Java security improvements (this addition to GSAC was requested by a U.S. government lab using GSAC.)
+    The Java 1.6 GSAC works with existing Tomcat Java 1.6 servers used by several GSAC operators.
+
+    The GSAC package exported from SourceForge is ready to build GSAC with Java 1.7.  Make sure your javac compiler is for Java 1.7.
+    The command "which javac" should show a Java 7 comoiler, such as 
+    /usr/lib/jvm/java-7-oracle/bin/javac
+
+    For Java 6 GSAC:
+    ONLY if you want Java 1.6 and do not wish to use Java 1.7: modify the GSAC package to work with Java 1.6 in these 6 steps:
+    a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
+    b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the "import block for Java 1.6" and comment-out the "import block for Java 1.7"
+    c. in gsac-code/src/org/gsac/gsl/database/ edit the GsacDatabaseManager.java to use the lines labeled "Java 1.6 version" and to comment-out the lines for "Java 1.7 version."
+    d. in gsac-code/src/org/prototype/gsac/ do the command cp build.xml.Java6 build.xml
+    e. in gsac-code/src/org/prototype/gsac/ edit the file PrototypeServer.java to use the "Java 1.6 version" lines and to comment-out the lines for "Java 1.7 version."
+    f. Make sure your javac compiler is for Java 1.6, not Java 1.7.
+
+    All the remaining instructions apply to both Java 1.6 and Java 1.7.
+
+    Build the GSAC core code:  
+
+cd to gsac-code/
+
+    Do an initial ant build with the command:
+
+ant
+
+    This process sends information to the screen, like "gsl: Building GSL", and takes about 6 to 30 seconds.
+    Look for any error messages.  This process makes a Java jar file, named gsacws.jar, in gsac-code/lib/.
+    This file contains the compiled GSAC core GSL code.  This jar file will be used to build your GSAC server executable, to build the Tomcat .war file, 
+    and to build any other GSAC using the GSL on your system, such as a federated GSAC.
+
+    Next, create GSAC configuration files and make new initial GSAC code for your GSAC.
+    To set the Map Area, edit the file 
+
+vi  gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js 
+
+    to set the longitude, latitude, and map zoom level for the center of the map GSAC shown shows in site search results on a web page.  
+    For example use these lines:
+
+var defaultLocation = new OpenLayers.LonLat(14.15, 48.5);  
+var defaultZoomLevel = 5;
+
+    The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
+    West longitudes are negative.  Do not use "W".  South latitudes are negative.  Do not use "S".
+
+    Build the GSAC core code with command 'ant' again, executed in gsac-code/.  
+
+cd to gsac-code/
+
+ant
+
+    Next, use the command "ant makerepository" to create your initial set of local implementation files:
+    First make a new macros template file. Go to the template/ directory:
+
+cd  to gsac-code/src/org/gsac/template/
+
+    Copy the file macros.properties to a new properties file such as my.properties.  
+
+cp  macros.properties  my.properties
+
+    The new file name 'my.properties' does not matter. You only use this file one time.
+    Edit the new properties file to set values for your repository GSAC.  For example, new values something like these:
+
+vi  my.properties
+
+    target.name=The Boulder GNSS Repository  ## To name the repository. Spaces are allowed.
+    target.basename=bouldergsac     ## For your package's .jar file name, and for the Tomcat .war file name
+    target.package=org.boulder.gsac  ## to set your GSAC Java package name.  This controls making and naming the new directory path to hold your local GSAC installation code.
+    ## If your agency is not an "org", use the appropriate value such as pt, fr, de, is, gov, or edu.
+    target.prefix=Boulder          
+    ## to set the prefix for filenames for the new Java .java files and .class files for your GSAC installation. Like BoulderSiteManager.java.   No spaces.
+    target.dbdriver=mysql.jar     
+    ## to choose which Java database driver is used in GSAC code to read the database your GSAC will read.  Choose (uncomment) one of these three:
+    #target.dbdriver=mysql.jar     
+    #target.dbdriver=oracleDriver.jar
+    #target.dbdriver=postgres.jar
+
+
+   Next, change the working directory to
+
+cd  to gsac-code/src/org/gsac/
+
+    Then run this command, with your new properties file name in place of my.properties:
+
+ant -propertyfile template/my.properties makerepository   
+
+    The last two lines of screen output should be like this:
+
+[echo] Repository source package has been created
+BUILD SUCCESSFUL
+
+    This process creates a new code area (new folders), and new Java files for your GSAC installation, 
+    beginning with a new folder, such as in this case gsac-code/src/org/boulder/ 
+    and populates it with some new directories and files for your GSAC repository's code.
+
+
+    The Javax Security java.policy file
+
+    Add the following line with permission ... "register" 
+    to your java.policy file in the 'grant' section, which may be under $JAVA_HOME/lib/security/ or under $JRE_HOME/lib/security/.
+    In some operating systems the java.policy file is in  /usr/lib/jvm/java-7-oracle/jre/lib/security/java.policy. 
+
+vi ... java.policy 
+
+    grant {
+    // JMX Java Management eXtensions
+    permission javax.management.MBeanTrustPermission "register";
+    }; 
+
+
+    Next:
+
+    cd to the just-made directory with new GSAC code for your repository, such as 
+
+cd to gsac-code/src/org/boulder/gsac/ 
+
+    Follow the README file there to complete your GSAC installation. That is README Part 2. 
+
+    To install a Federated GSAC, see the README file (section 3.) in gsac-code/src/org/gsac/
+
