@@ -9,25 +9,34 @@
 
 Quick Install
 
-For those who wish to read less, you may see the brief "GSAC Quick Installation" 
-at  http://www.unavco.org/software/data-management/gsac/installation/GSAC_Quick_Install.txt
+For those who wish to read less, you may see the brief "GSAC Quick Installation", in the GSAC package at gsac-code/GSAC_Quick_Install.txt
+and online at http://www.unavco.org/software/data-management/gsac/installation/GSAC_Quick_Install.txt,
 in place of this document.  If something is unclear in that guide, you can return here for details.
 
 
 Introduction
+
+This README file describes the first steps in GSAC installation, and is Part 1 of two README files detailing GSAC installation.  
+This file is found in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge, as described below.
 
 UNAVCO's GSAC is a package of code for web services. With GSAC a geodesy or geophysics data center can offer a set of complete, 
 consistent, modern web services for remote users to query the data center about stations and instruments, and download data 
 files make by the instruments, and product files such as plots.  The UNAVCO GSAC home page is at 
 http://www.unavco.org/software/data-management/gsac/gsac.html
 
-This README file describes the first steps in GSAC installation, and is Part 1 of two README files detailing GSAC installation.  
-This file is found in gsac-code/src/org/gsac/ in the GSAC package available from SourceForge, as described below.
+    Building your code for GSAC services has two major parts:
+    1. Download the GSAC package and build its core code (called the GSL, the GSAC service layer), which includes some templates for your "local GSAC files".
+    2. Complete your "local GSAC files". Your "local GSAC files" are new Java for GSAC to read from your database, and also to specify what services your GSAC offers.
+    This README Part 1 (and the GSAC Quick Installation guide) tells how to do 1.
+    GSAC instructions use a hypothetical "Boulder" data repository; you will of course use your own terms.
+    README Part 2 tells how to do 2, complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
 
-These instructions apply both to installing GSAC services for a data repository, and to installing a Federated GSAC which merges 
+Instructions here detail the first part of installing GSAC services for a data repository
+
+Section 4. below describes the oprtional installation of a "federated GSAC" which makes an online service merging
 GSAC services from several separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README 
-file, except the section "Create GSAC configuration files and make your initial GSAC,"  
-and then follow the section "To Build a Federated GSAC".
+file, except the section "Create GSAC configuration files and make your initial GSAC."  
+Then follow the section 4., "To Build a Federated GSAC".
 
 This file also has section 3, How to To Install a Federated GSAC.
 
@@ -314,16 +323,19 @@ cd  to gsac-code/src/org/gsac/
 
 ant -propertyfile template/my.properties makerepository   
 
-    The last two lines of screen output should be like this:
 
-[echo] Repository source package has been created
+    The final lines of screen output should be something like this:
+
+copyjava:
+     [copy] Copying 1 file to /home/dev/GSAC/gsac-code/src/org/bouler/gsac
+     [echo] Repository source package has been created
 BUILD SUCCESSFUL
+Total time: 1 second
 
-   Look to be sure no errors occured.  
-
-   This process creates a new code area (new folders), and new Java files for your GSAC installation, 
-   beginning with a new folder, such as in this case gsac-code/src/org/boulder/ 
-   and populates it with some new directories and files for your GSAC repository's code.
+    The ant ... makerepository process creates a new code area (new folders), and new Java files for your GSAC installation,
+    beginning with a new folder, such as in this case gsac-code/src/org/boulder/,
+    and populates it with some new directories and files for your GSAC repository's code.
+    This is where your "local GSAC files" are.
 
 
 ##############################################################c################################################################
@@ -369,8 +381,7 @@ cd to gsac-code/src/org/boulder/gsac/
 ##############################################################c################################################################
 
 
-
-4. How to To Install a Federated GSAC
+                             Section 4. How to To Install a Federated GSAC
 
 To learn about federated GSACs, see the UNAVCO GSAC web site.
 
