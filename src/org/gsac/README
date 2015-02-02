@@ -4,8 +4,15 @@
 
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                          29 January 2015.  Stuart Wier, UNAVCO
-                                          Copyright (C) 2013, 2014, 2015 UNAVCO.
+                                          2 February 2015.  Stuart Wier, UNAVCO
+                                          Copyright (C) 2013, 2014, 2015 UNAVCO
+
+Quick Install
+
+For those who wish to read less, you may see the brief "GSAC Quick Installation" 
+at  http://www.unavco.org/software/data-management/gsac/installation/GSAC_Quick_Install.txt
+in place of this document.  If something is unclear in that guide, you can return here for details.
+
 
 Introduction
 
@@ -23,23 +30,6 @@ file, except the section "Create GSAC configuration files and make your initial 
 and then follow the section "To Build a Federated GSAC".
 
 This file also has section 3, How to To Install a Federated GSAC.
-
-The GSAC package has these README files starting at gsac-code/: 
-README
-lib/README                    [where library files are]
-src/org/gsac/README           [part 1 of installation]
-src/org/[mygsac]/gsac/README  [part 2 of installation]
-src/org/gsac/federated/README
-
-About Time Formats in GSAC
-
-GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss" or "yyyy-MM-ddTHH:mm:ss", to avoid the complexities and 
-error-prone behavior of using several different formats. Internally GSAC avoids use of character strings for time.  Date and 
-time values in the ISO 8601 format may be easily entered into and extracted from databases as databases' 
-native datetime objects.  Date and time values in the ISO 8601 format as character strings may be easily converted into Java or Joda Date objects.
-
-GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number in an ISO 8601 value.  
-GSAC does not expect times in the database to be in any time zone other than UTC.
 
 
 ##########################################
@@ -141,7 +131,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
     Your new directory need not be called gsac-code/, as in the example svn export command above.  But the GSAC installation guides use gsac-code/ so it is easier to use that, if you wish.
 
 
-2. To choose Java 1.6 or Java 1.7 to build GSAC.
+2. To choose Java 6 (1.6) or Java 7 (1.7) to build GSAC.
 
    The GSAC package from SOurceForge contains code for both Java 1.6 and 1.7.  Rather than having 2 "releases" of GSAC, with more than 99% duplicate code, which would require
    UNAVCO to make identical updates in 2 places, both versions of GSAC are in one package.
@@ -544,7 +534,6 @@ Your federated GSAC URL will have a Base URL something like http://www.boulder.o
 end of README for installing a federated GSAC.
 
 ##############################################################c################################################################
-##############################################################c################################################################
 
 
 5. Updating GSAC to get new core code from SourceForge.
@@ -570,6 +559,26 @@ cd  to gsac-code/
 ant
 
 and then again build your local GSAC code in your GSAC code area, with ant, as described below.
+
+
+##############################################################c################################################################
+
+The GSAC package has these README files starting at gsac-code/: 
+README
+lib/README                    [where library files are]
+src/org/gsac/README           [part 1 of installation]
+src/org/[mygsac]/gsac/README  [part 2 of installation]
+src/org/gsac/federated/README
+
+About Time Formats in GSAC
+
+GSAC tries to use all date and time values in the ISO 8601 format, like "yyyy-MM-dd HH:mm:ss" or "yyyy-MM-ddTHH:mm:ss", to avoid the complexities and 
+error-prone behavior of using several different formats. Internally GSAC avoids use of character strings for time.  Date and 
+time values in the ISO 8601 format may be easily entered into and extracted from databases as databases' 
+native datetime objects.  Date and time values in the ISO 8601 format as character strings may be easily converted into Java or Joda Date objects.
+
+GSAC treats all time values as UTC times, and does not expect the optional Z or time zone hour number in an ISO 8601 value.  
+GSAC does not expect times in the database to be in any time zone other than UTC.
 
 
 ##############################################################c################################################################
