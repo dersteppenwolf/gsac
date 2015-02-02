@@ -114,14 +114,18 @@ cd  to gsac-code/src/org/gsac/
 
 ant -propertyfile template/my.properties makerepository   
 
-    The last two lines of screen output should be like this:
+    The final lines of screen output should be something like this:
 
-[echo] Repository source package has been created
+copyjava:
+     [copy] Copying 1 file to /home/dev/GSAC/gsac-code/src/org/bouler/gsac
+     [echo] Repository source package has been created
 BUILD SUCCESSFUL
+Total time: 1 second
 
-    This process creates a new code area (new folders), and new Java files for your GSAC installation, 
-    beginning with a new folder, such as in this case gsac-code/src/org/boulder/ 
+    The ant ... makerepository process creates a new code area (new folders), and new Java files for your GSAC installation, 
+    beginning with a new folder, such as in this case gsac-code/src/org/boulder/,
     and populates it with some new directories and files for your GSAC repository's code.
+    This is where your "local GSAC files" are.
 
 
     The Javax Security java.policy file
@@ -146,5 +150,5 @@ cd to gsac-code/src/org/boulder/gsac/
 
     Follow the README file there to complete your GSAC installation. That is README Part 2. 
 
-    To install a Federated GSAC, see the README file (section 3.) in gsac-code/src/org/gsac/
+    To install a Federated GSAC, see the README file (section 4.) in gsac-code/src/org/gsac/
 
