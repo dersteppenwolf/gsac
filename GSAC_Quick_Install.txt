@@ -13,12 +13,20 @@
     Beginning January 29, 2015, GSAC can be made with either Java 1.6 or Java 1.7.  The Java Library files were updated from the older GSAC code, for both cases.  
     If you use Tomcat with Java JRE 1.6 you will need GSAC built with Java 1.6.
 
-    The following instructions use a hypothetical "Boulder" data repository.  GSAC has a set of core code (the "GSAC Service Layer," or GSL), 
-    used by all installations. You will also create some local Java code files (Boulderaaaaaaa.java).
+
+
+    Building your code for GSAC services has two major parts:
+    1. Download the GSAC package and build its core code (called the GSL, the GSAC service layer), which includes some templates for your "local GSAC files".
+    2. Complete your "local GSAC files". Your "local GSAC files" are new Java for GSAC to read from your database, and also to specify what services your GSAC offers.
+    This GSAC Quick Installation guide (and the more detailed README part 1) tells how to do 1.
+    GSAC instructions use a hypothetical "Boulder" data repository; you will of course use your own terms.
+    README Part 2 tells how to do 2, complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
+
 
     Choose or make a top-level working directory for GSAC, and go there. For example:
 
-cd    ~/GSAC/
+mkdir ~/GSAC/
+cd  ~/GSAC/
 
     Check out the GSAC code from SourceForge by entering this command:
 
