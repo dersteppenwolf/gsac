@@ -711,8 +711,7 @@ public class GsacClient implements GsacConstants {
 
         System.err.println(
             "\t-" + ARG_SERVER
-            + "  http://examplegsacrepository.edu/someprefixpath, e.g. http://facility.unavco.org/gsacws");
-        /* System.err.println(" e.g. http://facility.unavco.org/gsacws"); */
+            + "  http://examplegsacrepository.edu/someprefixpath, e.g. http://www.unavco.org/gsacws");
         System.err.println(
             "\t-info  fetch and print to stdout the remote GSAC repository's information, including available arguments");
         System.err.println(

@@ -358,11 +358,11 @@ public class @MACRO.PREFIX@SiteManager extends SiteManager {
         if (type.toLowerCase().equals(SITETYPE_CAMPAIGN)) {
             site.addMetadata(
             new IconMetadata(
-                    "http://facility.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
+                    "http://www.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
         } else {
             site.addMetadata(
             new IconMetadata(
-                    "http://facility.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
+                    "http://www.unavco.org/data/gnss/lib/DAI/images/icon1.png"));
         }
         return site;
         */

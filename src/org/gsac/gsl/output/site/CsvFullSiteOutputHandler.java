@@ -52,7 +52,7 @@ import javax.servlet.http.*;
 /* 
  * Class description: makes site and instrument information in the "GSAC Full CSV" format.
  *
- * The format convention is the "Standard CSV File Format" ; see http://facility.unavco.org/data/gsacws/docs/UNAVCO_standard_CSV_format.html 
+ * The format convention is the "Standard CSV File Format" ; see http://www.unavco.org/data/gsacws/docs/UNAVCO_standard_CSV_format.html 
  * and see  http://ramadda.org/repository/entry/show/Home/RAMADDA+Information/Development/CF+for+CSV?entryid=23652828-c6f4-482b-bb2f-041dae14542e
  *
  * This GSAC Full Csv format file has values for:

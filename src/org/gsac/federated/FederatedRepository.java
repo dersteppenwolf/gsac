@@ -108,7 +108,6 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
     public void doMakeServerInfoList(List<GsacRepositoryInfo> servers) {
 
         boolean doTest = false;
-        //servers.add(new GsacRepositoryInfo("http://facility.unavco.org", "Unavco GSAC Repository"));
         //Get the comma separated list of server ids
         String serverList = getProperty("gsac.federated.servers",
                                         (String) null);
