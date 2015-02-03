@@ -11,7 +11,7 @@ gsacclient.sh -help
 You can specify any number of arguments that will always be used when running the client.
 Just edit the gsac.properties file in the release directory. e.g., uncomment the line:
 
-      server=http://facility.unavco.org/gsacws
+      server=http://www.unavco.org/gsacws
 
 You can also specify a properties file of the same format on the command line:
 
@@ -20,13 +20,13 @@ You can also specify a properties file of the same format on the command line:
 If you don't have a server defined in the gsac.properties file specify it with -server.
 You just use the url path leading up to the gsacapi, e.g.:
 
-      -server http://facility.unavco.org/gsacws
+      -server http://www.unavco.org/gsacws
 
 Some example calls:
 
 List out the repository information from UNAVCO:
 
-      gsacclient.sh -server http://facility.unavco.org/gsacws -info
+      gsacclient.sh -server http://www.unavco.org/gsacws -info
 
 List out the repository information from SOPAC:
 

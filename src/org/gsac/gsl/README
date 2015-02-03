@@ -64,10 +64,8 @@ We run 2 different gsacs on wes - this Unavco Repository and also
 the federated gsac repository (in the main GSAC source tree from
 sourceforge)
 
-http://facdev.unavco.org/gsacws/gsacapi/site/form
-http://facility.unavco.org/gsacws/gsacapi/site/form
-http://facdev.unavco.org/gsacfederated/gsacapi/site/form
-http://facility.unavco.org/gsacws/gsacapi/site/form
+http://www.unavco.org/gsacfederated/gsacapi/site/form
+http://www.unavco.org/gsacws/gsacapi/site/form
 
 Both of these repositories are run on both the development server 
 (/usr/local/apachetomcatdev) and the live server (/usr/local/apachetomcat).
