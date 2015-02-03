@@ -95,9 +95,9 @@
             compress="true"
             jarfile="${gsacwsjar}">
             <include name="org/**/*.class"/>
+            <include name="org/gsac/gsl/**/*"/>  <!-- includes all the .java source files; not needed -->
         </jar>
    </target>
-         <!-- to put source code in the jar file <include name="org/gsac/gsl/**/*"/> -->
 
 
    <target name="gsacserver" depends="init,gsacjar">

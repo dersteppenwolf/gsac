@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- GSAC's ant build.xml file for GSAC core code in gsac-code/src/org/gsac/gsl/ -->
+<!-- GSAC's ant build.xml file for GSAC core code in gsac-code/src/org/gsac/gsl/ 
 
-<!-- Java 1.7 version of build.xml -->
+     Java 1.7 version of build.xml in gsac-code/src/org/gsac/gsl/.
+     This uses different Java library files than for Java 6. See README in gsac-code/src/org/gsac/.
 
-<!-- to build GSAC with Java 1.7, first do the command in gsac-code/src/org/gsac/gsl/ 
+     To build GSAC with Java 1.7, first do this command, in gsac-code/src/org/gsac/gsl/:
      cp build.xml.Java7 build.xml
-  -->
+-->
 
 <project basedir="../../../../" default="all" name="GSAC">
 
@@ -93,9 +94,9 @@
             compress="true"
             jarfile="${gsacwsjar}">
             <include name="org/**/*.class"/> 
+            <include name="org/gsac/gsl/**/*"/>  <!-- includes all the .java source files; not needed -->
         </jar>
    </target>
-            <!-- <include name="org/gsac/gsl/**/*"/> -->
 
 
    <target name="gsacserver" depends="init,gsacjar">
