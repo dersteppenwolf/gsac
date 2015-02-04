@@ -1,16 +1,18 @@
 #######################################################################/
 
-GSAC_WS Installation     
+                  GSAC Installation     
 
-README, Part 2.
+                    README, Part 2.
 
-21 Jan. 2015.   SKW  UNAVCO
+               2 Feb 2015.   SKW  UNAVCO
 
-This file describes how to complete your new Prototype GSAC-WS Web Services suite,
+This file describes how to complete your new Prototype GSAC Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
 You should have first read and followed the installation instructions in the first README file ("Part 1"), 
 in the main GSAC code area, gsac-code/src/org/gsac/.
+
+This README file sometimes uses for examples code for a hypothetical "Boulder" agency running a GPS network called "BoulderNet." You will use you own names for these.
 
 Installation of GSAC requires some Java coding, as described below.  It is not possible for GSAC core code to anticipate
 the design of data repositories or what data values and files are available or are of interest for you to
@@ -19,44 +21,40 @@ data repository.  Users may need to correspond with UNAVCO if they want to have 
 Contact UNAVCO at gsac-ws@unavco.org to request software support.
 
 This README file is automatically generated when you do the command 'ant makerepository' during GSAC installation, but the file creation may have an error.
-Some file names such as gsacrMyRepo.properties or gsacPrototype.properties in this README file, may have one or more upper case letters.                  
+Some file names such as gsacrBoulder.properties or gsacPrototype.properties in this README file, may have one or more upper case letters.                  
 The cooresponding actual GSAC files on disk lack upper case in their names.
-Some new Java class file names do have upper case letters, such as UnavcoSiteManager.java.         
-Do not change actual filenames of files made by GSAC to match the uppercase letters shown in this README file.
+Java class file names may have upper case letters, such as UnavcoSiteManager.java.         
+Do not change actual filenames of files made by GSAC to match any uppercase letters shown in this README file.
 
 ########################################################################
 
-
 Hopefully you've managed to generate the initial repository source package using README Part 1.
 
-This README (Part 2) file is found in your new GSAC package in org/prototype/gsac/ (ignore the README file in org/prototype/gsac/release).
+This README (Part 2) file is located in your new GSAC package in org/prototype/gsac. (Ignore the README file in org/prototype/gsac/release).
 
-Now, change the working directory to your local GSAC code area, like src/org/prototype/gsac/ or src/org/boulder/gsac/.
+Now, change the working directory to your local GSAC code area, at org/prototype/gsac. 
 
 
-    ########################################################################
+Adding Your Repository's Details: The "GSAC Resources Properties" File.
 
-    The resources/gsac.properties File. 
-
-The file org/prototype/gsac/resources/gsac.properties has a number of properties about your GSAC installation, for example, 
+The file org/prototype/gsac/resources/gsac.properties has a number of properties about your GSAC installation (not the database), for example, 
 gsac.baseurl will be part of the full URL for your GSAC repository.
 
 Some values were created in the initial ant build you just made.
 
-An example, a file myrepo/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
+    An example, a file boulder/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
 
-    #Your baseurl
-    gsac.baseurl = /bouldergsac
+    gsac.baseurl = /gsacboulder
     #Your repository name
-    gsac.repository.name=The Boulder GSAC Repository
+    gsac.repository.name=Boulder GPS Repository
     #Your repository description
-    gsac.repository.description=The Boulder GSAC Repository 
+    gsac.repository.description=The Boulder GPS Repository 
 
 Change the items for your GSAC repository.
 
 The  gsac.baseurl is used in a URL to a GSAC server such as the "gsacws" in  http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-It comes before '/gsacapi' in all GSACs.  You can use 'gsacws', or this baseurl can have an acronym for identification of your agency, for example 'bouldergsac'.
-(The later parts of a GSAC URL  such as '/site/form' are created automtically GSAC code.)
+You can use 'gsacws', or this baseurl can have an acronym for identification of your agency, for example 'acrogsac'.
+(The later parts of a GSAC URL  such as 'gsacapi/site/form' are always part (of a site search) and you do not enter them anywhere while installing GSAC.)
 
 The items repository.name and repository.description are used as labels on the web site.
 
@@ -64,29 +62,38 @@ You optionally add this line showing the  maximum size allowed when zipping up f
 
     file.zip.maxsize=100000000
 
-    ######################################################################################
 
-    Connecting to the Database used by GSAC; the dbresources/gsacdb_test.properties file.
+########################################################################
+Connecting to the Database used by GSAC
+########################################################################
 
-You edit this file in your local code area, gsac/dbresources/gsacdb_test.properties, to hold the database account details
-to permit the GSAC web server process to read from your database.  The contents are like:
+Setting and Hiding DB account information: the "GSAC DB Properties" File.
 
-gsac.db.username=db-gsac-account-name
-gsac.db.password=db-gsac-account-password
-gsac.db.jdbcurl=jdbc:mysql://localhost:3306/Prototype_GSAC_Database?useUnicode=yes&characterEncoding=UTF-8
+You code the file, org/prototype/gsac/dbresources/gsacdb_test.properties, to hold the database account details,
+to permit the GSAC web server process to read from the geodesy database.  The contents are like:
 
-The database host (localhost), db port (3306), database user account name, and account password are all specified here.  
-You may need to use something other than "localhost" and "3306."
-"db-gsac-account-name" is a non-functional placeholder for your account for GSAC to read the database. 
-You must replace "db-gsac-account-name" and "db-gsac-account-password" in these two lines with a real database account name and password on your system.
-That database account need only have database read permission.  GSAC does not write to the database.
-When the GSAC code assembles the JDBC URL it finds the database account name and password from here.
-The database name is, in this example, Prototype_GSAC_Database. Use your own database's name.
+        ## This is the file dbresources/gsacdb_test.properties, which specifies the database used by GSAC, and the db account to use.
 
-The '?useUnicode=yes&characterEncoding=UTF-8' is part of GSAC code to allow use of the large UTF_8 character set, such as Icelandic characters.
-Do not chahge that.
+        gsac.db.username=db-gsac-username
+        gsac.db.password=db-gsac-password
 
-The Oracle and Postgres have different syntax for the 'jdbc' line in this file.  For postgres the form is 
+        gsac.db.jdbcurl=jdbc:mysql://localhost:8080/Boulder_GSAC_database_name?useUnicode=yes&characterEncoding=UTF-8
+
+        #gsac.db.jdbcurl=jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>
+
+        #gsac.db.jdbcurl=jdbc:postgresql://<hostname>/<database>
+        ##
+
+
+The database host (like localhost or boulderdev.mydomain.org), port (8080), account user name and account password are all given.  
+When the GSL assembles the JDBC URL it finds the user name and password from these.  
+The database must have an account GSAC can use to read from the database.  (GSAC does not write to any database.)
+
+One MySQL example which may work running both the db and GSAC locally on your computer, for testing, is 
+
+gsac.db.jdbcurl=jdbc:mysql://localhost:8080/your_database_name?useUnicode=yes&characterEncoding=UTF-8
+
+The Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  Also for Postgres the form is 
 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
@@ -94,46 +101,38 @@ One Oracle JDBC URL is of the form:
 
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
    e.g:
-=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:Prototype_GSAC_Database
-
-Copy the complete org/prototype/gsac/dbresources/gsacdb_test.properties to org/prototype/gsac/dbresources/gsacdb_production.properties.
-The two files with the same contents are a legacy from earlier GSAC code.
-
-Caution: if you have GSAC SourceForge write access: do not do 'svn add' or 'svn commit' this file, or your database account details will be public.
-
-Everytime you do "ant" to build your repository, the file 
-org/prototype/gsac/dbresources/gsacdb_test.properties 
-is copied to the file 
-org/prototype/gsac/resources/gsacdb.properties. 
+=jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
 
-The resources/gsac.properties file and the dbresources/gsacdb_test.properties files are the only "properties" files you need to edit to make a working GSAC.
+If you have GSAC SourceForge write access, do not do 'svn add' or 'svn commit' this file, or your database account details will become public.
 
-(The files dbresources/gsacdb_production.properties, resources/gsacserver_production.properties, resources/gsacserver.properties and 
- resources/gsacserver_test.properties are not used by GSAC now.)
+The file org/prototype/gsac/dbresources/gsacdb_production.properties is not used now. It can be empty.
 
-########################################################################
 
-Verify that the build.xml file has your basename.
+Everytime you do "ant" to build your repository, the file
+   myrepo/gsac/dbresources/gsacdb_test.properties
+is copied to the file
+   myrepo/gsac/resources/gsacdb.properties
+and also copied to
+   myrepo/gsac/resources/gsacserver.properties.
 
-Check that the file build.xml, in your location org/prototype/gsac, has these lines. 
-Note that the basename value should be lower case.
-
-    <target name="localinit">
-        <!-- base name for build products -->
-        <property name="basename" value="bouldergsac"/>
-
-You can use any basename you like; it can be the same as the resources/gsac.properties file value for gsac.baseurl.
-This target will be used by ant build process to make your GSAC server.  
-
-You have specified the basic information needed to run your full GSAC server.
+This can be a little confusing if you attempt to keep track of the several properties files.
 
 
 ########################################################################
 Initial compile of GSAC in your new GSAC code area
 ########################################################################
 
-Do the command 'ant' in org/prototype/gsac:
+Check that the file build.xml, in your location org/prototype/gsac has these lines. 
+Note that the value represented by 'prototypegsac' 
+
+    <target name="localinit">
+        <!-- base name for build products -->
+        <property name="basename" value="prototypegsac"/>
+
+No changes are needed here unless something went wrong.  This target will be used by ant build process to make your GSAC server.  
+
+Do the command 'ant' in org/prototype/gsac: 
 
 ant 
 
@@ -144,13 +143,13 @@ compile:
     [javac] Note: Some input files use unchecked or unsafe operations.
     [javac] Note: Recompile with -Xlint:unchecked for details.
 gsacjar:
-     [echo] Making jar /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0.jar
-     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0.jar
+     [echo] Making jar /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder1.0.jar
+     [jar] Building jar: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder1.0.jar
 and including
 war:
      [copy] Copying 1 file to /home/wier/gsac/sourceforge/gsac/gsac-code/dist
-   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo1.0/servlet-api.jar
-      [war] Building war: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacmyrepo.war
+   [delete] Deleting: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder1.0/servlet-api.jar
+      [war] Building war: /home/wier/gsac/sourceforge/gsac/gsac-code/dist/gsacboulder.war
      [echo] ********************************
      [echo] To run the server run:
      [echo] ant runserver
@@ -160,24 +159,28 @@ Total time: 8 seconds
 
 This 'ant' build will take about 5 to 10 seconds.
 
-The source Java (.java) files compiled are like these in org/prototype/gsac:
+The source Java (.java) files compiled are like these in org/prototype/gsac
 
--rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 MyrepoRepository.class
--rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 MyrepoFileManager.class
--rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 MyrepoServer.class
--rw-r--r-- 1 wier wier  3444 2013-03-04 10:13 MyrepoTest.class
--rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 MyrepoDatabaseManager.class
--rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 MyrepoSiteManager.class
+-rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 BoulderRepository.class
+-rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 BoulderFileManager.class
+-rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 BoulderServer.class
+-rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 BoulderDatabaseManager.class
+-rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 BoulderSiteManager.class
 
-This ant command builds GSAC for your repository, using code in org/prototype/gsac.  
+This ant command builds GSAC for your repository, using code in org/prototype/gsac
 
 It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If you change core GSAC code,
 as if you do an svn update to get new core code from SourceForge for GSAC,
-you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in org/prototype/gsac.
+you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in org/prototype/gsac
 
-Your ant build also creates a new Tomcat "war" file, something like gsacmyrepo.war, located in gsac-code/dist/, 
+Your ant build also creates a new Tomcat "war" file, named something like gsacboulder.war, located in gsac-code/dist/, 
 which will be used as the servlet (application) container for your public web site, if you use Tomcat. 
 
+If you happen to use two or more GSACs, doing 'ant' one for one removes the .class files for the others.  So you
+must do ant again for another GSAC to do ant runserver there, after doing ant in this GSAC area.
+
+Doing ant in the core GSAC code area also removes all local GSAC .class files
+so you must do ant here again.
 
 ########################################################################
 Automatic Code Generation for Java reading from the Database 
@@ -188,33 +191,19 @@ Now run this command in org/prototype/gsac:
 ant tables
 
 Output from the ant tables command includes lines  to the screen something like this:
-
 Buildfile: build.xml
 localinit:
 init:
 tables:
      [java] JVM args ignored when same JVM is used.
-     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
-     [java] JDBC:jdbc:mysql://localhost:3306/MYREPO_GSAC_db
-     [java] processing ACCESS_PERMISSION
-     [java] processing AGENCY
-     [java] processing ANTENNA_SESSION
-     [java] processing ANTENNA_TYPE
-     [java] processing COUNTRY
-     [java] processing FILE_TYPE
-     [java] processing GNSS_DATA_FILE
-     ...[more...
 BUILD SUCCESSFUL
 Total time: 2 seconds
-
-Each 'processing' line corresponds to a named table in your database.
 
 This makes a new Java file, org/prototype/gsac/Tables.java. This file defines Java 'Tables' classes
 with complete specifications for your GSAC database, using GSAC Java code.
 
-The package name in Tables.java (at or near line 3) should be edited to end with .database: 
+  The line with 'package' in Tables.java (at or near line 3) should be edited to end with .database: 
 package org.Prototype.gsac.database;
-
   not the supplied value:
 package org.Prototype.gsac;
 
@@ -242,7 +231,7 @@ and
 BUILD SUCCESSFUL
 Total time: 5 seconds
  
-This time ant compiles the six java files in org/prototype/gsac/, and compiles the new Java class file Tables.java in org/prototype/gsac/database/.
+This time ant compiles the six java files in org/prototype/gsac/, and also compiles the new Java class file Tables.java in org/prototype/gsac/database/.
 (You can check for some new Tables*.class files in org/prototype/gsac/database/.)  
 
 The Tables classes provide a link between your database and your GSAC code.  
@@ -267,12 +256,14 @@ ant runserver
 
 This command runs a gsacPrototype GSAC, on your local desktop where you are developing your GSAC.  
 
-Screen output of this ant command includes a line like
+Screen output of th ant command includes a line like
 
 GSAC INFO: Tue Aug 28 14:33:59 EDT 2013: GsacServlet: url:http://mycpuname:8080/gsacPrototype/gsacapi
+ or 
+     [java] Running stand-alone GSAC server at: http://localhost:8080/bouldergsac
 
 This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
-running ant runserver.  If you already use 8080 for another purpose, enter a different value in buuild.xml.  It is 
+running ant runserver.  If you already use 8080 for another purpose, enter a different value in build.xml.  It is 
 also in the gsacrepository.sh for when running stand-alone.
 
 In a browser on your desktop where you are developing your GSAC, look at that URL, like 
@@ -288,7 +279,6 @@ This shows that all the core GSAC code runs on your system.  You can look at the
 The 'Search' links won't do much yet.
 
 Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
-
 
 Stop the 'ant runserver' process with CTRL-c.  
 
@@ -350,68 +340,60 @@ offer online in GSAC.  New code is needed to adapt GSAC to your database and pos
 data repository.  Users may need to correspond with UNAVCO if they want to have a successful installation. GSAC support is available
 from UNAVCO at gsac-ws@unavco.org.
 
-Your files @MACRO.PREFIX@SiteManager.java and @MACRO.PREFIX@sFileManager.java 
-PrototypeSiteManager.java and PrototypesFileManager.java 
-(at least these files)  must implement database queries (about geodesy data files and stations)
-to your GSAC database, used by your GSAC web form searches and by the GSAC API.  
+Your files PrototypeSiteManager.java and PrototypesFileManager.java
+(at least these files) must implement database queries (about geodesy data files and stations)
+to your GSAC database, used by your GSAC web form searches and by the GSAC API.
 
-The initial or template files for these Java classes automatically created in your local GSAC area of course 
-lack any database details (since the Tables class you just made was unknown before.
+The initial or template files for these Java classes automatically created in your local GSAC area of course
+lack any database details (since the Tables class you just made was unknown).
 
 ########################################################################
  Using the Prototype GSAC db design
 ########################################################################
 
-If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes which probably will make a working GSAC installation wiht little Java coding.
+If you use the Prototype GSAC db design, the GSAC package now (Oct 25 2013) includes prototype Java files which will probably make a working GSAC installation with little Java coding.
 
-Since this *is* the Prototype package, this next has been done.
+Replace your new files PrototypeSiteManager.java and PrototypesFileManager.java with these two "Prototype" files,  from in your GSAC package:
 
-Replace your new files PrototypeSiteManager.java and PrototypesFileManager.java  
-
-with these two "Prototype" GSAC files:
-
-gsac-code/src/org/prototype/gsac/PrototypeFileManager.java
 gsac-code/src/org/prototype/gsac/PrototypeSiteManager.java
- 
-Change them to fit into your GSAC code by:
-- rename them both, replacing Prototype in the names with with your file name part someting like Myrepo.
-- in the files change all uses of Prototype in Java class and method names to ne your file name part someting like Myrepo.
+gsac-code/src/org/prototype/gsac/PrototypeFileManager.java
+
+Change them to fit into your GSAC code:
+- rename them both, replacing Prototype in the file names with with your file name part, something like Boulder.
+- in the files change all uses of Prototype in Java class and method names using your file name part to replace Boulder.
 - replace the lines
-package org.prototype.gsac; 
+package org.prototype.gsac;
 import  org.prototype.gsac.database.*;
-with 
-package org.myrep.gsac; 
+with
+package org.myrep.gsac;
 import  org.myrep.gsac.database.*;
-with whatever your short name is for myrep/
+using whatever your short name is, in place of myrep.
 
 Also see notes below about SiteManager.java and FileManager.java.
- 
+
 Then test your new GSAC, using the commands "ant" (to compile), and if that succeeds, do "ant runserver" to
 try your GSAC on your local development platform. (You can combine these two ant processes into one: "ant compile build" which only succeeds if there are
-no errors in the compile step.)  
+no errors in the compile step.)
 
 Stop ant runserver with CTRL-C.
 
-If the ant build has errors they will hopefully show where is the disconnect between your database (represented by Tables classes) and 
-your new PrototypeSiteManager.java and PrototypesFileManager.java files.
-
+If the ant build has errors they will hopefully show where is the disconnect between your database (represented by Tables classes) and
+your new  PrototypeSiteManager.java and PrototypesFileManager.java files, by naming variable names in the Java code (like COL_NETWORKS) not found in your Tables classes and java file.
 
 ########################################################################
- Using Other Databases 
+ Using Other Databases
 ########################################################################
 
-If you are using your own database schema, first compare its schema to the prototype GSAC database schema.  
-Then modify copies of the files PrototypeSiteManager.java and PrototypesFileManager.java 
+If you are using your own database schema, first compare its schema to the prototype GSAC database schema.
+Then modify copies of the files PrototypeSiteManager.java and PrototypesFileManager.java
 to get GSAC to work with your database. You will be changing, at least, database names of tables and fields: see the Java file Tables.java you made.
 Probably you will rewrite the SQL queries, and how query results are habdled for GSAC use. This will be the most demanding part of GSAC installation.
 
-
 ########################################################################
-
 
 The file PrototypeRepository.java 
 
-The Repository class is the main entry point. 
+The PrototypeRepository class is the main entry point. 
 
 Above the import lines, be sure there is correct new Java package name, something like this:
 
@@ -490,50 +472,38 @@ class to do this.
 
 
 ########################################################################
-Web Site Page Design, Contents, and Images 
+Web Site Page Contents, Header, Footer, and Images 
 ########################################################################
 
 Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
-You can add more to this file for a larger page, using normal HTML.
+You can add more to this file for a larger page, using normal HTML.  You can also create HTML code for a header and a footer 
+which will be used at the top and bottom of all the web pages in your GSAC site.
 
-The home page of a GSAC repository web site is detailed in a file such as src/org/Prototype/htdocs/index.html
+The contents of a home page of a GSAC repository web site is contained in an index.html file.
 In your GSAC code area, use mkdir htdocs to create htdocs/ in Prototype/gsac/ (src/org/Prototype/gsac/htdocs/).
-In Prototype/gsac/htdocs make a new HTML file index.html. A very simple but working one has these lines:
+Into Prototype/gsac/htdocs copy the template file index.html from src/org/prototype/gsac/htdocs/index.html.
 
-    <link rel="search" type="application/opensearchdescription+xml" href="htdocs/opensearch.xml" 
-    title=" Prototype GSAC Repository" />
-    This is the Prototype GPS Repository
+Into Prototype/gsac/htdocs also copy from src/org/prototype/gsac/htdocs/ the files GSAC_logo2.jpg, GSAC_logo2_short.jpg, and GSAC_logo2_small.jpg.
 
-Put image files used on the web main page  in the directory htdocs.
-
-In your index.html file, an image is added like <img  src="${htdocs}/network_map.jpg" >
-
-If that does not work, try <img src="gsacmyrepo/gsacapi/htdocs/network_map.jpg"> with the correct myrepo part.
-
-As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
-
-Note that these pages do not have complete <html>  lines (including <html> and more at the beginning, or the final </html>), since these pages
+Edit your htdocs/index.html file to create your GSAC home page contents.  Put image files used on the web main page  in the directory htdocs.
+Note that the index page does  not have a complete set of HTML lines, found on a typical web page, 
+including <html> and more at the beginning, or the final </html>, since the index contents
 are wrapped inside the GSAC header and footer HTML files, mentioned next.
+
+In the index.html file, add images with HTML like
+<img src="Prototype/gsacapi/htdocs/COCONet_stations_map.png">
+As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
 
 The files footer.html and header.html, in the directory org/prototype/gsac/resources/, specify the top and bottom of the 
 GSAC web pages at your locations, and provide web page layout and decoration surrounding  the GSAC forms and results. 
-These files may be as simple as
+Copy the template files src/org/prototype/gsac/resources/header.html and src/org/prototype/gsac/resources/footer.html to your Prototype/gsac/resources.
+These files may be as simple, or fully developed, such as using css. To include an image in the header and footer html files
+use <img  src="${htdocs}/home-page-header_1.jpg" > .     All web page image files are in your htdocs/.
+Include an email address for Contact or Support in your header or footer.  If persons using your GSAC have
+questions, they need an easy way to reach you.  This will help your GSAC service be responsive, and not frustrating.
 
- header.html:
-	<html>
-	<head>
-	<title>New Repos GSAC Repository</title>
-	</head>
-	<body>
-
-or fully developed, such as using css. To include an image use <img  src="${htdocs}/home-page-header_1.jpg" > 
-Image files are in Prototype/gsac/htdocs/.
-
-Change the files resources/header.html and resources/footer.html to give the HTML appearance for the header and footer
-for your GSAC web site pages.  You may use these files to supply your standard web site look to your GSAC repository web site.
-
-The GSAC search web forms (web page content), and pages with static GSCA information such as the GSAC Help pages,
-are complete and provided by GSAC installation. They  use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
+The GSAC web pages with search forms, and pages with static GSAC information such as the GSAC Help pages,
+are complete and provided by GSAC installation. They also use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
 with Java programming in the core GSAC code, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
 other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
 
@@ -548,18 +518,29 @@ and then the Output: menu.
 
 GSAC now offers results in these formats:
 
-HTML                    output=site.html (for the GSAC web pages of results)
-XML Site Log (SOPAC)    output=site.xmllog
-SINEX                   output=site.snx
-GAMIT station.info      output=site.station.info
-GSAC Plain text         output=site.plaintext
-GSAC Full Site CSV      output=site.csv.full
-GSAC Short Site CSV     output=site.csv
-GSAC Site ATOM          output=site.gsacatom
-GSAC Site JSON          output=site.json
-GSAC Site RSS           output=site.gsacrss
-Google Earth KML        output=site.kml
-Google Earth KMZ        output=site.kmz
+Site Outputs
+HTML    output=site.html
+SINEX sites info    output=site.snx
+GAMIT station.info  output=site.station.info
+Google Earth KMZ    output=site.kmz
+SOPAC XML Site Log  output=site.xmllog
+GSAC Sites info, JSON   output=site.json
+GSAC Sites info, short csv  output=site.csv
+GSAC Sites info, full csv   output=sitefull.csv
+GSAC Sites info, Ops XML    output=siteops.xml
+GSAC Sites info, RSS    output=site.gsacrss
+GSAC Sites info, text   output=site.plaintext
+
+File Outputs
+File HTML   output=file.html
+Wget Script for FTP download    output=file.wget
+File URLs list  output=file.url
+File CSV    output=file.csv
+Download Files via Webstart output=file.download
+File JSON   output=file.json
+Zip Files   output=file.zip
+File GSAC RSS   output=file.gsacrss
+File GSAC XML   output=file.gsacxml
 
 (The terms output=... are the result format arguments in GSAC API queries.)
 
@@ -573,7 +554,7 @@ you need do nothing about output format choices. Go to the next topic.
 
 The choices of what to show in GSAC are set in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
 
-You may very easily NOT offer some formats, if you don't want to offer them.  Comment out lines for handlers, in gsac/gsl/SiteManager.java,  NOT wanted your GSAC-WS repository.
+You may very easily NOT offer some formats, if you don't want to offer them.  Comment out lines for handlers, in gsac/gsl/SiteManager.java,  NOT wanted your GSAC  repository.
 For example if you do not want to provide the GSAC "Short csv" format, comment out (put // before) 
 new TextSiteLogOutputHandler(getRepository(), getResourceClass()) in the file gsac-code/src/org/gsac/gsl/SiteManager.java. 
 
@@ -605,7 +586,9 @@ Dealing with Elevation and Ellipsoid Height
 GSAC code assumes station height values are ellipsoid heights above a geoid model surface, 
 the heights for locations in terrestrial reference frames, including GNSS positions.
 
-If your location values have elevations instread of ellipsoid heights, you can change these lines in these files in core GSAC code to 
+Usually you need do nothing to GSAC about "elevations" to handle your geodesy data.
+
+If your location values are true elevations instead of ellipsoid heights above a geodi model, you can change these lines in these files in core GSAC code to 
 change output labels with "ellipsoid height" to "elevation":
 
 Look for lines in the files with "// About ellipsoidal height:"
@@ -618,7 +601,7 @@ gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
 gsl/output/site/SinexSiteOutputHandler.java:        // About ellipsoidal height:
 gsl/output/site/XmlSiteLogOutputHandler.java:        // About ellipsoidal height:
 
-Then rebuild core GSAC with command ant in gsac-code/, and rebuild your GSAC instance with ant in your myrepo/gsac/ file area.
+Then rebuild core GSAC with command ant in gsac-code/, and rebuild your GSAC instance with ant in your boulder/gsac/ file area.
 
 Note that the geodesy formats SINEX, GAMIT station.info, and SOPAC XML Site Log do not have a choice of two labels to 
 distinguish ellipsoid height from elevation. In those cases you may need to force zero for ellipsoid heights if you lack that data.
@@ -646,9 +629,9 @@ This will run a test or demo version of your GSAC on your desktop, with Jetty do
 
 To see the new GSAC, in the runserver screen output is a line such as
 
-     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacmyrepo/gsacapi
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/gsacboulder/gsacapi
 
-Enter the "http:/hostname:8080/gsacmyrepo/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
+Enter the "http:/hostname:8080/gsacboulder/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
 
 The display is handled by Jetty.
 
@@ -659,13 +642,13 @@ Hiding DB account info
 
 If you have some database authentication you need to use (or any other properties), 
 but don't want to check in with the properties files (into SourceForge or other svn), 
-you can create a org/Prototype/prototype_gsac.properties file. The contents are two lines:
+you can create a org/Prototype/mygsac.properties file. The contents are two lines:
 gsac.db.username=your-db-account-name
 gsac.db.password=your-db-account-password
 
 The ant runserver command implicitly uses this property file as a command line argument.
 When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
-So, for example, for a 'gsacmyrepo' server,  it looks for a gsacmyrepo.properties file. 
+So, for example, for a 'gsacboulder' server,  it looks for a gsacboulder.properties file. 
 Put the authentication information in that properties file so it's not checked into any svn.
 
 
@@ -700,13 +683,6 @@ to restart tomcat  and force a read of the .war files.
 The Tomcat's servlet reads the properties file:
 /usr/local/apachetomcatdev/conf/gsacigs.properties
 which contains the database authentication info. This is in the .war file.
-
-
-########################################################################
-Installing a Federated GSAC
-########################################################################
-
-To be supplied...
 
 ########################################################################
 ########################################################################
