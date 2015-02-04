@@ -29,9 +29,12 @@
 
     <target name="localinit">
         <!-- base name for build products -->
-        <property name="basename" value="prototype_gsac"/>
+        <property name="basename" value="prototype_gsac"/> 
 
         <!-- Where the main source dir is at (relative to the top level src dir) -->
+        <!-- <property name="repository_relative_dir" value="org/prototype/gsac"/>
+        <property name="repositorypackage" value="org.prototype.gsac"/>
+        -->
         <property name="repository_relative_dir" value="org/prototype/gsac"/>
         <property name="repositorypackage" value="org.prototype.gsac"/>
 
@@ -94,7 +97,7 @@
     </target>
 
 
-    <target name="build" depends="init,clean">
+    <target name="build" depends="init,clean"> 
         <echo message="Creating ${build} build"/>
         <!-- Uncomment this line if you want to build the gsacws.jar everytime 
         <ant antfile="${srcdir}/org/gsac/gsl/build.xml" target="gsacjar"/>
