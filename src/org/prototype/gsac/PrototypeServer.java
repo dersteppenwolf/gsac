@@ -18,7 +18,9 @@
  *   
  */
 
+/* CHANGEME - in the next  line, use the correct name of package, replacing 'prototype': */
 package org.prototype.gsac;
+
 
 import org.gsac.gsl.*;
 
@@ -56,7 +58,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 /* 
  * Java 1.6 
  * Uncomment these lines to build a Prototype GSAC with Java 1.6
-
 import org.mortbay.jetty.*;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
