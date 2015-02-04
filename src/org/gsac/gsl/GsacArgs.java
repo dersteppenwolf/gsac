@@ -261,6 +261,10 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_FILE_TYPE = ARG_FILE_PREFIX + "type";
 
+    public static final String ARG_FILE_FORMAT = ARG_FILE_PREFIX + "format";
+
+    public static final String ARG_FILE_TRF = ARG_FILE_PREFIX + "trf";
+
 
     /** _more_ */
     public static final String ARG_REPOSITORY = "gsac.repository";

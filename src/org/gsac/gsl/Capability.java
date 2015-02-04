@@ -112,7 +112,6 @@ public class Capability {
     /** _more_  new 15 Oct 2103 */
     public static final String TYPE_FILETYPE = "file.type";
 
-
     /** _more_ */
     public static final String TYPE_NUMBERRANGE = "number_range";
 
@@ -121,6 +120,10 @@ public class Capability {
 
     /** _more_ */
     public static final String TYPE_LABEL = "label";
+
+    /** _more_  new 4 feb 2105 */
+    public static final String TYPE_FILE_FORMAT = "file.format";
+    public static final String TYPE_TRF         = "file.trf";
 
 
     /** The vocabulary used. May be null */
