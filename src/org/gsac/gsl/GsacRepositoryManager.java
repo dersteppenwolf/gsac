@@ -28,30 +28,21 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 import org.gsac.gsl.util.*;
 
-//import org.ramadda.sql.Clause;
-//import org.ramadda.sql.SqlUtil;
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import ucar.unidata.util.HtmlUtil;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
-
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.InputStream;
-
 import java.net.URL;
 import java.net.URLConnection;
-
-
-
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
