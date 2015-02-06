@@ -18,11 +18,10 @@
  *   
  */
 
-/* CHANGEME - in the next 2 lines, use the correct name of package, replacing 'prototype': */
+/* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
 package org.prototype.gsac;
 
 import  org.prototype.gsac.database.*;
-
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
@@ -30,12 +29,10 @@ import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.*;
 import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
-
-import ucar.unidata.util.Misc;
-
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
 
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
@@ -52,18 +49,32 @@ import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
 
+
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  *
- * The SIteManager for the Prototype "local GSAC code".
+ * This subclass of SiteManager creates and handles all of the site related repository requests. 
  *
- * NOTE this version of 4 Feb 2015 is INCOMPLETE; commented-out code may need to be revised to work with with new (Jan 2015) "Prototype 15 " GSAC database.
- * This code does work to a limited extent but lacks many common GSAC queries.
+ * The FileManager for the GSAC Prototype example local code set.
+ *
+ * This version is incomplete but functional, with limited queries. For full functionality. code commented-out will need to be revised to use the new Protptype15 GSAC database.
+ *
+ * You may use this with the Prototype 15 GSAC database to implement your GSAC.
+ * Or, if you use another database, you may uses thise code as a guide to writing Java for GSAC to read your GSAC and ito create and handle site metadata queries.
+ * Form example, use this as a guide to import Java libraries, and a guide to GSAC classes and methods.
  * 
+ * Note that you may retain the file names "Prototype...java" for any GSAC local code set.
+ *
+ * For a the local GSAC code set for the Prototype GSAC installation, this class is the code to handle site searches, based on the database read by GSAC about data holdings.
+ * 
+ * A GSAC SiteManager class composes what siterelated items are provided for SEARCHES for site in the API and web site.
+ * A GSAC SiteManager class composes what items are provided returned in the RESULTS when a site search finds something.
+ *
+ * This code uses a Prototype15 GSAC database. 
  *
  * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
  *
- * This class is one major part of making a new local GSAC; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
+ * This class is one major part of making a new local GSAC code set; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
  *
  * - what metadata may be queried on, that is used for searches or selections, in this GSAC repository (see method doGetQueryCapabilities below)
  *   either by the web page forms or via the API URL arguments, 
@@ -77,7 +88,7 @@ import java.text.DateFormat;
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * @author  S K Wier, 2 Feb 2015
+ * @author  S K Wier, 2013; 2104; Jan. 29 2015. 
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -122,7 +133,7 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * LOOK - this method appears to be called twice at server start-up.
      *
-     * CHANGEME if you have other things to search on, or different db table or field names for the items to search on.
+     * CHANGE if you have other things to search on, or different db table or field names for the items to search on.
      *
      * @return site search capabilities
      */
@@ -143,13 +154,14 @@ public class PrototypeSiteManager extends SiteManager {
             siteCode.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteCode);
 
-            /* search with site full name or partial name   NO site names at UNR
+            /* search with site name
             help="Full name of the site, such as Marshall, or part or name plus wildcard(*) such as Mar*";
             Capability siteName =
                 initCapability(     new Capability(ARG_SITE_NAME, "Site Name",             Capability.TYPE_STRING), 
                        CAPABILITY_GROUP_SITE_QUERY, "Name of the site",                    "Name of site.   " + help);
             capabilities.add(siteName);
             */
+
             //siteName.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
 
             // site search for latitude-longitude bounding box; 4 boxes; not in browse service
@@ -157,7 +169,7 @@ public class PrototypeSiteManager extends SiteManager {
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
 
-            // LOOK NOTE for UNR: use this if only have at least a starting date value for each site in the database. 
+            // LOOK NOTE ONLY use this if have at least a starting date value for each site in the database. 
             // site search by "Data Date Range" pair of boxes;
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
@@ -666,7 +678,7 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * CHANGEME set query order.  This string is SQL.
+     * Set query order.  This string is SQL.
      *   Set this to what you want to sort on   ; station 4 char ID, ASC means ascending ie from A to Z top to bottom.         
      */
     private static final String SITE_ORDER = " ORDER BY  " + Tables.STATION.COL_FOUR_CHAR_NAME + " ASC ";
@@ -714,18 +726,20 @@ public class PrototypeSiteManager extends SiteManager {
         // "results" is from sql select query on 'station' table in the database.
         // access values by name of field in database row: 
 
-        String    staname  =                  results.getString(Tables.STATION.COL_STATION_NAME);
-        // for UNR there are no names; hence null.
+        String staname  = results.getString(Tables.STATION.COL_STATION_NAME);
         // to fix bad java-jdbc reading of names in Icelandic or other non-latin characters which are correct in the mysql db:
         if (null!=staname) {
                  staname       =   new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
         }
         String fourCharId    =  results.getString(Tables.STATION.COL_FOUR_CHAR_NAME);  
-        //System.err.println("GSAC: SiteManager: site search found station " +fourCharId);
+        // debug System.err.println("GSAC: SiteManager: site search found station " +fourCharId);
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPSOID);
          
+        String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
+        String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
+
     /*
         String     city        =     results.getString(Tables.STATION.COL_CITY);
         if (null!= city) {
@@ -736,13 +750,11 @@ public class PrototypeSiteManager extends SiteManager {
                     networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
         }
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
-        String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         int station_style_id = results.getInt(Tables.STATION.COL_STATION_STYLE_ID);
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
-        String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_IMAGE_URL);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
         String station_status_id    = results.getString(Tables.STATION.COL_STATION_STATUS_ID);             // may be null; is String of an int
         if (1== access_permission_id ) {
@@ -760,9 +772,33 @@ public class PrototypeSiteManager extends SiteManager {
 
         // Set additional values in the site object:
 
+        // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
+        MetadataGroup imagesGroup = null;
+        // for an image file of a time series solution at this site
+        if (ts_image_URL!=null )    {
+            if (imagesGroup == null) {
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
+            }
+            if (ts_image_URL.length()>8 ) { 
+                // add a valid image URL of a time series data plot to the images group:
+                imagesGroup.add( new ImageMetadata(ts_image_URL, "Position Timeseries"));
+            }
+        }
+
+
 /*
 
-        NONE of this information is to be had at UNR:
+
+        // a photograph of the site
+        if ( station_photo_URL != null  )    {
+            if (imagesGroup == null) {
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
+            }
+            if ( station_photo_URL != null ) {
+                // add  site photo image to the group:
+                imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+            }
+        }
 
         // handle search on date range:
         Date fromDate=readDate(results,  Tables.STATION.COL_STATION_INSTALLED_DATE);
@@ -877,50 +913,12 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
 
-        // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
-        MetadataGroup imagesGroup = null;
-
-        if ( station_photo_URL != null  )    {
-            if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
-            }
-            if ( station_photo_URL != null ) {
-                // add  site photo image to the group:
-                imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
-            }
-        }
-        if (ts_image_URL!=null )    {
-            if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
-            }
-            if (ts_image_URL.length()>8 ) { 
-                // add a valid image URL of a time series data plot to the images group:
-                imagesGroup.add( new ImageMetadata(ts_image_URL, "Position Timeseries"));
-            }
-        }
-
         //  set site "Type" aka site.type corresponding to "station style" in the database
         // Not clear where or how this is used by GSAC code.
         // CHANGEME if you alter the GSAC prototype db schema.
         // hard coded, using values in the GSAC prototype db:
         //
 
-        select * from station_style;
-        +------------------+---------------------+
-        | station_style_id | station_style_name  |
-        +------------------+---------------------+
-        |                1 | GPS/GNSS Campaign   |
-        |                2 | GPS/GNSS Continuous |
-        |                3 | GPS/GNSS Mobile     |
-        |                4 | DORIS               |
-        |                5 | Seismic             |
-        |                6 | SLR                 |
-        |                7 | Strainmeter         |
-        |                8 | Tiltmeter           |
-        |                9 | VLBI                |
-        |               10 | GPS/GNSS Episodic   |
-        |               11 | Tide Gauge          |
-        +------------------+---------------------+
         
         if (1 == station_style_id ) {
            site.setType(new ResourceType("gnss.site.campaign"));
@@ -1000,7 +998,7 @@ public class PrototypeSiteManager extends SiteManager {
     public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {
         readIdentificationMetadata(gsacResource);
-        // UNR has no such data as from readEquipmentMetadata(gsacResource);
+        //  readEquipmentMetadata(gsacResource);
     }
 
     /**
@@ -1120,7 +1118,6 @@ public class PrototypeSiteManager extends SiteManager {
 
  /*
 
-NOT USED by UNR; have no such information:
 
         int station_sess_id=0;
         int receiverid=0;
@@ -1804,8 +1801,6 @@ NOT USED by UNR; have no such information:
      * Get (all?) the sites' networks. This gets called by the SiteManager.getDefaultCapabilities (base class, not here)
      * Used in query for the station's networks. 'group' is GSAC jargon for gnss networks, sometimes.
      *
-     * Not used for UNR since there is no network information for the sites
-     *
      *
      * @return site group list
      */
@@ -1851,7 +1846,6 @@ NOT USED by UNR; have no such information:
      * Utility that takes a list of network ids and makes the search clauses for them.
      *  Used in query for the station's networks. 'group' is GSAC jargon for gnss networks, sometimes.
      *
-     * Not used for UNR since there is no network information for the sites
      *
      * @param groupIds List of group ids
      * @param msgBuff Search criteria buffer

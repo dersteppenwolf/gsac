@@ -18,16 +18,14 @@
  * 
  */
 
-/* CHANGEME - in the next 2 lines, use the correct name of package, replacing 'prototype': */
+/* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
 package org.prototype.gsac;
-
 import  org.prototype.gsac.database.*;
 
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
-
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
 
@@ -46,22 +44,27 @@ import java.util.Calendar;
 
 
 /**
- * Handles all of the resource related repository requests. The main entry point is {@link #handleRequest}
+ * This subclass of FileManager creates and handles all of the data file related repository requests. The main entry point is     {@link #handleRequest}
  *
- * The FileManager for the Prototype "local GSAC code".
+ * The FileManager the GSAC Prototype example local code set.
  *
- * NOTE this version of 4 feb 2015 is INCOMPLETE; commented-out code may need to be revised to work with with new (Jan 2015) "Prototype 15 " GSAC database.
- * This code does work to a limited extent but lacks many common GSAC queries.
+ * This version is incomplete but functional, with limited queries. For full functionality. code commented-out will need to be revised to use the new Protptype15 GSAC database.
+ *
+ * You may use this with the Prototype 15 GSAC database to implement your GSAC.
+ * Or, if you use another database, you may uses thise code as a guide to writing Java for GSAC to read your GSAC and ito create and handle file metadata queries.
+ * Form example, use this as a guide to import Java libraries, and a guide to GSAC classes and methods.
  * 
- * For a particular GSAC, code to handle data file searches and download information, based on the database read by GSAC about data holdings.
+ * Note that you may retain the file names "Prototype...java" for any GSAC local code set.
+ *
+ * For a the local GSAC code set for the Prototype GSAC installation, this class is the code to handle data file searches, based on the database read by GSAC about data holdings.
  * 
  * A GSAC FileManager class composes what file-related items are provided for SEARCHES for files in the API and web site.
  * A GSAC FileManager class composes what items are provided returned in the RESULTS when a search finds something.
  *
- * This FileManager.java uses the prototype15 GSAC db 
+ * This FileManager.java uses a Prototype15 GSAC database. 
  *
  * @author  Jeff McWhirter 2011. A minimal function template file (made from gsac/fsl/template/Filemanager.java) without any code for any database variables.
- * @author  S K Wier  3 Feb 2015.
+ * @author  S K Wier  Jan. 30, 2015.
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -83,24 +86,20 @@ public class PrototypeFileManager extends FileManager {
      *
      *  In GSAC, "Capabilities" are things to search (query) on. 
      *
-     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
+     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as data types and data file formats.
      *
      * @return  List of GSAC "Capabilities"  objects
      */
     public List<Capability> doGetQueryCapabilities() {
 
-        // addDefaultCapabilities(capabilities); // why not used here?
-
         try {
 
         List<Capability> capabilities = new ArrayList<Capability>();
-        Capability   cap;
         String [] values; 
 
-        // Find the types of parameters in files in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE))" -- below in another method.)
-        // IF the files do list a data_type. which is not required by GSAC.
-        // Note this code has to read ALL the file entries in the database, table datafile.
-        // Note this only occurs when GSAC is started.  if you add new data types to your database, restart GSAC.
+        // Find the types of parameters in files  in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE))" -- below in another method.)
+        // Note this code has to read ALL the file entries in the database.
+        // (originally, code here found *all* the possible file type names in the database file_type table, many types not in most data centers; which is merely misleading)
         int gpsfcnt=0;
         ResultSet results;
         ArrayList<String> avalues = new ArrayList<String>();
@@ -116,11 +115,10 @@ public class PrototypeFileManager extends FileManager {
         Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           System.err.println("GSAC:  Have queried all the data files in the database for types of parameters (data types)." ) ;
+           System.err.println("GSAC: queried db datafiles table for all data file data types (parameter types)" ) ;
            // process each line in results of db query  
            while ((results = iter.getNext()) != null) {
                String ftype= results.getString(Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
-               gpsfcnt +=1;
                // save distinct values
                int notfound=1;
                for (int vi= 0; vi<avalues.size(); vi+=1 ) {
@@ -131,38 +129,131 @@ public class PrototypeFileManager extends FileManager {
                    }
                    if (notfound==1) {
                          avalues.add(ftype);
-                         //System.err.println("  this data center has GNSS data files of type '" + ftype +"'" ) ;
+                         gpsfcnt +=1;
+                         //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
                    }
                }
         } finally {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
-        System.err.println("GSAC:   there are data files in the database which list "+gpsfcnt+" types of parameters (data types)." ) ;
         String[] itemArray = new String[avalues.size()];
         values = avalues.toArray(itemArray);
         // sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
+        System.err.println("GSAC: there are "+gpsfcnt+" data file data types (parameter types). Restart GSAC when files with new data types are added to the database." ) ;
+
+
+        // Find the datafile_formats of files  in this data archive. Note this code has to read ALL the file entries in the database.
+        gpsfcnt=0;
+        results =null;
+        avalues = new ArrayList<String>();
+        clauses = new ArrayList<Clause>();
+        //  WHERE 
+        clauses.add(Clause.join(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID));
+        //  SELECT what column values to find
+        cols=SqlUtil.comma(new String[]{Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME});
+        //  FROM   
+        tables = new ArrayList<String>();
+        tables.add(Tables.DATAFILE.NAME);
+        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        try {
+           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+           System.err.println("GSAC: queried db datafiles table for all data file formats" ) ;
+           // process each line in results of db query  
+           while ((results = iter.getNext()) != null) {
+               String ftype= results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               // save distinct values
+               int notfound=1;
+               for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                  if ( avalues.get(vi).equals(ftype) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(ftype);
+                         gpsfcnt +=1;
+                         //System.err.println("  this data center has data files with format '" + ftype +"'" ) ;
+                   }
+               }
+        } finally {
+           getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+        //System.err.println("GSAC: there are "+gpsfcnt+" data file formats." ) ;
+        itemArray = new String[avalues.size()];
+        String [] formatvalues; 
+        formatvalues = avalues.toArray(itemArray);
+        // sort by alphabet: 
+        //Arrays.sort(formatvalues); // or can just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
+        System.err.println("GSAC: there are "+gpsfcnt+" data file formats. Restart GSAC when files with new file formats are added to the database." ) ;
+
+        // Find the data's TRFs this data archive table data_reference_frame. Note this code has to read ALL the datafile rows in the database.
+        gpsfcnt=0;
+        results =null;
+        avalues = new ArrayList<String>();
+        clauses = new ArrayList<Clause>();
+        clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID));
+        cols=SqlUtil.comma(new String[]{Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME});
+        tables = new ArrayList<String>();
+        tables.add(Tables.DATAFILE.NAME);
+        tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
+        statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        try {
+           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+           System.err.println("GSAC: queried db datafile-s table for all data TRFs" ) ;
+           while ((results = iter.getNext()) != null) {
+               String ftype= results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
+               int notfound=1;
+               for (int vi= 0; vi<avalues.size(); vi+=1 ) {
+                  if ( avalues.get(vi).equals(ftype) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         avalues.add(ftype);
+                         gpsfcnt +=1;
+                         //System.err.println("  this data center has data files with TRF '" + ftype +"'" ) ;
+                   }
+               }
+        } finally {
+           getDatabaseManager().closeAndReleaseConnection(statement);
+        }
+        itemArray = new String[avalues.size()];
+        String [] trfvalues; 
+        trfvalues = avalues.toArray(itemArray);
+        // sort by alphabet: 
+        //Arrays.sort(trfvalues); // or can just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
+        System.err.println("GSAC: there are "+gpsfcnt+" TRFs.  Restart GSAC when files with new data TRFs are added to the database." ) ;
+
 
         // the following search choices do not need or have any pre-defined values or enumerated lists of allowed choices:
         Capability[] dflt = { 
 
-              // parms like "ARG_FILE_..." are declared in core code GsacArgs.java.
+              // variables like "ARG_FILE_..." are declared in core code GsacArgs.java.
 
+              // create query in web site and in the API for Data Date Range
               initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",         Capability.TYPE_DATERANGE), "File Query", "Date the data was collected"),
 
-              // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
-              // no complete publish date for UNR produtcs
-              //initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+              // create query in web site and in the API for Data type
+              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",  values, true, Capability.TYPE_FILETYPE ),    "File Query", "Data parameter type" ),
 
-              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data (parameter) Type", values, true, Capability.TYPE_FILETYPE ), "File Query", "Data file type" ),
+              // create query in web site and in the API for data file format
+              initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
+
+              // create query in web site and in the API for data's reference frame
+              initCapability(new Capability(GsacArgs.ARG_FILE_TRF,     "Reference Frame", trfvalues, true, Capability.TYPE_TRF ), "File Query", "Data TRF" ),
+
+              // search on "Publish Date":this is the date when a repository made a file available for download online *most recently*.  This is used to look for changed / revised/ corrected files.
+              //initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
 
               // Note, for a case using Capability.TYPE_NUMBERRANGE, as for FILESIZE, 
               // the special parm name, ARG_FILE_SAMPLEINT, declared in GsacArgs.java, must have two more related corresponding parm names there with magic name extensions .max and .min
-              // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not real numbers.  FIX this code to allow fraction of seconds:
+              // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not float numbers.  FIX this code to allow fraction of seconds:
               //initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval") 
 
-              // LOOK could also search on revision_time in gsac prototype database
-
-              // Could also search on file size.  Not now regarded as useful. Nov. 2013.
+              // to search data files based on file size.  Not now regarded as useful. Nov. 2013.  File sizes are always listed (if available) on the web page, so the user can see them,
+              // Capability cap;
               //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
               // can use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
         };
@@ -172,7 +263,7 @@ public class PrototypeFileManager extends FileManager {
         }
 
         // Also add all the station-related search choices into the file search web page form, so you can select files from particular sites
-        // (gets choices from the related SiteManager class)
+        // (add the choices from the related SiteManager class, to this File search HTML page.)
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
@@ -308,7 +399,7 @@ public class PrototypeFileManager extends FileManager {
              //Tables.DATAFILE.COL_SAMPLE_INTERVAL, 
              Tables.DATAFILE.COL_DATAFILE_START_TIME,
              Tables.DATAFILE.COL_DATAFILE_STOP_TIME,
-             //Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE,
+             Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE,
              //Tables.DATAFILE.COL_FILE_SIZE,
              //Tables.DATAFILE.COL_FILE_MD5,
              Tables.DATAFILE.COL_URL_COMPLETE,
@@ -362,15 +453,16 @@ public class PrototypeFileManager extends FileManager {
 
                String start_time  = results.getString(Tables.DATAFILE.COL_DATAFILE_START_TIME);
                String stop_time  = results.getString (Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
-               //String pub_time  = results.getString  (Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE) ;
 
                // make sure they are in format "yyyy-MM-dd HH:mm:ss" - LOOK may need more code here
                start_time= start_time.substring(0,19);
                stop_time= stop_time.substring(0,19);
                Date data_start_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start_time);
                Date data_stop_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time);
-               //pub_time = pub_time.substring(0,19);
-               //Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
+
+               String pub_time  = results.getString  (Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE) ;
+               pub_time = pub_time.substring(0,19);
+               Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
 
                //String file_md5 = results.getString (Tables.DATAFILE.COL_FILE_MD5);
                //long file_size= results.getInt      (Tables.DATAFILE.COL_FILE_SIZE);
@@ -395,7 +487,7 @@ public class PrototypeFileManager extends FileManager {
                String file_type_name = results.getString (Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
 
                String sample_interval = "0.0"; 
-               /* no data for UNR:
+               /* 
                if (null == sample_interval) {
                   //System.err.println("  file sample interval is null");
                   sample_interval = results.getString (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
@@ -463,8 +555,7 @@ public class PrototypeFileManager extends FileManager {
                //int count = (request.getParameter("counter") == null) ? 0 : Integer.parseInt(request.getParameter("counter"));
 
                // generic: ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
-               // for UNR:
-               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy derived product");
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , "geoscience data");
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
@@ -479,12 +570,10 @@ public class PrototypeFileManager extends FileManager {
                float sampint = Float.parseFloat(sample_interval);
                fileinfo.setSampleInterval(sampint);
                */
-               // for UNR:
                FileInfo fileinfo = new FileInfo(file_url);
                //fileinfo.setMd5("NA");
                //fileinfo.setFileSize(0);
                //fileinfo.setSampleInterval(0.0);
-               Date published_date=null;
 
                // make and populate a GsacFile object for this file, used by other parts of GSAC for output handling.
                GsacFile gsacFile = new GsacFile(siteID, fileinfo,                                   null, published_date,  data_start_time, data_stop_time, rt);
@@ -555,10 +644,11 @@ public class PrototypeFileManager extends FileManager {
                // LOOK the following are perhaps somewhat defective because java.sql.Date objects "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
                Date data_start_time  = results.getDate(Tables.DATAFILE.COL_DATAFILE_START_TIME);
                Date data_stop_time  = results.getDate(Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
-               //Date published_date  = results.getDate(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE);
-               Date published_date  = null; // for UNR
+               Date published_date  = results.getDate(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE);
+               //Date published_date  = null; // use this line if you have no pub date
 
-               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy derived product");
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , "geoscience data");
+
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }

@@ -18,20 +18,20 @@
  *   
  */
 
-/* CHANGEME - in the next  line, use the correct name of package, replacing 'prototype': */
+/* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
 package org.prototype.gsac;
 
+import  org.prototype.gsac.database.*;
 
 import org.gsac.gsl.*;
-
 import java.io.*;
 import java.util.Locale;
 import java.util.Hashtable;
 import java.util.Properties;
 
 /*
- * 29 Jan 2015: merged version for either Java 1.6 or Java 1.7 GSAC build.
- * Look for " Java " here, and un-comment the lines for the Java version you use.
+ * CHANGE: 29 Jan 2015: merged GSAC java file version for either Java 1.6 or Java 1.7 GSAC build.
+ * Look for " Java " here, in the next 40 lines, and un-comment the lines for the Java version you use.
 */ 
 
 import javax.servlet.*;
