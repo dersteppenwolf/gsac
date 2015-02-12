@@ -18,10 +18,12 @@
  *   
  */
 
-/* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
 package org.prototype.gsac;
-
 import  org.prototype.gsac.database.*;
+/* CHANGE  above, make sure that both lines show your GSAC package name */
+
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
@@ -31,9 +33,6 @@ import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
-
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.StringUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -49,32 +48,14 @@ import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
 
-
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  *
- * This subclass of SiteManager creates and handles all of the site related repository requests. 
- *
- * The FileManager for the GSAC Prototype example local code set.
- *
- * This version is incomplete but functional, with limited queries. For full functionality. code commented-out will need to be revised to use the new Protptype15 GSAC database.
- *
- * You may use this with the Prototype 15 GSAC database to implement your GSAC.
- * Or, if you use another database, you may uses thise code as a guide to writing Java for GSAC to read your GSAC and ito create and handle site metadata queries.
- * Form example, use this as a guide to import Java libraries, and a guide to GSAC classes and methods.
- * 
- * Note that you may retain the file names "Prototype...java" for any GSAC local code set.
- *
- * For a the local GSAC code set for the Prototype GSAC installation, this class is the code to handle site searches, based on the database read by GSAC about data holdings.
- * 
- * A GSAC SiteManager class composes what siterelated items are provided for SEARCHES for site in the API and web site.
- * A GSAC SiteManager class composes what items are provided returned in the RESULTS when a site search finds something.
- *
- * This code uses a Prototype15 GSAC database. 
+ * For the GSAC prototype code.
  *
  * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
  *
- * This class is one major part of making a new local GSAC code set; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
+ * This class is one major part of making a new local GSAC; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
  *
  * - what metadata may be queried on, that is used for searches or selections, in this GSAC repository (see method doGetQueryCapabilities below)
  *   either by the web page forms or via the API URL arguments, 
@@ -88,7 +69,7 @@ import java.text.DateFormat;
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * @author  S K Wier, 2013; 2104; Jan. 29 2015. 
+ * @author  S K Wier, 12 Feb 2015
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -127,13 +108,13 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * A capability here which for example is tied to the value GsacExtArgs.ARG_ANTENNA has corresponding code in the method getResourceClauses which creates a query with it when user does so.
      *
-     * (Perhaps a call  to this method goes before makeCapabilities call, so regular site search form appears before advanced search?)
+     * (Perhaps a callto this method goes before makeCapabilities call, so regular site search form appears before advanced search?)
      *
      * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
      *
      * LOOK - this method appears to be called twice at server start-up.
      *
-     * CHANGE if you have other things to search on, or different db table or field names for the items to search on.
+     * CHANGEME if you have other things to search on, or different db table or field names for the items to search on.
      *
      * @return site search capabilities
      */
@@ -145,59 +126,53 @@ public class PrototypeSiteManager extends SiteManager {
 
             // Essential search items 
 
-            // search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*
+            // To search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*
             String help = HtmlOutputHandler.stringSearchHelp;  /* some mouse over help text */
             //            args:(                             "web page label"                     capab type ),      capab group name,       mouse over help text,  other help text)
             Capability siteCode =
                 initCapability( new Capability(ARG_SITE_CODE, "Code (4 character ID)", Capability.TYPE_STRING), 
-                      CAPABILITY_GROUP_SITE_QUERY, "Code (4 character ID) of the station", "Code (4 character ID) of the station. " + help);
+                CAPABILITY_GROUP_SITE_QUERY, "Code (4 character ID) of the station", "Code (4 character ID) of the station. " + help);
             siteCode.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteCode);
 
-            /* search with site name
             help="Full name of the site, such as Marshall, or part or name plus wildcard(*) such as Mar*";
             Capability siteName =
                 initCapability(     new Capability(ARG_SITE_NAME, "Site Name",             Capability.TYPE_STRING), 
                        CAPABILITY_GROUP_SITE_QUERY, "Name of the site",                    "Name of site.   " + help);
             capabilities.add(siteName);
-            */
-
             //siteName.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
 
             // site search for latitude-longitude bounding box; 4 boxes; not in browse service
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
-                    CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
+               CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
-
-            // LOOK NOTE ONLY use this if have at least a starting date value for each site in the database. 
             // site search by "Data Date Range" pair of boxes;
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
-                               initCapability( new Capability(ARG_SITE_DATE_FROM, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-                         "The site operated between these dates", "Site date");
+               initCapability( new Capability(ARG_SITE_DATE_FROM, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
+               "The site operated between these dates", "Site date");
             capabilities.add(sitedateRange);
             
 
-            /*
-            String[] values;
-
-            more possible search items, from the Unavco-gsac server sitemanager code:
-
-            capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
-                        "The site's metadata was modified between these dates"));
-            capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
-                        "The site was created between these dates"));
-
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
-
+            String[] values;
             ResultSet results;
             ArrayList<String> avalues = new ArrayList<String>();
             List<Clause> clauses = new ArrayList<Clause>();
             List<String> tables = new ArrayList<String>();
+            String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
+            String[] itemArray = new String[avalues.size()];
 
+            /* capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
+                        "The site's metadata was modified between these dates"));
+            capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
+                        "The site was created between these dates"));
+             */
+
+            /*
             // to provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station:
             // select 
-            String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
+            cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
             //  FROM which tables (for a table join)
             tables.add(Tables.STATION.NAME);
             //  LOOK need no clauses get all networks values in rows: 
@@ -236,37 +211,32 @@ public class PrototypeSiteManager extends SiteManager {
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-            String[] itemArray = new String[avalues.size()];
+            itemArray = new String[avalues.size()];
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             // add search on network names:
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
+            */
 
 
             // search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
-            //values = getDatabaseManager().readDistinctValues( Tables.STATION_STYLE.NAME, Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
-            //Arrays.sort(values);
-            //capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
-            
-            // OR
-            // SELECT station_style.station_style_name FROM station_session,station,station_style WHERE ((station_session.station_id =  station.station_id) AND (station.station_style_id = station_style.station_style_id));
             // get only site type names (station_style table values) used by stations in this database, only.
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_STYLE_ID, Tables.STATION_STYLE.COL_STATION_STYLE_ID));
+            clauses.add(Clause.join(Tables.STATION.COL_STYLE_ID, Tables.STATION_STYLE.COL_STATION_STYLE_ID));
             //  SELECT what column values to find
-            cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_NAME});
+            cols=SqlUtil.comma(new String[]{Tables.STATION_STYLE.COL_STATION_STYLE_DESCRIPTION});
             //  FROM   
             tables = new ArrayList<String>();
             tables.add(Tables.STATION.NAME);
             tables.add(Tables.STATION_STYLE.NAME);
-            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
-                   String statype= results.getString(Tables.STATION_STYLE.COL_STATION_STYLE_NAME);
+                   String statype= results.getString(Tables.STATION_STYLE.COL_STATION_STYLE_DESCRIPTION);
                    // save distinct values
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
@@ -290,10 +260,11 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Site Type", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // search on site status (3 static values possible)
-            values = getDatabaseManager().readDistinctValues( Tables.STATION_STATUS.NAME, Tables.STATION_STATUS.COL_STATION_STATUS_DESCRIPTION);
+            values = getDatabaseManager().readDistinctValues( Tables.STATION_STATUS.NAME, Tables.STATION_STATUS.COL_STATION_STATUS);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
 
+            /*
             // search on antenna types: get antenna type names used by station equipment sessions in this database, only.
             // Since the protoype db has all IGS antenna names, more than 200, show only the ones at stations in this repository .
             avalues = new ArrayList<String>();
@@ -372,11 +343,8 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacExtArgs.ARG_RECEIVER, "Receiver type", values, true, CAPABILITY_GROUP_ADVANCED));
 
 
-            /* get all radome type names in the db 
-            //values = getDatabaseManager().readDistinctValues( Tables.RADOME_TYPE.NAME, Tables.RADOME_TYPE.COL_RADOME_TYPE_NAME);
-            //Arrays.sort(values); capabilities.add(new Capability(GsacExtArgs.ARG_DOME, "Radome type", values, true, CAPABILITY_GROUP_ADVANCED));
-            
-            // better-- get only radome type names used by stations in this database, only.  Show choice of only the radome type names at stations in this repository .
+            // get all radome type names in the db 
+            //  get the  radome type names used by stations in this database, only.  Show choice of only the radome type names at stations in this repository .
             avalues = new ArrayList<String>();
             clauses =      new ArrayList<Clause>();
             //  WHERE
@@ -412,26 +380,24 @@ public class PrototypeSiteManager extends SiteManager {
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_DOME, "Radome type", values, true, CAPABILITY_GROUP_ADVANCED));
+            */
 
             // search on country, province/state, and city
 
             // add box to choose by country
-            values = getDatabaseManager().readDistinctValues( Tables.COUNTRY.NAME, Tables.COUNTRY.COL_COUNTRY_NAME);
+            values = getDatabaseManager().readDistinctValues( Tables.NATION.NAME, Tables.NATION.COL_NATION_NAME);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_COUNTRY, "Nation", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // add box to choose by state or province 
-            values = getDatabaseManager().readDistinctValues( Tables.PROVINCE_REGION_STATE.NAME, Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
+            values = getDatabaseManager().readDistinctValues( Tables.PROVINCE_STATE.NAME, Tables.PROVINCE_STATE.COL_PROVINCE_STATE_NAME);
             Arrays.sort(values);
-            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Province / region / state", values, true, CAPABILITY_GROUP_ADVANCED));
+            capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Province / state", values, true, CAPABILITY_GROUP_ADVANCED));
 
-            // add box to choose by city
-            values = getDatabaseManager().readDistinctValues( Tables.STATION.NAME, Tables.STATION.COL_CITY);  // get all the city (place) names in GSAC's database.
+            // add box to choose by locale or city
+            values = getDatabaseManager().readDistinctValues( Tables.STATION.NAME, Tables.LOCALE.COL_LOCALE_NAME);  // get all the city (place) names in GSAC's database.
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place / City", values, true, CAPABILITY_GROUP_ADVANCED));
-
-
-            */
 
             return capabilities;
         } catch (Exception exc) {
@@ -441,9 +407,9 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * Make database search clauses, select statements, from the user's choices specified in the web page input or from the URL request arguments' values.  
+     * Make database search clauses, SQL select statements, from the user's choices specified in the web page input or from the URL request arguments' values.  
      *
-     * Makes and returns item "clauses".
+     * Makes and returns item "clauses" a List of Clause  object
      *
      * @param request the request
      * @param response the response
@@ -453,7 +419,6 @@ public class PrototypeSiteManager extends SiteManager {
      * @return list of clauses for selecting sites
      */
     public List<Clause> getResourceClauses(GsacRequest request, GsacResponse response, List<String> tableNames, StringBuffer msgBuff) {
-
 
         /* which tables in the db to search on; the 'from' part of a db query, in this case the station table in the prototype database. */
         tableNames.add(Tables.STATION.NAME);
@@ -482,9 +447,9 @@ public class PrototypeSiteManager extends SiteManager {
             addStringSearch(request, ARG_SITE_NAME, " ", msgBuff, "Site Name", Tables.STATION.COL_STATION_NAME, clauses);  
             System.err.println("   SiteManager: query for name " + ARG_SITE_NAME ) ;
         }
-          */
+        */
         
-        // query for the station's  location inside a latitude-longitude box
+        // query for the station's  location inside a latitude-longitude box; see input ARG_BBOX
         if (request.defined(ARG_NORTH)) {
             clauses.add( Clause.le( latCol, request.get(ARG_NORTH, 0.0)));
             appendSearchCriteria(msgBuff, "north&lt;=", "" + request.get(ARG_NORTH, 0.0));
@@ -522,7 +487,8 @@ public class PrototypeSiteManager extends SiteManager {
         // query for the station's place name 
         if (request.defined(GsacExtArgs.ARG_CITY)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_CITY);
-            clauses.add( Clause.or( Clause.makeStringClauses( Tables.STATION.COL_CITY, values)));
+            clauses.add(Clause.join(Tables.STATION.COL_LOCALE_ID, Tables.LOCALE.COL_LOCALE_ID));
+            clauses.add(Clause.eq(Tables.LOCALE.COL_LOCALE_NAME, values.get(0)));
         }
 */
  
@@ -531,24 +497,24 @@ public class PrototypeSiteManager extends SiteManager {
 /*
         if (request.defined(GsacExtArgs.ARG_COUNTRY)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_COUNTRY);
-            tableNames.add(Tables.COUNTRY.NAME);
+            tableNames.add(Tables.NATION.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_COUNTRY_ID, Tables.COUNTRY.COL_COUNTRY_ID));
-            clauses.add(Clause.eq(Tables.COUNTRY.COL_COUNTRY_NAME, values.get(0)));
+            clauses.add(Clause.eq(Tables.COUNTRY.COL_NATION_NAME, values.get(0)));
         }
         
         if (request.defined(GsacExtArgs.ARG_STATE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_STATE);
-            tableNames.add(Tables.PROVINCE_REGION_STATE.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_PROVINCE_REGION_STATE_ID, Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_ID));
-            clauses.add(Clause.eq(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME, values.get(0)));
+            tableNames.add(Tables.PROVINCE_STATE.NAME);
+            clauses.add(Clause.join(Tables.STATION.COL_PROVINCE_STATE_ID, Tables.PROVINCE_STATE.COL_PROVINCE_STATE_ID));
+            clauses.add(Clause.eq(Tables.PROVINCE_STATE.COL_PROVINCE_STATE_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for province " + values.get(0)) ;
         }
         
         if (request.defined(GsacArgs.ARG_SITE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_TYPE);
             tableNames.add(Tables.STATION_STYLE.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_STYLE_ID, Tables.STATION_STYLE.COL_STATION_STYLE_ID));
-            clauses.add(Clause.eq(Tables.STATION_STYLE.COL_STATION_STYLE_NAME, values.get(0)));
+            clauses.add(Clause.join(Tables.STATION.COL_STYLE_ID, Tables.STATION_STYLE.COL_STATION_STYLE_ID));
+            clauses.add(Clause.eq(Tables.STATION_STYLE.COL_STATION_STYLE_DESCRIPTION, values.get(0)));
             //System.err.println("   SiteManager: query for style " + values.get(0)) ;
         }
         
@@ -556,7 +522,7 @@ public class PrototypeSiteManager extends SiteManager {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_STATUS);
             tableNames.add(Tables.STATION_STATUS.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_STATION_STATUS_ID, Tables.STATION_STATUS.COL_STATION_STATUS_ID));
-            clauses.add(Clause.eq(Tables.STATION_STATUS.COL_STATION_STATUS_DESCRIPTION, values.get(0)));
+            clauses.add(Clause.eq(Tables.STATION_STATUS.COL_STATION_STATUS, values.get(0)));
             //System.err.println("   SiteManager: query for STATUS " + values.get(0)) ;
         }
         
@@ -594,10 +560,13 @@ public class PrototypeSiteManager extends SiteManager {
 */
 
         // NOTE: the following shows a line like
-        //    SiteManager: getResourceClauses gives [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
+        // SiteManager: getResourceClauses gives search clauses=[(station.four_char_name LIKE 'b%' OR station.four_char_name LIKE 'b%' 
+        //    OR station.four_char_name LIKE 'B%'), station.latitude_north <= 42.0, station.latitude_north >= 38.0, station.longitude_east <= -100.0, station.longitude_east >= -114.0]
+        // or like    SiteManager: getResourceClauses gives [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
-        //System.err.println("   SiteManager: getResourceClauses gives created clauses="+clauses) ;
+        // show search sql 
+        System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -678,8 +647,8 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * Set query order.  This string is SQL.
-     *   Set this to what you want to sort on   ; station 4 char ID, ASC means ascending ie from A to Z top to bottom.         
+     * CHANGEME set query order.  This string is SQL.
+     *   Set this to what you want to sort on   ; station 4 char ID, ASC means ascending ie from A to z top to bottom.         
      */
     private static final String SITE_ORDER = " ORDER BY  " + Tables.STATION.COL_FOUR_CHAR_NAME + " ASC ";
 
@@ -726,7 +695,7 @@ public class PrototypeSiteManager extends SiteManager {
         // "results" is from sql select query on 'station' table in the database.
         // access values by name of field in database row: 
 
-        String staname  = results.getString(Tables.STATION.COL_STATION_NAME);
+        String    staname  =                  results.getString(Tables.STATION.COL_STATION_NAME);
         // to fix bad java-jdbc reading of names in Icelandic or other non-latin characters which are correct in the mysql db:
         if (null!=staname) {
                  staname       =   new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8");
@@ -740,19 +709,16 @@ public class PrototypeSiteManager extends SiteManager {
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
 
-    /*
-        String     city        =     results.getString(Tables.STATION.COL_CITY);
-        if (null!= city) {
-                    city =  new String( results.getBytes(Tables.STATION.COL_CITY), "UTF-8");
-        }
+        /*
         String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
         if (null!= networks) {
                     networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
         }
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
-        int station_style_id = results.getInt(Tables.STATION.COL_STATION_STYLE_ID);
+        int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
-        int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_REGION_STATE_ID);
+        int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
+        int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
@@ -786,7 +752,7 @@ public class PrototypeSiteManager extends SiteManager {
         }
 
 
-/*
+         /*
 
 
         // a photograph of the site
@@ -840,10 +806,10 @@ public class PrototypeSiteManager extends SiteManager {
         //  WHERE the test part in the select statement 
         clauses.add(Clause.join(Tables.STATION.COL_COUNTRY_ID, Tables.COUNTRY.COL_COUNTRY_ID));
         //  SELECT what to get from the db (result in rows returned):
-        cols=SqlUtil.comma(new String[]{Tables.COUNTRY.COL_COUNTRY_NAME});
+        cols=SqlUtil.comma(new String[]{Tables.COUNTRY.COL_NATION_NAME});
         //  FROM   the select from which tables part 
         tables.add(Tables.STATION.NAME);
-        tables.add(Tables.COUNTRY.NAME);
+        tables.add(Tables.NATION.NAME);
         Statement  statement = //select what    from      where
            getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //System.err.println("   SiteManager: country query is " +statement);
@@ -851,7 +817,7 @@ public class PrototypeSiteManager extends SiteManager {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            // process each line in results of db query  
            while ((qresults = iter.getNext()) != null) {
-               country = new String( qresults.getBytes(Tables.COUNTRY.COL_COUNTRY_NAME), "UTF-8"); //qresults.getString(Tables.COUNTRY.COL_COUNTRY_NAME);
+               country = new String( qresults.getBytes(Tables.COUNTRY.COL_NATION_NAME), "UTF-8"); //qresults.getString(Tables.COUNTRY.COL_NATION_NAME);
                // you want Only read the first row of db query results returned
                break;
            }
@@ -859,16 +825,18 @@ public class PrototypeSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
+        // LOOK add new code get name of locale or city from cityid     
+
         // get name of province or state     
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
         cols="";
-        clauses.add(Clause.join(Tables.STATION.COL_PROVINCE_REGION_STATE_ID, Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_ID));
-        clauses.add(Clause.eq(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_ID, stateid));
+        clauses.add(Clause.join(Tables.STATION.COL_PROVINCE_STATE_ID, Tables.PROVINCE_STATE.COL_PROVINCE_STATE_ID));
+        clauses.add(Clause.eq(Tables.PROVINCE_STATE.COL_PROVINCE_STATE_ID, stateid));
         //System.err.println("   SiteManager: clauses is >>>" +clauses+"<<<");
-        cols=SqlUtil.comma(new String[]{Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME});
+        cols=SqlUtil.comma(new String[]{Tables.PROVINCE_STATE.COL_PROVINCE_STATE_NAME});
         tables.add(Tables.STATION.NAME);
-        tables.add(Tables.PROVINCE_REGION_STATE.NAME);
+        tables.add(Tables.PROVINCE_STATE.NAME);
         statement = //select            what    from      where
            getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //System.err.println("   SiteManager: province query is " +statement);
@@ -876,7 +844,7 @@ public class PrototypeSiteManager extends SiteManager {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
                //      System.err.println("   get state name");
-               state = new String( qresults.getBytes(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME), "UTF-8"); // qresults.getString(Tables.PROVINCE_REGION_STATE.COL_PROVINCE_REGION_STATE_NAME);
+               state = new String( qresults.getBytes(Tables.PROVINCE_STATE.COL_PROVINCE_STATE_NAME), "UTF-8"); // qresults.getString(Tables.PROVINCE_STATE.COL_PROVINCE_STATE_NAME);
                //      System.err.println("   did get state name"+state);
                break;
            }
@@ -897,9 +865,8 @@ public class PrototypeSiteManager extends SiteManager {
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.AGENCY.NAME);
 
-        statement = 
-           getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        //                      select  what   from     where
+        statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        //                               select  fields   from     where
         //System.err.println("   SiteManager: select query is " +statement);
 
         try {
@@ -919,6 +886,22 @@ public class PrototypeSiteManager extends SiteManager {
         // hard coded, using values in the GSAC prototype db:
         //
 
+        select * from station_style;
+        +------------------+---------------------+
+        | station_style_id | station_style_name  |
+        +------------------+---------------------+
+        |                1 | GPS/GNSS Campaign   |
+        |                2 | GPS/GNSS Continuous |
+        |                3 | GPS/GNSS Mobile     |
+        |                4 | DORIS               |
+        |                5 | Seismic             |
+        |                6 | SLR                 |
+        |                7 | Strainmeter         |
+        |                8 | Tiltmeter           |
+        |                9 | VLBI                |
+        |               10 | GPS/GNSS Episodic   |
+        |               11 | Tide Gauge          |
+        +------------------+---------------------+
         
         if (1 == station_style_id ) {
            site.setType(new ResourceType("gnss.site.campaign"));
@@ -998,7 +981,7 @@ public class PrototypeSiteManager extends SiteManager {
     public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {
         readIdentificationMetadata(gsacResource);
-        //  readEquipmentMetadata(gsacResource);
+        readEquipmentMetadata(gsacResource);
     }
 
     /**
@@ -1053,18 +1036,16 @@ public class PrototypeSiteManager extends SiteManager {
                 String zstr = results.getString(Tables.STATION.COL_Z);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Z, "Z", zstr);
 
-
                 /* get, check, and save value for IERS DOMES. */
-               /* trap bad value "(A9)", an artifact of some IGS site logs,  and replace with empty string.  */
-                 /*
+                /*
                 String idn= results.getString(Tables.STATION.COL_IERS_DOMES);
+                // trap bad value "(A9)", an artifact of some IGS site logs,  and replace with empty string. 
                 if (idn != null && idn.equals("(A9)") ) 
                    { idn = " " ; }
                 else if (idn != null && idn.equals("NULL") ) 
                    { idn = " " ; }
                 else if ( idn == null ) 
                    { idn = " " ; }
-                
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
                 */
 
@@ -1075,7 +1056,7 @@ public class PrototypeSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-             /*
+        /*
         // db query  to get MONUMENT_DESCRIPTION
         List<Clause> clauses = new ArrayList<Clause>();
         clauses.add(Clause.eq(Tables.STATION.COL_FOUR_CHAR_NAME, gsacResource.getId()));
@@ -1117,7 +1098,6 @@ public class PrototypeSiteManager extends SiteManager {
     private void readEquipmentMetadata(GsacResource gsacResource) throws Exception {
 
  /*
-
 
         int station_sess_id=0;
         int receiverid=0;
@@ -1845,7 +1825,6 @@ public class PrototypeSiteManager extends SiteManager {
     /**
      * Utility that takes a list of network ids and makes the search clauses for them.
      *  Used in query for the station's networks. 'group' is GSAC jargon for gnss networks, sometimes.
-     *
      *
      * @param groupIds List of group ids
      * @param msgBuff Search criteria buffer

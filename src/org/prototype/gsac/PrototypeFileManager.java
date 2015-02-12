@@ -18,7 +18,7 @@
  * 
  */
 
-/* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
+/* CHANGEME - use the correct name of package, replacing 'prototype': */
 package org.prototype.gsac;
 import  org.prototype.gsac.database.*;
 
@@ -26,6 +26,7 @@ import  org.prototype.gsac.database.*;
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
+
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
 
@@ -44,27 +45,19 @@ import java.util.Calendar;
 
 
 /**
- * This subclass of FileManager creates and handles all of the data file related repository requests. The main entry point is     {@link #handleRequest}
+ * Handles all of the resource related repository requests. The main entry point is {@link #handleRequest}
  *
- * The FileManager the GSAC Prototype example local code set.
- *
- * This version is incomplete but functional, with limited queries. For full functionality. code commented-out will need to be revised to use the new Protptype15 GSAC database.
- *
- * You may use this with the Prototype 15 GSAC database to implement your GSAC.
- * Or, if you use another database, you may uses thise code as a guide to writing Java for GSAC to read your GSAC and ito create and handle file metadata queries.
- * Form example, use this as a guide to import Java libraries, and a guide to GSAC classes and methods.
+ * The FileManager for the Prototype GSAC code.
  * 
- * Note that you may retain the file names "Prototype...java" for any GSAC local code set.
- *
- * For a the local GSAC code set for the Prototype GSAC installation, this class is the code to handle data file searches, based on the database read by GSAC about data holdings.
+ * For a particular GSAC, code to handle data file searches and download information, based on the database read by GSAC about data holdings.
  * 
  * A GSAC FileManager class composes what file-related items are provided for SEARCHES for files in the API and web site.
  * A GSAC FileManager class composes what items are provided returned in the RESULTS when a search finds something.
  *
- * This FileManager.java uses a Prototype15 GSAC database. 
+ * This FileManager.java uses the prototype15 GSAC db 
  *
  * @author  Jeff McWhirter 2011. A minimal function template file (made from gsac/fsl/template/Filemanager.java) without any code for any database variables.
- * @author  S K Wier  Jan. 30, 2015.
+ * @author  S K Wier  3 Feb 2015.
  */
 public class PrototypeFileManager extends FileManager {
 
@@ -82,11 +75,11 @@ public class PrototypeFileManager extends FileManager {
 
     /**
      *  Define and enable what file-related items are are offered for search choices (database queries) for geoscience data files to download from this particular data repository.  
-     *  This sets the search forms on the web site file search page.
+     *  This sets the search forms on the web site file search page. (and also enables API choices)
      *
-     *  In GSAC, "Capabilities" are things to search (query) on. 
+     *  In GSAC jargon "capabilities" are things to search (query) on. 
      *
-     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as data types and data file formats.
+     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
      *
      * @return  List of GSAC "Capabilities"  objects
      */
@@ -96,9 +89,10 @@ public class PrototypeFileManager extends FileManager {
 
         List<Capability> capabilities = new ArrayList<Capability>();
         String [] values; 
+        int filecount=0;
 
-        // Find the types of parameters in files  in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE))" -- below in another method.)
-        // Note this code has to read ALL the file entries in the database.
+        // Find the types of data in files, such as rain fall amount or GPS obs, in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE))" -- below in another method.)
+        // Note this code has to read ALL the file entries in the database; every row, to find all the types.
         // (originally, code here found *all* the possible file type names in the database file_type table, many types not in most data centers; which is merely misleading)
         int gpsfcnt=0;
         ResultSet results;
@@ -115,10 +109,11 @@ public class PrototypeFileManager extends FileManager {
         Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           System.err.println("GSAC: queried db datafiles table for all data file data types (parameter types)" ) ;
+           //System.err.println("GSAC: queried db datafiles table for all data file data types (parameter types)" ) ;
            // process each line in results of db query  
            while ((results = iter.getNext()) != null) {
                String ftype= results.getString(Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
+               filecount += 1  ; //count all files in the datafile table.
                // save distinct values
                int notfound=1;
                for (int vi= 0; vi<avalues.size(); vi+=1 ) {
@@ -139,10 +134,10 @@ public class PrototypeFileManager extends FileManager {
         String[] itemArray = new String[avalues.size()];
         values = avalues.toArray(itemArray);
         // sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
-        System.err.println("GSAC: there are "+gpsfcnt+" data file data types (parameter types). Restart GSAC when files with new data types are added to the database." ) ;
+        System.err.println("GSAC: there are "+filecount+" data files in the database." ) ;
+        System.err.println("GSAC: there are "+gpsfcnt+" data types (types of observations and product files) among the data files." ) ;
 
-
-        // Find the datafile_formats of files  in this data archive. Note this code has to read ALL the file entries in the database.
+        // Find the datafile formats of data or product files in this data archive. Note this code has to read ALL the file entries in the database.
         gpsfcnt=0;
         results =null;
         avalues = new ArrayList<String>();
@@ -158,7 +153,7 @@ public class PrototypeFileManager extends FileManager {
         statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           System.err.println("GSAC: queried db datafiles table for all data file formats" ) ;
+           //System.err.println("GSAC: queried db datafiles table for all data file formats" ) ;
            // process each line in results of db query  
            while ((results = iter.getNext()) != null) {
                String ftype= results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
@@ -185,9 +180,9 @@ public class PrototypeFileManager extends FileManager {
         formatvalues = avalues.toArray(itemArray);
         // sort by alphabet: 
         //Arrays.sort(formatvalues); // or can just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
-        System.err.println("GSAC: there are "+gpsfcnt+" data file formats. Restart GSAC when files with new file formats are added to the database." ) ;
+        System.err.println("GSAC: there are "+gpsfcnt+" data file formats among the data files." ) ;
 
-        // Find the data's TRFs this data archive table data_reference_frame. Note this code has to read ALL the datafile rows in the database.
+        // Find the data's TRFs from this data archive's table data_reference_frame. Note this code has to read ALL the file entries in the database.
         gpsfcnt=0;
         results =null;
         avalues = new ArrayList<String>();
@@ -200,7 +195,7 @@ public class PrototypeFileManager extends FileManager {
         statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           System.err.println("GSAC: queried db datafile-s table for all data TRFs" ) ;
+           //System.err.println("GSAC: queried db datafile-s table for all data TRFs" ) ;
            while ((results = iter.getNext()) != null) {
                String ftype= results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
                int notfound=1;
@@ -224,35 +219,33 @@ public class PrototypeFileManager extends FileManager {
         trfvalues = avalues.toArray(itemArray);
         // sort by alphabet: 
         //Arrays.sort(trfvalues); // or can just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
-        System.err.println("GSAC: there are "+gpsfcnt+" TRFs.  Restart GSAC when files with new data TRFs are added to the database." ) ;
+        if (gpsfcnt>0) { System.err.println("GSAC: there are "+gpsfcnt+" TRFs among the data files" ) ; }
 
 
-        // the following search choices do not need or have any pre-defined values or enumerated lists of allowed choices:
+        // the following file search choices are added to the web site file search page and available via API options: 
         Capability[] dflt = { 
 
               // variables like "ARG_FILE_..." are declared in core code GsacArgs.java.
 
-              // create query in web site and in the API for Data Date Range
               initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",         Capability.TYPE_DATERANGE), "File Query", "Date the data was collected"),
 
-              // create query in web site and in the API for Data type
-              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",  values, true, Capability.TYPE_FILETYPE ),    "File Query", "Data parameter type" ),
+              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",  values, true, Capability.TYPE_FILETYPE ),    "File Query", "Data file or parameter type" ),
 
-              // create query in web site and in the API for data file format
               initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
 
-              // create query in web site and in the API for data's reference frame
-              initCapability(new Capability(GsacArgs.ARG_FILE_TRF,     "Reference Frame", trfvalues, true, Capability.TYPE_TRF ), "File Query", "Data TRF" ),
+              initCapability(new Capability(GsacArgs.ARG_FILE_TRF,     "Reference Frame", trfvalues, true, Capability.TYPE_TRF ), "File Query", "Data reference frame" ),
 
-              // search on "Publish Date":this is the date when a repository made a file available for download online *most recently*.  This is used to look for changed / revised/ corrected files.
-              //initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+              // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
+              initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first entered in repository"),
 
               // Note, for a case using Capability.TYPE_NUMBERRANGE, as for FILESIZE, 
               // the special parm name, ARG_FILE_SAMPLEINT, declared in GsacArgs.java, must have two more related corresponding parm names there with magic name extensions .max and .min
-              // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not float numbers.  FIX this code to allow fraction of seconds:
+              // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not real numbers.  FIX this code to allow fraction of seconds:
               //initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval") 
 
-              // to search data files based on file size.  Not now regarded as useful. Nov. 2013.  File sizes are always listed (if available) on the web page, so the user can see them,
+              // LOOK could also search on revision_time in gsac prototype database
+
+              // Could also search on file size.  Not now regarded as useful. Nov. 2013.
               // Capability cap;
               //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
               // can use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
@@ -264,6 +257,7 @@ public class PrototypeFileManager extends FileManager {
 
         // Also add all the station-related search choices into the file search web page form, so you can select files from particular sites
         // (add the choices from the related SiteManager class, to this File search HTML page.)
+        // somwhow this is buried under a [+] button; but how is not set here.
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
@@ -296,10 +290,9 @@ public class PrototypeFileManager extends FileManager {
         //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_FOUR_CHAR_NAME, clauses);
         
-        // FROM SiteManager: 
         String latCol  = Tables.STATION.COL_LATITUDE_NORTH;
         String lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
-             // query for the station's name string  
+        // query for the station's name string  
         if (request.defined(ARG_SITE_NAME)) {
             addStringSearch(request, ARG_SITE_NAME, " ", msgBuff, "Site Name", Tables.STATION.COL_STATION_NAME, clauses);
             //System.err.println("   SiteManager: query for name " + ARG_SITE_NAME ) ;
@@ -321,8 +314,27 @@ public class PrototypeFileManager extends FileManager {
             clauses.add( Clause.ge( lonCol, request.get(ARG_WEST, 0.0)));
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
-        // end FROM SiteManager
 
+        // make query clause for the data type ; search with OR on the list of file type names in 'values':
+        if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
+             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
+             //System.err.println("  FileHandler:handleRequest(): search on file types "+ values.toString() );
+            clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATA_TYPE.COL_DATA_TYPE_NAME, values)));
+        }
+
+        // make query clause for the data file format type ; search with OR on the list of file type names in 'values':
+        if (request.defined(GsacArgs.ARG_FILE_FORMAT)) {
+             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_FILE_FORMAT );
+            clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME, values)));
+        }
+
+        // make query clause for the data reference frame name; search with OR on the list of  names in 'values':
+        if (request.defined(GsacArgs.ARG_FILE_TRF)) {
+             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_FILE_TRF );
+            clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME, values)));
+        }
+
+        //float intrange1 = Float.parseFloat(stri); // java atof
         /*
         if (request.defined(ARG_FILESIZE_MIN)) {
             int size = request.get(ARG_FILESIZE_MIN, 0);
@@ -334,18 +346,7 @@ public class PrototypeFileManager extends FileManager {
             appendSearchCriteria(msgBuff, "Filesize&lt;=",
                                  "" + request.get(ARG_FILESIZE_MAX, 0));
         }
-        */
 
-        // make query clause for the file type ; search with OR on the list of file type names in 'values':
-        if (request.defined(GsacArgs.ARG_FILE_TYPE)) {
-             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacArgs.ARG_FILE_TYPE);
-             //System.err.println("  FileHandler:handleRequest(): search on file types "+ values.toString() );
-            clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATA_TYPE.COL_DATA_TYPE_NAME, values)));
-        }
-
-        //float intrange1 = Float.parseFloat(stri); // java atof
-
-        /*
         // sample interval code: // FIX handle case if database has null values for DATAFILE.COL_FILE_SAMPLE_INTERVAL
         if (request.defined(ARG_FILE_SAMPLEINT_MAX)) {
             float intrange1 = request.get(ARG_FILE_SAMPLEINT_MIN, 0);
@@ -382,13 +383,19 @@ public class PrototypeFileManager extends FileManager {
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
 
-
-
-        // to get file info, join these db tables:
         // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
         clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
-        //clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
+
+        // to get data file type info, join these db tables:
         clauses.add(Clause.join(Tables.DATA_TYPE.COL_DATA_TYPE_ID, Tables.DATAFILE.COL_DATA_TYPE_ID )) ;
+
+        // to get data file format, join these db tables:
+        clauses.add(Clause.join(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE.COL_DATAFILE_FORMAT_ID )) ;
+
+        // to get data reference frame, join these db tables:
+        clauses.add(Clause.join(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID, Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID )) ;
+
+        //clauses.add(Clause.join(Tables.RECEIVER_SESSION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
  
         Clause mainClause = Clause.and(clauses);
 
@@ -396,14 +403,23 @@ public class PrototypeFileManager extends FileManager {
         String cols=SqlUtil.comma(new String[]{
              Tables.DATAFILE.COL_STATION_ID,
              Tables.DATAFILE.COL_DATA_TYPE_ID,
-             //Tables.DATAFILE.COL_SAMPLE_INTERVAL, 
+             Tables.DATAFILE.COL_DATAFILE_FORMAT_ID,
+             Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID,
              Tables.DATAFILE.COL_DATAFILE_START_TIME,
              Tables.DATAFILE.COL_DATAFILE_STOP_TIME,
              Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE,
+             Tables.DATAFILE.COL_URL_COMPLETE,
+             Tables.STATION.COL_FOUR_CHAR_NAME,
+             Tables.DATA_TYPE.COL_DATA_TYPE_ID,
+             Tables.DATA_TYPE.COL_DATA_TYPE_NAME ,         
+             Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID,
+             Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME,       // NO comma for last item!     
+             Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID,
+             Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME       // NO comma for last item!     
+             
+             //Tables.DATAFILE.COL_SAMPLE_INTERVAL, 
              //Tables.DATAFILE.COL_FILE_SIZE,
              //Tables.DATAFILE.COL_FILE_MD5,
-             Tables.DATAFILE.COL_URL_COMPLETE,
-             
              /*Tables.DATAFILE.COL_URL_PROTOCOL,
              Tables.DATAFILE.COL_URL_PATH_DOMAIN,
              Tables.DATAFILE.COL_URL_PATH_DIRS,
@@ -412,25 +428,24 @@ public class PrototypeFileManager extends FileManager {
              Tables.STATION.COL_EMBARGO_DURATION_HOURS,
              Tables.STATION.COL_EMBARGO_AFTER_DATE,
              */
-
-             Tables.STATION.COL_FOUR_CHAR_NAME,
              //Tables.STATION.COL_ACCESS_ID,
              //Tables.STATION.COL_EMBARGO_DURATION_HOURS,
              //Tables.STATION.COL_EMBARGO_AFTER_DATE,
-
-             Tables.DATA_TYPE.COL_DATA_TYPE_ID,
-             Tables.DATA_TYPE.COL_DATA_TYPE_NAME            
              //Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL    // last item has no final comma ,
              });
 
-        //  for the sql select FROM clause, which tables to select from
+        // for the sql select FROM clause, which tables to select from
         List<String> tables = new ArrayList<String>();
         tables.add(Tables.DATAFILE.NAME);
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.DATA_TYPE.NAME);
+        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
         //tables.add(Tables.RECEIVER_SESSION.NAME);
 
-        //System.err.println("  FileHandler:handleRequest(): select FROM "+tables+" WHERE "+mainClause);
+        // show sql SQL query command string
+        //System.err.println("GSAC: FileHandler:handleRequest(): db SQL query is:" );
+        //System.err.println("SELECT "+cols+" FROM "+tables+" WHERE "+mainClause+" ;");
 
         // do sql query type "select distinct " columns:
         String distinctCols= getDatabaseManager().distinct(cols);   // adds " distinct " before the list of columns
@@ -450,16 +465,15 @@ public class PrototypeFileManager extends FileManager {
                String siteID = results.getString     (Tables.STATION.COL_FOUR_CHAR_NAME);
                int station_id  = results.getInt      (Tables.DATAFILE.COL_STATION_ID);
                int file_type_id  = results.getInt    (Tables.DATAFILE.COL_DATA_TYPE_ID);
-
+               int file_format_id  = results.getInt  (Tables.DATAFILE.COL_DATAFILE_FORMAT_ID);
+               int file_trf_id  = results.getInt     (Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID);
                String start_time  = results.getString(Tables.DATAFILE.COL_DATAFILE_START_TIME);
                String stop_time  = results.getString (Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
-
-               // make sure they are in format "yyyy-MM-dd HH:mm:ss" - LOOK may need more code here
+               // make sure these next are in format "yyyy-MM-dd HH:mm:ss" 
                start_time= start_time.substring(0,19);
                stop_time= stop_time.substring(0,19);
                Date data_start_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start_time);
                Date data_stop_time= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time);
-
                String pub_time  = results.getString  (Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE) ;
                pub_time = pub_time.substring(0,19);
                Date published_date= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pub_time);
@@ -469,14 +483,15 @@ public class PrototypeFileManager extends FileManager {
 
                String file_url = results.getString       (Tables.DATAFILE.COL_URL_COMPLETE);
 
-               // if this database row does not supply the complete FILE_URL, try to compose it from all the parts of a complete url found in the same database row
+               /* if this database row does not supply the complete FILE_URL, try to compose it from all the parts of a complete url found in the same database row
+               */
                if (file_url==null || file_url.length()< 13 )   // error check for say ftp://a.b.c/d has length of 13
                {
-                   String file_url_protocol = results.getString  (Tables.DATAFILE.COL_URL_PROTOCOL);
-                   String file_url_ip_domain = results.getString (Tables.DATAFILE.COL_URL_PATH_DOMAIN);
-                   String file_url_folders = results.getString   (Tables.DATAFILE.COL_URL_PATH_DIRS);
-                   String file_url_filename = results.getString  (Tables.DATAFILE.COL_DATAFILE_NAME);
-
+                   String file_url_protocol = results.getString  (Tables.DATAFILE.COL_URL_PROTOCOL); // http or ftp
+                   String file_url_ip_domain = results.getString (Tables.DATAFILE.COL_URL_PATH_DOMAIN);  // like www.myrepo.org
+                   String file_url_folders = results.getString   (Tables.DATAFILE.COL_URL_PATH_DIRS);  // like /pub/rinex/  including all "/"
+                   String file_url_filename = results.getString  (Tables.DATAFILE.COL_DATAFILE_NAME);   // like abcd0120.12o
+                   // make sure this composition matches values of its pieces in the database, i.e. where are the "/":
                    file_url =file_url_protocol + "://" + file_url_ip_domain + file_url_folders + file_url_filename;
                }
 
@@ -484,10 +499,12 @@ public class PrototypeFileManager extends FileManager {
                if (file_url==null || file_url.length()< 13)   proceed with showing results for this data file, even with null for url, or short url
                */
 
-               String file_type_name = results.getString (Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
+               String file_type_name = results.getString   (Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
+               String file_format_name = results.getString (Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               String file_trf_name = results.getString (Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
 
                String sample_interval = "0.0"; 
-               /* 
+                 /*
                if (null == sample_interval) {
                   //System.err.println("  file sample interval is null");
                   sample_interval = results.getString (Tables.RECEIVER_SESSION.COL_RECEIVER_SAMPLE_INTERVAL); 
@@ -496,12 +513,11 @@ public class PrototypeFileManager extends FileManager {
                      //System.err.println("  rcvr sample interval is null");
                      sample_interval = "0.0"; // some output formats change this to 'unknown'
                   }
-               }
-               */
+               } */
 
                //System.err.println("   sample interval ="+sample_interval+"_");
 
-           /*
+               /*
                // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
                Date now = new Date();
@@ -548,21 +564,22 @@ public class PrototypeFileManager extends FileManager {
                      //System.err.println("       do not show this file (file is more recent that its embargo date) : " + file_url);
                      continue;
                      }
-          */
 
                // OK this file may be shown to user for downloading
+
+               */
 
                //int count = (request.getParameter("counter") == null) ? 0 : Integer.parseInt(request.getParameter("counter"));
 
                // generic: ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
-               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , "geoscience data");
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " data or product file");
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
 
                // make and populate a FileInfo object for this file, used by other parts of GSAC for output handling.
-               /* generic:
                FileInfo fileinfo = new FileInfo(file_url);
+               /* generic:
                //String sizestr = ""+file_size;
                fileinfo.setMd5(file_md5);
                fileinfo.setFileSize(file_size);
@@ -570,7 +587,6 @@ public class PrototypeFileManager extends FileManager {
                float sampint = Float.parseFloat(sample_interval);
                fileinfo.setSampleInterval(sampint);
                */
-               FileInfo fileinfo = new FileInfo(file_url);
                //fileinfo.setMd5("NA");
                //fileinfo.setFileSize(0);
                //fileinfo.setSampleInterval(0.0);
@@ -616,10 +632,14 @@ public class PrototypeFileManager extends FileManager {
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.DATAFILE.NAME);
         tables.add(Tables.DATA_TYPE.NAME);
+        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
         // clauses: WHERE this station is id-ed by its 4 char id:, and join other tables
         clauses.add(Clause.eq(Tables.STATION.COL_FOUR_CHAR_NAME, resourceId));
         clauses.add(Clause.join(Tables.DATAFILE.COL_STATION_ID, Tables.STATION.COL_STATION_ID));
         clauses.add(Clause.join(Tables.DATA_TYPE.COL_DATA_TYPE_ID, Tables.DATAFILE.COL_DATA_TYPE_ID )) ;
+        clauses.add(Clause.join(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE.COL_DATAFILE_FORMAT_ID )) ;
+        clauses.add(Clause.join(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID, Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID )) ;
         //  and for the mysql SELECT clause: make a list of what to get (row values returned):
         String cols=SqlUtil.comma(new String[]{
              Tables.DATAFILE.COL_STATION_ID,
@@ -630,7 +650,11 @@ public class PrototypeFileManager extends FileManager {
              Tables.DATAFILE.COL_DATA_TYPE_ID,
              Tables.STATION.COL_FOUR_CHAR_NAME,
              Tables.STATION.COL_STATION_ID,
-             Tables.DATA_TYPE.COL_DATA_TYPE_NAME
+             Tables.DATA_TYPE.COL_DATA_TYPE_NAME,
+             Tables.DATAFILE.COL_DATAFILE_FORMAT_ID,
+             Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME,
+             Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID,
+             Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME
              });
         Statement statement =  getDatabaseManager().select(cols,  tables, Clause.and(clauses));
         try {
@@ -638,17 +662,19 @@ public class PrototypeFileManager extends FileManager {
             while (results.next()) {
                int station_id  = results.getInt(Tables.DATAFILE.COL_STATION_ID);
                int file_type_id  = results.getInt(Tables.DATAFILE.COL_DATA_TYPE_ID);
+               int file_format_id  = results.getInt(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID);
+               int file_trf_id  = results.getInt(Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID);
                String file_type_name  = results.getString(Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
+               String file_format_name  = results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               String file_trf_name  = results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
                String file_url = results.getString(Tables.DATAFILE.COL_URL_COMPLETE);
                String siteID = ""+station_id;
                // LOOK the following are perhaps somewhat defective because java.sql.Date objects "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
                Date data_start_time  = results.getDate(Tables.DATAFILE.COL_DATAFILE_START_TIME);
                Date data_stop_time  = results.getDate(Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
                Date published_date  = results.getDate(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE);
-               //Date published_date  = null; // use this line if you have no pub date
 
-               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , "geoscience data");
-
+               ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy derived product");
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
