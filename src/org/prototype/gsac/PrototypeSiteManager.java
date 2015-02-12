@@ -477,12 +477,6 @@ public class PrototypeSiteManager extends SiteManager {
             throw new IllegalArgumentException(e);
         }
 
-/*
-        // query for the station's networks; "group" is GSAC jargon for gnss network
-        if (request.defined(ARG_SITE_GROUP)) {
-            List<String> values = (List<String>) request.get(ARG_SITE_GROUP, new ArrayList());
-            clauses.add(Clause.or(getNetworkClauses(values, msgBuff)));  // see method def getNetworkClauses () below
-        }
 
         // query for the station's place name 
         if (request.defined(GsacExtArgs.ARG_CITY)) {
@@ -490,16 +484,11 @@ public class PrototypeSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.STATION.COL_LOCALE_ID, Tables.LOCALE.COL_LOCALE_ID));
             clauses.add(Clause.eq(Tables.LOCALE.COL_LOCALE_NAME, values.get(0)));
         }
-*/
- 
-        // LOOK might add code for each case below which has values.get(0), to use a loop over i>1 values.get(i) if present, so can make a selection list
-
-/*
         if (request.defined(GsacExtArgs.ARG_COUNTRY)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_COUNTRY);
             tableNames.add(Tables.NATION.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_COUNTRY_ID, Tables.COUNTRY.COL_COUNTRY_ID));
-            clauses.add(Clause.eq(Tables.COUNTRY.COL_NATION_NAME, values.get(0)));
+            clauses.add(Clause.join(Tables.STATION.COL_NATION_ID, Tables.NATION.COL_NATION_ID));
+            clauses.add(Clause.eq(Tables.NATION.COL_NATION_NAME, values.get(0)));
         }
         
         if (request.defined(GsacExtArgs.ARG_STATE)) {
@@ -509,6 +498,18 @@ public class PrototypeSiteManager extends SiteManager {
             clauses.add(Clause.eq(Tables.PROVINCE_STATE.COL_PROVINCE_STATE_NAME, values.get(0)));
             //System.err.println("   SiteManager: query for province " + values.get(0)) ;
         }
+
+/*
+        // query for the station's networks; "group" is GSAC jargon for gnss network
+        if (request.defined(ARG_SITE_GROUP)) {
+            List<String> values = (List<String>) request.get(ARG_SITE_GROUP, new ArrayList());
+            clauses.add(Clause.or(getNetworkClauses(values, msgBuff)));  // see method def getNetworkClauses () below
+        }
+*/
+ 
+        // LOOK might add code for each case below which has values.get(0), to use a loop over i>1 values.get(i) if present, so can make a selection list
+
+/*
         
         if (request.defined(GsacArgs.ARG_SITE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_TYPE);
@@ -708,17 +709,17 @@ public class PrototypeSiteManager extends SiteManager {
          
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
+        String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
+        int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
+        int countryid    =     results.getInt(Tables.STATION.COL_NATION_ID);
+        int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
+        int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
 
         /*
         String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
         if (null!= networks) {
                     networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
         }
-        String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
-        int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
-        int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
-        int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
-        int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
@@ -794,6 +795,7 @@ public class PrototypeSiteManager extends SiteManager {
                 site.addResourceGroup(new ResourceGroup(tok));  // this method adds the comma-separated list of network names at a site, to a site object
             }
         }
+        */
 
         // get names of country, province or state, and agency from their id numbers 
         String country = "";
@@ -804,9 +806,9 @@ public class PrototypeSiteManager extends SiteManager {
         List<String> tables = new ArrayList<String>();
         // get name of country
         //  WHERE the test part in the select statement 
-        clauses.add(Clause.join(Tables.STATION.COL_COUNTRY_ID, Tables.COUNTRY.COL_COUNTRY_ID));
+        clauses.add(Clause.join(Tables.STATION.COL_NATION_ID, Tables.NATION.COL_NATION_ID));
         //  SELECT what to get from the db (result in rows returned):
-        cols=SqlUtil.comma(new String[]{Tables.COUNTRY.COL_NATION_NAME});
+        cols=SqlUtil.comma(new String[]{Tables.NATION.COL_NATION_NAME});
         //  FROM   the select from which tables part 
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.NATION.NAME);
@@ -817,7 +819,7 @@ public class PrototypeSiteManager extends SiteManager {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            // process each line in results of db query  
            while ((qresults = iter.getNext()) != null) {
-               country = new String( qresults.getBytes(Tables.COUNTRY.COL_NATION_NAME), "UTF-8"); //qresults.getString(Tables.COUNTRY.COL_NATION_NAME);
+               country = new String( qresults.getBytes(Tables.NATION.COL_NATION_NAME), "UTF-8"); //qresults.getString(Tables.NATION.COL_NATION_NAME);
                // you want Only read the first row of db query results returned
                break;
            }
@@ -825,6 +827,7 @@ public class PrototypeSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
+        String city = " ";
         // LOOK add new code get name of locale or city from cityid     
 
         // get name of province or state     
@@ -855,6 +858,7 @@ public class PrototypeSiteManager extends SiteManager {
         // add all three above items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
 
+        /*
         // following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
@@ -880,63 +884,10 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
 
+
         //  set site "Type" aka site.type corresponding to "station style" in the database
         // Not clear where or how this is used by GSAC code.
-        // CHANGEME if you alter the GSAC prototype db schema.
-        // hard coded, using values in the GSAC prototype db:
-        //
-
-        select * from station_style;
-        +------------------+---------------------+
-        | station_style_id | station_style_name  |
-        +------------------+---------------------+
-        |                1 | GPS/GNSS Campaign   |
-        |                2 | GPS/GNSS Continuous |
-        |                3 | GPS/GNSS Mobile     |
-        |                4 | DORIS               |
-        |                5 | Seismic             |
-        |                6 | SLR                 |
-        |                7 | Strainmeter         |
-        |                8 | Tiltmeter           |
-        |                9 | VLBI                |
-        |               10 | GPS/GNSS Episodic   |
-        |               11 | Tide Gauge          |
-        +------------------+---------------------+
-        
-        if (1 == station_style_id ) {
-           site.setType(new ResourceType("gnss.site.campaign"));
-        }
-        else if (2 == station_style_id ) {
-           site.setType(new ResourceType("gnss.site.continuous"));
-        }
-        else if (3 == station_style_id ) {
-           site.setType(new ResourceType("gnss.site.mobile"));
-        }
-        else if (4  == station_style_id ) {
-           site.setType(new ResourceType("doris.site"));
-        }
-        else if (5  == station_style_id ) {
-           site.setType(new ResourceType("seismic.site"));
-        }
-        else if (6 == station_style_id ) {
-           site.setType(new ResourceType("slr.site"));
-        }
-        else if (7 == station_style_id ) {
-           site.setType(new ResourceType("strainmeter.site"));
-        }
-        else if (8  == station_style_id ) {
-           site.setType(new ResourceType("tiltmeter.site"));
-        }
-        else if (9  == station_style_id ) {
-           site.setType(new ResourceType("tiltmeter.site"));
-        }
-        else if (10 == station_style_id ) {
-           site.setType(new ResourceType("gnss.site.episodic"));
-        }
-        else if (11 == station_style_id ) {
-           site.setType(new ResourceType("tidegauge.site"));
-        }
-*/
+            */
 
         // CHANGEME: implement this, if you need this; sample code is below in this file.
         // readFrequencyStandardMetadata(site);
