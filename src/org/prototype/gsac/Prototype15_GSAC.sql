@@ -62,7 +62,7 @@ CREATE TABLE `agency` (
   `agency_individual_name` varchar(100) DEFAULT NULL,
   `other_contact` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`agency_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,88 +100,6 @@ INSERT INTO `antenna` VALUES (1,'TRM57971.00','Y'),(2,'TRM59800.00','Y'),(3,'ASH
 UNLOCK TABLES;
 
 --
--- Table structure for table `datafile`
---
-
-DROP TABLE IF EXISTS `datafile`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `datafile` (
-  `datafile_id` int(9) unsigned NOT NULL AUTO_INCREMENT,
-  `station_id` int(6) unsigned NOT NULL,
-  `equip_config_id` int(6) unsigned DEFAULT NULL,
-  `datafile_name` varchar(120) NOT NULL,
-
-  `URL_complete` varchar(120) NOT NULL,
-  `URL_protocol` varchar(7) DEFAULT NULL,
-  `URL_path_domain` varchar(50) DEFAULT NULL,
-  `URL_path_dirs` varchar(70) DEFAULT NULL,
-
-  `data_type_id` int(3) unsigned DEFAULT NULL,
-  `datafile_format_id` int(3) unsigned DEFAULT NULL,
-  `data_reference_frame_id` int(3) unsigned DEFAULT NULL,
-
-  `datafile_start_time` datetime DEFAULT  NULL,
-  `datafile_stop_time` datetime DEFAULT  NULL,
-  `published_time` datetime DEFAULT  NULL,
-
-  `sample_interval` float DEFAULT NULL,
-  `latency_estimate` float DEFAULT NULL,
-  `year` year(4) DEFAULT NULL,
-  `day_of_year` int(3) DEFAULT NULL,
-  `size_bytes` int(10) DEFAULT  NULL,
-  `MD5` char(32) DEFAULT NULL,
-  PRIMARY KEY (`datafile_id`),
-  KEY `station_id_idx` (`station_id`),
-  KEY `equip_config_id_idx` (`equip_config_id`),
-  KEY `data_type_id_idx`            (`data_type_id`),
-  KEY `datafile_format_id_idx`      (`datafile_format_id`),
-  KEY `data_reference_frame_id_idx` (`data_reference_frame_id`),
-  CONSTRAINT `data_type_id`            FOREIGN KEY (`data_type_id`) REFERENCES `data_type` (`data_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `datafile_format_id`      FOREIGN KEY (`datafile_format_id`) REFERENCES `datafile_format` (`datafile_format_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `data_reference_frame_id` FOREIGN KEY (`data_reference_frame_id`) REFERENCES `data_reference_frame` (`data_reference_frame_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `datafile`
---
-
-LOCK TABLES `datafile` WRITE;
-/*!40000 ALTER TABLE `datafile` DISABLE KEYS */;
-INSERT INTO `datafile` VALUES (1,1,1,'AVCA.NA12.tenv','http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv','http','geodesy.unr.edu','/gps_timeseries/',9,5,3,'2003-04-10 00:00:00','2015-01-17 00:00:00','2015-01-27 00:00:00',NULL,86400.0,2015,17,NULL,NULL);
-/*!40000 ALTER TABLE `datafile` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-
---
--- Table structure for table `datafile_format`
---
-
-DROP TABLE IF EXISTS `datafile_format`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `datafile_format` (
-  `datafile_format_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `datafile_format_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`datafile_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
---
--- Dumping data for table `datafile_format`
---
-LOCK TABLES `datafile_format` WRITE;
-/*!40000 ALTER TABLE `datafile` DISABLE KEYS */;
-INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR northings and eastings; tenv3'),(6,'UNR xyz Cartesian;   txyz2'),(7,'UNR traditional NEU; tenv'),(8,'time series    plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR 5 minute products; kenv'); 
-/*!40000 ALTER TABLE `datafile` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-
---
 -- Table structure for table `data_reference_frame`
 --
 
@@ -194,15 +112,16 @@ CREATE TABLE `data_reference_frame` (
   PRIMARY KEY (`data_reference_frame_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Dumping data for table `data_reference_frame`
 --
-LOCK TABLES `data_reference_frame` WRITE;
-/*!40000 ALTER TABLE `datafile` DISABLE KEYS */;
-INSERT INTO `data_reference_frame` VALUES (1,'WGS84'),(2,'IGS08'),(3,'NA12'),(4,'GTRF09'),(5,'ETRS89'),(6,'FID (UNR)'),(7,'SNARF');
-/*!40000 ALTER TABLE `datafile` ENABLE KEYS */;
-UNLOCK TABLES;
 
+LOCK TABLES `data_reference_frame` WRITE;
+/*!40000 ALTER TABLE `data_reference_frame` DISABLE KEYS */;
+INSERT INTO `data_reference_frame` VALUES (1,'WGS84'),(2,'IGS08'),(3,'NA12'),(4,'GTRF09'),(5,'ETRS89'),(6,'FID (UNR)'),(7,'SNARF');
+/*!40000 ALTER TABLE `data_reference_frame` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `data_type`
@@ -225,8 +144,84 @@ CREATE TABLE `data_type` (
 
 LOCK TABLES `data_type` WRITE;
 /*!40000 ALTER TABLE `data_type` DISABLE KEYS */;
-INSERT INTO `data_type` VALUES (1,'instrument data file','any type instrument native, raw, or binary file'),(2,'GNSS observation file','any GNSS obs file; may be compressed'),(3,'GPS navigation file','a GPS \'n\' nav file; may be compressed'),(4,'Galileo navigation file','a Galileo \'e\' nav file; may be compressed'),(5,'GLONASS navigation file','a \'g\' nav file; may be compressed'),(6,'meteorology file','an \'m\' met    file; may be    compressed'),(7,'QZSS navigation file','a \'j\' nav file; may be compressed'),(8,'Beidou navigation file','a \'c\' nav file; may be compressed'),(9,'Final Daily time series','Final Daily time      series solution; latency=7-10 d'),(10,'Rapid Daily time series','Rapid Daily time series solution; latency 1 d'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution; latency 8-32 hr'),(12,'Ultra    Rapid 5 minute time series','Ultra Rapid 5 min time series solution; latency 2 '),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series; latency 1.5 h'),(14,'Nights Ultra Rapid 5       minute time series','Nights Ultra Rapid 5 min time series; latency 2 hr'),(15,'Time series plot','Time series static plot image'),(16,'Time series, cleaned, plot','Time series cleaned static plot image '),(17,    'Time series, Rapid 5   minute plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'tiltmeter observations',''),(21,'strainmeter observations',''),(22,     'tidegage observations',''), (23,'GNSS sites positions','');
+INSERT INTO `data_type` VALUES (1,'instrument data file','any type instrument native, raw, or binary file'),(2,'GNSS observation file','any GNSS obs file; may be compressed'),(3,'GPS navigation file','a GPS \'n\' nav file; may be compressed'),(4,'Galileo navigation file','a Galileo \'e\' nav file; may be compressed'),(5,'GLONASS navigation file','a \'g\' nav file; may be compressed'),(6,'meteorology file','an \'m\' met file; may be compressed'),(7,'QZSS navigation file','a \'j\' nav file; may be compressed'),(8,'Beidou navigation file','a \'c\' nav file; may be compressed'),(9,'Final Daily time series','Final Daily time series solution, latency=7-10 d'),(10,'Rapid Daily time series','Rapid Daily time series solution; latency 1 d'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution; latency 8-32 hr'),(12,'Ultra    Rapid 5 minute time series','Ultra Rapid 5 min time series; latency 2 h'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series; latency 1.5 h'),(14,'Nights Ultra Rapid 5       minute time series','Nights Ultra Rapid 5 min time series; latency 2 h'),(15,'Time series plot','Time series static plot image'),(16,'Time series, cleaned, plot','Time series cleaned static plot image '),(17,'Time series, Rapid 5   minute plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'tiltmeter observations',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'GNSS sites positions','');
 /*!40000 ALTER TABLE `data_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `datafile`
+--
+
+DROP TABLE IF EXISTS `datafile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `datafile` (
+  `datafile_id` int(9) unsigned NOT NULL AUTO_INCREMENT,
+  `station_id` int(6) unsigned NOT NULL,
+  `equip_config_id` int(6) unsigned DEFAULT NULL,
+  `datafile_name` varchar(120) NOT NULL,
+  `URL_complete` varchar(120) NOT NULL,
+  `URL_protocol` varchar(7) DEFAULT NULL,
+  `URL_path_domain` varchar(50) DEFAULT NULL,
+  `URL_path_dirs` varchar(70) DEFAULT NULL,
+  `data_type_id` int(3) unsigned DEFAULT NULL,
+  `datafile_format_id` int(3) unsigned DEFAULT NULL,
+  `data_reference_frame_id` int(3) unsigned DEFAULT NULL,
+  `datafile_start_time` datetime DEFAULT NULL,
+  `datafile_stop_time` datetime DEFAULT NULL,
+  `datafile_published_date` datetime DEFAULT NULL,
+  `sample_interval` float DEFAULT NULL,
+  `latency_estimate` float DEFAULT NULL,
+  `year` year(4) DEFAULT NULL,
+  `day_of_year` int(3) DEFAULT NULL,
+  `size_bytes` int(10) DEFAULT NULL,
+  `MD5` char(32) DEFAULT NULL,
+  PRIMARY KEY (`datafile_id`),
+  KEY `station_id_idx` (`station_id`),
+  KEY `equip_config_id_idx` (`equip_config_id`),
+  KEY `data_type_id_idx` (`data_type_id`),
+  KEY `datafile_format_id_idx` (`datafile_format_id`),
+  KEY `data_reference_frame_id_idx` (`data_reference_frame_id`),
+  CONSTRAINT `datafile_format_id` FOREIGN KEY (`datafile_format_id`) REFERENCES `datafile_format` (`datafile_format_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `data_reference_frame_id` FOREIGN KEY (`data_reference_frame_id`) REFERENCES `data_reference_frame` (`data_reference_frame_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `data_type_id` FOREIGN KEY (`data_type_id`) REFERENCES `data_type` (`data_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `datafile`
+--
+
+LOCK TABLES `datafile` WRITE;
+/*!40000 ALTER TABLE `datafile` DISABLE KEYS */;
+INSERT INTO `datafile` VALUES (1,1,1,'AVCA.NA12.tenv','http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv','http','geodesy.unr.edu','/gps_timeseries/',9,5,3,'2003-04-10 00:00:00','2015-01-17 00:00:00','2015-01-27 00:00:00',NULL,86400,2015,17,NULL,NULL);
+/*!40000 ALTER TABLE `datafile` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `datafile_format`
+--
+
+DROP TABLE IF EXISTS `datafile_format`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `datafile_format` (
+  `datafile_format_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
+  `datafile_format_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`datafile_format_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `datafile_format`
+--
+
+LOCK TABLES `datafile_format` WRITE;
+/*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
+INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR northings and eastings; tenv3'),(6,'UNR xyz Cartesian;   txyz2'),(7,'UNR traditional NEU; tenv'),(8,'time series    plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR 5 minute products; kenv');
+/*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -487,17 +482,20 @@ CREATE TABLE `station` (
   `latitude_north` double NOT NULL,
   `longitude_east` double NOT NULL,
   `height_ellips_elev` float DEFAULT NULL,
+  `X` double DEFAULT NULL,
+  `Y` double DEFAULT NULL,
+  `Z` double DEFAULT NULL,
   `installed_date` datetime DEFAULT NULL,
   `retired_date` datetime DEFAULT NULL,
   `agency_id` int(3) unsigned DEFAULT NULL,
   `access_id` int(3) unsigned DEFAULT NULL,
-  `style_id` int(3) unsigned DEFAULT NULL, 
+  `style_id` int(3) unsigned DEFAULT NULL,
   `status_id` int(3) unsigned NOT NULL,
   `monument_style_id` int(3) unsigned DEFAULT NULL,
-  `nation_id` int(3) unsigned DEFAULT  NULL,
+  `nation_id` int(3) unsigned DEFAULT NULL,
   `province_state_id` int(3) unsigned DEFAULT NULL,
-  `locale_id` int(3) unsigned DEFAULT  NULL,
-  `ellipsoid_id` int(1) unsigned DEFAULT  NULL,
+  `locale_id` int(3) unsigned DEFAULT NULL,
+  `ellipsoid_id` int(1) unsigned DEFAULT NULL,
   `networks` varchar(2000) DEFAULT NULL,
   `iers_domes` char(9) DEFAULT NULL,
   `station_photo_URL` varchar(100) DEFAULT NULL,
@@ -515,10 +513,10 @@ CREATE TABLE `station` (
   KEY `agency_id_idx` (`agency_id`),
   CONSTRAINT `access_id` FOREIGN KEY (`access_id`) REFERENCES `access` (`access_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `agency_id` FOREIGN KEY (`agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `ellipsoid_id` FOREIGN KEY (`ellipsoid_id`) REFERENCES `ellipsoid` (`ellipsoid_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `locale_id` FOREIGN KEY (`locale_id`) REFERENCES `locale` (`locale_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `monument_style_id` FOREIGN KEY (`monument_style_id`) REFERENCES `monument_style` (`monument_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
@@ -530,7 +528,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeodNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg',NULL,NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeodNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg',NULL,NULL,NULL);
+INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,NULL,NULL,NULL,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeodNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg',NULL,NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,NULL,NULL,NULL,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeodNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -547,9 +545,11 @@ CREATE TABLE `station_status` (
   PRIMARY KEY (`station_status_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Dumping data for table `station_status`
 --
+
 LOCK TABLES `station_status` WRITE;
 /*!40000 ALTER TABLE `station_status` DISABLE KEYS */;
 INSERT INTO `station_status` VALUES (1,'Active'),(2,'Inactive/intermittent'),(3,'Retired'),(4,'Pending');
@@ -569,9 +569,11 @@ CREATE TABLE `station_style` (
   PRIMARY KEY (`station_style_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Dumping data for table `station_style`
 --
+
 LOCK TABLES `station_style` WRITE;
 /*!40000 ALTER TABLE `station_style` DISABLE KEYS */;
 INSERT INTO `station_style` VALUES (1,'GPS/GNSS Continuous'),(2,'GPS/GNSS Campaign'),(3,'GPS/GNSS Mobile'),(4,'other');
@@ -587,4 +589,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-01-23 10:00:10
+-- Dump completed on 2015-02-12 12:43:52
