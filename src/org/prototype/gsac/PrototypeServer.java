@@ -20,7 +20,6 @@
 
 /* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
 package org.prototype.gsac;
-
 import  org.prototype.gsac.database.*;
 
 import org.gsac.gsl.*;
