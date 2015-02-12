@@ -645,7 +645,7 @@ public class PrototypeFileManager extends FileManager {
              Tables.DATAFILE.COL_STATION_ID,
              Tables.DATAFILE.COL_DATAFILE_START_TIME,
              Tables.DATAFILE.COL_DATAFILE_STOP_TIME,
-             //Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE,
+             Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE,
              Tables.DATAFILE.COL_URL_COMPLETE,
              Tables.DATAFILE.COL_DATA_TYPE_ID,
              Tables.STATION.COL_FOUR_CHAR_NAME,

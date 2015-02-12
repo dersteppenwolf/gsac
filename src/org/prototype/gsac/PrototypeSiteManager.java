@@ -395,7 +395,7 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacExtArgs.ARG_STATE, "Province / state", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // add box to choose by locale or city
-            values = getDatabaseManager().readDistinctValues( Tables.STATION.NAME, Tables.LOCALE.COL_LOCALE_NAME);  // get all the city (place) names in GSAC's database.
+            values = getDatabaseManager().readDistinctValues( Tables.LOCALE.NAME, Tables.LOCALE.COL_LOCALE_NAME);  // get all the city (place) names in GSAC's database.
             Arrays.sort(values);
             capabilities.add(new Capability(GsacExtArgs.ARG_CITY, "Place / City", values, true, CAPABILITY_GROUP_ADVANCED));
 
@@ -704,7 +704,7 @@ public class PrototypeSiteManager extends SiteManager {
         // debug System.err.println("GSAC: SiteManager: site search found station " +fourCharId);
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
-        double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPSOID);
+        double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPS_ELEV);
          
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
