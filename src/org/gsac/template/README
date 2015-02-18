@@ -28,11 +28,25 @@ Do not change actual filenames of files made by GSAC to match any uppercase lett
 
 ########################################################################
 
+
 Hopefully you've managed to generate the initial repository source package using README Part 1.
 
 This README (Part 2) file is located in your new GSAC package in @MACRO.SRCDIR@/ (ignore the README file in @MACRO.SRCDIR@/release).
 
 Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ .
+
+
+To modify your files to build with a Java 1.6 javac (to not use Java 1.7), do the following:
+  Make sure your javac compiler is for Java 1.6, not Java 1.7.
+  Your inital build.xml file for ant is for Java 1.7.  If you wish to use Java 1.6, :
+        copy your build.xml to a new file build.xml.J17
+        copy the file gsac-code/src/org/prototype/gsac/build.xml.Java6  to your build.xml
+        In that new build.xml replace the "prototype" words in these lines:
+        <property name="basename" value="prototype_gsac"/>
+        <property name="repository_relative_dir" value="org/prototype/gsac"/>
+        <property name="repositorypackage" value="org.prototype.gsac"/>
+        with your words from your file build.xml.J17.  For example, you might replace org.prototype.gsac with org.myrepo.gsac.
+  In your Server.java class file like MyrepoServer.java, edit lines to use the "Java 1.6 version" lines and to comment-out the lines for "Java 1.7 version."
 
 
 Adding Your Repository's Details: The "GSAC Resources Properties" File.
