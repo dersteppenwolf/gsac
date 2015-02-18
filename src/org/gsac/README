@@ -138,23 +138,20 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
 2. To choose Java 6 (1.6) or Java 7 (1.7) to build GSAC.
 
-   The GSAC package from SOurceForge contains code for both Java 1.6 and 1.7.  Rather than having 2 "releases" of GSAC, with more than 99% duplicate code, which would require
-   UNAVCO to make identical updates in 2 places, both versions of GSAC are in one package.
+   The GSAC package from SourceForge contains code for both Java 1.6 and 1.7.  Rather than having 2 "releases" of GSAC, with more than 99% duplicate code, and which would require
+   UNAVCO to make identical updates in both releases, both versions of GSAC are in one package.
 
-   The difference is entirely due to Java library files.  The Java 1.7 GSAC has recent Java security improvements (required by a U.S. government lab using GSAC.)
-   The Java 1.6 GSAC works with existing Tomcat Java 1.6 servers used by several GSAC operators.
+   The difference is (almost) entirely due to Java library files.  The Java 1.7 GSAC has recent Java security improvements (required by a U.S. government lab using GSAC.)
 
-   The GSAC package as and when exported from SourceForge is ready to build GSAC with Java 1.7.  Make sure your javac compiler is for Java 1.7, such as this example:
-   /usr/lib/jvm/java-7-oracle/bin/javac.
+   The GSAC package when exported from SourceForge is ready to build GSAC with Java 1.7.  
+   If you want to use Java 1.7, make sure your javac compiler is for Java 1.7, such as this example: /usr/lib/jvm/java-7-oracle/bin/javac.
 
-   To modify files in the GSAC package from SourceForge to build with a Java 1.6 javac, do the following:
+   To modify files in the GSAC package from SourceForge to build with a Java 1.6 javac (to not use Java 1.7), do the following:
       a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
       b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the "import block for Java 1.6" and comment-out the "import block for Java 1.7"
       c. in gsac-code/src/org/gsac/gsl/database/ edit the GsacDatabaseManager.java to use the lines labeled "Java 1.6 version" and to comment-out the lines for "Java 1.7 version."
-      d. in gsac-code/src/org/prototype/gsac/ do the command cp build.xml.Java6 build.xml
-      e. in gsac-code/src/org/prototype/gsac/ edit the file PrototypeServer.java to use the "Java 1.6 version" lines and to comment-out the lines for "Java 1.7 version."
-      f. Make sure your javac compiler is for Java 1.6, not Java 1.7.
-    
+      d. Make sure your javac compiler is for Java 1.6, not Java 1.7.
+   More file changes are in the README part 2 file detailed later.
 
 
 3. To build the GSAC core code (GSAC Source Library or GSL).
