@@ -435,21 +435,31 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         String sdlat=""+decimalDegrees;
         //System.out.println("\n  formatLongitudeDMS.  input value   ="+sdlat);
 
-        // example of converting -15.1014 
-        int    degrees = (int) decimalDegrees;  // truncates as desired, to a + or - integer ; -15 in this case
+        // examples of converting 20.2, -15.1014 and -0.50. 
 
-        // make minutes part as fraction of degree; always positive:
-        double minsdegfrac = decimalDegrees - degrees;  // like -15.1014 - (-15) = -01014.
+        // corrected by Jean-Luc Menut: Process the absolute value, the sign will be changed after 
+        // (avoid the problem of -1 < longitude < 0)
+        int intdegrees = (int) Math.abs(decimalDegrees);  // truncates as desired, to a + or - integer ;  gives 20, 15, 0
+        
+        // make String of (unsigned) integer degree value
+        String sdeg=""+intdegrees;      // Strings of 20, 15, 0 
+        // Put back the sign
+        if ( decimalDegrees<0) {
+            sdeg = "-"+sdeg;              // Strings of -15  -0
+            intdegrees = -1 * intdegrees; // ints       -15   0 
+            } 
+
+        // for minutes, use unit of  fraction of degree; always positive:
+        double minsdegfrac = decimalDegrees - intdegrees;  // like -15.1014 - (-15) = -0.01014     20.2 - 20 = 0.2     -0.50 - 0 = -0.50
         // drop the minux part of the fraction, if any
-        if ( minsdegfrac < 0.0) { minsdegfrac *= -1.0; }
+        if ( minsdegfrac < 0.0) { minsdegfrac *= -1.0; }   // like -0.50 becomes 0.50
 
         // "minutes part" in units minutes: 
-        int minutes = (int) (minsdegfrac * 60);  // like  (int)(0.1014*60) = int(6.084)= 6 minutes 
+        int minutes = (int) (minsdegfrac * 60);  // like  (int)(0.1014*60) = int(6.084)= 6 minutes (int)      .2*60 = 12 (int)    0.5 * 60 = 30 (int)
 
-        String sdeg=""+degrees;
         String smin=""+minutes;
-        String add="";
         
+        String add="";
         // sdeg should have 4 characters
         if (sdeg.length() ==1 )      { add="   "; }
         else if (sdeg.length() ==2 ) { add="  "; }
@@ -467,7 +477,8 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         // decimal seconds: compute by (minutes fraction in unit seconds) minus integer minutes in units seconds  
         double seconds = (minsdegfrac*3600 - minutes*60) ;  
 
-        String ssec = secFormat.format(seconds); // one decimal point; but if decimal fraction is zero as in 5.0 then this gives just "5" not 5.0; no good.
+        String ssec = secFormat.format(seconds); 
+        // that nakes value of one decimal point; but if decimal fraction is zero as in 5.0 then this gives just "5" not 5.0; no good.
         // fix it:
         if (ssec.contains(".") ) { ; }
         else { ssec=ssec+".0"; }
@@ -485,33 +496,6 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
         String lonStr = sdeg + smin + ssec;
         return lonStr;
 
-        /* orig
-        if (decimalDegrees<0.0) { decimalDegrees = decimalDegrees + 360.0; }
-
-        int    degrees = (int) decimalDegrees;  // truncates as desired, to a + or - integer ; -15 in this case
-        // minutes part as fraction of degree; always positive:
-        double minsdegfrac = decimalDegrees - degrees;  // like |-15.353 - (-15)| = |-0.353| = .353.
-        if ( minsdegfrac < 0.0) { minsdegfrac *= -1.0; }
-        // "minutes part" in units integer minutes: lll
-        int minutes = (int) (minsdegfrac * 60);  // like  (int)(0.647*60) = int(38.82)= 38 minutes 
-        // decimal seconds: comp by minutes fraction in unit seconds minus integer minutes in units seconds  
-        double seconds = (minsdegfrac*3600 - minutes*60) ;  
-        //int isec = int(seconds);
-        //int frac = int ( (seconds - isec) *10);  // integer number of tenths of seconds
-        String deg = ""+degrees;
-        String min = ""+minutes;
-        // note minutes is integer; can be '0'; need an extra leading space if only have a minute value like 9.9 using 3 spaces not 4
-        if (10>minutes) { min = "  "+min; }
-
-        String sec = secFormat.format(seconds); // one decimal point;  but look it rounds to one decimal , so 15.97 becomes 16 not '16.0'
-        // if sec is '0'
-        if (sec.length() <=2 ) { sec = sec+".0"; }
-        // need an extra leading space if only have a single-digitn integer part of seconds value like 9.9,  using 3 spaces not 4
-        if (seconds<10.0 ) { sec = "  "+sec; }
-        String s = deg + " " + min + " " + sec;
-        // tests s = s + "(from "+decimalDegrees+" minsdegfrac="+minsdegfrac+" minutes="+minutes+"  seconds="+seconds+" deg="+deg+" min="+min +" sec="+sec+")" ;
-        return setStringLength(s, 11);
-        */
     }
 
 
@@ -535,11 +519,15 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
             sescount +=1;
 
             if (equipment.hasReceiver()) {
-                // for testing ONLY: 
-                //pw.append("         REC SESSION "+sescount+  "\n ");
                 pw.append(" "+ setStringLength(site.getShortName(),4) +"  A    1 P ");
                 starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
+                // for testing ONLY: 
+                // debug log:
+                //System.out.println("GSAC:   SINEX: addSiteEquipment rcvr start time =_"+starttime+"_ at site "+site.getShortName());
+
                 starttime = getSinexTimeFormat(starttime, equipment.getFromDate());
+                //System.out.println("GSAC:   SINEX: addSiteEquipment sinex start time =_"+starttime+"_");
+
                 stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
                 stoptime = getSinexTimeFormat(stoptime, equipment.getToDate());
                 pw.append( starttime+ " ");
@@ -887,12 +875,18 @@ public class SinexSiteOutputHandler extends GsacOutputHandler {
       if (starttime.equals("") || starttime.equals("------------") ) {
           starttime="------------"; // the no data available format
       } else {
+
+          // add 0.1 sec 100 ms,  to fix doy bug in calendar.get(calendar.DAY_OF_YEAR);
+          //long shift = 100;
+          //long t= gd.getTime();
+          //java.util.Date nd = new java.util.Date(t + shift);
           calendar.setTime( gd );
-          String yy = calendar.get(calendar.YEAR) +"";  // like 1999
-          yy =   yy.substring(2,4); // like 99
-          String ddd  = "" + calendar.get(calendar.DAY_OF_YEAR);
+          String yy = calendar.get(calendar.YEAR) +"";  // like 1999 or 2010
+          yy =   yy.substring(2,4); // like 99 or 10
+          String ddd  = "" +  calendar.get(calendar.DAY_OF_YEAR);                     //  FIX doy is 1 too low in some cases like for 2010-09-01 00:00:00
           if (ddd.length() == 1) { ddd="0"+ddd; }
           if (ddd.length() == 2) { ddd="0"+ddd; }
+
           String time =iso8601UTCDateTime( gd ); // such as 2009-03-30T00:00:00 -0600
           time=time.substring(11,19); 
           // for HHMMSS 
