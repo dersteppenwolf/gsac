@@ -35,8 +35,7 @@ Instructions here detail the first part of installing GSAC services for a data r
 
 Section 4 below describes the oprtional installation of a "federated GSAC" which makes an online service merging
 GSAC services from several separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README 
-file, except the section "Create GSAC configuration files and make your initial GSAC."  
-Then follow the section 4 "To Build a Federated GSAC".
+file, except the section "Create GSAC configuration files and make your initial GSAC."  Then follow the section 4 "To Build a Federated GSAC".
 
 ##########################################
 
