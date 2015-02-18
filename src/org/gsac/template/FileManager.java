@@ -19,22 +19,27 @@
  */
 
 package @MACRO.PACKAGE@;
-
+/* CHANGEME - use the correct name of package in line above*/
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
+import org.gsac.gsl.util.*;
 
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
+import ucar.unidata.util.DateUtil;
 import ucar.unidata.util.StringUtil;
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+import java.util.Calendar;
 
 
 /**

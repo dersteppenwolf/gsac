@@ -20,26 +20,32 @@
 
 package @MACRO.PACKAGE@;
 
+/* CHANGE above, make sure that both lines show your GSAC package name */
+
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 
 import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.util.*;
-
-
-import org.ramadda.sql.Clause;
-import org.ramadda.sql.SqlUtil;
-import ucar.unidata.util.Misc;
+import org.gsac.gsl.metadata.gnss.*;
+import org.gsac.gsl.output.HtmlOutputHandler;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
-
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.HashSet;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 
 /**
