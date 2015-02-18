@@ -4,13 +4,13 @@
 
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                          2 February 2015.  Stuart Wier, UNAVCO
+                                         18 February 2015.  Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
 
 For those who wish to read less, you may see the brief "GSAC Quick Installation", in the GSAC package at gsac-code/GSAC_Quick_Install.txt
-and online at http://www.unavco.org/software/data-management/gsac/installation/GSAC_Quick_Install.txt,
+and online at http://www.unavco.org/software/data-management/gsac/lib/docs/GSAC_Quick_Install.txt
 in place of this document.  If something is unclear in that guide, you can return here for details.
 
 
@@ -25,27 +25,23 @@ files make by the instruments, and product files such as plots.  The UNAVCO GSAC
 http://www.unavco.org/software/data-management/gsac/gsac.html
 
     Building your code for GSAC services has two major parts:
-    1. Download the GSAC package and build its core code (called the GSL, the GSAC service layer), which includes some templates for your "local GSAC files".
-    2. Complete your "local GSAC files". Your "local GSAC files" are new Java for GSAC to read from your database, and also to specify what services your GSAC offers.
-    This README Part 1 (and the GSAC Quick Installation guide) tells how to do 1.
+    a. Download the GSAC package and build its core code (called the GSL, the GSAC service layer), which includes some templates for your "local GSAC files".
+    b. Complete your "local GSAC files". Your "local GSAC files" are new Java for GSAC to read from your database, and also to specify what services your GSAC offers.
+    This README Part 1 (and the GSAC Quick Installation guide) tells how to do "a."
     GSAC instructions use a hypothetical "Boulder" data repository; you will of course use your own terms.
-    README Part 2 tells how to do 2, complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
+    README Part 2 tells how to do "b," complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
 
 Instructions here detail the first part of installing GSAC services for a data repository
 
-Section 4. below describes the oprtional installation of a "federated GSAC" which makes an online service merging
+Section 4 below describes the oprtional installation of a "federated GSAC" which makes an online service merging
 GSAC services from several separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README 
 file, except the section "Create GSAC configuration files and make your initial GSAC."  
-Then follow the section 4., "To Build a Federated GSAC".
-
-This file also has section 3, How to To Install a Federated GSAC.
-
+Then follow the section 4 "To Build a Federated GSAC".
 
 ##########################################
 
 
-Installing the GSAC Web Services Software Package for a Data Repository, Part 1.
-
+Installing the GSAC Web Services Software Package for a Data Repository
 
 System Requirements
 
