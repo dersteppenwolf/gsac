@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -39,10 +39,10 @@ import javax.servlet.http.*;
 
 
 /**
- * Class description not given by author
+ * Class description not given by original class author.
  *
  * @author         Jeff McWhirter
- * @author S K Wier Jan 2013 - 12 Nov 2013
+ * @author S K Wier Jan 2013 - 12 Nov 2013; 5 Feb 2015 for special UNR case
  */
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
@@ -59,11 +59,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
     public HtmlFileOutputHandler(GsacRepository gsacRepository,
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
-        getRepository().addOutput(getResourceClass(),
-                                  new GsacOutput(this, OUTPUT_FILE_HTML,
-                                      "File HTML"));
-        //        getRepository().addOutput(OUTPUT_GROUP_FILE,new GsacOutput(this,
-        //                OUTPUT_FILE_DEFAULT, "File Default"));
+        getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_FILE_HTML, "File HTML"));
+
+        // getRepository().addOutput(OUTPUT_GROUP_FILE,new GsacOutput(this,   OUTPUT_FILE_DEFAULT, "File Default"));
     }
 
 
@@ -88,9 +86,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             handleRequestInner(request, response, sb);
         } catch (IllegalArgumentException iae) {
             getRepository().getLogManager().logError("Error handling site request", iae);
-            sb.append(
-                getRepository().makeErrorDialog(
-                    "An error has occurred:<br>" + iae.getMessage()));
+            sb.append( getRepository().makeErrorDialog( "An error has occurred:<br>" + iae.getMessage()));
             handleSearchForm(request, response, sb);
             finishHtml(request, response, sb);
         }
@@ -202,7 +198,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         Date publishTime = resource.getPublishDate();
         Date startTime   = resource.getFromDate();
         Date endTime     = resource.getToDate();
-
 
         if (publishTime != null) {
             sb.append(formEntry(request, msgLabel("Publish Date"), formatDate(publishTime)));
@@ -326,16 +321,17 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             // works ok: sb.append("<br>The API request is GSAC URL domain + "+ reqstr+" <br>");
             sb.append(HtmlUtil.makeShowHideBlock(msg("API request"), "GSAC URL domain + "+reqstr, false));
 
+            Hashtable<String, String> override = new Hashtable<String, String>();
 
-
-            Hashtable<String, String> override = new Hashtable<String,
-                                                     String>();
             override.put(ARG_OUTPUT, OUTPUT_FILE_HTML);
+
             makeNextPrevHeader(request, response, sb);
             long filesizesum = 0;
             //float sampint = 0.0f;
             int  cnt  = 0;
             String relatedLabel = null;
+
+            //System.err.println("   HTML file list 1 ");
 
             // NOTE in this main loop the "resource" is a GsacFile
             for (GsacFile resource : files) {
@@ -365,13 +361,17 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     String[] labels = null;
                     if (  relatedLabel != null)
                     { 
-                       // unavco gsac server has this case (pre-Nov 2013); since lacks the file values easily available for the prototype GSAC code
+                       // unavco gsac server has this case, since it lacks some file metadata values easily available in the prototype GSAC code
                        labels = new String[] {
                            (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"), msg(relatedLabel), msg("Pub. Date"), msg("File size")
                            };
                     }
-                    else {  // for prototype GSAC:
-                       labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                    else {  
+                       // note that the HTML term for the Greek letter delta is &Delta;
+                       // for prototype GSAC:
+                       labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                       // for UNR:
+                       //labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("File size") };
                     }
 
                     String[] sortValues = new String[] {
@@ -527,6 +527,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 // any real "relatedResources" is, so far, from the UNAVCO GSAC instances, not the Prototype GSAC for general use.
 
                 if (relatedResources.size() > 0) {  
+                    //System.err.println("   HTML file list a ");
                     // original code to preserve legacy output format from the unavco gsac server
                     if (startTime == null) {
                         sb.append(HtmlUtil.col(formatDate(publishTime)));
@@ -541,11 +542,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     }
                 }
                 else {
+                    //System.err.println("   HTML file list b ");
                     // more complete info in prototype gsac:
                     //  to fix a bug original code with GsacOutputHandler:formatDateTime gives a wrong date-time value, hours later than input date-time
                     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     if (publishTime != null) {
-                        publish = sdfDate.format(publishTime);
+                        publish = sdfDate.format(publishTime);  // LOOK not used
                     }
 
                     if (startTime == null && endTime != null) {
@@ -555,6 +557,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     else if (endTime == null && startTime != null) {
                            start = sdfDate.format(startTime);
                            sb.append(HtmlUtil.col( start + " - end unknown"));
+                    }
+                    else if (endTime == null && startTime == null) {  // new 19 feb
+                           sb.append(HtmlUtil.col(  "start and end dates unknown"));
                     }
                     else {
                            // case of prototype gsac code has proper times: 
@@ -570,7 +575,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 else {
                     // show sample rate for this file;  (prototype gsac servers).  note the column label coded above as the Delta-symbol  in HTML
-                    if ( resource.getFileInfo().getSampleInterval() > 0) {
+                    if ( /*resource.getFileInfo().getSampleInterval()!=null && */ resource.getFileInfo().getSampleInterval() > 0) {
                         //sb.append("<td align=\"left\" class=\"gsac-sampint\" " + clickEvent + ">");
                         sb.append("<td align=\"left\" class=\"gsac-sampint\" " +  ">");
                         //sampint       += resource.getFileInfo().getSampleInterval();
@@ -578,6 +583,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append("</td>");
                     } else {
                         sb.append(HtmlUtil.col(" unknown"));
+                        // or for UNR:
+                        //;
                     }
                 }
 
@@ -593,19 +600,23 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append("</td>");
                     } else {
                         sb.append(HtmlUtil.col(" unknown"));
+                        // or for UNR:
+                        //;
                     }
                 }
 
                 // show file size value if any
                 if (resource.getRelatedResources() != null) {
-                    if ( resource.getFileInfo().getFileSize() > 0) {
+                    if ( /*resource.getFileInfo().getFileSize() !=null &&*/ resource.getFileInfo().getFileSize() > 0) {
                         //sb.append("<td align=\"left\" class=\"gsac-filesize\" " + clickEvent + ">");
                         sb.append("<td align=\"left\" class=\"gsac-filesize\" "+ ">");
                         filesizesum += resource.getFileInfo().getFileSize();
                         sb.append( "" + formatFileSize( resource.getFileInfo().getFileSize()));
                         sb.append("</td>");
                     } else {
-                        sb.append(HtmlUtil.col(" size unknown"));
+                        sb.append(HtmlUtil.col(" unknown"));
+                        // or for UNR:
+                        //;
                     }
                  }
 
@@ -632,7 +643,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append("" + formatFileSize(filesizesum));
                 }
                 else {
-                    sb.append(HtmlUtil.col(" sizes unknown"));
+                    sb.append(HtmlUtil.col(" "));  // no total file sizes sum made
                 }
                 sb.append("</td>");
 
