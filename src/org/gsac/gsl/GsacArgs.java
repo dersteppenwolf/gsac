@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -46,8 +46,7 @@ public interface GsacArgs {
     public static final String ARG_RESOURCE_PREFIX = "resource.";
 
     /** _more_ */
-    public static final String ARG_RESOURCE_CLASS = ARG_RESOURCE_PREFIX
-                                                    + "class";
+    public static final String ARG_RESOURCE_CLASS = ARG_RESOURCE_PREFIX + "class";
 
     /** _more_ */
     public static final String ARG_SITE_PREFIX = "site.";
@@ -56,13 +55,10 @@ public interface GsacArgs {
     public static final String ARG_SITE_ID = ARG_SITE_PREFIX + "id";
 
     /** _more_ */
-    public static final String ARG_SITE_SORT_VALUE = ARG_SITE_PREFIX
-                                                     + ARG_SORT_VALUE_SUFFIX;
+    public static final String ARG_SITE_SORT_VALUE = ARG_SITE_PREFIX + ARG_SORT_VALUE_SUFFIX;
 
     /** _more_ */
-    public static final String ARG_SITE_SORT_ORDER = ARG_SITE_PREFIX
-                                                     + ARG_SORT_ORDER_SUFFIX;
-
+    public static final String ARG_SITE_SORT_ORDER = ARG_SITE_PREFIX + ARG_SORT_ORDER_SUFFIX;
 
     /** short name or 4 letter code for sites */
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
@@ -76,25 +72,17 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_SITE_DATE_TO = ARG_SITE_DATE + ".to";
 
-
+    /** _more_ */
+    public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
 
     /** _more_ */
-    public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX
-                                                     + "createdate";
+    public static final String ARG_SITE_CREATEDATE_FROM = ARG_SITE_CREATEDATE + ".from";
 
     /** _more_ */
-    public static final String ARG_SITE_CREATEDATE_FROM = ARG_SITE_CREATEDATE
-                                                          + ".from";
+    public static final String ARG_SITE_CREATEDATE_TO = ARG_SITE_CREATEDATE + ".to";
 
     /** _more_ */
-    public static final String ARG_SITE_CREATEDATE_TO = ARG_SITE_CREATEDATE
-                                                        + ".to";
-
-
-
-    /** _more_ */
-    public static final String ARG_SITE_MODIFYDATE = ARG_SITE_PREFIX
-                                                     + "modifydate";
+    public static final String ARG_SITE_MODIFYDATE = ARG_SITE_PREFIX + "modifydate";
 
     /** _more_ */
     public static final String ARG_SITE_MODIFYDATE_FROM = ARG_SITE_MODIFYDATE
@@ -229,13 +217,10 @@ public interface GsacArgs {
     public static final String SORT_FILE_DATADATE = ARG_FILE_PREFIX
                                                     + "datadate";
 
-
-    /** file size in bytes; why these 3 whcih appear to duplicate the next three items. */
+    /** file size in bytes; . */
     public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + ".filesize";
     public static final String ARG_FILE_SIZEMAX = ARG_FILE_SIZE + ".max";
     public static final String ARG_FILE_SIZEMIN = ARG_FILE_SIZE + ".min";
-
-
 
     /** file size in bytes; used in FileManager.java code*/
     public static final String ARG_FILE_FILESIZE       = ARG_FILE_PREFIX + ".filesize";
@@ -269,10 +254,7 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_REPOSITORY = "gsac.repository";
 
-
-    /** _more_ */
     public static final String ARG_BBOX = "bbox";
-
 
     /** _more_ */
     public static final String ARG_AREA = ARG_BBOX;
