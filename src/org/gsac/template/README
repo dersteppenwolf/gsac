@@ -231,7 +231,6 @@ package org.@MACRO.PREFIX@.gsac;
 
 Edit that line in the Tables.java file to add ".database" in that line.  Do not make other changes to the file.
 
-
 Make a new @MACRO.SRCDIR@/database subdirectory:
 
 mkdir database
@@ -262,15 +261,11 @@ Names of items (Java variables) in the class files made from Tables.java to iden
 in GSAC Java code.  For example, one table name may be, in GSAC code, Tables.STATION, and a column (field) in that table might be 
 Tables.STATION.COL_LATITUDE or COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
 
-CAUTION:
-If you later do "svn update" in your GSAC code area, svn will put a copy of the Tables.java file in @MACRO.SRCDIR@/ where it does not belong.
-If you then try "ant" in @MACRO.SRCDIR@/ a compile error is made.  Remove the Tables.java file from @MACRO.SRCDIR@/ and do "ant" again.
-Tables.java must be ONLY in @MACRO.SRCDIR@/database.
-
 
 ########################################################################
 Run a local test of your GSAC server
 ########################################################################
+
 
 Now test the new, more complete, GSAC web server with the command:
 
