@@ -4,7 +4,7 @@
 
                     README, Part 2.
 
-               5 Jan 2015.   SKW  UNAVCO
+            18 Feb 2015.  Stuart Wier, UNAVCO
 
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -210,34 +210,22 @@ Now run this command in @MACRO.SRCDIR@:
 
 ant tables
 
-Output from the ant tables command includes lines  to the screen something like this:
+Output from the ant tables command includes lines something like this:
 
 Buildfile: build.xml
 localinit:
 init:
 tables:
      [java] JVM args ignored when same JVM is used.
-     [java] JDBC:jdbc:mysql://localhost:8080/MYREPO_GSAC_db
-     [java] JDBC:jdbc:mysql://localhost:8080/MYREPO_GSAC_db
-     [java] processing ACCESS_PERMISSION
-     [java] processing AGENCY
-     [java] processing ANTENNA_SESSION
-     [java] processing ANTENNA_TYPE
-     [java] processing COUNTRY
-     [java] processing FILE_TYPE
-     [java] processing GNSS_DATA_FILE
-     ...[more...
+     ...
 BUILD SUCCESSFUL
 Total time: 2 seconds
 
-Each 'processing' line corresponds to a named table in your database.
-
 This makes a new Java file, @MACRO.SRCDIR@/Tables.java. This file defines Java 'Tables' classes
-with complete specifications for your GSAC database, using GSAC Java code.
+with complete specifications for your GSAC database, one class for each database table, using GSAC Java code.
 
-The package name in Tables.java (at or near line 3) should be edited to end with .database: 
+The package name in the file Tables.java (at or near line 3) should be edited to end with .database: 
 package org.@MACRO.PREFIX@.gsac.database;
-
   not the supplied value:
 package org.@MACRO.PREFIX@.gsac;
 
