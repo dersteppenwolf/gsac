@@ -120,7 +120,7 @@ public abstract class Tables {
         public static final String COL_DATAFILE_NAME =  NAME + ".datafile_name";
         public static final String COL_URL_COMPLETE =  NAME + ".URL_complete";
         public static final String COL_URL_PROTOCOL =  NAME + ".URL_protocol";
-        public static final String COL_URL_PATH_DOMAIN =  NAME + ".URL_path_domain";
+        public static final String COL_URL_DOMAIN =  NAME + ".URL_domain";
         public static final String COL_URL_PATH_DIRS =  NAME + ".URL_path_dirs";
         public static final String COL_DATA_TYPE_ID =  NAME + ".data_type_id";
         public static final String COL_DATAFILE_FORMAT_ID =  NAME + ".datafile_format_id";
@@ -133,10 +133,10 @@ public abstract class Tables {
         public static final String COL_YEAR =  NAME + ".year";
         public static final String COL_DAY_OF_YEAR =  NAME + ".day_of_year";
         public static final String COL_SIZE_BYTES =  NAME + ".size_bytes";
-        public static final String COL_MD5 =  NAME + ".MD5";
+        public static final String COL_MD5 =  NAME + ".md5";
 
         public static final String[] ARRAY = new String[] {
-            COL_DATAFILE_ID,COL_STATION_ID,COL_EQUIP_CONFIG_ID,COL_DATAFILE_NAME,COL_URL_COMPLETE,COL_URL_PROTOCOL,COL_URL_PATH_DOMAIN,COL_URL_PATH_DIRS,COL_DATA_TYPE_ID,COL_DATAFILE_FORMAT_ID,COL_DATA_REFERENCE_FRAME_ID,COL_DATAFILE_START_TIME,COL_DATAFILE_STOP_TIME,COL_DATAFILE_PUBLISHED_DATE,COL_SAMPLE_INTERVAL,COL_LATENCY_ESTIMATE,COL_YEAR,COL_DAY_OF_YEAR,COL_SIZE_BYTES,COL_MD5
+            COL_DATAFILE_ID,COL_STATION_ID,COL_EQUIP_CONFIG_ID,COL_DATAFILE_NAME,COL_URL_COMPLETE,COL_URL_PROTOCOL,COL_URL_DOMAIN,COL_URL_PATH_DIRS,COL_DATA_TYPE_ID,COL_DATAFILE_FORMAT_ID,COL_DATA_REFERENCE_FRAME_ID,COL_DATAFILE_START_TIME,COL_DATAFILE_STOP_TIME,COL_DATAFILE_PUBLISHED_DATE,COL_SAMPLE_INTERVAL,COL_LATENCY_ESTIMATE,COL_YEAR,COL_DAY_OF_YEAR,COL_SIZE_BYTES,COL_MD5
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
@@ -353,7 +353,7 @@ public abstract class Tables {
         public static final String COL_STATION_NAME =  NAME + ".station_name";
         public static final String COL_LATITUDE_NORTH =  NAME + ".latitude_north";
         public static final String COL_LONGITUDE_EAST =  NAME + ".longitude_east";
-        public static final String COL_HEIGHT_ELLIPSOID =  NAME + ".height_ellipsoid";
+        public static final String COL_HEIGHT_ELLIPS_ELEV =  NAME + ".height_ellips_elev";
         public static final String COL_X =  NAME + ".X";
         public static final String COL_Y =  NAME + ".Y";
         public static final String COL_Z =  NAME + ".Z";
@@ -376,7 +376,7 @@ public abstract class Tables {
         public static final String COL_EMBARGO_AFTER_DATE =  NAME + ".embargo_after_date";
 
         public static final String[] ARRAY = new String[] {
-            COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ELLIPSOID,COL_X,COL_Y,COL_Z,COL_INSTALLED_DATE,COL_RETIRED_DATE,COL_AGENCY_ID,COL_ACCESS_ID,COL_STYLE_ID,COL_STATUS_ID,COL_MONUMENT_STYLE_ID,COL_NATION_ID,COL_PROVINCE_STATE_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_NETWORKS,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_TIME_SERIES_PLOT_IMAGE_URL,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
+            COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ELLIPS_ELEV,COL_X,COL_Y,COL_Z,COL_INSTALLED_DATE,COL_RETIRED_DATE,COL_AGENCY_ID,COL_ACCESS_ID,COL_STYLE_ID,COL_STATUS_ID,COL_MONUMENT_STYLE_ID,COL_NATION_ID,COL_PROVINCE_STATE_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_NETWORKS,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_TIME_SERIES_PLOT_IMAGE_URL,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
