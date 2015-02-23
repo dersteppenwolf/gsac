@@ -51,9 +51,9 @@ import java.text.DateFormat;
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  *
- * For the GSAC prototype code.
+ * For the GSAC Prototype15 databasce schema and code, of 2105.
  *
- * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
+ * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/myrepo/gsac/MyrepoSiteManager.java.
  *
  * This class is one major part of making a new local GSAC; it allows a local GSAC to query the local GSAC database, and handles the results from queries:
  *
@@ -69,7 +69,7 @@ import java.text.DateFormat;
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * @author  S K Wier, 12 Feb 2015
+ * @author  S K Wier, 23 Feb 2015
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -108,11 +108,10 @@ public class PrototypeSiteManager extends SiteManager {
      *
      * A capability here which for example is tied to the value GsacExtArgs.ARG_ANTENNA has corresponding code in the method getResourceClauses which creates a query with it when user does so.
      *
-     * (Perhaps a callto this method goes before makeCapabilities call, so regular site search form appears before advanced search?)
+     * (it appears a call to this method goes before makeCapabilities call, so regular site search form appears before advanced search)
      *
-     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
-     *
-     * LOOK - this method appears to be called twice at server start-up.
+     * This method is called at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
+     * This method appears to be called twice at server start-up.
      *
      * CHANGEME if you have other things to search on, or different db table or field names for the items to search on.
      *
@@ -160,48 +159,48 @@ public class PrototypeSiteManager extends SiteManager {
             ArrayList<String> avalues = new ArrayList<String>();
             List<Clause> clauses = new ArrayList<Clause>();
             List<String> tables = new ArrayList<String>();
-            String cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
-            String[] itemArray = new String[avalues.size()];
+            String cols="";
+            ResultSet qresults;
+            Statement statement=null;
+            String[] itemArray;
 
-            /* capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
-                        "The site's metadata was modified between these dates"));
-            capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
-                        "The site was created between these dates"));
-             */
+            // Note values used in the following are only read once at GSAC start-up time.  If these sort of quasi-static database values are changed, restart GSAC.
 
-            /*
-            // to provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station:
-            // select 
+            // search on site status (only a few static values possible)
+            // get all values of this type from its table
+            values = getDatabaseManager().readDistinctValues( Tables.STATION_STATUS.NAME, Tables.STATION_STATUS.COL_STATION_STATUS);
+            Arrays.sort(values);
+            capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
+
+            // To provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station with this query:
+            //  WHERE
             cols=SqlUtil.comma(new String[]{Tables.STATION.COL_NETWORKS});
-            //  FROM which tables (for a table join)
+            int netcount=0;
+            //  FROM which tables 
             tables.add(Tables.STATION.NAME);
-            //  LOOK need no clauses get all networks values in rows: 
-            //Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-            Statement statement = getDatabaseManager().select(cols,  tables,  null,  (String) null,  -1);
+            statement = getDatabaseManager().select(cols,  tables,  null,  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query
                while ((results = iter.getNext()) != null) {
-                   String networks= results.getString(Tables.STATION.COL_NETWORKS); // comma sep list of names of networks
-
+                   String networks= results.getString(Tables.STATION.COL_NETWORKS); //  the field value should be one string , a SEMI_COLON separated  list of names of networks
                    // for tests; show all network names, from each single site, found when GSAC server starts 
-                   if (networks  != null ) {
-                     System.err.println("      station as network(s) _"+networks+"_");
-                   }
-                   else {
-                     System.err.println("      station has networks value null in the database.");
-                   }
-                   
-          
+                   //if (networks  != null ) {
+                   //  System.err.println("      station as network(s) _"+networks+"_");
+                   //}
+                   //else {
+                   //  ;// System.err.println("      station has networks value null in the database.");
+                   //}
                    if (networks  != null && networks.length()>0) {
-                         // split at commas to get each network name
-                         String[] parts = networks.split(",");
+                         // split at SEMI_COLON to get each network name
+                         String[] parts = networks.split(";");
                          if  (parts.length>0) {
                             //loop on all; make sure not already seen
                             for (int ni= 0; ni<parts.length; ni+=1 ) {
                                String nwname = parts[ni]; 
                                if ( ! avalues.contains(nwname)) {
                                    avalues.add(nwname);
+                                   netcount += 1;
                                    //System.err.println("      new network _"+nwname+"_");
                                }
                             }
@@ -216,7 +215,13 @@ public class PrototypeSiteManager extends SiteManager {
             Arrays.sort(values);
             // add search on network names:
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
-            */
+            System.err.println("GSAC: there are "+netcount+" networks among the stations.");
+
+            /* capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
+                        "The site's metadata was modified between these dates"));
+            capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
+                        "The site was created between these dates"));
+             */
 
 
             // search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
@@ -231,7 +236,7 @@ public class PrototypeSiteManager extends SiteManager {
             tables = new ArrayList<String>();
             tables.add(Tables.STATION.NAME);
             tables.add(Tables.STATION_STYLE.NAME);
-            Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+            statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
                // process each line in results of db query  
@@ -499,17 +504,17 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for province " + values.get(0)) ;
         }
 
-/*
+
         // query for the station's networks; "group" is GSAC jargon for gnss network
         if (request.defined(ARG_SITE_GROUP)) {
             List<String> values = (List<String>) request.get(ARG_SITE_GROUP, new ArrayList());
             clauses.add(Clause.or(getNetworkClauses(values, msgBuff)));  // see method def getNetworkClauses () below
         }
-*/
+
  
         // LOOK might add code for each case below which has values.get(0), to use a loop over i>1 values.get(i) if present, so can make a selection list
 
-/*
+
         
         if (request.defined(GsacArgs.ARG_SITE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_TYPE);
@@ -522,11 +527,12 @@ public class PrototypeSiteManager extends SiteManager {
         if (request.defined(GsacArgs.ARG_SITE_STATUS)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_STATUS);
             tableNames.add(Tables.STATION_STATUS.NAME);
-            clauses.add(Clause.join(Tables.STATION.COL_STATION_STATUS_ID, Tables.STATION_STATUS.COL_STATION_STATUS_ID));
+            clauses.add(Clause.join(Tables.STATION.COL_STATUS_ID, Tables.STATION_STATUS.COL_STATION_STATUS_ID));
             clauses.add(Clause.eq(Tables.STATION_STATUS.COL_STATION_STATUS, values.get(0)));
             //System.err.println("   SiteManager: query for STATUS " + values.get(0)) ;
         }
         
+/*
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
             tableNames.add(Tables.ANTENNA_SESSION.NAME);
@@ -566,8 +572,8 @@ public class PrototypeSiteManager extends SiteManager {
         // or like    SiteManager: getResourceClauses gives [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
-        // show search sql 
-        System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
+        // LOOK debug  DEBUG print show search sql 
+        //System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -715,21 +721,22 @@ public class PrototypeSiteManager extends SiteManager {
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
         int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
 
-        /*
         String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
         if (null!= networks) {
                     networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
         }
+
+        String station_status_id    = results.getString(Tables.STATION.COL_STATUS_ID);             // may be null; is String of an int
+        /*
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
-        String station_status_id    = results.getString(Tables.STATION.COL_STATION_STATUS_ID);             // may be null; is String of an int
         if (1== access_permission_id ) {
             System.err.println("GSAC: new request      GSAC found station with no access permission (no public views allowed) " +fourCharId);
             GsacSite site = new GsacSite();
             return site;
         }
-*/
+        */
 
         /*  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
          public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
@@ -741,6 +748,16 @@ public class PrototypeSiteManager extends SiteManager {
 
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
+        // a photograph of the site
+        if ( station_photo_URL != null  )    {
+            if (imagesGroup == null) {
+                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
+            }
+            if ( station_photo_URL != null ) {
+                // add  site photo image to the group:
+                imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+            }
+        }
         // for an image file of a time series solution at this site
         if (ts_image_URL!=null )    {
             if (imagesGroup == null) {
@@ -752,24 +769,9 @@ public class PrototypeSiteManager extends SiteManager {
             }
         }
 
-
-         /*
-
-
-        // a photograph of the site
-        if ( station_photo_URL != null  )    {
-            if (imagesGroup == null) {
-                site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
-            }
-            if ( station_photo_URL != null ) {
-                // add  site photo image to the group:
-                imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
-            }
-        }
-
         // handle search on date range:
-        Date fromDate=readDate(results,  Tables.STATION.COL_STATION_INSTALLED_DATE);
-        Date toDate=  readDate(results,  Tables.STATION.COL_STATION_RETIRED_DATE);
+        Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
+        Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE);
         //System.err.println("   SiteManager: station " +fourCharId+ " has installed date from "+fromDate);
         //System.err.println("   SiteManager: station " +fourCharId+ " has installed date to   "+toDate);
         if (toDate != null )
@@ -784,10 +786,10 @@ public class PrototypeSiteManager extends SiteManager {
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value), probably
         site.setToDate(toDate);
 
-        //Add the network(s) for this station, in alphabetical order,  to the resource group
+        //Add the network(s) for this station, in alphabetical order, to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
             List<String> toks = new ArrayList<String>();
-            for (String tok : networks.split(",")) {
+            for (String tok : networks.split(";")) {
                 toks.add(tok.trim());
             }
             Collections.sort(toks);
@@ -795,7 +797,6 @@ public class PrototypeSiteManager extends SiteManager {
                 site.addResourceGroup(new ResourceGroup(tok));  // this method adds the comma-separated list of network names at a site, to a site object
             }
         }
-        */
 
         // get names of country, province or state, and agency from their id numbers 
         String country = "";
@@ -1739,8 +1740,8 @@ public class PrototypeSiteManager extends SiteManager {
     public List<ResourceGroup> doGetResourceGroups() {
 
         List<ResourceGroup> groups = new ArrayList<ResourceGroup>();
-        return groups;
-/*
+        // tests onlyreturn groups;
+
         try {
             System.err.println("       doGetResourceGroups(): ");
             HashSet<String>     seen   = new HashSet<String>();
@@ -1769,7 +1770,7 @@ public class PrototypeSiteManager extends SiteManager {
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
-*/
+
     }
     
 
@@ -1784,8 +1785,8 @@ public class PrototypeSiteManager extends SiteManager {
      */
     private List<Clause> getNetworkClauses(List<String> groupIds, StringBuffer msgBuff) {
         List<Clause> groupClauses = new ArrayList<Clause>();
-        return groupClauses;
-/*
+        // tests only return groupClauses;
+
         String  col = Tables.STATION.COL_NETWORKS;
 
         int cnt = 0;
@@ -1808,7 +1809,7 @@ public class PrototypeSiteManager extends SiteManager {
             //groupClauses.add(Clause.like(col, SqlUtil.wildCardBoth("," + group + ",")));
         }
         return groupClauses;
-*/
+
     }
 
 
