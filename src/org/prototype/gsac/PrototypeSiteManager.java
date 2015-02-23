@@ -828,8 +828,28 @@ public class PrototypeSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-        String city = " ";
         // LOOK add new code get name of locale or city from cityid     
+        String city = " ";
+        clauses = new ArrayList<Clause>();
+        tables = new ArrayList<String>();
+        cols="";
+        clauses.add(Clause.join(Tables.STATION.COL_LOCALE_ID, Tables.LOCALE.COL_LOCALE_ID));
+        clauses.add(Clause.eq(Tables.LOCALE.COL_LOCALE_ID, cityid));
+        cols=SqlUtil.comma(new String[]{Tables.LOCALE.COL_LOCALE_NAME});
+        tables.add(Tables.STATION.NAME);
+        tables.add(Tables.LOCALE.NAME);
+        statement = //select            what    from      where
+           getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        //System.err.println("   SiteManager: province query is " +statement);
+        try {
+           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+           while ((qresults = iter.getNext()) != null) {
+               city = new String( qresults.getBytes(Tables.LOCALE.COL_LOCALE_NAME), "UTF-8"); // qresults.getString(Tables.LOCALE.COL_LOCALE_NAME);
+               break;
+           }
+         } finally {
+               getDatabaseManager().closeAndReleaseConnection(statement);
+         }
 
         // get name of province or state     
         clauses = new ArrayList<Clause>();
@@ -869,11 +889,8 @@ public class PrototypeSiteManager extends SiteManager {
         cols=SqlUtil.comma(new String[]{Tables.AGENCY.COL_AGENCY_NAME});
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.AGENCY.NAME);
-
         statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //                               select  fields   from     where
-        //System.err.println("   SiteManager: select query is " +statement);
-
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
@@ -884,13 +901,9 @@ public class PrototypeSiteManager extends SiteManager {
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
+        */
 
-
-        //  set site "Type" aka site.type corresponding to "station style" in the database
-        // Not clear where or how this is used by GSAC code.
-            */
-
-        // CHANGEME: implement this, if you need this; sample code is below in this file.
+        // LOOK for this value (NOT yet in database!)  implement this, if you need this; sample code is below in this file.
         // readFrequencyStandardMetadata(site);
 
         return site;
