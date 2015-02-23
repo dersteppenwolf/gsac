@@ -62,7 +62,7 @@ CREATE TABLE `agency` (
   `agency_individual_name` varchar(100) DEFAULT NULL,
   `other_contact` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`agency_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,6 +71,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
+INSERT INTO `agency` VALUES (1,'some agency name',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +145,7 @@ CREATE TABLE `data_type` (
 
 LOCK TABLES `data_type` WRITE;
 /*!40000 ALTER TABLE `data_type` DISABLE KEYS */;
-INSERT INTO `data_type` VALUES (1,'instrument data file','any type instrument native, raw, or binary file'),(2,'GNSS observation file','any GNSS obs file; may be compressed'),(3,'GPS navigation file','a GPS \'n\' nav file; may be compressed'),(4,'Galileo navigation file','a Galileo \'e\' nav file; may be compressed'),(5,'GLONASS navigation file','a \'g\' nav file; may be compressed'),(6,'meteorology file','an \'m\' met file; may be compressed'),(7,'QZSS navigation file','a \'j\' nav file; may be compressed'),(8,'Beidou navigation file','a \'c\' nav file; may be compressed'),(9,'Final Daily time series','Final Daily time series solution, latency=7-10 d'),(10,'Rapid Daily time series','Rapid Daily time series solution; latency 1 d'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution; latency 8-32 hr'),(12,'Ultra    Rapid 5 minute time series','Ultra Rapid 5 min time series; latency 2 h'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series; latency 1.5 h'),(14,'Nights Ultra Rapid 5       minute time series','Nights Ultra Rapid 5 min time series; latency 2 h'),(15,'Time series plot','Time series static plot image'),(16,'Time series, cleaned, plot','Time series cleaned static plot image '),(17,'Time series, Rapid 5   minute plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'tiltmeter observations',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'GNSS sites positions','');
+INSERT INTO `data_type` VALUES (1,'instrument data file','any type instrument native, raw, or binary file'),(2,'GNSS observation file','any GNSS obs file; may be compressed'),(3,'GPS navigation file','a GPS \'n\' nav file; may be compressed'),(4,'Galileo navigation file','a Galileo \'e\' nav file; may be compressed'),(5,'GLONASS navigation file','a \'g\' nav file; may be compressed'),(6,'GNSS meteorology file','an \'m\' met file; may be compressed'),(7,'QZSS navigation file','a \'j\' nav file; may be compressed'),(8,'Beidou navigation file','a \'c\' nav file; may be compressed'),(9,'Final Daily time series','Final Daily time series solution, latency=7-10 d'),(10,'Rapid Daily time series','Rapid Daily time series solution; latency 1 d'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution; latency 8-32 hr'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time series; latency 2 h'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series; latency 1.5 h'),(14,'Nights Ultra Rapid 5 minute time series','Nights Ultra Rapid 5 min time series; latency 2 h'),(15,'Time series plot','Time series static plot image'),(16,'Time series, cleaned, plot','Time series cleaned static plot image '),(17,'Time series, Rapid 5 minute, plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter observations','');
 /*!40000 ALTER TABLE `data_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,7 +163,7 @@ CREATE TABLE `datafile` (
   `datafile_name` varchar(120) NOT NULL,
   `URL_complete` varchar(120) NOT NULL,
   `URL_protocol` varchar(7) DEFAULT NULL,
-  `URL_path_domain` varchar(50) DEFAULT NULL,
+  `URL_domain` varchar(50) DEFAULT NULL,
   `URL_path_dirs` varchar(70) DEFAULT NULL,
   `data_type_id` int(3) unsigned DEFAULT NULL,
   `datafile_format_id` int(3) unsigned DEFAULT NULL,
@@ -519,7 +520,7 @@ CREATE TABLE `station` (
   CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -528,7 +529,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,NULL,NULL,NULL,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeodNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg',NULL,NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,NULL,NULL,NULL,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeodNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg',NULL,NULL,NULL);
+INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,NULL,NULL,NULL,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg',NULL,NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,NULL,NULL,NULL,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg',NULL,NULL,NULL),(5,'ABMF','Aeroport du Raizet -LES ABYMES - Mitio France',16.2623,-61.5275,-25.67,1636819.0859,-4939085.2795,-3676612.7351,'2009-12-25 00:00:00',NULL,1,2,2,1,NULL,1,1,1,1,'myNet;NewNet',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg','http://pboshared.unavco.org/timeseries/ABMF_timeseries_cleaned.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -589,4 +590,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-02-12 12:43:52
+-- Dump completed on 2015-02-23 11:01:13
