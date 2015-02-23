@@ -99,10 +99,9 @@ to permit the GSAC web server process to read from the geodesy database.  The co
         ##
 
 
-The database host (like boulderdev.mydomain.org), port (3080), account user name and account password are all given.  
+The database host (like boulderdev.mydomain.org), port (8080), account user name and account password are all given.  
 When the GSL assembles the JDBC URL it finds the user name and password from these.  
-The database must have an account GSAC can use to read from the database. 
-GSAC does not write to any database.
+The database must have an account GSAC can use to read from the database.  GSAC does not write to any database.
 
 One MySQL example which may work running both the db and GSAC locally on your computer, for testing, is 
 gsac.db.jdbcurl=jdbc:mysql://localhost:8080/your_database_name
@@ -271,23 +270,23 @@ Now test the new, more complete, GSAC web server with the command:
 
 ant runserver
 
-This command runs a gsac@MACRO.PREFIX@ GSAC, on your local desktop where you are developing your GSAC.  
+This command runs a gsac@MACRO.PREFIX@ GSAC, a Java program, on your local desktop.
 
-Screen output of th ant command includes a line like
+Screen output of the ant command includes a line like
 
-GSAC INFO: Tue Aug 28 14:33:59 EDT 2013: GsacServlet: url:http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi
- or 
      [java] Running stand-alone GSAC server at: http://localhost:8080/bouldergsac
 
 This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
-running ant runserver.  If you already use 8080 for another purpose, enter a different value in build.xml.  It is 
-also in the gsacrepository.sh for when running stand-alone.
+running ant runserver.  It is also in the gsacrepository.sh for when running stand-alone.
+If post 8080 is in use for another purpose, you will see an error like
+"FAILED ServerConnector@50bbaeee{HTTP/1.1}{0.0.0.0:8080}: java.net.BindException: Address already in use".
+Enter a different value like 9000 in build.xml.  
 
 In a browser on your desktop where you are developing your GSAC, look at that URL, like 
 
-http://mycpuname:8080/gsac@MACRO.PREFIX@/gsacapi.  
+http://localhost:9000/gsac@MACRO.PREFIX@/gsacapi.  
 
-You should see a new web page with minimal content:
+You should see a web page with minimal content:
 
                     Search Sites | Search Files | Browse | Infomation | Help
     Welcome to the GSAC Repository
@@ -295,13 +294,13 @@ You should see a new web page with minimal content:
 This shows that all the core GSAC code runs on your system.  You can look at the GSAC informational pages, such as the Information and Help links.
 The 'Search' links won't do much yet.
 
-Congratulations!  You've generated the core GSAC repository package, and an initial new GSAC server.
+Congratulations!  You've created the core GSAC repository package, and built a functioning (if incomplete)  GSAC server.
 
 Stop the 'ant runserver' process with CTRL-c.  
 
 This local test of GSAC uses Jetty, http://www.eclipse.org/jetty/, a Java HTTP server and Java servlet container.  
 The Jetty servlet is for local testing, which saves the trouble of deploying a .war file to a Tomcat implementation 
-(and may avoid restarting Tomcat for every test of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
+(and may avoid restarting Tomcat for every test run of the new GSAC).  Public web servers often run with Tomcat in place of Jetty.
 
 You have made an operational GSAC server which has complete core GSAC code, but which lacks specific details about your repository,
 that is, where to find station and instrument metadata, and geodesy file info, in your database.
