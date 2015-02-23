@@ -1,13 +1,311 @@
 
-			      Prototype or Standard GSAC Database Schema
+			         "Prototype15" GSAC Database Schema
 
 				    Tables and Field Definitions and Notes.
 
-					             10 March 2014          
+					             25 Feb  2014          
+
+             FIRST HALF COMPLETE ONLY
 
 					      UNAVCO, Boulder Colorado.
 
+ql> show tables;
++----------------------------+
+| Tables_in_Prototype15_GSAC |
++----------------------------+
+| access                     |
+| agency                     |
+| antenna                    |
+| data_reference_frame       |
+| data_type                  |
+| datafile                   |
+| datafile_format            |
+| ellipsoid                  |
+| equip_config               |
+| locale                     |
+| metpack                    |
+| monument_style             |
+| nation                     |
+| province_state             |
+| radome                     |
+| receiver_firmware          |
+| station                    |
+| station_status             |
+| station_style              |
++----------------------------+
 
-(to be replaced in early 2015 with details about the new Prototype15_GSAC MySQL schema and .sql file).
 
- em ail  wier at unavco.org for updates
+mysql> desc access;
++--------------------+-----------------+------+-----+---------+----------------+
+| Field              | Type            | Null | Key | Default | Extra          |
++--------------------+-----------------+------+-----+---------+----------------+
+| access_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| access_description | varchar(80)     | NO   |     | NULL    |                |
++--------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from access;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
++-----------+-----------------------------------------+
+| access_id | access_description                      |
++-----------+-----------------------------------------+
+|         1 | no public access allowed                |
+|         2 | public access allowed                   |
+|         3 | public access allowed for metadata only |
++-----------+-----------------------------------------+
+
+
+mysql> desc agency;
++--------------------------+-----------------+------+-----+---------+----------------+
+| Field                    | Type            | Null | Key | Default | Extra          |
++--------------------------+-----------------+------+-----+---------+----------------+
+| agency_id                | int(4) unsigned | NO   | PRI | NULL    | auto_increment |
+| operating_agency_name    | varchar(100)    | NO   |     | NULL    |                |
+| operating_agency_address | varchar(150)    | YES  |     | NULL    |                |
+| operating_agency_email   | varchar(100)    | YES  |     | NULL    |                |
+| agency_individual_name   | varchar(100)    | YES  |     | NULL    |                |
+| other_contact            | varchar(150)    | YES  |     | NULL    |                |
++--------------------------+-----------------+------+-----+---------+----------------+
+
+
+
+mysql> desc antenna;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| antenna_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| antenna_name | varchar(15)     | NO   |     | NULL    |                |
+| igs_defined  | char(1)         | NO   |     | N       |                |
++--------------+-----------------+------+-----+---------+----------------+
+
+mysql> select * from antenna;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
++------------+----------------+-------------+
+| antenna_id | antenna_name   | igs_defined |
++------------+----------------+-------------+
+|          1 | TRM57971.00    | Y           |
+|          2 | TRM59800.00    | Y           |
+|          3 | ASH701945B_M   | Y           |
+|          4 | TRM55971.00    | Y           |
+|          5 | TRM41249.00    | N           |
+|          6 | TRM22020.00+GP | N           |
+|          7 | AOAD/M_T       | N           |
+|          8 | TRM14532.00    | N           |
+|          9 | ASH700936D_M   | N           |
+|         10 | TRM29659.00    | N           |
+|         11 | TRM22020.00-GP | N           |
++------------+----------------+-------------+
+
+
+
+mysql> desc data_reference_frame;
++---------------------------+-----------------+------+-----+---------+----------------+
+| Field                     | Type            | Null | Key | Default | Extra          |
++---------------------------+-----------------+------+-----+---------+----------------+
+| data_reference_frame_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| data_reference_frame_name | varchar(50)     | NO   |     | NULL    |                |
++---------------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from  data_reference_frame;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
++-------------------------+---------------------------+
+| data_reference_frame_id | data_reference_frame_name |
++-------------------------+---------------------------+
+|                       1 | WGS84                     |
+|                       2 | IGS08                     |
+|                       3 | NA12                      |
+|                       4 | GTRF09                    |
+|                       5 | ETRS89                    |
+|                       6 | FID (UNR)                 |
+|                       7 | SNARF                     |
++-------------------------+---------------------------+
+
+
+
+mysql> desc data_type;
++-----------------------+-----------------+------+-----+---------+----------------+
+| Field                 | Type            | Null | Key | Default | Extra          |
++-----------------------+-----------------+------+-----+---------+----------------+
+| data_type_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| data_type_name        | varchar(50)     | NO   |     | NULL    |                |
+| data_type_description | varchar(50)     | NO   |     | NULL    |                |
++-----------------------+-----------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from data_type;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
++--------------+-----------------------------------------+----------------------------------------------------+
+| data_type_id | data_type_name                          | data_type_description                              |
++--------------+-----------------------------------------+----------------------------------------------------+
+|            1 | instrument data file                    | any type instrument native, raw, or binary file    |
+|            2 | GNSS observation file                   | any GNSS obs file; may be compressed               |
+|            3 | GPS navigation file                     | a GPS 'n' nav file; may be compressed              |
+|            4 | Galileo navigation file                 | a Galileo 'e' nav file; may be compressed          |
+|            5 | GLONASS navigation file                 | a 'g' nav file; may be compressed                  |
+|            6 | GNSS meteorology file                   | an 'm' met file; may be compressed                 |
+|            7 | QZSS navigation file                    | a 'j' nav file; may be compressed                  |
+|            8 | Beidou navigation file                  | a 'c' nav file; may be compressed                  |
+|            9 | Final Daily time series                 | Final Daily time series solution, latency=7-10 d   |
+|           10 | Rapid Daily time series                 | Rapid Daily time series solution; latency 1 d      |
+|           11 | Rapid 5 minute time series              | Rapid 5 min time series solution; latency 8-32 hr  |
+|           12 | Ultra Rapid 5 minute time series        | Ultra Rapid 5 min time series; latency 2 h         |
+|           13 | Ultra Rapid 5 minute Combo time series  | Ultra Rapid 5 min Combo time series; latency 1.5 h |
+|           14 | Nights Ultra Rapid 5 minute time series | Nights Ultra Rapid 5 min time series; latency 2 h  |
+|           15 | Time series plot                        | Time series static plot image                      |
+|           16 | Time series, cleaned, plot              | Time series cleaned static plot image              |
+|           17 | Time series, Rapid 5 minute, plot       | Time series Rapid 5 minute plot image              |
+|           18 | SINEX product                           |                                                    |
+|           19 | GNSS sites velocities                   |                                                    |
+|           20 | GNSS sites positions                    |                                                    |
+|           21 | strainmeter observations                |                                                    |
+|           22 | tidegage observations                   |                                                    |
+|           23 | tiltmeter observations                  |                                                    |
++--------------+-----------------------------------------+----------------------------------------------------+
+
+
+
+mysql> desc datafile;
++-------------------------+-----------------+------+-----+---------+----------------+
+| Field                   | Type            | Null | Key | Default | Extra          |
++-------------------------+-----------------+------+-----+---------+----------------+
+| datafile_id             | int(9) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id              | int(6) unsigned | NO   | MUL | NULL    |                |
+| equip_config_id         | int(6) unsigned | YES  | MUL | NULL    |                |
+| datafile_name           | varchar(120)    | NO   |     | NULL    |                |
+| URL_complete            | varchar(120)    | NO   |     | NULL    |                |
+| URL_protocol            | varchar(7)      | YES  |     | NULL    |                |
+| URL_domain              | varchar(50)     | YES  |     | NULL    |                |
+| URL_path_dirs           | varchar(70)     | YES  |     | NULL    |                |
+| data_type_id            | int(3) unsigned | YES  | MUL | NULL    |                |
+| datafile_format_id      | int(3) unsigned | YES  | MUL | NULL    |                |
+| data_reference_frame_id | int(3) unsigned | YES  | MUL | NULL    |                |
+| datafile_start_time     | datetime        | YES  |     | NULL    |                |
+| datafile_stop_time      | datetime        | YES  |     | NULL    |                |
+| datafile_published_date | datetime        | YES  |     | NULL    |                |
+| sample_interval         | float           | YES  |     | NULL    |                |
+| latency_estimate        | float           | YES  |     | NULL    |                |
+| year                    | year(4)         | YES  |     | NULL    |                |
+| day_of_year             | int(3)          | YES  |     | NULL    |                |
+| size_bytes              | int(10)         | YES  |     | NULL    |                |
+| MD5                     | char(32)        | YES  |     | NULL    |                |
++-------------------------+-----------------+------+-----+---------+----------------+
+20 rows in set (0.00 sec)
+
+mysql> select * from datafile;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
++-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
+| datafile_id | station_id | equip_config_id | datafile_name  | URL_complete                                                   | URL_protocol | URL_domain      | URL_path_dirs    | data_type_id | datafile_format_id | data_reference_frame_id | datafile_start_time | datafile_stop_time  | datafile_published_date | sample_interval | latency_estimate | year | day_of_year | size_bytes | MD5  |
++-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
+|           1 |          1 |               1 | AVCA.NA12.tenv | http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv | http         | geodesy.unr.edu | /gps_timeseries/ |            9 |                  5 |                       3 | 2003-04-10 00:00:00 | 2015-01-17 00:00:00 | 2015-01-27 00:00:00     |            NULL |            86400 | 2015 |          17 |       NULL | NULL |
++-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
+
+
+
+mysql> desc datafile_format;
++----------------------+-----------------+------+-----+---------+----------------+
+| Field                | Type            | Null | Key | Default | Extra          |
++----------------------+-----------------+------+-----+---------+----------------+
+| datafile_format_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| datafile_format_name | varchar(50)     | NO   |     | NULL    |                |
++----------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from datafile_format ;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
++--------------------+-----------------------------------+
+| datafile_format_id | datafile_format_name              |
++--------------------+-----------------------------------+
+|                  1 | RINEX 2                           |
+|                  2 | RINEX 3                           |
+|                  3 | BINEX                             |
+|                  4 | SINEX                             |
+|                  5 | UNR northings and eastings; tenv3 |
+|                  6 | UNR xyz Cartesian;   txyz2        |
+|                  7 | UNR traditional NEU; tenv         |
+|                  8 | time series    plot image         |
+|                  9 | UNR station QC estimate .qa file  |
+|                 10 | UNR 5 minute products; kenv       |
++--------------------+-----------------------------------+
+
+
+
+ql> desc ellipsoid;
++----------------------+-----------------+------+-----+---------+----------------+
+| Field                | Type            | Null | Key | Default | Extra          |
++----------------------+-----------------+------+-----+---------+----------------+
+| ellipsoid_id         | int(4) unsigned | NO   | PRI | NULL    | auto_increment |
+| ellipsoid_name       | varchar(45)     | NO   |     | NULL    |                |
+| ellipsoid_short_name | varchar(10)     | YES  |     | NULL    |                |
++----------------------+-----------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from ellipsoid;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
++--------------+----------------+----------------------+
+| ellipsoid_id | ellipsoid_name | ellipsoid_short_name |
++--------------+----------------+----------------------+
+|            1 | WGS 84         | WGS 84               |
+|            2 | GRS 80         | GRS 80               |
+|            3 | PZ-90          | PZ-90                |
++--------------+----------------+----------------------+
+
+
+mysql> desc equip_config;
++-------------------------+-----------------+------+-----+---------+----------------+
+| Field                   | Type            | Null | Key | Default | Extra          |
++-------------------------+-----------------+------+-----+---------+----------------+
+| equip_config_id         | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id              | int(6) unsigned | NO   | MUL | NULL    |                |
+| equip_config_start_time | datetime        | NO   |     | NULL    |                |
+| equip_config_stop_time  | datetime        | YES  |     | NULL    |                |
+| db_update_time          | datetime        | NO   |     | NULL    |                |
+| antenna_id              | int(3) unsigned | NO   | MUL | NULL    |                |
+| antenna_serial_number   | varchar(20)     | YES  |     | NULL    |                |
+| antenna_height          | float           | YES  |     | NULL    |                |
+| metpack_id              | int(3) unsigned | YES  | MUL | NULL    |                |
+| metpack_serial_number   | varchar(20)     | YES  |     | NULL    |                |
+| radome_id               | int(3) unsigned | NO   | MUL | NULL    |                |
+| radome_serial_number    | varchar(20)     | YES  |     | NULL    |                |
+| receiver_firmware_id    | int(3) unsigned | NO   | MUL | NULL    |                |
+| receiver_serial_number  | varchar(20)     | NO   |     | NULL    |                |
+| satellite_system        | varchar(20)     | YES  |     | NULL    |                |
+| sample_interval         | float           | YES  |     | NULL    |                |
++-------------------------+-----------------+------+-----+---------+----------------+
+16 rows in set (0.00 sec)
+
+mysql> select * from equip_config;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
++-----------------+------------+-------------------------+------------------------+---------------------+------------+-----------------------+----------------+------------+-----------------------+-----------+----------------------+----------------------+------------------------+------------------+-----------------+
+| equip_config_id | station_id | equip_config_start_time | equip_config_stop_time | db_update_time      | antenna_id | antenna_serial_number | antenna_height | metpack_id | metpack_serial_number | radome_id | radome_serial_number | receiver_firmware_id | receiver_serial_number | satellite_system | sample_interval |
++-----------------+------------+-------------------------+------------------------+---------------------+------------+-----------------------+----------------+------------+-----------------------+-----------+----------------------+----------------------+------------------------+------------------+-----------------+
+|               1 |          1 | 2014-09-04 00:00:00     | 2014-12-17 23:59:45    | 2014-11-15 00:17:41 |          2 | 5343354885            |         0.0083 |          2 | K2630028              |         2 |                      |                    1 | 5250K40670             | GPS              |              15 |
+|               2 |          1 | 2014-08-15 14:30:30     | 2014-12-16 23:59:45    | 2014-11-15 00:17:41 |          1 | 5000112724            |            0.5 |          2 |                       |         1 |                      |                    1 | 5137K78333             | GPS              |              15 |
++-----------------+------------+-------------------------+------------------------+---------------------+------------+-----------------------+----------------+------------+-----------------------+-----------+----------------------+----------------------+------------------------+------------------+-----------------+
+
+
+
+mysql> desc locale;
++-------------+-----------------+------+-----+---------+----------------+
+| Field       | Type            | Null | Key | Default | Extra          |
++-------------+-----------------+------+-----+---------+----------------+
+| locale_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| locale_name | varchar(70)     | NO   |     | NULL    |                |
++-------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from locale;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
++-----------+-----------------+
+| locale_id | locale_name     |
++-----------+-----------------+
+|         1 |  some city name |
++-----------+-----------------+
+
+
+
