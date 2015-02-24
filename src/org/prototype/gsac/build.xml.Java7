@@ -190,7 +190,7 @@
 
 
     <target name="runserver" depends="init">
-      <java classname="org.gsac.gsl.GsacServer" maxmemory="512mb">
+      <java classname="org.gsac.gsl.GsacServer" maxmemory="512mb"> 
           <arg value="-port"/>
           <arg value="8080"/>
           <arg value="-Dgsac.repository.class=${repositoryclass}"/>
