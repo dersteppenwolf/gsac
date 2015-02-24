@@ -5,11 +5,21 @@
 
 					             25 Feb  2014          
 
-             FIRST HALF COMPLETE ONLY
-
 					      UNAVCO, Boulder Colorado.
 
-ql> show tables;
+This corresponds to the Prototype15_GSAC.sql file which can be used to make an empty MySQL database.
+
+Some tables have only metadata about a particular operation such as about the data files
+available at one GSAC. Other tables are semi-static
+lists of values for commonly used categories of information used by many or by all GSAC installations.
+
+Many fields are optional and need not be populated for GSAC to operate.  Look for 
+DEFAULT NULL ros in the Prototype15_GSAC.sql file.  Use the fields you need to offer searches for 
+your metadata.
+
+List all tables in the database:
+
+mysql> show tables;
 +----------------------------+
 | Tables_in_Prototype15_GSAC |
 +----------------------------+
@@ -35,6 +45,8 @@ ql> show tables;
 +----------------------------+
 
 
+Describe all tables in the database, and show some or all of the contents:
+
 mysql> desc access;
 +--------------------+-----------------+------+-----+---------+----------------+
 | Field              | Type            | Null | Key | Default | Extra          |
@@ -46,7 +58,7 @@ mysql> desc access;
 
 mysql> select * from access;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
 +-----------+-----------------------------------------+
 | access_id | access_description                      |
 +-----------+-----------------------------------------+
@@ -79,6 +91,14 @@ mysql> desc antenna;
 | igs_defined  | char(1)         | NO   |     | N       |                |
 +--------------+-----------------+------+-----+---------+----------------+
 
+The value 'igs_defined' is Y or N, and determined by seeing if that exact antenna_name is in
+the most recent version of http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab.
+GSAC does not make this determination.  You must do so as part of your database maintenance -- if you care about 
+this field's value.  GSAC works whether this field is populated or not.
+
+Table antenna can be used to identify any kind of sensor for observations.  The value igs_defined
+need not be defined for non-GNSS instruments.
+
 mysql> select * from antenna;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +------------+----------------+-------------+
@@ -87,14 +107,6 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 |          1 | TRM57971.00    | Y           |
 |          2 | TRM59800.00    | Y           |
 |          3 | ASH701945B_M   | Y           |
-|          4 | TRM55971.00    | Y           |
-|          5 | TRM41249.00    | N           |
-|          6 | TRM22020.00+GP | N           |
-|          7 | AOAD/M_T       | N           |
-|          8 | TRM14532.00    | N           |
-|          9 | ASH700936D_M   | N           |
-|         10 | TRM29659.00    | N           |
-|         11 | TRM22020.00-GP | N           |
 +------------+----------------+-------------+
 
 
@@ -110,7 +122,7 @@ mysql> desc data_reference_frame;
 
 mysql> select * from  data_reference_frame;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
 +-------------------------+---------------------------+
 | data_reference_frame_id | data_reference_frame_name |
 +-------------------------+---------------------------+
@@ -137,7 +149,7 @@ mysql> desc data_type;
 
 mysql> select * from data_type;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
 +--------------+-----------------------------------------+----------------------------------------------------+
 | data_type_id | data_type_name                          | data_type_description                              |
 +--------------+-----------------------------------------+----------------------------------------------------+
@@ -203,6 +215,9 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 |           1 |          1 |               1 | AVCA.NA12.tenv | http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv | http         | geodesy.unr.edu | /gps_timeseries/ |            9 |                  5 |                       3 | 2003-04-10 00:00:00 | 2015-01-17 00:00:00 | 2015-01-27 00:00:00     |            NULL |            86400 | 2015 |          17 |       NULL | NULL |
 +-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
 
+A datafile row can exist only if it has a previously-defined station_id and equip_config_id in the database, and usually if it has some other previously-defined 
+table key values such as datafile_format_id
+
 
 
 mysql> desc datafile_format;
@@ -216,7 +231,7 @@ mysql> desc datafile_format;
 
 mysql> select * from datafile_format ;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
 +--------------------+-----------------------------------+
 | datafile_format_id | datafile_format_name              |
 +--------------------+-----------------------------------+
@@ -246,7 +261,7 @@ ql> desc ellipsoid;
 
 mysql> select * from ellipsoid;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS  TO ALLOW FEDERATED GSACs to INOPERATE.
 +--------------+----------------+----------------------+
 | ellipsoid_id | ellipsoid_name | ellipsoid_short_name |
 +--------------+----------------+----------------------+
@@ -277,7 +292,12 @@ mysql> desc equip_config;
 | satellite_system        | varchar(20)     | YES  |     | NULL    |                |
 | sample_interval         | float           | YES  |     | NULL    |                |
 +-------------------------+-----------------+------+-----+---------+----------------+
-16 rows in set (0.00 sec)
+
+An "equip_config" row specifies one "equipment session" which is a period of time during which a sensor and data logger 
+installation at one station has no changes.  One site (station) can have many equipment sessions, as instrumentation changes.
+
+An equip_config row can exist only if it has a previously-defined station_id, and usually if it has some other previously-defined 
+table key values such as receiver_firmware_id
 
 mysql> select * from equip_config;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
@@ -307,5 +327,262 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 |         1 |  some city name |
 +-----------+-----------------+
 
+
+
+mysql> desc metpack;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| metpack_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| metpack_name | varchar(15)     | NO   |     | NULL    |                |
++--------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from metpack;
++------------+--------------+
+| metpack_id | metpack_name |
++------------+--------------+
+|          1 | WXT510       |
+|          2 | WXT520       |
++------------+--------------+
+
+
+
+mysql> desc monument_style;
++----------------------------+-----------------+------+-----+---------+----------------+
+| Field                      | Type            | Null | Key | Default | Extra          |
++----------------------------+-----------------+------+-----+---------+----------------+
+| monument_style_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| monument_style_description | varchar(70)     | NO   |     | NULL    |                |
++----------------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from monument_style;
++-------------------+----------------------------+
+| monument_style_id | monument_style_description |
++-------------------+----------------------------+
+|                 1 | shallow foundation pillar  |
+|                 2 | building roof              |
+|                 3 | deep-drilled braced        |
+|                 4 | shallow-drilled braced     |
++-------------------+----------------------------+
+
+
+
+mysql> desc metpack;
++--------------+-----------------+------+-----+---------+----------------+
+| Field        | Type            | Null | Key | Default | Extra          |
++--------------+-----------------+------+-----+---------+----------------+
+| metpack_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| metpack_name | varchar(15)     | NO   |     | NULL    |                |
++--------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from metpack;
++------------+--------------+
+| metpack_id | metpack_name |
++------------+--------------+
+|          1 | WXT510       |
+|          2 | WXT520       |
++------------+--------------+
+2 rows in set (0.00 sec)
+
+mysql> desc monument_style;
++----------------------------+-----------------+------+-----+---------+----------------+
+| Field                      | Type            | Null | Key | Default | Extra          |
++----------------------------+-----------------+------+-----+---------+----------------+
+| monument_style_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| monument_style_description | varchar(70)     | NO   |     | NULL    |                |
++----------------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from monument_style;
++-------------------+----------------------------+
+| monument_style_id | monument_style_description |
++-------------------+----------------------------+
+|                 1 | shallow foundation pillar  |
+|                 2 | building roof              |
+|                 3 | deep-drilled braced        |
+|                 4 | shallow-drilled braced     |
++-------------------+----------------------------+
+4 rows in set (0.00 sec)
+
+mysql> desc nation;
++-------------+-----------------+------+-----+---------+----------------+
+| Field       | Type            | Null | Key | Default | Extra          |
++-------------+-----------------+------+-----+---------+----------------+
+| nation_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| nation_name | varchar(70)     | NO   |     | NULL    |                |
++-------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from nation;
++-----------+------------------+
+| nation_id | nation_name      |
++-----------+------------------+
+|         1 | some nation name |
++-----------+------------------+
+1 row in set (0.00 sec)
+
+mysql> desc province_state;
++---------------------+-----------------+------+-----+---------+----------------+
+| Field               | Type            | Null | Key | Default | Extra          |
++---------------------+-----------------+------+-----+---------+----------------+
+| province_state_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| province_state_name | varchar(70)     | NO   |     | NULL    |                |
++---------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from province_state;
++-------------------+---------------------+
+| province_state_id | province_state_name |
++-------------------+---------------------+
+|                 1 | some province name  |
++-------------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> desc radome;
++-------------+-----------------+------+-----+---------+----------------+
+| Field       | Type            | Null | Key | Default | Extra          |
++-------------+-----------------+------+-----+---------+----------------+
+| radome_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| radome_name | varchar(15)     | NO   |     | NULL    |                |
+| igs_defined | char(1)         | NO   |     | N       |                |
++-------------+-----------------+------+-----+---------+----------------+
+
+The value 'igs_defined' is Y or N, and determined by seeing if that exact radome_name is in
+the most recent version of http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab.
+GSAC does not make this determination.  You must do so as part of your database maintenance -- if you care about 
+this field's value.  GSAC works whether this field is populated or not.
+
+mysql> select * from radome;
++-----------+-------------+-------------+
+| radome_id | radome_name | igs_defined |
++-----------+-------------+-------------+
+|         1 | NONE        | Y           |
+|         2 | SCIT        | Y           |
++-----------+-------------+-------------+
+
+
+
+mysql> desc receiver_firmware;
++----------------------+-----------------+------+-----+---------+----------------+
+| Field                | Type            | Null | Key | Default | Extra          |
++----------------------+-----------------+------+-----+---------+----------------+
+| receiver_firmware_id | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| receiver_name        | varchar(20)     | NO   |     | NULL    |                |
+| receiver_firmware    | varchar(20)     | NO   |     | NULL    |                |
+| igs_defined          | char(1)         | NO   |     | N       |                |
++----------------------+-----------------+------+-----+---------+----------------+
+
+The value 'igs_defined' is Y or N, and determined by seeing if that exact receiver_name is in
+the most recent version of http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab.
+GSAC does not make this determination.  You must do so as part of your database maintenance -- if you care about 
+this field's value.  GSAC works whether this field is populated or not.
+
+Table receiver_firmware can be used to identify any kind of data logger for observations.  The values receiver_firmware and igs_defined
+need not be defined for non-GNSS instruments.
+
+mysql> select * from receiver_firmware;
++----------------------+-------------------+-------------------+-------------+
+| receiver_firmware_id | receiver_name     | receiver_firmware | igs_defined |
++----------------------+-------------------+-------------------+-------------+
+|                    1 | TRIMBLE NETR9     | 4.85              | Y           |
+|                    2 | TRIMBLE 4000SSI   | 7.19b             | Y           |
+|                    3 | TRIMBLE NETRS     | 1.1-1             | Y           |
+|                    4 | TRIMBLE NETRS     | 1.1-2             | Y           |
+|                    5 | TRIMBLE NETR5     | 4.03              | Y           |
++----------------------+-------------------+-------------------+-------------+
+
+
+
+mysql> desc station;
++----------------------------+-----------------+------+-----+---------+----------------+
+| Field                      | Type            | Null | Key | Default | Extra          |
++----------------------------+-----------------+------+-----+---------+----------------+
+| station_id                 | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
+| four_char_name             | char(4)         | NO   |     | NULL    |                |
+| station_name               | varchar(50)     | NO   |     | NULL    |                |
+| latitude_north             | double          | NO   |     | NULL    |                |
+| longitude_east             | double          | NO   |     | NULL    |                |
+| height_ellips_elev         | float           | YES  |     | NULL    |                |
+| X                          | double          | YES  |     | NULL    |                |
+| Y                          | double          | YES  |     | NULL    |                |
+| Z                          | double          | YES  |     | NULL    |                |
+| installed_date             | datetime        | YES  |     | NULL    |                |
+| retired_date               | datetime        | YES  |     | NULL    |                |
+| agency_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| access_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| style_id                   | int(3) unsigned | YES  | MUL | NULL    |                |
+| status_id                  | int(3) unsigned | NO   | MUL | NULL    |                |
+| monument_style_id          | int(3) unsigned | YES  | MUL | NULL    |                |
+| nation_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| province_state_id          | int(3) unsigned | YES  |     | NULL    |                |
+| locale_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| ellipsoid_id               | int(1) unsigned | YES  | MUL | NULL    |                |
+| networks                   | varchar(2000)   | YES  |     | NULL    |                |
+| iers_domes                 | char(9)         | YES  |     | NULL    |                |
+| station_photo_URL          | varchar(100)    | YES  |     | NULL    |                |
+| time_series_plot_image_URL | varchar(100)    | YES  |     | NULL    |                |
+| embargo_duration_hours     | int(6) unsigned | YES  |     | NULL    |                |
+| embargo_after_date         | datetime        | YES  |     | NULL    |                |
++----------------------------+-----------------+------+-----+---------+----------------+
+
+A station (or site) is an instrumented location with a unique name or 4 character ID.  
+In GNSS use, one station has one precise lat-long-elevation location, at the phase center of a GNSS receiver.
+In GNSS use, differing lat-long-elevation locations must have different four_char_name-s, or station_name-s, usually both.
+Other data types may not need to be so restrictive.
+
+mysql> select * from station;
++------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
+| station_id | four_char_name | station_name                                  | latitude_north | longitude_east | height_ellips_elev | X            | Y             | Z             | installed_date      | retired_date | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks     | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                         | embargo_duration_hours | embargo_after_date |
++------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
+|          5 | ABMF           | Aeroport du Raizet -LES ABYMES - Mitio France |        16.2623 |       -61.5275 |             -25.67 | 1636819.0859 | -4939085.2795 | -3676612.7351 | 2009-12-25 00:00:00 | NULL         |         1 |         2 |        2 |         1 |              NULL |         1 |                 1 |         1 |            1 | myNet;NewNet | NULL       | http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg | http://pboshared.unavco.org/timeseries/ABMF_timeseries_cleaned.png |                   NULL | NULL               |
++------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
+
+
+mysql> desc station_status;
++-------------------+-----------------+------+-----+---------+----------------+
+| Field             | Type            | Null | Key | Default | Extra          |
++-------------------+-----------------+------+-----+---------+----------------+
+| station_status_id | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_status    | varchar(80)     | NO   |     | NULL    |                |
++-------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from station_status;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). 
+YOU MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
++-------------------+-----------------------+
+| station_status_id | station_status        |
++-------------------+-----------------------+
+|                 1 | Active                |
+|                 2 | Inactive/intermittent |
+|                 3 | Retired               |
+|                 4 | Pending               |
++-------------------+-----------------------+
+
+
+
+mysql> desc station_style;
++---------------------------+-----------------+------+-----+---------+----------------+
+| Field                     | Type            | Null | Key | Default | Extra          |
++---------------------------+-----------------+------+-----+---------+----------------+
+| station_style_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_style_description | varchar(80)     | NO   |     | NULL    |                |
++---------------------------+-----------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from station_style;
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). 
+YOU MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
++------------------+---------------------------+
+| station_style_id | station_style_description |
++------------------+---------------------------+
+|                1 | GPS/GNSS Continuous       |
+|                2 | GPS/GNSS Campaign         |
+|                3 | GPS/GNSS Mobile           |
+|                4 | other                     |
++------------------+---------------------------+
 
 
