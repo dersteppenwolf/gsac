@@ -205,7 +205,8 @@ mysql> desc datafile;
 | size_bytes              | int(10)         | YES  |     | NULL    |                |
 | MD5                     | char(32)        | YES  |     | NULL    |                |
 +-------------------------+-----------------+------+-----+---------+----------------+
-20 rows in set (0.00 sec)
+A datafile row can exist only if it has a previously-defined station_id and equip_config_id in the database, and usually if it has some other previously-defined 
+table key values such as datafile_format_id
 
 mysql> select * from datafile;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
@@ -215,8 +216,6 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 |           1 |          1 |               1 | AVCA.NA12.tenv | http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv | http         | geodesy.unr.edu | /gps_timeseries/ |            9 |                  5 |                       3 | 2003-04-10 00:00:00 | 2015-01-17 00:00:00 | 2015-01-27 00:00:00     |            NULL |            86400 | 2015 |          17 |       NULL | NULL |
 +-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
 
-A datafile row can exist only if it has a previously-defined station_id and equip_config_id in the database, and usually if it has some other previously-defined 
-table key values such as datafile_format_id
 
 
 
@@ -227,7 +226,6 @@ mysql> desc datafile_format;
 | datafile_format_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | datafile_format_name | varchar(50)     | NO   |     | NULL    |                |
 +----------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
 
 mysql> select * from datafile_format ;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
@@ -376,7 +374,6 @@ mysql> desc metpack;
 | metpack_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
 | metpack_name | varchar(15)     | NO   |     | NULL    |                |
 +--------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
 
 mysql> select * from metpack;
 +------------+--------------+
@@ -385,7 +382,7 @@ mysql> select * from metpack;
 |          1 | WXT510       |
 |          2 | WXT520       |
 +------------+--------------+
-2 rows in set (0.00 sec)
+
 
 mysql> desc monument_style;
 +----------------------------+-----------------+------+-----+---------+----------------+
@@ -394,7 +391,6 @@ mysql> desc monument_style;
 | monument_style_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | monument_style_description | varchar(70)     | NO   |     | NULL    |                |
 +----------------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
 
 mysql> select * from monument_style;
 +-------------------+----------------------------+
@@ -405,7 +401,8 @@ mysql> select * from monument_style;
 |                 3 | deep-drilled braced        |
 |                 4 | shallow-drilled braced     |
 +-------------------+----------------------------+
-4 rows in set (0.00 sec)
+
+
 
 mysql> desc nation;
 +-------------+-----------------+------+-----+---------+----------------+
@@ -422,7 +419,8 @@ mysql> select * from nation;
 +-----------+------------------+
 |         1 | some nation name |
 +-----------+------------------+
-1 row in set (0.00 sec)
+
+
 
 mysql> desc province_state;
 +---------------------+-----------------+------+-----+---------+----------------+
@@ -431,7 +429,7 @@ mysql> desc province_state;
 | province_state_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | province_state_name | varchar(70)     | NO   |     | NULL    |                |
 +---------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
+
 
 mysql> select * from province_state;
 +-------------------+---------------------+
@@ -439,7 +437,8 @@ mysql> select * from province_state;
 +-------------------+---------------------+
 |                 1 | some province name  |
 +-------------------+---------------------+
-1 row in set (0.00 sec)
+
+
 
 mysql> desc radome;
 +-------------+-----------------+------+-----+---------+----------------+
@@ -531,7 +530,7 @@ mysql> desc station;
 A station (or site) is an instrumented location with a unique name or 4 character ID.  
 In GNSS use, one station has one precise lat-long-elevation location, at the phase center of a GNSS receiver.
 In GNSS use, differing lat-long-elevation locations must have different four_char_name-s, or station_name-s, usually both.
-Other data types may not need to be so restrictive.
+Other data types may not need be so restrictive.
 
 mysql> select * from station;
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
@@ -541,6 +540,7 @@ mysql> select * from station;
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
 
 
+
 mysql> desc station_status;
 +-------------------+-----------------+------+-----+---------+----------------+
 | Field             | Type            | Null | Key | Default | Extra          |
@@ -548,7 +548,6 @@ mysql> desc station_status;
 | station_status_id | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | station_status    | varchar(80)     | NO   |     | NULL    |                |
 +-------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
 
 mysql> select * from station_status;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). 
@@ -571,7 +570,6 @@ mysql> desc station_style;
 | station_style_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | station_style_description | varchar(80)     | NO   |     | NULL    |                |
 +---------------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
 
 mysql> select * from station_style;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). 
