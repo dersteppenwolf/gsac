@@ -95,27 +95,40 @@ public class PrototypeFileManager extends FileManager {
         // Find the types of data in files, such as rain fall amount or GPS obs, in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE))" -- below in another method.)
         // Note this code has to read ALL the file entries in the database; every row, to find all the types.
         // (originally, code here found *all* the possible file type names in the database file_type table, many types not in most data centers; which is merely misleading)
+
         int gpsfcnt=0;
+        int fmcnt=0;
+        int trfcnt=0;
         ResultSet results;
-        ArrayList<String> avalues = new ArrayList<String>();
         List<Clause> clauses = new ArrayList<Clause>();
+        List<String> tables = new ArrayList<String>();
+
         //  WHERE 
         clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_TYPE_ID, Tables.DATA_TYPE.COL_DATA_TYPE_ID));
+        clauses.add(Clause.join(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID));
+        clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID));
         //  SELECT what column values to find
-        String cols=SqlUtil.comma(new String[]{Tables.DATA_TYPE.COL_DATA_TYPE_NAME});
+        String cols=SqlUtil.comma(new String[]{Tables.DATA_TYPE.COL_DATA_TYPE_NAME, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME});
         //  FROM   
-        List<String> tables = new ArrayList<String>();
         tables.add(Tables.DATAFILE.NAME);
         tables.add(Tables.DATA_TYPE.NAME);
+        tables.add(Tables.DATAFILE_FORMAT.NAME);
+        tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
+
+        ArrayList<String> avalues = new ArrayList<String>();
+        ArrayList<String> fmvalues = new ArrayList<String>();
+        ArrayList<String> rfvalues = new ArrayList<String>();
         Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           //System.err.println("GSAC: queried db datafiles table for all data file data types (parameter types)" ) ;
-           // process each line in results of db query  
+           //System.err.println("GSAC: queried db datafiles table for data file metadata, type, format, trf" ) ;
+           // process each line in results of db query : 
            while ((results = iter.getNext()) != null) {
-               String ftype= results.getString(Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
-               filecount += 1  ; //count all files in the datafile table.
-               // save distinct values
+               String ftype = results.getString(Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
+               String format= results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
+               String trf   = results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
+               filecount += 1;  // count all files in the datafile table.
+               // accumulate distinct types in the array avalues
                int notfound=1;
                for (int vi= 0; vi<avalues.size(); vi+=1 ) {
                   if ( avalues.get(vi).equals(ftype) ) {
@@ -128,115 +141,67 @@ public class PrototypeFileManager extends FileManager {
                          gpsfcnt +=1;
                          //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
                    }
+               // accumulate distinct format names in the array fmvalues
+               notfound=1;
+               for (int vi= 0; vi< fmvalues.size(); vi+=1 ) {
+                  if ( fmvalues.get(vi).equals(format) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         fmvalues.add(format);
+                         fmcnt +=1;
+                         //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
+                   }
+               // accumulate distinct trf names in the array rfvalues
+               notfound=1;
+               for (int vi= 0; vi< rfvalues.size(); vi+=1 ) {
+                  if ( rfvalues.get(vi).equals(trf) ) {
+                         notfound=0;
+                         break;
+                         }
+                   }
+                   if (notfound==1) {
+                         rfvalues.add(trf);
+                         trfcnt +=1;
+                         //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
+                   }
                }
         } finally {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
-        String[] itemArray = new String[avalues.size()];
-        values = avalues.toArray(itemArray);
-        // sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
+        // types:
+        String [] tvalues;
+        String[] itemArray = new String[avalues.size()];  // declare String[] itemArray with size
+        tvalues = avalues.toArray(itemArray);             // load itemArray
+        // formats:
+        String [] formatvalues;
+        itemArray = new String[fmvalues.size()];
+        formatvalues = fmvalues.toArray(itemArray);
+        // types:
+        String [] trfvalues;
+        itemArray = new String[rfvalues.size()];  // declare String[] itemArray with size
+        trfvalues = rfvalues.toArray(itemArray);             // load itemArray
+        // The arrays tvalues, formatvalues, and trfvalues are used below to load file query choices.
+        // can sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
         System.err.println("GSAC: there are "+filecount+" data files in the database." ) ;
         System.err.println("GSAC: there are "+gpsfcnt+" data types (types of observations and product files) among the data files." ) ;
-
-        // Find the datafile formats of data or product files in this data archive. Note this code has to read ALL the file entries in the database.
-        gpsfcnt=0;
-        results =null;
-        avalues = new ArrayList<String>();
-        clauses = new ArrayList<Clause>();
-        //  WHERE 
-        clauses.add(Clause.join(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID));
-        //  SELECT what column values to find
-        cols=SqlUtil.comma(new String[]{Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME});
-        //  FROM   
-        tables = new ArrayList<String>();
-        tables.add(Tables.DATAFILE.NAME);
-        tables.add(Tables.DATAFILE_FORMAT.NAME);
-        statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        try {
-           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           //System.err.println("GSAC: queried db datafiles table for all data file formats" ) ;
-           // process each line in results of db query  
-           while ((results = iter.getNext()) != null) {
-               String ftype= results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
-               // save distinct values
-               int notfound=1;
-               for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                  if ( avalues.get(vi).equals(ftype) ) {
-                         notfound=0;
-                         break;
-                         }
-                   }
-                   if (notfound==1) {
-                         avalues.add(ftype);
-                         gpsfcnt +=1;
-                         //System.err.println("  this data center has data files with format '" + ftype +"'" ) ;
-                   }
-               }
-        } finally {
-           getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-        //System.err.println("GSAC: there are "+gpsfcnt+" data file formats." ) ;
-        itemArray = new String[avalues.size()];
-        String [] formatvalues; 
-        formatvalues = avalues.toArray(itemArray);
-        // sort by alphabet: 
-        //Arrays.sort(formatvalues); // or can just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
-        System.err.println("GSAC: there are "+gpsfcnt+" data file formats among the data files." ) ;
-
-        // Find the data's TRFs from this data archive's table data_reference_frame. Note this code has to read ALL the file entries in the database.
-        /* not commonly used; all reference frame code (see 'trf') is commented out in this prototype.
-        gpsfcnt=0;
-        results =null;
-        avalues = new ArrayList<String>();
-        clauses = new ArrayList<Clause>();
-        clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID));
-        cols=SqlUtil.comma(new String[]{Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME});
-        tables = new ArrayList<String>();
-        tables.add(Tables.DATAFILE.NAME);
-        tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
-        statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        try {
-           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           //System.err.println("GSAC: queried db datafile-s table for all data TRFs" ) ;
-           while ((results = iter.getNext()) != null) {
-               String ftype= results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
-               int notfound=1;
-               for (int vi= 0; vi<avalues.size(); vi+=1 ) {
-                  if ( avalues.get(vi).equals(ftype) ) {
-                         notfound=0;
-                         break;
-                         }
-                   }
-                   if (notfound==1) {
-                         avalues.add(ftype);
-                         gpsfcnt +=1;
-                         //System.err.println("  this data center has data files with TRF '" + ftype +"'" ) ;
-                   }
-               }
-        } finally {
-           getDatabaseManager().closeAndReleaseConnection(statement);
-        }
-        itemArray = new String[avalues.size()];
-        String [] trfvalues; 
-        trfvalues = avalues.toArray(itemArray);
-        // sort by alphabet: 
-        //Arrays.sort(trfvalues); // or can just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
-        if (gpsfcnt>0) { System.err.println("GSAC: there are "+gpsfcnt+" TRFs among the data files" ) ; }
-        */
+        System.err.println("GSAC: there are "+fmcnt+" data file formats among the data files." ) ;
+        System.err.println("GSAC: there are "+trfcnt+" TRFs among the data files." ) ;
 
 
         // the following file search choices are added to the web site file search page and available via API options: 
         Capability[] dflt = { 
+              // variables like "GsacSrgs.ARG_FILE_..." are declared in GSAC core code GsacArgs.java.
 
-              // variables like "ARG_FILE_..." are declared in core code GsacArgs.java.
+              initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",                      Capability.TYPE_DATERANGE),    "File Query", "Date range when the data was collected"),
 
-              initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",         Capability.TYPE_DATERANGE), "File Query", "Date the data was collected"),
+              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",        tvalues, true,      Capability.TYPE_FILETYPE ),    "File Query", "Data Type" ),
 
-              initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",  values, true, Capability.TYPE_FILETYPE ),    "File Query", "Data file or parameter type" ),
+              initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "Data File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
 
-              initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
-
-              //initCapability(new Capability(GsacArgs.ARG_FILE_TRF,     "Reference Frame", trfvalues, true, Capability.TYPE_TRF ), "File Query", "Data reference frame" ),
+              //   initCapability(new Capability(GsacArgs.ARG_FILE_TRF,     "Data Reference Frame", trfvalues, true,Capability.TYPE_TRF ),         "File Query", "Data Reference Frame" ),
 
               // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
               initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first entered in repository"),
