@@ -136,7 +136,7 @@ CREATE TABLE `data_type` (
   `data_type_name` varchar(50) NOT NULL,
   `data_type_description` varchar(50) NOT NULL,
   PRIMARY KEY (`data_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,7 +145,7 @@ CREATE TABLE `data_type` (
 
 LOCK TABLES `data_type` WRITE;
 /*!40000 ALTER TABLE `data_type` DISABLE KEYS */;
-INSERT INTO `data_type` VALUES (1,'instrument data file','any type instrument native, raw, or binary file'),(2,'GNSS observation file','any GNSS obs file; may be compressed'),(3,'GPS navigation file','a GPS \'n\' nav file; may be compressed'),(4,'Galileo navigation file','a Galileo \'e\' nav file; may be compressed'),(5,'GLONASS navigation file','a \'g\' nav file; may be compressed'),(6,'GNSS meteorology file','an \'m\' met file; may be compressed'),(7,'QZSS navigation file','a \'j\' nav file; may be compressed'),(8,'Beidou navigation file','a \'c\' nav file; may be compressed'),(9,'Final Daily time series','Final Daily time series solution, latency=7-10 d'),(10,'Rapid Daily time series','Rapid Daily time series solution; latency 1 d'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution; latency 8-32 hr'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time series; latency 2 h'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series; latency 1.5 h'),(14,'Nights Ultra Rapid 5 minute time series','Nights Ultra Rapid 5 min time series; latency 2 h'),(15,'Time series plot','Time series static plot image'),(16,'Time series, cleaned, plot','Time series cleaned static plot image '),(17,'Time series, Rapid 5 minute, plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter observations','');
+INSERT INTO `data_type` VALUES (1,'instrument data file','any type instrument native, raw, or binary file'),(2,'GNSS observation file','any GNSS obs file'),(3,'GPS navigation file','a GPS navigation file'),(4,'Galileo navigation file','a Galileo GNSS navigation file'),(5,'GLONASS navigation file','a GLONASS GNSS navigation file'),(6,'GNSS meteorology file','a GNSS meteorology file'),(7,'QZSS navigation file','a QZSS GNSS navigation file'),(8,'Beidou navigation file','a Beidou GNSS navigation file'),(9,'Final Daily time series','Final Daily time series solution'),(10,'Rapid Daily time series','Rapid Daily time series solution'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time series solution'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series solution'),(14,'Nights Ultra Rapid 5 minute time series','Night Ultra Rapid 5 min time series solution'),(15,'Time series plot','Time series static plot image'),(16,'Time series cleaned plot','Time series cleaned static plot image '),(17,'Time series Rapid 5 min plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter observations',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI');
 /*!40000 ALTER TABLE `data_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,7 +212,7 @@ CREATE TABLE `datafile_format` (
   `datafile_format_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `datafile_format_name` varchar(50) NOT NULL,
   PRIMARY KEY (`datafile_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +221,7 @@ CREATE TABLE `datafile_format` (
 
 LOCK TABLES `datafile_format` WRITE;
 /*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
-INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR northings and eastings; tenv3'),(6,'UNR xyz Cartesian;   txyz2'),(7,'UNR traditional NEU; tenv'),(8,'time series    plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR 5 minute products; kenv');
+INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'time series plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI');
 /*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -590,4 +590,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-02-23 11:01:13
+-- Dump completed on 2015-02-27 10:25:41

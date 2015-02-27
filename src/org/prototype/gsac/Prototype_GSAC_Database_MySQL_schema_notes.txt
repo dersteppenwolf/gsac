@@ -1,21 +1,35 @@
 
-			         "Prototype15" GSAC Database Schema
+			          "Prototype15" GSAC Database Schema
 
-				    Tables and Field Definitions and Notes.
+                        The Prototype15 GSAC Database
 
-					             25 Feb  2014          
+				     Tables, Field Definitions, and Notes.
+
+					             27 Feb  2014          
 
 					      UNAVCO, Boulder Colorado.
 
 This corresponds to the Prototype15_GSAC.sql file which can be used to make an empty MySQL database.
 
-Some tables have only metadata about a particular operation such as about the data files
-available at one GSAC. Other tables are semi-static
-lists of values for commonly used categories of information used by many or by all GSAC installations.
+See more details in the web page http://www.unavco.org/software/data-management/gsac/installation/installation.html,
+section "The Prototype database."
 
-Many fields are optional and need not be populated for GSAC to operate.  Look for 
-DEFAULT NULL ros in the Prototype15_GSAC.sql file.  Use the fields you need to offer searches for 
-your metadata.
+Some tables are semi-static lists of values for commonly used categories of information used by many or by all GSAC installations.
+For example, the tables data_type and data_file_format.  So that all GSACs can work the same way, and so that GSACs can
+be used in federated GSACs, do not change the rows in these tables.  
+One wants to be able to query the same things in the same ways in all GSACs, and not make each GSAC a specail case.
+But you are very welcome to  add any new rows you want to these tables, for example for a new type of table or for a new data file format.
+
+Many fields are optional (can have NULL value) and need not be populated for GSAC to operate. Look for rows with Y in the 
+NULL column, or for the DEFAULT NULL rows in the Prototype15_GSAC.sql file.  You will populate only the rows in the fields you need to offer searches for 
+your metadata.   For example, is it possible that some GSAC has no information about instruments, so the tables antenna, receiver_firmware and other
+tables will be entirely empty.  Your local GSAC code will only read the database tables and fields needed.
+There is no reason to remove empty tables from the database.
+
+Some fundamental data is required, for example, site latitude and longitude.
+
+Keys ensure required data is present.  For example, to add a row to table equip_config there must be a valid station_id already existing in the station table.
+But a station may have no corresponding rows in the  table equip_config, if you do not supply instrument metadata.  
 
 List all tables in the database:
 
@@ -147,35 +161,38 @@ mysql> desc data_type;
 +-----------------------+-----------------+------+-----+---------+----------------+
 3 rows in set (0.00 sec)
 
-mysql> select * from data_type;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
 MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+mysql> select * from data_type;
 +--------------+-----------------------------------------+----------------------------------------------------+
 | data_type_id | data_type_name                          | data_type_description                              |
 +--------------+-----------------------------------------+----------------------------------------------------+
 |            1 | instrument data file                    | any type instrument native, raw, or binary file    |
-|            2 | GNSS observation file                   | any GNSS obs file; may be compressed               |
-|            3 | GPS navigation file                     | a GPS 'n' nav file; may be compressed              |
-|            4 | Galileo navigation file                 | a Galileo 'e' nav file; may be compressed          |
-|            5 | GLONASS navigation file                 | a 'g' nav file; may be compressed                  |
-|            6 | GNSS meteorology file                   | an 'm' met file; may be compressed                 |
-|            7 | QZSS navigation file                    | a 'j' nav file; may be compressed                  |
-|            8 | Beidou navigation file                  | a 'c' nav file; may be compressed                  |
-|            9 | Final Daily time series                 | Final Daily time series solution, latency=7-10 d   |
-|           10 | Rapid Daily time series                 | Rapid Daily time series solution; latency 1 d      |
-|           11 | Rapid 5 minute time series              | Rapid 5 min time series solution; latency 8-32 hr  |
-|           12 | Ultra Rapid 5 minute time series        | Ultra Rapid 5 min time series; latency 2 h         |
-|           13 | Ultra Rapid 5 minute Combo time series  | Ultra Rapid 5 min Combo time series; latency 1.5 h |
-|           14 | Nights Ultra Rapid 5 minute time series | Nights Ultra Rapid 5 min time series; latency 2 h  |
+|            2 | GNSS observation file                   | any GNSS obs file                                  |
+|            3 | GPS navigation file                     | a GPS navigation file                              |
+|            4 | Galileo navigation file                 | a Galileo GNSS navigation file                     |
+|            5 | GLONASS navigation file                 | a GLONASS GNSS navigation file                     |
+|            6 | GNSS meteorology file                   | a GNSS meteorology file                            |
+|            7 | QZSS navigation file                    | a QZSS GNSS navigation file                        |
+|            8 | Beidou navigation file                  | a Beidou GNSS navigation file                      |
+|            9 | Final Daily time series                 | Final Daily time series solution                   |
+|           10 | Rapid Daily time series                 | Rapid Daily time series solution                   |
+|           11 | Rapid 5 minute time series              | Rapid 5 min time series solution                   |
+|           12 | Ultra Rapid 5 minute time series        | Ultra Rapid 5 min time series solution             |
+|           13 | Ultra Rapid 5 minute Combo time series  | Ultra Rapid 5 min Combo time series solution       |
+|           14 | Nights Ultra Rapid 5 minute time series | Night Ultra Rapid 5 min time series solution       |
 |           15 | Time series plot                        | Time series static plot image                      |
-|           16 | Time series, cleaned, plot              | Time series cleaned static plot image              |
-|           17 | Time series, Rapid 5 minute, plot       | Time series Rapid 5 minute plot image              |
+|           16 | Time series cleaned plot                | Time series cleaned static plot image              |
+|           17 | Time series Rapid 5 min plot            | Time series Rapid 5 minute plot image              |
 |           18 | SINEX product                           |                                                    |
 |           19 | GNSS sites velocities                   |                                                    |
 |           20 | GNSS sites positions                    |                                                    |
 |           21 | strainmeter observations                |                                                    |
 |           22 | tidegage observations                   |                                                    |
 |           23 | tiltmeter observations                  |                                                    |
+|           24 | DORIS                                   | DORIS                                           |
+|           25 | SLR                                     | SLR                                             |
+|           26 | VLBI                                    | VLBI                                            |
 +--------------+-----------------------------------------+----------------------------------------------------+
 
 
@@ -230,20 +247,24 @@ mysql> desc datafile_format;
 mysql> select * from datafile_format ;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
 MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
-+--------------------+-----------------------------------+
-| datafile_format_id | datafile_format_name              |
-+--------------------+-----------------------------------+
-|                  1 | RINEX 2                           |
-|                  2 | RINEX 3                           |
-|                  3 | BINEX                             |
-|                  4 | SINEX                             |
-|                  5 | UNR northings and eastings; tenv3 |
-|                  6 | UNR xyz Cartesian;   txyz2        |
-|                  7 | UNR traditional NEU; tenv         |
-|                  8 | time series    plot image         |
-|                  9 | UNR station QC estimate .qa file  |
-|                 10 | UNR 5 minute products; kenv       |
-+--------------------+-----------------------------------+
++--------------------+----------------------------------+
+| datafile_format_id | datafile_format_name             |
++--------------------+----------------------------------+
+|                  1 | RINEX 2                          |
+|                  2 | RINEX 3                          |
+|                  3 | BINEX                            |
+|                  4 | SINEX                            |
+|                  5 | UNR northings and eastings; tenv3|
+|                  6 | UNR txyz2 Cartesian xyz          |
+|                  7 | UNR tenv traditional NEU         |
+|                  8 | time series plot image           |
+|                  9 | UNR station QC estimate .qa file |
+|                 10 | UNR 5 minute products; kenv      |
+|                 11 | UNR krms RMS products            |
+|                 12 | DORIS                            |
+|                 13 | SLR                              |
+|                 14 | VLBI                             |
++--------------------+----------------------------------+
 
 
 
@@ -337,6 +358,7 @@ mysql> desc metpack;
 2 rows in set (0.00 sec)
 
 mysql> select * from metpack;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +------------+--------------+
 | metpack_id | metpack_name |
 +------------+--------------+
@@ -356,6 +378,7 @@ mysql> desc monument_style;
 2 rows in set (0.00 sec)
 
 mysql> select * from monument_style;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +-------------------+----------------------------+
 | monument_style_id | monument_style_description |
 +-------------------+----------------------------+
@@ -376,6 +399,7 @@ mysql> desc metpack;
 +--------------+-----------------+------+-----+---------+----------------+
 
 mysql> select * from metpack;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +------------+--------------+
 | metpack_id | metpack_name |
 +------------+--------------+
@@ -411,9 +435,9 @@ mysql> desc nation;
 | nation_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | nation_name | varchar(70)     | NO   |     | NULL    |                |
 +-------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
 
 mysql> select * from nation;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +-----------+------------------+
 | nation_id | nation_name      |
 +-----------+------------------+
@@ -430,8 +454,8 @@ mysql> desc province_state;
 | province_state_name | varchar(70)     | NO   |     | NULL    |                |
 +---------------------+-----------------+------+-----+---------+----------------+
 
-
 mysql> select * from province_state;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +-------------------+---------------------+
 | province_state_id | province_state_name |
 +-------------------+---------------------+
@@ -455,6 +479,7 @@ GSAC does not make this determination.  You must do so as part of your database 
 this field's value.  GSAC works whether this field is populated or not.
 
 mysql> select * from radome;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +-----------+-------------+-------------+
 | radome_id | radome_name | igs_defined |
 +-----------+-------------+-------------+
@@ -483,6 +508,7 @@ Table receiver_firmware can be used to identify any kind of data logger for obse
 need not be defined for non-GNSS instruments.
 
 mysql> select * from receiver_firmware;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +----------------------+-------------------+-------------------+-------------+
 | receiver_firmware_id | receiver_name     | receiver_firmware | igs_defined |
 +----------------------+-------------------+-------------------+-------------+
@@ -533,6 +559,7 @@ In GNSS use, differing lat-long-elevation locations must have different four_cha
 Other data types may not need be so restrictive.
 
 mysql> select * from station;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
 | station_id | four_char_name | station_name                                  | latitude_north | longitude_east | height_ellips_elev | X            | Y             | Z             | installed_date      | retired_date | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks     | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                         | embargo_duration_hours | embargo_after_date |
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
