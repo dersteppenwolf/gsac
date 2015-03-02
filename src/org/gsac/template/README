@@ -240,6 +240,34 @@ mv Tables.java database/
 
 Do not leave a copy of Tables.java in @MACRO.SRCDIR@/.
 
+*** *** ***
+
+GSAC design notes:
+
+Note that for every table in your database there is a class defined in Tables.java like
+    public static class AGENCY 
+and for every field in every database table there is a Java variable like
+        public static final String COL_OPERATING_AGENCY_NAME =  NAME + ".operating_agency_name";
+
+Note that for every field name in your database like 
+"operating_agency_name" 
+there is a variable with the same name in Tables.java, which variable also has an upper case Java part like 
+COL_OPERATING_AGENCY_NAME 
+in the same line in Tables.java.
+
+Your .java code like repFileManager.java must use those exact Java variable names found in Tables.java.
+
+Tables.java is made from your database with ant tables. This ensures that Tables.java correctly matches your database.  
+Do not edit Tables.java.  You need to make sure your .java code is correct.
+(When you comile with 'ant' then .class files like Tables$AGENCY.class are made from Tables.java.
+
+So the logical progression is :
+a. make your database. (it need not be populated yet.)
+b. make Tables.java with 'ant tables.' (the previous step in these instructions)
+c. make your local GSAC Java code, using variable names from Tables.java.  This is explained below.
+
+*** *** ***
+
 
 Build GSAC again, with 'ant' in @MACRO.SRCDIR@.  This time you should see 
 
@@ -251,20 +279,27 @@ and
 BUILD SUCCESSFUL
 Total time: 5 seconds
  
-This time ant compiles the six java files in @MACRO.SRCDIR@/, and also compiles the new Java class file Tables.java in @MACRO.SRCDIR@/database/.
-(You can check for some new Tables*.class files in @MACRO.SRCDIR@/database/.)  
+This time ant compiles the six java files in @MACRO.SRCDIR@/, and also compiles the new Java file 'Tables.java' in @MACRO.SRCDIR@/database/.
+(There are new Table$*.class files in @MACRO.SRCDIR@/database/.)  
 
-The Tables classes provide a link between your database and your GSAC code.  
+The new Tables.java classes will eventually provide a link between your database and your GSAC code.  
 
-Names of items (Java variables) in the class files made from Tables.java to identify your database tables and columns (fields)
-in GSAC Java code.  For example, one table name may be, in GSAC code, Tables.STATION, and a column (field) in that table might be 
-Tables.STATION.COL_LATITUDE or COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
 
 
 ########################################################################
-Run a local test of your GSAC server
+Run a local test of your GSAC server with Tables classes.
 ########################################################################
 
+So far the .java files in  @MACRO.SRCDIR@/ are only short templates. They do no read your database.  They have no code 
+using  Tables class variables.  
+
+(I recommend that your save copies of these .java files, such as with the command
+cp BoulderSiteManager.java BoulderSiteManager.java-original. 
+These original files may be useful later if you encounter a problem with your code and need to start over 
+from the 'ant table' command. )
+
+But that means you can build a run a new GSAC in your local GSAC code area which will run, but does not depand on corret database coding.
+This is a test of all GSAC code so far, up to use of your database.
 
 Now test the new, more complete, GSAC web server with the command:
 
@@ -272,13 +307,14 @@ ant runserver
 
 This command runs a gsac@MACRO.PREFIX@ GSAC, a Java program, on your local desktop.
 
-Screen output of the ant command includes a line like
+If there is no error, the screen output of the ant command includes a line like
 
      [java] Running stand-alone GSAC server at: http://localhost:8080/bouldergsac
 
 This means your GSAC test is running at the URL shown.  The local host value, 8080, is declared in the build.xml for 
-running ant runserver.  It is also in the gsacrepository.sh for when running stand-alone.
-If post 8080 is in use for another purpose, you will see an error like
+running ant runserver.  (The port  is also in the gsacrepository.sh for when running stand-alone.)
+
+If port 8080 is already used by any other computer process,  you will see an error like
 "FAILED ServerConnector@50bbaeee{HTTP/1.1}{0.0.0.0:8080}: java.net.BindException: Address already in use".
 Enter a different value like 9000 in build.xml.  
 
