@@ -19,17 +19,17 @@
 <project basedir="@MACRO.DOTS@" default="test_build" name="GSAC Build">
 
     <target name="localinit">
-<!-- base name for build products -->
+        <!-- base name for build products -->
         <property name="basename" value="@MACRO.BASENAME@"/>
 
-<!-- Where the main source dir is at (relative to the top level src dir) -->
+        <!-- Where the main source dir is at (relative to the top level src dir) -->
         <property name="repository_relative_dir" value="@MACRO.SRCDIR@"/>
         <property name="repositorypackage" value="@MACRO.PACKAGE@"/>
 
         <property name="serverclass" value="${repositorypackage}.@MACRO.PREFIX@Server"/>
         <property name="repositoryclass" value="${repositorypackage}.@MACRO.PREFIX@Repository"/>
 
-<!-- The root of the Tomcat URL -->
+        <!-- The root of the Tomcat URL -->
         <property name="urlroot" value="/${basename}"/>
     </target>
 
@@ -88,9 +88,9 @@
 
     <target name="build" depends="init,clean">
         <echo message="Creating ${build} build"/>
-<!-- Uncomment this line if you want to build the gsacws.jar everytime 
+        <!-- Uncomment this line if you want to build the gsacws.jar everytime 
         <ant antfile="${srcdir}/org/gsac/gsl/build.xml" target="gsacjar"/>
--->
+        -->
 
         <property name="db.properties" value="${repositorydir}/dbresources/gsacdb_${build}.properties"/>
         <copy overwrite="true"    file="${db.properties}"  
@@ -180,7 +180,8 @@
        </zip>
    </target>
 
-
+    <!-- ant runserver runs GSAC as a java program. Jetty is the application container, not Tomcat.
+      Note the port used is 8080.  If another processes is using 8080, use a different number, such as 9000.  -->
     <target name="runserver" depends="init">
       <java classname="org.gsac.gsl.GsacServer" maxmemory="512mb">
           <arg value="-port"/>
@@ -195,7 +196,8 @@
    </target>
 
 
-
+    <!-- ant tables makes creates the new file Tables.java, based on your database schema, making Java classes for each table in the database,
+         with varible names for each field in each table.  You use those variables of table and field names in Java code for GSAC to read your database. -->
     <target name="tables" depends="init">
       <java classname="${repositorypackage}.@MACRO.PREFIX@DatabaseManager" maxmemory="512mb">
           <classpath>
