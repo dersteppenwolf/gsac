@@ -246,25 +246,29 @@ GSAC design notes:
 
 Note that for every table in your database there is a class defined in Tables.java like
     public static class AGENCY 
-and for every field in every database table there is a Java variable like
-        public static final String COL_OPERATING_AGENCY_NAME =  NAME + ".operating_agency_name";
+and for every field in every database table there is a Tables.java Java variable like
 
 Note that for every field name in your database like 
 "operating_agency_name" 
-there is a variable with the same name in Tables.java, which variable also has an upper case Java part like 
-COL_OPERATING_AGENCY_NAME 
+there is a variable with the same name in Tables.java 
+        public static final String COL_OPERATING_AGENCY_NAME =  NAME + ".operating_agency_name";
+which variable also has an upper case Java part like 
+                                   COL_OPERATING_AGENCY_NAME 
 in the same line in Tables.java.
 
-Your .java code like repFileManager.java must use those exact Java variable names found in Tables.java.
+Your .java code like BoulderFileManager.java must use those exact Java variable names found in Tables.java.
 
-Tables.java is made from your database with ant tables. This ensures that Tables.java correctly matches your database.  
-Do not edit Tables.java.  You need to make sure your .java code is correct.
-(When you comile with 'ant' then .class files like Tables$AGENCY.class are made from Tables.java.
+Tables.java is made from your database with command 'ant tables'. This ensures that Tables.java correctly matches your database.  
+(When you comile with 'ant' then .class files like Tables$AGENCY.class are made from Tables.java.)
+Do not edit Tables.java.  You need to make sure your Java code like MygsacFileManager.java has correct variable names.
 
 So the logical progression is :
 a. make your database. (it need not be populated yet.)
 b. make Tables.java with 'ant tables.' (the previous step in these instructions)
 c. make your local GSAC Java code, using variable names from Tables.java.  This is explained below.
+
+(The Java files in the GSAC package at src/org/prototype/gsac/ match the file src/org/prototype/gsac/database/Tables.java 
+which matches the database schema in file Prototype15.sql.)
 
 *** *** ***
 
