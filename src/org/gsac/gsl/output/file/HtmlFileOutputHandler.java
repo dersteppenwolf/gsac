@@ -42,7 +42,7 @@ import javax.servlet.http.*;
  * Class description not given by original class author.
  *
  * @author         Jeff McWhirter
- * @author S K Wier Jan 2013 - 12 Nov 2013; 5 Feb 2015 for special UNR case
+ * @author S K Wier Jan 2013 - 12 Nov 2013; 19 Feb 2015 some special code for UNR case
  */
 public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
@@ -359,6 +359,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
                     String[] labels = null;
+                    // CHANGEME labels for file table columns
                     if (  relatedLabel != null)
                     { 
                        // unavco gsac server has this case, since it lacks some file metadata values easily available in the prototype GSAC code
@@ -368,36 +369,28 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     }
                     else {  
                        // note that the HTML term for the Greek letter delta is &Delta;
-                       // for prototype GSAC:
-                       labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
-                       // for UNR:
-                       //labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("File size") };
+                       // Standard, and for for prototype GSAC:
+                       //labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                       // CHANGEME for UNR:
+                       labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data") };
                     }
 
                     String[] sortValues = new String[] {
-                        (includeExtraCol
-                         ? ""
-                         : null), "", SORT_FILE_TYPE, "",
-                        SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
+                        (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE
                     };
-                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels,
-                                   sortValues);
+
+                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
+
                     /* 
                     request.remove(ARG_OUTPUT);
                     sb.append(HtmlUtil.formPost(request.getUrl(null), HtmlUtil.attr("name", "searchform")));;
                     sb.append( "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
                     sb.append(toolbar);
                     sb.append("</div></td></tr></table>");
-
                     boolean includeExtraCol = getRepository().getRemoteHref(resource).length() > 0;
-
-
                     sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
-
-
                     String[] labels = null; 
                     labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
-
                     // * to handle "related content"; and also see below
                     if ( relatedLabel.equals("") || relatedLabel == null)
                     {
@@ -409,10 +402,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     else {
                         labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
                     }
-                    //* /
+                    // * /
                     
-                    String[] sortValues = new String[] { (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
-
+                    String[]   sortValues = new String[] { (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
                     //String[] sortValues = new String[] {  "",                             SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
 
@@ -420,8 +412,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 cnt++;
 
-        
-                // this method was modified 6 Nov 2013
                 openEntryRow(sb, resource.getId(), URL_FILE_VIEW, ARG_FILE_ID);
                 //                sb.append("<tr valign=top>");
                 //                sb.append(HtmlUtil.col(""));
@@ -441,7 +431,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 */
 
                 sb.append("</tr></table></td>\n");
-
 
                 // show link to the url, the complete URL to download one file 
                 String url = resource.getFileInfo().getUrl();  
@@ -525,9 +514,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 String publish = " ";
 
                 // any real "relatedResources" is, so far, from the UNAVCO GSAC instances, not the Prototype GSAC for general use.
-
                 if (relatedResources.size() > 0) {  
-                    //System.err.println("   HTML file list a ");
+                    //System.err.println("   HTML file list for UNAVCO GSAC ");
                     // original code to preserve legacy output format from the unavco gsac server
                     if (startTime == null) {
                         sb.append(HtmlUtil.col(formatDate(publishTime)));
@@ -582,9 +570,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append( "" +  resource.getFileInfo().getSampleInterval() );
                         sb.append("</td>");
                     } else {
-                        sb.append(HtmlUtil.col(" unknown"));
-                        // or for UNR:
-                        //;
+                        //sb.append(HtmlUtil.col(" unknown"));
+                        // CHANGEME or for UNR:
+                        ;
                     }
                 }
 
@@ -599,9 +587,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append( "<font size=-2>" +  resource.getFileInfo().getMd5() +"</font>");
                         sb.append("</td>");
                     } else {
-                        sb.append(HtmlUtil.col(" unknown"));
-                        // or for UNR:
-                        //;
+                        //sb.append(HtmlUtil.col(" unknown"));
+                        // CHANGEME  for UNR:
+                        ;
                     }
                 }
 
@@ -614,16 +602,14 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append( "" + formatFileSize( resource.getFileInfo().getFileSize()));
                         sb.append("</td>");
                     } else {
-                        sb.append(HtmlUtil.col(" unknown"));
-                        // or for UNR:
-                        //;
+                        //sb.append(HtmlUtil.col(" unknown"));
+                        // CHANGEME for UNR:
+                        ;
                     }
                  }
 
-
                 sb.append("</tr>\n");
-            } // end of loop on files for (GsacFile resource : files)
-
+            } // end of loop on data files for (GsacFile resource : files)
 
             // show lower line of table with count of files found, and sum of all sizes found
             if (cnt == 0) {
