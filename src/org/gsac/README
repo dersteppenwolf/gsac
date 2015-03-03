@@ -216,7 +216,7 @@ commons-logging-1.2.jar  gson-1.5.jar       jetty.jar              mysql-connect
 commons-pool-1.6.jar     gson-2.3.1.jar     jetty-util.jar             ojdbc6.jar               unidata_idv.jar
 
 The file gsac-code/lib/README tells where to download the .jar files for general information, but they already are in the GSAC package.
-The versions of the files listed above are recent at the data shown.  In future new versions may be released for some of them,
+The versions of the files listed above are recent at the date shown.  In future new versions may be released for some of them,
 
 You are welcome to update these library files when you know of newer versions.  After an update you should do a new complete build of the 
 GSAC package and look for errors caused by Java code changes required by the new libraries.  You may have to change lines of java, method calls, or 'import' lines
@@ -232,17 +232,14 @@ About building GSAC: the library files for database access
 
 GSAC uses library files to read from your database.  The library files in the GSAC package are (in gsac-code/lib/)
 
+ postgresql-9.3-1102.jdbc41.jar
  mysql-connector-java-5.1.34-bin.jar
  ojdbc6.jar  (Java 1.6 and oracle 11)
  ojdbc7.jar  (Java 1.7 and oracle 12)
- oracleDriver.jar  (Java 1.5 ? and oracle 11?)
- postgresql-9.3-1102.jdbc41.jar
+ for older GSACs: oracleDriver.jar  (Java 1.5?  oracle 11?)
 
 You may find your brand of database and its version and which Java it works with may not work with the library file in GSAC builds.
 See the library files in gsac/gsl/build.xml in particular.
-
-You may need to chose another library file from the one in the GSAC package, or another one from online.
-You may need to change some GSAC JAVA code to work with other libraries.
 
                     #########################################
 
@@ -265,7 +262,6 @@ var defaultZoomLevel = 5;
     The defaultZoomLevel value 3 shows a map about 10000 km across;  6 will show an area about 1200 km wide by 800 km high. 
 
     West longitudes are negative.  Do not use "W".  South latitudes are negative.  Do not use "S".
-
 
     Build the GSAC core code with command 'ant' again, executed in gsac-code/.  
 
@@ -315,7 +311,6 @@ cd  to gsac-code/src/org/gsac/
 
 ant -propertyfile template/my.properties makerepository   
 
-
     The final lines of screen output should be something like this:
 
 copyjava:
@@ -356,8 +351,7 @@ security.AccessControlException: access denied ("javax.management.MBeanTrustPerm
 ##############################################################c################################################################
 
 
-End of GSAC installation, Part 1.
-
+   End of GSAC installation, Part 1.
 
    DO NEXT:
 
@@ -366,7 +360,6 @@ End of GSAC installation, Part 1.
 cd to gsac-code/src/org/boulder/gsac/ 
 
    Follow the README file there to complete your GSAC installation. That is README Part 2. 
-
 
 
 ##############################################################c################################################################
