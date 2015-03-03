@@ -4,8 +4,6 @@
 
                     README, Part 2.
 
-            18 Feb 2015.  Stuart Wier, UNAVCO
-
 This file describes how to complete your new @MACRO.PREFIX@ GSAC-WS Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
 
@@ -38,9 +36,9 @@ Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR
 
 To modify your files to build with a Java 1.6 javac (to not use Java 1.7), do the following:
   Make sure your javac compiler is for Java 1.6, not Java 1.7.
-  Your inital build.xml file for ant is for Java 1.7.  If you wish to use Java 1.6, :
-        copy your build.xml to a new file build.xml.J17
-        copy the file gsac-code/src/org/prototype/gsac/build.xml.Java6  to your build.xml
+  Your initial build.xml file for ant is for Java 1.7.  If you wish to use Java 1.6:
+        copy your build.xml to a backup file build.xml.Java7
+        copy the file gsac-code/src/org/prototype/gsac/build.xml.Java6 to build.xml in your local GSAC code area.
         In that new build.xml replace the "prototype" words in these lines:
         <property name="basename" value="prototype_gsac"/>
         <property name="repository_relative_dir" value="org/prototype/gsac"/>
@@ -81,7 +79,7 @@ You optionally add this line showing the  maximum size allowed when zipping up f
 Connecting to the Database used by GSAC
 ########################################################################
 
-Setting and Hiding DB account information: the "GSAC DB Properties" File.
+Setting database account information: the "GSAC DB Properties" File.
 
 You code the file, @MACRO.SRCDIR@/dbresources/gsacdb_test.properties, to hold the database account details,
 to permit the GSAC web server process to read from the geodesy database.  The contents are like:
@@ -116,10 +114,7 @@ One Oracle JDBC URL is of the form:
    e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
-
-If you have GSAC SourceForge write access, do not do 'svn add' or 'svn commit' this file, or your database account details will become public.
-
-The file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties is not used now. It can be empty.
+The file @MACRO.SRCDIR@/dbresources/gsacdb_production.properties is not used now. 
 
 
 Everytime you do "ant" to build your repository, the file
@@ -359,28 +354,19 @@ The Java class Tables has methods, such as the next (hypothetical) code block fo
 with methods getName() which gives the table name, and getColumns() which returns names for fields 
 in that table about GPS receivers, and which defines new String variables.
 
-     public static class STATION_IDENTIFICATION extends Tables {
-        public static final String NAME = "Station_Identification";
+    public static class STATION extends Tables {
+        public static final String NAME = "station";
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
-        public static final String COL_MARKERNAME =  NAME + ".MarkerName";
-        public static final String ORA_MARKERNAME =  "MarkerName";
-        public static final String COL_MARKERNUMBER = NAME + ".MarkerNumber";
-        public static final String ORA_MARKERNUMBER = "MarkerNumber";
-        public static final String COL_LATITUDE =  NAME + ".Latitude";
-        public static final String ORA_LATITUDE =  "Latitude";
-        public static final String COL_LONGITUDE =  NAME + ".Longitude";
-        public static final String ORA_LONGITUDE =  "Longitude";
-        public static final String COL_CITY =  NAME + ".City";
-        public static final String ORA_CITY =  "City";
-        public static final String COL_COUNTRY =  NAME + ".Country";
-        public static final String ORA_COUNTRY =  "Country";
-        public static final String[] ARRAY = new String[] {
-            COL_MARKERNAME,COL_MARKERNUMBER,COL_LATITUDE,COL_LONGITUDE,COL_CITY,COL_COUNTRY, ...
-        };
+        public static final String COL_STATION_ID =  NAME + ".station_id";
+        public static final String COL_FOUR_CHAR_NAME =  NAME + ".four_char_name";
+        public static final String COL_STATION_NAME =  NAME + ".station_name";
+        public static final String COL_LATITUDE_NORTH =  NAME + ".latitude_north";
+        public static final String COL_LONGITUDE_EAST =  NAME + ".longitude_east";
+        public static final String COL_HEIGHT_ELLIPS_ELEV =  NAME + ".height_ellips_elev";
 
-You will recognize the correspondence between your database's specific table names, such as Station Identification, and your field names, such as latitude,
-with the names GSAC uses internally, in Tables.java, such as STATION.COL_LATITUDE.  
+You will recognize the correspondence between your database's  table names like station and your field names, such as latitude_north,
+with the names GSAC uses internally, in Tables.java, such as STATION.COL_LATITUDE_NORTH. The lower case strings are the same as field names.
 
 The GSAC forms of table and field (column) names from Tables.java will be used in new methods needed to implement your GSAC server, described below.
 
