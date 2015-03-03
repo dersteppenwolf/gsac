@@ -2665,8 +2665,8 @@ public class GsacRepository implements GsacConstants {
             throws Exception {
         int          cnt    = 0;
 
-        String[]     urls   = { info.getUrl() };
-        String[]     labels = { "Base URL" };
+        String[]     urls   = { info.getUrl() };   // this is where the BASE URL: value is found for the information page
+        String[]     labels = { "Base URL" };      // this is where the BASE URL: string is made for the information page
         StringBuffer tmp;
         pw.append(HtmlUtil.formTable());
         for (int i = 0; i < urls.length; i++) {
