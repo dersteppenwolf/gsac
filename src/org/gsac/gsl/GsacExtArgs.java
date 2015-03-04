@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -27,7 +27,7 @@ package org.gsac.gsl;
  *
  *
  * @version  Aug 29, 2013 
- * @author   JM; SKW; 2010-2013.
+ * @author   JM; SKW; 2010-2015.
  */
 public interface GsacExtArgs {
 
