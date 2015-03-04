@@ -33,8 +33,8 @@
         <property name="commons-pool.jar" value="commons-pool-1.6.jar"/> 
         <property name="commons-dbcp.jar" value="commons-dbcp-1.4.jar"/>
 
-        <!-- old jetty  -->
-        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc6.jar:${libdir}/unidata_idv.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-2.6.jar"/>
+        <!-- uses  java 1.6 or older forms for jetty and unidata and javax servlet lib files  -->
+        <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc6.jar:${libdir}/unidatautil.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/servlet-api.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-2.6.jar"/>
 
         <!-- Where the .class files (and other files for the jars) go -->
         <property name="compiledir" value="${srcdir}"/>
@@ -57,6 +57,8 @@
 
     </target>
 
+        <!-- <property name="classpath" value="${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/log4j-1.2.17.jar:${libdir}/ojdbc6.jar:${libdir}/unidata_idv.jar:${libdir}/jetty.jar:${libdir}/jetty-util.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gson-1.5.jar:${libdir}/joda-time-2.6.jar"/>
+        -->
 
 
    <target name="clean" depends="init" >
@@ -110,18 +112,18 @@
               <attribute name="Implementation-Version" value="1.0"/>
               <attribute name="Implementation-Vendor" value="UNAVCO"/>
               <attribute name="Main-class" value="org.gsac.gsl.GsacServer"/>
-              <attribute name="Class-Path" value="gsacws.jar   ${commons-dbcp.jar} log4j-1.2.17.jar ${commons-pool.jar}  ojdbc6.jar jetty.jar jetty-util.jar javax.servlet-api-3.1.0.jar gson-1.5.jar joda-time-2.6.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar   ${commons-dbcp.jar} log4j-1.2.17.jar ${commons-pool.jar}  ojdbc6.jar jetty.jar jetty-util.jar servlet-api.jar gson-1.5.jar joda-time-2.6.jar"/>
             </manifest> 
         </jar>
          <copy failonerror="true" file="${gsacserverjar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${gsacwsjar}"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/unidata_idv.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/unidatautil.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-dbcp.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/${commons-pool.jar}"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/log4j-1.2.17.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/ojdbc6.jar"  todir="${gsacserverdir}"/>
    	     <copy failonerror="true" file="${libdir}/joda-time-2.6.jar"  todir="${gsacserverdir}"/>
-         <copy failonerror="true" file="${libdir}/javax.servlet-api-3.1.0.jar"  todir="${gsacserverdir}"/>
+         <copy failonerror="true" file="${libdir}/servlet-api.jar"  todir="${gsacserverdir}"/>
 
          <copy failonerror="true" file="${libdir}/gson-1.5.jar"  todir="${gsacserverdir}"/>
          <copy failonerror="true" file="${libdir}/jetty.jar"  todir="${gsacserverdir}"/> 
@@ -132,6 +134,7 @@
            <zipfileset dir="${gsacserverdir}" prefix="${gsacserver}"/>
        </zip>
    </target>
+         <!-- <copy failonerror="true" file="${libdir}/unidata_idv.jar"  todir="${gsacserverdir}"/> -->
 
 
 
@@ -152,10 +155,10 @@
             <zipfileset dir="${basedir}"  includes="lib/${commons-dbcp.jar}"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/${commons-pool.jar}"  prefix="gsacrelease"/>
 
-            <zipfileset dir="${basedir}"  includes="lib/unidata_idv.jar"  prefix="gsacrelease"/>
+            <zipfileset dir="${basedir}"  includes="lib/unidatautil.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/gsacws.jar"  prefix="gsacrelease"/>
             <zipfileset dir="${basedir}"  includes="lib/log4j-1.2.17.jar"         prefix="gsacrelease"/>
-            <zipfileset dir="${basedir}"  includes="lib/javax.servlet-api-3.1.0.jar"  prefix="gsacrelease"/> 
+            <zipfileset dir="${basedir}"  includes="lib/servlet-api.jar"  prefix="gsacrelease"/> 
             <zipfileset dir="${basedir}"  includes="lib/joda-time-2.6.jar"  prefix="gsacrelease"/>
 
             <!-- Java 1.6 version of these lines: -->
@@ -166,6 +169,7 @@
         </zip>
    </target>
 
+   <!--         <zipfileset dir="${basedir}"  includes="lib/unidata_idv.jar"  prefix="gsacrelease"/> -->
 
    <target name="downloader" depends="init,clean">
         <javac
@@ -199,8 +203,8 @@
         <!-- storetype="pkcs12" -->
         <signjar alias="idv" jar="${downloaderjar}" 
             keystore="${sign_keystore}" storepass="${sign_password}"/>
-	  <copy file="${libdir}/unidata_idv.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
-        <signjar alias="idv" jar="${srcdir}/org/gsac/gsl/htdocs/webstart/unidata_idv.jar"
+	  <copy file="${libdir}/unidatautil.jar" todir="${srcdir}/org/gsac/gsl/htdocs/webstart"/>
+        <signjar alias="idv" jar="${srcdir}/org/gsac/gsl/htdocs/webstart/unidatautil.jar"
             keystore="${sign_keystore}" storepass="${sign_password}"/>
    </target>
 
