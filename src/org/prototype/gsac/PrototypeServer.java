@@ -20,18 +20,12 @@
 
 /* CHANGE: make sure that the next 2 lines show your GSAC package name, replacing prototype */
 package org.prototype.gsac;
-import  org.prototype.gsac.database.*;
 
 import org.gsac.gsl.*;
 import java.io.*;
 import java.util.Locale;
 import java.util.Hashtable;
 import java.util.Properties;
-
-/*
- * CHANGE: 29 Jan 2015: merged GSAC java file version for either Java 1.6 or Java 1.7 GSAC build.
- * Look for " Java " here, in the next 40 lines, and un-comment the lines for the Java version you use.
-*/ 
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -42,7 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 /* Jetty is used as the GSAC web application container in the case of no Tomcat. */
 
 /*
- * Java 1.7 version:
+ * Look for "code block for Java " in the next 40 lines, and un-comment the lines for the Java version you use.
+*/ 
+
+/*
+ * code block for Java 1.7 version:
  * Uncomment these lines to build a Prototype GSAC with Java 1.7
 */
 import org.eclipse.jetty.server.Server;
@@ -55,7 +53,7 @@ import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /* 
- * Java 1.6 
+ * code block for Java 1.6 
  * Uncomment these lines to build a Prototype GSAC with Java 1.6
 import org.mortbay.jetty.*;
 import org.mortbay.jetty.Connector;
