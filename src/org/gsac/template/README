@@ -34,6 +34,13 @@ This README (Part 2) file is located in your new GSAC package in @MACRO.SRCDIR@/
 Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ .
 
 
+The code in the GSAC package is for Java 1.7 builds. To use Java 1.6:
+   - make sure your Java compiler 'javac' is for 1.6
+   - see the code changes for Java 1.6 in README part 1 (you saw this already).
+   - in PrototypeServer.java for comments " code block for Java ", and un-comment the lines for the Java 1.6 can commnet-out the Java 1.7 lines.
+   - cp build.xml.Java6 build.xml
+
+
 To modify your files to build with a Java 1.6 javac (to not use Java 1.7), do the following:
   Make sure your javac compiler is for Java 1.6, not Java 1.7.
   Your initial build.xml file for ant is for Java 1.7.  If you wish to use Java 1.6:
