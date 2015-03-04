@@ -4,7 +4,7 @@
 
                     README, Part 2.
 
-               2 Feb 2015.   SKW  UNAVCO
+               4 Mar 2015.   SKW  UNAVCO
 
 This file describes how to complete your new Prototype GSAC Web Services suite,
 to provide web service access to site-located data in a geoscience data repository.
@@ -33,6 +33,12 @@ Hopefully you've managed to generate the initial repository source package using
 This README (Part 2) file is located in your new GSAC package in org/prototype/gsac. (Ignore the README file in org/prototype/gsac/release).
 
 Now, change the working directory to your local GSAC code area, at org/prototype/gsac. 
+
+
+The code in the GSAC package is for Java 1.7 builds. To use Java 1.6:
+   - make sure your Java compiler 'javac' is for 1.6
+   - in PrototypeServer.java for comments " code block for Java ", and un-comment the lines for the Java 1.6 can commnet-out the Java 1.7 lines.
+   - cp build.xml.Java6 build.xml
 
 
 Adding Your Repository's Details: The "GSAC Resources Properties" File.
