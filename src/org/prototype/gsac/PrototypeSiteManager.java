@@ -167,11 +167,6 @@ public class PrototypeSiteManager extends SiteManager {
 
             // Note values used in the following are only read once at GSAC start-up time.  If these sort of quasi-static database values are changed, restart GSAC.
 
-            // search on site status (only a few static values possible)
-            // get all values of this type from its table
-            values = getDatabaseManager().readDistinctValues( Tables.STATION_STATUS.NAME, Tables.STATION_STATUS.COL_STATION_STATUS);
-            Arrays.sort(values);
-            capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
 
             // To provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station with this query:
             //  WHERE
