@@ -324,9 +324,8 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         String reqstr=request.toString();
         resultsTitles.add(msg("API request"));
+        //String frontend = resource.getRepositoryInfo().getUrl();
         resultsContents.add("GSAC URL domain + "+reqstr );
-
-
 
         makeTabs(pw, resultsTitles, resultsContents);
 
