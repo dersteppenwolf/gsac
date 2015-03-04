@@ -20,8 +20,8 @@
         <!-- used by the javadoc target 
         Java 1.7 library files:
         <property name="classpath" value="${lib}/javax.servlet-api-3.1.0.jar:${lib}/unidata_idv.jar:${lib}/gson-2.3.1.jar:${lib}/commons-pool2-2.2.jar:${lib}/log4j-1.2.17.jar:${lib}/commons-dbcp2-2.0.1.jar"/>
-        for Java 1.6 use :
-        to be specified if needed
+        for Java 1.6 use : FIX commons lib files, use older versions
+        <property name="classpath" value="${lib}/servlet-api.jar:${lib}/unidatautil.jar:${lib}/gson-2.3.1.jar:${lib}/commons-pool2-2.2.jar:${lib}/log4j-1.2.17.jar:${lib}/commons-dbcp2-2.0.1.jar"/>
         -->
     </target>
 
@@ -47,7 +47,6 @@
       <echo message="Building GSL"/>
       <ant antfile="${srcdir}/org/gsac/gsl/build.xml" inheritAll="false"/>
     </target>
-
 
     <!-- The GSAC client need only be built by UNAVCO.  Its lib files are in gsac-code/dist/gsacserver/, not in gsac-code/.  
     <target name="client" depends="init">
