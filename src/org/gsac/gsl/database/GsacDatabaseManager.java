@@ -23,30 +23,32 @@ package org.gsac.gsl.database;
 
 /* ************************************************************
  *
- * To do Java 1.7  or Java 1.6 build of GSAC:
+ * To choose a Java 1.7 or Java 1.6 build of GSAC:
  * Find comments in this file with " Java ", and
- * uncomment the Java 1.7 or Java 1.7 code lines for the version needed.
+ * the Java 1.7 or Java 1.6 code lines for the version needed.
+ * There are three sets of such code choices.
+ * All changes are caused by changes in method names in Apache commons 
+ * from java 1.6 to java 1.7.
  * 
- * See for example the next several lines.
- *
  *************************************************************
  */
 
-//  Java 1.6 version: 
-//import org.apache.commons.dbcp.BasicDataSource;
 
-//  Java 1.7 version: 
+//  for Java 1.6 version, use this one line 
+//import org.apache.commons.dbcp.BasicDataSource;
+//  for Java 1.7 version, use this one line
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import org.gsac.gsl.*;
-import org.gsac.gsl.model.*;
 
-import org.gsac.gsl.ramadda.sql.Clause;
-import org.gsac.gsl.ramadda.sql.SqlUtil;
-
+// for either 1.6 or 1.7, use all these imports:
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
+
+import org.gsac.gsl.*;
+import org.gsac.gsl.model.*;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import java.io.*;
 import java.io.InputStream;
@@ -277,10 +279,13 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
 
         BasicDataSource dataSource = new BasicDataSource();
 
+
+        // to choose java 1.6 or 1.7:
         //  Java 1.6 version: 
         //dataSource.setMaxActive(100);
         //  Java 1.7 version: 
         dataSource.setMaxTotal(100);
+
 
         dataSource.setMaxIdle(100);
         dataSource.setDriverClassName(getDriverClassName());
@@ -288,12 +293,15 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         dataSource.setPassword(password);
         dataSource.setUrl(jdbcUrl);
 
+
+        // to choose java 1.6 or 1.7:
         //  Java 1.6 version: 
         //dataSource.setMaxWait(1L);
         //dataSource.setRemoveAbandoned(true);
-        //  Java 1.7 version: 
+        // Java 1.7 version: 
         dataSource.setMaxWaitMillis(1L);
         dataSource.setRemoveAbandonedOnBorrow(true); 
+
 
         //60 seconds
         dataSource.setRemoveAbandonedTimeout(60);

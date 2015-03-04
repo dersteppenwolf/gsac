@@ -33,9 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /* ************************************************************
  *
- * import block for Java 1.7 build of GSAC
+ * code block for Java 1.7 build of GSAC
  * 
- * Do not include these lines inside a Java comment 
  * to build GSAC with Java 1.7
  *
  *************************************************************
@@ -53,13 +52,11 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /* ************************************************************
  *
- * import block for Java 1.6 build of GSAC
+ * code block for Java 1.6 build of GSAC
  * 
- * Do not include these lines inside a Java comment 
  * to build GSAC with Java 1.6
  *
  *************************************************************
-
 import org.mortbay.jetty.*;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -124,11 +121,9 @@ public class GsacServer {
          *
          * code block for Java 1.6 build of GSAC
          * 
-         * Do not include these lines inside a Java comment 
          * to build GSAC with Java 1.6
          *
          *************************************************************
-         
         GsacServlet              gsacServlet = doMakeServlet(port, properties);
         Server                   server      = new Server(port);
         HandlerCollection        handlers    = new HandlerCollection();
@@ -145,7 +140,6 @@ public class GsacServer {
          *
          * code block for Java 1.7 build of GSAC
          * 
-         * Do not include these lines inside a Java comment 
          * to build GSAC with Java 1.7
          *
          *************************************************************
