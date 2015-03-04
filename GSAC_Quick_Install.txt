@@ -43,7 +43,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
     For Java 1.6 GSAC, do the following:
       a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
-      b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the "import block for Java 1.6" and comment-out the "import block for Java 1.7"
+      b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java with sections commented "code block for Java" to choose the Java 1.6 code line code lines.
       c. in gsac-code/src/org/gsac/gsl/database/ edit the GsacDatabaseManager.java to use the lines labeled "Java 1.6 version" and to comment-out the lines for "Java 1.7 version."
       d. Make sure your javac compiler is for Java 1.6, not Java 1.7.
       More file changes are in the README part 2 file detailed later.
