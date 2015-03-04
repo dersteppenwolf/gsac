@@ -168,6 +168,8 @@ if (param.equals(ARG_SITE_TYPE)) {
         pw.append(    " site "+sitecount+" (in this list):\n");
         pw.append(    " site four char ID:           "+ site.getShortName() + "\n");
         pw.append(    " site place name:             "+ site.getLongName() + "\n");
+        String sitetype = site.getType().getId();
+        if ( sitetype == null ) { sitetype = ""; }
         pw.append(    " site continuous or campaign: "+ site.getType().getId() + "\n");
         pw.append(    " site agency:                 "+ getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "") + "\n");
         Date date = site.getFromDate();
