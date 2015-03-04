@@ -68,7 +68,7 @@
         <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
         <!-- for oracle in place of mysql,   use ojdbc7.jar i                   in place of mysql-connector-java-5.1.34-bin.jar --> 
 
-        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-util.jar:${libdir}/jetty.jar:${libdir}/gson-1.5.jar"/> 
+        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/servlet-api.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidatautil.jar:${libdir}/jetty-util.jar:${libdir}/jetty.jar:${libdir}/gson-1.5.jar"/> 
 
         <property name="build.sysclasspath"    value="ignore" />
 
@@ -131,7 +131,7 @@
               <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
               <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
               <!-- Java 1.6 -->
-              <attribute name="Class-Path" value="gsacws.jar  unidata_idv.jar jetty.jar jetty-util.jar    gson-1.5.jar javax.servlet-api-3.1.0.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
+              <attribute name="Class-Path" value="gsacws.jar  unidatautil.jar jetty.jar jetty-util.jar  gson-1.5.jar servlet-api.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
             </manifest> 
         </jar>
     </target>
@@ -166,9 +166,9 @@
         <mkdir dir="${reldirlib}"/>
         <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
         <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidata_idv.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidatautil.jar"/>
 
-        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/javax.servlet-api-3.1.0.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/servlet-api.jar"/>
         <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
         <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
         <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/mysql-connector-java-5.1.34-bin.jar"/>
@@ -229,7 +229,7 @@
             <filter token="MACRO.URLROOT" value="${urlroot}"/>
           </filterset>
         </copy>
-        <delete file="${reldir}/javax.servlet-api-3.1.0.jar"/>
+        <delete file="${reldir}/servlet-api.jar"/>
         <war webxml="${distdir}/web.xml" destfile="${distdir}/${warfile}">
           <lib dir="${reldir}"/>
         </war>
