@@ -80,8 +80,8 @@ To install ant on Debian or Ubuntu, do command sudo apt-get install ant
 
 To install subversion ('svn') on Debian or Ubuntu, do command sudo apt-get install subversion
 
-To install or use the Tomcat application container, see the Tomcat for GSAC guide, created and contributed by Marco Portugal, Space & Earth Geodetic 
-Analysis Laboratory (SEGAL), Universidade da Beira Interior, Departamento de Informática, Covilhã, Portugal in the UNAVCO GSAC web site.
+To install or use the Tomcat application container, see the Tomcat for GSAC guide,  in the UNAVCO GSAC web site,  created and contributed by Marco Portugal, Space & Earth Geodetic 
+Analysis Laboratory (SEGAL), Universidade da Beira Interior, Departamento de Informática, Covilhã, Portugal.
 
 GSAC can work with MySQL and Oracle databases, and Postgre is is having a bug fixed (Jan. 2015). To install the MySQL server on Debian or Ubuntu, simply do the command sudo apt-get install mysql-server
 This requests you to "enter the root password", which is a new password for the MySQL root account, not your Linux system root password.
@@ -177,8 +177,8 @@ Total time: 36 seconds
     Look for any error messages.  If there are none, you have compiled the GSAC core (GSL) code.
 
     This process makes a Java jar file, named gsacws.jar, in gsac-code/lib/.
-    This file contains the compiled GSAC core GSL code.  This jar file will be used to build your final
-    Java jar file for your complete GSAC server executable, to build the Tomcat .war file, and to build any other GSAC using the GSL on your system, such as a federated GSAC.
+    This file contains the compiled GSAC core GSL code.  This jar file will be used to build your final Java jar file 
+    for your complete GSAC server executable, to build the Tomcat .war file, and to build any other GSAC using the GSL on your system, such as a federated GSAC.
 
 
                     #########################################
