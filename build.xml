@@ -7,6 +7,12 @@
 
 <project basedir="." default="gsac" name="UNAVCO">
 
+    <target name="help">
+      <echo  message="To create a new GSAC installation, begin with gsac-code/src/org/gsac/README."/>
+      <echo  message="You are in gsac-code/.  To build GSAC core code, do ant in gsac-code/"/>
+    </target>
+
+
     <target name="init">
         <property name="distdir" value="${basedir}/dist"/>
         <mkdir dir="${distdir}"/>
