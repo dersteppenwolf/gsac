@@ -4,7 +4,7 @@
 
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                         18 February 2015.  Stuart Wier, UNAVCO
+                                            5 Mar 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -74,7 +74,7 @@ bash a Linux shell (or similar shell), and subversion ('svn', a code repository 
 A recommended operating system for GSAC is Debian. Debian with bash has simple installation of the software tools you need, using the apt-get utility. Ubuntu and OpenSUSE are similar. Debian is recommended by programmers for stable and secure operations.
 
 You need Java JDK 1.6 or 1.7. Most Linux systems come with a Java runtime library (JRE), but may lack the JDK with javac. 
-Try commands "java -version" and "javac -version" to see if you have both the JCK and JRE, and to make sure they both show the same Java version number.
+Try commands "java -version" and "javac -version" to see if you have both the JDK and JRE, and to make sure they both show the same Java version number.
 
 To install ant on Debian or Ubuntu, do command sudo apt-get install ant
 
