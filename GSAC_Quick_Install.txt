@@ -38,8 +38,9 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
     The Java 1.7 GSAC has recent Java security improvements (this addition to GSAC was requested by a U.S. government lab using GSAC.)
     The Java 1.6 GSAC works with existing Tomcat Java 1.6 servers used by several GSAC operators.
 
-    The GSAC package exported from SourceForge is ready to build GSAC with Java 1.7.  Make sure your javac compiler is for Java 1.7.
-    The command "which javac" should show a Java 7 comoiler, such as /usr/lib/jvm/java-7-oracle/bin/javac
+    You need Java 1.6 or Java 1.7. Most Linux systems come with a Java runtime library (JRE), but many lack the JDK with javac.
+    Try commands "java -version" and "javac -version" to see if you have both the JDK and JRE, and to make sure they both show the same Java version number.
+    The GSAC package exported from SourceForge is ready to build GSAC with Java 1.7. 
 
     For Java 1.6 GSAC, do the following:
       a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
