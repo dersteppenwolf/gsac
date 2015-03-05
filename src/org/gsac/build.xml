@@ -7,11 +7,12 @@
     </target>
 
     <target name="help">
-      <echo  message="Run ant makerepository; to make the repository source package from the template"/>
+      <echo  message="To create a new GSAC installation, begin with gsac-code/src/org/gsac/README."/>
+      <echo  message="You are in gsac-code/src/org/gsac/.  To build GSAC core code, do ant in gsac-code/"/>
     </target>
 
     <target name="makerepository" depends="init">
-<!-- First convert the target.package into the target.dir and target.dots properties -->
+    <!-- First convert the target.package into the target.dir and target.dots properties -->
       <script language="javascript">
           var before = project.getProperty("target.package");
           var dir = before.replaceAll("\\.", "/");
@@ -78,9 +79,9 @@
 
 
    <target name="copyjava" depends="init">
-<!--
-For now set overwrite=true
--->
+    <!--
+    For now set overwrite=true
+    -->
       <copy  overwrite="true" file="${gsacdir}/template/${file}" 
              tofile="${srcdir}/${target.dir}/${target.prefix}${file}">
           <filterset>
