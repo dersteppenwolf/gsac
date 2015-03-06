@@ -5,31 +5,51 @@
 
 				     Tables, Field Definitions, and Notes.
 
-					             27 Feb  2014          
+					              6 Mar 2014          
 
 					      UNAVCO, Boulder Colorado.
 
 This corresponds to the Prototype15_GSAC.sql file which can be used to make an empty MySQL database.
 
-See more details in the web page http://www.unavco.org/software/data-management/gsac/installation/installation.html,
-section "The Prototype database."
+The database is built around the tables station, equip_config, and datafile.  Other tables have information supporting those three tables.
+
+Each row (record) in the station table is for one station or site, about which GSAC has information.
+There are only five required fields, for example, site latitude and longitude.
+Others fields are very often used for essential information about the stations in you repository.
+Key id values such as status_id must exist in the database before a station table row with that value can be inserted.
+
+Each row (record) in the equip_config table is for one equipment session at one station or site, about which GSAC has information.
+One equipment session is a time interval at one station or site when instrumentation has no changes.  The equip_config row has
+imnformation about the instrumentation during that time interval.
+
+Each line (record) in the datafile table is for one data file, from or related to observations at one station or site, about which GSAC has information.
+To insert a new row in datafile, you must have already in the database rows about the items with key id numbers. The only required _id is station_id.
+But in many cases you will need equip_id, and data_type_id and datafile_format_id are often valuable.
+So before you insert a datafile row you must already have in the database a station table entry and an equip config table entry.
+Also often needed at datafile_name and URL_complete, both required.
+And datafile_start_time datafile_stop_time are very important.  All these enable GSAC seraches for data files based on these metadata types.
 
 Some tables are semi-static lists of values for commonly used categories of information used by many or by all GSAC installations.
 For example, the tables data_type and data_file_format.  So that all GSACs can work the same way, and so that GSACs can
 be used in federated GSACs, do not change the rows in these tables.  
-One wants to be able to query the same things in the same ways in all GSACs, and not make each GSAC a specail case.
-But you are very welcome to  add any new rows you want to these tables, for example for a new type of table or for a new data file format.
+One wants to be able to query the same things in the same ways in all GSACs, and not make each GSAC a special case.
+But you are very welcome to add new rows you want to these tables, for example for a new type of data (tidegage observations?) or for a new data file format (NetCDF?).
+
+Keys ('_id') ensure required data is present.  For example, to add a row to table equip_config there must be a valid station_id already existing in the station table.
+But a station may have no corresponding rows in the  table equip_config, if you do not supply instrument metadata.  
 
 Many fields are optional (can have NULL value) and need not be populated for GSAC to operate. Look for rows with Y in the 
 NULL column, or for the DEFAULT NULL rows in the Prototype15_GSAC.sql file.  You will populate only the rows in the fields you need to offer searches for 
 your metadata.   For example, is it possible that some GSAC has no information about instruments, so the tables antenna, receiver_firmware and other
-tables will be entirely empty.  Your local GSAC code will only read the database tables and fields needed.
-There is no reason to remove empty tables from the database.
+tables, even equip_config,  will be entirely empty.  Your local GSAC code must be written to only read the database tables and fields needed.
+There is need to remove empty tables from the database.  And you may need them later.
 
-Some fundamental data is required, for example, site latitude and longitude.
-
-Keys ensure required data is present.  For example, to add a row to table equip_config there must be a valid station_id already existing in the station table.
-But a station may have no corresponding rows in the  table equip_config, if you do not supply instrument metadata.  
+Some fields such as operating_agency_address data_type_description ellipsoid_short_name and igs_defined 
+are Not used by GSAC in any way but were included at the request of UANVCO staff 
+with the idea of someday being useful. Of course to operate your GSAC values need not be supplied for these cases.
+Field station_style is used only with GSP data archives with both permanent and campaign networks, when that choice matters.
+(You could add a new row to station_style table, for high rate GPS stations for example, also.)
+ 
 
 List all tables in the database:
 
@@ -59,7 +79,8 @@ mysql> show tables;
 +----------------------------+
 
 
-Describe all tables in the database, and show some or all of the contents:
+Describe all tables in the database, and show samples of the contents:
+
 
 mysql> desc access;
 +--------------------+-----------------+------+-----+---------+----------------+
@@ -264,6 +285,8 @@ MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPER
 |                 12 | DORIS                            |
 |                 13 | SLR                              |
 |                 14 | VLBI                             |
+|                 15 | BOTTLE                           |
+|                 16 | SEED                             |
 +--------------------+----------------------------------+
 
 
@@ -368,28 +391,6 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 
 
 
-mysql> desc monument_style;
-+----------------------------+-----------------+------+-----+---------+----------------+
-| Field                      | Type            | Null | Key | Default | Extra          |
-+----------------------------+-----------------+------+-----+---------+----------------+
-| monument_style_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
-| monument_style_description | varchar(70)     | NO   |     | NULL    |                |
-+----------------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
-
-mysql> select * from monument_style;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+-------------------+----------------------------+
-| monument_style_id | monument_style_description |
-+-------------------+----------------------------+
-|                 1 | shallow foundation pillar  |
-|                 2 | building roof              |
-|                 3 | deep-drilled braced        |
-|                 4 | shallow-drilled braced     |
-+-------------------+----------------------------+
-
-
-
 mysql> desc metpack;
 +--------------+-----------------+------+-----+---------+----------------+
 | Field        | Type            | Null | Key | Default | Extra          |
@@ -417,6 +418,7 @@ mysql> desc monument_style;
 +----------------------------+-----------------+------+-----+---------+----------------+
 
 mysql> select * from monument_style;
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +-------------------+----------------------------+
 | monument_style_id | monument_style_description |
 +-------------------+----------------------------+
