@@ -212,7 +212,7 @@ CREATE TABLE `datafile_format` (
   `datafile_format_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `datafile_format_name` varchar(50) NOT NULL,
   PRIMARY KEY (`datafile_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +221,7 @@ CREATE TABLE `datafile_format` (
 
 LOCK TABLES `datafile_format` WRITE;
 /*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
-INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'time series plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI');
+INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'time series plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED');
 /*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -529,7 +529,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,NULL,NULL,NULL,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg',NULL,NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,NULL,NULL,NULL,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg',NULL,NULL,NULL),(5,'ABMF','Aeroport du Raizet -LES ABYMES - Mitio France',16.2623,-61.5275,-25.67,1636819.0859,-4939085.2795,-3676612.7351,'2009-12-25 00:00:00',NULL,1,2,2,1,NULL,1,1,1,1,'myNet;NewNet',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg','http://pboshared.unavco.org/timeseries/ABMF_timeseries_cleaned.png',NULL,NULL);
+INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,NULL,NULL,NULL,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/STA1.png',NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,NULL,NULL,NULL,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/STA2.png',NULL,NULL),(5,'ABMF','Aeroport du Raizet -LES ABYMES - Mitio France',16.2623,-61.5275,-25.67,1636819.0859,-4939085.2795,-3676612.7351,'2009-12-25 00:00:00',NULL,1,2,2,1,NULL,1,1,1,1,'myNet;NewNet',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/ABMF.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -590,4 +590,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-02-27 10:25:41
+-- Dump completed on 2015-03-06  9:00:28
