@@ -5,11 +5,11 @@
 
 				     Tables, Field Definitions, and Notes.
 
-					              6 Mar 2014          
+					              9 Mar 2014          
 
 					      UNAVCO, Boulder Colorado.
 
-This corresponds to the Prototype15_GSAC.sql file which can be used to make an empty MySQL database.
+This corresponds to the Prototype15_GSAC.sql file which can be used to make an empty MySQL database with the GSAC Prototype15 schema.
 
 The database is built around the tables station, equip_config, and datafile.  Other tables have information supporting those three tables.
 
@@ -20,18 +20,20 @@ Key id values such as status_id must exist in the database before a station tabl
 
 Each row (record) in the equip_config table is for one equipment session at one station or site, about which GSAC has information.
 One equipment session is a time interval at one station or site when instrumentation has no changes.  The equip_config row has
-imnformation about the instrumentation during that time interval.
+information about the site instrumentation during that time interval.
 
 Each line (record) in the datafile table is for one data file, from or related to observations at one station or site, about which GSAC has information.
-To insert a new row in datafile, you must have already in the database rows about the items with key id numbers. The only required _id is station_id.
+Data files may include GPS data (as in RINEX format), derived products such as position time series solutions (data or image of plots), tide gage data, and so on.
+To insert a new row in datafile, you must have already in the database rows about the items with key '_id' numbers. The only required _id is station_id.
 But in many cases you will need equip_id, and data_type_id and datafile_format_id are often valuable.
-So before you insert a datafile row you must already have in the database a station table entry and an equip config table entry.
-Also often needed at datafile_name and URL_complete, both required.
-And datafile_start_time datafile_stop_time are very important.  All these enable GSAC seraches for data files based on these metadata types.
+So before you insert a datafile row you must already have in the database a station table entry and an equip config table entry
+and entries about data file formats and about data file types (in tables data_type and data_file_format).
+Also usually needed are datafile_name and URL_complete, to let users download files.
+And datafile_start_time datafile_stop_time are very important.  All these enable GSAC searches for data files based on these metadata types.
 
-Some tables are semi-static lists of values for commonly used categories of information used by many or by all GSAC installations.
-For example, the tables data_type and data_file_format.  So that all GSACs can work the same way, and so that GSACs can
-be used in federated GSACs, do not change the rows in these tables.  
+Some tables are semi-static lists of values for categories of information used by many or by all GSAC installations.
+For example, the tables data_type and data_file_format.  (Note for example a data_type is "GNSS observations" and the data_file_format is "RINEX 3."  The data type is not "RINEX obs.")
+So that all GSACs can work the same way, and so that GSACs can be used in federated GSACs, do not change the rows in these tables.  
 One wants to be able to query the same things in the same ways in all GSACs, and not make each GSAC a special case.
 But you are very welcome to add new rows you want to these tables, for example for a new type of data (tidegage observations?) or for a new data file format (NetCDF?).
 
@@ -39,16 +41,18 @@ Keys ('_id') ensure required data is present.  For example, to add a row to tabl
 But a station may have no corresponding rows in the  table equip_config, if you do not supply instrument metadata.  
 
 Many fields are optional (can have NULL value) and need not be populated for GSAC to operate. Look for rows with Y in the 
-NULL column, or for the DEFAULT NULL rows in the Prototype15_GSAC.sql file.  You will populate only the rows in the fields you need to offer searches for 
+NULL columns columns shown below, or for the DEFAULT NULL rows in the Prototype15_GSAC.sql file.  You will populate only the rows in the fields you need to offer searches for 
 your metadata.   For example, is it possible that some GSAC has no information about instruments, so the tables antenna, receiver_firmware and other
-tables, even equip_config,  will be entirely empty.  Your local GSAC code must be written to only read the database tables and fields needed.
-There is need to remove empty tables from the database.  And you may need them later.
+tables, even equip_config, can be entirely empty.  Your local GSAC code must be written to read the database tables and fields needed.
+There is no need to remove empty tables from the database (and you may need them later).
 
-Some fields such as operating_agency_address data_type_description ellipsoid_short_name and igs_defined 
-are Not used by GSAC in any way but were included at the request of UANVCO staff 
-with the idea of someday being useful. Of course to operate your GSAC values need not be supplied for these cases.
-Field station_style is used only with GSP data archives with both permanent and campaign networks, when that choice matters.
-(You could add a new row to station_style table, for high rate GPS stations for example, also.)
+Some fields such as operating_agency_address, data_type_description, ellipsoid_short_name, and igs_defined 
+are Not used by GSAC in any way but were included in the datasbase at the request of UANVCO staff 
+with the idea of someday being useful (based on needs of UNAVCO's very complex archive, not your archive). 
+Of course to operate your GSAC, values need not be supplied for these cases,
+since the Prototype GSAC will never use them.  Field station_style is used only with GSP data 
+archives with both permanent and campaign networks, when that choice matters.
+(Also, you could add a new row to station_style table, for high rate GPS stations for example, also.)
  
 
 List all tables in the database:
