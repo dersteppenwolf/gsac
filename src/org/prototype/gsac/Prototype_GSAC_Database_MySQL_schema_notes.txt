@@ -97,7 +97,7 @@ mysql> desc access;
 
 mysql> select * from access;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO  INOPERATE.
 +-----------+-----------------------------------------+
 | access_id | access_description                      |
 +-----------+-----------------------------------------+
@@ -161,7 +161,7 @@ mysql> desc data_reference_frame;
 
 mysql> select * from  data_reference_frame;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
 +-------------------------+---------------------------+
 | data_reference_frame_id | data_reference_frame_name |
 +-------------------------+---------------------------+
@@ -186,20 +186,23 @@ mysql> desc data_type;
 +-----------------------+-----------------+------+-----+---------+----------------+
 3 rows in set (0.00 sec)
 
+The type of measurements, parameters, computed values, or information, in a file.  
+Plots or image files (.jpg, .png) are some type of image file.  (but "RINEX" is not a data type, is it a file format.)
+
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
 mysql> select * from data_type;
 +--------------+-----------------------------------------+----------------------------------------------------+
 | data_type_id | data_type_name                          | data_type_description                              |
 +--------------+-----------------------------------------+----------------------------------------------------+
-|            1 | instrument data file                    | any type instrument native, raw, or binary file    |
-|            2 | GNSS observation file                   | any GNSS obs file                                  |
-|            3 | GPS navigation file                     | a GPS navigation file                              |
-|            4 | Galileo navigation file                 | a Galileo GNSS navigation file                     |
-|            5 | GLONASS navigation file                 | a GLONASS GNSS navigation file                     |
-|            6 | GNSS meteorology file                   | a GNSS meteorology file                            |
-|            7 | QZSS navigation file                    | a QZSS GNSS navigation file                        |
-|            8 | Beidou navigation file                  | a Beidou GNSS navigation file                      |
+|            1 | instrument data                     | any type instrument native, raw, or binary file    |
+|            2 | GNSS observation                    | any GNSS obs file                                  |
+|            3 | GPS navigation                      | a GPS navigation file                              |
+|            4 | Galileo navigation                  | a Galileo GNSS navigation file                     |
+|            5 | GLONASS navigation                  | a GLONASS GNSS navigation file                     |
+|            6 | GNSS meteorology                    | a GNSS meteorology file                            |
+|            7 | QZSS navigation                     | a QZSS GNSS navigation file                        |
+|            8 | Beidou navigation                   | a Beidou GNSS navigation file                      |
 |            9 | Final Daily time series                 | Final Daily time series solution                   |
 |           10 | Rapid Daily time series                 | Rapid Daily time series solution                   |
 |           11 | Rapid 5 minute time series              | Rapid 5 min time series solution                   |
@@ -212,16 +215,28 @@ mysql> select * from data_type;
 |           18 | SINEX product                           |                                                    |
 |           19 | GNSS sites velocities                   |                                                    |
 |           20 | GNSS sites positions                    |                                                    |
-|           21 | strainmeter observations                |                                                    |
-|           22 | tidegage observations                   |                                                    |
-|           23 | tiltmeter observations                  |                                                    |
-|           24 | DORIS                                   | DORIS                                           |
-|           25 | SLR                                     | SLR                                             |
-|           26 | VLBI                                    | VLBI                                            |
+|           21 | strainmeter observations, raw                      |                                                 |
+|           22 | strainmeter observations, processed                |                                                 |
+|           23 | tiltmeter observations, raw                        |                                                 |
+|           24 | DORIS                                              | DORIS                                           |
+|           25 | SLR                                                | SLR                                             |
+|           26 | VLBI                                               | VLBI                                            |
+|           27 | tidegage observations                              |                                                 |
+|           28 | Tiltmeter Plots for Station (7 Day)                |                                                 |
+|           29 | Tiltmeter Plots for Station (30 day)               |                                                 |
+|           30 | Tiltmeter All Plots for Station (multi-year)       |                                                 |
+|           31 | Environmental Plots for Station                    |                                                 |
+|           32 | Strainmeter Raw Rlots for Station                  |                                                 |
+|           33 | Strainmeter 7 Day Raw Plots for Station            |                                                 |
+|           34 | Strainmeter 30 Day Raw Plots for Station           |                                                 |
+|           35 | Strainmeter All Raw Plots for Station (multi-year) |                                                 |
+|           36 | Strainmeter Spectrograms for Station               |                                                 |
 +--------------+-----------------------------------------+----------------------------------------------------+
 
 
-
+Table datafile.
+GSAC provides information about data files from its sites, and where to download the files. This information
+is in the table datafile, with one row for each file.  Each row should have a corresponding site.
 mysql> desc datafile;
 +-------------------------+-----------------+------+-----+---------+----------------+
 | Field                   | Type            | Null | Key | Default | Extra          |
@@ -269,9 +284,15 @@ mysql> desc datafile_format;
 | datafile_format_name | varchar(50)     | NO   |     | NULL    |                |
 +----------------------+-----------------+------+-----+---------+----------------+
 
+A data file format is, well, a file format.  
+Note that a file format does not in general imply the data parameter type in a file, though in some special cases a 
+certain format is used only for one type of information, such as a PBO GPS Network Velocity file.
+Since GSAC can be used for many data types and many file formats, it is necessary to use this distinction properly.
+
 mysql> select * from datafile_format ;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
+mysql> select * from datafile_format;
 +--------------------+----------------------------------+
 | datafile_format_id | datafile_format_name             |
 +--------------------+----------------------------------+
@@ -279,23 +300,30 @@ MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPER
 |                  2 | RINEX 3                          |
 |                  3 | BINEX                            |
 |                  4 | SINEX                            |
-|                  5 | UNR northings and eastings; tenv3|
+|                  5 | UNR tenv3 northings and eastings |
 |                  6 | UNR txyz2 Cartesian xyz          |
 |                  7 | UNR tenv traditional NEU         |
 |                  8 | time series plot image           |
 |                  9 | UNR station QC estimate .qa file |
-|                 10 | UNR 5 minute products; kenv      |
+|                 10 | UNR kenv 5 minute products       |
 |                 11 | UNR krms RMS products            |
 |                 12 | DORIS                            |
 |                 13 | SLR                              |
 |                 14 | VLBI                             |
-|                 15 | BOTTLE                           |
+|                 15 | Bottle                           |
 |                 16 | SEED                             |
+|                 17 | ASCII (any)                      |
+|                 18 | KML / KMZ (any)                       |
+|                 19 | XML (any)                             |
+|                 20 | NetCDF (any)                          |
+|                 21 | JSON (any)                            |
+|                 22 | CSV (any)                             |
+|                 23 | PBO GPS Network Velocity Field Format | 
 +--------------------+----------------------------------+
 
 
 
-ql> desc ellipsoid;
+mysql> desc ellipsoid;
 +----------------------+-----------------+------+-----+---------+----------------+
 | Field                | Type            | Null | Key | Default | Extra          |
 +----------------------+-----------------+------+-----+---------+----------------+
@@ -303,11 +331,10 @@ ql> desc ellipsoid;
 | ellipsoid_name       | varchar(45)     | NO   |     | NULL    |                |
 | ellipsoid_short_name | varchar(10)     | YES  |     | NULL    |                |
 +----------------------+-----------------+------+-----+---------+----------------+
-3 rows in set (0.00 sec)
 
 mysql> select * from ellipsoid;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS  TO ALLOW FEDERATED GSACs to INOPERATE.
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS  TO ALLOW FEDERATED GSACs TO INOPERATE.
 +--------------+----------------+----------------------+
 | ellipsoid_id | ellipsoid_name | ellipsoid_short_name |
 +--------------+----------------+----------------------+
@@ -315,6 +342,7 @@ MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS  TO ALLOW FEDERATED GSACs to INOPE
 |            2 | GRS 80         | GRS 80               |
 |            3 | PZ-90          | PZ-90                |
 +--------------+----------------+----------------------+
+
 
 
 mysql> desc equip_config;
@@ -564,6 +592,12 @@ In GNSS use, one station has one precise lat-long-elevation location, at the pha
 In GNSS use, differing lat-long-elevation locations must have different four_char_name-s, or station_name-s, usually both.
 Other data types may not need be so restrictive.
 
+As is very common in Earth science today, one station may belong to two or more networks.
+Field "networks" is a character string.  The value may be one network acronym such as RENAG or PBO.  Or it may have two or more network acronyms separated
+by semi-colons such as RENAG;Orpheon;RPG  (but not by any other character such as comma for separation).  If you include a space it will become part of the
+newtwork name , so that the networks field value "PBO  ;FeoNET" includes one network named (wrongly) "PBO  ", which is not the same as "PBO" in a computer search.
+If you enter "RENAG,Orpheon,RPG" for networks, then that station belongs to one network named "RENAG,Orpheon,RPG".
+
 mysql> select * from station;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
@@ -584,7 +618,7 @@ mysql> desc station_status;
 
 mysql> select * from station_status;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). 
-YOU MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+YOU MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
 +-------------------+-----------------------+
 | station_status_id | station_status        |
 +-------------------+-----------------------+
@@ -606,7 +640,7 @@ mysql> desc station_style;
 
 mysql> select * from station_style;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). 
-YOU MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs to INOPERATE.
+YOU MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
 +------------------+---------------------------+
 | station_style_id | station_style_description |
 +------------------+---------------------------+
