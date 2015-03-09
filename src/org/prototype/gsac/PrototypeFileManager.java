@@ -133,7 +133,7 @@ public class PrototypeFileManager extends FileManager {
                for (int vi= 0; vi<avalues.size(); vi+=1 ) {
                   if ( avalues.get(vi).equals(ftype) ) {
                          notfound=0;
-                         break;
+                         continue; 
                          }
                    }
                    if (notfound==1) {
@@ -146,7 +146,7 @@ public class PrototypeFileManager extends FileManager {
                for (int vi= 0; vi< fmvalues.size(); vi+=1 ) {
                   if ( fmvalues.get(vi).equals(format) ) {
                          notfound=0;
-                         break;
+                         continue;
                          }
                    }
                    if (notfound==1) {
@@ -159,7 +159,7 @@ public class PrototypeFileManager extends FileManager {
                for (int vi= 0; vi< rfvalues.size(); vi+=1 ) {
                   if ( rfvalues.get(vi).equals(trf) ) {
                          notfound=0;
-                         break;
+                         continue;
                          }
                    }
                    if (notfound==1) {
@@ -185,10 +185,13 @@ public class PrototypeFileManager extends FileManager {
         trfvalues = rfvalues.toArray(itemArray);             // load itemArray
         // The arrays tvalues, formatvalues, and trfvalues are used below to load file query choices.
         // can sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
-        System.err.println("GSAC: there are "+filecount+" data files in the database." ) ;
-        System.err.println("GSAC: there are "+gpsfcnt+" data types (types of observations and product files) among the data files." ) ;
-        System.err.println("GSAC: there are "+fmcnt+" data file formats among the data files." ) ;
-        System.err.println("GSAC: there are "+trfcnt+" TRFs among the data files." ) ;
+        System.err.println   ("GSAC: there are "+filecount+" data files in the database." ) ;
+        if ( gpsfcnt>0) {
+           System.err.println("GSAC:                  there are  "+gpsfcnt+  " data types (types of measurements, parameters, or products) among the data files." ) ; }
+        if ( fmcnt>0) {
+           System.err.println("GSAC:                  there are  "+fmcnt+    " data file formats among the data files." ); }
+        if ( trfcnt>0) {
+           System.err.println("GSAC:                  there are  "+trfcnt+   " Terrestrial Reference Frames among the data files." ); }
 
 
         // the following file search choices are added to the web site file search page and available via API options: 
