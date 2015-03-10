@@ -38,13 +38,13 @@ public class EarthLocation {
     private double elevation;
 
     /** _more_ */
-    private double x = Double.NaN;
+    private double x ; //= Double.NaN; NaN is supposedly not allowed in Json.
 
     /** _more_ */
-    private double y = Double.NaN;
+    private double y ; //= Double.NaN;
 
     /** _more_ */
-    private double z = Double.NaN;
+    private double z ; // = Double.NaN;
 
     /**
      * ctor
@@ -64,6 +64,23 @@ public class EarthLocation {
         this.latitude  = latitude;
         this.longitude = longitude;
         this.elevation = elevation;
+    }
+
+    /**
+     * ctor
+     *
+     * @param latitude latitude
+     * @param longitude  longitude
+     * @param elevation elevation
+     */
+    public EarthLocation(double latitude, double longitude,
+                         double elevation, double x,double y, double z) {
+        this.latitude  = latitude;
+        this.longitude = longitude;
+        this.elevation = elevation;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
 

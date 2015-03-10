@@ -26,6 +26,11 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 
+import org.gsac.gsl.metadata.*;
+//import org.gsac.gsl.metadata.gnss.*;
+//import org.gsac.gsl.util.*;
+
+
 import java.io.*;
 import java.text.DateFormat;
 import java.util.List;
@@ -79,6 +84,30 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
     }
     */
 
+    /**
+     *  from the input GSAC 'site' object, extract the value of the named field or API argument.
+     *
+     * @param site _more_
+     * @param propertyId _more_
+     * @param dflt _more_
+     *
+     * @return _more_
+     */
+    private String getProperty(GsacResource site, String propertyId,
+                               String dflt) {
+        List<GsacMetadata> propertyMetadata =
+            (List<GsacMetadata>) site.findMetadata(
+                new GsacMetadata.ClassMetadataFinder(PropertyMetadata.class));
+        for (int i = 0; i < propertyMetadata.size(); i++) {
+            PropertyMetadata metadata =
+                (PropertyMetadata) propertyMetadata.get(i);
+            if (metadata.getName().equals(propertyId)) {
+                return metadata.getValue();
+            }
+        }
+        return "";
+    }
+
 
     /**
      * handle the request
@@ -92,6 +121,10 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+        String Xstr ="";
+        String Ystr ="";
+        String Zstr ="";
+
         //long t1 = System.currentTimeMillis();
         response.startResponse(GsacResponse.MIME_JSON);
         PrintWriter pw          = response.getPrintWriter();
@@ -109,6 +142,16 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         gsonBuilder.serializeSpecialFloatingPointValues();
         Gson           gson  = gsonBuilder.create();
         List<GsacSite> sites = response.getSites();
+
+        /* how to put the x yx z value in the site?  
+        for (GsacSite site : sites) {
+            Xstr       =getProperty(site, GsacExtArgs.SITE_TRF_X, "");
+            Ystr       =getProperty(site, GsacExtArgs.SITE_TRF_Y, "");
+            Zstr       =getProperty(site, GsacExtArgs.SITE_TRF_Z, "");
+            System.err.println("GSAC: x y z = "+ Xstr +"  "+ Ystr  +"  "+ Zstr );
+            site.earthlocation.addXYZ( - - -  );
+        } */
+
         String         json  = gson.toJson(sites);
         pw.print(json);
         response.endResponse();
