@@ -64,17 +64,20 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
                                  ResourceClass resourceClass) {
         super(gsacRepository, resourceClass);
 
+        // this line labels the choice in the Results > Outout formats choice box, and ...?
         getRepository().addOutput(getResourceClass(), new GsacOutput(this, OUTPUT_SITE_JSON, 
            "GSAC Sites info, JSON", "/sites.json", true));
     }
 
 
+    /* not used
     public static String getUTCnowString() {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         final String utcTime = sdf.format(new Date());
         return utcTime;
     }
+    */
 
 
     /**
@@ -94,7 +97,14 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
         PrintWriter pw          = response.getPrintWriter();
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
-        gsonBuilder.setDateFormat(DateFormat.LONG);
+
+        // original time format for for Java before 1.7:
+        //gsonBuilder.setDateFormat(DateFormat.LONG);
+        // new 2015:
+        // based on SimpleDateFormat sdf8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss" );  
+        // note that "yyyy-MM-dd'T'HH:mm:ss.SSS" in SimpleDateFormat makes a time string like 2001-07-04T12:08:56.235 WITHOUT the '' around the T.
+
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
         gsonBuilder.serializeSpecialFloatingPointValues();
         Gson           gson  = gsonBuilder.create();
