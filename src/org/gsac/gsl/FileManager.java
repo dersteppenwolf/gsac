@@ -74,7 +74,11 @@ public abstract class FileManager extends GsacResourceManager {
         new WgetFileOutputHandler(getRepository(), getResourceClass());
         new UrlFileOutputHandler(getRepository(), getResourceClass());
         new CsvFileOutputHandler(getRepository(), getResourceClass());
-        new DownloaderFileOutputHandler(getRepository(), getResourceClass());
+
+        // to provide a jnlp script for files downloading with Java Webstart:
+        // no one has ever used this so far as we know 
+        // new DownloaderFileOutputHandler(getRepository(), getResourceClass());
+
         new JsonFileOutputHandler(getRepository(), getResourceClass());
         new ZipFileOutputHandler(getRepository(), getResourceClass());
         new RssFileOutputHandler(getRepository(), getResourceClass());
