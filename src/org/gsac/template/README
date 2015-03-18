@@ -17,8 +17,6 @@ For more details see http://www.unavco.org/software/data-management/gsac/install
 
 This README (Part 2) file is located in your new GSAC package in @MACRO.SRCDIR@/ (ignore the README file in @MACRO.SRCDIR@/release).
 
-Now, change the working directory to your local GSAC code area, at @MACRO.SRCDIR@ .
-
 The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for recent security features.
 To build GSAC for Java 1.6, make the following changes:
    - make sure your java and javac are for Java 1.6, not Java 1.7. On Linux, do which java and which javac and make sure the versions are the same and for Java 1.6
@@ -35,7 +33,7 @@ To build GSAC for Java 1.6, make the following changes:
    - in your file like myrepServer.java, edit the file to use the "Java 1.6 version" lines and to comment-out the lines for "Java 1.7 version."
 
 
-The main steps in README part 2 are these:
+The main steps in README part 2 are these.  In your local GSAC code area, MACRO.SRCDIR@:
 
     - edit @MACRO.SRCDIR@/resources/gsac.properties
     - edit @MACRO.SRCDIR@/dbresources/gsacdb_test.properties
@@ -48,6 +46,9 @@ The main steps in README part 2 are these:
     - create your subclasses of SiteManager.java and FileManager.java (creating the executable code for your GSAC, based on how you wish to use your database.)
     - ant           (build your complete new GSAC.)  If that succeeds do:
     - ant runserver (to execute your complete new GSAC on your local development platform, to can see on your browser).
+
+
+Change the working directory to your local GSAC code area @MACRO.SRCDIR@ 
 
 
 
