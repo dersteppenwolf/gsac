@@ -44,8 +44,8 @@ The main steps in README part 2 are these:
     - edit Tables.java, mkdir database/, and move Tables.java to database/
     - ant           (this builds GSAC with the automatic Java code, Tables.java, and with your properties files. There should be no errors.) 
     - ant runserver (stop the 'ant runserver' process with CTRL-c)  (A test run of the GSAC without any executable code for your database.)
-    - save copies of the orignal subclasses of SiteManager.java and FileManager.java files, such as BoulderSiteManager.java-original and BoulderFileManager.java-original 
-    - create your subclasses of SiteManager.java and FileManager.java  (creating the executable code for your GSAC, based on how you wish to use your database.)
+    - save copies of the orignal local subclasses of SiteManager.java and FileManager.java files, such as MySiteManager.java-orig and MyFileManager.java-orig 
+    - create your subclasses of SiteManager.java and FileManager.java (creating the executable code for your GSAC, based on how you wish to use your database.)
     - ant           (build your complete new GSAC.)  If that succeeds do:
     - ant runserver (to execute your complete new GSAC on your local development platform, to can see on your browser).
 
