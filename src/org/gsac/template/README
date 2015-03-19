@@ -527,6 +527,8 @@ class to do this.
 Web Site Page Contents, Header, Footer, and Images 
 ########################################################################
 
+You can specify details of the header and footer used on GSAC web pages, and the home page contents.
+
 Installing  GSAC initially creates a short version of its web site home page which says only "Welcome to GSAC." 
 You can add more to this file for a larger page, using normal HTML.  You can also create HTML code for a header and a footer 
 which will be used at the top and bottom of all the web pages in your GSAC site.
@@ -534,28 +536,25 @@ which will be used at the top and bottom of all the web pages in your GSAC site.
 The contents of a home page of a GSAC repository web site is contained in an index.html file.
 In your GSAC code area, use mkdir htdocs to create htdocs/ in @MACRO.PREFIX@/gsac/ (src/org/@MACRO.PREFIX@/gsac/htdocs/).
 Into @MACRO.PREFIX@/gsac/htdocs copy the template file index.html from src/org/prototype/gsac/htdocs/index.html.
-
 Into @MACRO.PREFIX@/gsac/htdocs also copy from src/org/prototype/gsac/htdocs/ the files GSAC_logo2.jpg, GSAC_logo2_short.jpg, and GSAC_logo2_small.jpg.
 
-Edit your htdocs/index.html file to create your GSAC home page contents.  Put image files used on the web main page  in the directory htdocs.
-Note that the index page does  not have a complete set of HTML lines, found on a typical web page, 
-including <html> and more at the beginning, or the final </html>, since the index contents
+Edit your htdocs/index.html file to create your GSAC home page contents.  Put image files used on the web main page in the directory htdocs.
+Note that the index page does not have a complete set of HTML lines, found on a typical web page, 
+including <html> at the beginning, or the final </html>, since the index contents
 are wrapped inside the GSAC header and footer HTML files, mentioned next.
 
-In the index.html file, add images with HTML like
-<img src="@MACRO.PREFIX@/gsacapi/htdocs/COCONet_stations_map.png">
-As usual in HTML, images also may be retrieved from another web server, for example, with <img src="http://www.nasa.gov/images/gps_satellite.gif">.
+In the index.html file, add images with HTML like <img src="@MACRO.PREFIX@/gsacapi/htdocs/stations_map.png">
+As usual in HTML, images also may be retrieved from a URL, for example <img src="http://www.nasa.gov/images/gps_satellite.gif">.
 
 The files footer.html and header.html, in the directory @MACRO.SRCDIR@/resources/, specify the top and bottom of the 
-GSAC web pages at your locations, and provide web page layout and decoration surrounding  the GSAC forms and results. 
-Copy the template files src/org/prototype/gsac/resources/header.html and src/org/prototype/gsac/resources/footer.html to your @MACRO.PREFIX@/gsac/resources.
+GSAC web pages.  Copy the template files src/org/prototype/gsac/resources/header.html and src/org/prototype/gsac/resources/footer.html to your @MACRO.PREFIX@/gsac/resources.
 These files may be as simple, or fully developed, such as using css. To include an image in the header and footer html files
-use <img  src="${htdocs}/home-page-header_1.jpg" > .     All web page image files are in your htdocs/.
+use <img  src="${htdocs}/home-page-header_1.jpg" >. All web page image files are in directory htdocs/.
 Include an email address for Contact or Support in your header or footer.  If persons using your GSAC have
-questions, they need an easy way to reach you.  This will help your GSAC service be responsive, and not frustrating.
+questions, they need an easy way to reach you. 
 
 The GSAC web pages with search forms, and pages with static GSAC information such as the GSAC Help pages,
-are complete and provided by GSAC installation. They also use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
+are provided by GSAC. They also use your header and footer HTML files.  Is it possible to modify the GSAC search forms 
 with Java programming in the core GSAC code, but we urge you to write to UNAVCO if you see need for a change.  For consitency with
 other GSAC repositories, and for problem-free operation in a federated GSAC, it is best not to modify core GSAC code.
 
