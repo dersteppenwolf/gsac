@@ -196,27 +196,35 @@ public class PrototypeFileManager extends FileManager {
 
         // the following file search choices are added to the web site file search page and available via API options: 
         Capability[] dflt = { 
-              // variables like "GsacSrgs.ARG_FILE_..." are declared in GSAC core code GsacArgs.java.
+              // variables like "ARG_FILE_..." are declared in GSAC core code GsacArgs.java.
 
-              initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",                      Capability.TYPE_DATERANGE),    "File Query", "Date range when the data was collected"),
+              initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",                      Capability.TYPE_DATERANGE),    
+                               "File Query", "Date range when the data was collected"),
 
+              // NEW publish date code revisions 25 Mar 2015
+              // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
+              // this loads the user's choices of the range values of ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO used later to seach on
+              initCapability(new Capability(ARG_FILE_PUBLISHDATE,      "Publish Date",                         Capability.TYPE_DATERANGE),
+                               "File Query", "Date when this file was published in the repository"),
+              // end this part of NEW revisions
+
+              // enable this for choices of Data Type; see related code below also with "_FILE_TYPE"
               initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",        tvalues, true,      Capability.TYPE_FILETYPE ),    "File Query", "Data Type" ),
 
+              // enable this for choices of File Format; see related code below also with "_FILE_FORMAT"
               initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "Data File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
 
-              //   initCapability(new Capability(GsacArgs.ARG_FILE_TRF,     "Data Reference Frame", trfvalues, true,Capability.TYPE_TRF ),         "File Query", "Data Reference Frame" ),
+              // enable this for choices of Data Reference Frame; see related code below also with "_FILE_TRF"
+              //initCapability(new Capability(GsacArgs.ARG_FILE_TRF, "Data Reference Frame", trfvalues,  true, Capability.TYPE_TRF ),           "File Query", "Data Reference Frame" ),
 
-              // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
-              initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first entered in repository"),
-
+              // enable this for choices of Sampling Interval 
               // the special parm name, ARG_FILE_SAMPLEINT, declared in GsacArgs.java, must have two more related corresponding parm names there with magic name extensions .max and .min
               // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not real numbers.  FIX this code to allow fraction of seconds:
-              initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval")
+              //initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval")
 
-              // Could also search on file size.  Not now regarded as useful. Nov. 2013.
-              // Capability cap;
-              //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
-              // can use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
+              // enable this for choices of file size. 
+              //initCapability(new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
+              // can also use  cap.setSuffixLabel("&nbsp;(bytes)");
         };
 
         for (Capability capability : dflt) {
@@ -290,22 +298,18 @@ public class PrototypeFileManager extends FileManager {
             clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATA_TYPE.COL_DATA_TYPE_NAME, values)));
         }
 
-   /*
         // make query clause for the data file format type ; search with OR on the list of file type names in 'values':
         if (request.defined(GsacArgs.ARG_FILE_FORMAT)) {
              List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_FILE_FORMAT );
             clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME, values)));
         }
 
+        /*
         // make query clause for the data reference frame name; search with OR on the list of  names in 'values':
         if (request.defined(GsacArgs.ARG_FILE_TRF)) {
              List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_FILE_TRF );
             clauses.add( Clause.or( Clause.makeStringClauses( Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME, values)));
         }
-    */
-
-        //float intrange1 = Float.parseFloat(stri); // java atof
-        /*
         if (request.defined(ARG_FILESIZE_MIN)) {
             int size = request.get(ARG_FILESIZE_MIN, 0);
             appendSearchCriteria(msgBuff, "Filesize&gt;=",
@@ -318,6 +322,8 @@ public class PrototypeFileManager extends FileManager {
         }
         */
 
+        //float intrange1 = Float.parseFloat(stri); // java atof
+
         // sample interval code: // FIX handle case if database has null values for DATAFILE.COL_FILE_SAMPLE_INTERVAL
         if (request.defined(ARG_FILE_SAMPLEINT_MAX)) {
             float intrange1 = request.get(ARG_FILE_SAMPLEINT_MIN, 0);
@@ -326,8 +332,66 @@ public class PrototypeFileManager extends FileManager {
             clauses.add(Clause.ge(Tables.DATAFILE.COL_SAMPLE_INTERVAL, intrange1));
             clauses.add(Clause.le(Tables.DATAFILE.COL_SAMPLE_INTERVAL, intrange2));
         }
+
+        // file.publishdate.to=2015-02-02&limit=500&file.type=Final+Daily+time+series&site.code=p7*&file.publishdate.from=2015-01-07
+        // Pub. date<=  Mon Feb 02 00:00:00 MST 2015
+
+        // NEW publish date code revisions 25 Mar 2015
+        // use the data range requested by the user, from the input from web search form / API, to search on the "publish time" of data files:
+        Date[] usersDateRange = request.getDateRange(ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO, null, null);
+        //                                                pubDateRange[0]
+        // to compare the pub date to the final date in range of interest: pub date must be >=  [0[ 1st in users date range
+        if (usersDateRange[0] != null) {
+            // wrangle the final date into a format you can use in a SQL query
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(usersDateRange[0]);
+            java.sql.Date testDate = new java.sql.Date(cal.getTimeInMillis());
+            clauses.add(Clause.ge(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE, testDate));
+            appendSearchCriteria(msgBuff, "Pub. date&gt;=", "" + format(usersDateRange[0]));
+        }
+        if (usersDateRange[1] != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(usersDateRange[1]);
+            // do this to NOT shift one day earlier, both user dates are the same.  do   3 lines:
+            cal.add(Calendar.HOUR, 23);
+            cal.add(Calendar.MINUTE, 59);
+            cal.add(Calendar.SECOND, 59);
+            java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
+            clauses.add(Clause.le(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE, sqlEndDate));
+            appendSearchCriteria(msgBuff, "Pub. date&le;=", "" + format(usersDateRange[1]));
+        }
+
+        // NEW date date code revisions 25 Mar 2015
+        // use the data range requested by the user, from the input from web search form / API, to search on the "data time" of data files:
+        Date[] datarangeDates = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
+        if (datarangeDates[0] != null) {
+            // wrangle the users start time into a format you can use in a SQL query
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(datarangeDates[0]);
+            java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
+            clauses.add(Clause.ge(Tables.DATAFILE.COL_DATAFILE_STOP_TIME, sqlStartDate));
+            // time of data must be inside some one receiver session
+            //clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlStartDate));
+            appendSearchCriteria(msgBuff, "GPS Data ends &gt;=", "" + format(datarangeDates[0]));
+        }
+        if (datarangeDates[1] != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(datarangeDates[1]);
+            // do this to NOT shift one day earlier:   3 lines:
+            cal.add(Calendar.HOUR, 23);
+            cal.add(Calendar.MINUTE, 59);
+            cal.add(Calendar.SECOND, 59);
+            java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
+            clauses.add(Clause.le(Tables.DATAFILE.COL_DATAFILE_START_TIME, sqlEndDate));
+            // time of data must be inside some one receiver session
+            //clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
+            appendSearchCriteria(msgBuff, "GPS Data starts &lt;=", "" + format(datarangeDates[1]));
+        }
+
+        // end NEW section 2
+
             
-        // get values of the data date range requested by the user, from the input from web search form / API:
+        /* original- replaced by the above - get values of the data date range requested by the user, from the input from web search form / API:
         Date[] dataDateRange = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
         if (dataDateRange[0] != null) {
             // wrangle the data start time into a format you can use in a SQL query
@@ -352,6 +416,7 @@ public class PrototypeFileManager extends FileManager {
             //clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
+        */
 
         // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
         clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
