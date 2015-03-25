@@ -213,13 +213,12 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
             //System.err.println("GSAC: there are "+netcount+" networks among the stations.");
 
-
             /* capabilities.add(initCapability(new Capability(ARG_SITE_MODIFYDATE, "Site Modified Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
                         "The site's metadata was modified between these dates"));
+
             capabilities.add( initCapability( new Capability( ARG_SITE_CREATEDATE, "Site Created Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_ADVANCED,
                         "The site was created between these dates"));
-             */
-
+            */
 
             // search on site type; to show all station style or types in the database station_style table which will have more than this data center has:
             // get only site type names (station_style table values) used by stations in this database, only.
@@ -742,9 +741,11 @@ public class PrototypeSiteManager extends SiteManager {
            networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
            }
 
-        /*
+        
         int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
-        int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_DESCRIPTION_ID);
+        int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_STYLE_ID);
+
+        /*
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
         if (1== access_permission_id ) {
             System.err.println("GSAC: new request      GSAC found station with no access permission (no public views allowed) " +fourCharId);
@@ -894,6 +895,9 @@ public class PrototypeSiteManager extends SiteManager {
         // add all three above items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
 
+        //  To set this value in MySiteManager.java:
+        //   site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ))
+
         /*
         // following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
@@ -1002,10 +1006,9 @@ public class PrototypeSiteManager extends SiteManager {
                 // ok gsacResource.setLongName( new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8") ); /*results.getString(Tables.STATION.COL_STATION_NAME)*/  
                 gsacResource.setLongName( staname ); 
 
-                // get values from the dq query row returned, and then et for x,y,z, the SITE_TRF_X  etc.
+                // get values from the dq query row returned, and then SET x,y,z, the SITE_TRF_X  etc.
                 // Note if you add similar but new and different parameters to your data base, you also need to
                 // add to the file gsac/trunk/src/org/gsac/gsl/GsacExtArgs.java to declare similar new variables.
-                // The var names "Tables..." comes from the Tables.java file made when you built with ant maketables with your new database.
 
                 String xstr = results.getString(Tables.STATION.COL_X);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_X, "X", xstr);
@@ -1015,6 +1018,8 @@ public class PrototypeSiteManager extends SiteManager {
 
                 String zstr = results.getString(Tables.STATION.COL_Z);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Z, "Z", zstr);
+
+                // The var names "Tables..." comes from the Tables.java file made when you built with ant maketables with your new database.
 
                 /* get, check, and save value for IERS DOMES. */
                 /*
@@ -1036,33 +1041,34 @@ public class PrototypeSiteManager extends SiteManager {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-        /*
+        
         // db query  to get MONUMENT_DESCRIPTION
         List<Clause> clauses = new ArrayList<Clause>();
         clauses.add(Clause.eq(Tables.STATION.COL_FOUR_CHAR_NAME, gsacResource.getId()));
         // join the table with these 2 values:
-        clauses.add(Clause.join  (Tables.STATION.COL_MONUMENT_DESCRIPTION_ID, Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION_ID));
-        String cols=SqlUtil.comma(new String[]{  Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION});
+        clauses.add(Clause.join  (Tables.STATION.COL_MONUMENT_STYLE_ID, Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_ID));
+        String cols=SqlUtil.comma(new String[]{  Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION});
         List<String> tables = new ArrayList<String>();
         // FROM BOTH the tables 
         tables.add(Tables.STATION.NAME);
-        tables.add(Tables.MONUMENT_DESCRIPTION.NAME);
+        tables.add(Tables.MONUMENT_STYLE.NAME);
         statement =
             getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1); 
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
-                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "monument", 
-                     results.getString(Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION) );
-                //System.err.println("\n  --------------------------- set monu desc "+results.getString(Tables.MONUMENT_DESCRIPTION.COL_MONUMENT_DESCRIPTION));
-                // arg "monument" appears as a label in the HTML page about one station.
                 //Only read the first row of db query results returned
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "monument", 
+                     results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION) );
+                // arg "monument" appears as a label in the HTML page about one station.
+                // debug DEBUG
+                System.err.println(" site manager: set monu desc "+results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION));
                 break;
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
-        */
+       
 
     }
 
