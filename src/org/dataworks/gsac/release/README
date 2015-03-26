@@ -1,8 +1,11 @@
 
+NEW: see ~/gsac/GSAC/gsac-code/src/org/dataworks/gsac/README
+
+old:
+
 ###########################################
 This README gets included in the release
 ###########################################
-
 
 This is the stand-alone GSAC Prototype GSAC Repository server. 
 You will need Java 1.6 (or higher) to run this server.
