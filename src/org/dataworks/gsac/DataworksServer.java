@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -23,19 +23,51 @@ package org.dataworks.gsac;
 
 import org.gsac.gsl.*;
 
+import java.io.*;
+import java.util.Properties;
 
+/* original
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnection;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+*/
 
+/*
+ * code block for Java 1.7 version:
+ * Uncomment these lines to build a Prototype GSAC with Java 1.7
+*/
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import java.io.*;
-import java.util.Properties;
+/* 
+ * code block for Java 1.6 
+ * Uncomment these lines to build a Prototype GSAC with Java 1.6
+import org.mortbay.jetty.*;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Handler;
+import org.mortbay.jetty.HttpConnection;
+import org.mortbay.jetty.NCSARequestLog;
+import org.mortbay.jetty.Request;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.handler.*;
+import org.mortbay.jetty.handler.AbstractHandler;
+import org.mortbay.jetty.security.SslSocketConnector;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHolder;
+*/
+
 
 
 

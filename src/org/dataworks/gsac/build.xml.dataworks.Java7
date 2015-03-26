@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- GSAC's ant build.xml file for Dataworks GSAC 
+
+     Java 1.7 version of build.xml
+-->
+
+<!-- 
+     This build script assumes the source tree is structured as:
+     base_directory/
+             src
+             lib
+             dist (this gets created by the build)
+    The basedir (below) needs to be set to the base_directory relative to this build.xml
+    The localinit target defines the properties for the build. These properties need to be changed.
+    
+    The default build target is test_build. This copies the dbresources/gsacdb_test.properties file 
+    to resources/gsacdb.properties and makes a .zip and .war in the dist dir
+
+    Once GSAC is built, you can run the server with:
+    ant runserver
+    This uses the Jetty application container for browser display.
+-->
+
+<project basedir="../../../.." default="test_build" name="GSAC Build">
+
+    <target name="localinit">
+        <!-- base name for build products -->
+        <property name="basename" value="dataworksgsac"/>
+
+        <!-- Where the main source dir is at (relative to the top level src dir) -->
+        <property name="repository_relative_dir" value="org/dataworks/gsac"/>
+        <property name="repositorypackage" value="org.dataworks.gsac"/>
+
+        <property name="serverclass" value="${repositorypackage}.DataworksServer"/>
+        <property name="repositoryclass" value="${repositorypackage}.DataworksRepository"/>
+
+        <!-- The root of the Tomcat URL -->
+        <property name="urlroot" value="/${basename}"/>
+    </target>
+
+    <target name="init" depends="localinit">
+        <property name="build" value="test"/>
+        <property name="version" value="1.0"/>
+        <property name="package" value="${basename}${build}${version}"/>
+
+        <property name="distdir" value="${basedir}/dist"/>
+        <mkdir dir="${distdir}"/>
+        <property name="jardir" value="${distdir}"/>
+        <property name="srcdir" value="${basedir}/src"/>
+        <property name="libdir" value="${basedir}/lib"/>
+        <property name="reldir" value="${distdir}/${package}"/>
+
+        <property name="repositorydir" value="${srcdir}/${repository_relative_dir}"/>
+
+        <property name="jarfile" value="${package}.jar"/>
+        <property name="warfile" value="${basename}.war"/>
+        <property name="srcjarfile" value="${basename}${version}_src.jar"/>
+        <property name="zipfile" value="${distdir}/${package}.zip"/>
+
+        <property name="commons-pool.jar" value="commons-pool2-2.2.jar"/>
+        <property name="commons-dbcp.jar" value="commons-dbcp2-2.0.1.jar"/>
+
+        <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
+        <!-- for oracle in place of mysql,   use ojdbc7.jar i                   in place of mysql-connector-java-5.1.34-bin.jar --> 
+
+        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/> 
+
+        <property name="build.sysclasspath"    value="ignore" />
+
+        <!-- javac flags -->
+        <property name="javac.failonerror" value="true"/>
+        <property name="javac.fork" value="true"/>
+        <property name="javac.maxmemory" value="512m"/>
+        <property name="fileencoding" value="UTF-8" />
+    </target>
+
+
+    <target name="test_build">
+        <property name="build" value="test"/>
+        <antcall target="build"/>
+        <echo message="********************************"/>
+        <echo message="To run the server run:"/>
+        <echo message="ant runserver"/>
+        <echo message="********************************"/>
+    </target>
+
+    <target name="production_build">
+        <property name="build" value="production"/>
+        <antcall target="build"/>
+    </target>
+
+
+    <target name="build" depends="init,clean">
+        <echo message="Creating ${build} build"/>
+        <!-- Uncomment this line if you want to build the gsacws.jar everytime 
+        <ant antfile="${srcdir}/org/gsac/gsl/build.xml" target="gsacjar"/>
+        -->
+
+        <property name="db.properties" value="${repositorydir}/dbresources/gsacdb_${build}.properties"/>
+        <copy overwrite="true"    file="${db.properties}"  
+                 tofile="${repositorydir}/resources/gsacdb.properties" />
+        <property name="server.properties" value="${repositorydir}/resources/gsacserver_${build}.properties"/>
+        <copy overwrite="true"    file="${server.properties}"  
+                 tofile="${repositorydir}/resources/gsacserver.properties" />
+        <antcall target="release"/>
+        <antcall target="war"/>
+    </target>
+
+
+    <target name="gsacjar" depends="init,clean,compile">
+        <echo message="Making jar ${jardir}/${jarfile}"/>
+        <jar 
+            basedir="${srcdir}"
+            update="false"
+            compress="true"
+            jarfile="${jardir}/${jarfile}">
+            <include name="org/**/*.class"/>
+            <include name="gov/**/*.class"/>
+            <include name="edu/**/*.class"/>
+            <include name="${repository_relative_dir}/resources/**/*"/>
+            <include name="${repository_relative_dir}/htdocs/**/*"/>
+           <manifest>
+              <attribute name="Implementation-Title" value="Stand alone GSAC server"/>
+              <attribute name="Implementation-Version" value="1.0"/>
+              <attribute name="Implementation-Vendor" value="${basename}"/>
+              <attribute name="Main-class" value="${serverclass}"/>
+              <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
+              <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
+              <attribute name="Class-Path" value="gsacws.jar  unidata_idv.jar  jetty-all-9.2.6.v20141205.jar gson-2.3.1.jar javax.servlet-api-3.1.0.jar mysql-connector-java-5.1.34-bin.jar ${commons-dbcp.jar} ${commons-pool.jar} commons-logging-1.2.jar log4j-1.2.17.jar"/>
+            </manifest> 
+        </jar>
+    </target>
+
+
+    <target name="compile" depends="init">
+        <javac
+            classpath="${classpath}"
+            verbose="false"
+            debug="true"
+            deprecation="false" 
+            nowarn="true"
+            srcdir="${srcdir}"
+            failonerror="${javac.failonerror}"
+            fork="${javac.fork}"
+            memoryMaximumSize="${javac.maxmemory}"
+            target="1.7" 
+            source="1.7"
+            encoding="${fileencoding}"
+            >
+
+        <include name="${repository_relative_dir}/**/*.java"/>
+
+        </javac>
+    </target>
+
+   <target  name="release" depends="init,clean,gsacjar">
+        <echo message="Making ${zipfile}"/>
+        <delete includeemptydirs="true" dir="${reldir}"/>
+        <mkdir dir="${reldir}"/>
+        <property name="reldirlib" value="${reldir}"/>
+        <mkdir dir="${reldirlib}"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="dist/${jarfile}"/>
+        <copy overwrite="true"  todir="${reldir}"     file="${libdir}/gsacws.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/unidata_idv.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/jetty-all-9.2.6.v20141205.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/gson-2.3.1.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/javax.servlet-api-3.1.0.jar"/>
+        <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
+        <!-- for oracle in place of mysql, use ojdbc7.jar in place of mysql-connector-java-5.1.34-bin.jar --> 
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/mysql-connector-java-5.1.34-bin.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-dbcp.jar}"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/${commons-pool.jar}"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/commons-logging-1.2.jar"/>
+        <copy overwrite="true"  todir="${reldirlib}"  file="${libdir}/log4j-1.2.17.jar"/>
+
+        <copy overwrite="true"  todir="${reldir}"  file="${repositorydir}/release/README"/>
+        <copy overwrite="true"  todir="${reldir}"  file="${repositorydir}/gsacrepository.sh">
+          <filterset>
+            <filter token="JARFILE" value="${jarfile}"/>
+          </filterset>
+        </copy>
+        <zip destfile="${zipfile}" >
+            <zipfileset dir="${reldir}" prefix="${package}"/>
+       </zip>
+   </target>
+
+
+    <target name="runserver" depends="init">
+      <java classname="org.gsac.gsl.GsacServer" maxmemory="512mb"> 
+          <arg value="-port"/>
+          <arg value="8080"/>
+          <arg value="-Dgsac.repository.class=${repositoryclass}"/>
+          <arg value="${basename.properties}"/>
+          <classpath>
+             <pathelement path="${classpath}"/>
+             <pathelement location=""/>
+         </classpath>
+     </java>
+   </target>
+
+
+
+    <target name="tables" depends="init">
+      <java classname="${repositorypackage}.DataworksDatabaseManager" maxmemory="512mb">
+          <classpath>
+             <pathelement path="${classpath}"/>
+             <pathelement location=""/>
+         </classpath>
+     </java>
+   </target>
+
+    <target name="war" depends="init">
+      <delete>
+           <fileset file="${distdir}/${warfile}"/>
+       </delete>
+       <property name="reldir" value="${distdir}/${package}"/>
+        <copy overwrite="true"  tofile="${distdir}/web.xml"  file="${repositorydir}/release/web.xml">
+          <filterset>
+            <filter token="MACRO.URLROOT" value="${urlroot}"/>
+          </filterset>
+        </copy>
+        <delete file="${reldir}/javax.servlet-api-3.1.0.jar"/>
+        <war webxml="${distdir}/web.xml" destfile="${distdir}/${warfile}">
+          <lib dir="${reldir}"/>
+        </war>
+    </target>
+
+    <target name="clean" depends="init" >
+        <delete>
+            <fileset dir="${srcdir}" includes="**/*.class"/>
+        </delete>
+    </target>
+
+
+   <target name="purge" depends="init,clean" >
+        <delete dir="${distdir}"/>
+   </target>
+
+
+    <target name="srcrelease" depends="init,clean">
+        <echo message="Making src jar ${jardir}/${srcjarfile}"/>
+        <delete file="${repositorydir}/resources/gsacdb.properties"/>
+        <jar 
+            basedir="${srcdir}"
+            update="false"
+            compress="true"
+            jarfile="${jardir}/${srcjarfile}">
+
+            <include name="${repository_relative_dir}/**/*"/>
+
+            <!-- don't include the production properties file in a release, since this has real passwords -->
+            <exclude name="${repository_relative_dir}/dbresources/gsacdb_production.properties"/>
+
+            <include name="org/unavco/database/**/*.java"/>
+        </jar>
+    </target>
+
+</project>

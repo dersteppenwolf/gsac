@@ -1,26 +1,39 @@
 <html>
 <head>
-<title>A UNAVCO Dataworks Repository</title>
+<title>Dataworks Repository</title>
 
-<!-- The Dataworks GSAC provisional headter file for web pages.  -->
-<!-- GSAC operators modify this file, stored in mygsacarrea/gsac/resources/footer.html -->
+<!-- The Dataworks GSAC provisional header file for web pages.  -->
 
 <blockquote>
 <p>
-<font face=verdana size=-1 color="#aaaaaa">
-(add institution images and/ or text header here, 
-<br> in the file mygsac/gsac/resources/header.html, for the header of GSAC web site pages.)
-<!--
- add image file to gsac/htdocs/, and show with:
+<font face=verdana size=+2 color="#0000BB">
+Dataworks GSAC Web Services for the GNSS Data Center
+</font>
+<font face=verdana size=-1 color="#0000cc">
+<p>
+To define the GSAC files' header and footer:
+<br>
+Edit the file dataworks/gsac/resources/header.html, for the header of GSAC web site pages.
+<br>
+Edit the file dataworks/gsac/resources/footer.html, for the footer of GSAC web site pages.
+<br>
+Add image files for the header and footer to dataworks/gsac/resources/.
+<br>
+Edit the file dataworks/gsac/htdocs/index.html, for the contents of the GSAC web site home page.
+<br>
+Rebuild GSAC and re-deploy.
+<!-- and show a logo image file with this HTML:
 <P align=center>
- <img  src="${htdocs}/agency_header_image.jpg" > 
+ <img  src="${htdocs}/agency_logo_image.jpg" > 
 </p>
 -->
-</font>
 </p>
 
+</font>
 
-<!-- Please do not remove this, as a courtesy to UNAVCO who makes GSAC freely available: -->
+<!-- Add your header logo image(s) and text here. -->
+
+<!-- use this, as a courtesy to UNAVCO who makes GSAC freely available: -->
 <p align=right>
 <font face=verdana size=-1 color="#0066CC"><b><i> Powered by </i></b></font> 
 <img  src="${htdocs}/GSAC_logo2_small.jpg" > 
@@ -29,9 +42,12 @@
 </blockquote>
 
 </head>
-
-<!-- begin web page contents: -->
-
 <hr=90%>
-<body bgcolor="#e4d4b6"> <!-- set page background color -->
-<!-- end of GSAC file header.html -->
+
+<!-- AND to set background color of all GSAC pages:
+<body bgcolor="#e4d4b6"> 
+-->
+
+<body> 
+
+<!-- end of GSAC header -->

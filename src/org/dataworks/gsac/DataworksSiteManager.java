@@ -696,6 +696,12 @@ public class DataworksSiteManager extends SiteManager {
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
         int networkid    =     results.getInt(Tables.STATION.COL_NETWORK_ID);
+        /* for 
+        | station_image_URL        | varchar(100)    | YES  |     | NULL    |                |
+        | time_series_URL          | varchar(100)    | YES  |     | NULL    |                |
+        public static final String COL_STATION_PHOTO_URL =  NAME + ".station_image_URL";
+        public static final String COL_TIME_SERIES_PLOT_PHOTO_URL =  NAME + ".time_series_URL";
+        */
         String station_photo_URL          = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         String time_series_plot_image_URL = results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_PHOTO_URL); 
 
@@ -841,6 +847,7 @@ public class DataworksSiteManager extends SiteManager {
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
 
+
         if ( station_photo_URL != null  )    {
             if (imagesGroup == null) {
                 site.addMetadata(imagesGroup = new MetadataGroup("Images:", MetadataGroup.DISPLAY_TABS));
@@ -849,15 +856,15 @@ public class DataworksSiteManager extends SiteManager {
                    URL u = new URL(station_photo_URL); 
                    HttpURLConnection huc = (HttpURLConnection)u.openConnection(); 
                    huc.setDoOutput(true);
-                   huc.setRequestMethod("GET");
-		   huc.setConnectTimeout(100);
-                   huc.connect() ;
-                   int ucode = huc.getResponseCode();
-                   if ( 200 == ucode ) {
-                      imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
-                   } else {
-                        System.err.println("DataworksSiteManager.makeResource(): ERROR could not establish connection to "+station_photo_URL);
-                   }
+                   huc.setRequestMethod("GET"); 
+                   huc.connect() ; 
+                   OutputStream os = huc.getOutputStream(); 
+                int ucode = huc.getResponseCode(); 
+                //System.err.println("       station_photo_URL   get ucode = "+ucode);
+                // add  a real site photo image to the group:
+                if (200==ucode) {
+                   imagesGroup.add( new ImageMetadata( station_photo_URL, "Site Photo"));
+                }
             }
         }
         if (time_series_plot_image_URL!=null )    {
@@ -869,17 +876,17 @@ public class DataworksSiteManager extends SiteManager {
                    HttpURLConnection huc = (HttpURLConnection)u.openConnection(); 
                    huc.setDoOutput(true);
                    huc.setRequestMethod("GET"); 
-		   huc.setConnectTimeout(100); 
-                   huc.connect() ;
-                   int ucode = huc.getResponseCode();
-                   if ( 200 == ucode ) {
-                      imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));                   
-                   } else {
-                        System.err.println("DataworksSiteManager.makeResource(): ERROR could not establish connection to "+time_series_plot_image_URL);
-                  }
-           }
+                   huc.connect() ; 
+                   OutputStream os = huc.getOutputStream(); 
+                   int ucode = huc.getResponseCode(); 
+                   //System.err.println("       time seris plot file get ucode = "+ucode);
+                   // add  a real  image to the group:
+                   if (200==ucode) {
+                      imagesGroup.add( new ImageMetadata(time_series_plot_image_URL, "Position Timeseries"));
+                }
+            }
         }
-
+        
 
         /* following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
