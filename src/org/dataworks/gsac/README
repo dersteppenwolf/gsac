@@ -29,9 +29,12 @@ Dataworks includes:
   Those files have headers which tell how to use them.
 - Python code to receive GPS receiver files from your local GPS receivers and populate the Dataworks GSAC database (not available from GSAC).
 
+For Dataworks GSAC, be sure you used the main GSAC package in SourceForge, not a 'branch'.  The main GSAC installation is described in the
+GSAC installation web page http://www.unavco.org/software/data-management/gsac/installation/installation.html
+and in the README files in the main GSAC package, with dates after 16 March 2015.
 
 
-Before you can use your Dataworks GSAC, you need to:
+Before you can use a complete Dataworks GSAC, you need to:
 > create and populate your database, starting with the file Dataworks_demo.sql. You may change the name of the database
   from "Dataworks_demo" to some other name, by editing the file Dataworks_demo.sql.  You need not change the filename of the file Dataworks_demo.sql. 
   You may use the db name Dataworks_demo with no problem.
