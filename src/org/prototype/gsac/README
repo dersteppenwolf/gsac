@@ -10,7 +10,7 @@ You have completed the installation in the first README file ("Part 1"), in the 
 This README (Part 2) file is located in the "prototype GSAC code area", src/org/prototype/gsac/.
 
 This README file describes how to complete your new Prototype GSAC, to provide web service access to site-located data in a geoscience data repository.
-This file sometimes uses for examples code for a hypothetical "Boulder" agency running a GPS network called "BoulderNet." You will use you own names for these.
+This file sometimes uses for examples a hypothetical "Boulder" agency running GSAC.  You will use your own names for these.
 
 The Prototype GSAC code is ready to use, after some small code changes for your repository name.
 
@@ -48,7 +48,7 @@ Some values were created in the initial ant build you just made.
 
     gsac.baseurl = /bouldergsac   # this appears in all URL web addresses for your GSAC
     #Your repository name
-    gsac.repository.name=Boulder GPS Repository
+    gsac.repository.name="Boulder GPS Repository
     #Your repository description
     gsac.repository.description=The Boulder GPS Repository 
 
@@ -139,11 +139,13 @@ This 'ant' build will take about 5 to 10 seconds.
 
 The source Java (.java) files compiled are like these in org/prototype/gsac
 
--rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 BoulderRepository.class
--rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 BoulderFileManager.class
--rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 BoulderServer.class
--rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 BoulderDatabaseManager.class
--rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 BoulderSiteManager.class
+-rw-r--r-- 1 wier wier  1623 2013-03-04 10:13 PrototypeRepository.class
+-rw-r--r-- 1 wier wier  3962 2013-03-04 10:13 PrototypeFileManager.class
+-rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 PrototypeServer.class
+-rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 PrototypeDatabaseManager.class
+-rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 PrototypeSiteManager.class
+
+and also database/Tables.class.
 
 This ant command builds GSAC for your repository
 
@@ -243,6 +245,58 @@ other GSAC repositories, and for problem-free operation in a federated GSAC, it 
 
 
 ########################################################################
+
+Running the GSAC server in Tomcat and Jetty
+
+The ant  builds a .zip of a stand-alone gsac server in gsac-code/dist/  and generates a Tomcat war file  gsac-code/dist/bouldergsac.war.
+
+To run the server with Jetty do:
+
+ ant runserver
+
+This will run a test or demo version of your GSAC on your desktop, with Jetty doing the web page management.
+
+To see the new GSAC, in the runserver screen output is a line such as
+
+     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/bouldergsac/gsacapi
+
+Enter the "http:/hostname:8080/bouldergsac/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
+
+The display is handled by Jetty.
+
+
+Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
+
+Building GSAC (in the src/org/prototype/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
+
+ gsac-code/dist/bouldergsac.war.   
+
+Copy this file to the Tomcat folder for .war file folder on your web server host.  For example, on the Tomcat server, do something like
+
+cp bouldergsac.war /usr/local/apachetomcat/webapps
+
+The GSAC server web should be available in a few seconds if you are using "hot deploy," without a restart of Tomcat.
+    
+You can see the log of Tomcat actions by doing for example,
+
+ tail -f /usr/local/apachetomcat/logs/catalina.out
+    
+If for some reason Tomcat and hotdeploy are misbehaving, or to restart Tomcat, you can do:
+
+sudo /etc/init.d/tomcatdev stop
+sudo /etc/init.d/tomcatdev start
+
+to restart tomcat  and force a read of the .war files.
+
+The Tomcat's servlet reads the properties file: /usr/local/apachetomcatdev/conf/bouldergsac.properties
+which contains the database authentication info. This is in the .war file.
+
+When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
+So, for example, for a 'gsacboulder' server,  it looks for a gsacboulder.properties file. 
+Put the authentication information in that properties file so it's not checked into any svn.
+
+
+########################################################################
 GSAC's Format Choices for Query Results
 ########################################################################
 
@@ -309,57 +363,6 @@ The Java output handler source files are in gsac-code/src/org/gsac/gsl/output/si
 guides to what is needed in a similar Java class.  Remember to call it in gsl/SiteManager.java and rebuild everything.
 
 GSAC code assumes station height values are ellipsoid heights above a geoid model surface, in meters. 
-
-########################################################################
-
-Running the GSAC server in Tomcat and Jetty
-
-The ant  builds a .zip of a stand-alone gsac server in gsac-code/dist/  and generates a Tomcat war file  gsac-code/dist/bouldergsac.war.
-
-To run the server with Jetty do:
-
- ant runserver
-
-This will run a test or demo version of your GSAC on your desktop, with Jetty doing the web page management.
-
-To see the new GSAC, in the runserver screen output is a line such as
-
-     [java] GSAC INFO: Wed Dec 12 10:18:46 MST 2012: GsacServlet: url:http:/hostname:8080/bouldergsac/gsacapi
-
-Enter the "http:/hostname:8080/bouldergsac/gsacapi" part in a browser URL address window on the same machine to see your new GSAC.
-
-The display is handled by Jetty.
-
-
-Apache Tomcat is a Java servlet container to power web applications. See http://tomcat.apache.org/.
-
-Building GSAC (in the src/org/prototype/gsac directory, run ant) makes a Tomcat .war file in the dist/ folder: 
-
- gsac-code/dist/bouldergsac.war.   
-
-Copy this file to the Tomcat folder for .war file folder on your web server host.  For example, on the Tomcat server, do something like
-
-cp bouldergsac.war /usr/local/apachetomcat/webapps
-
-The GSAC server web should be available in a few seconds if you are using "hot deploy," without a restart of Tomcat.
-    
-You can see the log of Tomcat actions by doing for example,
-
- tail -f /usr/local/apachetomcat/logs/catalina.out
-    
-If for some reason Tomcat and hotdeploy are misbehaving, or to restart Tomcat, you can do:
-
-sudo /etc/init.d/tomcatdev stop
-sudo /etc/init.d/tomcatdev start
-
-to restart tomcat  and force a read of the .war files.
-
-The Tomcat's servlet reads the properties file: /usr/local/apachetomcatdev/conf/bouldergsac.properties
-which contains the database authentication info. This is in the .war file.
-
-When running in production the servlet will look for such a properties file under Tomcat/conf/<rootname>.properties
-So, for example, for a 'gsacboulder' server,  it looks for a gsacboulder.properties file. 
-Put the authentication information in that properties file so it's not checked into any svn.
 
 ########################################################################
 ########################################################################
