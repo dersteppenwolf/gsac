@@ -22,14 +22,17 @@ The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for rece
    - copy the file gsac-code/src/org/prototype/gsac/build.xml.Java6 to build.xml
 
 
-The main steps in README part 2 are these.  In general for all GSACs you follow steps like this:
+The main steps in this Dataworks GSAC README part 2 are these.
 
     - edit src/org/prototype/gsac/resources/gsac.properties
     - edit src/org/prototype/gsac/dbresources/gsacdb_test.properties
+    - edit the web page HTML files.
     - ant           (this builds GSAC with your properties files. There should be no errors.)
-    - ant runserver (to execute your complete new GSAC on your local development platform, to can see on your browser).
- 
+    - ant runserver (to execute and test your complete new GSAC on your local development platform, on your browser).
+
 Stop ant runserver with CTRL-c.
+
+    - deploy GSAC to Tomcat
 
 
 ########################################################################
