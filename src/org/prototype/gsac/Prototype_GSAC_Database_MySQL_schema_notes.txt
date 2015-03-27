@@ -5,11 +5,15 @@
 
 				     Tables, Field Definitions, and Notes.
 
-					              9 Mar 2014          
+					             27 Mar 2014          
 
 					      UNAVCO, Boulder Colorado.
 
-This corresponds to the Prototype15_GSAC.sql file which can be used to make an empty MySQL database with the GSAC Prototype15 schema.
+The "Prototype15" GSAC database works with the GSAC prototype code in gsac-code/src/org/prototype/gsac.
+This database is desinged to be a general-purpose schema to meet many diverse needs in earth sciences.
+
+The schema described here is that of the Prototype15_GSAC.sql file which can be used to make an empty MySQL database with the GSAC Prototype15 schema.
+The Prototype15_GSAC.sql file is in the GSAC prototype area in gsac-code/src/org/prototype/gsac.
 
 The database is built around the tables station, equip_config, and datafile.  Other tables have information supporting those three tables.
 
@@ -564,7 +568,7 @@ mysql> desc station;
 | station_name               | varchar(50)     | NO   |     | NULL    |                |
 | latitude_north             | double          | NO   |     | NULL    |                |
 | longitude_east             | double          | NO   |     | NULL    |                |
-| height_ellips_elev         | float           | YES  |     | NULL    |                |
+| height_ellipsoid           | float           | YES  |     | NULL    |                |
 | X                          | double          | YES  |     | NULL    |                |
 | Y                          | double          | YES  |     | NULL    |                |
 | Z                          | double          | YES  |     | NULL    |                |
@@ -596,12 +600,12 @@ As is very common in Earth science today, one station may belong to two or more 
 Field "networks" is a character string.  The value may be one network acronym such as RENAG or PBO.  Or it may have two or more network acronyms separated
 by semi-colons such as RENAG;Orpheon;RPG  (but not by any other character such as comma for separation).  If you include a space it will become part of the
 newtwork name , so that the networks field value "PBO  ;FeoNET" includes one network named (wrongly) "PBO  ", which is not the same as "PBO" in a computer search.
-If you enter "RENAG,Orpheon,RPG" for networks, then that station belongs to one network named "RENAG,Orpheon,RPG".
+Do not use commas for separations: if you enter "RENAG,Orpheon,RPG" for networks, then that station belongs to one network named "RENAG,Orpheon,RPG".
 
 mysql> select * from station;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
-| station_id | four_char_name | station_name                                  | latitude_north | longitude_east | height_ellips_elev | X            | Y             | Z             | installed_date      | retired_date | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks     | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                         | embargo_duration_hours | embargo_after_date |
+| station_id | four_char_name | station_name                                  | latitude_north | longitude_east | height_ellipsoid   | X            | Y             | Z             | installed_date      | retired_date | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks     | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                         | embargo_duration_hours | embargo_after_date |
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
 |          5 | ABMF           | Aeroport du Raizet -LES ABYMES - Mitio France |        16.2623 |       -61.5275 |             -25.67 | 1636819.0859 | -4939085.2795 | -3676612.7351 | 2009-12-25 00:00:00 | NULL         |         1 |         2 |        2 |         1 |              NULL |         1 |                 1 |         1 |            1 | myNet;NewNet | NULL       | http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg | http://pboshared.unavco.org/timeseries/ABMF_timeseries_cleaned.png |                   NULL | NULL               |
 +------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
