@@ -15,6 +15,7 @@ This database is desinged to be a general-purpose schema to meet many diverse ne
 The schema described here is that of the Prototype15_GSAC.sql file which can be used to make an empty MySQL database with the GSAC Prototype15 schema.
 The Prototype15_GSAC.sql file is in the GSAC prototype area in gsac-code/src/org/prototype/gsac.
 
+
 The database is built around the tables station, equip_config, and datafile.  Other tables have information supporting those three tables.
 
 Each row (record) in the station table is for one station or site, about which GSAC has information.
