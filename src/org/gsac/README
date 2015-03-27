@@ -2,9 +2,10 @@
 
                                                      GSAC Installation
 
+                          Installing the GSAC Web Services Software Package for a Data Repository
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                            5 Mar 2015    Stuart Wier, UNAVCO
+                                            27 Mar 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -27,9 +28,12 @@ http://www.unavco.org/software/data-management/gsac/gsac.html
     Building your code for GSAC services has two major parts:
     a. Download the GSAC package and build its core code (called the GSL, the GSAC service layer), which includes some templates for your "local GSAC files".
     b. Complete your "local GSAC files". Your "local GSAC files" are new Java for GSAC to read from your database, and also to specify what services your GSAC offers.
-    This README Part 1 (and the GSAC Quick Installation guide) tells how to do "a."
-    GSAC instructions use a hypothetical "Boulder" data repository; you will of course use your own terms.
-    README Part 2 tells how to do "b," complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
+
+This README Part 1 (and the GSAC Quick Installation guide) tells how to do "a."
+
+GSAC instructions use a hypothetical "Boulder" data repository; you will of course use your own terms.
+
+README Part 2 tells how to do "b," complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
 
 Instructions here detail the first part of installing GSAC services for a data repository
 
@@ -38,9 +42,6 @@ GSAC services from several separate data repository GSACs.  To install a Federat
 file, except the section "Create GSAC configuration files and make your initial GSAC."  Then follow the section 4 "To Build a Federated GSAC".
 
 ##########################################
-
-
-Installing the GSAC Web Services Software Package for a Data Repository
 
 System Requirements
 
@@ -64,6 +65,8 @@ If you use Tomcat with Java JRE 1.6 you will need GSAC built with Java 1.6.
 Details below tell how to choose which Java version of GSAC to use.
 
 To install and test preliminary working GSAC software, you do not need the web server, FTP server, or data files. You can implement and test your GSAC on a personal computer before dealing with web servers. GSAC will use Jetty on your desktop machine (included with GSAC). 
+
+##########################################
 
 
 Operating Systems for GSAC
@@ -102,19 +105,20 @@ On FreeBSD, see Installing GSAC on FreeBSD, http://beta-web-server.win.int.unavc
 GSAC CentOS Installation Tips, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/centos/GSAC_CentOS_installation_tips.pdf, contributed by  James Matykiewicz and Susanna Gross of UNAVCO. This may not be complete. 
 
 
-                    ##########################################
+##########################################
 
 How to Install GSAC, Part 1.
 
-1. Install the GSAC core code
+1. Download the GSAC package 
 
     The following instructions use a hypothetical "Boulder" data repository. 
 
-    GSAC has a set of core code (the "GSAC Service Layer," or GSL), used by all installations. You will also need some local Java code files and several configuration files (README part 2).
+    GSAC has a set of core code (the "GSAC Service Layer," or GSL), used by all installations. 
+    You will also need some local Java code files and several configuration files (README part 2).
 
     You download the GSAC code package from SourceForge, and compile it, without making any changes to it.
 
-  To get the whole GSAC package from SourceForge:
+    To get the whole GSAC package from SourceForge:
 
     Choose or make a top-level working directory for GSAC, and go there. For example:
 
@@ -132,7 +136,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
     This creates a new top level directory for all GSAC files, in a new directory called gsac-code/ and downloads all the files in the GSAC package.
 
-    Your new directory need not be called gsac-code/, as in the example svn export command above.  But the GSAC installation guides use gsac-code/ so it is easier to use that, if you wish.
+    Your new directory need not be called gsac-code/, as in the example svn export command above.  But the GSAC installation guides use gsac-code/ so it is easier to use that.
 
 
 2. To choose Java 6 (1.6) or Java 7 (1.7) to build GSAC.
@@ -180,8 +184,8 @@ Total time: 36 seconds
     This file contains the compiled GSAC core GSL code.  This jar file will be used to build your final Java jar file 
     for your complete GSAC server executable, to build the Tomcat .war file, and to build any other GSAC using the GSL on your system, such as a federated GSAC.
 
+#########################################
 
-                    #########################################
 
 About building GSAC with ant: the build.xml files
 
@@ -225,8 +229,8 @@ in .java files, or other code.
 UNAVCO will attempt to update GSAC library files as they become available.  But UNAVCO checking in a new library file to the GSAC repository on 
 SourceForge will not of course automatically change your GSAC code.
 
+#########################################
 
-                    #########################################
 
 About building GSAC: the library files for database access
 
@@ -241,10 +245,10 @@ GSAC uses library files to read from your database.  The library files in the GS
 You may find your brand of database and its version and which Java it works with may not work with the library file in GSAC builds.
 See the library files in gsac/gsl/build.xml in particular.
 
-                    #########################################
+#########################################
 
 
-2. Create GSAC configuration files and make new initial GSAC code for your GSAC.
+Create GSAC configuration files and make new initial GSAC code for your GSAC.
 
    How to set the Map Area:
 
@@ -266,8 +270,38 @@ var defaultZoomLevel = 5;
     Build the GSAC core code with command 'ant' again, executed in gsac-code/.  
 
 
+##############################################################c################################################################
 
-  How to use the command "ant makerepository" to create your initial set of local implementation files:
+
+   To use the Prototype GSAC.
+
+   If you want to use the protoype GSAC code (which uses the Prototype GSAC database design), now 
+   cd to the prototype GSAC code area, provided in the GSAC package: 
+
+cd to gsac-code/src/org/prototype/gsac/ 
+
+   Follow the README file there to complete your prototype GSAC installation. That is README "Part 2" for the prototype GSAC code. 
+
+
+##############################################################c################################################################
+
+
+   To use the Dataworks GSAC.
+
+   If you want to use the Dataworks  GSAC (which uses the Dataworks GSAC database design), now 
+   cd to the dataworks GSAC code area, provided in the GSAC package: 
+
+cd to gsac-code/src/org/dataworks/gsac/ 
+
+   Follow the README file there to complete your prototype GSAC installation. That is README "Part 2"  for the Dataworks GSAC.
+
+
+##############################################################c################################################################
+
+  
+  To make a custom GSAC, to use an existing database.
+
+  Use the command "ant makerepository" to create your prelimary "local GSAC code":
 
     First make a new macros template file. Go to the template/ directory:
 
@@ -332,7 +366,9 @@ Javax Security java.policy file
 Add the following line with 
     permission ... "register" 
 to your java.policy file in the 'grant' section, which may be under $JAVA_HOME/lib/security/ or under $JRE_HOME/lib/security/.
-In some operating systems the java.policy file is in  /usr/lib/jvm/java-7-oracle/jre/lib/security/java.policy. 
+In some operating systems the java.policy file 
+is in /usr/lib/jvm/java-7-oracle/jre/lib/security/java.policy 
+or in java/jdk1.7.0_75/jre/lib/security/java.policy.
 
 Inside the java.policy file:
 
@@ -563,7 +599,7 @@ The GSAC package has these README files starting at gsac-code/:
 README
 lib/README                    [where library files are]
 src/org/gsac/README           [part 1 of installation]
-src/org/[mygsac]/gsac/README  [part 2 of installation]
+src/org/[boulder]/gsac/README  [part 2 of installation]
 src/org/gsac/federated/README
 
 About Time Formats in GSAC
