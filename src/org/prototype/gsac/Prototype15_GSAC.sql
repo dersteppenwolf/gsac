@@ -71,7 +71,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
-INSERT INTO `agency` VALUES (1,'some agency name',NULL,NULL,NULL,NULL);
+INSERT INTO `agency` VALUES (1,'Boulder data center',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,7 +136,7 @@ CREATE TABLE `data_type` (
   `data_type_name` varchar(50) NOT NULL,
   `data_type_description` varchar(50) NOT NULL,
   PRIMARY KEY (`data_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,7 +145,7 @@ CREATE TABLE `data_type` (
 
 LOCK TABLES `data_type` WRITE;
 /*!40000 ALTER TABLE `data_type` DISABLE KEYS */;
-INSERT INTO `data_type` VALUES (1,'instrument data','any type instrument native, raw, or binary file'),(2,'GNSS observations','any GNSS obs file'),(3,'GPS navigation data','a GPS navigation file'),(4,'Galileo navigation data','a Galileo GNSS navigation file'),(5,'GLONASS navigation data','a GLONASS GNSS navigation file'),(6,'meteorology observations','a GNSS meteorology file'),(7,'QZSS navigation data','a QZSS GNSS navigation file'),(8,'Beidou navigation data','a Beidou GNSS navigation file'),(9,'Final Daily time series','Final Daily time series solution'),(10,'Rapid Daily time series','Rapid Daily time series solution'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time series solution'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series solution'),(14,'Nights Ultra Rapid 5 minute time series','Night Ultra Rapid 5 min time series solution'),(15,'Time series plot','Time series static plot image'),(16,'Time series cleaned plot','Time series cleaned static plot image '),(17,'Time series Rapid 5 min plot','Time series Rapid 5 minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations, raw',''),(22,'strainmeter observations, processed',''),(23,'tiltmeter observations, raw',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI'),(27,'tidegage observations',''),(28,'Tiltmeter Plots for Station (7 Day)',''),(29,'Tiltmeter Plots for Station (30 day)',''),(30,'Tiltmeter All Plots for Station (multi-year)',''),(31,'Environmental Plots for Station',''),(32,'Strainmeter Raw Rlots for Station',''),(33,'Strainmeter 7 Day Raw Plots for Station',''),(34,'Strainmeter 30 Day Raw Plots for Station',''),(35,'Strainmeter All Raw Plots for Station (multi-year)',''),(36,'Strainmeter Spectrograms for Station','');
+INSERT INTO `data_type` VALUES (1,'instrumental data','any type instrumental native, raw, or binary data'),(2,'GNSS observation file','any GNSS obs file'),(3,'GPS navigation file','a GPS          navigation file'),(4,'Galileo navigation file','a Galileo GNSS navigation file'),(5,'GLONASS navigation file','a GLONASS GNSS navigation file'),(6,'GNSS meteorology file','a GNSS meteorology       file'),(7,'QZSS navigation file','a QZSS GNSS navigation file'),(8,'Beidou navigation file','a Beidou GNSS navigation file'),(9,'Final Daily time series','Final Daily time series solution'),(10,   'Rapid Daily time series','Rapid Daily time series solution'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time    series solution'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series solution'),(14,'Nights Ultra Rapid 5 minute time series','Night Ultra Rapid 5 min time series    solution'),(15,'Time series plot','Time series static plot image'),(16,'Time series cleaned plot','Time series cleaned static plot image '),(17,'Time series Rapid 5 min plot','Time series Rapid 5  minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter        observations',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI');
 /*!40000 ALTER TABLE `data_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ CREATE TABLE `datafile` (
   `station_id` int(6) unsigned NOT NULL,
   `equip_config_id` int(6) unsigned DEFAULT NULL,
   `datafile_name` varchar(120) NOT NULL,
-  `URL_complete` varchar(120) NOT NULL,
+  `URL_complete` varchar(120) DEFAULT NULL,
   `URL_protocol` varchar(7) DEFAULT NULL,
   `URL_domain` varchar(50) DEFAULT NULL,
   `URL_path_dirs` varchar(70) DEFAULT NULL,
@@ -188,7 +188,7 @@ CREATE TABLE `datafile` (
   CONSTRAINT `data_type_id` FOREIGN KEY (`data_type_id`) REFERENCES `data_type` (`data_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +197,6 @@ CREATE TABLE `datafile` (
 
 LOCK TABLES `datafile` WRITE;
 /*!40000 ALTER TABLE `datafile` DISABLE KEYS */;
-INSERT INTO `datafile` VALUES (1,1,1,'AVCA.NA12.tenv','http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv','http','geodesy.unr.edu','/gps_timeseries/',9,5,3,'2003-04-10 00:00:00','2015-01-17 00:00:00','2015-01-27 00:00:00',NULL,86400,2015,17,NULL,NULL);
 /*!40000 ALTER TABLE `datafile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,7 +211,7 @@ CREATE TABLE `datafile_format` (
   `datafile_format_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `datafile_format_name` varchar(50) NOT NULL,
   PRIMARY KEY (`datafile_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +220,7 @@ CREATE TABLE `datafile_format` (
 
 LOCK TABLES `datafile_format` WRITE;
 /*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
-INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'time series plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'Bottle'),(16,'SEED'),(17,'ASCII (any)'),(18,'KML / KMZ (any)'),(19,'XML (any)'),(20,'NetCDF (any)'),(21,'JSON (any)'),(22,'CSV (any)'),(23,'PBO GPS Network Velocity Field Format');
+INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,     'time series plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED');
 /*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,7 +284,7 @@ CREATE TABLE `equip_config` (
   CONSTRAINT `radome_id` FOREIGN KEY (`radome_id`) REFERENCES `radome` (`radome_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `receiver_firmware_id` FOREIGN KEY (`receiver_firmware_id`) REFERENCES `receiver_firmware` (`receiver_firmware_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +293,6 @@ CREATE TABLE `equip_config` (
 
 LOCK TABLES `equip_config` WRITE;
 /*!40000 ALTER TABLE `equip_config` DISABLE KEYS */;
-INSERT INTO `equip_config` VALUES (1,1,'2014-09-04 00:00:00','2014-12-17 23:59:45','2014-11-15 00:17:41',2,'5343354885',0.0083,2,'K2630028',2,' ',1,'5250K40670','GPS',15),(2,1,'2014-08-15 14:30:30','2014-12-16 23:59:45','2014-11-15 00:17:41',1,'5000112724',0.5,2,'',1,' ',1,'5137K78333','GPS',15);
 /*!40000 ALTER TABLE `equip_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -318,7 +316,7 @@ CREATE TABLE `locale` (
 
 LOCK TABLES `locale` WRITE;
 /*!40000 ALTER TABLE `locale` DISABLE KEYS */;
-INSERT INTO `locale` VALUES (1,' some city name');
+INSERT INTO `locale` VALUES (1,'Boulder');
 /*!40000 ALTER TABLE `locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -390,7 +388,7 @@ CREATE TABLE `nation` (
 
 LOCK TABLES `nation` WRITE;
 /*!40000 ALTER TABLE `nation` DISABLE KEYS */;
-INSERT INTO `nation` VALUES (1,'some nation name');
+INSERT INTO `nation` VALUES (1,'U.S.');
 /*!40000 ALTER TABLE `nation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -414,7 +412,7 @@ CREATE TABLE `province_state` (
 
 LOCK TABLES `province_state` WRITE;
 /*!40000 ALTER TABLE `province_state` DISABLE KEYS */;
-INSERT INTO `province_state` VALUES (1,'some province name');
+INSERT INTO `province_state` VALUES (1,'Colorado');
 /*!40000 ALTER TABLE `province_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -482,7 +480,7 @@ CREATE TABLE `station` (
   `station_name` varchar(50) NOT NULL,
   `latitude_north` double NOT NULL,
   `longitude_east` double NOT NULL,
-  `height_ellips_elev` float DEFAULT NULL,
+  `height_ellipsoid` float DEFAULT NULL,
   `X` double DEFAULT NULL,
   `Y` double DEFAULT NULL,
   `Z` double DEFAULT NULL,
@@ -501,6 +499,7 @@ CREATE TABLE `station` (
   `iers_domes` char(9) DEFAULT NULL,
   `station_photo_URL` varchar(100) DEFAULT NULL,
   `time_series_plot_image_URL` varchar(100) DEFAULT NULL,
+  `time_series_raw_plot_URL` varchar(100) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
   PRIMARY KEY (`station_id`),
@@ -520,7 +519,7 @@ CREATE TABLE `station` (
   CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -529,7 +528,6 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (1,'STA1','STA1 name',19.1187,-98.6552,3992,NULL,NULL,NULL,'2014-08-15 14:30:30',NULL,2,2,1,1,1,1,1,1,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/TNAM.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/STA1.png',NULL,NULL),(2,'STA2','STA2 name',20.5357,-103.9668,1226.78,NULL,NULL,NULL,'2014-09-04 00:00:00',NULL,1,2,1,1,2,1,1,2,1,'GeoNet;myNet','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/BOGT.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/STA2.png',NULL,NULL),(5,'ABMF','Aeroport du Raizet -LES ABYMES - Mitio France',16.2623,-61.5275,-25.67,1636819.0859,-4939085.2795,-3676612.7351,'2009-12-25 00:00:00',NULL,1,2,2,1,NULL,1,1,1,1,'myNet;NewNet',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/ABMF.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -568,7 +566,7 @@ CREATE TABLE `station_style` (
   `station_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `station_style_description` varchar(80) NOT NULL,
   PRIMARY KEY (`station_style_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -577,7 +575,7 @@ CREATE TABLE `station_style` (
 
 LOCK TABLES `station_style` WRITE;
 /*!40000 ALTER TABLE `station_style` DISABLE KEYS */;
-INSERT INTO `station_style` VALUES (1,'GPS/GNSS Continuous'),(2,'GPS/GNSS Campaign'),(3,'GPS/GNSS Mobile'),(4,'other');
+INSERT INTO `station_style` VALUES (1,'GPS/GNSS Continuous'),(2,'GPS/GNSS Campaign'),(3,'GPS/GNSS Mobile');
 /*!40000 ALTER TABLE `station_style` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -590,4 +588,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-03-09 11:49:38
+-- Dump completed on 2015-03-11 10:38:12

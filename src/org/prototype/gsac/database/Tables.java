@@ -353,7 +353,7 @@ public abstract class Tables {
         public static final String COL_STATION_NAME =  NAME + ".station_name";
         public static final String COL_LATITUDE_NORTH =  NAME + ".latitude_north";
         public static final String COL_LONGITUDE_EAST =  NAME + ".longitude_east";
-        public static final String COL_HEIGHT_ELLIPS_ELEV =  NAME + ".height_ellips_elev";
+        public static final String COL_HEIGHT_ELLIPS_ELEV =  NAME + ".height_ellipsoid";
         public static final String COL_X =  NAME + ".X";
         public static final String COL_Y =  NAME + ".Y";
         public static final String COL_Z =  NAME + ".Z";
