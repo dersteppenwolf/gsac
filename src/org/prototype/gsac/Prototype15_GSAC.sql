@@ -145,7 +145,7 @@ CREATE TABLE `data_type` (
 
 LOCK TABLES `data_type` WRITE;
 /*!40000 ALTER TABLE `data_type` DISABLE KEYS */;
-INSERT INTO `data_type` VALUES (1,'instrumental data','any type instrumental native, raw, or binary data'),(2,'GNSS observation file','any GNSS obs file'),(3,'GPS navigation file','a GPS          navigation file'),(4,'Galileo navigation file','a Galileo GNSS navigation file'),(5,'GLONASS navigation file','a GLONASS GNSS navigation file'),(6,'GNSS meteorology file','a GNSS meteorology       file'),(7,'QZSS navigation file','a QZSS GNSS navigation file'),(8,'Beidou navigation file','a Beidou GNSS navigation file'),(9,'Final Daily time series','Final Daily time series solution'),(10,   'Rapid Daily time series','Rapid Daily time series solution'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time    series solution'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series solution'),(14,'Nights Ultra Rapid 5 minute time series','Night Ultra Rapid 5 min time series    solution'),(15,'Time series plot','Time series static plot image'),(16,'Time series cleaned plot','Time series cleaned static plot image '),(17,'Time series Rapid 5 min plot','Time series Rapid 5  minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter        observations',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI');
+INSERT INTO `data_type` VALUES (1,'instrumental data','any type instrumental native, raw, or binary data'),(2,'GNSS observation file','any GNSS obs file'),(3,'GPS navigation file','a GPS          navigation file'),(4,'Galileo navigation file','a Galileo GNSS navigation file'),(5,'GLONASS navigation file','a GLONASS GNSS navigation file'),(6,'GNSS meteorology file','a GNSS meteorology       file'),(7,'QZSS navigation file','a QZSS GNSS navigation file'),(8,'Beidou navigation file','a Beidou GNSS navigation file'),(9,'Final Daily time series','Final Daily time series solution'),(10,'Rapid Daily time series','Rapid Daily time series solution'),(11,'Rapid 5 minute time series','Rapid 5 min time series solution'),(12,'Ultra Rapid 5 minute time series','Ultra Rapid 5 min time    series solution'),(13,'Ultra Rapid 5 minute Combo time series','Ultra Rapid 5 min Combo time series solution'),(14,'Nights Ultra Rapid 5 minute time series','Night Ultra Rapid 5 min time series    solution'),(15,'Time series plot','Time series static plot image'),(16,'Time series cleaned plot','Time series cleaned static plot image '),(17,'Time series Rapid 5 min plot','Time series Rapid 5  minute plot image '),(18,'SINEX product',''),(19,'GNSS sites velocities',''),(20,'GNSS sites positions',''),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter observations',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI');
 /*!40000 ALTER TABLE `data_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,15 +161,15 @@ CREATE TABLE `datafile` (
   `station_id` int(6) unsigned NOT NULL,
   `equip_config_id` int(6) unsigned DEFAULT NULL,
   `datafile_name` varchar(120) NOT NULL,
-  `URL_complete` varchar(120) DEFAULT NULL,
+  `URL_complete` varchar(120)  NOT NULL,
   `URL_protocol` varchar(7) DEFAULT NULL,
   `URL_domain` varchar(50) DEFAULT NULL,
   `URL_path_dirs` varchar(70) DEFAULT NULL,
   `data_type_id` int(3) unsigned DEFAULT NULL,
   `datafile_format_id` int(3) unsigned DEFAULT NULL,
   `data_reference_frame_id` int(3) unsigned DEFAULT NULL,
-  `datafile_start_time` datetime DEFAULT NULL,
-  `datafile_stop_time` datetime DEFAULT NULL,
+  `datafile_start_time` datetime NOT NULL,
+  `datafile_stop_time` datetime NOT NULL,
   `datafile_published_date` datetime DEFAULT NULL,
   `sample_interval` float DEFAULT NULL,
   `latency_estimate` float DEFAULT NULL,
@@ -188,7 +188,7 @@ CREATE TABLE `datafile` (
   CONSTRAINT `data_type_id` FOREIGN KEY (`data_type_id`) REFERENCES `data_type` (`data_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211,7 +211,7 @@ CREATE TABLE `datafile_format` (
   `datafile_format_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `datafile_format_name` varchar(50) NOT NULL,
   PRIMARY KEY (`datafile_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,7 +220,7 @@ CREATE TABLE `datafile_format` (
 
 LOCK TABLES `datafile_format` WRITE;
 /*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
-INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,     'time series plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED');
+INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED'),(17,'PBO GPS Velocity Field Format'),(18,'PBO GPS Station Position Time Series, .pos');
 /*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,7 +284,7 @@ CREATE TABLE `equip_config` (
   CONSTRAINT `radome_id` FOREIGN KEY (`radome_id`) REFERENCES `radome` (`radome_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `receiver_firmware_id` FOREIGN KEY (`receiver_firmware_id`) REFERENCES `receiver_firmware` (`receiver_firmware_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -499,7 +499,6 @@ CREATE TABLE `station` (
   `iers_domes` char(9) DEFAULT NULL,
   `station_photo_URL` varchar(100) DEFAULT NULL,
   `time_series_plot_image_URL` varchar(100) DEFAULT NULL,
-  `time_series_raw_plot_URL` varchar(100) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
   PRIMARY KEY (`station_id`),
@@ -519,7 +518,7 @@ CREATE TABLE `station` (
   CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -588,4 +587,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-03-11 10:38:12
+-- Dump completed on 2015-03-30  9:02:24
