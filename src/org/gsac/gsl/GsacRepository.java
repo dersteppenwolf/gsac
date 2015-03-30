@@ -2550,19 +2550,19 @@ public class GsacRepository implements GsacConstants {
         sb.append("<br>The following four sections list all capabilities used in composing API queries to this GSAC. ");
 
         StringBuffer contents = new StringBuffer();
-        showRepositoryInfo(request, contents, gri, true);
 
+        showRepositoryInfo(request, contents, gri, true);
+        // debug System.err.println("GSAC:  debug gri= "+ gri );  like GSAC:  debug gri= http://swierd:8080/prototypegsac The     GSAC Repository
 
         StringBuffer tmp = new StringBuffer();
-        contents.append(HtmlUtil.p());
 
-        // debug:
-        sb.append("<br><!-- debug did contents.append(HtmlUtil.p())-->  ");
+        contents.append(HtmlUtil.p());  // add  <p>
+
+        // debug: sb.append("<br><!-- debug did contents.append(HtmlUtil.p())-->  ");
 
         contents.append(getHeader(msg("Misc. Arguments")));
 
-        // debug:
-        sb.append("<br><!-- debug did contents.append(getHeader ... -->  ");
+        // debug: sb.append("<br><!-- debug did contents.append(getHeader ... -->  ");
 
         tmp = new StringBuffer();
 
