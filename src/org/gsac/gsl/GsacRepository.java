@@ -2515,24 +2515,55 @@ public class GsacRepository implements GsacConstants {
         GsacRepositoryInfo       gri     = getRepositoryInfo();
         StringBuffer             sb      = new StringBuffer();
 
-        getHtmlOutputHandler().initHtml(request, response, sb,
-                                        "Repository Information");
+        getHtmlOutputHandler().initHtml(request, response, sb, "Repository Information");
+
+        // get and print the string value of 'gsac.repository.name' in the file  myarea/gsac/resources/gsac.properties .   SKW
         sb.append(getHeader(gri.getName()));
+
         sb.append(HtmlUtil.br());
+
+        // get and print the string 'gsac.repository.description' in the file  myarea/gsac/resources/gsac.properties .   SKW
         sb.append(gri.getDescription());
+
+        sb.append("<p> You can use information on this page to get data from this repository using API commands. ");
+        sb.append("<br>GSAC enables searches and downloads from archives of geoscience data, including GPS/GNSS station information and instrument data files.");
+        sb.append("<br>To learn how to use GSAC and to see what GSAC provides, begin with  the "+
+                  " <a href='http://www.unavco.org/software/data-management/gsac/lib/docs/UNAVCO_GSAC_User_Guide.pdf'>GSAC User Guide</a>.  ");
+
+        sb.append("</p> <p>With information on this page you can compose an GSAC API request. ");
+        sb.append("<br> For example, GSAC can be invoked from a Linux command with the Linux curl utility. <br>For example, this command uses curl for a single site "+
+                   " search with SINEX output: " );
+
+        sb.append("<p> curl 'http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P210&output=site.snx' </p> ");
+
+        sb.append("<p>For many more details and examples see the GSAC User Guide. </p> ");
+
+        sb.append("<p>The next link, for Repository information xml, is an XML file of all capabilities provided by this GSAC.</p>");
+
         sb.append(HtmlUtil.p());
+
         sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?"
                                 + ARG_OUTPUT
                                 + "=xml", msg("Repository information xml")));
 
-        sb.append("<p>\n");
+        sb.append("<p>The Base URL, next, is used in composing API queries to this GSAC. ");
+        sb.append("<br>The following four sections list all capabilities used in composing API queries to this GSAC. ");
 
         StringBuffer contents = new StringBuffer();
         showRepositoryInfo(request, contents, gri, true);
 
+
         StringBuffer tmp = new StringBuffer();
         contents.append(HtmlUtil.p());
+
+        // debug:
+        sb.append("<br><!-- debug did contents.append(HtmlUtil.p())-->  ");
+
         contents.append(getHeader(msg("Misc. Arguments")));
+
+        // debug:
+        sb.append("<br><!-- debug did contents.append(getHeader ... -->  ");
+
         tmp = new StringBuffer();
 
         String[] args  = { ARG_LIMIT, ARG_OFFSET, ARG_GZIP };
