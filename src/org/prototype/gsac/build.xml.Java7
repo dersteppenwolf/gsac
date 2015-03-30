@@ -2,10 +2,7 @@
 
 <!-- GSAC's ant build.xml file for GSAC "Prototype" code in gsac-code/src/org/prototype/gsac/ 
 
-     Java 1.7 version of build.xml for the Prototype GSAC. 
-
-     To build a Prototype GSAC with Java 1.7, first do the command in gsac-code/src/org/prototype/gsac/ 
-     cp build.xml.Java7 build.xml
+     This is the ant build.xml file to build a Prototype GSAC with Java 1.7.
 -->
 
 <!-- 
