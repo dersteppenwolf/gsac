@@ -1062,7 +1062,7 @@ public class PrototypeSiteManager extends SiteManager {
                      results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION) );
                 // arg "monument" appears as a label in the HTML page about one station.
                 // debug DEBUG
-                System.err.println(" site manager: set monu desc "+results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION));
+                //System.err.println(" site manager: set monu desc "+results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION));
                 break;
             }
         } finally {
