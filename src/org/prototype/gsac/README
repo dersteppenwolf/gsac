@@ -2,9 +2,9 @@
 
                   Prototype GSAC Installation     
 
-                    README, Part 2.
+                       README, Part 2.
 
-               27 Mar 2015.   SKW  UNAVCO
+                  30 Mar 2015.   SKW  UNAVCO
 
 You have completed the installation in the first README file ("Part 1"), in the GSAC code area, gsac-code/src/org/gsac/.
 This README (Part 2) file is located in the "prototype GSAC code area", src/org/prototype/gsac/.
@@ -44,18 +44,24 @@ gsac.baseurl will be part of the full URL for your GSAC repository.
 
 Some values were created in the initial ant build you just made.
 
-    An example, a file boulder/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
+An example, a file boulder/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
 
-    gsac.baseurl = /bouldergsac   # this appears in all URL web addresses for your GSAC
-    #Your repository name
-    gsac.repository.name="Boulder GPS Repository
-    #Your repository description
-    gsac.repository.description=The Boulder GPS Repository 
+    ##what is the base url used; this appears in the GSAC URL, like http://mydomain.org/prototypegsac/
+    gsac.baseurl = /prototypegsac
+
+    # used on the highlighted label line near top of the 'Information' web page, and perhaps used in some product files like (?) Sinex, GAMIT, full csv formats.
+    # Enter your agency name between The    and    GSAC
+    gsac.repository.name=The   GSAC Repository
+
+    # used on text line near top of the 'Information' web page 
+    # Enter your agency name between  the         and                   Repository
+    gsac.repository.description=GSAC Web Services to Access Data from the   Repository
+
 
 Change the items for your GSAC repository.
 
 The  gsac.baseurl is used in a URL to a GSAC server such as the "gsacws" in  http://cddis.gsfc.nasa.gov/gsacws/gsacapi/site/form.
-USe an acronym for identification of your agency, for example 'acrogsac'.
+Replace 'prototypegsac' with an acronym for identification of your agency, for example 'acrogsac'.
 
 The items repository.name and repository.description are used as labels on the web site.
 
