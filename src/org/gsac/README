@@ -5,7 +5,7 @@
                           Installing the GSAC Web Services Software Package for a Data Repository
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                            27 Mar 2015    Stuart Wier, UNAVCO
+                                            31 Mar 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -151,10 +151,12 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
 
    To modify files in the GSAC package from SourceForge to build with a Java 1.6 javac (to not use Java 1.7), do the following:
       a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
-      b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the "import block for Java 1.6" and comment-out the "import block for Java 1.7"
+      b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the two sections labeled "code block for Java 1.6 build of GSAC" 
+         and comment-out the two sections "code block for Java 1.6 build of GSAC".
       c. in gsac-code/src/org/gsac/gsl/database/ edit the GsacDatabaseManager.java to use the lines labeled "Java 1.6 version" and to comment-out the lines for "Java 1.7 version."
       d. Make sure your javac compiler is for Java 1.6, not Java 1.7.
-   More file changes are in the README part 2 file detailed later.
+   More file changes to use Java 1.6 are in the README part 2 file detailed later.
+   Reverse these changes to use Java 1.7, if you later choose to use Java 1.7 in place of Java 1.6
 
 
 3. To build the GSAC core code (GSAC Source Library or GSL).
