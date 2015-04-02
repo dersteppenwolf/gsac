@@ -484,7 +484,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      */
     public void handleRequest(GsacRequest request, GsacResponse response) throws Exception {
 
-        System.err.println("GSAC: new request received by GsacResourceManager at time "+getUTCnowString() );
+        //System.err.println("    GsacResourceManager handleRequest called "); // at time "+getUTCnowString() );
 
         String columns = getResourceSelectColumns();
         if (columns == null) {
@@ -508,14 +508,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
         Statement statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
 
-        //System.err.println("GSAC: GsacResourceManager, handleRequest() db query SQL is " + statement.toString() 
+        //System.err.println("GSAC: GsacResourceManager, handleRequest() db query SQL is " + statement.toString()  );
         //       + "; at time "+getUTCnowString()  ); // DEBUG.   LOOK toString  for oracle jbdc ; OK for mysql
 
-        // DEBUG
-        //    NOTE do this , for oracle (and other db-s), since oracle jdbc statement.toString() does nothing 
-        //String fromtables= (clause.getTableNames(tableNames)).toString();
-        // DEBUG LOOK print to LOG the SQL query made on the UNAVCO database gps3 (usually gps3) 
-        //System.err.println("GSAC: GsacResourceManager: query SQL is  SELECT " + columns.toString() +" from "+ fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); // DEBUG sql string
+        // DEBUG for oracle (and other db-s), since oracle jdbc statement.toString() does nothing 
+        String fromtables= (clause.getTableNames(tableNames)).toString();
+        //System.err.println("    GsacResourceManager handleRequest SQL is  SELECT " + columns.toString() +" from "+ 
+          //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
 
 
         // DEBUG
@@ -557,11 +556,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         while (iter.getNext() != null) {
             //t1 = System.currentTimeMillis();
 
+            //System.err.println("        GRM: processStatement() call to makeResource(): ");
             GsacResource resource = makeResource(request, iter.getResults());
 
             t2 = System.currentTimeMillis();
-            totalms += (t2 - t1) ;
-            //System.err.println("         processStatement():makeResource() completed in " + (t2 - t1) + " ms;  total = "+totalms+" ms "  ); // DEBUG
+            //System.err.println("        GRM: processStatement() call to makeResource() completed in " + (t2 - t1) + " ms"  ); // DEBUG
 
             if (resource == null) {
                 continue;
