@@ -223,8 +223,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
         handleResult(gsacRequest, gsacResponse);
 
         long t3 = System.currentTimeMillis();
-        System.err.println("GSAC: GsacOutputHandler:  processRequest() took " + (t2-t1) + " ms;  handleResult() took " + (t3-t2) + 
-          " ms;  total time= "+ (t3-t1)+ " ms;  for " + gsacResponse.getResources().size() +" items." ); // DEBUG
+        //System.err.println("GSAC: GsacOutputHandler:  processRequest() took " + (t2-t1) + " ms;  handleResult() took " + (t3-t2) + 
+        //  " ms;  total time= "+ (t3-t1)+ " ms;  for " + gsacResponse.getResources().size() +" items." ); // DEBUG
     }
 
 
