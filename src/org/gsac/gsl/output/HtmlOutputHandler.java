@@ -1032,41 +1032,30 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                         Appendable sb, int width, int height,
                         boolean forSelection)
             throws IOException {
-        sb.append(
-            HtmlUtil.cssLink(
-                makeHtdocsUrl("/openlayers/theme/default/google.css")));
-        sb.append(
-            HtmlUtil.cssLink(
-                makeHtdocsUrl("/openlayers/theme/default/style.css")));
-        sb.append(
-            HtmlUtil.importJS(
-                "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"));
-        //        sb.append(
-        //            HtmlUtil.importJS(
-        //                "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"));
-        //        sb.append(
-        //            HtmlUtil.importJS(
-        //                "http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
-        sb.append(
-            HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
+        sb.append( HtmlUtil.cssLink( makeHtdocsUrl("/openlayers/theme/default/google.css")));
+        sb.append( HtmlUtil.cssLink( makeHtdocsUrl("/openlayers/theme/default/style.css")));
+        sb.append( HtmlUtil.importJS( "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"));
+        /*        
+        sb.append( HtmlUtil.importJS( "http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"));
+        sb.append( HtmlUtil.importJS( "http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
+        */
+        sb.append( HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
         sb.append(HtmlUtil.importJS(makeHtdocsUrl("/repositorymap.js")));
-        sb.append(
-            HtmlUtil.div(
-                "",
-                HtmlUtil.style(
-                    "border:2px #888888 solid; width:" + width
-                    + "px; height:" + height + "px") + " "
+
+        sb.append( HtmlUtil.div( "", HtmlUtil.style( "border:2px #888888 solid; width:" + width + "px; height:" + height + "px") + " "
                         + HtmlUtil.id(mapVarName)));
 
-
         sb.append("\n");
+
         StringBuffer js = new StringBuffer();
-        js.append("var " + mapVarName + " = new RepositoryMap('" + mapVarName
-                  + "');\n");
+
+        js.append("var " + mapVarName + " = new RepositoryMap('" + mapVarName + "');\n");
         js.append("var map = " + mapVarName + ";\n");
+
         if ( !forSelection) {
             js.append("map.initMap(" + forSelection + ");\n");
         }
+
         sb.append(HtmlUtil.script(js.toString()));
         sb.append("\n");
     }
