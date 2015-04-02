@@ -2520,34 +2520,34 @@ public class GsacRepository implements GsacConstants {
         // get and print the string value of 'gsac.repository.name' in the file  myarea/gsac/resources/gsac.properties .   SKW
         sb.append(getHeader(gri.getName()));
 
-        sb.append(HtmlUtil.br());
+        sb.append(HtmlUtil.br());  // print a <br> probably
 
         // get and print the string 'gsac.repository.description' in the file  myarea/gsac/resources/gsac.properties .   SKW
-        sb.append(gri.getDescription());
+        // seems redundant abfter the html page header and the above call to sb.append(getHeader(gri.getName()));
+        // sb.append(gri.getDescription());
 
-        sb.append("<p> You can use information on this page to get data from this repository using API commands. ");
-        sb.append("<br>GSAC enables searches and downloads from archives of geoscience data, including GPS/GNSS station information and instrument data files.");
+        sb.append("GSAC API Information ");
+
+        sb.append("<p>GSAC enables searches and downloads from archives of geoscience data, including GPS/GNSS station information and instrument data files.");
         sb.append("<br>To learn how to use GSAC and to see what GSAC provides, begin with  the "+
                   " <a href='http://www.unavco.org/software/data-management/gsac/lib/docs/UNAVCO_GSAC_User_Guide.pdf'>GSAC User Guide</a>.  ");
 
-        sb.append("</p> <p>With information on this page you can compose an GSAC API request. ");
-        sb.append("<br> For example, GSAC can be invoked from a Linux command with the Linux curl utility. <br>For example, this command uses curl for a single site "+
-                   " search with SINEX output: " );
+        sb.append("</p> <p>With information on this page you can compose a GSAC API request. ");
+        sb.append("<br> For example, GSAC can be invoked from a Linux command with the Linux curl utility. <br>This command gets site P678 information with SINEX output:" );
 
-        sb.append("<p> curl 'http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P210&output=site.snx' </p> ");
+        sb.append("<p> curl \"http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P678&output=site.snx\" </p> ");
 
-        sb.append("<p>For many more details and examples see the GSAC User Guide. </p> ");
+        sb.append("<p>For many more details and examples of GSAC API requests, see the GSAC User Guide. </p> ");
 
-        sb.append("<p>The next link, for Repository information xml, is an XML file of all capabilities provided by this GSAC.</p>");
+        sb.append("<p>This link, Repository information xml, is an XML file of all capabilities provided by this GSAC:</p>");
 
-        sb.append(HtmlUtil.p());
+        //sb.append(HtmlUtil.p());
 
-        sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?"
-                                + ARG_OUTPUT
-                                + "=xml", msg("Repository information xml")));
+        sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?" + ARG_OUTPUT + "=xml", msg("Repository information xml")));
 
+        sb.append("<p>The Repository information xml is read by other GSAC installations if they operate a federated GSAC incorporating this GSAC.</p>");
         sb.append("<p>The Base URL, next, is used in composing API queries to this GSAC. ");
-        sb.append("<br>The following four sections list all capabilities used in composing API queries to this GSAC. ");
+        sb.append("<br>The following four sections list all capabilities (option-argument pairs) used in composing API queries to this GSAC. ");
 
         StringBuffer contents = new StringBuffer();
 
