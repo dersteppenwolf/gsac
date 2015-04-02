@@ -73,7 +73,7 @@ import javax.servlet.http.*;
  * revised: added code to remove commas in char String values, which ruins csv formatting. Feb 6,7 2014. remove SwVer from output.
  * revised: SKW revised 23 May 2014.
  * revised: SKW revised 27 Aug 2014.  add city state country x y z
- * revised: SKW revised 26 Nov 2014.  add agencyname, metpackname, metpackSN 
+ * revised: SKW correct the code for metpackname, metpackSN  2 Apr 2015
  */
 public class CsvFullSiteOutputHandler extends GsacOutputHandler {
 
@@ -207,8 +207,6 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         }
         name = cleanString( site.getLongName() ); // cleanString removes unwanted commas in the station name which mess up the csv line
 
-        mondesc    =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, ""); 
-        sampIntstr =getProperty(site, GsacExtArgs.ARG_SAMPLE_INTERVAL, "");  // station not datafile sample interval
         /*  if ( sampIntstr==null ) {
              ; //sampIntstr ="";
         }
@@ -221,11 +219,11 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         Xstr       =getProperty(site, GsacExtArgs.SITE_TRF_X, ""); 
         Ystr       =getProperty(site, GsacExtArgs.SITE_TRF_Y, ""); 
         Zstr       =getProperty(site, GsacExtArgs.SITE_TRF_Z, ""); 
-        agencyname =getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, ""); 
+        mondesc    =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, ""); 
+        sampIntstr =getProperty(site, GsacExtArgs.ARG_SAMPLE_INTERVAL, "");  // station not datafile sample interval
+        // DEBUG debug looks correct System.out.println("   CsvFull site "+id+" sample int "+sampIntstr + " monum="+mondesc+"  zstr="+Zstr);
 
-        metpackname=getProperty(site, GsacExtArgs.SITE_METADATA_NAMEMETPACK, ""); 
-        metpackSN  =getProperty(site, GsacExtArgs.SITE_METADATA_METPACKSN, ""); 
-        //System.out.println("GSAC:     CsvFullSiteOutputHandler() for site "+id+" metpack name="+metpackname+"  metpack SN="+metpackSN);
+        agencyname =getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, ""); 
 
         //  must have first set this value in MySiteManager.java:
         //  as with site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ))
@@ -399,6 +397,12 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
                 starttime= getNonNullString(iso8601UTCDateTime( equipment.getFromDate()));
                 stoptime= getNonNullString(iso8601UTCDateTime( equipment.getToDate()));
             }
+
+            metpackname=    equipment.getMetpackname();
+            if (metpackname == null) { metpackname=""; }
+            metpackSN  =    equipment.getMetpackSerial();
+            if (metpackSN == null) { metpackSN=""; }
+            //System.out.println("GSAC:     CsvFullSiteOutputHandler() for site "+id+" metpack name="+metpackname+"  metpack SN="+metpackSN);
 
         // Finally, compose the csv file line for this equipment session at this site:   
         pw.append(id+"," +name+"," +latitude+","+longitude+","+ellipsoidalheight+","+mondesc+","+iersdomes+","+   
