@@ -81,6 +81,12 @@ public class GnssEquipment extends GsacMetadata {
     /** _more_ */
     private float sampInt;  // receiver's sampling interval in seconds
 
+    /** _more_ */
+    private String metpackname;
+
+    /** _more_ */
+    private String metpackSerial;
+
     /**
      * _more_
      */
@@ -317,6 +323,42 @@ public class GnssEquipment extends GsacMetadata {
      */
     public String getReceiver() {
         return receiver;
+    }
+
+    /**
+     *  Set the Metpackname property.
+     *
+     *  @param value The new value for Metpackname
+     */
+    public void setMetpackname(String value) {
+        metpackname = value;
+    }
+
+    /**
+     *  Get the Metpackname property.
+     *
+     *  @return The Metpackname
+     */
+    public String getMetpackname() {
+        return metpackname;
+    }
+
+    /**
+     *  Set the MetpackSerial property.
+     *
+     *  @param value The new value for MetpackSerial
+     */
+    public void setMetpackSerial(String value) {
+        metpackSerial = value;
+    }
+
+    /**
+     *  Get the MetpackSerial property.
+     *
+     *  @return The MetpackSerial
+     */
+    public String getMetpackSerial() {
+        return metpackSerial;
     }
 
     /**
