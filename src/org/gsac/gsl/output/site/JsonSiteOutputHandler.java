@@ -138,8 +138,8 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
             Zstr       =getProperty(site, GsacExtArgs.SITE_TRF_Z, "");
             mondesc    =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
             sampIntstr =getProperty(site, GsacExtArgs.ARG_SAMPLE_INTERVAL, "");  // station not datafile sample interval
-            System.out.println("   Json   sample int="+sampIntstr + "   monum="+mondesc+"   zstr="+Zstr);
-            //System.err.println("GSAC: x y z = "+ Xstr +"  "+ Ystr  +"  "+ Zstr );
+            // debug System.out.println("   Json   sample int="+sampIntstr + "   monum="+mondesc+"   zstr="+Zstr);
+            // debug System.err.println("GSAC: x y z = "+ Xstr +"  "+ Ystr  +"  "+ Zstr );
             //site.earthlocation.addXYZ( - - -  );
         } 
 
