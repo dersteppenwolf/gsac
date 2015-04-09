@@ -5,7 +5,7 @@
                           Installing the GSAC Web Services Software Package for a Data Repository
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                            31 Mar 2015    Stuart Wier, UNAVCO
+                                            9 Spr 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -413,14 +413,11 @@ You can install a federated GSAC now, without installing GSAC server for data do
 Installing a federated GSAC is much simpler than installing GSAC for a data repository. 
 You do not use a local (your own) database for a federated GSAC.  
 
-If you have not already installed GSAC in any way, do step 1 below. 
+If you have not already installed GSAC in any way, do step 4a below. 
 
-Otherwise do svn update for your GSAC core code again (unless you did svn update after 12 Mar 2014), 
+Otherwise do svn update for your GSAC core code again 
 to get the original working code for federated GSACs, and then go to step 2.
 
-The installation instructions for federated GSACs are also included in the GSAC package from SourceForge, in the file  
-README_GSAC_Federated_Installation, for example in gsac-code/src/org/gsac/federated/README_GSAC_Federated_Installation. 
-(ignore the file 'README there)
 
                            ###########################################
 
@@ -493,7 +490,7 @@ GSACs to use.  Lines beginning with '#' are comments.  Here is an example of the
     # (This file gsacserver_test.properties gets copied to gsacserver.properties when you do ant.)
 
     # Set the host name and port for the repository (your local server info, where your GSAC will run):
-    gsac.server.hostname=facdev.unavco.org
+    gsac.server.hostname=www.unavco.org
     gsac.server.port=80
 
     # For the remote GSACs to connect to, specify:
@@ -565,35 +562,77 @@ Without HotDeploy you will need to restart the Tomcat service.
 Your federated GSAC URL will have a Base URL something like http://www.boulder.org/gsacfederated.
 
 
-end of README for installing a federated GSAC.
+End of README for installing a federated GSAC.
+
 
 ##############################################################c################################################################
+##############################################################c################################################################
+
 
 
 5. Updating GSAC to get new core code from SourceForge.
 
-After you are operating a GSAC service, you may wish to update your core GSAC code, to use new features, or corrections, added
-to GSAC after you first installed GSAC.
+ UNAVCO makes improvements to GSAC. You may wish to update a GSAC installation. For example, beginning in January 2015 GSAC has Java library files and java code to support builds with either Java 1.6 or Java 1.7. After a period of numerous refinements in GSAC based on early use, in 2013 and 2014, GSAC is ready to become more stable and to concentrate on installations and operations.
 
-Running 'ant' in gsac-code/ (or wherever you put GSAC package on your system) builds the core GSAC code, as just described.
+31 March 2015
 
-This step (but not the SourceForge svn export step) is also used from time to time when GSAC developers have checked in new code
-to SourceForge.
+There are at the moment eight GSACs operating on public web sites. There are many improvements in the core GSAC code since a year ago, such as a fix for the error in the format of SINEX longitude values in the range -0.9999 to 0.0
 
-To update your GSAC with that new code, first do svn update to get the bew source code files.
+All or some of those will be automatically used by any older local *SiteManager.java and *FileManager.java files. For example all the choices and formating of results is provided by GSAC core code.
 
-Usually you do these 4 commands: 
+In general an older working GSAC was designed to use its older style database. And because of how GSAC is designed, its *SiteManager.java and *FileManager.java files will (or should!) still work the same way with the latest core GSAC code, along with the older database. Many improvements in the core GSAC (such as using Java 1.7) are automatically available. However as detailed below you need to make a new GSAC core installation and modify the ant build of your local GSAC java code since GSAC uses new Java library files after 2014 (i.e. change import lines and the build.xml file).
 
-cd to gsac-code/src/org/gsac
+Some new features enabled by new GSAC code/ new database contents will not be possible. Some new GSAC features depend on having new items in the new Prototype15 database schema, so in that case the new features will not be possible with all older databases and code. An example is that with the latest GSAC and with a new database you can (optionally) specify a terrestrial reference frame for each data file, and choose data files using a choice of TRF. Since older databases do not have TRF information, of course they can't do a GSAC search with terrestrial reference frames.
 
-svn update
+If you have an earlier version of GSAC the best way to update GSAC core code and use your older local GSAC code is first to make a complete, new, separate installation. Otherwise you can make a complete, new, separate installation of GSAC, and make a new-style (Prototype) database with data from your previous database from GSAC.
 
-cd  to gsac-code/
+For all GSAC versions, the core GSAC code used by all GSAC installations is in gsac-code/src/ and in subdirectories of that directory. Let's say you have the older GSAC in directory GSAC/. You have your "local GSAC code" for your installation in a location such as GSAC/gsac-code/src/org/mygsac/gsac/ where in your case "mygsac" will be some other word, (or perhaps in a location more like GSAC/gsac-code/src/fr/renag/gsac/). Your local GSAC code will be there, for example, MygsacSiteManager.java. In these instructions we will use "mygsac" for the local GSAC code, both in the older code area, and in the new local GSAC code area to be installed now.
 
-ant
+Make a new top level directory for the new GSAC, GSAC2015/.
 
-and then again build your local GSAC code in your GSAC code area, with ant, as described below.
+Install an all-new GSAC according to the "To Install GSAC" section on this web page, above. You will do a new export from SourceForge of the main GSAC package, in the directory GSAC2015/. You follow the instructions in the README Part 1 file mentioned in that web page section. As usual, you edit the file
+GSAC2015/gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js
+to set the longitude, latitude, and map zoom level for the center of the map GSAC which shown shows in site search results. You can see your old values in the older file like gsac-code/src/org/gsac/gsl/htdocs/repositorymap.js
 
+In GSAC2015/gsac-code/src/org/gsac/, build the core GSAC code with 'ant.'
+
+Next as detailed in the installation guide, use the command "ant makerepository" to create a new "mygsac/" local GSAC code area. Begin by making a new "my.properties" macros file.
+
+Next, copy some existing files from your old local GSAC code area, such as GSAC/gsac-code/src/org/mygsac/gsac/ area.
+
+Copy files from the 'old' mygsac/gsac/ directory to the new GSAC2015/gsac-code/src/org/mygsac/gsac/ area, for example with commands like this:
+
+cp -r /home/GSAC/gsac-code/src/org/mygsac/*java /home/GSAC2015/gsac-code/src/org/mygsac/
+cp -r /home/GSAC/gsac-code/src/org/mygsac/dbresources/* /home/GSAC2015/gsac-code/src/org/mygsac/dbresources/
+cp -r /home/GSAC/gsac-code/src/org/mygsac/resources/* /home/GSAC2015/gsac-code/src/org/mygsac/resources/
+cp -r /home/GSAC/gsac-code/src/org/mygsac/database/*java /home/GSAC2015/gsac-code/src/org/mygsac/database/
+cp -r /home/GSAC/gsac-code/src/org/mygsac/htdocs/* /home/GSAC2015/gsac-code/src/org/mygsac/htdocs/
+Do not copy the old build.xml file to the new area.
+
+(Do not do the command "ant tables" )
+
+Then you must make these changes in your code in GSAC2015/gsac-code/src/org/mygsac/gsac/:
+
+1. make sure the new build.xml file in the new GSAC2105 package has lines something like this, corresponding to your GSAC Java package and file names:
+
+property name="basename" value="mygsac"/
+property name="repository_relative_dir" value="org/agency/gsac"/
+property name="repositorypackage" value="org.agency.gsac"/
+property name="serverclass" value="${repositorypackage}.MygsacServer"/
+property name="repositoryclass" value="${repositorypackage}.MygsacRepository"/
+java classname="${repositorypackage}.MygsacDatabaseManager" maxmemory="512mb"
+
+2. Usually edit your new file mygsac/gsac/database/Tables.java by replacing import org.ramadda.sql.SqlUtil;
+with
+import org.gsac.gsl.ramadda.sql.SqlUtil;
+
+3. In your local area edit the 3 files like MygsacFileManager.java MygsacServer.java and MygsacSiteManager.java so they match the "import" lines in the headers of the corresponding new GSAC2015 files PrototypeFileManager.java, PrototypeServer.java and PrototypeSiteManager.java in GSAC2015/gsac-code/src/org/prototype/gsac/. This allows use of the latest Java library .jar files in the new GSAC package. Also make sure the .java file 'package' lines are updated.
+
+You will need to change the 'package' and 'import' lines in all your local Java files to work with the new Java 1.6 / 1.7 GSAC. Look at the corresponding lines in the Java files in src/org/prototype/gsac/ and src/org/prototype/gsac/database.
+
+There may be other import lines in Java files which need to be revised. You can always look at the corresponding Java files in GSAC2015/gsac-code/src/org/prototype/gsac/ to see code that works.
+
+Do a build of GSAC with 'ant' to look for errors indicating any problems. If ant succeeds, try 'ant runserver' to run your GSAC on your PC. 
 
 ##############################################################c################################################################
 
