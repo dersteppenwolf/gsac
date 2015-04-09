@@ -2533,9 +2533,9 @@ public class GsacRepository implements GsacConstants {
                   " <a href='http://www.unavco.org/software/data-management/gsac/lib/docs/UNAVCO_GSAC_User_Guide.pdf'>GSAC User Guide</a>.  ");
 
         sb.append("</p> <p>With information on this page you can compose a GSAC API request. ");
-        sb.append("<br> For example, GSAC can be invoked from a Linux command with the Linux curl utility. <br>This command gets site P678 information with SINEX output:" );
+        sb.append("<br> A GSAC API can be invoked with the Linux curl utility. <p>For example, this command gets site MORV information with SINEX output:" );
 
-        sb.append("<p> curl \"http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=P678&output=site.snx\" </p> ");
+        sb.append("<p> curl \"http://webrenag.unice.fr/gsac/gsacapi/site/search?site.code.searchtype=exact&output=site.snx&limit=500&search.y=0&search.x=0&site.code=morv&site.name.searchtype=exact\" </p> ");
 
         sb.append("<p>For many more details and examples of GSAC API requests, see the GSAC User Guide. </p> ");
 
