@@ -2,8 +2,7 @@
           How to install a Federated GSAC web services server
                         25 March 2014
 
-To learn about what are GSAC web services and federated GSACs, see the UNAVCO GSAC web site
-at http://facility.unavco.org/data/gsacws/gsacws.html.
+To learn about what are GSAC web services and federated GSACs, see the UNAVCO GSAC web site at http://www.unavco.org/software/data-management/gsac/gsac.html.
 
 Installing a federated GSAC is much simpler than installing GSAC for a data repository. 
 You do not use a database for a federated GSAC.  

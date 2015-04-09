@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -20,9 +20,41 @@
 
 package org.gsac.federated;
 
-
 import org.gsac.gsl.*;
+import java.io.*;
+import java.util.Locale;
+import java.util.Hashtable;
+import java.util.Properties;
 
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/* Jetty is used as the GSAC web application container in the case of no Tomcat. */
+
+/*
+ * Look for "code block for Java " in the next 40 lines, and un-comment the lines for the Java version you use.
+*/
+
+/*
+ * code block for Java 1.7 version:
+ * Uncomment these lines to build  GSAC with Java 1.7
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+*/
+
+/* 
+ * code block for Java 1.6 
+ * Uncomment these lines to build a Prototype GSAC with Java 1.6
+*/
 import org.mortbay.jetty.*;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -30,25 +62,33 @@ import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.NCSARequestLog;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
-
-
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.handler.*;
 import org.mortbay.jetty.handler.AbstractHandler;
-
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-
-
+/* 2010 original (old lib files:)
+import org.gsac.gsl.*;
+import org.mortbay.jetty.*;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Handler;
+import org.mortbay.jetty.HttpConnection;
+import org.mortbay.jetty.NCSARequestLog;
+import org.mortbay.jetty.Request;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.handler.*;
+import org.mortbay.jetty.handler.AbstractHandler;
+import org.mortbay.jetty.security.SslSocketConnector;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHolder;
 import java.io.*;
-
 import java.util.Properties;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
-
+ end old   */
 
 
 
