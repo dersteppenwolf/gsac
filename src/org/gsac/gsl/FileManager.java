@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -63,9 +63,10 @@ public abstract class FileManager extends GsacResourceManager {
 
 
     /**
-     * Create the default output handlers for this resource
-     * order of the cstrs here fixes the order of the itmes in the web site choice box for file search results output type.  Revised 11 Feb 2104 to show most used choices in order.
-     *
+     * Create the output handlers for this resource. Each makes a different format for file search results.
+     * The order of the cstrs here fixes the order of the itmes in the web site choice box for file search results output type.  
+     * Revised 11 Feb 2104 to show most used choices in order.
+     * Revised 13 Apr 2015 to remove the as yet unused and unwanted RSS choice.
      */
     @Override
     public void initOutputHandlers() {
@@ -81,7 +82,9 @@ public abstract class FileManager extends GsacResourceManager {
 
         new JsonFileOutputHandler(getRepository(), getResourceClass());
         new ZipFileOutputHandler(getRepository(), getResourceClass());
-        new RssFileOutputHandler(getRepository(), getResourceClass());
+
+        // no interest or support for this yet: new RssFileOutputHandler(getRepository(), getResourceClass());
+
         new XmlFileOutputHandler(getRepository(), getResourceClass());
     }
 
