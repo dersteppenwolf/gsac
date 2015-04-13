@@ -112,7 +112,7 @@ such as</FONT></P>
 <FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">which shows</FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-properties &lt;properties file to load&gt; </FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-server  http://examplegsacrepository.edu/someprefixpath, e.g. </FONT></FONT>
-<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		http://facility.unavco.org/gsacws </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		http://www.unavco.org/gsacws </FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-info  fetch and print to stdout the remote GSAC repository's information, </FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>		including available arguments </FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>	-download &lt;destination directory&gt; Do a file search and download the files to </FONT></FONT>
@@ -139,7 +139,7 @@ such as</FONT></P>
 <FONT FACE="Times New Roman">5.3 Listing Repository Information</FONT></H2>
 <PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You can get information (including gsacclient arguments) about a GSAC repository with for example</FONT></FONT></PRE><P>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh
--server http://facility.unavco.org/gsacws -info</FONT></FONT></P>
+-server http://www.unavco.org/gsacws -info</FONT></FONT></P>
 <P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Similar
 and more complete information is on the GSAC repository's</FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">
 </FONT></FONT></FONT><FONT COLOR="#0084d1"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Information
@@ -151,10 +151,10 @@ the GSAC database.</FONT></FONT></P>
 <H2 CLASS="western" STYLE="font-style: normal"><FONT FACE="Times New Roman">5.4
 Site searches</FONT></H2>
 <PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">A sample query for one GPS site is:</FONT></FONT>
-<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh -server http://facility.unavco.org/gsacws -site.code ADE1</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh -server http://www.unavco.org/gsacws -site.code ADE1</FONT></FONT>
 <FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">Spaces separate arguments in the gsacclient command line.  Do <I>not </I>have a &quot;/&quot; at the end of the server URL.</FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">The<FONT FACE="Times New Roman, serif"> results are sent to your terminal, from the remote GSAC web service, in the short csv format with header line:</FONT></FONT></FONT>
-<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=ADE1&amp;out put=site.csv </FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://www.unavco.org/gsacws/gsacapi/site/search?site.code=ADE1&amp;out put=site.csv </FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">#site.id,site.code,site.name,site.latitude,site.longitude,site.elevation </FONT></FONT>
 <FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">23478_ADE1_5650,ADE1,Australia NGA collocated,-34.729,138.6473,38.1548 </FONT></FONT>
 </PRE><P STYLE="margin-bottom: 0in">
@@ -163,7 +163,7 @@ begin with a line (&quot;http...&quot;) showing the GSAC URL which is
 equivalent to the gsacclient query, in this case:</FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://facility.unavco.org/gsacws/gsacapi/site/search?site.code=ADE1&amp;output=site.csv
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">http://www.unavco.org/gsacws/gsacapi/site/search?site.code=ADE1&amp;output=site.csv
 </FONT></FONT>
 </P>
 <P STYLE="margin-bottom: 0in"><BR>
@@ -177,7 +177,7 @@ and &quot;?&quot; in web services. No spaces are used.</FONT></P>
 <PRE CLASS="western">
 <FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">You can get results in other formats using the argument &quot;-output,&quot;, such as SOPAC XML Site Log format:</FONT></FONT>
 
-<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient/gsacclient.sh -server http://facility.unavco.org/gsacws -site.code &quot;ADE1&quot; -output site.xmllog</FONT></FONT>
+<FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient/gsacclient.sh -server http://www.unavco.org/gsacws -site.code &quot;ADE1&quot; -output site.xmllog</FONT></FONT>
 </PRE><P STYLE="margin-bottom: 0.1in">
 <FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">All
 the possible  choices of formats of results from  site queries are
@@ -196,7 +196,7 @@ output=site.plaintext.</FONT></P>
 command </FONT></FONT>
 </P>
 <P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient/gsacclient.sh
--server http://facility.unavco.org/gsacws -site.code ADE*</FONT></FONT></P>
+-server http://www.unavco.org/gsacws -site.code ADE*</FONT></FONT></P>
 <P STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">finds
 three sites, all beginning with &quot;ADE&quot;; a wild card search.</FONT></FONT></P>
 <P STYLE="margin-bottom: 0.1in"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Times New Roman, serif">That
@@ -208,7 +208,7 @@ three SOPAC XML Site Logs to your terminal.  </FONT></FONT>
 can direct any gsacclient results, such as all those site logs in XML
 format, to a file:</FONT></FONT></P>
 <P STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient/gsacclient.sh
--server http://facility.unavco.org/gsacws -site.code ADE* -output
+-server http://www.unavco.org/gsacws -site.code ADE* -output
 site.xmllog -out ADE_site_logs.xml</FONT></FONT></P>
 <P STYLE="margin-bottom: 0.1in"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
 command argument format for a latitude-longitude bounding box search
@@ -232,7 +232,7 @@ can specify one or more gsacclient arguments to always use when
 running the client. Just edit the <FONT FACE="Courier 10 Pitch">gsac.properties</FONT>
 file in the gsacclient/ directory. For example, use the line: </FONT>
 </P>
-<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">server=http://facility.unavco.org/gsacws</FONT></FONT></PRE><P STYLE="margin-bottom: 0.1in">
+<PRE CLASS="western" STYLE="margin-bottom: 0.1in"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">server=http://www.unavco.org/gsacws</FONT></FONT></PRE><P STYLE="margin-bottom: 0.1in">
 <FONT SIZE=2 STYLE="font-size: 11pt">to query the UNAVCO GSAC with
 every gsacclient call.  To make every command a site query, add the
 line</FONT></P>
@@ -399,7 +399,7 @@ URL:</SPAN></FONT></FONT></FONT></P>
 file query: </SPAN></FONT></FONT></FONT>
 </P>
 <P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
-<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">http://facility.unavco.org/gsacws/gsacapi/file/search?site.code=Palm&amp;limit=15&amp;output=file.url</SPAN></FONT></FONT></FONT></P>
+<FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt"><SPAN STYLE="background: #ffffff">http://www.unavco.org/gsacws/gsacapi/file/search?site.code=Palm&amp;limit=15&amp;output=file.url</SPAN></FONT></FONT></FONT></P>
 <P ALIGN=LEFT STYLE="margin-bottom: 0in; font-style: normal; font-weight: normal">
 <BR>
 </P>
@@ -445,7 +445,7 @@ Using Linux with the GSAC Client</FONT></H2>
 <P>You can use gsac client calls as part of Linux commands, such as 
 </P>
 <P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>gsacclient.sh -server
-http://facility.unavco.org/gsacws -site.code ADE* -output site.xmllog
+http://www.unavco.org/gsacws -site.code ADE* -output site.xmllog
 | grep receiverType</FONT></FONT></P>
 <P><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt">which
 lists the reciever types for sites beginning with ADE:</FONT></FONT></P>
@@ -462,7 +462,7 @@ Z-XII3]]&gt;&lt;/equip:receiverType&gt; </FONT></FONT></FONT>
 can write results in a new file ADE_receiver_list: </FONT></FONT></FONT>
 </P>
 <P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Courier 10 Pitch"><FONT SIZE=2 STYLE="font-size: 11pt">gsacclient.sh
--server http://facility.unavco.org/gsacws -site.code ADE* -output
+-server http://www.unavco.org/gsacws -site.code ADE* -output
 site.xmllog | grep receiverType &gt;&gt; ADE_receiver_list</FONT></FONT></FONT></P>
 <P STYLE="margin-bottom: 0.08in"><FONT FACE="Times New Roman"><FONT SIZE=2 STYLE="font-size: 11pt">You
 can get the GSAC API (URL) for any query submitted through the GSAC
