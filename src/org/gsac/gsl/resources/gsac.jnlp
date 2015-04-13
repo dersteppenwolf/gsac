@@ -5,7 +5,7 @@
        <information> 
          <title>GSAC File Downloader</title> 
          <vendor>Unavco</vendor> 
-         <homepage href=" http://facility.unavco.org/data/gsacws"/> 
+         <homepage href=" http://www.unavco.org/data/gsacws"/> 
          <description>GSAC File Downloader</description> 
          <description kind="short">
         </description> 
