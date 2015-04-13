@@ -41,7 +41,7 @@ import javax.servlet.http.*;
  *
  * @version        Enter version here..., Wed, May 19, '10
  * @author         Jeff McWhirter 2010
- * @author         modified by SK Wier UNAVCO 2 Feb 2014; 5 Feb 2015.
+ * @author         modified by SK Wier UNAVCO 2 Feb 2014; 5 Feb 2015; 13 Apr 2015.
  */
 public class CsvFileOutputHandler extends StreamingOutputHandler {
 
@@ -76,7 +76,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
         try {
             //System.out.println("   begin file csv handler processResource(): " );
 
-            GsacFile file = (GsacFile) resource;
+            GsacFile file     = (GsacFile) resource;
             FileInfo fiinfo   = file.getFileInfo();
             //Its OK to do this every time because the response keeps track if it has started already
             boolean firstTime = !response.getHaveInitialized();
@@ -187,10 +187,10 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             String end = " ";
             Date startTime   = resource.getFromDate();
             Date endTime     = resource.getToDate();
-            //if (startTime != null ) { System.out.println("   file csv handler processResource(): date times are "+startTime.toString()+" To "+endTime.toString() ); }
+            //if (startTime != null ) 
+            // { System.out.println("   file csv handler processResource(): date times are "+startTime.toString()+" To "+endTime.toString() ); }
             //else {  System.out.println("   startTime is NULL"); }
-            // LOOK FIX: this works right with Prototype GSAC code, but 
-            // gets nulls from UNAVCO gsac server; file info has no times set there...    
+
             SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (startTime != null) {
                 start = sdfDate.format(startTime);
@@ -209,11 +209,14 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
                 pw.print  ("," ); // add , at end of previous value even if missing to complete cvs formatting.
             }
 
-            // add sample interval:
-            float sif = resource.getSampleInterval();
+            // find and add sample interval:
+            // fixed bug 13 APr 2015
+            float sif = fiinfo.getSampleInterval();
+            //System.out.println("   file csv handler processResource(): samp interval ="+sif );
+            String asif = ""+sif;
             if ( sif >0.0f) {
-                     //System.out.println("   file csv handler processResource(): samp interval ="+sif+"_" );
-                     pw.print( "," + (""+sif) ); 
+                     //System.out.println("   file csv handler processResource():  add  ,"+asif+"," );
+                     pw.print( "," + asif +"," ); 
              } else {
                 pw.print  (",,");
              }
@@ -232,6 +235,7 @@ public class CsvFileOutputHandler extends StreamingOutputHandler {
             throw new RuntimeException(exc);
         }
     }
+
 
     /**
      * _more_
