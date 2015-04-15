@@ -88,7 +88,7 @@ Edit the file resources/gsacserver_test.properties to specify the values for the
     # (This file gsacserver_test.properties gets copied to gsacserver.properties when you do ant.)
 
     # Set the host name and port for the repository (your local server info, where your GSAC will run):
-    gsac.server.hostname=gsac.unavco.org
+    gsac.server.hostname=www.unavco.org
     gsac.server.port=80
 
     # For the remote GSACs to connect to, specify:
