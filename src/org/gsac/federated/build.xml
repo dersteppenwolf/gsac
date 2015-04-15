@@ -10,9 +10,10 @@
     The localinit target defines the properties for the build. These properties need to be changed.
     
     The default build target is test_build. This copies the dbresources/gsacdb_test.properties file 
-    to resources/gsacdb.properties and makes a .zip and .war in the dist dir
+    to resources/gsacdb.properties and makes a .zip and .war in the dist dir.
+    This is the production code as well as for tests.
 
-    Once run you can run the server with:
+    Once built with 'ant',  you can run the server with:
     ant runserver
 -->
 
