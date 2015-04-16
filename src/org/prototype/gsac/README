@@ -18,7 +18,7 @@ The Prototype GSAC code is ready to use, after some small code changes for your 
 The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for recent security features.  To build GSAC for Java 1.6, make the following changes:
    - make sure your java and javac are for Java 1.6, not Java 1.7. On Linux, do which java and which javac and make sure the versions are the same and for Java 1.6
    - see the code changes for Java 1.6 in README part 1 (you saw this already).
-   - in PrototypeServer.java find comments " code block for Java ", and un-comment the lines for the Java 1.6 can commnet-out the Java 1.7 lines.
+   - in PrototypeServer.java find comments " code block for Java ",  un-comment the lines for Java 1.6, and comment-out the Java 1.7 lines.
    - copy the file gsac-code/src/org/prototype/gsac/build.xml.Java6 to build.xml
 
 
