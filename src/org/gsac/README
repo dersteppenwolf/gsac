@@ -1,11 +1,11 @@
-##############################################################c################################################################
+##############################################################################################################################
 
                                                      GSAC Installation
 
                           Installing the GSAC Web Services Software Package for a Data Repository
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                            9 Spr 2015    Stuart Wier, UNAVCO
+                                            9 Apr 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -250,7 +250,7 @@ See the library files in gsac/gsl/build.xml in particular.
 #########################################
 
 
-Create GSAC configuration files and make new initial GSAC code for your GSAC.
+Create the GSAC map configuration file "repositorymap.js"
 
    How to set the Map Area:
 
@@ -272,10 +272,13 @@ var defaultZoomLevel = 5;
     Build the GSAC core code with command 'ant' again, executed in gsac-code/.  
 
 
-##############################################################c################################################################
+#########################################
 
 
-   To use the Prototype GSAC.
+Create the new initial GSAC code for your GSAC.
+
+
+To use the Prototype GSAC.
 
    If you want to use the protoype GSAC code (which uses the Prototype GSAC database design), now 
    cd to the prototype GSAC code area, provided in the GSAC package: 
@@ -284,11 +287,9 @@ cd to gsac-code/src/org/prototype/gsac/
 
    Follow the README file there to complete your prototype GSAC installation. That is README "Part 2" for the prototype GSAC code. 
 
+OR
 
-##############################################################c################################################################
-
-
-   To use the Dataworks GSAC.
+To use the Dataworks GSAC.
 
    If you want to use the Dataworks  GSAC (which uses the Dataworks GSAC database design), now 
    cd to the dataworks GSAC code area, provided in the GSAC package: 
@@ -297,11 +298,9 @@ cd to gsac-code/src/org/dataworks/gsac/
 
    Follow the README file there to complete your prototype GSAC installation. That is README "Part 2"  for the Dataworks GSAC.
 
-
-##############################################################c################################################################
-
+OR
   
-  To make a custom GSAC, to use an existing database.
+To make a custom GSAC, to use an existing database.
 
   Use the command "ant makerepository" to create your prelimary "local GSAC code":
 
