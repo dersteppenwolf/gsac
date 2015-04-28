@@ -269,13 +269,22 @@ var defaultZoomLevel = 5;
 
     West longitudes are negative.  Do not use "W".  South latitudes are negative.  Do not use "S".
 
+
+#########################################
+
+
+Create the GSAC Java jar file gsacws.jar 
+
     Build the GSAC core code with command 'ant' again, executed in gsac-code/.  
+
+    This process makes a Java jar file, named gsacws.jar, in gsac-code/lib/, which includes all the GSAC core core, compiled and ready for execution on your machine,
+    in any GSAC which you make.
 
 
 #########################################
 
 
-Create the new initial GSAC code for your GSAC.
+Create the new initial GSAC directories and Java code for your GSAC.
 
 
 To use the Prototype GSAC.
