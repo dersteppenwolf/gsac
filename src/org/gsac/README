@@ -5,7 +5,7 @@
                           Installing the GSAC Web Services Software Package for a Data Repository
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                            9 Apr 2015    Stuart Wier, UNAVCO
+                                            28 Apr 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -231,7 +231,6 @@ in .java files, or other code.
 UNAVCO will attempt to update GSAC library files as they become available.  But UNAVCO checking in a new library file to the GSAC repository on 
 SourceForge will not of course automatically change your GSAC code.
 
-#########################################
 
 
 About building GSAC: the library files for database access
