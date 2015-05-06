@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -80,7 +80,7 @@ import org.mortbay.jetty.servlet.ServletHolder;
  * the GsacRepository.
  *
  * 29 Jan 2015: merged version for either Java 1.6 or Java 1.7 GSAC builds.
- * Look for lines with " Java 1.6 " and " Java 1.7 " and use accordingly.
+ * Look for lines with " Java 1.6 " and " Java 1.7 " after line 120, and above in the imports lines, and use the lines for your version of Java accordingly.
  *
  */
 public class GsacServer {
