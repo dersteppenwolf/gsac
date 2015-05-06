@@ -179,9 +179,6 @@ public abstract class SiteManager extends GsacResourceManager {
         // for the GSAC JSON site info format. This GSAC output is used by a supersites aggregator tool or web site.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         
-        //  for the 2010 GSAC XML site info format; not used yet; and functionally replaced by the GSAC Ops XML site info format.
-        //new XmlSiteOutputHandler(getRepository(), getResourceClass());
-
         // the 2010 GSAC short csv format
         new TextSiteOutputHandler(getRepository(), getResourceClass());   
 
@@ -190,6 +187,9 @@ public abstract class SiteManager extends GsacResourceManager {
 
         // for the GSAC Ops XML site info format; new on 22 May 2014; creatted for UNAVCO field engineering operations.
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
+
+        //  for the 2010 GSAC XML site info format; functionally replaced by the GSAC Ops XML site info format.
+        new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // defer; no indication anyone used this output format in 2014.
         //new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
