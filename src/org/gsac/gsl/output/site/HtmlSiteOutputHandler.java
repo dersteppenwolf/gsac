@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -312,9 +312,10 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         // for tab "Map"
         // make a tab title to create map for Search Results site search results web page
-        // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
+        // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, 
+        //               List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
         // "Map" label is hidden somewhere here.
-        String js = createMap(request, (List<GsacResource>) new ArrayList(sites),         resultsTitles,          resultsContents,       600,        400, false,             true);
+        String js = createMap(request, (List<GsacResource>) new ArrayList(sites),resultsTitles, resultsContents, 600,        400, false,             true);
 
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
@@ -325,7 +326,7 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
         String reqstr=request.toString();
         resultsTitles.add(msg("API request"));
         //String frontend = resource.getRepositoryInfo().getUrl();
-        resultsContents.add("GSAC URL domain + "+reqstr );
+        resultsContents.add("Base URL + "+reqstr );
 
         makeTabs(pw, resultsTitles, resultsContents);
 
