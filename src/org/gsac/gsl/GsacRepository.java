@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -1340,6 +1340,7 @@ public class GsacRepository implements GsacConstants {
      * @return defaults to 8080
      */
     public int getPort() {
+        System.err.println("GSAC:    getPort() set to 8080" );  
         return getProperty(PROP_PORT, 8080);
     }
 
@@ -1902,7 +1903,7 @@ public class GsacRepository implements GsacConstants {
         if (myInfo == null) {
             GsacRepositoryInfo gri =
                 new GsacRepositoryInfo(
-                    getServlet().getAbsoluteUrl(getUrlBase()),
+                    getServlet().getAbsoluteUrl(getUrlBase()),    // to get Base URL determined by Java from where built (NOT hard-coded by user)
                     getRepositoryName(), getRepositoryIcon());
             gri.setDescription(getRepositoryDescription());
             for (GsacResourceManager gom : resourceManagers) {
@@ -1916,6 +1917,8 @@ public class GsacRepository implements GsacConstants {
                 }
             }
         }
+
+        //System.err.println("   GsacRepositoryInfo getRepositoryInfo():  abs url ="+ getServlet().getAbsoluteUrl(getUrlBase()) + "   repo name ="+getRepositoryName() );
 
         return myInfo;
     }
@@ -2551,8 +2554,9 @@ public class GsacRepository implements GsacConstants {
 
         StringBuffer contents = new StringBuffer();
 
-        showRepositoryInfo(request, contents, gri, true);
-        // debug System.err.println("GSAC:  debug gri= "+ gri );  like GSAC:  debug gri= http://swierd:8080/prototypegsac The     GSAC Repository
+        showRepositoryInfo(request, contents, gri, true);// to get Base URL determined by Java from where built (NOT hard-coded by user)
+        //System.err.println("GSAC:    handleRequestView(): gri= "+ gri );  
+        // like like GSAC:  debug gri= http://swierd:8080/prototypegsac 
 
         StringBuffer tmp = new StringBuffer();
 
@@ -2693,26 +2697,39 @@ public class GsacRepository implements GsacConstants {
      */
     private void showRepositoryInfo(GsacRequest request, Appendable pw,
                                     GsacRepositoryInfo info, boolean showList)
-            throws Exception {
-        int          cnt    = 0;
+      throws Exception {
+        int cnt    = 0;
 
-        String[]     urls   = { info.getUrl() };   // this is where the BASE URL: value is found for the information page
-        String[]     labels = { "Base URL" };      // this is where the BASE URL: string is made for the information page
-        StringBuffer tmp;
+        // to specify the String labeled "Base URL" the Information web page
+
+        String baseURL = info.getUrl();   //this BASE URL is made by Java from system info where built. 
+        // CHANGE alternately, to hard code Base URL, uncomment and revise this line to your GSAC domain URL:
+        // baseURL        = "http://www.somedomain.org/";   // to specify any "BASE URL"  value, which is shown in the  GSAC Information page.
+
+        String[] urls   = { baseURL };
+        String[] labels = { "Base URL" };      // this is where the BASE URL's LABEL is made for the information page
+        //StringBuffer tmp;
+
         pw.append(HtmlUtil.formTable());
         for (int i = 0; i < urls.length; i++) {
+            // append the base URL on the info page:
             pw.append(HtmlUtil.formEntry(msgLabel(labels[i]), urls[i]));
         }
         pw.append(HtmlUtil.formTableClose());
 
-
         StringBuffer sb = new StringBuffer();
 
         for (CapabilityCollection collection : info.getCollections()) {
+            // seems to be Site Query or File Query
             cnt = 0;
             sb  = new StringBuffer();
-            sb.append("<b>" + msgLabel("URL") + "</b> "
-                      + collection.getUrl());
+
+            // set collection URL 
+            String collectionUrl = collection.getUrl();
+            // CHANGE   Or replace the line above with the next line:
+            //collectionUrl = baseURL; // alternate choice
+            //sb.append("<b>" + msgLabel("URL") + "</b> " + collectionUrl );  
+
             for (Capability capability : collection.getCapabilities()) {
                 if (cnt++ == 0) {
                     pw.append(HtmlUtil.p());
@@ -2720,7 +2737,7 @@ public class GsacRepository implements GsacConstants {
                     sb.append(
                         "<table width=100% cellspacing=10><tr><td><b>Item</b></td><td><b>API/URL Argument</b></td><td><b>Type</b></td><td></td><td><b>Description or values</b></td></tr>");
                 }
-                showCapabilityInfo(sb, capability, collection.getUrl());
+                showCapabilityInfo(sb, capability, collectionUrl); 
             }
             if (cnt > 0) {
                 sb.append("</table>");
@@ -2728,9 +2745,6 @@ public class GsacRepository implements GsacConstants {
                         false));
             }
         }
-
-
-
     }
 
 
