@@ -181,10 +181,17 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         StringBuffer sb   = new StringBuffer();
         for (GsacRepositoryInfo info : allServers) {
             String url = info.getUrl();
-            sb.append(HtmlUtil.checkbox(ARG_REPOSITORY, url,
-                                        urls.size() == 0
-                                        | urls.contains(url)));
-            sb.append(HtmlUtil.href(info.getUrl(), info.getName()));
+            sb.append(HtmlUtil.checkbox(ARG_REPOSITORY, url, urls.size() == 0 | urls.contains(url)));
+
+            /* original: sb.append(HtmlUtil.href(info.getUrl(), info.getName())); */
+            // If a remote service has chosen the ambiguous name 'GSAC Repository', append their url to disambiguate among federated services
+            // yep it happened with the 2nd GSAC installed.
+            String newname = info.getName();
+            if (newname == "GSAC Repository") {
+               newname += " at " + url;
+            }
+            sb.append(HtmlUtil.href(info.getUrl(), newname));
+
             sb.append(HtmlUtil.br());
         }
         pw.append(getHeader(msg("Search in Repositories")));
