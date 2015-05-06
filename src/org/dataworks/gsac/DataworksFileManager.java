@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -145,16 +145,21 @@ public class DataworksFileManager extends FileManager {
               initCapability(new Capability(ARG_FILE_DATADATE,         "Data Date Range",         Capability.TYPE_DATERANGE), "File Query", "Date the data was collected"),
 
               // search on "Publish Date" is when a repository made a file available *most recently*.  This is used to look for changed / revised/ corrected files.
-              initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", "Date when this file was first published to the repository"),
+              initCapability(new Capability(ARG_FILE_PUBLISHDATE,       "Publish Date",           Capability.TYPE_DATERANGE), "File Query", 
+                              "Date when this file was first published to the repository"),
+              // this loads the user's choices of the range values of ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO used later to seach on
+
 
               initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "File Type", values, true, Capability.TYPE_FILETYPE ), "File Query", "Data file type" ),
 
               // Note, for a case using Capability.TYPE_NUMBERRANGE, as for FILESIZE, 
-              // the special parm name, ARG_FILE_SAMPLEINT, declared in GsacArgs.java, must have two more related corresponding parm names there with magic name extensions .max and .min
+              // the special parm name, ARG_FILE_SAMPLEINT, declared in GsacArgs.java, 
+              //    must have two more related corresponding parm names there with magic name extensions .max and .min
               // Note the Capability.TYPE_NUMBERRANGE appears to permit only integer numbers, not real numbers.  FIX this code to allow fraction of seconds:
-              initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval") 
+              initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", 
+                   "instrument data sampling interval") 
 
-              // Could also search on file size.  Not now regarded as useful.
+              // Could also search on file size.  Not now regarded as useful. No-one has ever asked for this.
               //initCapability(cap = new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
               // can use with file size searches: cap.setSuffixLabel("&nbsp;(bytes)");
         };
@@ -281,6 +286,33 @@ public class DataworksFileManager extends FileManager {
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
 
+        // new 6 may
+        // use the data range requested by the user, from the input from web search form / API, to search on the "publish time" of data files:
+        Date[] usersDateRange = request.getDateRange(ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO, null, null);
+        //                                                pubDateRange[0]
+        // to compare the pub date to the final date in range of interest: pub date must be >=  [0], the  1st in users date range
+        if (usersDateRange[0] != null) {
+            // wrangle the final date into a format you can use in a SQL query
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(usersDateRange[0]);
+            java.sql.Date testDate = new java.sql.Date(cal.getTimeInMillis());
+            clauses.add(Clause.ge(Tables.DATAFILE.COL_PUBLISHED_TIME, testDate));
+            appendSearchCriteria(msgBuff, "Pub. date&gt;=", "" + format(usersDateRange[0]));
+        }
+        if (usersDateRange[1] != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(usersDateRange[1]);
+            // do this to NOT shift one day earlier, both user dates are the same.  do   3 lines:
+            cal.add(Calendar.HOUR, 23);
+            cal.add(Calendar.MINUTE, 59);
+            cal.add(Calendar.SECOND, 59);
+            java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
+            clauses.add(Clause.le(Tables.DATAFILE.COL_PUBLISHED_TIME, sqlEndDate));
+            appendSearchCriteria(msgBuff, "Pub. date&le;=", "" + format(usersDateRange[1]));
+        }
+        // end new
+
+
         // to get file info, join these db tables:
         // sql select needs to join row pairs from these tables, connected by these id values. (search rows in these tables with these shared values):
         clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.DATAFILE.COL_STATION_ID )) ;
@@ -357,7 +389,7 @@ public class DataworksFileManager extends FileManager {
                String file_url = results.getString       (Tables.DATAFILE.COL_URL_PATH);
                String file_url_filename = results.getString  (Tables.DATAFILE.COL_DATAFILE_NAME);
 
-               /* from more complex prototype GSAC database way to create path urls
+               /* from more complex prototype GSAC database, here is a  way to create path urls from simple parts, so you need not change all if a part changes:
                // if this database row does not supply the complete FILE_URL, try to compose it from all the parts of a complete url found in the same database row
                if (file_url==null || file_url.length()< 13 )   // error check for say ftp://a.b.c/d has length of 13
                {
@@ -368,9 +400,6 @@ public class DataworksFileManager extends FileManager {
 
                    file_url =file_url_protocol + "://" + file_url_ip_domain + file_url_folders + file_url_filename;
                }
-               */
-               /*
-               if (file_url==null || file_url.length()< 13)   proceed with showing results for this data file, even with null for url, or short url
                */
 
                String file_type_name = results.getString (Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME);
@@ -387,9 +416,12 @@ public class DataworksFileManager extends FileManager {
                }
                //System.err.println("   sample interval ="+sample_interval+"_");
 
-               // Check in the station's data, all types of file access permissions and limits. If accces not allowed for this file, do not show in GSAC reults (ie do not allow downloading).
+               // Check in the station's data, all types of file access permissions and limits. 
+               // If acccess not allowed for this file, do not show in GSAC results (ie do not allow downloading).
                // and do not show this file in GSAC results sent to the user.
+
                Date now = new Date();
+
                int  sta_access_permission_id  = results.getInt(Tables.STATION.COL_ACCESS_ID);
 
                /*
