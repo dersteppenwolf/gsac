@@ -314,12 +314,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
             boolean        openSection = (files.size() == 0);
             sb.append(HtmlUtil.makeShowHideBlock(msg("Search Information"), tabs.toString(), openSection));
 
-            // new
             String reqstr=request.toString();
-            //resultsTitles.add(msg("API request"));
-            //resultsContents.add("Base URL plus "+reqstr );
-            // works ok: sb.append("<br>The API request is GSAC URL domain + "+ reqstr+" <br>");
-            sb.append(HtmlUtil.makeShowHideBlock(msg("API request"), "GSAC URL domain + "+reqstr, false));
+            sb.append(HtmlUtil.makeShowHideBlock(msg("API request"), "Base URL + "+reqstr, false));
 
             Hashtable<String, String> override = new Hashtable<String, String>();
 
