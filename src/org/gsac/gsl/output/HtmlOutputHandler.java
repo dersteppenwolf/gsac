@@ -59,8 +59,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         "semi-colon separated list: p123;p456,  wildcards: p12* *123 *12* negate: !p123";
 
     /** help message */
-    public static final String dateHelp =
-        "e.g., yyyy-mm-dd,  now, -1 week, +3 days, etc.";
+    //  weeks and days offset not yet in code
+    // LOOK public static final String dateHelp = "e.g., yyyy-mm-dd,  now, -1 week, +3 days, etc.";  // week and days offset not implemented
+    public static final String dateHelp = "date format yyyy-mm-dd";
 
     /** help message */
     public static final String timeHelp = "hh:mm:ss Z, e.g. 20:15:00 MST";
