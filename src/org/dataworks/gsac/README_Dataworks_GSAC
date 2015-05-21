@@ -10,36 +10,27 @@ About Dataworks.
 
 Dataworks is a UNAVCO project.  The web site is https://www.unavco.org/software/data-management/dataworks/dataworks.html.
 
-The goal is to provide services to find and download GNSS RINEX obs, met, and nav data files from a data center, using GSAC, and 
-"mirroring" information from the UNAVCO GNSS archive.  Dataworks also has Python code to receive GPS receiver files 
-from your local GPS receivers and populate the Dataworks GSAC database.  Dataworks is not intended for general-purpose GSACs.
-Dataworks is for one GPS network with stations already in the UNAVCO archive, plus one or more local GSP stations (not archived at
-UNAVCO) which you receive directly.
+The goal is to provide services to find and download GNSS RINEX obs, met, and nav data files from local stations, and 
+it also may have "mirroring" information from remote GSACs.  Dataworks is not intended for general-purpose GSACs.
+GSAC can be used without anything from Dataworks, but Dataworks must have GSAC.
 
 Dataworks includes:
 
-- a particular instance of GSAC, what you are building here.
-- a MySQL database with the Dataworks schema and .sql file, to work with the Dataworks GSAC. The .sql file is Dataworks_demo.sql in the 
-  GSAC package at gsac-code/src/org/dataworks/gsac/. This demo file has actual station (site) and data file values
-  from the COCONet network, to show good examples of a complete working GSAC database.  There are rows for 2 stations, 4 equip_config rows,
-  and 156 rows in the datafile table for GNSS files from the two stations. Remove these COCONet rows after your have a working 
-  test version of your GSAC.
-- Python code to "mirror" (copy) information about GNSS sites and data files from UNAVCO to populate the Dataworks GSAC database.
-  The files are  mirrorData.py and mirrorStations.py in the GSAC package at gsac-code/src/org/dataworks/gsac/.
-  Those files have headers which tell how to use them.
-- Python code to receive GPS receiver files from your local GPS receivers and populate the Dataworks GSAC database (not available from GSAC).
+- a MySQL database with the Dataworks schema file Dataworks_demo.sql, in this GSAC package in the same directory where
+  this README files resides, to work with the Dataworks GSAC
+  GSAC package at gsac-code/src/org/dataworks/gsac/. 
+  Make a database with this .sql file (myslq command "source Dataworks_demo.sql) before you install GSAC.
 
-For Dataworks GSAC, be sure you used the main GSAC package in SourceForge, not a 'branch'.  The main GSAC installation is described in the
+- a particular instance of GSAC, what you are building here.
+
+For Dataworks GSAC, be sure you used the main GSAC package in SourceForge, not an earlier 'branch' or 'release'.  The main GSAC installation is described in the
 GSAC installation web page http://www.unavco.org/software/data-management/gsac/installation/installation.html
 and in the README files in the main GSAC package, with dates after 16 March 2015.
 
-
-Before you can use a complete Dataworks GSAC, you need to:
-> create and populate your database, starting with the file Dataworks_demo.sql. You may change the name of the database
-  from "Dataworks_demo" to some other name, by editing the file Dataworks_demo.sql.  You need not change the filename of the file Dataworks_demo.sql. 
-  You may use the db name Dataworks_demo with no problem.
-> complete the build and deployment of the GSAC, detailed in this file, as follows.
-
+Before you can make the Dataworks GSAC, you need to
+create and populate your database, starting with the file Dataworks_demo.sql. You may change the name of the database
+from "Dataworks_demo" to some other name, by editing the file Dataworks_demo.sql.  You need not change the name. 
+You may use the db name Dataworks_demo with no problem, or change it.
 
 
 You have completed the code GSAC installation in the first README file ("Part 1" in the GSAC core code area gsac-code/src/org/gsac/).
