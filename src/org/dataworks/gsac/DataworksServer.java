@@ -39,7 +39,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /*
  * code block for Java 1.7 version:
- * Uncomment these lines to build a Prototype GSAC with Java 1.7
+ * Uncomment these lines to build GSAC with Java 1.7
 */
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -52,7 +52,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /* 
  * code block for Java 1.6 
- * Uncomment these lines to build a Prototype GSAC with Java 1.6
+ * Uncomment these lines to build  GSAC with Java 1.6
 import org.mortbay.jetty.*;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
