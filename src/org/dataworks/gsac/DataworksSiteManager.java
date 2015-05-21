@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,14 +28,11 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.metadata.*;
 import org.gsac.gsl.metadata.gnss.*;
 import org.gsac.gsl.output.HtmlOutputHandler;
+import org.gsac.gsl.ramadda.sql.Clause;
+import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
-
-// The ramadda imports refer to the rammadda jar file included with GSAC,
-// not necessarily the latest thing from rammadda.org
-import org.gsac.gsl.ramadda.sql.Clause;
-import org.gsac.gsl.ramadda.sql.SqlUtil;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -50,6 +47,7 @@ import java.util.HashSet;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.Calendar;
 
 import java.net.URL;
 import java.net.HttpURLConnection;
@@ -69,7 +67,7 @@ import java.io.OutputStream;
  * - what metadata may be queried on, that is used for searches or selections, in this GSAC repository (see method doGetQueryCapabilities below)
  *   either by the web page forms or via the API URL arguments, 
  *
- * - how to query the database for such request, make SQL phrases, (see method get ResourceClauses below), which is called by GSAC/gsac-code/src/org/gsac/gsl/GsacResourceManager.java
+ * - how to query the database for such request, make SQL phrases, (see method getResourceClauses below), which is called by GSAC/gsac-code/src/org/gsac/gsl/GsacResourceManager.java
  *
  * - how to package up the results from the query (method makeResource below) into a java object for further use, such as for the HTML pages of
  *   search results on the GSAC web site, and the items in other result formats like SINEX.
@@ -78,7 +76,7 @@ import java.io.OutputStream;
  * The database schema is simpler for more than one netowrk.  More than one network per station may be enable using this code.
  * 
  * @author  Jeff McWhirter, 2011. A short template for any SiteManager.java, without code for querying a database.
- * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014 - 18 Sep 2014
+ * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014, ... 21 May 2015
  */
 public class DataworksSiteManager extends SiteManager {
 
@@ -130,6 +128,7 @@ public class DataworksSiteManager extends SiteManager {
      * @return site search capabilities
      */
     public List<Capability> doGetQueryCapabilities() {
+        // debug   System.err.println("   SiteManager:  doGetQueryCapabilities ") ;
         try {
 
             // order of adding to capabilities here specifies order on html site search page
@@ -158,9 +157,10 @@ public class DataworksSiteManager extends SiteManager {
             // site search by "Data Date Range" pair of boxes;
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
-                               initCapability( new Capability(ARG_SITE_DATE_FROM, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-                         "The site operated between these dates", "Site date");
+                               initCapability( new Capability(ARG_SITE_DATE, "Site spans date range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
+                               "The site has data between these dates", "Site data dates");
             capabilities.add(sitedateRange);
+            // debug System.err.println("   SiteManager:      show the entry box for data at a site between two dates") ;
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
 
@@ -383,7 +383,8 @@ public class DataworksSiteManager extends SiteManager {
 
 
     /**
-     * Make database search clauses, the db select statement clauses, from the user's choices specified in the web page input or from the URL or API request arguments' values.  
+     * Make database search clauses, the db select statement clauses, from the user's choices specified 
+     *  in the web page input boxes, or from the URL or API request arguments' values.  
      *
      * Makes and returns item "clauses".
      *
@@ -394,8 +395,9 @@ public class DataworksSiteManager extends SiteManager {
      *
      * @return list of clauses for selecting sites
      */
-    public List<Clause> getResourceClauses(GsacRequest request, GsacResponse response, List<String> tableNames, StringBuffer msgBuff) {
-
+    public List<Clause> getResourceClauses(GsacRequest request, GsacResponse response, List<String> tableNames, StringBuffer msgBuff) 
+        {
+        // debug System.err.println("   SiteManager:  getResourceClauses ") ;
         /* which tables in the db to search on; the 'from' part of a db query, in this case the station table in the database. */
         tableNames.add(Tables.STATION.NAME);
 
@@ -441,13 +443,55 @@ public class DataworksSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query for the station's dates in use
+        // query using the station's data availabe dates 
+        //      [java]    SiteManager: station UNPM installed from date 2007-08-07
+        //      [java]    SiteManager: station UNPM latest data date   2015-03-23
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
-                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_RETIRED_DATE));
+                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
+            //System.err.println("   SiteManager: ok 1") ;
+            // debug System.err.println("   SiteManager:  date clause =" + getDateRangeClause(request, msgBuff,
+            //        ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ) ); 
         } catch (Exception e) {
+            // debug System.err.println("   SiteManager: fails 1") ;
             throw new IllegalArgumentException(e);
-        }
+        } 
+        // debug System.err.println("   SiteManager: grc gives search clauses so far="+clauses) ;
+        /*
+        // model from file manager: new 6 may
+        // use the data range requested by the user, from the input from web search form / API, to search on the "publish time" of data files:
+        try {
+            //Date[] usersDateRange = request.getDateRange(ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, null, null);
+            Date[] usersDateRange = request.getDateRange(ARG_SITE_DATE, ARG_SITE_DATE, null, null);
+            System.err.println("   SiteManager:      getResourceClauses: user data date range query VALUES "+usersDateRange[0]+"   "+usersDateRange[1] ) ;
+            //
+            // to compare the pub date to the final date in range of interest: pub date must be >=  [0], the  1st in users date range
+            if (usersDateRange[0] != null) {
+                // wrangle the final date into a format you can use in a SQL query
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(usersDateRange[0]);
+                java.sql.Date fromDate = new java.sql.Date(cal.getTimeInMillis());
+                clauses.add(Clause.ge(Tables.STATION.COL_INSTALLED_DATE, fromDate));
+                appendSearchCriteria(msgBuff, "data date&gt;=", "" + format(usersDateRange[0]));
+            }
+            if (usersDateRange[1] != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(usersDateRange[1]);
+                // CHECK do this to NOT shift one day earlier, both user dates are the same.  do   3 lines:
+                cal.add(Calendar.HOUR, 23);
+                cal.add(Calendar.MINUTE, 59);
+                cal.add(Calendar.SECOND, 59);
+                java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
+                clauses.add(Clause.le(Tables.STATION.COL_LATEST_DATA_TIME, sqlEndDate));
+                appendSearchCriteria(msgBuff, "data date&le;=", "" + format(usersDateRange[1]));
+             }
+        } catch (Exception e) {
+            System.err.println("   SiteManager: fails 1") ;
+            throw new IllegalArgumentException(e);
+        } 
+        // end new
+        */
+        
 
         // Query for the single network name allowed in the default Dataworks db scheme for this station 
         // When a set of network names is required; see code below.
@@ -457,7 +501,7 @@ public class DataworksSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.STATION.COL_NETWORK_ID, Tables.NETWORK.COL_NETWORK_ID));
             clauses.add(Clause.eq(Tables.NETWORK.COL_NETWORK_NAME, values.get(0)));
         }
-        // NETWORKS : alternate code to allow two or more network names per site.
+        // or for NETWORKS : alternate code to allow two or more network names per site.
         /*
         // query for this station's networks; "group" is GSAC jargon for gnss network name set.
         // The Dataworks schema only allows one network for each station.  This code for a group of network names for each station is
@@ -498,7 +542,7 @@ public class DataworksSiteManager extends SiteManager {
             //System.err.println("   DW SiteManager: query for antenna type name " + values.get(0) + " with where clauses "+clauses) ;
             // query for antenna type name AOAD/M_T with where clauses 
             // [station.station_id join 'equip_config.station_id', equip_config.antenna_id join 'antenna.antenna_id', antenna.antenna_name = 'AOAD/M_T']
-            // the sql query is done by iGsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
+            // the sql query is done by GsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
             request.setsqlWhereSuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
         
@@ -542,7 +586,7 @@ public class DataworksSiteManager extends SiteManager {
         }
 
         // for testing: 
-        //System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
+        // debug System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
         // to show clauses like
         //  [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
         // which creates, later, the sql based query or API to GSAC:
@@ -626,12 +670,23 @@ public class DataworksSiteManager extends SiteManager {
 
         List<Clause> clauses = new ArrayList<Clause>();
         // TODO: check the logic of the date range search
+        // debug System.err.println("   SiteManager:  get date range from-name and to-name s: "+fromArg+"   "+toArg) ;
+
         Date[] dateRange = request.getDateRange(fromArg, toArg, null, null);
-        if (dateRange[0] != null) { appendSearchCriteria(msgBuff,  argTxt + "&gt;=", "" + format(dateRange[0]));
+        // System.err.println("   SiteManager:  get date range from - to : "+dateRange[0]+" -  "+dateRange[1]) ;
+
+        if (dateRange[0] != null) { 
+           appendSearchCriteria(msgBuff,  argTxt + "&gt;=", "" + format(dateRange[0]));
         }
-        if (dateRange[1] != null) { appendSearchCriteria(msgBuff, argTxt + "&lt;=", "" + format(dateRange[1]));
+        if (dateRange[1] != null) { 
+           appendSearchCriteria(msgBuff, argTxt + "&lt;=", "" + format(dateRange[1]));
         }
-        if ((dateRange[0] != null) || (dateRange[1] != null)) { addDateRangeClause(clauses, colStart, colEnd, dateRange); }
+        if ((dateRange[0] != null) || (dateRange[1] != null)) { 
+           addDateRangeClause(clauses, colStart, colEnd, dateRange); 
+           // System.err.println("   SiteManager:  get date range clause = "+ clauses) ;
+        }
+           // debug System.err.println("   SiteManager:  get date range clause = "+ clauses) ;
+
         return clauses;
     }
 
@@ -669,10 +724,12 @@ public class DataworksSiteManager extends SiteManager {
 
 
     /**
-     * Create a single 'site':  make a GsacSite object which has site metadata (for display in web page, or to send to user as 'results' in some form determined by an OutputHandler class).
+     * Create a single 'site':  make a GsacSite object which has site metadata 
+        (for display in web page, or to send to user as 'results' in some form determined by an OutputHandler class).
      * Input "results" is one row got from the db query, a search on stations.
+     * "results" is from sql select query on 'station' table in the database.
      * Previous code to this call did a db select clause to get one (or more?) rows in the db station table for one (or more?) site ids
-     * cf. makeSite() in UNAVCO_GSAC code.
+     * cf. makeSite() in UNAVCO GSAC code
      *
      * @param results db results
      *
@@ -682,8 +739,7 @@ public class DataworksSiteManager extends SiteManager {
      */
     @Override
     public GsacResource makeResource(ResultSet results) throws Exception {
-        // "results" is from sql select query on 'station' table in the database.
-        //System.err.println("GSAC: makeResource(): Sites Search results are " +results.toString());
+        // debug System.err.println("GSAC:  makeResource: ");
 
         GsacSite site = new GsacSite();
 
@@ -696,41 +752,40 @@ public class DataworksSiteManager extends SiteManager {
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
         int networkid    =     results.getInt(Tables.STATION.COL_NETWORK_ID);
-        /* for 
+        /* for station fields of images of plots of time series:
         | station_image_URL        | varchar(100)    | YES  |     | NULL    |                |
         | time_series_URL          | varchar(100)    | YES  |     | NULL    |                |
-        public static final String COL_STATION_PHOTO_URL =  NAME + ".station_image_URL";
-        public static final String COL_TIME_SERIES_PLOT_PHOTO_URL =  NAME + ".time_series_URL";
         */
-        String station_photo_URL          = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
-        String time_series_plot_image_URL = results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_PHOTO_URL); 
+        String station_photo_URL          = results.getString(Tables.STATION.COL_STATION_IMAGE_URL);
+        String time_series_plot_image_URL = results.getString(Tables.STATION.COL_TIME_SERIES_URL); 
 
-        // fix incorrect reading by Java JDBC of names in Icelandic or other non-latin characters (which are correct in the MySQL db:   utf-8 utf8)
-        if (null!=staname) { staname = new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8"); }
+        //  tricky code to fix the otherwise incorrect reading by Java JDBC                                  (UTF8 UTF-8 utf-8 utf8)
+        //  of names in Icelandic or in other non-latin characters, and which are correct in the MySQL db:   (UTF8 UTF-8 utf-8 utf8)
+        if (null!=staname) { staname = new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8"); }       //    (UTF8 UTF-8 utf-8 utf8)
          
         //  Make a site object: GsacSite ctor in src/org/gsac/gsl/model/GsacSite.java is 
         // public          GsacSite(String siteId, String siteCode, String name, double latitude, double longitude, double elevation) 
-        // The so-called "elevation," in GSAC GSL code, is properly the height above reference ellipsoid. Not elevation, which is height above some (unknown) geoid model surface.
+        // The so-called "elevation," in GSAC GSL code, is properly the height above reference ellipsoid. 
+        //  Not elevation, which is height above some (unknown) geoid model surface.
         site = new GsacSite(fourCharId, fourCharId, staname, latitude, longitude, ellipsoid_hgt);
 
         // Set additional values in the site object:
 
-        // handle search on date range:
+        // set data date range at this station:
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
-        Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE);
-        //System.err.println("   SiteManager: station " +fourCharId+ " installed from date "+fromDate);
-        //System.err.println("   SiteManager: station " +fourCharId+ " installed to date   "+toDate);
+        Date toDate=  readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME );
+        site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
         if (toDate != null )
             {
-            //System.err.println("   SiteManager: station " +fourCharId+ " has installed date to   "+toDate);
+            ; // System.err.println("   SiteManager: station " +fourCharId+ " has latest data date to   "+toDate);
             }
         else
             {
-            toDate = new Date(); // "now" ie still operating
-            //System.err.println("   SiteManager: station " +fourCharId+ " installed to-date was NULL; now is "+toDate);
+            toDate = new Date(); // db value is null, so use "now" ie still operating
+            //System.err.println("\n   SiteManager: station " +fourCharId+ " latest data date was NULL; now is "+toDate);
             }
-        site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value), probably
         site.setToDate(toDate);
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";    latest data date "+ site.getToDate());
 
         /*
          *
