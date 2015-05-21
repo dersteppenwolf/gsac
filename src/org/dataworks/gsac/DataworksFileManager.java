@@ -268,8 +268,6 @@ public class DataworksFileManager extends FileManager {
             cal.setTime(dataDateRange[0]);
             java.sql.Date sqlStartDate = new java.sql.Date(cal.getTimeInMillis());
             clauses.add(Clause.ge(Tables.DATAFILE.COL_DATAFILE_START_TIME, sqlStartDate));
-            // time of data must be inside some one receiver session
-            // from prototype gsac clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlStartDate));
             appendSearchCriteria(msgBuff, "Data date&gt;=", "" + format(dataDateRange[0]));
         }
         if (dataDateRange[1] != null) {
@@ -281,8 +279,6 @@ public class DataworksFileManager extends FileManager {
             cal.add(Calendar.SECOND, 59);
             java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
             clauses.add(Clause.le(Tables.DATAFILE.COL_DATAFILE_STOP_TIME, sqlEndDate));
-            // time of data must be inside some one receiver session
-            // from prototype gsac clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
 
