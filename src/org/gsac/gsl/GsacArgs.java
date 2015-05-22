@@ -64,13 +64,15 @@ public interface GsacArgs {
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
 
     /** _more_ */
-    public static final String ARG_SITE_DATE = ARG_SITE_PREFIX + "date";
+    public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
+    public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
+    public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
 
-    /** _more_ */
-    public static final String ARG_SITE_DATE_FROM = ARG_SITE_DATE + ".from";
-
-    /** _more_ */
-    public static final String ARG_SITE_DATE_TO = ARG_SITE_DATE + ".to";
+    /** publish date for files 
+    public static final String ARG_FILE_PUBLISHDATE =     ARG_FILE_PREFIX + "publishdate";
+    public static final String ARG_FILE_PUBLISHDATE_FROM =ARG_FILE_PUBLISHDATE + ".from";
+    public static final String ARG_FILE_PUBLISHDATE_TO =  ARG_FILE_PUBLISHDATE + ".to";
+    */
 
     /** _more_ */
     public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
