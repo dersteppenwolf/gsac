@@ -353,11 +353,12 @@ public abstract class Tables {
         public static final String COL_STATION_NAME =  NAME + ".station_name";
         public static final String COL_LATITUDE_NORTH =  NAME + ".latitude_north";
         public static final String COL_LONGITUDE_EAST =  NAME + ".longitude_east";
-        public static final String COL_HEIGHT_ELLIPS_ELEV =  NAME + ".height_ellipsoid";
+        public static final String COL_HEIGHT_ELLIPSOID =  NAME + ".height_ellipsoid";
         public static final String COL_X =  NAME + ".X";
         public static final String COL_Y =  NAME + ".Y";
         public static final String COL_Z =  NAME + ".Z";
         public static final String COL_INSTALLED_DATE =  NAME + ".installed_date";
+        public static final String COL_LATEST_DATA_TIME =  NAME + ".latest_data_time";
         public static final String COL_RETIRED_DATE =  NAME + ".retired_date";
         public static final String COL_AGENCY_ID =  NAME + ".agency_id";
         public static final String COL_ACCESS_ID =  NAME + ".access_id";
@@ -376,7 +377,7 @@ public abstract class Tables {
         public static final String COL_EMBARGO_AFTER_DATE =  NAME + ".embargo_after_date";
 
         public static final String[] ARRAY = new String[] {
-            COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ELLIPS_ELEV,COL_X,COL_Y,COL_Z,COL_INSTALLED_DATE,COL_RETIRED_DATE,COL_AGENCY_ID,COL_ACCESS_ID,COL_STYLE_ID,COL_STATUS_ID,COL_MONUMENT_STYLE_ID,COL_NATION_ID,COL_PROVINCE_STATE_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_NETWORKS,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_TIME_SERIES_PLOT_IMAGE_URL,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
+            COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ELLIPSOID,COL_X,COL_Y,COL_Z,COL_INSTALLED_DATE,COL_LATEST_DATA_TIME,COL_RETIRED_DATE,COL_AGENCY_ID,COL_ACCESS_ID,COL_STYLE_ID,COL_STATUS_ID,COL_MONUMENT_STYLE_ID,COL_NATION_ID,COL_PROVINCE_STATE_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_NETWORKS,COL_IERS_DOMES,COL_STATION_PHOTO_URL,COL_TIME_SERIES_PLOT_IMAGE_URL,COL_EMBARGO_DURATION_HOURS,COL_EMBARGO_AFTER_DATE
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
