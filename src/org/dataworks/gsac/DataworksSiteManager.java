@@ -157,7 +157,7 @@ public class DataworksSiteManager extends SiteManager {
             // site search by "Data Date Range" pair of boxes;
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
-                               initCapability( new Capability(ARG_SITE_DATE, "Site spans date range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
+                               initCapability( new Capability(ARG_SITE_DATE, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
                                "The site has data between these dates", "Site data dates");
             capabilities.add(sitedateRange);
             // debug System.err.println("   SiteManager:      show the entry box for data at a site between two dates") ;
