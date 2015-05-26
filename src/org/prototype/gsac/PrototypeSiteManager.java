@@ -150,7 +150,7 @@ public class PrototypeSiteManager extends SiteManager {
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
                initCapability( new Capability(ARG_SITE_DATE_FROM, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-               "The site operated between these dates", "Site date");
+               "The site was installed between these dates (but may be no data)", "Site date");
             capabilities.add(sitedateRange);
             
 
@@ -467,16 +467,19 @@ public class PrototypeSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query for the station's dates in use
+        // query using the station's data available dates 
+        //      [java]    SiteManager: station UNPM installed from date 2007-08-07
+        //      [java]    SiteManager: station UNPM latest data date   2015-03-23
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
-                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date",
-                    Tables.STATION.COL_INSTALLED_DATE,
-                    Tables.STATION.COL_RETIRED_DATE));
+                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
+            //System.err.println("   SiteManager: ok 1") ;
+            // debug System.err.println("   SiteManager:  date clause =" + getDateRangeClause(request, msgBuff,
+            //        ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ) ); 
         } catch (Exception e) {
+            // debug System.err.println("   SiteManager: fails 1") ;
             throw new IllegalArgumentException(e);
         }
-
 
         // query for the station's place name 
         if (request.defined(GsacExtArgs.ARG_CITY)) {
@@ -726,7 +729,7 @@ public class PrototypeSiteManager extends SiteManager {
         // debug System.err.println("GSAC: SiteManager: site search found station " +fourCharId);
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
-        double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPS_ELEV);
+        double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPSOID);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
@@ -785,22 +788,24 @@ public class PrototypeSiteManager extends SiteManager {
             }
         }
 
-        // handle search on date range:
+
+        // set data date range at this station:
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
-        Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE);
-        //System.err.println("   SiteManager: station " +fourCharId+ " has installed date from "+fromDate);
-        //System.err.println("   SiteManager: station " +fourCharId+ " has installed date to   "+toDate);
+        Date toDate=  readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME );
+        site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
         if (toDate != null )
             {
-            //System.err.println("   SiteManager: station " +fourCharId+ " has installed date to   "+toDate);
+            ; // System.err.println("   SiteManager: station " +fourCharId+ " has latest data date to   "+toDate);
             }
         else
             {
-            toDate = new Date(); // "now" ie still operating
-            //System.err.println("   SiteManager: station " +fourCharId+ " installed to-date was NULL; now is "+toDate);
+            toDate = new Date(); // db value is null, so use "now" ie still operating
+            //System.err.println("\n   SiteManager: station " +fourCharId+ " latest data date was NULL; now is "+toDate);
             }
-        site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value), probably
         site.setToDate(toDate);
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";    latest data date "+ site.getToDate());
+
+
 
         //Add the network(s) for this station, in alphabetical order, to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
