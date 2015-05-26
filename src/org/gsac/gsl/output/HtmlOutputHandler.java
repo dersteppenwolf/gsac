@@ -757,11 +757,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
 
-            /* language String[] labels = { "Browse / Sfogliare", "Information / Informazioni", "Help / Assistenza" }; */
-            String[] labels = { "Browse", "Information", "Help" };
-            String[] urls   = { URL_BROWSE_BASE, URL_REPOSITORY_VIEW,
-                                URL_HELP + "/index.html" };
+            /* language demo: String[] labels = { "Browse / Sfogliare", "Information / Informazioni", "Help / Assistenza" }; */
+            String[] labels = { "Browse", "API Information", "Help" };
+
+            String[] urls   = { URL_BROWSE_BASE, URL_REPOSITORY_VIEW, URL_HELP + "/index.html" };
+
             String[] keys = { HEADER_BROWSE, HEADER_INFO, HEADER_HELP };
+
             for (int i = 0; i < labels.length; i++) {
                 if (getRepository().isCapable(keys[i])) {
                     labelList.add(labels[i]);
