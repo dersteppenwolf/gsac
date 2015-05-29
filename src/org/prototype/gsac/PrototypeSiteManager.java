@@ -70,7 +70,7 @@ import java.text.DecimalFormat;
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * @author  S K Wier, 24 Feb 2015
+ * @author  S K Wier, 2013 - 29 May 2015
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -146,12 +146,21 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
-            // site search by "Data Date Range" pair of boxes;
+            // search for sites INSTALLED spanning a date range; entry box is a "Date Range" pair of boxes;
             // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
             Capability sitedateRange =
-               initCapability( new Capability(ARG_SITE_DATE_FROM, "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-               "The site was installed between these dates (but may be no data)", "Site date");
+               initCapability( new Capability(ARG_SITE_DATE_FROM,     "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
+               "The site was INSTALLED in these dates (not always with data)", "Site dates");
             capabilities.add(sitedateRange);
+            
+            // search for sites with actual instrument DATA in a date range; entry box is a "Date Range" pair of boxes;
+            // sites may be installed but have gaps with no data
+            /* FIX use this when have implemented code near line 492 
+            Capability siteDatadateRange =
+               initCapability( new Capability(ARG_SITE_DATADATE_FROM,  "Site has Data in Dates Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
+               "Sites with instrumental DATA in a date range", "Site data dates");
+            capabilities.add(siteDatadateRange);
+            */
             
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
@@ -238,7 +247,7 @@ public class PrototypeSiteManager extends SiteManager {
                // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
                    String statype= results.getString(Tables.STATION_STYLE.COL_STATION_STYLE_DESCRIPTION);
-                   // save distinct values
+                   // save Distinct values
                    int notfound=1;
                    for (int vi= 0; vi<avalues.size(); vi+=1 ) {
                       if ( avalues.get(vi).equals(statype) ) {
@@ -265,14 +274,15 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
 
 
-            // to enable the search on antenna types, first get antenna type names used by station equipment sessions
+            // Make a choice box for antenna types, to search for site(S) with ONE antenna type choosen from this list of types.
+            // First get ALL antenna type names used by ALL stations in all equipment sessions
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
             //  WHERE 
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_ANTENNA_ID, Tables.ANTENNA.COL_ANTENNA_ID));
-            //  SELECT what to 
+            //  SELECT what to get from the database 
             cols=SqlUtil.comma(new String[]{Tables.ANTENNA.COL_ANTENNA_NAME});
-            //  FROM   
+            //  FROM  which tables: 
             tables = new ArrayList<String>();
             tables.add(Tables.EQUIP_CONFIG.NAME);
             tables.add(Tables.ANTENNA.NAME);
@@ -302,25 +312,23 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("GSAC: found "+ avalues.size() +  " antenna types ") ;
             values = avalues.toArray(itemArray);
             Arrays.sort(values);
+            // finally make an entry box with pull-down list of all antenna types, for the user to choose one from:
             capabilities.add(new Capability(GsacExtArgs.ARG_ANTENNA, "Antenna type", values, true, CAPABILITY_GROUP_ADVANCED));
+            // also makes the enum list in "API Information" page for API allowed arguments.
 
 
-
-            // to allow a search on receiver NAMES (not firmware version numbers)
+            // To allow a search on receiver NAMES (not firmware version numbers).
+            // See comments for similar antenna type searches, above.
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
-            //  WHERE 
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RECEIVER_FIRMWARE_ID, Tables.RECEIVER_FIRMWARE.COL_RECEIVER_FIRMWARE_ID));
-            //  SELECT what to 
             cols=SqlUtil.comma(new String[]{Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME});
-            //  FROM   
             tables = new ArrayList<String>();
             tables.add(Tables.EQUIP_CONFIG.NAME);
             tables.add(Tables.RECEIVER_FIRMWARE.NAME);
             statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-               // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
                    String type= results.getString(Tables.RECEIVER_FIRMWARE.COL_RECEIVER_NAME);
                    int notfound=1;
@@ -345,20 +353,17 @@ public class PrototypeSiteManager extends SiteManager {
 
 
             // to allow a search on radome types: get radome type names used by station equipment sessions 
+            // See comments for similar antenna type searches, above.
             avalues = new ArrayList<String>();
             clauses = new ArrayList<Clause>();
-            //  WHERE 
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_RADOME_ID, Tables.RADOME.COL_RADOME_ID));
-            //  SELECT what to 
             cols=SqlUtil.comma(new String[]{Tables.RADOME.COL_RADOME_NAME});
-            //  FROM   
             tables = new ArrayList<String>();
             tables.add(Tables.EQUIP_CONFIG.NAME);
             tables.add(Tables.RADOME.NAME);
             statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
             try {
                SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-               // process each line in results of db query  
                while ((results = iter.getNext()) != null) {
                    String type= results.getString(Tables.RADOME.COL_RADOME_NAME);
                    int notfound=1;
@@ -410,6 +415,8 @@ public class PrototypeSiteManager extends SiteManager {
      * Make database search clauses, SQL select statements, from the user's choices specified in the web page input or from the URL request arguments' values.  
      *
      * Makes and returns item "clauses" a List of Clause  object
+     *
+     * called by GsacResourceManager:handleRequest(GsacRequest request, GsacResponse response)  via ?
      *
      * @param request the request
      * @param response the response
@@ -467,19 +474,29 @@ public class PrototypeSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query using the station's data available dates 
+        // query using the station's INSTALLED dates 
         //      [java]    SiteManager: station UNPM installed from date 2007-08-07
         //      [java]    SiteManager: station UNPM latest data date   2015-03-23
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
                     ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
-            //System.err.println("   SiteManager: ok 1") ;
-            // debug System.err.println("   SiteManager:  date clause =" + getDateRangeClause(request, msgBuff,
-            //        ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ) ); 
+            // debug System.err.println("   SiteManager: ok 1") ;
         } catch (Exception e) {
             // debug System.err.println("   SiteManager: fails 1") ;
             throw new IllegalArgumentException(e);
         }
+
+        // query using the station's DATA dates 
+        /* FIX must do query over the 1 or more equip sessions' start and end times:
+        try {
+            clauses.addAll(getDateRangeClause(request, msgBuff,
+                    ARG_SITE_DATADATE_FROM, ARG_SITE_DATADATE_TO, "Site data dates", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
+            // debug System.err.println("   SiteManager: ok 1") ;
+        } catch (Exception e) {
+            // debug System.err.println("   SiteManager: fails 1") ;
+            throw new IllegalArgumentException(e);
+        }
+        */
 
         // query for the station's place name 
         if (request.defined(GsacExtArgs.ARG_CITY)) {
@@ -530,21 +547,24 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for STATUS " + values.get(0)) ;
         }
         
-        // LOOK FIX return distinct stations, not duplicates of one station with many antennas (why):
+
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
-            //System.err.println("      DW SiteManager: search for sites with antenna "+GsacExtArgs.ARG_ANTENNA);
+            // debug System.err.println("      PrototypeSiteManager: search for sites with antenna "+GsacExtArgs.ARG_ANTENNA);
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_ANTENNA);
             tableNames.add(Tables.EQUIP_CONFIG.NAME);
             tableNames.add(Tables.ANTENNA.NAME);
             clauses.add(Clause.join(Tables.STATION.COL_STATION_ID, Tables.EQUIP_CONFIG.COL_STATION_ID));
             clauses.add(Clause.join(Tables.EQUIP_CONFIG.COL_ANTENNA_ID, Tables.ANTENNA.COL_ANTENNA_ID));
             clauses.add(Clause.eq(Tables.ANTENNA.COL_ANTENNA_NAME, values.get(0)));
+            // FIX do for select DISTINCT distinct
+            // with like  getDatabaseManager().select( distinct(Tables.STATION.COL_NETWORKS), Tables.STATION.NAME);
             //System.err.println("GSAC SiteManager: query for antenna type name " + values.get(0) + " with where clauses "+clauses) ;
-            // query for antenna type name AOAD/M_T with where clauses 
+            // query for antenna type name AOAD/M_T with where clauses:
             // [station.station_id join 'equip_config.station_id', equip_config.antenna_id join 'antenna.antenna_id', antenna.antenna_name = 'AOAD/M_T']
-            // the sql query is done by iGsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
+            // the sql query is done by GsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
             request.setsqlWhereSuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
+
 
         if (request.defined(GsacExtArgs.ARG_DOME)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_DOME);
@@ -619,9 +639,10 @@ public class PrototypeSiteManager extends SiteManager {
 
         // compose the complete select SQL phrase; apply the select clause to the table(s) given. see select ( ) in gsl/database/GsacDatabaseManager.java
         //                                                 DB  .select( what to find (fields),     from which tables,      where clause, )  
-        // works ok: Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
+        // works ok: 
+        // Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
         // and this also has ordering :
-        Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_FOUR_CHAR_NAME, -1);
+        Statement    statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_FOUR_CHAR_NAME, -1);
         //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is " +statement);
 
         try {
@@ -834,8 +855,8 @@ public class PrototypeSiteManager extends SiteManager {
         //  FROM   the select from which tables part 
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.NATION.NAME);
-        Statement  statement = //select what    from      where
-           getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        //                                          select  what    from      where
+        Statement  statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //System.err.println("   SiteManager: country query is " +statement);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
