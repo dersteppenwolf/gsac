@@ -68,6 +68,11 @@ public interface GsacArgs {
     public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
     public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
 
+    /* to search for sites with data files in date range */
+    public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
+    public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
+    public static final String ARG_SITE_DATADATE_TO  =    ARG_SITE_DATADATE + ".to";
+
     /** publish date for files 
     public static final String ARG_FILE_PUBLISHDATE =     ARG_FILE_PREFIX + "publishdate";
     public static final String ARG_FILE_PUBLISHDATE_FROM =ARG_FILE_PUBLISHDATE + ".from";
@@ -197,13 +202,10 @@ public interface GsacArgs {
     public static final String ARG_FILE_ID = ARG_FILE_PREFIX + ARG_SUFFIX_ID;
 
     /** _more_ */
-    public static final String ARG_FILE_SORT_VALUE = ARG_FILE_PREFIX
-                                                     + ARG_SORT_VALUE_SUFFIX;
+    public static final String ARG_FILE_SORT_VALUE = ARG_FILE_PREFIX + ARG_SORT_VALUE_SUFFIX;
 
     /** _more_ */
-    public static final String ARG_FILE_SORT_ORDER = ARG_FILE_PREFIX
-                                                     + ARG_SORT_ORDER_SUFFIX;
-
+    public static final String ARG_FILE_SORT_ORDER = ARG_FILE_PREFIX + ARG_SORT_ORDER_SUFFIX;
 
     /** _more_ */
     public static final String SORT_FILE_TYPE = ARG_FILE_PREFIX + "type";
@@ -212,12 +214,10 @@ public interface GsacArgs {
     public static final String SORT_FILE_SIZE = ARG_FILE_PREFIX + "size";
 
     /** _more_ */
-    public static final String SORT_FILE_PUBLISHDATE = ARG_FILE_PREFIX
-                                                       + "publishdate";
+    public static final String SORT_FILE_PUBLISHDATE = ARG_FILE_PREFIX + "publishdate";
 
     /** _more_ */
-    public static final String SORT_FILE_DATADATE = ARG_FILE_PREFIX
-                                                    + "datadate";
+    public static final String SORT_FILE_DATADATE = ARG_FILE_PREFIX + "datadate";
 
     /** file size in bytes; . */
     public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + ".filesize";
