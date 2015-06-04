@@ -67,10 +67,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     private Hashtable<String, GsacOutput> outputMap = new Hashtable<String,
                                                           GsacOutput>();
 
-
     /** _more_ */
     private CapabilityCollection capabilityCollection;
-
 
     /** _more_ */
     private String urlPrefix;
@@ -506,23 +504,36 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             //System.err.println("     GsacResourceManager: handleRequest: new suffix:       "+ suffix );
         }
 
-        Statement statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
+        Statement statement;
+        // origainl single line:    statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
+
+        // New June 2015:
+        if ( ! columns.contains( "station.four_char_name" )) {
+            statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
+        }
+        else {
+            // New June 2015: use " distinct " in the SQL site query, if the SQL query has station.four_char_name in 'columns':
+            // Need "select distinct" here... when doing site searches  DISTINCT
+            // otherwise you can get multiples of the same returned row (same site duplicated) from the SQL search when looking for, say, sites with some antenna name.
+            statement = getDatabaseManager().select( distinct (columns),  clause.getTableNames(tableNames), clause, suffix, -1 );                       
+        }
+
+        //System.err.println("GSAC: GsacResourceManager:handleRequest() db query SQL is \n      " + statement ); // + "; at time "+getUTCnowString()  ); //  for mysql
 
         //System.err.println("GSAC: GsacResourceManager, handleRequest() db query SQL is " + statement.toString()  );
         //       + "; at time "+getUTCnowString()  ); // DEBUG.   LOOK toString  for oracle jbdc ; OK for mysql
 
         // DEBUG for oracle (and other db-s), since oracle jdbc statement.toString() does nothing 
-        String fromtables= (clause.getTableNames(tableNames)).toString();
+        //String fromtables= (clause.getTableNames(tableNames)).toString();
         //System.err.println("    GsacResourceManager handleRequest SQL is  SELECT " + columns.toString() +" from "+ 
-          //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
+        //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
 
-
-        // DEBUG
+        // DEBUG: to time the SQL query:
         //   long t1 = System.currentTimeMillis();
-        int nr = processStatement(request, response, statement, request.getOffset(), request.getLimit());
+        int rowCount = processStatement(request, response, statement, request.getOffset(), request.getLimit());
         // DEBUG
         //   long t2 = System.currentTimeMillis();
-        //System.err.println("      GsacResourceManager: processStatement() completed and got "+nr+" rows in " + (t2 - t1) + " ms; at time "+getUTCnowString()); // DEBUG
+        //System.err.println("      GsacResourceManager: processStatement() completed and got "+rowCount+" rows in " + (t2 - t1) + " ms"); // at time "+getUTCnowString()); // DEBUG
     }
 
 
@@ -591,7 +602,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
 
     /**
-     * get the resource query clause. This also sets the seach criteria message on the response
+     * get the resource query clause, SQL to query the database. This also sets the seach criteria message on the response
      *
      * @param request the resquest
      * @param response the response
@@ -603,8 +614,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                     GsacResponse response,
                                     List<String> tableNames) {
         StringBuffer msgBuff = new StringBuffer();
-        List<Clause> clauses = getResourceClauses(request, response,
-                                   tableNames, msgBuff);
+        List<Clause> clauses = getResourceClauses(request, response, tableNames, msgBuff);
         setSearchCriteriaMessage(response, msgBuff);
         //System.err.println("GSAC: did    GRM getResourceClause");
 
@@ -663,7 +673,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
                                            GsacResponse response,
                                            List<String> tableNames,
                                            StringBuffer msgBuff) {
-        notImplemented("getResourceClauses needs to be implemented");
+        notImplemented("getResourceClauses needs to be implemented in a *SiteManager.java class");
 
         return null;
     }
