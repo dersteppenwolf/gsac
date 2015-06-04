@@ -5,7 +5,7 @@
                           Installing the GSAC Web Services Software Package for a Data Repository
                             README, Part 1.  Creating an Initial GSAC server at your Data Center 
 
-                                            28 Apr 2015    Stuart Wier, UNAVCO
+                                            29 Apr 2015    Stuart Wier, UNAVCO
                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
@@ -38,7 +38,7 @@ README Part 2 tells how to do "b," complete your "local GSAC files". You will cr
 Instructions here detail the first part of installing GSAC services for a data repository
 
 Section 4 below describes the oprtional installation of a "federated GSAC" which makes an online service merging
-GSAC services from several separate data repository GSACs.  To install a Federated GSAC, follow the instructions in this README 
+GSAC services from several separate data repository GSACs.  To install a federated GSAC, follow the instructions in this README 
 file, except the section "Create GSAC configuration files and make your initial GSAC."  Then follow the section 4 "To Build a Federated GSAC".
 
 ##########################################
@@ -144,7 +144,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
    The GSAC package from SourceForge contains code for both Java 1.6 and 1.7.  Rather than having 2 "releases" of GSAC, with more than 99% duplicate code, and which would require
    UNAVCO to make identical updates in both releases, both versions of GSAC are in one package.
 
-   The difference is (almost) entirely due to Java library files.  The Java 1.7 GSAC has recent Java security improvements (required by a U.S. government lab using GSAC.)
+   The difference is (almost) entirely due to Java library files.  
 
    The GSAC package when exported from SourceForge is ready to build GSAC with Java 1.7.  
    If you want to use Java 1.7, make sure your javac compiler is for Java 1.7, such as this example: /usr/lib/jvm/java-7-oracle/bin/javac.
@@ -152,7 +152,7 @@ svn export svn://svn.code.sf.net/p/gsac/code/trunk gsac-code
    To modify files in the GSAC package from SourceForge to build with a Java 1.6 javac (to not use Java 1.7), do the following:
       a. in gsac-code/src/org/gsac/gsl/ do the command cp build.xml.Java6 build.xml
       b. in gsac-code/src/org/gsac/gsl/ edit the file GsacServer.java to use the two sections labeled "code block for Java 1.6 build of GSAC" 
-         and comment-out the two sections "code block for Java 1.6 build of GSAC".
+         and comment-out the two sections "code block for Java 1.7 build of GSAC".
       c. in gsac-code/src/org/gsac/gsl/database/ edit the GsacDatabaseManager.java to use the lines labeled "Java 1.6 version" and to comment-out the lines for "Java 1.7 version."
       d. Make sure your javac compiler is for Java 1.6, not Java 1.7.
    More file changes to use Java 1.6 are in the README part 2 file detailed later.
@@ -413,17 +413,14 @@ cd to gsac-code/src/org/boulder/gsac/
 
                              Section 4. How to To Install a Federated GSAC
 
-To learn about federated GSACs, see the UNAVCO GSAC web site.
-
-You can install a federated GSAC now, without installing GSAC server for data downloads as described in README Part 2.
+You can make a federated GSAC now (without the extra work to make a local GSAC server as described in README Part 2).
 
 Installing a federated GSAC is much simpler than installing GSAC for a data repository. 
-You do not use a local (your own) database for a federated GSAC.  
+You do not use a local database for a federated GSAC, though you may choose to include your own GSAC in the federated GSAC.  
 
 If you have not already installed GSAC in any way, do step 4a below. 
 
-Otherwise do svn update for your GSAC core code again 
-to get the original working code for federated GSACs, and then go to step 2.
+Otherwise do svn update for your GSAC core code again to get the original working code for federated GSAC, if your GSAC code is older, and then go to step 2.
 
 
                            ###########################################
@@ -482,10 +479,8 @@ Install GSAC core code, as described in the GSAC web site, repeated here:
 
 4b. Specify connections to remote GSACs.
 
-Federated GSACs use the services provided by other GSAC installations, usually at remote locations. Federated GSACs do not 
-use a local data repository.
-
-You must tell your federated GSAC about the other GSACs to use.
+Federated GSACs use the services provided by other GSAC installations, usually at remote locations. 
+You must tell your federated GSAC about the other GSACs to use.  Federated GSACs do not use a local database.
 
 Go to the gsac/federated/ directory in your GSAC package, for example, something like gsac-code/src/org/gsac/federated/.  
 The files to make a federated GSAC are here.
@@ -524,24 +519,30 @@ Ignore the file resources/gsacserver_production.properties.
 
                            ###########################################
 
+Make no changes to any java files in gsac/federated/.
+The FederatedSiteManager.java and FederatedResourceManager.java files should NOT be changed. 
+
 
 4c. Edit files for your federated GSAC's web page header and footer.
 
-Edit federated/resources/header.html to create your GSAC web page header.
-Image files are kept in federated/resources/htdocs.
+Edit the file federated/resources/header.html to create your GSAC web page's header.
+Edit the file federated/htdocs/index.html to create your GSAC home page contents.
+There is a complete HTML footer file, federated/resources/footer.html, for all your GSAC web pages.
+You may change it, if you wish to.  Image files are kept in federated/resources/htdocs.
 
-There is a complete HTML footer file, federated/resources/footer.html, for your GSAC web pages.
-You may change it, if you wish to.
-
-The FederatedSiteManager.java and FederatedResourceManager.java files should NOT be changed. Make no changes to
-any java files in gsac/federated/.
 
 
                            ###########################################
 
 4d. Build and Deploy the Federated GSAC.
 
-To build your federated GSAC, in gsac-code/src/org/gsac/federated/  do
+To build your federated GSAC:
+
+Copy the correct build.xml template file in gsac-code/src/org/gsac/federated/ for your Java version to build.xml,  like
+
+cp build.xml.Java7 build.xml
+
+The build the federated GSAC .war file with:
 
 ant
 
