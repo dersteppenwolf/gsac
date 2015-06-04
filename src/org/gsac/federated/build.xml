@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
+     federated GSAB build.xml for JAVA 6
+
      This build script assumes the source tree is structured as:
      base_directory/
              src
