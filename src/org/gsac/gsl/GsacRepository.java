@@ -71,7 +71,7 @@ import javax.servlet.http.*;
  * do the work of encoding the results (e.g., into HTML, XML, CSV, etc).
  *
  * @author  Jeff McWhirter mcwhirter@unavco.org
- * @version SK Wier improve date-time string formats so not in local time zone
+ * @version SK Wier improve date-time string formats so not in local time zone; many others; latest June 10 2015.
  */
 public class GsacRepository implements GsacConstants {
 
@@ -1918,7 +1918,7 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        //System.err.println("   GsacRepositoryInfo getRepositoryInfo():  abs url ="+ getServlet().getAbsoluteUrl(getUrlBase()) + "   repo name ="+getRepositoryName() );
+        //System.err.println("GSAC:   GsacRepository:getRepositoryInfo():  GOOD Base URL ="+ getServlet().getAbsoluteUrl(getUrlBase()) + "   (repos name ="+getRepositoryName() +")"  );
 
         return myInfo;
     }
@@ -2383,21 +2383,28 @@ public class GsacRepository implements GsacConstants {
     public Object getRemoteObject(String repositoryUrl, String urlPath,
                                   String urlArgs, String output)
             throws Exception {
+
+        // System.err.println("GSAC:    GSACRepository: connect to GSAC URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
+
         boolean     zipit          = false;
         GsacServlet servlet        = getServlet();
         String      thisRepository = "client";
         if (servlet != null) {
             thisRepository = servlet.getAbsoluteUrl(getUrlBase());
         }
+
         String url = repositoryUrl + urlPath + "?" + urlArgs + "&"
-                     + HtmlUtil.args(new String[] {
-            ARG_REMOTEREPOSITORY, thisRepository, ARG_GZIP, zipit + "",
-            ARG_OUTPUT, output
-        });
+                     + HtmlUtil.args(new String[] { ARG_REMOTEREPOSITORY, thisRepository, ARG_GZIP, zipit + "", ARG_OUTPUT, output });
+
+        // LOOK FIX log the URL tried, if this next line fails:
         URLConnection connection = new URL(url).openConnection();
+
         String        userAgent  = getUserAgent();
         if (userAgent != null) {
             connection.setRequestProperty("User-Agent", userAgent);
+        }
+        else {
+            System.err.println("GSAC:    GSACRepository: federated GSAC failed to connect to the remote GSAC URL "+ repositoryUrl); 
         }
         connection.setConnectTimeout(1000 * URL_TIMEOUT_SECONDS);
         InputStream inputStream = connection.getInputStream();
@@ -2405,6 +2412,7 @@ public class GsacRepository implements GsacConstants {
             inputStream = new GZIPInputStream(inputStream);
         }
 
+        //System.err.println("GSAC:    GSACRepository: getRemoteObject; OK DID connect to remote GSAC URL "+ repositoryUrl );
         return decodeObject(IOUtil.readContents(inputStream));
     }
 
@@ -2555,7 +2563,7 @@ public class GsacRepository implements GsacConstants {
         StringBuffer contents = new StringBuffer();
 
         showRepositoryInfo(request, contents, gri, true);// to get Base URL determined by Java from where built (NOT hard-coded by user)
-        //System.err.println("GSAC:    handleRequestView(): gri= "+ gri );  
+        //System.err.println("    GsacRepos: handleRequestView(): where built or gri= "+ gri );  
         // like like GSAC:  debug gri= http://swierd:8080/prototypegsac 
 
         StringBuffer tmp = new StringBuffer();
@@ -2702,19 +2710,25 @@ public class GsacRepository implements GsacConstants {
 
         // to specify the String labeled "Base URL" the Information web page
 
-        String baseURL = info.getUrl();   //this BASE URL is made by Java from system info where built. 
-        // CHANGE alternately, to hard code Base URL, uncomment and revise this line to your GSAC domain URL:
-        // baseURL        = "http://www.somedomain.org/";   // to specify any "BASE URL"  value, which is shown in the  GSAC Information page.
+        //String baseURL = info.getUrl();   //this originally-coded  BASE URL is made by Java from system info where built: NOT the true URL seen by the remote user in a browser. 
+        //System.err.println("GSAC:   showRepositoryInfo() baseURL = "+ baseURL );
+        //String[] urls   = { baseURL };
 
-        String[] urls   = { baseURL };
         String[] labels = { "Base URL" };      // this is where the BASE URL's LABEL is made for the information page
-        //StringBuffer tmp;
+        
+        String BaseURL = getServlet().getAbsoluteUrl(getUrlBase());
+
+        //System.err.println("GSAC:   GsacRepository:showRepositoryInfo():  GOOD Base URL ="+ getServlet().getAbsoluteUrl(getUrlBase())   );
 
         pw.append(HtmlUtil.formTable());
-        for (int i = 0; i < urls.length; i++) {
+
+        pw.append(HtmlUtil.formEntry(msgLabel("Base URL"), BaseURL ));
+
+        //for (int i = 0; i < urls.length; i++) {
             // append the base URL on the info page:
-            pw.append(HtmlUtil.formEntry(msgLabel(labels[i]), urls[i]));
-        }
+            //pw.append(HtmlUtil.formEntry(msgLabel(labels[i]), urls[i]));
+        //}
+
         pw.append(HtmlUtil.formTableClose());
 
         StringBuffer sb = new StringBuffer();
