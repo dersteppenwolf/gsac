@@ -1340,7 +1340,7 @@ public class GsacRepository implements GsacConstants {
      * @return defaults to 8080
      */
     public int getPort() {
-        System.err.println("GSAC:    getPort() set to 8080" );  
+        //System.err.println("GSAC:    getPort() set to 8080" );  
         return getProperty(PROP_PORT, 8080);
     }
 
