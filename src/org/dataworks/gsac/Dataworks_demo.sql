@@ -432,8 +432,9 @@ CREATE TABLE `station` (
   `operator_agency_id` int(3) unsigned DEFAULT NULL,
   `data_publisher_agency_id` int(3) unsigned DEFAULT NULL,
   `network_id` int(5) unsigned NOT NULL,
-  `station_image_URL` varchar(100) DEFAULT NULL,
-  `time_series_URL` varchar(100) DEFAULT NULL,
+  `mirrored_from_URL` varchar(120) DEFAULT NULL,
+  `station_image_URL` varchar(120) DEFAULT NULL,
+  `time_series_URL` varchar(120) DEFAULT NULL,
   PRIMARY KEY (`station_id`),
   KEY `style_id_idx` (`style_id`),
   KEY `status_id_idx` (`status_id`),
@@ -524,4 +525,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-21 14:39:52
+-- Dump completed on 2015-06-11 14:39:52
