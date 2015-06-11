@@ -2384,7 +2384,7 @@ public class GsacRepository implements GsacConstants {
                                   String urlArgs, String output)
             throws Exception {
 
-        // System.err.println("GSAC:    GSACRepository: connect to GSAC URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
+        System.err.println("GSAC:    GSACRepository: connect to GSAC URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
 
         boolean     zipit          = false;
         GsacServlet servlet        = getServlet();
@@ -2398,21 +2398,26 @@ public class GsacRepository implements GsacConstants {
 
         // LOOK FIX log the URL tried, if this next line fails:
         URLConnection connection = new URL(url).openConnection();
+        System.err.println("GSAC:    GSACRepository: getRemoteObject; OK DID connect to remote GSAC URL "+ repositoryUrl );
 
         String        userAgent  = getUserAgent();
+        System.err.println("GSAC:    GSACRepository: getRemoteObject;    try connection get use agent for "+ repositoryUrl );
         if (userAgent != null) {
             connection.setRequestProperty("User-Agent", userAgent);
         }
         else {
-            System.err.println("GSAC:    GSACRepository: federated GSAC failed to connect to the remote GSAC URL "+ repositoryUrl); 
+            System.err.println("GSAC:    GSACRepository: federated GSAC failed connection.setRequestProperty('User-Agent', userAgent) for "+ repositoryUrl); 
         }
+
         connection.setConnectTimeout(1000 * URL_TIMEOUT_SECONDS);
+        System.err.println("GSAC:    GSACRepository: getRemoteObject;    try connection.getInputStream() for "+ repositoryUrl );
         InputStream inputStream = connection.getInputStream();
+        System.err.println("GSAC:    GSACRepository: getRemoteObject; OK DID connection.getInputStream() for "+ repositoryUrl );
+
         if (zipit) {
             inputStream = new GZIPInputStream(inputStream);
         }
 
-        //System.err.println("GSAC:    GSACRepository: getRemoteObject; OK DID connect to remote GSAC URL "+ repositoryUrl );
         return decodeObject(IOUtil.readContents(inputStream));
     }
 
@@ -2550,13 +2555,10 @@ public class GsacRepository implements GsacConstants {
 
         sb.append("<p>For many more details and examples of GSAC API requests, see the GSAC User Guide. </p> ");
 
-        sb.append("<p>This link, Repository information xml, is an XML file of all capabilities provided by this GSAC:</p>");
-
-        //sb.append(HtmlUtil.p());
-
+        sb.append("<p>This link, Repository information xml, is an XML file of all capabilities provided by this GSAC: &nbsp; ");
         sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?" + ARG_OUTPUT + "=xml", msg("Repository information xml")));
+        sb.append("   The Repository information xml file is read by other GSAC installations operating a federated GSAC incorporating this GSAC.</p>");
 
-        sb.append("<p>The Repository information xml is read by other GSAC installations if they operate a federated GSAC incorporating this GSAC.</p>");
         sb.append("<p>The Base URL, next, is used in composing API queries to this GSAC. ");
         sb.append("<br>The following four sections list all capabilities (option-argument pairs) used in composing API queries to this GSAC. ");
 
