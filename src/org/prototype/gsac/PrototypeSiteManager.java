@@ -147,19 +147,32 @@ public class PrototypeSiteManager extends SiteManager {
                CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
             // search for sites INSTALLED spanning a date range; entry box is a "Date Range" pair of boxes;
-            // output of site search is an html table with "Date Range" column , showing station's installed date until now; see gsl/output/HtmlOutputHandler.java.
+            // output of site search is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
+            // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
+            // GsacArgs.java    public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
+            // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
+            // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
             Capability sitedateRange =
-               initCapability( new Capability(ARG_SITE_DATE_FROM,     "Site Includes Dates in Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-               "The site was INSTALLED in these dates (not always with data)", "Site dates");
+               initCapability( new Capability(ARG_SITE_DATE, "Site Operated in Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
+               "site in", "Site in");
             capabilities.add(sitedateRange);
             
+
             // search for sites with actual instrument DATA in a date range; entry box is a "Date Range" pair of boxes;
             // sites may be installed but have gaps with no data
-            /* FIX use this when have implemented code near line 492 
+            // FIX use this when have implemented code near line 492 
+            /*
             Capability siteDatadateRange =
                initCapability( new Capability(ARG_SITE_DATADATE_FROM,  "Site has Data in Dates Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
                "Sites with instrumental DATA in a date range", "Site data dates");
             capabilities.add(siteDatadateRange);
+            */
+            
+            /*
+            Capability ldt =
+                initCapability(     new Capability( ARG_SITE_LATEST_DATA_TIME,  "Site has Latest Data Time >=",   Capability.TYPE_STRING), 
+                       CAPABILITY_GROUP_SITE_QUERY, "Site has latest data time >=",  "Site has Latest Data time >=");
+            capabilities.add(ldt);
             */
             
 
@@ -474,17 +487,33 @@ public class PrototypeSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query using the station's INSTALLED dates 
-        //      [java]    SiteManager: station UNPM installed from date 2007-08-07
-        //      [java]    SiteManager: station UNPM latest data date   2015-03-23
+        // query for the station's dates in use
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
-                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
-            // debug System.err.println("   SiteManager: ok 1") ;
+                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date",
+                    Tables.STATION.COL_INSTALLED_DATE,
+                    Tables.STATION.COL_RETIRED_DATE));
         } catch (Exception e) {
-            // debug System.err.println("   SiteManager: fails 1") ;
             throw new IllegalArgumentException(e);
         }
+
+        // query using the station's INSTALLED dates 
+        /* try {
+            clauses.addAll(getDateRangeClause(request, msgBuff,
+                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_RETIRED_DATE ));
+            // debug System.err.println("   SiteManager: ok line 490") ;
+        } catch (Exception e) {
+            System.err.println("   SiteManager: fails line 490") ;
+            throw new IllegalArgumentException(e);
+        } */
+
+
+        /*
+        if (request.defined(ARG_SITE_LATEST_DATA_TIME)) {
+            clauses.add( Clause.ge( lastdatatime, ARG_SITE_LATEST_DATA_TIME);
+            //appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
+        }
+         */
 
         // query using the station's DATA dates 
         /* FIX must do query over the 1 or more equip sessions' start and end times:
@@ -519,17 +548,13 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for province " + values.get(0)) ;
         }
 
-
-        // query for the station's networks; "group" is GSAC jargon for gnss network
+        // query for the station's networks; "GROUP" or group is GSAC jargon for instrumented networks' names
         if (request.defined(ARG_SITE_GROUP)) {
             List<String> values = (List<String>) request.get(ARG_SITE_GROUP, new ArrayList());
             clauses.add(Clause.or(getNetworkClauses(values, msgBuff)));  // see method def getNetworkClauses () below
         }
 
- 
         // LOOK might add code for each case below which has values.get(0), to use a loop over i>1 values.get(i) if present, so can make a selection list
-
-
         
         if (request.defined(GsacArgs.ARG_SITE_TYPE)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList(GsacArgs.ARG_SITE_TYPE);
@@ -612,7 +637,7 @@ public class PrototypeSiteManager extends SiteManager {
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
         // LOOK debug  DEBUG print show search sql 
-        //System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
+        System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -678,7 +703,6 @@ public class PrototypeSiteManager extends SiteManager {
     public List<Clause> getDateRangeClause(GsacRequest request, StringBuffer msgBuff, String fromArg, String toArg,
                                            String argTxt, String colStart, String colEnd) 
                         throws Exception {
-
 
         List<Clause> clauses = new ArrayList<Clause>();
         // TODO: check the logic of the date range search
@@ -810,9 +834,10 @@ public class PrototypeSiteManager extends SiteManager {
         }
 
 
-        // set data date range at this station:
+        // set installed date range at this station:
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
-        Date toDate=  readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME );
+        Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE );
+        //Date toDate=  readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME );
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
         if (toDate != null )
             {
@@ -991,7 +1016,9 @@ public class PrototypeSiteManager extends SiteManager {
     public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {
         readIdentificationMetadata(gsacResource);
+        // For the ONE station with the input 4 char ID number gsacResource.getId(), get the metadata for each station session:
         readEquipmentMetadata(gsacResource);
+        // LOOK for data times search at this station,Next check equip session date ranges in the gsacResource thing.
     }
 
     /**
@@ -1100,7 +1127,7 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * For the station with the input 4 char ID number gsacResource.getId(), get the metadata for each station session, when
+     * For the ONE station with the input 4 char ID number gsacResource.getId(), get the metadata for each station session, when
      * generated from the antenna and receiver sessions.
      *
      * @param gsacResource _more_
@@ -1111,7 +1138,7 @@ public class PrototypeSiteManager extends SiteManager {
         //        System.err.println("      called  read EquipmentMetadata");
         Date indate=null;
         Date outdate=null;
-        Date[] dateRange=null;
+        Date[] datadateRange=null;
         List<GnssEquipment>  equipmentList  = new ArrayList<GnssEquipment>();
         List<Date>  startDates = new ArrayList<Date>();
         List<Date>  stopDates =  new ArrayList<Date>();
@@ -1207,7 +1234,7 @@ public class PrototypeSiteManager extends SiteManager {
                   outdate = dateformatter.parse(odt);
                }
                colCnt++;
-               dateRange = new Date[] { indate, outdate };
+               datadateRange = new Date[] { indate, outdate };
 
                if (null!=indate && null!=outdate && indate.after(outdate)) {
                     System.err.println("   GSAC DB values ERROR:  Dates of equip config session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +" is >  end time: "+ outdate);
@@ -1321,10 +1348,10 @@ public class PrototypeSiteManager extends SiteManager {
                 }
 
                // construct a GSAC "GnssEquipment" object with these values:
-               // public GnssEquipment(Date[] dateRange, String antennatype, String antennaSN, String dometype, String domeSerial, String receiver, String receiverSerial, 
+               // public GnssEquipment(Date[] datadateRange, String antennatype, String antennaSN, String dometype, String domeSerial, String receiver, String receiverSerial, 
                //                       String receiverFirmware,  double zoffset)  
                GnssEquipment equipment_session =
-                   new GnssEquipment(dateRange, ant_type, ant_serial_number, dome_type, dome_serial_number, rcvr_type, rec_serial_number, rec_firmware_vers,antenna_height);
+                   new GnssEquipment(datadateRange, ant_type, ant_serial_number, dome_type, dome_serial_number, rcvr_type, rec_serial_number, rec_firmware_vers,antenna_height);
 
                // add name of sat systems like "GPS" 
                equipment_session.setSatelliteSystem(sat_system);
@@ -1343,10 +1370,13 @@ public class PrototypeSiteManager extends SiteManager {
         // for every item equipment_session in the local equipmentList, add it to the equipmentGroup 
         for (GnssEquipment equipment_session : equipmentList) {
             if (equipmentGroup == null) {
-                gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup()); // LOOK why add null to this list?
+                gsacResource.addMetadata(equipmentGroup = new GnssEquipmentGroup()); //  add null object of correct type
             }
             equipmentGroup.add(equipment_session);
         }
+
+        // LOOK what is 'returned' by this method?  probably has updated the input arg gsacResource.
+        // gsacResource has a one or more GnssEquipment equipment_session (s),  which has (have) a Date[] object perhaps called like datadateRange
 
     }  // end of readEquipmentMetadata
 
