@@ -479,6 +479,18 @@ Install GSAC core code, as described in the GSAC web site, repeated here:
 
 4b. Specify connections to remote GSACs.
 
+Edit resources/gsac.properties:
+ 
+Set your values for:
+
+    ##Basic information for this repository
+    gsac.baseurl=/gsacfederated
+    gsac.repository.name=geoCenter Federated GSAC Repository
+    gsac.repository.description=Provides access to a set of external repositories
+
+Values shown here are only examples.
+
+
 Federated GSACs use the services provided by other GSAC installations, usually at remote locations. 
 You must tell your federated GSAC about the other GSACs to use.  Federated GSACs do not use a local database.
 
@@ -503,7 +515,7 @@ GSACs to use.  Lines beginning with '#' are comments.  Here is an example of the
     #gsac.federated.<id>.icon=url   To link to small icon for that remote repository. Will be used inside web page tables of results,
                                     # so a height < 50 pixels is good.
 
-    # examples (URLS shown are non-working):
+    # examples  only:
 
     gsac.federated.servers=geoazur,noanet
 
