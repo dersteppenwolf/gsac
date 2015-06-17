@@ -59,10 +59,11 @@ import java.io.OutputStream;
  * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/dataworks/gsac/DataworksSiteManager.java.
  *
  * For the Dataworks GSAC.
- * Code in this SiteManager class is highly dependent on the db schema code and its names for tables and columns in tables, in src/org/dataworks/gsac/database/Tables.java
- * This instance of the SiteManager class uses the GSAC Dataworks database schema.
  *
- * This class is one major part of making a new GSAC server instance; it allows a particular GSAC to query its database, and handles the results from queries:
+ * Code in this SiteManager class is highly dependent on the database design.  This code is designed to work with the corresponding UNAVCO GSAC Dataworks database for MySQL.
+ * This code uses database names for tables and columns in database tables, coded for GSAC Java code in src/org/dataworks/gsac/database/Tables.java
+ *
+ * The *SiteManager.java is one major part of making a GSAC server instance; it allows a particular GSAC to query its database, and handles the results from queries:
  *
  * - what metadata may be queried on, that is used for searches or selections, in this GSAC repository (see method doGetQueryCapabilities below)
  *   either by the web page forms or via the API URL arguments, 
@@ -75,8 +76,8 @@ import java.io.OutputStream;
  * See NETWORKS for alternate code to allow two or more network names per site; this code is commented out to match the initial Dataworks specification of one network per site.
  * The database schema is simpler for more than one netowrk.  More than one network per station may be enable using this code.
  * 
- * @author  Jeff McWhirter, 2011. A short template for any SiteManager.java, without code for querying a database.
- * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014, ... 21 May 2015
+ * @author  Jeff McWhirter, 2011. A short template for any SiteManager.java, without any code for querying a database.
+ * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014 to (at least) 17 June 2015
  */
 public class DataworksSiteManager extends SiteManager {
 
@@ -165,14 +166,6 @@ public class DataworksSiteManager extends SiteManager {
                initCapability( new Capability(ARG_SITE_DATE,               "Site installed during date range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site in", "Site in");
             capabilities.add(sitedateRange);
-
-            // search on latest data time
-            /*
-            Capability ldt =
-                initCapability( new Capability( ARG_SITE_LATEST_DATA_TIME,  "Site Latest Data Time >=",   Capability.TYPE_DATE),
-                       CAPABILITY_GROUP_SITE_QUERY, "Site has latest data time >=",  "Site has Latest Data time >=");
-            capabilities.add(ldt);
-            */
 
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
@@ -469,41 +462,6 @@ public class DataworksSiteManager extends SiteManager {
 
         // debug System.err.println("   SiteManager: grc gives search clauses so far="+clauses) ;
 
-        /*
-        // model from file manager: new 6 may
-        // use the data range requested by the user, from the input from web search form / API, to search on the "publish time" of data files:
-        try {
-            //Date[] usersDateRange = request.getDateRange(ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, null, null);
-            Date[] usersDateRange = request.getDateRange(ARG_SITE_DATE, ARG_SITE_DATE, null, null);
-            System.err.println("   SiteManager:      getResourceClauses: user data date range query VALUES "+usersDateRange[0]+"   "+usersDateRange[1] ) ;
-            //
-            // to compare the pub date to the final date in range of interest: pub date must be >=  [0], the  1st in users date range
-            if (usersDateRange[0] != null) {
-                // wrangle the final date into a format you can use in a SQL query
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(usersDateRange[0]);
-                java.sql.Date fromDate = new java.sql.Date(cal.getTimeInMillis());
-                clauses.add(Clause.ge(Tables.STATION.COL_INSTALLED_DATE, fromDate));
-                appendSearchCriteria(msgBuff, "data date&gt;=", "" + format(usersDateRange[0]));
-            }
-            if (usersDateRange[1] != null) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(usersDateRange[1]);
-                // CHECK do this to NOT shift one day earlier, both user dates are the same.  do   3 lines:
-                cal.add(Calendar.HOUR, 23);
-                cal.add(Calendar.MINUTE, 59);
-                cal.add(Calendar.SECOND, 59);
-                java.sql.Date sqlEndDate = new java.sql.Date(cal.getTimeInMillis());
-                clauses.add(Clause.le(Tables.STATION.COL_LATEST_DATA_TIME, sqlEndDate));
-                appendSearchCriteria(msgBuff, "data date&le;=", "" + format(usersDateRange[1]));
-             }
-        } catch (Exception e) {
-            System.err.println("   SiteManager: fails 1") ;
-            throw new IllegalArgumentException(e);
-        } 
-        // end new
-        */
-        
 
         // Query for the single network name allowed in the default Dataworks db scheme for this station 
         // When a set of network names is required; see code below.
@@ -597,12 +555,12 @@ public class DataworksSiteManager extends SiteManager {
             //System.err.println("   SiteManager: query for locale " + values.get(0)) ;
         }
 
-        // for testing: 
-        // debug System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
-        // to show clauses like
-        //  [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
-        // which creates, later, the sql based query or API to GSAC:
-        // new request /somegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
+        //     debug / for testing: 
+        // System.err.println("   SiteManager: getResourceClauses created clauses="+clauses) ;
+        //     to show clauses like
+        //       [(station.networks = 'BOULDER GNSS' OR station.networks LIKE '%BOULDER GNSS%')]
+        //      which creates, later, the sql based query or API to GSAC:
+        //      new request /somegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
 
         return clauses;
     } // end of getResourceClauses
