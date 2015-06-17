@@ -486,7 +486,6 @@ CREATE TABLE `station` (
   `Z` double DEFAULT NULL,
   `installed_date` datetime DEFAULT NULL,
   `retired_date` datetime DEFAULT NULL,
-  `latest_data_time` datetime DEFAULT NULL,
   `agency_id` int(3) unsigned DEFAULT NULL,
   `access_id` int(3) unsigned DEFAULT NULL,
   `style_id` int(3) unsigned DEFAULT NULL,
