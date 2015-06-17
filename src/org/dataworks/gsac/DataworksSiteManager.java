@@ -154,14 +154,26 @@ public class DataworksSiteManager extends SiteManager {
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
-            // site search by "Data Date Range" pair of boxes;
-            // output of site search is an html table with "Date Range" column , showing station's installed date until now; 
-            // see gsl/output/HtmlOutputHandler.java.
+            // Search for sites INSTALLED and overlapping a requested date range; entry box is a "Date Range" pair of boxes;
+            // Output of all site searchs is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
+            // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
+            // GsacArgs.java:
+            // public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
+            // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
+            // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
             Capability sitedateRange =
-                               initCapability( new Capability(ARG_SITE_DATE, "Site spans dates in range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-                               "The site was installed between these dates (but may have data gaps)", "Site installed dates");
+               initCapability( new Capability(ARG_SITE_DATE,               "Site installed during date range", Capability.TYPE_DATERANGE),
+                      CAPABILITY_GROUP_SITE_QUERY, "Site in", "Site in");
             capabilities.add(sitedateRange);
-            // debug System.err.println("   SiteManager:      show the entry box for data at a site between two dates") ;
+
+            // search on latest data time
+            /*
+            Capability ldt =
+                initCapability( new Capability( ARG_SITE_LATEST_DATA_TIME,  "Site Latest Data Time >=",   Capability.TYPE_DATE),
+                       CAPABILITY_GROUP_SITE_QUERY, "Site has latest data time >=",  "Site has Latest Data time >=");
+            capabilities.add(ldt);
+            */
+
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
 
@@ -444,20 +456,19 @@ public class DataworksSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query using the station's data available dates 
-        //      [java]    SiteManager: station UNPM installed from date 2007-08-07
-        //      [java]    SiteManager: station UNPM latest data date   2015-03-23
+        // query for the dates station operated: (see code above setting ARG_SITE_DATE)
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
-                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
-            //System.err.println("   SiteManager: ok 1") ;
-            // debug System.err.println("   SiteManager:  date clause =" + getDateRangeClause(request, msgBuff,
-            //        ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ) ); 
+                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date",
+                    Tables.STATION.COL_INSTALLED_DATE,
+                    Tables.STATION.COL_RETIRED_DATE));
         } catch (Exception e) {
-            // debug System.err.println("   SiteManager: fails 1") ;
             throw new IllegalArgumentException(e);
-        } 
+        }
+
+
         // debug System.err.println("   SiteManager: grc gives search clauses so far="+clauses) ;
+
         /*
         // model from file manager: new 6 may
         // use the data range requested by the user, from the input from web search form / API, to search on the "publish time" of data files:
@@ -772,21 +783,24 @@ public class DataworksSiteManager extends SiteManager {
 
         // Set additional values in the site object:
 
-        // set data date range at this station:
+        // set the site-was-installed data range at this station:
+        // (Not the dates data obd files are available at this site.)
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
-        Date toDate=  readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME );
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
+
+        Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE );
         if (toDate != null )
             {
-            ; // System.err.println("   SiteManager: station " +fourCharId+ " has latest data date to   "+toDate);
+            ; // System.err.println("   SiteManager: station " +fourCharId+ " has retired date "+toDate);
             }
         else
             {
             toDate = new Date(); // db value is null, so use "now" ie still operating
-            //System.err.println("\n   SiteManager: station " +fourCharId+ " latest data date was NULL; now is "+toDate);
+            //System.err.println("\n   SiteManager: station " +fourCharId+ " retired date was NULL; now is "+toDate);
             }
         site.setToDate(toDate);
-        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";    latest data date "+ site.getToDate());
+
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
 
         /*
          *
