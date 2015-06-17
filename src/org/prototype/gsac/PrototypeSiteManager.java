@@ -146,34 +146,23 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
-            // search for sites INSTALLED spanning a date range; entry box is a "Date Range" pair of boxes;
-            // output of site search is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
+            // Search for sites INSTALLED and overlapping a requested date range; entry box is a "Date Range" pair of boxes;
+            // Output of all site searchs is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
             // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
-            // GsacArgs.java    public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
+            // GsacArgs.java:
+            // public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
             // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
             Capability sitedateRange =
-               initCapability( new Capability(ARG_SITE_DATE, "Site Operated in Date Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-               "site in", "Site in");
+               initCapability( new Capability(ARG_SITE_DATE,               "Site installed during date range", Capability.TYPE_DATERANGE),
+                      CAPABILITY_GROUP_SITE_QUERY, "Site installed", "Site installed");
             capabilities.add(sitedateRange);
-            
 
-            // search for sites with actual instrument DATA in a date range; entry box is a "Date Range" pair of boxes;
-            // sites may be installed but have gaps with no data
-            // FIX use this when have implemented code near line 492 
-            /*
-            Capability siteDatadateRange =
-               initCapability( new Capability(ARG_SITE_DATADATE_FROM,  "Site has Data in Dates Range", Capability.TYPE_DATERANGE), CAPABILITY_GROUP_SITE_QUERY, 
-               "Sites with instrumental DATA in a date range", "Site data dates");
-            capabilities.add(siteDatadateRange);
-            */
             
-            /*
-            Capability ldt =
-                initCapability(     new Capability( ARG_SITE_LATEST_DATA_TIME,  "Site has Latest Data Time >=",   Capability.TYPE_STRING), 
-                       CAPABILITY_GROUP_SITE_QUERY, "Site has latest data time >=",  "Site has Latest Data time >=");
-            capabilities.add(ldt);
-            */
+            // search on latest data time at a site -- > should do this in Search Files code, not here.
+            //Capability ldt = initCapability( new Capability( ARG_SITE_LATEST_DATA_TIME,  "Site Latest Data Time >=",   Capability.TYPE_DATE), 
+            //           CAPABILITY_GROUP_SITE_QUERY, "Site has latest data time >=",  "Site has Latest Data time >=");
+            //capabilities.add(ldt);
             
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
@@ -446,8 +435,8 @@ public class PrototypeSiteManager extends SiteManager {
         // declare (empty) item to return:
         List<Clause> clauses = new ArrayList();
 
-        String       latCol  = Tables.STATION.COL_LATITUDE_NORTH;
-        String       lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
+        String  latCol  = Tables.STATION.COL_LATITUDE_NORTH;
+        String  lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
 
         // query for the station's 4 character ID
         if (request.defined(ARG_SITE_CODE)) {
@@ -487,7 +476,7 @@ public class PrototypeSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query for the station's dates in use
+        // query for the dates station operated: (see code above setting ARG_SITE_DATE)
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
                     ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date",
@@ -497,35 +486,7 @@ public class PrototypeSiteManager extends SiteManager {
             throw new IllegalArgumentException(e);
         }
 
-        // query using the station's INSTALLED dates 
-        /* try {
-            clauses.addAll(getDateRangeClause(request, msgBuff,
-                    ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_RETIRED_DATE ));
-            // debug System.err.println("   SiteManager: ok line 490") ;
-        } catch (Exception e) {
-            System.err.println("   SiteManager: fails line 490") ;
-            throw new IllegalArgumentException(e);
-        } */
 
-
-        /*
-        if (request.defined(ARG_SITE_LATEST_DATA_TIME)) {
-            clauses.add( Clause.ge( lastdatatime, ARG_SITE_LATEST_DATA_TIME);
-            //appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
-        }
-         */
-
-        // query using the station's DATA dates 
-        /* FIX must do query over the 1 or more equip sessions' start and end times:
-        try {
-            clauses.addAll(getDateRangeClause(request, msgBuff,
-                    ARG_SITE_DATADATE_FROM, ARG_SITE_DATADATE_TO, "Site data dates", Tables.STATION.COL_INSTALLED_DATE, Tables.STATION.COL_LATEST_DATA_TIME ));
-            // debug System.err.println("   SiteManager: ok 1") ;
-        } catch (Exception e) {
-            // debug System.err.println("   SiteManager: fails 1") ;
-            throw new IllegalArgumentException(e);
-        }
-        */
 
         // query for the station's place name 
         if (request.defined(GsacExtArgs.ARG_CITY)) {
@@ -837,19 +798,18 @@ public class PrototypeSiteManager extends SiteManager {
         // set installed date range at this station:
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
         Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE );
-        //Date toDate=  readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME );
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
         if (toDate != null )
             {
-            ; // System.err.println("   SiteManager: station " +fourCharId+ " has latest data date to   "+toDate);
+            ; // System.err.println("   SiteManager: station " +fourCharId+ " was installed to   "+toDate);
             }
         else
             {
-            toDate = new Date(); // db value is null, so use "now" ie still operating
-            //System.err.println("\n   SiteManager: station " +fourCharId+ " latest data date was NULL; now is "+toDate);
+            ; //  toDate = new Date(); // db value is null, so use "now" ie still operating
+            //System.err.println("\n   SiteManager: station " +fourCharId+ " retired date is NULL; so is now, "+toDate);
             }
         site.setToDate(toDate);
-        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";    latest data date "+ site.getToDate());
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
 
 
