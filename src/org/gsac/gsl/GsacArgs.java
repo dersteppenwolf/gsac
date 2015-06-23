@@ -68,16 +68,14 @@ public interface GsacArgs {
     public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
     public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
 
-    /* to search for sites with data files in date range */
+    /** to search for sites with DATA in date range 
     public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
     public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
     public static final String ARG_SITE_DATADATE_TO  =    ARG_SITE_DATADATE + ".to";
-
-    /** publish date for files 
-    public static final String ARG_FILE_PUBLISHDATE =     ARG_FILE_PREFIX + "publishdate";
-    public static final String ARG_FILE_PUBLISHDATE_FROM =ARG_FILE_PUBLISHDATE + ".from";
-    public static final String ARG_FILE_PUBLISHDATE_TO =  ARG_FILE_PUBLISHDATE + ".to";
     */
+
+    /** to search for sites most recent data */
+    public static final String ARG_SITE_LATEST_DATA_TIME = ARG_SITE_PREFIX + "latestdatatime";
 
     /** _more_ */
     public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
@@ -92,76 +90,59 @@ public interface GsacArgs {
     public static final String ARG_SITE_MODIFYDATE = ARG_SITE_PREFIX + "modifydate";
 
     /** _more_ */
-    public static final String ARG_SITE_MODIFYDATE_FROM = ARG_SITE_MODIFYDATE
-                                                          + ".from";
+    public static final String ARG_SITE_MODIFYDATE_FROM = ARG_SITE_MODIFYDATE + ".from";
 
     /** _more_ */
-    public static final String ARG_SITE_MODIFYDATE_TO = ARG_SITE_MODIFYDATE
-                                                        + ".to";
-
-
-
+    public static final String ARG_SITE_MODIFYDATE_TO = ARG_SITE_MODIFYDATE + ".to";
 
     /** _more_ */
-    public static final String ARG_SITE_LOCATION = ARG_SITE_PREFIX
-                                                   + "location";
+    public static final String ARG_SITE_LOCATION = ARG_SITE_PREFIX + "location";
 
     /** _more_ */
-    public static final String ARG_SITE_HASSTREAM = ARG_SITE_PREFIX
-                                                    + "hasstream";
+    public static final String ARG_SITE_HASSTREAM = ARG_SITE_PREFIX + "hasstream";
 
     /** _more_ */
-    public static final String ARG_SITE_LATITUDE = ARG_SITE_PREFIX
-                                                   + "latitude";
+    public static final String ARG_SITE_LATITUDE = ARG_SITE_PREFIX + "latitude";
 
     /** _more_ */
-    public static final String ARG_SITE_LONGITUDE = ARG_SITE_PREFIX
-                                                    + "longitude";
+    public static final String ARG_SITE_LONGITUDE = ARG_SITE_PREFIX + "longitude";
 
     /** _more_ */
-    public static final String ARG_SITE_ELEVATION = ARG_SITE_PREFIX
-                                                    + "elevation";
+    public static final String ARG_SITE_ELEVATION = ARG_SITE_PREFIX + "elevation";
 
 
     /** _more_ */
     public static final String SEARCHTYPE_SUFFIX = ".searchtype";
 
     /** _more_ */
-    public static final String ARG_SITE_CODE_SEARCHTYPE = ARG_SITE_CODE
-                                                          + SEARCHTYPE_SUFFIX;
+    public static final String ARG_SITE_CODE_SEARCHTYPE = ARG_SITE_CODE + SEARCHTYPE_SUFFIX;
 
     /** _more_ */
     public static final String ARG_SITE_NAME = ARG_SITE_PREFIX + "name";
 
     /** _more_ */
-    public static final String ARG_SITE_NAME_SEARCHTYPE = ARG_SITE_NAME
-                                                          + SEARCHTYPE_SUFFIX;
-
+    public static final String ARG_SITE_NAME_SEARCHTYPE = ARG_SITE_NAME + SEARCHTYPE_SUFFIX;
 
 
     /** _more_ */
     public static final String ARG_SITENAME = ARG_SITE_NAME;
 
     /** _more_ */
-    public static final String ARG_SITENAME_SEARCHTYPE =
-        ARG_SITE_NAME_SEARCHTYPE;
-
+    public static final String ARG_SITENAME_SEARCHTYPE = ARG_SITE_NAME_SEARCHTYPE;
 
 
     /** _more_ */
     public static final String ARG_SITECODE = ARG_SITE_CODE;
 
     /** _more_ */
-    public static final String ARG_SITECODE_SEARCHTYPE =
-        ARG_SITE_CODE_SEARCHTYPE;
+    public static final String ARG_SITECODE_SEARCHTYPE = ARG_SITE_CODE_SEARCHTYPE;
 
     /** _more_ */
     public static final String ARG_SUFFIX_GROUP = "group";
 
 
     /** _more_ */
-    public static final String ARG_SITE_GROUP = ARG_SITE_PREFIX
-                                                + ARG_SUFFIX_GROUP;
+    public static final String ARG_SITE_GROUP = ARG_SITE_PREFIX + ARG_SUFFIX_GROUP;
 
     /** _more_ */
     public static final String ARG_SITE_TYPE = ARG_SITE_PREFIX + "type";
@@ -169,11 +150,12 @@ public interface GsacArgs {
     /** _more_ */
     public static final String ARG_SITE_STATUS = ARG_SITE_PREFIX + "status";
 
-
     /** _more_ */
     public static final String[] SITE_ARGS = { ARG_SITE_CODE, ARG_SITENAME,
             ARG_SITE_TYPE, ARG_SITE_GROUP, ARG_SITE_STATUS };
 
+    /** _more_ */
+    public static final String ARG_SITE_MIRROR_FROM_URL = ARG_SITE_PREFIX + "mirrorURL";
 
     /** _more_ */
     public static final String SORT_ORDER_ASCENDING = "ascending";
@@ -220,12 +202,12 @@ public interface GsacArgs {
     public static final String SORT_FILE_DATADATE = ARG_FILE_PREFIX + "datadate";
 
     /** file size in bytes; . */
-    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + ".filesize";
+    public static final String ARG_FILE_SIZE = ARG_FILE_PREFIX + "filesize";
     public static final String ARG_FILE_SIZEMAX = ARG_FILE_SIZE + ".max";
     public static final String ARG_FILE_SIZEMIN = ARG_FILE_SIZE + ".min";
 
     /** file size in bytes; used in FileManager.java code*/
-    public static final String ARG_FILE_FILESIZE       = ARG_FILE_PREFIX + ".filesize";
+    public static final String ARG_FILE_FILESIZE       = ARG_FILE_PREFIX + "filesize";
     public static final String ARG_FILESIZE_MAX        = ARG_FILE_FILESIZE + ".max";
     public static final String ARG_FILESIZE_MIN        = ARG_FILE_FILESIZE + ".min";
 
