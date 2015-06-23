@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -20,17 +20,12 @@
 
 package org.gsac.gsl;
 
-
 import org.gsac.gsl.model.*;
-
-
 import org.gsac.gsl.util.*;
 
 import ucar.unidata.xml.XmlUtil;
 
 import java.io.PrintWriter;
-
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -109,6 +104,9 @@ public class Capability {
     /** _more_ */
     public static final String TYPE_DATERANGE = "date_range";
 
+    /** _more_ */
+    public static final String TYPE_DATE = "date";
+
     /** _more_  new 15 Oct 2103 */
     public static final String TYPE_FILETYPE = "file.type";
 
@@ -121,8 +119,10 @@ public class Capability {
     /** _more_ */
     public static final String TYPE_LABEL = "label";
 
-    /** _more_  new 4 feb 2105 */
+    /** _more_  */
     public static final String TYPE_FILE_FORMAT = "file.format";
+
+    /** _more_  */
     public static final String TYPE_TRF         = "file.trf";
 
 
