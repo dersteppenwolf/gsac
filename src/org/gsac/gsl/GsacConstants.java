@@ -99,7 +99,8 @@ public interface GsacConstants extends GsacArgs {
     public static final int DEFAULT_LIMIT = 500;
 
     /**  Fran says to use 5000. */
-    public static final int MAX_LIMIT = 5000;
+    /* June 17 2015 Fran complains about the limit of "only" 5000; now she wants 9600 or more. So raise it to 20000. */
+    public static final int MAX_LIMIT = 20000;
 
     /** _more_ */
     public static final String TAG_CAPABILITIES = "capabilities";
