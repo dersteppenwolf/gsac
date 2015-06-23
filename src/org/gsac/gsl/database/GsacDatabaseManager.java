@@ -24,22 +24,21 @@ package org.gsac.gsl.database;
 /* ************************************************************
  *
  * To choose a Java 1.7 or Java 1.6 build of GSAC:
- * Find comments in this file with " Java ", and use
- * the Java 1.7 or Java 1.6 code lines for the version needed.
+ * Find code lines in this file with this comment:
+        // Choose either java 1.6 or 1.7:
+ * and un-comment the code lines for the version needed.
  * There are three sets of such code choices.
- * All changes are caused by changes in method names in Apache commons 
- * from Java 1.6 to Java 1.7.
+ * All changes are caused by changes in method names in Apache commons from Java 1.6 to Java 1.7.
  * 
  *************************************************************
  */
 
 
-//            Choose Java version:
-//
+// Choose either java 1.6 or 1.7:
 //  for Java 1.6 version, use this one line 
-import org.apache.commons.dbcp.BasicDataSource;
+//import org.apache.commons.dbcp.BasicDataSource;
 //  for Java 1.7 version, use this one line
-//import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 
 // for either 1.6 or 1.7, use all these imports:
@@ -282,11 +281,11 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         BasicDataSource dataSource = new BasicDataSource();
 
 
-        // to choose java 1.6 or 1.7:
+        // Choose either java 1.6 or 1.7:
         //  Java 1.6 version: 
-        dataSource.setMaxActive(100);
+        //dataSource.setMaxActive(100);
         //  Java 1.7 version: 
-        //dataSource.setMaxTotal(100);
+        dataSource.setMaxTotal(100);
 
 
         dataSource.setMaxIdle(100);
@@ -296,13 +295,13 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         dataSource.setUrl(jdbcUrl);
 
 
-        // to choose java 1.6 or 1.7:
+        // Choose either java 1.6 or 1.7:
         //  Java 1.6 version: 
-        dataSource.setMaxWait(1L);
+        //dataSource.setMaxWait(1L);
         //dataSource.setRemoveAbandoned(true);
         // Java 1.7 version: 
-        //dataSource.setMaxWaitMillis(1L);
-        //dataSource.setRemoveAbandonedOnBorrow(true); 
+        dataSource.setMaxWaitMillis(1L);
+        dataSource.setRemoveAbandonedOnBorrow(true); 
 
 
         //60 seconds
@@ -711,10 +710,23 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
             throws Exception {
         Connection connection = getConnection();
         try {
+
+             /*
+            System.err.println ("\n    SELECT what  = " + what);
+            System.err.println ("    from tables  = " + tables.toString() );
+            //System.err.println ("    clause  = " + clause.toString());
+            //System.err.println ("    sqlBetweenFromAndWhere  = " + sqlBetweenFromAndWhere );
+            if (suffixSql.equals( "file.datadate") ) {
+                  //System.err.println ("    1. suffixSql = " + suffixSql);
+                  suffixSql = " order by RAW_GPS.START_TIME" ;
+             }
+            System.err.println ("    suffixSql = " + suffixSql);
+            //System.err.println ("    max  = " + max);
+            */
+
             Statement statement = SqlUtil.select(connection, what, tables,
                                       clause, sqlBetweenFromAndWhere,
                                       suffixSql, max, TIMEOUT);
-
             return statement;
         } catch (Exception exc) {
             closeConnection(connection);
