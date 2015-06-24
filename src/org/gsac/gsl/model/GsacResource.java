@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -34,9 +34,9 @@ import java.util.List;
  * Class description
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
- * @author         added new value, sampleInterval   SK Wier UNAVCO 3 Feb 2014
+ * @version        original May 19, 2010
+ * @author         Jeff McWhirter 2010
+ * @author         SK Wier 2014 to 24 June 2015 
  */
 public abstract class GsacResource implements GsacArgs, GsacConstants {
 
@@ -89,6 +89,11 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
 
     /** _more_ */
     private float sampleInterval;
+
+    /** the URL of the agency repository where this site's info and data was copied from, that is the original data source's URL. */
+    private String mirroredFromUrl;
+
+
 
     /**
      * ctor
@@ -193,6 +198,24 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
         this.modificationDate = modificationDate;
     }
 
+
+    /**
+     * Set the MirroredFromURL property.
+     *
+     * @param value The new value for MirroredFromURL
+     */
+    public void setMirroredFromURL(String value) {
+        mirroredFromUrl = value;
+    }
+
+    /**
+     * Get the MirroredFromURL property.
+     *
+     * @return mirroredFromURL
+     */
+    public String getMirroredFromURL() {
+        return mirroredFromUrl;
+    }
 
     /**
      * Set the Id property.

@@ -58,6 +58,7 @@ public class GsacSite extends GsacResource implements Comparable {
      */
     public GsacSite(String siteId, String siteCode, String name) {
         super(siteId, null, siteCode, name);
+        setMirroredFromURL( null );  // default value and is usually the actual case
     }
 
 
@@ -75,6 +76,7 @@ public class GsacSite extends GsacResource implements Comparable {
                     double latitude, double longitude, double elevation) {
         this(siteId, siteCode, name, null,
              new EarthLocation(latitude, longitude, elevation));
+        setMirroredFromURL( null );  // default value and is usually the actual case
     }
 
     /**
@@ -90,6 +92,7 @@ public class GsacSite extends GsacResource implements Comparable {
                     ResourceType type, EarthLocation location) {
         super(siteId, type, siteCode, name);
         setEarthLocation(location);
+        setMirroredFromURL( null );  // default value and is usually the actual case
     }
 
 
