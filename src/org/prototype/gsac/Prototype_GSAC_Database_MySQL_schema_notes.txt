@@ -5,7 +5,7 @@
 
 				     Tables, Field Definitions, and Notes.
 
-					             27 Mar 2014          
+					             24 Jun 2015          
 
 					      UNAVCO, Boulder Colorado.
 
@@ -586,6 +586,7 @@ mysql> desc station;
 | ellipsoid_id               | int(1) unsigned | YES  | MUL | NULL    |                |
 | networks                   | varchar(2000)   | YES  |     | NULL    |                |
 | iers_domes                 | char(9)         | YES  |     | NULL    |                |
+| mirrored_from_URL          | varchar(120)    | YES  |     | NULL    |                |
 | station_photo_URL          | varchar(100)    | YES  |     | NULL    |                |
 | time_series_plot_image_URL | varchar(100)    | YES  |     | NULL    |                |
 | embargo_duration_hours     | int(6) unsigned | YES  |     | NULL    |                |
@@ -602,6 +603,11 @@ Field "networks" is a character string.  The value may be one network acronym su
 by semi-colons such as RENAG;Orpheon;RPG  (but not by any other character such as comma for separation).  If you include a space it will become part of the
 newtwork name , so that the networks field value "PBO  ;FeoNET" includes one network named (wrongly) "PBO  ", which is not the same as "PBO" in a computer search.
 Do not use commas for separations: if you enter "RENAG,Orpheon,RPG" for networks, then that station belongs to one network named "RENAG,Orpheon,RPG".
+
+Field mirrored_from_URL is used if this station and its data is copied from (mirrored) from any other repository of any kind, including data available
+from another GSAC.  If this value is not NULL and not the special word 'local' then the station and data from it does not originate at this GSAC's agency.
+This field is used to inform users there is another original source for the data they may prefer to use.  And it is used in federated GSACs 
+to prevent multiple listings of the same information from several GSACs copying the same information.
 
 mysql> select * from station;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
