@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: Prototype15_GSAC
+-- Host: localhost    Database: Prototype15_GSAC_with_data
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `Prototype15_GSAC`
+-- Current Database: `Prototype15_GSAC_with_data`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype15_GSAC` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype15_GSAC_with_data` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `Prototype15_GSAC`;
+USE `Prototype15_GSAC_with_data`;
 
 --
 -- Table structure for table `access`
@@ -71,7 +71,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
-INSERT INTO `agency` VALUES (1,'Boulder data center',NULL,NULL,NULL,NULL);
+INSERT INTO `agency` VALUES (1,'UNAVCO',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ CREATE TABLE `datafile` (
   `station_id` int(6) unsigned NOT NULL,
   `equip_config_id` int(6) unsigned DEFAULT NULL,
   `datafile_name` varchar(120) NOT NULL,
-  `URL_complete` varchar(120)  NOT NULL,
+  `URL_complete` varchar(120) NOT NULL,
   `URL_protocol` varchar(7) DEFAULT NULL,
   `URL_domain` varchar(50) DEFAULT NULL,
   `URL_path_dirs` varchar(70) DEFAULT NULL,
@@ -307,7 +307,7 @@ CREATE TABLE `locale` (
   `locale_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `locale_name` varchar(70) NOT NULL,
   PRIMARY KEY (`locale_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -316,7 +316,7 @@ CREATE TABLE `locale` (
 
 LOCK TABLES `locale` WRITE;
 /*!40000 ALTER TABLE `locale` DISABLE KEYS */;
-INSERT INTO `locale` VALUES (1,'Boulder');
+INSERT INTO `locale` VALUES (1,'Boulder'),(2,'Felipe Carrillo Puerto'),(3,'Weaverville'),(4,'Cerrillos');
 /*!40000 ALTER TABLE `locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -379,7 +379,7 @@ CREATE TABLE `nation` (
   `nation_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `nation_name` varchar(70) NOT NULL,
   PRIMARY KEY (`nation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -388,7 +388,7 @@ CREATE TABLE `nation` (
 
 LOCK TABLES `nation` WRITE;
 /*!40000 ALTER TABLE `nation` DISABLE KEYS */;
-INSERT INTO `nation` VALUES (1,'U.S.');
+INSERT INTO `nation` VALUES (1,'U.S.'),(2,'Mexico');
 /*!40000 ALTER TABLE `nation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -403,7 +403,7 @@ CREATE TABLE `province_state` (
   `province_state_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `province_state_name` varchar(70) NOT NULL,
   PRIMARY KEY (`province_state_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -412,7 +412,7 @@ CREATE TABLE `province_state` (
 
 LOCK TABLES `province_state` WRITE;
 /*!40000 ALTER TABLE `province_state` DISABLE KEYS */;
-INSERT INTO `province_state` VALUES (1,'Colorado');
+INSERT INTO `province_state` VALUES (1,'Colorado'),(2,'Quintana Roo'),(3,'California'),(4,'Puerto Rico');
 /*!40000 ALTER TABLE `province_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -496,10 +496,10 @@ CREATE TABLE `station` (
   `locale_id` int(3) unsigned DEFAULT NULL,
   `ellipsoid_id` int(1) unsigned DEFAULT NULL,
   `networks` varchar(2000) DEFAULT NULL,
-  `iers_domes` char(9) DEFAULT NULL,
   `mirrored_from_URL` varchar(120) DEFAULT NULL,
-  `station_photo_URL` varchar(120) DEFAULT NULL,
-  `time_series_plot_image_URL` varchar(120) DEFAULT NULL,
+  `iers_domes` char(9) DEFAULT NULL,
+  `station_photo_URL` varchar(100) DEFAULT NULL,
+  `time_series_plot_image_URL` varchar(100) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
   PRIMARY KEY (`station_id`),
@@ -519,7 +519,7 @@ CREATE TABLE `station` (
   CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -528,6 +528,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
+INSERT INTO `station` VALUES (1,'CN24','FelipeCarMEX2012',19.5756,-88.0539,16.0001,NULL,NULL,NULL,'2013-10-30 17:15:15','2015-06-01 00:00:00',1,2,1,1,2,2,2,2,1,'COCONet','http://www.tlalocnet.mx/tlalocnetgsac',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/CN24.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/CN24.png',NULL,NULL),(2,'P338','WeavrvlAirCN2005',40.7476,-122.923,672.216,NULL,NULL,NULL,'2005-09-21 00:00:00','2015-06-06 00:00:00',1,2,1,1,3,1,3,3,1,'PBO;PBO Analysis Complete;PBO Core Network',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P338.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P338.png',NULL,NULL),(3,'P780','Cerrillos_PR2008',18.075,-66.5791,154.07,-5565748.2083,-3746572.4236,4577161.3946,'2008-06-20 00:00:00','2015-06-12 00:00:00',1,2,1,1,2,1,4,4,1,'PBO;PBO Analysis Complete;PBO Core Network;COCONet',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P780.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P780.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -588,4 +589,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-03-30  9:02:24
+-- Dump completed on 2015-06-24 11:48:12
