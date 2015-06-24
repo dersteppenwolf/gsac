@@ -70,8 +70,8 @@ import javax.servlet.http.*;
  * The resourceManager creates a set of GsacOutputHandler-s. These
  * do the work of encoding the results (e.g., into HTML, XML, CSV, etc).
  *
- * @author  Jeff McWhirter mcwhirter@unavco.org
- * @version SK Wier improve date-time string formats so not in local time zone; many others; latest June 10 2015.
+ * @author  Jeff McWhirter mcwhirter@unavco.org original 2010.
+ * @version SK Wier improve date-time string formats so not in local time zone; others; change Base  URL code (grep for BaseU); latest June 24 2015.
  */
 public class GsacRepository implements GsacConstants {
 
@@ -1918,8 +1918,6 @@ public class GsacRepository implements GsacConstants {
             }
         }
 
-        //System.err.println("GSAC:   GsacRepository:getRepositoryInfo():  GOOD Base URL ="+ getServlet().getAbsoluteUrl(getUrlBase()) + "   (repos name ="+getRepositoryName() +")"  );
-
         return myInfo;
     }
 
@@ -2371,6 +2369,8 @@ public class GsacRepository implements GsacConstants {
     /**
      * _more_
      *
+     * [used for a federated GSAC, to connect to one remote GSAC and get its XML capabilites file]
+     *
      * @param repositoryUrl _more_
      * @param urlPath _more_
      * @param urlArgs _more_
@@ -2384,41 +2384,74 @@ public class GsacRepository implements GsacConstants {
                                   String urlArgs, String output)
             throws Exception {
 
-        System.err.println("GSAC:    GSACRepository: connect to GSAC URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
+        System.err.println("\nGSAC:    GSACRepository: getRemoteObject was called to connect to a remote GSAC and get its XML capabilities file (federating GSACs).");
+        // repositoryUrl is to the remote GSAC to federate
+        System.err.println  ("GSAC:    GSACRepository: getRemoteObject input is repositoryUrl="+ repositoryUrl+", urlPath="+urlPath+", urlArgs="+urlArgs+", output="+output+".");
 
         boolean     zipit          = false;
         GsacServlet servlet        = getServlet();
         String      thisRepository = "client";
+
         if (servlet != null) {
             thisRepository = servlet.getAbsoluteUrl(getUrlBase());
+            //System.err.println("GSAC:    GSACRepository: getRemoteObject  THIS (my local) GSAC repository's UrlBase = "+ thisRepository);
+            // Base URL :  this code returns here  the URL  http://www.unavco.org:8080/gsacfederated   with 8080 in unavco federated GSAC on facdev
         }
 
         String url = repositoryUrl + urlPath + "?" + urlArgs + "&"
                      + HtmlUtil.args(new String[] { ARG_REMOTEREPOSITORY, thisRepository, ARG_GZIP, zipit + "", ARG_OUTPUT, output });
 
-        // LOOK FIX log the URL tried, if this next line fails:
+        // 1.
+        System.err.println("GSAC:    GSACRepository: getRemoteObject connect to remote GSAC at URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
         URLConnection connection = new URL(url).openConnection();
-        System.err.println("GSAC:    GSACRepository: getRemoteObject; OK DID connect to remote GSAC URL "+ repositoryUrl );
+        System.err.println("GSAC:    GSACRepository:                  OK did openConnection() at that URL to the remote GSAC, and " );
+        System.err.println("GSAC:    GSACRepository:                  the URLConnection with the GSAC API request for the XML file is:" );
+        System.err.println("         "+ connection.toString() );
 
-        String        userAgent  = getUserAgent();
-        System.err.println("GSAC:    GSACRepository: getRemoteObject;    try connection get use agent for "+ repositoryUrl );
+        // 2. 
+        //System.err.println    ("GSAC:    GSACRepository: getRemoteObject call getUserAgent() " );
+        String  userAgent  = getUserAgent();  // for example userAgent = "gsac federated"
         if (userAgent != null) {
+            //System.err.println("GSAC:    GSACRepository: getRemoteObject ok did getUserAgent(): userAgent = "+ userAgent.toString() );
+
+            //System.err.println("GSAC:    GSACRepository: getRemoteObject call connection.setRequestProperty() " );
             connection.setRequestProperty("User-Agent", userAgent);
+            System.err.println("GSAC:    GSACRepository: getRemoteObject  OK did connection.setRequestProperty('User-Agent', userAgent)" );
         }
         else {
-            System.err.println("GSAC:    GSACRepository: federated GSAC failed connection.setRequestProperty('User-Agent', userAgent) for "+ repositoryUrl); 
+            System.err.println("GSAC:    GSACRepository: getRemoteObject call to getUserAgent() got NULL; return null from getRemoteObject(). no capabilities file recovered.  \n " ); 
+            return null;
         }
 
+        // 3. 
         connection.setConnectTimeout(1000 * URL_TIMEOUT_SECONDS);
-        System.err.println("GSAC:    GSACRepository: getRemoteObject;    try connection.getInputStream() for "+ repositoryUrl );
+        System.err.println("GSAC:    GSACRepository: getRemoteObject call connection.getInputStream() for the XML capabilites file, from "+ repositoryUrl );
+
         InputStream inputStream = connection.getInputStream();
-        System.err.println("GSAC:    GSACRepository: getRemoteObject; OK DID connection.getInputStream() for "+ repositoryUrl );
+        Object xmlfile;
+        if (inputStream != null) {
+           ;// System.err.println("GSAC:    GSACRepository: getRemoteObject  OK did connection.getInputStream()" );
+        }
+        else {
+            System.err.println("GSAC:    GSACRepository: getRemoteObject  failed: connection.getInputStream() got NULL; no capabilities file recovered.  \n " ); 
+            //return null;
+        }
 
         if (zipit) {
             inputStream = new GZIPInputStream(inputStream);
         }
 
-        return decodeObject(IOUtil.readContents(inputStream));
+        // original code return decodeObject(IOUtil.readContents(inputStream));
+
+        xmlfile = decodeObject(IOUtil.readContents(inputStream));
+        if (xmlfile != null) {
+            System.err.println("GSAC:    GSACRepository: getRemoteObject: did connection.getInputStream() and decoded the inputStream(XML capab file) , so can use remote GSAC.  ");
+            return xmlfile;
+        }
+        else {
+            System.err.println("GSAC:    GSACRepository: getRemoteObject  failed to decode the inputStream. getRemoteObject returns NULL.  No connection with the remote GSAC. \n  " ); 
+            return xmlfile;
+        }
     }
 
     /**
@@ -2559,20 +2592,23 @@ public class GsacRepository implements GsacConstants {
         sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?" + ARG_OUTPUT + "=xml", msg("Repository information xml")));
         sb.append("   The Repository information xml file is read by other GSAC installations operating a federated GSAC incorporating this GSAC.</p>");
 
-        sb.append("<p>The Base URL, next, is used in composing API queries to this GSAC. ");
-        sb.append("<br>The following four sections list all capabilities (option-argument pairs) used in composing API queries to this GSAC. ");
+        sb.append("<p>The Base URL next is used in composing API queries to this GSAC. ");
 
         StringBuffer contents = new StringBuffer();
 
-        showRepositoryInfo(request, contents, gri, true);// to get Base URL determined by Java from where built (NOT hard-coded by user)
-        //System.err.println("    GsacRepos: handleRequestView(): where built or gri= "+ gri );  
+        // this method adds more text to the  "Appendable pw" = 'contents':
+        showRepositoryInfo(request, contents, gri, true);
+
+        //System.err.println("    GsacRepository: handleRequestView(): where built ="+ gri );  
         // like like GSAC:  debug gri= http://swierd:8080/prototypegsac 
+
+        sb.append("<p>The four sections following the Base URL list all capabilities (option-argument pairs) used in composing API queries to this GSAC. ");
 
         StringBuffer tmp = new StringBuffer();
 
-        contents.append(HtmlUtil.p());  // add  <p>
+        contents.append(HtmlUtil.p());  
 
-        // debug: sb.append("<br><!-- debug did contents.append(HtmlUtil.p())-->  ");
+        sb.append("<p>   "); 
 
         contents.append(getHeader(msg("Misc. Arguments")));
 
@@ -2696,7 +2732,8 @@ public class GsacRepository implements GsacConstants {
     }
 
     /**
-     * _more_
+     *
+     *  showRepositoryInfo(----): this is where the Base URL is made for the API Information page
      *
      * @param request the request
      * @param pw _more_
@@ -2710,26 +2747,24 @@ public class GsacRepository implements GsacConstants {
       throws Exception {
         int cnt    = 0;
 
-        // to specify the String labeled "Base URL" the Information web page
+        // to specify the String labeled "Base URL" the API Information web page
 
-        //String baseURL = info.getUrl();   //this originally-coded  BASE URL is made by Java from system info where built: NOT the true URL seen by the remote user in a browser. 
+        // old form:
+        //String baseURL = info.getUrl();   //this originally-coded so-called Base URL is made by Java from system info where built: NOT from the true GSAC URL seen by the remote user in a browser. 
         //System.err.println("GSAC:   showRepositoryInfo() baseURL = "+ baseURL );
         //String[] urls   = { baseURL };
-
-        String[] labels = { "Base URL" };      // this is where the BASE URL's LABEL is made for the information page
-        
-        String BaseURL = getServlet().getAbsoluteUrl(getUrlBase());
-
-        //System.err.println("GSAC:   GsacRepository:showRepositoryInfo():  GOOD Base URL ="+ getServlet().getAbsoluteUrl(getUrlBase())   );
-
-        pw.append(HtmlUtil.formTable());
-
-        pw.append(HtmlUtil.formEntry(msgLabel("Base URL"), BaseURL ));
-
+        //String[] labels = { "Base URL" };
         //for (int i = 0; i < urls.length; i++) {
             // append the base URL on the info page:
             //pw.append(HtmlUtil.formEntry(msgLabel(labels[i]), urls[i]));
         //}
+
+        String BaseURL = getServlet().getAbsoluteUrl(getUrlBase());
+        System.err.println("GSAC: GsacRepository:showRepositoryInfo() BaseURL = "+ BaseURL+" (added to API Information page here)")  ;
+
+        pw.append(HtmlUtil.formTable());
+
+        pw.append(HtmlUtil.formEntry(msgLabel("Base URL "), BaseURL ));
 
         pw.append(HtmlUtil.formTableClose());
 
