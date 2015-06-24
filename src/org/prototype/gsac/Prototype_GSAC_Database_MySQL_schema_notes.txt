@@ -604,19 +604,16 @@ by semi-colons such as RENAG;Orpheon;RPG  (but not by any other character such a
 newtwork name , so that the networks field value "PBO  ;FeoNET" includes one network named (wrongly) "PBO  ", which is not the same as "PBO" in a computer search.
 Do not use commas for separations: if you enter "RENAG,Orpheon,RPG" for networks, then that station belongs to one network named "RENAG,Orpheon,RPG".
 
-Field mirrored_from_URL is used if this station and its data is copied from (mirrored) from any other repository of any kind, including data available
+Field mirrored_from_URL is used if this station and its data is copied from (mirrored from) any other repository of any kind, including data available
 from another GSAC.  If this value is not NULL and not the special word 'local' then the station and data from it does not originate at this GSAC's agency.
 This field is used to inform users there is another original source for the data they may prefer to use.  And it is used in federated GSACs 
 to prevent multiple listings of the same information from several GSACs copying the same information.
 
 mysql> select * from station;
 SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
-| station_id | four_char_name | station_name                                  | latitude_north | longitude_east | height_ellipsoid   | X            | Y             | Z             | installed_date      | retired_date | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks     | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                         | embargo_duration_hours | embargo_after_date |
-+------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
-|          5 | ABMF           | Aeroport du Raizet -LES ABYMES - Mitio France |        16.2623 |       -61.5275 |             -25.67 | 1636819.0859 | -4939085.2795 | -3676612.7351 | 2009-12-25 00:00:00 | NULL         |         1 |         2 |        2 |         1 |              NULL |         1 |                 1 |         1 |            1 | myNet;NewNet | NULL       | http://www.unavco.org/data/gps-gnss/lib/images/station_images/ABMF.jpg | http://pboshared.unavco.org/timeseries/ABMF_timeseries_cleaned.png |                   NULL | NULL               |
-+------------+----------------+-----------------------------------------------+----------------+----------------+--------------------+--------------+
-
+| station_id | four_char_name | station_name     | latitude_north | longitude_east | height_ellipsoid | X             | Y             | Z            | installed_date | retired_date     | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks                                           | mirrored_from_URL            | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                       | embargo_duration_hours | embargo_after_date |
+|          3 | P780           | Cerrillos_PR2008 |         18.075 |       -66.5791 |           154.07 | -5565748.2083 | -3746572.4236 | 4577161.3946 | 2008-06-20 00:00:00 | 2015-06-12 00:00:00 |         1 |         2 |        1 |         1 |                 2 |         1 |                 4 |         4 |            1 | PBO;PBO Analysis Complete;PBO Core Network;COCONet | http://www.myrepo.us/gsacws | NULL       | http://www.unavco.org/data/gps-gnss/lib/images/station_images/P780.jpg                                                | http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P780.png |                      NULL | NULL               |
+[please note P780 station data is not actually copied from myrepo.us]
 
 
 mysql> desc station_status;
