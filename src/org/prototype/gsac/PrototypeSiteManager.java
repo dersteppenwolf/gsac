@@ -70,7 +70,8 @@ import java.text.DecimalFormat;
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * @author  S K Wier, 2013 - 29 May 2015
+ * use new variables ARG_SITE_LATEST_DATA_TIME (found from datafiles table in db for a site) and ARG_SITE_MIRROR_FROM_URL read from the db station table.  24 June 2015.
+ * @author  S K Wier, 2013 - 24 June 2015
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -97,7 +98,7 @@ public class PrototypeSiteManager extends SiteManager {
         super.handleRequest(request, response);
     }
 
-    /** do we get the data ranges */
+    /** do we get the data ranges: where used? */
     private boolean doDateRanges = true;
 
 
@@ -598,7 +599,7 @@ public class PrototypeSiteManager extends SiteManager {
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
         // LOOK debug  DEBUG print show search sql 
-        System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
+        //System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -737,6 +738,7 @@ public class PrototypeSiteManager extends SiteManager {
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPSOID);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
+        String mirrored_from_URL = results.getString(Tables.STATION.COL_MIRRORED_FROM_URL);   // may be null
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
@@ -809,9 +811,8 @@ public class PrototypeSiteManager extends SiteManager {
             //System.err.println("\n   SiteManager: station " +fourCharId+ " retired date is NULL; so is now, "+toDate);
             }
         site.setToDate(toDate);
+        site.setFromDate(fromDate);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
-
-
 
         //Add the network(s) for this station, in alphabetical order, to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
@@ -906,8 +907,15 @@ public class PrototypeSiteManager extends SiteManager {
         // add all three above items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
 
+
+        site.setMirroredFromURL(mirrored_from_URL);
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
+
         //  To set this value in MySiteManager.java:
-        //   site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ))
+        if (null!= iersdomes ) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
+
+        // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Mirrored from" plus ":"
+        if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));}
 
         /*
         // following code section is in effect readAgencyMetadata(site);
@@ -1070,19 +1078,17 @@ public class PrototypeSiteManager extends SiteManager {
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
-                //Only read the first row of db query results returned
-                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "monument", 
+                // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Monument Style" plus ":"
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "Monument Style", 
                      results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION) );
-                // arg "monument" appears as a label in the HTML page about one station.
-                // debug DEBUG
-                //System.err.println(" site manager: set monu desc "+results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION));
+                // debug System.err.println(" site manager: set monu desc "+results.getString(Tables.MONUMENT_STYLE.COL_MONUMENT_STYLE_DESCRIPTION));
+                // break to Only read the first row of db query results returned
                 break;
             }
         } finally {
             getDatabaseManager().closeAndReleaseConnection(statement);
         }
        
-
     }
 
 
