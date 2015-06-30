@@ -309,7 +309,6 @@ public abstract class Tables {
         public static final String COL_LONGITUDE_EAST =  NAME + ".longitude_east";
         public static final String COL_HEIGHT_ABOVE_ELLIPSOID =  NAME + ".height_above_ellipsoid";
         public static final String COL_INSTALLED_DATE =  NAME + ".installed_date";
-        public static final String COL_LATEST_DATA_TIME =  NAME + ".latest_data_time";
         public static final String COL_RETIRED_DATE =  NAME + ".retired_date";
         public static final String COL_STYLE_ID =  NAME + ".style_id";
         public static final String COL_STATUS_ID =  NAME + ".status_id";
@@ -326,7 +325,7 @@ public abstract class Tables {
         public static final String COL_TIME_SERIES_URL =  NAME + ".time_series_URL";
 
         public static final String[] ARRAY = new String[] {
-            COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ABOVE_ELLIPSOID,COL_INSTALLED_DATE,COL_LATEST_DATA_TIME,COL_RETIRED_DATE,COL_STYLE_ID,COL_STATUS_ID,COL_ACCESS_ID,COL_MONUMENT_STYLE_ID,COL_COUNTRY_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_IERS_DOMES,COL_OPERATOR_AGENCY_ID,COL_DATA_PUBLISHER_AGENCY_ID,COL_NETWORK_ID,COL_STATION_IMAGE_URL,COL_TIME_SERIES_URL
+            COL_STATION_ID,COL_FOUR_CHAR_NAME,COL_STATION_NAME,COL_LATITUDE_NORTH,COL_LONGITUDE_EAST,COL_HEIGHT_ABOVE_ELLIPSOID,COL_INSTALLED_DATE,COL_RETIRED_DATE,COL_STYLE_ID,COL_STATUS_ID,COL_ACCESS_ID,COL_MONUMENT_STYLE_ID,COL_COUNTRY_ID,COL_LOCALE_ID,COL_ELLIPSOID_ID,COL_IERS_DOMES,COL_OPERATOR_AGENCY_ID,COL_DATA_PUBLISHER_AGENCY_ID,COL_NETWORK_ID,COL_STATION_IMAGE_URL,COL_TIME_SERIES_URL
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
