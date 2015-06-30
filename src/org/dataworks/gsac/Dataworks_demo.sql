@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
+-- MySQL dump 10.13  Distrib 5.1.73, for redhat-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: Dataworks_demo
 -- ------------------------------------------------------
--- Server version	5.1.69-0ubuntu0.10.04.1
+-- Server version	5.1.73
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -17,6 +17,7 @@
 
 --
 -- Current Database: `Dataworks_demo`
+-- derived from unavco test db DATAWORKS_SCHEMA_3.
 --
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Dataworks_demo` /*!40100 DEFAULT CHARACTER SET utf8 */;
@@ -69,7 +70,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
-INSERT INTO `agency` VALUES (1,'UNAVCO','UNAVCO');
+INSERT INTO `agency` VALUES (1,'My Agency name','My Agency');
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +86,7 @@ CREATE TABLE `antenna` (
   `antenna_name` varchar(15) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`antenna_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,6 +95,7 @@ CREATE TABLE `antenna` (
 
 LOCK TABLES `antenna` WRITE;
 /*!40000 ALTER TABLE `antenna` DISABLE KEYS */;
+INSERT INTO `antenna` VALUES (14,'Zephyr Geodetic','N'),(15,'TRM41249.00','N'),(16,'TRM57971.00','N'),(17,'TRM59800.00','N'),(18,'TRM55971.00','N'),(19,'TRM33429.00+GP','N'),(20,'ASH701945B_M','N'),(21,'TRM14532.00','N'),(22,'TRM22020.00+GP','N'),(23,'TRM33429.20+GP','N');
 /*!40000 ALTER TABLE `antenna` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,7 +110,7 @@ CREATE TABLE `country` (
   `country_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `country_name` varchar(70) NOT NULL,
   PRIMARY KEY (`country_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,6 +119,7 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
+INSERT INTO `country` VALUES (4,'My country');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,7 +153,7 @@ CREATE TABLE `datafile` (
   CONSTRAINT `datafile_type_id` FOREIGN KEY (`datafile_type_id`) REFERENCES `datafile_type` (`datafile_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `equip_config_id` FOREIGN KEY (`equip_config_id`) REFERENCES `equip_config` (`equip_config_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id2` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=49624 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=50070 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,6 +162,7 @@ CREATE TABLE `datafile` (
 
 LOCK TABLES `datafile` WRITE;
 /*!40000 ALTER TABLE `datafile` DISABLE KEYS */;
+INSERT INTO `datafile` VALUES (49625,54,145,'IRI31620.15d.Z','5024K68287201506110000a.CRX',2,30,'2015-06-11 00:00:00','2015-06-11 23:59:30',2015,162,'2015-06-23 17:09:25',1142167,'84e87c45246a67a23c2a4100d4dfe285','ftp://dataworks1/rinex/obs/2015/162/IRI31620.15d.Z'),(49626,54,145,'IRI31600.15d.Z','5024K68287201506090000a.CRX',2,30,'2015-06-09 00:00:00','2015-06-09 23:59:30',2015,160,'2015-06-23 17:09:25',1179692,'f2e29f339ddbb3514f38a4e95ff8869b','ftp://dataworks1/rinex/obs/2015/160/IRI31600.15d.Z'),(49628,54,145,'IRI31640.15d.Z','5024K68287201506130000a.CRX',2,30,'2015-06-13 00:00:00','2015-06-13 23:59:30',2015,164,'2015-06-23 17:11:30',1218951,'1584fbdc5df934a78c87649ed4f8f8ce','ftp://dataworks1/rinex/obs/2015/164/IRI31640.15d.Z'),(49630,54,145,'IRI31560.15d.Z','5024K68287201506050000a.CRX',2,30,'2015-06-05 00:00:00','2015-06-05 23:59:30',2015,156,'2015-06-23 17:05:17',1162189,'464c1621bcb0e647a4f77b1e357bdc28','ftp://dataworks1/rinex/obs/2015/156/IRI31560.15d.Z'),(49631,54,145,'IRI31550.15d.Z','5024K68287201506040000a.CRX',2,30,'2015-06-04 00:00:00','2015-06-04 23:59:30',2015,155,'2015-06-23 17:05:17',1134544,'1750cc8c287873e403556398c25dea89','ftp://dataworks1/rinex/obs/2015/155/IRI31550.15d.Z'),(49632,54,145,'IRI31590.15d.Z','5024K68287201506080000a.CRX',2,30,'2015-06-08 00:00:00','2015-06-08 23:59:30',2015,159,'2015-06-23 17:07:21',1150483,'a7f987d3015b06eb81654e978ba43048','ftp://dataworks1/rinex/obs/2015/159/IRI31590.15d.Z'),(49633,54,145,'IRI31470.15d.Z','5024K68287201505270000a.CRX',2,30,'2015-05-27 00:00:00','2015-05-27 23:59:30',2015,147,'2015-06-23 16:59:05',1188363,'13262b398adf041c3a3591a710d12b93','ftp://dataworks1/rinex/obs/2015/147/IRI31470.15d.Z'),(49634,54,145,'IRI31530.15d.Z','5024K68287201506020000a.CRX',2,30,'2015-06-02 00:00:00','2015-06-02 23:59:30',2015,153,'2015-06-23 17:03:13',1188015,'bbf07e3c8f7c33afc4d866ab97c238ec','ftp://dataworks1/rinex/obs/2015/153/IRI31530.15d.Z'),(49635,54,145,'IRI31650.15d.Z','5024K68287201506140000a.CRX',2,30,'2015-06-14 00:00:00','2015-06-14 23:59:30',2015,165,'2015-06-23 17:11:30',1178533,'c07e0ef6ae7f238d3eb9399b694581d2','ftp://dataworks1/rinex/obs/2015/165/IRI31650.15d.Z'),(49637,54,145,'IRI31480.15d.Z','5024K68287201505280000a.CRX',2,30,'2015-05-28 00:00:00','2015-05-28 23:59:30',2015,148,'2015-06-23 17:01:09',1123937,'f63748e8dc95d871a754bbe0572beae4','ftp://dataworks1/rinex/obs/2015/148/IRI31480.15d.Z'),(49639,54,145,'IRI31580.15d.Z','5024K68287201506070000a.CRX',2,30,'2015-06-07 00:00:00','2015-06-07 23:59:30',2015,158,'2015-06-23 17:07:21',1153315,'55e978711b93ea74febb7db6cdd5791f','ftp://dataworks1/rinex/obs/2015/158/IRI31580.15d.Z'),(49640,54,145,'IRI31630.15d.Z','5024K68287201506120000a.CRX',2,30,'2015-06-12 00:00:00','2015-06-12 23:59:30',2015,163,'2015-06-23 17:09:25',1215645,'2618faa986f8800feb8079767f024092','ftp://dataworks1/rinex/obs/2015/163/IRI31630.15d.Z'),(49644,54,145,'IRI31570.15d.Z','5024K68287201506060000a.CRX',2,30,'2015-06-06 00:00:00','2015-06-06 23:59:30',2015,157,'2015-06-23 17:07:21',1194251,'e50e1aade258568fa63bf9fe83de6a08','ftp://dataworks1/rinex/obs/2015/157/IRI31570.15d.Z'),(49646,54,145,'IRI31610.15d.Z','5024K68287201506100000a.CRX',2,30,'2015-06-10 00:00:00','2015-06-10 23:59:30',2015,161,'2015-06-23 17:09:25',1178099,'01e17449675a4ca8801148481e0e4571','ftp://dataworks1/rinex/obs/2015/161/IRI31610.15d.Z');
 /*!40000 ALTER TABLE `datafile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,7 +252,7 @@ CREATE TABLE `equip_config` (
   CONSTRAINT `radome_id` FOREIGN KEY (`radome_id`) REFERENCES `radome` (`radome_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `receiver_firmware_id` FOREIGN KEY (`receiver_firmware_id`) REFERENCES `receiver_firmware` (`receiver_firmware_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=264 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,6 +261,7 @@ CREATE TABLE `equip_config` (
 
 LOCK TABLES `equip_config` WRITE;
 /*!40000 ALTER TABLE `equip_config` DISABLE KEYS */;
+INSERT INTO `equip_config` VALUES (145,54,'2012-02-12 00:00:00','2012-02-12 00:00:00','0000-00-00 00:00:00',14,'60142329',0,6,'\n',4,'unspecified',43,'5024K68287','GPS',NULL),(205,115,'2015-06-26 16:17:57','2005-04-27 22:40:30','2005-10-07 23:59:30',15,'60100911',0.077,NULL,NULL,1,' ',44,'153273569','GPS',15);
 /*!40000 ALTER TABLE `equip_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -271,7 +276,7 @@ CREATE TABLE `locale` (
   `locale_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `locale_info` varchar(70) NOT NULL,
   PRIMARY KEY (`locale_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -280,6 +285,7 @@ CREATE TABLE `locale` (
 
 LOCK TABLES `locale` WRITE;
 /*!40000 ALTER TABLE `locale` DISABLE KEYS */;
+INSERT INTO `locale` VALUES (33,'Boulder Colorado');
 /*!40000 ALTER TABLE `locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -294,7 +300,7 @@ CREATE TABLE `metpack` (
   `metpack_id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `metpack_name` varchar(15) NOT NULL,
   PRIMARY KEY (`metpack_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,7 +309,7 @@ CREATE TABLE `metpack` (
 
 LOCK TABLES `metpack` WRITE;
 /*!40000 ALTER TABLE `metpack` DISABLE KEYS */;
-INSERT INTO `metpack` VALUES (1,'no metpack'),(2,'WXT520'),(4,''),(5,'WXT510');
+INSERT INTO `metpack` VALUES (1,'no metpack'),(2,'WXT520'),(4,''),(5,'WXT510'),(6,'None');
 /*!40000 ALTER TABLE `metpack` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -318,7 +324,7 @@ CREATE TABLE `monument_style` (
   `monument_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `monument_style_description` varchar(70) NOT NULL,
   PRIMARY KEY (`monument_style_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -327,7 +333,7 @@ CREATE TABLE `monument_style` (
 
 LOCK TABLES `monument_style` WRITE;
 /*!40000 ALTER TABLE `monument_style` DISABLE KEYS */;
-INSERT INTO `monument_style` VALUES (1,'shallow foundation pillar'),(2,'building roof'),(3,'deep-drilled braced'),(4,'shallow-drilled braced'),(5,'rock-pin');
+INSERT INTO `monument_style` VALUES (1,'shallow foundation pillar'),(2,'building roof'),(3,'deep-drilled braced'),(4,'shallow-drilled braced'),(5,'rock-pin'),(6,'Building Roof Top'),(7,'permanent station unspecified');
 /*!40000 ALTER TABLE `monument_style` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,7 +348,7 @@ CREATE TABLE `network` (
   `network_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `network_name` varchar(50) NOT NULL,
   PRIMARY KEY (`network_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,6 +357,7 @@ CREATE TABLE `network` (
 
 LOCK TABLES `network` WRITE;
 /*!40000 ALTER TABLE `network` DISABLE KEYS */;
+INSERT INTO `network` VALUES (4,'(test)'),(5,'my_network');
 /*!40000 ALTER TABLE `network` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -366,7 +373,7 @@ CREATE TABLE `radome` (
   `radome_name` varchar(15) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`radome_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -375,7 +382,7 @@ CREATE TABLE `radome` (
 
 LOCK TABLES `radome` WRITE;
 /*!40000 ALTER TABLE `radome` DISABLE KEYS */;
-INSERT INTO `radome` VALUES (1,'NONE','N'),(2,'SCIT','N'),(3,'SCIS','N');
+INSERT INTO `radome` VALUES (1,'NONE','N'),(2,'SCIT','N'),(3,'SCIS','N'),(4,'Unknown','N');
 /*!40000 ALTER TABLE `radome` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -392,7 +399,7 @@ CREATE TABLE `receiver_firmware` (
   `receiver_firmware` varchar(20) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`receiver_firmware_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -401,6 +408,7 @@ CREATE TABLE `receiver_firmware` (
 
 LOCK TABLES `receiver_firmware` WRITE;
 /*!40000 ALTER TABLE `receiver_firmware` DISABLE KEYS */;
+INSERT INTO `receiver_firmware` VALUES (43,'NetR9','4.85','N'),(44,'TRIMBLE NETRS','1.0-3','N'),(45,'TRIMBLE NETRS','1.1-3','N'),(46,'TRIMBLE NETRS','1.1-5','N'),(47,'TRIMBLE NETRS','1.3-2','N'),(48,'TRIMBLE NETR9','4.85','N'),(49,'TRIMBLE NETRS','1.1-2','N'),(50,'TRIMBLE NETRS','1.2-5','N'),(51,'TRIMBLE NETR9','4.17','N'),(52,'TRIMBLE NETR9','4.62','N'),(53,'TRIMBLE NETR9','4.70','N'),(54,'TRIMBLE 4000SSE','7.29/3.07','N'),(55,'TRIMBLE 4700','1.37','N'),(56,'TRIMBLE 4000SSI','7.19b','N'),(57,'TRIMBLE NETRS','1.1-1','N'),(58,'TRIMBLE 4000SSE','7.19/3.04','N');
 /*!40000 ALTER TABLE `receiver_firmware` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,8 +426,6 @@ CREATE TABLE `station` (
   `latitude_north` double NOT NULL,
   `longitude_east` double NOT NULL,
   `height_above_ellipsoid` float NOT NULL,
-  `installed_date` datetime NOT NULL,
-  `latest_data_time` datetime DEFAULT NULL,
   `retired_date` datetime DEFAULT NULL,
   `style_id` int(3) unsigned NOT NULL,
   `status_id` int(3) unsigned NOT NULL,
@@ -456,7 +462,7 @@ CREATE TABLE `station` (
   CONSTRAINT `operator_agency_id` FOREIGN KEY (`operator_agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -465,6 +471,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
+INSERT INTO `station` VALUES (54,'IRI3','IRI3 Test Station',40.061253,-105.206251,1571.56,'2012-02-12 00:00:00','2015-06-21 23:59:30',NULL,1,1,2,6,4,33,1,'',1,1,4,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/IRI3.jpg','http://pboshared.unavco.org/timeseries/IRI3_timeseries_cleaned.png');
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,4 +532,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-06-11 14:39:52
+-- Dump completed on 2015-06-30 18:40:24
