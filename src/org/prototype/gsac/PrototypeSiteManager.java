@@ -64,13 +64,13 @@ import java.text.DecimalFormat;
  * - how to query the database for such request (see method getResourceClauses below), and 
  *
  * - how to package up the results from the query (method makeResource below) into a java object for further use, such as for the HTML pages of
- *   search results on the GSAC web site, and the items in other result formats like SINEX.
+ *   Search Sites results on the GSAC web site, and the items in other result formats like SINEX.
  *
  * The base class is gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/arepo/gsac/ArepoSiteManager.java.
  * Code in the SiteManager class is highly dependent on your particular db schema design and its names for tables and columns in tables.
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
- * use new variables ARG_SITE_LATEST_DATA_TIME (found from datafiles table in db for a site) and ARG_SITE_MIRROR_FROM_URL read from the db station table.  24 June 2015.
+ * new variable ARG_SITE_MIRROR_FROM_URL read from the db station table.  
  * @author  S K Wier, 2013 - 24 June 2015
  */
 public class PrototypeSiteManager extends SiteManager {
@@ -147,6 +147,7 @@ public class PrototypeSiteManager extends SiteManager {
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
+
             // Search for sites INSTALLED and overlapping a requested date range; entry box is a "Date Range" pair of boxes;
             // Output of all site searchs is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
             // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
@@ -155,16 +156,39 @@ public class PrototypeSiteManager extends SiteManager {
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
             // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
             Capability sitedateRange =
-               initCapability( new Capability(ARG_SITE_DATE,               "Site installed during date range", Capability.TYPE_DATERANGE),
+               initCapability( new Capability(ARG_SITE_DATE,     "Site installed during date range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site installed", "Site installed");
             capabilities.add(sitedateRange);
 
-            
-            // search on latest data time at a site -- > should do this in Search Files code, not here.
-            //Capability ldt = initCapability( new Capability( ARG_SITE_LATEST_DATA_TIME,  "Site Latest Data Time >=",   Capability.TYPE_DATE), 
-            //           CAPABILITY_GROUP_SITE_QUERY, "Site has latest data time >=",  "Site has Latest Data time >=");
-            //capabilities.add(ldt);
-            
+
+            // LOOK NEW
+            // Search for sites with real data files in a time range, in this repository (not just INSTALLED n a requested date range); entry box is a "Date Range" pair of boxes;
+            // sites have gaps when data was collected even inside of of times they are installed and have equipment completely specified.
+            // implicitly uses and constructs two values from ARG_SITE_DATADATE by adding .from , etc.:
+            // GsacArgs.java:
+            // public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
+            // public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
+            // public static final String ARG_SITE_DATADATE_TO  =    ARG_SITE_DATADATE + ".to";
+            /* 
+            Capability siteDataDateRange = 
+               initCapability( new Capability(ARG_SITE_DATADATE, "Site with data files in date range", Capability.TYPE_DATERANGE),
+                      CAPABILITY_GROUP_SITE_QUERY, "Site with data in date", "Site  with data in date");
+            capabilities.add(siteDataDateRange);
+            */
+
+            // LOOK NEW , could possibly do this:
+            // to Search for sites with the lastest time of its data files in a requested date range; entry box is a "Date Range" pair of boxes;
+            // GsacArgs.java:
+            // public static final String ARG_SITE_LATEST_DATA_TIME =        ARG_SITE_PREFIX + "datadate";
+            // public static final String ARG_SITE_LATEST_DATA_TIME_FROM   = ARG_SITE_LATEST_DATA_TIME + ".from";
+            // public static final String ARG_SITE_LATEST_DATA_TIME_TO  =    ARG_SITE_LATEST_DATA_TIME + ".to";
+            /* 
+            Capability siteDataDateRange = 
+               initCapability( new Capability(ARG_SITE_LATEST_DATA_TIME, "Site latest data in tim  range", Capability.TYPE_DATERANGE),
+                      CAPABILITY_GROUP_SITE_QUERY, "Site latest data time", "Site latest data time");
+            capabilities.add(siteDataDateRange);
+            */
+
 
             //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
             String[] values;
@@ -178,7 +202,6 @@ public class PrototypeSiteManager extends SiteManager {
             String[] itemArray;
 
             // Note values used in the following are only read once at GSAC start-up time.  If these sort of quasi-static database values are changed, restart GSAC.
-
 
             // To provide a list of networks to search on, for all sites in the archive, first get all network(s) names found in each station with this query:
             //  WHERE
@@ -417,7 +440,7 @@ public class PrototypeSiteManager extends SiteManager {
     /**
      * Make database search clauses, SQL select statements, from the user's choices specified in the web page input or from the URL request arguments' values.  
      *
-     * Makes and returns item "clauses" a List of Clause  object
+     * Makes and returns a  List<Clause> object "clauses", a List of Clause objects.
      *
      * called by GsacResourceManager:handleRequest(GsacRequest request, GsacResponse response)  via ?
      *
@@ -477,7 +500,7 @@ public class PrototypeSiteManager extends SiteManager {
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
 
-        // query for the dates station operated: (see code above setting ARG_SITE_DATE)
+        // query for the dates station was installed, but not necessarily recording data observation values. (see code above setting ARG_SITE_DATE)
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
                     ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date",
@@ -487,7 +510,18 @@ public class PrototypeSiteManager extends SiteManager {
             throw new IllegalArgumentException(e);
         }
 
-
+        /* NEW query by times when DATA is available from stations, in a given date range.
+        */
+            /* NNN
+        try {
+            clauses.addAll(getDateRangeClause(request, msgBuff,
+                    ARG_SITE_DATADATE_FROM, ARG_SITE_DATADATE_TO, "Site data date",
+                    Tables.DATAFILE.COL_DATAFILE_START_TIME,
+                    Tables.DATAFILE.COL_DATAFILE_STOP_TIME));
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+             */
 
         // query for the station's place name 
         if (request.defined(GsacExtArgs.ARG_CITY)) {
@@ -495,6 +529,7 @@ public class PrototypeSiteManager extends SiteManager {
             clauses.add(Clause.join(Tables.STATION.COL_LOCALE_ID, Tables.LOCALE.COL_LOCALE_ID));
             clauses.add(Clause.eq(Tables.LOCALE.COL_LOCALE_NAME, values.get(0)));
         }
+
         if (request.defined(GsacExtArgs.ARG_COUNTRY)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_COUNTRY);
             tableNames.add(Tables.NATION.NAME);
@@ -533,7 +568,6 @@ public class PrototypeSiteManager extends SiteManager {
             clauses.add(Clause.eq(Tables.STATION_STATUS.COL_STATION_STATUS, values.get(0)));
             //System.err.println("   SiteManager: query for STATUS " + values.get(0)) ;
         }
-        
 
         if (request.defined(GsacExtArgs.ARG_ANTENNA)) {
             // debug System.err.println("      PrototypeSiteManager: search for sites with antenna "+GsacExtArgs.ARG_ANTENNA);
@@ -551,7 +585,6 @@ public class PrototypeSiteManager extends SiteManager {
             // the sql query is done by GsacResourceManager:handleRequest(GsacRequest request, GsacResponse response);   how called here?  
             request.setsqlWhereSuffix(" GROUP BY "+ Tables.STATION.COL_STATION_ID);
         }
-
 
         if (request.defined(GsacExtArgs.ARG_DOME)) {
             List<String> values = (List<String>) request.getDelimiterSeparatedList( GsacExtArgs.ARG_DOME);
@@ -599,7 +632,7 @@ public class PrototypeSiteManager extends SiteManager {
         // which creates, later, the sql based query or API to GSAC:
         //  new request /prototypegsac/gsacapi/site/search?site.code.searchtype=exact&output=site.html&limit=1000&site.group=BOULDER+GNSS&site.name.searchtype=exact
         // LOOK debug  DEBUG print show search sql 
-        //System.err.println("   SiteManager: getResourceClauses gives search clauses="+clauses) ;
+        //System.err.println("   SiteManager: getResourceClauses gives search clauses=\n      "+clauses) ;
 
         return clauses;
     } // end of getResourceClauses
@@ -628,7 +661,7 @@ public class PrototypeSiteManager extends SiteManager {
         //                                                 DB  .select( what to find (fields),     from which tables,      where clause, )  
         // works ok: 
         // Statement statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause);
-        // and this also has ordering :
+        // and this also has ordering (ORDER BY) [sort SORT] :
         Statement    statement = getDatabaseManager().select(getResourceSelectColumns(), clause.getTableNames(), clause,  " order by " + Tables.STATION.COL_FOUR_CHAR_NAME, -1);
         //System.err.println("GSAC:  SiteManager:getResource() Sites Search query is " +statement);
 
@@ -688,6 +721,8 @@ public class PrototypeSiteManager extends SiteManager {
     /**
      * Get the columns that are to be searched on              
      *
+     * value "Tables.STATION.COLUMNS" is all the columns (fields) in the database's station table.
+     *
      * @param request the request
      *
      * @return comma delimited fully qualified column names to select on
@@ -746,15 +781,14 @@ public class PrototypeSiteManager extends SiteManager {
         int countryid    =     results.getInt(Tables.STATION.COL_NATION_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
         int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
+        int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
+        int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_STYLE_ID);
+        int station_id      =     results.getInt(Tables.STATION.COL_STATION_ID);
 
         String networks  =     results.getString(Tables.STATION.COL_NETWORKS);
         if (null!= networks) {
            networks =  new String( results.getBytes(Tables.STATION.COL_NETWORKS), "UTF-8");
            }
-
-        
-        int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
-        int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_STYLE_ID);
 
         /*
         int access_permission_id    = results.getInt(Tables.STATION.COL_ACCESS_PERMISSION_ID);
@@ -833,6 +867,7 @@ public class PrototypeSiteManager extends SiteManager {
         ResultSet qresults;
         List<Clause> clauses = new ArrayList<Clause>();
         List<String> tables = new ArrayList<String>();
+
         // get name of country
         //  WHERE the test part in the select statement 
         clauses.add(Clause.join(Tables.STATION.COL_NATION_ID, Tables.NATION.COL_NATION_ID));
@@ -856,7 +891,7 @@ public class PrototypeSiteManager extends SiteManager {
            getDatabaseManager().closeAndReleaseConnection(statement);
         }
 
-        // LOOK add new code get name of locale or city from cityid     
+        // get name of locale or city from cityid     
         String city = " ";
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
@@ -907,15 +942,55 @@ public class PrototypeSiteManager extends SiteManager {
         // add all three above items to site as "PoliticalLocationMetadata":
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
 
+        //  To set this value in MySiteManager.java:
+        if (null!= iersdomes ) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
 
         site.setMirroredFromURL(mirrored_from_URL);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
 
-        //  To set this value in MySiteManager.java:
-        if (null!= iersdomes ) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
-
         // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Mirrored from" plus ":"
         if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));}
+
+        /* NEW possible: LATEST; to show latest data time in station information (not to search for sites by latest data time at sites).
+        // new code here for in effect object ldt = findSiteLatestDataTime(site); site.setLatestDataTime(ldt);
+        // with SQL query per site in the datafile table; get latest data time with variables
+        // COL_DATAFILE_STOP_TIME  per STATION_ID
+        // select max(datafile_stop_time) from datafile where station_id=60;
+        // ALSO new add this value to the HTML table of Search Site results. 
+        // use new code like next block in effect readAgencyMetadata(site), and with
+        // if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));} for latest time
+        */
+        // select max(datafile_stop_time) from datafile where station_id=60;
+        // SELECT what:
+        cols="";
+        //cols=SqlUtil.comma(new String[]{ Tables.DATAFILE.COL_DATAFILE_STOP_TIME });
+        cols= " max( " + SqlUtil.comma(new String[]{ Tables.DATAFILE.COL_DATAFILE_STOP_TIME }) +") " ;
+        // FROM 
+        tables = new ArrayList<String>();
+        tables.add(Tables.DATAFILE.NAME);
+        // WHERE
+        clauses = new ArrayList<Clause>();
+        clauses.add(Clause.eq(Tables.DATAFILE.COL_STATION_ID, station_id));
+        statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        try {
+           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+           while ((qresults = iter.getNext()) != null) {
+              Date ldt =  readDate(qresults, Tables.DATAFILE.COL_DATAFILE_STOP_TIME );
+              if (null != ldt) {
+                 site.setLatestDataDate(ldt); // this will appear on the single site HTML page
+                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_TIME, "Latest data time", ldt.toString() ); // this will appear on the Search Sites first HTML table of all sites found.   
+                 //System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
+                 // debug System.err.println("   Prototype SiteManager: ldt =\n      "+  ldt.toString() ) ;
+              }
+              else {
+                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_TIME, "Latest data time", "no data files for this station." );    
+                 // debug System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
+              }
+              break;
+              }
+            } finally {
+               ;// LOOK getDatabaseManager().closeAndReleaseConnection(statement);
+            }
 
         /*
         // following code section is in effect readAgencyMetadata(site);
@@ -941,7 +1016,7 @@ public class PrototypeSiteManager extends SiteManager {
             }
         */
 
-        // LOOK for this value (NOT yet in database!)  implement this, if you need this; sample code is below in this file.
+        // this value is not in the GSAC prototype database.  Add to db and implement this, if you need this.
         // readFrequencyStandardMetadata(site);
 
         return site;
@@ -1489,7 +1564,7 @@ public class PrototypeSiteManager extends SiteManager {
 
 
     /**
-     * _more_
+     * add this value to the site metadata AND make a line showing it on the Search Sites results HTML web page table, labeled with 'label'  plus ": ".
      *
      * @param gsacResource _more_
      * @param id _more_
