@@ -2267,10 +2267,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
-            String       remoteHref =
-                getRepository().getRemoteHref(resources.get(0));
+            String       remoteHref = getRepository().getRemoteHref(resources.get(0));
+
             labels.add(msg("Site Code").replace(" ", "&nbsp;"));
             sortValues.add(SORT_SITE_CODE);
+
             labels.add(msg("Name"));
             sortValues.add(SORT_SITE_NAME);
 
@@ -2280,23 +2281,31 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
             //labels.add(msg("Location") + " (latitude, longitude, elevation)"); // original 2010
             // use this (preferredi since gps instr locations are in geodetic coordinates, without elevation):
-            labels.add(msg(" ") + " Latitude, Longitude, Ellipsoid hgt.");
+            labels.add(msg(" ") + "Latitude, Longitude, Ellipsoid hgt.");
+            sortValues.add("");
             // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
-            sortValues.add("");
+            // for date range (site installed dates, not data dates)
+
             if (doDateRange) {
-                labels.add(msg("Date Range"));
+                labels.add(msg("Installed Dates"));
             }
             sortValues.add("");
+
+            // for ARG_SITE_LATEST_DATA_TIME
+            labels.add(msg("Latest Data Time") );
+            sortValues.add("");
+
             if (doResourceGroups) {
                 // add top label to column of networks for each site
                 // was labels.add(msg("Groups"));
                 labels.add(msg("Networks"));
                 sortValues.add("");
             }
+
             TABLE_LABELS     = Misc.listToStringArray(labels);
             TABLE_SORTVALUES = Misc.listToStringArray(sortValues);
-        }
+        } // added table labels
 
         int cnt = 0;
         for (GsacResource resource : resources) {
@@ -2327,9 +2336,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String href     = makeResourceViewHref(resource);
             openEntryRow(sb, resource.getId(), URL_SITE_VIEW, idUrlArg);
             String cbx = HtmlUtil.checkbox(idUrlArg, resource.getId(), false);
-
-            String clickEvent = getEntryEventJS(resource.getId(),
-                                    URL_SITE_VIEW, idUrlArg)[1];
+            String clickEvent = getEntryEventJS(resource.getId(), URL_SITE_VIEW, idUrlArg)[1];
             sb.append(HtmlUtil.col(cbx));
             String remoteHref = getRepository().getRemoteHref(resource);
             if (remoteHref.length() > 0) {
@@ -2360,26 +2367,21 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("<td " + clickEvent + ">");
 
             // show Location (lat, longi, vertical measure of some kind)
-            //    add latitude to row:
+            //    add latitude  to next data box in row:
             sb.append(formatLatLon(resource.getLatitude()));
-
             //    comma separator between latitude and longitude may be confused with European comma for decimal point, so use space:
             //sb.append(",");
             sb.append("&nbsp; &nbsp;");
-
             //   add longitude to row:
             sb.append(
                 formatLatLon(
                     EarthLocation.normalizeLongitude(
                         resource.getLongitude())));
-
             //    comma separator may be confused with European comma for decimal point, so use space:
             //sb.append(",");
             sb.append("&nbsp; &nbsp;");
-
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
-
 
             if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
@@ -2390,6 +2392,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 }
                 sb.append("</td>");
             }
+
+            // show latest time of data from this site: nnn
+            sb.append("<td " + clickEvent + ">");
+            if ( resource.getLatestDataDate()  != null ) 
+            {
+               sb.append(resource.getLatestDataDate() );
+            }  
+            else 
+            {
+                    sb.append(" no data files ");
+            }
+            sb.append("</td>");
 
             if (doResourceGroups) {
                 sb.append(

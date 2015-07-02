@@ -82,6 +82,9 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     private Date toDate;
 
     /** _more_ */
+    private Date latestDataDate;
+
+    /** _more_ */
     private Date publishDate;
 
     /** _more_ */
@@ -566,6 +569,25 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      */
     public double getElevation() {
         return getEarthLocation(true).getElevation();
+    }
+
+
+    /**
+     *  Set the latestDataDate property.
+     *
+     *  @param value The new value for FromDate
+     */
+    public void setLatestDataDate(Date value) {
+        latestDataDate = value;
+    }
+
+    /**
+     *  Get the latestDataDate property.
+     *
+     *  @return The FromDate
+     */
+    public Date getLatestDataDate() {
+        return latestDataDate;
     }
 
 

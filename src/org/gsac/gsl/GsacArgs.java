@@ -68,11 +68,10 @@ public interface GsacArgs {
     public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
     public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
 
-    /** to search for sites with DATA in date range 
+    /** to search for sites with DATA in date range */
     public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
     public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
     public static final String ARG_SITE_DATADATE_TO  =    ARG_SITE_DATADATE + ".to";
-    */
 
     /** to search for sites most recent data */
     public static final String ARG_SITE_LATEST_DATA_TIME = ARG_SITE_PREFIX + "latestdatatime";
