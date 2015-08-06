@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -34,6 +34,10 @@ import java.util.List;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -41,7 +45,6 @@ import java.text.DecimalFormat;
  *
  * This produces a SHORT report with few values for each station: code, lati, longi, height 
  *
- * Note the "elevation" value should be the site's ellipsoid height, depending in the metadata available.
  *
  * @author Jeff McWhirter 2010
  * @version SK Wier 26 Feb 2013 Re-format lat longi height to avoid huge number of non-significant digits.  
@@ -50,6 +53,7 @@ import java.text.DecimalFormat;
  * 2. replace top header line with standard csv format style.
  * @version SK Wier  6 Feb 2014 to change GUI choice label to "GSAC Sites info, csv".
  * @version SK Wier 27 Aug 2014 to change GUI choice label to "GSAC Sites info, short csv" to parallel other full csv choice label. API arg value site.csv never changes.
+ *                   4 aug 2015 add two time values fromdate and todate
  */
 public class TextSiteOutputHandler extends GsacOutputHandler {
     String latitude ="";
@@ -110,7 +114,7 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         try {
             int colCnt = 0;
             // #fields=ID[type='string'],station name[type='string'],latitude,longitude,ellip. height[unit='m']
-            String l1= "#fields=ID[type='string'],station name[type='string'],latitude,longitude,ellipsoid height[unit='m']";
+            String l1= "#fields=ID[type='string'],station name[type='string'],latitude,longitude,ellipsoid height[unit='m'],data_start_time[type='date' format='yyyy-MM-ddTHH:mm:ss],data_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss]";
             pw.print(l1);
             /* old: 
             for (String param : params) {
@@ -135,6 +139,9 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                 latitude =formatLocation(el.getLatitude())  ;
                 longitude =formatLocation(el.getLongitude()) ;
                 ellipsoidalheight =elevationFormat.format(el.getElevation()) ;
+                Date fromdate = site.getFromDate();
+                Date todate = site.getToDate();
+
 
                 // for each parm in the List
                 for (String param : params) {
@@ -188,6 +195,13 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
                             "Unknown parameter:" + param);
                     }
                 }
+                // 4 aug 2015:
+                pw.print(delimiter); // add a ,
+                //System.out.println("GSAC: short csv output, FromDate, ToDate "+iso8601UTCDateTime(fromdate)+", "+iso8601UTCDateTime(todate));
+                pw.print(iso8601UTCDateTime(fromdate) );
+                pw.print(delimiter); // add a ,
+                pw.print(iso8601UTCDateTime  (todate) );
+
                 pw.print("\n");
             }
         } finally {
@@ -223,5 +237,24 @@ public class TextSiteOutputHandler extends GsacOutputHandler {
         String s = latLonFormat.format(v);
         return s;
     }
+
+    /**
+     *  make this date-time in UTC, in ISO 8601 format
+     *
+     * @param date _more_
+     *
+     * @return _more_
+     */
+    private String iso8601UTCDateTime(Date date) {
+        if (date == null) { return ""; }
+        /*synchronized (dateTimeFormatnoT) {
+            return dateTimeFormatnoT.format(date); } */
+        // make this date-time in UTC, in ISO 8601 format 
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String utcTime = sdf.format( date );
+        return utcTime;
+    }
+
 
 }
