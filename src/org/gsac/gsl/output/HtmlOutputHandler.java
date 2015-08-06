@@ -238,7 +238,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String[][] tuples = new String[][] {
             { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
             { SORT_SITE_CODE, msg("Site Code") },
-            { SORT_SITE_NAME, msg("Name") } 
+            { SORT_SITE_NAME, msg("Site Name") } 
             //{ SORT_SITE_TYPE, msg("Type") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
@@ -2272,7 +2272,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             labels.add(msg("Site Code").replace(" ", "&nbsp;"));
             sortValues.add(SORT_SITE_CODE);
 
-            labels.add(msg("Name"));
+            labels.add(msg("Site Name"));
             sortValues.add(SORT_SITE_NAME);
 
             //labels.add(msg("Type"));
@@ -2287,9 +2287,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // for date range (site installed dates, not data dates)
 
-            if (doDateRange) {
-                labels.add(msg("Installed Dates"));
-            }
+            if (doDateRange) { labels.add(msg("Occupied Dates")); }
             sortValues.add("");
 
             // for ARG_SITE_LATEST_DATA_TIME
@@ -2353,7 +2351,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(HtmlUtil.col(resource.getLongName() + " &nbsp; ", clickEvent));
             // the next shows if the longName is a bad value:
             //System.err.println("     HtmlOutputHandler.java getLongName: " + resource.getLongName() );
-            //                         HtmlOutputHandler.java getLongName: InntakshÃºs KÃ¡rahnjÃºkavirkjunar viÃ° HÃ¡lslÃ³n
+            //                         HtmlOutputHandler.java getLongName: InntakshÃºs KÃ¡rahnjÃºkavirkjunar viÃ° HÃ¡lslÃ³n    a bad result
 
             //show Type in col 3, of site, OK since values are supplied by prototype GSAC database in most cases, with plain latin letters.
             /*
@@ -2395,13 +2393,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // show latest time of data from this site: nnn
             sb.append("<td " + clickEvent + ">");
+            // LOOK code to be implemented
             if ( resource.getLatestDataDate()  != null ) 
             {
                sb.append(resource.getLatestDataDate() );
             }  
             else 
             {
-                    sb.append(" no data files ");
+               sb.append("TBD");
             }
             sb.append("</td>");
 
