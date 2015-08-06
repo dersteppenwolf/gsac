@@ -27,9 +27,6 @@ import org.gsac.gsl.model.*;
 import org.gsac.gsl.output.*;
 
 import org.gsac.gsl.metadata.*;
-//import org.gsac.gsl.metadata.gnss.*;
-//import org.gsac.gsl.util.*;
-
 
 import java.io.*;
 import java.text.DateFormat;
@@ -47,7 +44,7 @@ import java.util.TimeZone;
  *  easy for humans to read and write. It is easy for machines to parse and generate."
  *
  *  This is a basic implementation.  You may add to it.  For more geodesy parameters in GSAC and how to access and format them in Java,
- *  see the other  ---OutputHandler.java files in /gsac/trunk/src/org/gsac/gsl/output/site/.
+ *  see the other *OutputHandler.java files in gsac/gsl/output/site/.
  *
  * @version        version 1 2012.
  * @author         Jeff McWhirter
@@ -74,15 +71,6 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
            "GSAC Sites info, JSON", "/sites.json", true));
     }
 
-
-    /* not used
-    public static String getUTCnowString() {
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        final String utcTime = sdf.format(new Date());
-        return utcTime;
-    }
-    */
 
     /**
      *  from the input GSAC 'site' object, extract the value of the named field or API argument.
@@ -124,12 +112,13 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
 
         //long t1 = System.currentTimeMillis();
 
-        //Get all the sites in the results (response) from the GSAC site query made by the user: 
         String Xstr ;
         String Ystr;
         String Zstr;
         String mondesc;
         String sampIntstr ;
+
+        //Get all the sites in the results (response) from the GSAC site query made by the user: 
         List<GsacSite> sites = response.getSites();
         // /* how to put  samp int, monu, xyz  values in the site?  
         for (GsacSite site : sites) {
@@ -157,9 +146,8 @@ public class JsonSiteOutputHandler extends GsacOutputHandler {
 
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
         gsonBuilder.serializeSpecialFloatingPointValues();
+
         Gson           gson  = gsonBuilder.create();
-
-
         String         json  = gson.toJson(sites);
         pw.print(json);
         response.endResponse();
