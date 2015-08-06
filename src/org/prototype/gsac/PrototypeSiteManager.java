@@ -71,7 +71,7 @@ import java.text.DecimalFormat;
  * This instance of the SiteManager class uses the GSAC Prototype database schema.
  * 
  * new variable ARG_SITE_MIRROR_FROM_URL read from the db station table.  
- * @author  S K Wier, 2013 - 24 June 2015
+ * @author  S K Wier, 2013 - 2 July 2015
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -156,15 +156,15 @@ public class PrototypeSiteManager extends SiteManager {
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
             // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
             Capability sitedateRange =
-               initCapability( new Capability(ARG_SITE_DATE,     "Site installed during date range", Capability.TYPE_DATERANGE),
+               initCapability( new Capability(ARG_SITE_DATE,     "Site occupied in date range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site installed", "Site installed");
             capabilities.add(sitedateRange);
 
 
             // LOOK NEW
-            // Search for sites with real data files in a time range, in this repository (not just INSTALLED n a requested date range); entry box is a "Date Range" pair of boxes;
-            // sites have gaps when data was collected even inside of of times they are installed and have equipment completely specified.
-            // implicitly uses and constructs two values from ARG_SITE_DATADATE by adding .from , etc.:
+            // Search for sites with real data files in a time range, in this repository (not just INSTALLED in a requested date range); entry box is a "Date Range" pair of boxes;
+            // Sites can have data gaps when data was not collected even inside of times they are installed and have equipment completely specified.
+            //    implicitly uses and constructs two values from ARG_SITE_DATADATE by adding .from , etc.:
             // GsacArgs.java:
             // public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
             // public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
@@ -177,7 +177,7 @@ public class PrototypeSiteManager extends SiteManager {
             */
 
             // LOOK NEW , could possibly do this:
-            // to Search for sites with the lastest time of its data files in a requested date range; entry box is a "Date Range" pair of boxes;
+            // Search for sites with the lastest time of its data files in a requested date range; entry box is a "Date Range" pair of boxes;
             // GsacArgs.java:
             // public static final String ARG_SITE_LATEST_DATA_TIME =        ARG_SITE_PREFIX + "datadate";
             // public static final String ARG_SITE_LATEST_DATA_TIME_FROM   = ARG_SITE_LATEST_DATA_TIME + ".from";
@@ -951,7 +951,9 @@ public class PrototypeSiteManager extends SiteManager {
         // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Mirrored from" plus ":"
         if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));}
 
-        /* NEW possible: LATEST; to show latest data time in station information (not to search for sites by latest data time at sites).
+
+        // LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
+        // NEW 2 July 2015. for "LatestDataTime': to SHOW latest data time in station information (NOT to search for sites by latest data time at sites).
         // new code here for in effect object ldt = findSiteLatestDataTime(site); site.setLatestDataTime(ldt);
         // with SQL query per site in the datafile table; get latest data time with variables
         // COL_DATAFILE_STOP_TIME  per STATION_ID
@@ -959,7 +961,7 @@ public class PrototypeSiteManager extends SiteManager {
         // ALSO new add this value to the HTML table of Search Site results. 
         // use new code like next block in effect readAgencyMetadata(site), and with
         // if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));} for latest time
-        */
+        // sample sql:
         // select max(datafile_stop_time) from datafile where station_id=60;
         // SELECT what:
         cols="";
@@ -991,6 +993,7 @@ public class PrototypeSiteManager extends SiteManager {
             } finally {
                ;// LOOK getDatabaseManager().closeAndReleaseConnection(statement);
             }
+        // end of LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
 
         /*
         // following code section is in effect readAgencyMetadata(site);
