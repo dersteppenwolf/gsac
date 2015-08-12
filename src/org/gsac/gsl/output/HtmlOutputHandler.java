@@ -1648,7 +1648,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         //Check if this metadata can display itself
         if (metadata.addHtml(request, gsacObject, this, pw)) {
+            //System.err.println("    GSAC addHtml is ok ");
             return;
+        }
+        else {
+           // debug System.err.println("    GSAC addHtml not here (get date ranges) ");
         }
 
         if (metadata instanceof MetadataGroup) {
@@ -2287,12 +2291,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // for date range (site installed dates, not data dates)
 
-            if (doDateRange) { labels.add(msg("Occupied Dates")); }
+            if (doDateRange) { labels.add(msg("Dates")); }
             sortValues.add("");
 
             // for ARG_SITE_LATEST_DATA_TIME
-            labels.add(msg("Latest Data Time") );
-            sortValues.add("");
+            //labels.add(msg("Latest Data Time") );
+            //sortValues.add("");
 
             if (doResourceGroups) {
                 // add top label to column of networks for each site
@@ -2391,7 +2395,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 sb.append("</td>");
             }
 
-            // show latest time of data from this site: nnn
+            // show Latest time of data from this site: nnn
+            /*
             sb.append("<td " + clickEvent + ">");
             // LOOK code to be implemented
             if ( resource.getLatestDataDate()  != null ) 
@@ -2403,6 +2408,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                sb.append("TBD");
             }
             sb.append("</td>");
+            */
 
             if (doResourceGroups) {
                 sb.append(
