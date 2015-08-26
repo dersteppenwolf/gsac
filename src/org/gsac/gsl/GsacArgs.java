@@ -63,18 +63,24 @@ public interface GsacArgs {
     /** short name or 4 letter code for sites */
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
 
-    /** _more_ */
+    /** site occupation data range */
     public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
     public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
     public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
 
-    /** to search for sites with DATA in date range */
+    /** site DATA in date range */
     public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
     public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
     public static final String ARG_SITE_DATADATE_TO  =    ARG_SITE_DATADATE + ".to";
 
-    /** to search for sites most recent data */
-    public static final String ARG_SITE_LATEST_DATA_TIME = ARG_SITE_PREFIX + "latestdatatime";
+    /** site published date for site information */
+    public static final String ARG_SITE_PUBLISHDATE =     ARG_SITE_PREFIX + "publishdate";
+    public static final String ARG_SITE_PUBLISHDATE_FROM =ARG_SITE_PUBLISHDATE + ".from";
+    public static final String ARG_SITE_PUBLISHDATE_TO =  ARG_SITE_PUBLISHDATE + ".to";
+
+    /** site DATA in date range: alternate: as per Fran 21 Aug., 2015: to search for sites by data time range (ignorning any data gaps) */
+    public static final String ARG_SITE_LATEST_DATA_DATE = ARG_SITE_PREFIX + "latest_data_date";
+    public static final String ARG_SITE_EARLIEST_DATA_DATE = ARG_SITE_PREFIX + "earliest_data_date";
 
     /** _more_ */
     public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
@@ -140,7 +146,7 @@ public interface GsacArgs {
     public static final String ARG_SUFFIX_GROUP = "group";
 
 
-    /** _more_ */
+    /**  GSAC jargon for what is commonly called the site's network name */
     public static final String ARG_SITE_GROUP = ARG_SITE_PREFIX + ARG_SUFFIX_GROUP;
 
     /** _more_ */
