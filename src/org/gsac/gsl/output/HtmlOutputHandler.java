@@ -1561,28 +1561,28 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (resource.getPublishDate() != null) {
             String dateString = formatDate(resource.getPublishDate());
-            pw.append(formEntry(request, msgLabel("Publish Date"),
-                                dateString));
+            pw.append(formEntry(request, msgLabel("Publish Date"), dateString));
         }
 
         if (resource.getModificationDate() != null) {
             String dateString = formatDate(resource.getModificationDate());
-            pw.append(formEntry(request, msgLabel("Modification Date"),
-                                dateString));
+            pw.append(formEntry(request, msgLabel("Modification Date"),                              dateString ));
         }
 
+        // FIX after testing: what does msgLabel( 2 args) do?
+        /*
         List<ResourceGroup> groups = resource.getResourceGroups();
         if (groups.size() > 0) {
-            pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
-                    ? "Network"
-                    : "Networks"), getGroupHtml(groups,
-                    resource.getResourceClass(), false)));
+            String networkStr = getGroupHtml(groups, resource.getResourceClass(), false);
+            System.err.println("    network ="+networkStr+"_");
+            // LOOK 
+            // when EMPTY gives like network =<a href="/dataworksgsac/gsacapi/site/search?site.group=" ></a>_ which is a mystery
+            pw.append(formEntryTop(request, msgLabel((groups.size() == 1) ? "Network" : "Networks"), networkStr ));
         }
-            /* was pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
-                    ? "Group"
-                    : "Groups"), getGroupHtml(groups,
-                    resource.getResourceClass(), false)));
-            */
+        */
+        /* was pw.append(formEntryTop(request, msgLabel((groups.size() == 1)
+                    ? "Group" : "Groups"), getGroupHtml(groups, resource.getResourceClass(), false)));
+        */
 
 
         processMetadata(request, pw, resource, resource.getMetadata(),
@@ -2289,15 +2289,23 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
             // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
-            // for date range (site installed dates, not data dates)
-
+            // for date range ; at unavco this is DATA DATES, but not for all cases
             if (doDateRange) { labels.add(msg("Dates")); }
             sortValues.add("");
+
+   
+            // somehow ought to check if there is a non-null publish date before you do this: 
+            //if ( resource.getPublishDate()  != null )  { 
+            labels.add(msg("Publish Date")); 
+            // }
+            sortValues.add("");
+            
 
             // for ARG_SITE_LATEST_DATA_TIME
             //labels.add(msg("Latest Data Time") );
             //sortValues.add("");
 
+            // somehow ought to check if there is a non-null network name before you do this: 
             if (doResourceGroups) {
                 // add top label to column of networks for each site
                 // was labels.add(msg("Groups"));
@@ -2309,6 +2317,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             TABLE_SORTVALUES = Misc.listToStringArray(sortValues);
         } // added table labels
 
+        // NOW make a row in the table for each of one or more sites:
         int cnt = 0;
         for (GsacResource resource : resources) {
             GsacResourceManager resourceManager =
@@ -2385,6 +2394,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
 
+
+            // show values of "Dates" (data date range for example at UNAVCO)
             if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
                 if (resource.getFromDate() != null) {
@@ -2394,6 +2405,19 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 }
                 sb.append("</td>");
             }
+
+           
+            // show site info. publish date
+            String dateString = formatDate(resource.getPublishDate());
+            //if ( dateString  != null )  { 
+                sb.append("<td " + clickEvent + ">");
+                if ( dateString != null) {
+                    sb.append( dateString );
+                } else {
+                    sb.append("N/A");
+                }
+                sb.append("</td>");
+            //}
 
             // show Latest time of data from this site: nnn
             /*
@@ -2410,12 +2434,19 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
             */
 
+            // make column value in many-site HTML results table labeled Networks:
             if (doResourceGroups) {
-                sb.append(
-                    HtmlUtil.col(
-                        getGroupHtml(
-                            resource.getResourceGroups(),
-                            resource.getResourceClass(), true) + "&nbsp;"));
+                // orig. sb.append( HtmlUtil.col( getGroupHtml( resource.getResourceGroups(), resource.getResourceClass(), true) + "&nbsp;"));
+                String hcolpart = HtmlUtil.col( getGroupHtml( resource.getResourceGroups(), resource.getResourceClass(), true) + "&nbsp;");
+                //System.err.println(" network  =_" + hcolpart+"_"); // is like 
+                if ( hcolpart.contains("</a>&nbsp;</td>") ) {
+                    // no network
+                    sb.append("<td " + clickEvent + ">");
+                    sb.append("N/A");
+                    sb.append("</td>");
+                } else {
+                    sb.append( HtmlUtil.col( getGroupHtml( resource.getResourceGroups(), resource.getResourceClass(), true) + "&nbsp;"));
+                }
             }
             sb.append("</tr>\n");
         }
