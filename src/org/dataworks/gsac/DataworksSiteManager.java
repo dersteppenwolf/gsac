@@ -78,6 +78,7 @@ import java.io.OutputStream;
  * 
  * @author  Jeff McWhirter, 2011. A short template for any SiteManager.java, without any code for querying a database.
  * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 12 Aug 2014 to (at least) 17 June 2015
+ * @author  S K Wier, UNAVCO; DataworksSiteManager.java, 26 Aug 2015 for new core GSAC functions and values, and to suit the NCEDC & PANGA needs too.
  */
 public class DataworksSiteManager extends SiteManager {
 
@@ -135,7 +136,8 @@ public class DataworksSiteManager extends SiteManager {
             // order of adding to capabilities here specifies order on html site search page
             List<Capability> capabilities = new ArrayList<Capability>();
 
-            // Essential search items 
+
+            // Essential site search items: 
 
             String help = HtmlOutputHandler.stringSearchHelp;  /* some mouse over help text */
             // search on site code, the 4 character ID.  Users may use regular expressions such as AB* or P12*. Hover cursor on any GSAC entry box.
@@ -144,6 +146,7 @@ public class DataworksSiteManager extends SiteManager {
                       CAPABILITY_GROUP_SITE_QUERY, "Code (4 character ID) of the station", "Code (4 character ID) of the station. " + help);
             siteCode.setBrowse(true);  /*  which apparently adds these searches to the GSAC web site Browse form */
             capabilities.add(siteCode);
+
             // cursor hover text: search with site full name or partial name
             help="Full name of the site, such as Marshall, or part or name plus wildcard(*) such as Mar*";
             Capability siteName = initCapability(     new Capability(ARG_SITE_NAME, "Site Name",             Capability.TYPE_STRING), 
@@ -156,19 +159,31 @@ public class DataworksSiteManager extends SiteManager {
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
             // Search for sites INSTALLED and overlapping a requested date range; entry box is a "Date Range" pair of boxes;
-            // Output of all site searchs is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
+            // Output of all site searches is an HTML table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
             // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
             // GsacArgs.java:
             // public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
             // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
             Capability sitedateRange =
-               initCapability( new Capability(ARG_SITE_DATE,               "Site installed during date range", Capability.TYPE_DATERANGE),
-                      CAPABILITY_GROUP_SITE_QUERY, "Site in", "Site in");
+               initCapability( new Capability(ARG_SITE_DATE,        "Site Occupation Date Range", Capability.TYPE_DATERANGE),
+                      CAPABILITY_GROUP_SITE_QUERY, "Site in place", "Site in place");
             capabilities.add(sitedateRange);
 
 
-            //  Advanced search items: "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
+            sitedateRange =
+               initCapability( new Capability(ARG_SITE_PUBLISHDATE, "Site Published Date Range",  Capability.TYPE_DATERANGE),
+                      CAPABILITY_GROUP_SITE_QUERY, "Site published date", "Site published date");
+            capabilities.add(sitedateRange);
+
+            capabilities.add(
+               initCapability( new Capability( ARG_SITE_DATE,       "Site Data Date Range",       Capability.TYPE_DATERANGE),
+                     CAPABILITY_GROUP_SITE_QUERY, "Site data is between these dates", "Site data is between these dates"));
+
+
+
+            //  Advanced site search items: 
+            //  "CAPABILITY_GROUP_ADVANCED" search items appear on the web site search page under the "Advanced Site Query" label:
 
             String[] values;
             ResultSet results;
@@ -729,6 +744,9 @@ public class DataworksSiteManager extends SiteManager {
         String station_photo_URL          = results.getString(Tables.STATION.COL_STATION_IMAGE_URL);
         String time_series_plot_image_URL = results.getString(Tables.STATION.COL_TIME_SERIES_URL); 
 
+        // new 23 July 
+        //String mirrored_from_URL = results.getString(Tables.STATION.COL_MIRRORED_FROM_URL);   // may be null
+
         //  tricky code to fix the otherwise incorrect reading by Java JDBC                                  (UTF8 UTF-8 utf-8 utf8)
         //  of names in Icelandic or in other non-latin characters, and which are correct in the MySQL db:   (UTF8 UTF-8 utf-8 utf8)
         if (null!=staname) { staname = new String( results.getBytes(Tables.STATION.COL_STATION_NAME), "UTF-8"); }       //    (UTF8 UTF-8 utf-8 utf8)
@@ -744,8 +762,12 @@ public class DataworksSiteManager extends SiteManager {
         // set the site-was-installed data range at this station:
         // (Not the dates data obd files are available at this site.)
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
-        site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
+        if (fromDate != null )
+            {
+            site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
+            }
 
+        // for site retired date: if no defined, use value of "today" a UNAVCO practice still running, in place of "unknown."
         Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE );
         if (toDate != null )
             {
@@ -758,6 +780,29 @@ public class DataworksSiteManager extends SiteManager {
             }
         site.setToDate(toDate);
 
+        // set the published date for this  site
+        Date aDate=readDate(results,  Tables.STATION.COL_PUBLISHED_DATE);
+        //if (aDate != null )
+            {
+            site.setPublishDate(aDate); 
+            }
+
+        // set the latest data date for this  site
+        aDate=readDate(results,  Tables.STATION.COL_LATEST_DATA_DATE);
+        //if (aDate != null )
+            {
+            site.setLatestDataDate(aDate);  
+            }
+
+        // set the published date for this  site
+        //Date aDate=readDate(results,  Tables.STATION.COL_EARLIEST_DATA_DATE);
+        //if (aDate != null )
+        //  {
+            //site.setEarliestDataDate(aDate); 
+        //}
+
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
 
         /*
@@ -835,6 +880,7 @@ public class DataworksSiteManager extends SiteManager {
            // process each line in results of db query  
            while ((qresults = iter.getNext()) != null) {
                country = new String( qresults.getBytes(Tables.COUNTRY.COL_COUNTRY_NAME), "UTF-8"); //qresults.getString(Tables.COUNTRY.COL_COUNTRY_NAME);
+                     System.err.println("   got country =_"+country+"_");
                // you want Only read the first row of db query results returned
                break;
            }
@@ -860,7 +906,7 @@ public class DataworksSiteManager extends SiteManager {
            while ((qresults = iter.getNext()) != null) {
                //      System.err.println("   get locale name");
                locale = new String( qresults.getBytes(Tables.LOCALE.COL_LOCALE_INFO), "UTF-8"); // qresults.getString(Tables.LOCALE.COL_LOCALE_INFO);
-               //      System.err.println("   did get "+locale);
+                     System.err.println("   got locale =_"+locale+"_");
                break;
            }
          } finally {
@@ -868,9 +914,16 @@ public class DataworksSiteManager extends SiteManager {
          }
 
         // add above items to site as "PoliticalLocationMetadata":
-        String state =null;
-        String city = locale;
-        site.addMetadata(new PoliticalLocationMetadata(country , state , city ));  
+        //String state =null;
+        //String city = locale;
+        site.addMetadata(new PoliticalLocationMetadata(country , null , locale ));  
+
+        // new 23 July 2105
+        //site.setMirroredFromURL(mirrored_from_URL);
+        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
+        // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Mirrored from" plus ":"
+        //if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));}
+
 
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
@@ -1097,17 +1150,11 @@ public class DataworksSiteManager extends SiteManager {
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Z, "Z", zstr);
                 */
 
-                // get, check, and save value for IERS DOMES. 
+                // get and show in site html page the  value for IERS DOMES. 
                 String idn= results.getString(Tables.STATION.COL_IERS_DOMES);
-                // trap bad value "(A9)", an artifact of some IGS site logs,  and replace with empty string.  
-                if (idn != null && idn.equals("(A9)") ) 
-                   { idn = " " ; }
-                else if (idn != null && idn.equals("NULL") ) 
-                   { idn = " " ; }
-                else if ( idn == null ) 
-                   { idn = " " ; }
-                
-                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
+                if (idn != null ) { 
+                  addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", idn);
+                }
 
                 // did only the first row of db query results returned
                 break;
