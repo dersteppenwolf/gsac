@@ -25,8 +25,6 @@ import org.gsac.gsl.*;
 import org.gsac.gsl.model.*;
 import org.gsac.gsl.util.*;
 
-// The ramadda imports refer to the rammadda jar file included with GSAC,
-// not necessarily the latest thing from rammadda.org
 import org.gsac.gsl.ramadda.sql.Clause;
 import org.gsac.gsl.ramadda.sql.SqlUtil;
 
@@ -95,7 +93,7 @@ public class DataworksFileManager extends FileManager {
 
         // Find the types of files in this data archive ( see also "if (request.defined(GsacArgs.ARG_FILE_TYPE)) {" below in another method.)
         // Note this code has to read all the file entries in the database.
-        //    (originally, code here found *all* the possible file type names in the database file_type table, many types not in most data centers; which is merely misleading)
+        // (original old code here found *all* the possible file type names in the database file_type table, many types not in most data centers; which is merely misleading)
         int gpsfcnt=0;
         ResultSet results;
         ArrayList<String> avalues = new ArrayList<String>();
