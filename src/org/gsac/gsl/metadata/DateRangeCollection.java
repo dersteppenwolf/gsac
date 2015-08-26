@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Copied from the blaze_timecodes/src/org/unavco/remoting/timecode
  * package from the DAI web services
- *
+ * @author Jeff McWhirter
  */
 public class DateRangeCollection extends GsacMetadata {
 
@@ -79,6 +79,7 @@ public class DateRangeCollection extends GsacMetadata {
             throws IOException {
         GsacRepository repository = outputHandler.getRepository();
         if (dateRanges.size() == 0) {
+            System.err.println("  addHtml:  date ranges size is 0");
             return true;
         }
         StringBuffer buff = new StringBuffer(HtmlUtil.formTable());
@@ -89,7 +90,11 @@ public class DateRangeCollection extends GsacMetadata {
             max = Math.max(max, tuple[1]);
         }
 
-        //System.err.println("# date ranges:" + dateRanges.size());
+        // print date ranges data time ranges values:    Data Date Ranges Data Time Ranges
+        //System.err.println("# date ranges: size=" + dateRanges.size());
+        //System.err.println("  date ranges:  min=" + min);
+        //System.err.println("  date ranges:  max=" + max);
+
         int rowWidth = 1000;
 
         //        buff.append(HtmlUtil.row(HtmlUtil.cols(new String[] {
