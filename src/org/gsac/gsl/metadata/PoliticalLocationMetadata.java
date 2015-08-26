@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -33,8 +33,8 @@ import java.io.IOException;
  * Class description
  *
  *
- * @version        Enter version here..., Wed, May 19, '10
- * @author         Enter your name here...
+ * @version   Jeff McWhirter Wed, May 19, '10
+ * @author    Stuart Wier 26 Aug 2015; improve handling in case of no city, state, nation
  */
 public class PoliticalLocationMetadata extends GsacMetadata {
 
@@ -61,9 +61,9 @@ public class PoliticalLocationMetadata extends GsacMetadata {
 
 
     /**
-     *  shows nation, region or state, and city or place in html output pages
+     *  shows nation, province or state, and city or place in site HTML output pages
      *
-     * changed country -> nation and  state -> region/state, which are all cognates in Italian, French, German, Spanish and Portuguese
+     * changed country -> nation and  state -> Province/state, which are all cognates in English, Italian, French, German, Spanish and Portuguese
      *
      * @param request _more_
      * @param gsacResource _more_
@@ -77,20 +77,21 @@ public class PoliticalLocationMetadata extends GsacMetadata {
     public boolean addHtml(GsacRequest request, GsacResource gsacResource,
                            HtmlOutputHandler outputHandler, Appendable pw)
             throws IOException {
-        if (country != null) {
-            pw.append(outputHandler.formEntry(request,
-                    outputHandler.msgLabel("Nation"), country));
+        if (country != null && country.length()>1) {
+            //System.out.println("  ophd country = _" + country+"_");
+            pw.append(outputHandler.formEntry(request, outputHandler.msgLabel("Nation"), country));
         }
 
         // for COCONet and Dataworks, use of state is not allowed, as per requirements.
-        if (state != null) {
+        if (state != null && state.length()>1) {
             pw.append(outputHandler.formEntry(request,
                     outputHandler.msgLabel("Province/State"), state)); 
         }
 
-        if (city != null) {
+        if (city != null && city.length()>1) {
+            ///System.out.println("  ophd city = _" + city+"_");
             pw.append(outputHandler.formEntry(request,
-                    //outputHandler.msgLabel("Place/City"), city)); // for Europe and international use; ithe word place is more recognized than locale
+                    //outputHandler.msgLabel("Place/City"), city)); // for Europe and international use; the word "place" is more recognized than locale
                     outputHandler.msgLabel("City/Locale"), city)); // LOOK:  for COCONet GSAC, use locale as name for place, as per requirements.
         }
 
