@@ -2578,11 +2578,13 @@ public class GsacRepository implements GsacConstants {
         sb.append("GSAC API Information ");
 
         sb.append("<p>GSAC enables searches and downloads from archives of geoscience data, including GPS/GNSS station information and instrument data files.");
-        sb.append("<br>To learn how to use GSAC and to see what GSAC provides, begin with  the "+
+        sb.append("<br>GSAC can also support searches and downloads of GPS derived product files, and data files from other Earth science instruments such as tide gages.");
+
+        sb.append("<p>To learn how to use GSAC and to see what GSAC provides, begin with  the "+
                   " <a href='http://www.unavco.org/software/data-management/gsac/lib/docs/UNAVCO_GSAC_User_Guide.pdf'>GSAC User Guide</a>.  ");
 
         sb.append("</p> <p>With information on this page you can compose a GSAC API request. ");
-        sb.append("<br> A GSAC API can be invoked with the Linux curl utility. <p>For example, this command gets site MORV information with SINEX output:" );
+        sb.append(" A GSAC API can be invoked with the Linux curl utility. <p>For example, this command gets site MORV information with SINEX output:" );
 
         sb.append("<p> curl \"http://webrenag.unice.fr/gsac/gsacapi/site/search?site.code.searchtype=exact&output=site.snx&limit=500&search.y=0&search.x=0&site.code=morv&site.name.searchtype=exact\" </p> ");
 
