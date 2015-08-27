@@ -63,6 +63,9 @@ public interface GsacArgs {
     /** short name or 4 letter code for sites */
     public static final String ARG_SITE_CODE = ARG_SITE_PREFIX + "code";
 
+    /** special name thing used only for old GSAC flat file data */
+    public static final String ARG_SITE_UNIQUE_SITE_ID = ARG_SITE_PREFIX + "unique_site_id";
+
     /** site occupation data range */
     public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
     public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
