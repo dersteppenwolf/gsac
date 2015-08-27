@@ -52,6 +52,9 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
     /** _more_ */
     private String longName;
 
+    /** unique_site_id is ONLY used with old-style "flatfile" GSAC */
+    private String unique_site_id;
+
     /** _more_ */
     private List<GsacMetadata> metadata = new ArrayList<GsacMetadata>();
 
@@ -696,6 +699,14 @@ public abstract class GsacResource implements GsacArgs, GsacConstants {
      */
     public String getLongName() {
         return longName;
+    }
+
+    /** unique_site_id is ONLY used with flatfile GSAC */
+    public void setUniqueSiteId(String value) {
+        unique_site_id= value;
+    }
+    public String getUniqueSiteId() {
+        return unique_site_id;
     }
 
 
