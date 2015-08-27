@@ -2584,17 +2584,15 @@ public class GsacRepository implements GsacConstants {
                   " <a href='http://www.unavco.org/software/data-management/gsac/lib/docs/UNAVCO_GSAC_User_Guide.pdf'>GSAC User Guide</a>.  ");
 
         sb.append("</p> <p>With information on this page you can compose a GSAC API request. ");
-        sb.append(" A GSAC API can be invoked with the Linux curl utility. <p>For example, this command gets site MORV information with SINEX output:" );
+        sb.append(" A GSAC API can be invoked with the Linux curl utility. For example, this command gets site P666 and site P123  information from the UNAVCO archive GSAC, presented in a SINEX format file:" );
 
-        sb.append("<p> curl \"http://webrenag.unice.fr/gsac/gsacapi/site/search?site.code.searchtype=exact&output=site.snx&limit=500&search.y=0&search.x=0&site.code=morv&site.name.searchtype=exact\" </p> ");
+        sb.append("<br> curl \"http://www.unavco.org/gsacws/gsacapi/site/search?site.code.searchtype=exact&output=site.snx&limit=50&site.code=P666;P123&site.name.searchtype=exact\" </p> ");
 
-        sb.append("<p>For many more details and examples of GSAC API requests, see the GSAC User Guide. </p> ");
-
-        sb.append("<p>This link, Repository information xml, is an XML file of all capabilities provided by this GSAC: &nbsp; ");
+        sb.append("<p>This link ");
         sb.append(HtmlUtil.href(getUrl(URL_REPOSITORY_VIEW) + "?" + ARG_OUTPUT + "=xml", msg("Repository information xml")));
-        sb.append("   The Repository information xml file is read by other GSAC installations operating a federated GSAC incorporating this GSAC.</p>");
+        sb.append(" is an XML file of all capabilities provided by this particular GSAC service. <br> (The Repository information xml file may also be read by other GSAC installations operating a federated GSAC incorporating this GSAC.)</p>");
 
-        sb.append("<p>The Base URL next is used in composing API queries to this GSAC. ");
+        sb.append("<p>The Base URL, shown next just below, is used in composing API queries to this GSAC. The four sections following the Base URL list all capabilities (option-argument pairs) used in composing API queries to this GSAC.");
 
         StringBuffer contents = new StringBuffer();
 
@@ -2602,9 +2600,9 @@ public class GsacRepository implements GsacConstants {
         showRepositoryInfo(request, contents, gri, true);
 
         //System.err.println("    GsacRepository: handleRequestView(): where built ="+ gri );  
-        // like like GSAC:  debug gri= http://swierd:8080/prototypegsac 
+        // like  gri of http://swierd:8080/prototypegsac 
 
-        sb.append("<p>The four sections following the Base URL list all capabilities (option-argument pairs) used in composing API queries to this GSAC. ");
+        //sb.append("The four sections following the Base URL list all capabilities (option-argument pairs) used in composing API queries to this GSAC. ");
 
         StringBuffer tmp = new StringBuffer();
 
