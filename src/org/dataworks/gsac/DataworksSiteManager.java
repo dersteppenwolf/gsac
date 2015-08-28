@@ -154,6 +154,7 @@ public class DataworksSiteManager extends SiteManager {
             siteName.setBrowse(true); 
             capabilities.add(siteName);
 
+
             // site search for latitude-longitude bounding box; 4 boxes; not in browse service
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
@@ -165,16 +166,20 @@ public class DataworksSiteManager extends SiteManager {
             // public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
             // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
+
+            /* NOT used for the flat file GSAC
             Capability sitedateRange =
                initCapability( new Capability(ARG_SITE_DATE,        "Site Occupation Date Range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site in place", "Site in place");
             capabilities.add(sitedateRange);
+            */
 
 
-            sitedateRange =
+            Capability pubsitedateRange =
                initCapability( new Capability(ARG_SITE_PUBLISHDATE, "Site Published Date Range",  Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site published date", "Site published date");
-            capabilities.add(sitedateRange);
+            capabilities.add(pubsitedateRange);
+
 
             capabilities.add(
                initCapability( new Capability( ARG_SITE_DATE,       "Site Data Date Range",       Capability.TYPE_DATERANGE),
@@ -201,6 +206,7 @@ public class DataworksSiteManager extends SiteManager {
             values = getDatabaseManager().readDistinctValues( Tables.STATION_STATUS.NAME, Tables.STATION_STATUS.COL_STATION_STATUS);
             Arrays.sort(values);
             capabilities.add(new Capability(GsacArgs.ARG_SITE_STATUS, "Site Status", values, true, CAPABILITY_GROUP_ADVANCED));
+          
 
             // search on type of station (only a few static values possible)
             // LOOK: this query choice is disabled due to  "GPS/GNSS Campaign GPS/GNSS Continuous GPS/GNSS Mobile " not applicable to Dataworks (so far).
@@ -262,6 +268,7 @@ public class DataworksSiteManager extends SiteManager {
             // add search on network names:
             capabilities.add(new Capability(GsacArgs.ARG_SITE_GROUP, "Network", values, true, CAPABILITY_GROUP_ADVANCED));
             */
+
 
             // to enable the search on antenna types, first get antenna type names used by station equipment sessions
             avalues = new ArrayList<String>();
@@ -396,6 +403,7 @@ public class DataworksSiteManager extends SiteManager {
             //Arrays.sort(values);
             //capabilities.add(new Capability(GsacArgs.ARG_SITE_TYPE, "Monument Type", values, true, CAPABILITY_GROUP_ADVANCED));
 
+
             return capabilities;
         } catch (Exception exc) {
             throw new RuntimeException(exc);
@@ -445,6 +453,7 @@ public class DataworksSiteManager extends SiteManager {
             addStringSearch(request, ARG_SITE_NAME, " ", msgBuff, "Site Name", Tables.STATION.COL_STATION_NAME, clauses);  
             //System.err.println("   SiteManager: query for name " + ARG_SITE_NAME ) ;
         }
+        
         
         // query for the station's  location inside a latitude-longitude box
         if (request.defined(ARG_NORTH)) {
@@ -731,16 +740,22 @@ public class DataworksSiteManager extends SiteManager {
         // access values by name of field in database row: 
         String fourCharId  =   results.getString(Tables.STATION.COL_FOUR_CHAR_NAME);  
         String    staname  =   results.getString(Tables.STATION.COL_STATION_NAME);
+        
+
         double latitude =      results.getDouble(Tables.STATION.COL_LATITUDE_NORTH);
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ABOVE_ELLIPSOID);
+
+        /* not yet used
+        double x = results.getDouble(Tables.STATION.COL_X);
+        double y = results.getDouble(Tables.STATION.COL_Y);
+        double z = results.getDouble(Tables.STATION.COL_Z);
+        */
+
         int countryid    =     results.getInt(Tables.STATION.COL_COUNTRY_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
         int networkid    =     results.getInt(Tables.STATION.COL_NETWORK_ID);
-        /* for station fields of images of plots of time series:
-        | station_image_URL        | varchar(100)    | YES  |     | NULL    |                |
-        | time_series_URL          | varchar(100)    | YES  |     | NULL    |                |
-        */
+        /* for station fields of images of plots of time series: */
         String station_photo_URL          = results.getString(Tables.STATION.COL_STATION_IMAGE_URL);
         String time_series_plot_image_URL = results.getString(Tables.STATION.COL_TIME_SERIES_URL); 
 
@@ -758,6 +773,10 @@ public class DataworksSiteManager extends SiteManager {
         site = new GsacSite(fourCharId, fourCharId, staname, latitude, longitude, ellipsoid_hgt);
 
         // Set additional values in the site object:
+ 
+        // not yet used; set x,y,z LOOK simpler way?
+        //EarthLocation el = new EarthLocation(latitude, longitude, ellipsoid_hgt, x, y, z);
+        // site.setEarthLocation(el);
 
         // set the site-was-installed data range at this station:
         // (Not the dates data obd files are available at this site.)
@@ -780,36 +799,33 @@ public class DataworksSiteManager extends SiteManager {
             }
         site.setToDate(toDate);
 
-        // set the published date for this  site
-        Date aDate=readDate(results,  Tables.STATION.COL_PUBLISHED_DATE);
-        //if (aDate != null )
+        Date aDate;
+        /* not yet used;  set the published date for this  site
+        aDate=readDate(results,  Tables.STATION.COL_PUBLISHED_DATE);
+        if (aDate != null )
             {
             site.setPublishDate(aDate); 
             }
+         */
 
         // set the latest data date for this  site
-        aDate=readDate(results,  Tables.STATION.COL_LATEST_DATA_DATE);
+        aDate=readDate(results,  Tables.STATION.COL_LATEST_DATA_TIME);
         //if (aDate != null )
             {
             site.setLatestDataDate(aDate);  
             }
-
-        // set the published date for this  site
+ 
+        // not used yet.   set the published date for this  site
         //Date aDate=readDate(results,  Tables.STATION.COL_EARLIEST_DATA_DATE);
         //if (aDate != null )
         //  {
             //site.setEarliestDataDate(aDate); 
         //}
 
-        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
-        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
-        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
+        //System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ ";  retired date "+ site.getToDate());
 
-        /*
-         *
-         * The Dataworks schema only allows one network for each station.  This code for a group of network names for each station is
+        /* The Dataworks schema only allows one network for each station.  This code for a group of network names for each station is
          * retained for when they discover each station may belong to more than one network.  SW 5 Aug 2014.
-         *
         //Add the network(s) for this station, in alphabetical order,  to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
             List<String> toks = new ArrayList<String>();
@@ -828,59 +844,29 @@ public class DataworksSiteManager extends SiteManager {
         List<Clause> clauses = new ArrayList<Clause>();
         ResultSet qresults;
 
-        // get name of the single allowed dataworks network of this site
-        String network = "";
 
-        clauses.add(Clause.join(Tables.STATION.COL_NETWORK_ID, Tables.NETWORK.COL_NETWORK_ID));
-        clauses.add(Clause.eq(Tables.NETWORK.COL_NETWORK_ID, networkid));
-        cols=SqlUtil.comma(new String[]{Tables.NETWORK.COL_NETWORK_NAME});
-        tables.add(Tables.STATION.NAME);
-        tables.add(Tables.NETWORK.NAME);
-        Statement  statement = //select            what    from      where
-           getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        try {
-           SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           while ((qresults = iter.getNext()) != null) {
-               network = new String( qresults.getBytes(Tables.NETWORK.COL_NETWORK_NAME), "UTF-8"); // qresults.getString(Tables.NETWORK.COL_NETWORK_NAME);
-               //      System.err.println("   did get network  name"+network);
-               break;
-           }
-         } finally {
-               getDatabaseManager().closeAndReleaseConnection(statement);
-         }
-         /*
-         List<String> toks = new ArrayList<String>();
-         toks.add(network);
-         for (String tok : (List<String>) toks) {
-         }
-         */
-         site.addResourceGroup(new ResourceGroup(network));
-         // end of code for a single network name
-
-        // get names of country, province or state, and agency from their id numbers 
+        // get name of country, province or state, and agency from their id numbers 
 
         // get name of country
         String country = "";
         cols="";
         tables = new ArrayList<String>();
         clauses = new ArrayList<Clause>();
-        //  WHERE the test part in the select statement 
+        //  WHERE the test part in the select statement
         clauses.add(Clause.join(Tables.STATION.COL_COUNTRY_ID, Tables.COUNTRY.COL_COUNTRY_ID));
         clauses.add(Clause.eq(Tables.COUNTRY.COL_COUNTRY_ID, countryid));
         //  SELECT what to get from the db (result in rows returned):
         cols=SqlUtil.comma(new String[]{Tables.COUNTRY.COL_COUNTRY_NAME});
-        //  FROM   the select from which tables part 
+        //  FROM   the select from which tables part
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.COUNTRY.NAME);
-        statement = //select what    from      where
-           getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        Statement statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //System.err.println("   SiteManager: country query is " +statement);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           // process each line in results of db query  
+           // process each line in results of db query
            while ((qresults = iter.getNext()) != null) {
                country = new String( qresults.getBytes(Tables.COUNTRY.COL_COUNTRY_NAME), "UTF-8"); //qresults.getString(Tables.COUNTRY.COL_COUNTRY_NAME);
-                     System.err.println("   got country =_"+country+"_");
                // you want Only read the first row of db query results returned
                break;
            }
@@ -906,7 +892,7 @@ public class DataworksSiteManager extends SiteManager {
            while ((qresults = iter.getNext()) != null) {
                //      System.err.println("   get locale name");
                locale = new String( qresults.getBytes(Tables.LOCALE.COL_LOCALE_INFO), "UTF-8"); // qresults.getString(Tables.LOCALE.COL_LOCALE_INFO);
-                     System.err.println("   got locale =_"+locale+"_");
+               //      System.err.println("   did get "+locale);
                break;
            }
          } finally {
@@ -914,11 +900,12 @@ public class DataworksSiteManager extends SiteManager {
          }
 
         // add above items to site as "PoliticalLocationMetadata":
-        //String state =null;
-        //String city = locale;
-        site.addMetadata(new PoliticalLocationMetadata(country , null , locale ));  
+        String state =null;
+        String city = locale;
+        site.addMetadata(new PoliticalLocationMetadata(country , state , city ));
 
-        // new 23 July 2105
+
+        // NEW 23 July 2105
         //site.setMirroredFromURL(mirrored_from_URL);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
         // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Mirrored from" plus ":"
@@ -927,7 +914,6 @@ public class DataworksSiteManager extends SiteManager {
 
         // add URL(s) of image(s) here; which will appear on web page of one station's results, in a tabbed window
         MetadataGroup imagesGroup = null;
-
 
         if ( station_photo_URL != null  )    {
             if (imagesGroup == null) {
@@ -967,7 +953,6 @@ public class DataworksSiteManager extends SiteManager {
                 }
             }
         }
-        
 
         /* following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
@@ -1142,7 +1127,8 @@ public class DataworksSiteManager extends SiteManager {
                 // add to the file gsac/trunk/src/org/gsac/gsl/GsacExtArgs.java to declare similar new variables.
                 // The var names "Tables..." comes from the Tables.java file made when you built with ant maketables with your new database.
 
-                /*String xstr = results.getString(Tables.STATION.COL_X);
+                /*  not yet for dataworks:
+                String xstr = results.getString(Tables.STATION.COL_X);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_X, "X", xstr);
                 String ystr = results.getString(Tables.STATION.COL_Y);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Y, "Y", ystr);
@@ -1282,7 +1268,7 @@ public class DataworksSiteManager extends SiteManager {
                String sdt=null;
                Date test = readDate( results, Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME);
                if (null == test) { 
-                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid (null) EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME");
+                   // System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid (null) EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME");
                    indate = new Date();  //  better than null?
                } 
                else {
@@ -1306,7 +1292,7 @@ public class DataworksSiteManager extends SiteManager {
                dateRange = new Date[] { indate, outdate };
 
                if (null!=indate && null!=outdate && indate.after(outdate)) {
-                    System.err.println("   GSAC DB values ERROR:  Dates of equip config session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +" is >  end time: "+ outdate);
+                    // System.err.println("   GSAC DB values ERROR:  Dates of equip config session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +" is >  end time: "+ outdate);
                     continue;
                  }
 
