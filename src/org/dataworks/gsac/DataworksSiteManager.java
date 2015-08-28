@@ -159,6 +159,7 @@ public class DataworksSiteManager extends SiteManager {
             capabilities.add(initCapability(new Capability(ARG_BBOX, "Lat-Lon Bounding Box", Capability.TYPE_SPATIAL_BOUNDS), 
                     CAPABILITY_GROUP_SITE_QUERY, "Spatial bounds within which the site lies"));
 
+
             // Search for sites INSTALLED and overlapping a requested date range; entry box is a "Date Range" pair of boxes;
             // Output of all site searches is an HTML table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
             // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
@@ -166,25 +167,22 @@ public class DataworksSiteManager extends SiteManager {
             // public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
             // public static final String ARG_SITE_DATE_TO         = ARG_SITE_DATE + ".to";
-
-            /* NOT used for the flat file GSAC
             Capability sitedateRange =
                initCapability( new Capability(ARG_SITE_DATE,        "Site Occupation Date Range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site in place", "Site in place");
             capabilities.add(sitedateRange);
-            */
 
 
+            /* not yet used
             Capability pubsitedateRange =
                initCapability( new Capability(ARG_SITE_PUBLISHDATE, "Site Published Date Range",  Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site published date", "Site published date");
             capabilities.add(pubsitedateRange);
+            */
 
 
-            capabilities.add(
-               initCapability( new Capability( ARG_SITE_DATE,       "Site Data Date Range",       Capability.TYPE_DATERANGE),
+            capabilities.add( initCapability( new Capability( ARG_SITE_DATADATE, "Site with Data in Date Range", Capability.TYPE_DATERANGE),
                      CAPABILITY_GROUP_SITE_QUERY, "Site data is between these dates", "Site data is between these dates"));
-
 
 
             //  Advanced site search items: 
@@ -479,6 +477,16 @@ public class DataworksSiteManager extends SiteManager {
                     ARG_SITE_DATE_FROM, ARG_SITE_DATE_TO, "Site date",
                     Tables.STATION.COL_INSTALLED_DATE,
                     Tables.STATION.COL_RETIRED_DATE));
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        // query for DATA time range at a site NEW 28 Aug 2015
+        try {
+            clauses.addAll(getDateRangeClause(request, msgBuff,
+                    ARG_SITE_DATADATE_FROM, ARG_SITE_DATADATE_TO, "Site data times",
+                    Tables.STATION.COL_EARLIEST_DATA_TIME,
+                    Tables.STATION.COL_LATEST_DATA_TIME));
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
