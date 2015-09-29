@@ -940,7 +940,8 @@ public class GsacRequest implements GsacConstants {
      */
     public int getLimit() {
         int limit = get(ARG_LIMIT, DEFAULT_LIMIT);
-
+        // debug: shows actual limit to hamw many items returned from a query:
+        //         System.err.println(" limit= " + limit);
         return Math.min(limit, MAX_LIMIT);
     }
 

@@ -95,12 +95,10 @@ public interface GsacConstants extends GsacArgs {
     /** _more_ */
     public static final String OUTPUT_GSACXML = "gsacxml";
 
-    /** _more_ */
-    public static final int DEFAULT_LIMIT = 500;
-
-    /**  Fran says to use 5000. */
-    /* June 17 2015 Fran complains about the limit of "only" 5000; now she wants 9600 or more. So raise it to 20000. */
-    public static final int MAX_LIMIT = 20000;
+    public static final int DEFAULT_LIMIT = 500; // for how many items returned from a search.  the initial value shown in the limit box in the site search web form.
+    /* June 17 2015. Fran complains about the limit of "only" 5000; now she wants 9600 or more. So raise it to 20000. */
+    /* Sept 28 2015. 20000 not enough for Fran now.  Will remove, in effect, max limits on how many results can be found by GSAC.  Unless user other specifies a limit. */
+    public static final int MAX_LIMIT     = 250000;
 
     /** _more_ */
     public static final String TAG_CAPABILITIES = "capabilities";
