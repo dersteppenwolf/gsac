@@ -95,10 +95,12 @@ public class GnssEquipmentGroup extends MetadataGroup {
 
          for (GnssEquipment equipment :equipmentList) {
             if (cnt == 0) {
+                // label single site HTML page; equip section columns
                 buff.append(outputHandler.tableHeader(new String[] {
                     outputHandler.msg("Date"),
                     outputHandler.msg("Antenna"), 
                     outputHandler.msg("Dome"),
+                    // optional labels for X,Y,Z would go here x,y,z
                     outputHandler.msg("Antenna Height"),
                     outputHandler.msg("Receiver"),
                     outputHandler.msg("Firmware"), 
@@ -137,7 +139,7 @@ public class GnssEquipmentGroup extends MetadataGroup {
 
             buff.append("<td>&nbsp;");
 
-            // code to show X, Y, Z values:
+            // optional code to show X, Y, Z values:
             //                buff.append(equipment.getXyzOffset()[0] + "/"
             //                            + equipment.getXyzOffset()[1] + "/"
             //                            + equipment.getXyzOffset()[2]);
@@ -145,14 +147,20 @@ public class GnssEquipmentGroup extends MetadataGroup {
             double height = equipment.getXyzOffset()[2];
             if(Double.isNaN(height)) {
                 height = lastHeight;
+                buff.append("" ); 
+                // dont show a value when you dont have a value
             } 
-            buff.append("" + height);
+            else 
+               { buff.append("" + height); }
             lastHeight = height;
 
             buff.append("&nbsp;</td>");
+
             equipmentRow(buff, getValue(equipment.getReceiver(), values, 4),
                          getValue(equipment.getReceiverSerial(), values,5));
+
             equipmentRow(buff, getValue(equipment.getReceiverFirmware(), values, 4),"");
+
             equipmentRow(buff, getValue(equipment.getSatelliteSystem (), values, 4),"");
 
             buff.append("</tr>");
