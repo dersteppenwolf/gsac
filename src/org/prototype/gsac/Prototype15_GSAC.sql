@@ -172,7 +172,6 @@ CREATE TABLE `datafile` (
   `datafile_stop_time` datetime NOT NULL,
   `datafile_published_date` datetime DEFAULT NULL,
   `sample_interval` float DEFAULT NULL,
-  `latency_estimate` float DEFAULT NULL,
   `year` year(4) DEFAULT NULL,
   `day_of_year` int(3) DEFAULT NULL,
   `size_bytes` int(10) DEFAULT NULL,
@@ -261,7 +260,10 @@ CREATE TABLE `equip_config` (
   `station_id` int(6) unsigned NOT NULL,
   `equip_config_start_time` datetime NOT NULL,
   `equip_config_stop_time` datetime DEFAULT NULL,
-  `db_update_time` datetime NOT NULL,
+  `data_latency_hours` double DEFAULT NULL,
+  `data_latency_days` int(11) DEFAULT NULL,
+  `data_completeness` float DEFAULT NULL,
+  `db_update_time` datetime DEFAULT NULL,
   `antenna_id` int(3) unsigned NOT NULL,
   `antenna_serial_number` varchar(20) DEFAULT NULL,
   `antenna_height` float DEFAULT NULL,
@@ -485,7 +487,10 @@ CREATE TABLE `station` (
   `Y` double DEFAULT NULL,
   `Z` double DEFAULT NULL,
   `installed_date` datetime DEFAULT NULL,
+  `published_date` datetime DEFAULT NULL,
   `retired_date` datetime DEFAULT NULL,
+  `earliest_data_date` datetime DEFAULT NULL,
+  `latest_data_date` datetime DEFAULT NULL,
   `agency_id` int(3) unsigned DEFAULT NULL,
   `access_id` int(3) unsigned DEFAULT NULL,
   `style_id` int(3) unsigned DEFAULT NULL,
@@ -528,7 +533,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (1,'CN24','FelipeCarMEX2012',19.5756,-88.0539,16.0001,NULL,NULL,NULL,'2013-10-30 17:15:15','2015-06-01 00:00:00',1,2,1,1,2,2,2,2,1,'COCONet','http://www.tlalocnet.mx/tlalocnetgsac',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/CN24.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/CN24.png',NULL,NULL),(2,'P338','WeavrvlAirCN2005',40.7476,-122.923,672.216,NULL,NULL,NULL,'2005-09-21 00:00:00','2015-06-06 00:00:00',1,2,1,1,3,1,3,3,1,'PBO;PBO Analysis Complete;PBO Core Network',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P338.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P338.png',NULL,NULL),(3,'P780','Cerrillos_PR2008',18.075,-66.5791,154.07,-5565748.2083,-3746572.4236,4577161.3946,'2008-06-20 00:00:00','2015-06-12 00:00:00',1,2,1,1,2,1,4,4,1,'PBO;PBO Analysis Complete;PBO Core Network;COCONet',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P780.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P780.png',NULL,NULL);
+INSERT INTO `station` VALUES (1,'CN24','FelipeCarMEX2012',19.5756,-88.0539,16.0001,NULL,NULL,NULL,'2013-10-30 17:15:15',NULL,'2015-06-01 00:00:00',NULL,NULL,1,2,1,1,2,2,2,2,1,'COCONet','http://www.tlalocnet.mx/tlalocnetgsac',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/CN24.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/CN24.png',NULL,NULL),(2,'P338','WeavrvlAirCN2005',40.7476,-122.923,672.216,NULL,NULL,NULL,'2005-09-21 00:00:00',NULL,'2015-06-06 00:00:00',NULL,NULL,1,2,1,1,3,1,3,3,1,'PBO;PBO Analysis Complete;PBO Core Network',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P338.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P338.png',NULL,NULL),(3,'P780','Cerrillos_PR2008',18.075,-66.5791,154.07,-5565748.2083,-3746572.4236,4577161.3946,'2008-06-20 00:00:00',NULL,'2015-06-12 00:00:00',NULL,NULL,1,2,1,1,2,1,4,4,1,'PBO;PBO Analysis Complete;PBO Core Network;COCONet',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P780.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P780.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -589,4 +594,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-06-24 11:48:12
+-- Dump completed on 2015-09-29 10:53:59
