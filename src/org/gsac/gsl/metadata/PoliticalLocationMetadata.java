@@ -91,8 +91,8 @@ public class PoliticalLocationMetadata extends GsacMetadata {
         if (city != null && city.length()>1) {
             ///System.out.println("  ophd city = _" + city+"_");
             pw.append(outputHandler.formEntry(request,
-                    //outputHandler.msgLabel("Place/City"), city)); // for Europe and international use; the word "place" is more recognized than locale
-                    outputHandler.msgLabel("City/Locale"), city)); // LOOK:  for COCONet GSAC, use locale as name for place, as per requirements.
+                    outputHandler.msgLabel("Place/City"), city)); // for Europe and international use; the word "place" is more recognized than locale
+                    //outputHandler.msgLabel("City/Locale"), city)); // LOOK:  for COCONet GSAC, use locale as name for place, as per requirements.
         }
 
         return true;
