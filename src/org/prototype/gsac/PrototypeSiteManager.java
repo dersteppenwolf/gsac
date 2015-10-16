@@ -149,8 +149,8 @@ public class PrototypeSiteManager extends SiteManager {
 
 
             // Search for sites INSTALLED and overlapping a requested date range; entry box is a "Date Range" pair of boxes;
-            // Output of all site searchs is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
-            // implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
+            // Output of all site searches is an html table with "Date Range" column , showing station's installed to retired dates; see gsl/output/HtmlOutputHandler.java.
+            // Implicitely uses and constructs two values from ARG_SITE_DATE by adding .from , etc.:
             // GsacArgs.java:
             // public static final String ARG_SITE_DATE            = ARG_SITE_PREFIX + "date";
             // public static final String ARG_SITE_DATE_FROM       = ARG_SITE_DATE + ".from";
@@ -159,27 +159,25 @@ public class PrototypeSiteManager extends SiteManager {
                initCapability( new Capability(ARG_SITE_DATE,     "Site occupied in date range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site installed", "Site installed");
             capabilities.add(sitedateRange);
+            // LOOK you can use code like the above for sites' DATA AVAILABLE date ranges if your db station table records start and end times for when data was or is available,
+            // in place of site OCCUPATION dates.  In that case use a search box label like "Site Data Date Range."  Code elsewhere will or may need to be changed too. 
 
 
             // LOOK NEW
             // Search for sites with real data files in a time range, in this repository (not just INSTALLED in a requested date range); entry box is a "Date Range" pair of boxes;
             // Sites can have data gaps when data was not collected even inside of times they are installed and have equipment completely specified.
-            //    implicitly uses and constructs two values from ARG_SITE_DATADATE by adding .from , etc.:
-            // GsacArgs.java:
-            // public static final String ARG_SITE_DATADATE =        ARG_SITE_PREFIX + "datadate";
-            // public static final String ARG_SITE_DATADATE_FROM   = ARG_SITE_DATADATE + ".from";
-            // public static final String ARG_SITE_DATADATE_TO  =    ARG_SITE_DATADATE + ".to";
+            //    implicitly uses  ARG_SITE_EARLIEST_DATA_DATE from GsacArgs.java:
             /* 
             Capability siteDataDateRange = 
                initCapability( new Capability(ARG_SITE_DATADATE, "Site with data files in date range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site with data in date", "Site  with data in date");
             capabilities.add(siteDataDateRange);
             */
-
             // LOOK NEW , could possibly do this:
             // Search for sites with the lastest time of its data files in a requested date range; entry box is a "Date Range" pair of boxes;
             // GsacArgs.java:
-            // public static final String ARG_SITE_LATEST_DATA_TIME =        ARG_SITE_PREFIX + "datadate";
+            // debusterize this ???
+            // public static final String ARG_SITE_LATEST_DATA_DATE =        ARG_SITE_PREFIX + "datadate";
             // public static final String ARG_SITE_LATEST_DATA_TIME_FROM   = ARG_SITE_LATEST_DATA_TIME + ".from";
             // public static final String ARG_SITE_LATEST_DATA_TIME_TO  =    ARG_SITE_LATEST_DATA_TIME + ".to";
             /* 
@@ -980,12 +978,12 @@ public class PrototypeSiteManager extends SiteManager {
               Date ldt =  readDate(qresults, Tables.DATAFILE.COL_DATAFILE_STOP_TIME );
               if (null != ldt) {
                  site.setLatestDataDate(ldt); // this will appear on the single site HTML page
-                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_TIME, "Latest data time", ldt.toString() ); // this will appear on the Search Sites first HTML table of all sites found.   
+                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldt.toString() ); // this will appear on the Search Sites first HTML table of all sites found.   
                  //System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
                  // debug System.err.println("   Prototype SiteManager: ldt =\n      "+  ldt.toString() ) ;
               }
               else {
-                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_TIME, "Latest data time", "no data files for this station." );    
+                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", "no data files for this station." );    
                  // debug System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
               }
               break;
