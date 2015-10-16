@@ -172,6 +172,7 @@ CREATE TABLE `datafile` (
   `datafile_stop_time` datetime NOT NULL,
   `datafile_published_date` datetime DEFAULT NULL,
   `sample_interval` float DEFAULT NULL,
+  `latency_estimate` float DEFAULT NULL,
   `year` year(4) DEFAULT NULL,
   `day_of_year` int(3) DEFAULT NULL,
   `size_bytes` int(10) DEFAULT NULL,
@@ -221,31 +222,6 @@ LOCK TABLES `datafile_format` WRITE;
 /*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
 INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'plot image'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED'),(17,'PBO GPS Velocity Field Format'),(18,'PBO GPS Station Position Time Series, .pos');
 /*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `ellipsoid`
---
-
-DROP TABLE IF EXISTS `ellipsoid`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ellipsoid` (
-  `ellipsoid_id` int(4) unsigned NOT NULL AUTO_INCREMENT,
-  `ellipsoid_name` varchar(45) NOT NULL,
-  `ellipsoid_short_name` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`ellipsoid_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `ellipsoid`
---
-
-LOCK TABLES `ellipsoid` WRITE;
-/*!40000 ALTER TABLE `ellipsoid` DISABLE KEYS */;
-INSERT INTO `ellipsoid` VALUES (1,'WGS 84','WGS 84'),(2,'GRS 80','GRS 80'),(3,'PZ-90','PZ-90');
-/*!40000 ALTER TABLE `ellipsoid` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -499,7 +475,6 @@ CREATE TABLE `station` (
   `nation_id` int(3) unsigned DEFAULT NULL,
   `province_state_id` int(3) unsigned DEFAULT NULL,
   `locale_id` int(3) unsigned DEFAULT NULL,
-  `ellipsoid_id` int(1) unsigned DEFAULT NULL,
   `networks` varchar(2000) DEFAULT NULL,
   `mirrored_from_URL` varchar(120) DEFAULT NULL,
   `iers_domes` char(9) DEFAULT NULL,
@@ -514,11 +489,9 @@ CREATE TABLE `station` (
   KEY `monument_style_id_idx` (`monument_style_id`),
   KEY `nation_id_idx` (`nation_id`),
   KEY `locale_id_idx` (`locale_id`),
-  KEY `ellipsoid_id_idx` (`ellipsoid_id`),
   KEY `agency_id_idx` (`agency_id`),
   CONSTRAINT `access_id` FOREIGN KEY (`access_id`) REFERENCES `access` (`access_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `agency_id` FOREIGN KEY (`agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ellipsoid_id` FOREIGN KEY (`ellipsoid_id`) REFERENCES `ellipsoid` (`ellipsoid_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `locale_id` FOREIGN KEY (`locale_id`) REFERENCES `locale` (`locale_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `monument_style_id` FOREIGN KEY (`monument_style_id`) REFERENCES `monument_style` (`monument_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -594,4 +567,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-09-29 10:53:59
+-- Dump completed on 2015-10-16 12:50:55
