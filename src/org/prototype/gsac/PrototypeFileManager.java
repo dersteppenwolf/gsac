@@ -75,11 +75,11 @@ public class PrototypeFileManager extends FileManager {
 
     /**
      *  Define and enable what file-related items are are offered for search choices (database queries) for geoscience data files to download from this particular data repository.  
-     *  This sets the search forms on the web site file search page. (and also enables API choices)
+     *  This sets the search forms on the web site file search page and also enables API choices
      *
      *  In GSAC jargon "capabilities" are things to search (query) on. 
      *
-     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types.
+     * This method is called only once, at GSAC server start-up.  Must restart the GSAC server to find new items only detected here, such as gnss file types in the database file rows.
      *
      * @return  List of GSAC "Capabilities"  objects
      */
@@ -256,8 +256,7 @@ public class PrototypeFileManager extends FileManager {
      *
      * @throws Exception on badness
      */
-    public void handleRequest(GsacRequest request, GsacResponse response)
-            throws Exception {
+    public void handleRequest(GsacRequest request, GsacResponse response) throws Exception {
         StringBuffer msgBuff = new StringBuffer();
         List<Clause> clauses = new ArrayList<Clause>();
 
@@ -364,6 +363,7 @@ public class PrototypeFileManager extends FileManager {
         // NEW date date code revisions 25 Mar 2015
         // use the data range requested by the user, from the input from web search form / API, to search on the "data time" of data files:
         Date[] datarangeDates = request.getDateRange(ARG_FILE_DATADATE_FROM, ARG_FILE_DATADATE_TO, null, null);
+        // for data end time:
         if (datarangeDates[0] != null) {
             // wrangle the users start time into a format you can use in a SQL query
             Calendar cal = Calendar.getInstance();
@@ -372,8 +372,9 @@ public class PrototypeFileManager extends FileManager {
             clauses.add(Clause.ge(Tables.DATAFILE.COL_DATAFILE_STOP_TIME, sqlStartDate));
             // time of data must be inside some one receiver session
             //clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlStartDate));
-            appendSearchCriteria(msgBuff, "GPS Data ends &gt;=", "" + format(datarangeDates[0]));
+            appendSearchCriteria(msgBuff, " Data end time &gt;=", "" + format(datarangeDates[0]));
         }
+        // for data start time:
         if (datarangeDates[1] != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(datarangeDates[1]);
@@ -385,7 +386,7 @@ public class PrototypeFileManager extends FileManager {
             clauses.add(Clause.le(Tables.DATAFILE.COL_DATAFILE_START_TIME, sqlEndDate));
             // time of data must be inside some one receiver session
             //clauses.add(Clause.le(Tables.RECEIVER_SESSION.COL_RECEIVER_INSTALLED_DATE, sqlEndDate));
-            appendSearchCriteria(msgBuff, "GPS Data starts &lt;=", "" + format(datarangeDates[1]));
+            appendSearchCriteria(msgBuff, " Data start time &lt;=", "" + format(datarangeDates[1]));
         }
 
         // end NEW section 2
@@ -648,7 +649,7 @@ public class PrototypeFileManager extends FileManager {
     /**
      * original comment: "This takes the resource id that is used to identify files and creates a GsacFile object."
      *
-     * Composes one particular HTML "resource page"  when a user clicks on a particular item in the table of results, for files in this case, after a search.
+     * used for one particular HTML "resource page"  when a user clicks on a particular item in the table of results, for files in this case, after a search.
      *
      * FIX bug:  input arg is inadequate to find user-selected file by dates etc. Returns a GsacFile object for the station; for first file found for that station in the database.
      *  not the file clicked on. and, how to get file times in here?
@@ -707,15 +708,15 @@ public class PrototypeFileManager extends FileManager {
                String siteID = ""+station_id;
                // LOOK the following are perhaps somewhat defective because java.sql.Date objects "do not have a time component."  Geodesy needs data times to better resolution than 24 hours.
                Date data_start_time  = results.getDate(Tables.DATAFILE.COL_DATAFILE_START_TIME);
-               Date data_stop_time  = results.getDate(Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
-               Date published_date  = results.getDate(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE);
+               Date data_stop_time  =  results.getDate(Tables.DATAFILE.COL_DATAFILE_STOP_TIME);
+               Date published_date  =  results.getDate(Tables.DATAFILE.COL_DATAFILE_PUBLISHED_DATE);
 
                ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy data");
                if (file_type_name != null) {
                   rt = new ResourceType(TYPE_GNSS_OBSERVATION , file_type_name);
                }
-               //         Gsac File(String repositoryId, FileInfo fileInfo,      GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
-               GsacFile gsacFile = new GsacFile(resourceId, new FileInfo(file_url), null,                     published_date,    data_start_time,    data_stop_time, rt);
+               //            Gsac File(String repositoryId, FileInfo fileInfo,      GsacResource relatedResource, Date publishTime, Date startTime, Date endTime, ResourceType type)
+               GsacFile gsacFile = new GsacFile(resourceId, new FileInfo(file_url), null,                         published_date,  data_start_time, data_stop_time, rt);
                return gsacFile;
             } // end while
         } finally {
