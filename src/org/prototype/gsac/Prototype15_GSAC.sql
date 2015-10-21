@@ -161,11 +161,11 @@ CREATE TABLE `datafile` (
   `station_id` int(6) unsigned NOT NULL,
   `equip_config_id` int(6) unsigned DEFAULT NULL,
   `datafile_name` varchar(120) NOT NULL,
-  `URL_complete` varchar(120) NOT NULL,
+  `URL_complete` varchar(220) NOT NULL,
   `URL_protocol` varchar(7) DEFAULT NULL,
   `URL_domain` varchar(50) DEFAULT NULL,
   `URL_path_dirs` varchar(70) DEFAULT NULL,
-  `data_type_id` int(3) unsigned DEFAULT NULL,
+  `data_type_id` int(3) unsigned NOT NULL,
   `datafile_format_id` int(3) unsigned DEFAULT NULL,
   `data_reference_frame_id` int(3) unsigned DEFAULT NULL,
   `datafile_start_time` datetime NOT NULL,
@@ -177,6 +177,7 @@ CREATE TABLE `datafile` (
   `day_of_year` int(3) DEFAULT NULL,
   `size_bytes` int(10) DEFAULT NULL,
   `MD5` char(32) DEFAULT NULL,
+  `originating_agency_URL` varchar(220) DEFAULT NULL,
   PRIMARY KEY (`datafile_id`),
   KEY `station_id_idx` (`station_id`),
   KEY `equip_config_id_idx` (`equip_config_id`),
@@ -476,7 +477,7 @@ CREATE TABLE `station` (
   `province_state_id` int(3) unsigned DEFAULT NULL,
   `locale_id` int(3) unsigned DEFAULT NULL,
   `networks` varchar(2000) DEFAULT NULL,
-  `mirrored_from_URL` varchar(120) DEFAULT NULL,
+  `originating_agency_URL` varchar(120) DEFAULT NULL,
   `iers_domes` char(9) DEFAULT NULL,
   `station_photo_URL` varchar(100) DEFAULT NULL,
   `time_series_plot_image_URL` varchar(100) DEFAULT NULL,
@@ -506,7 +507,6 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (1,'CN24','FelipeCarMEX2012',19.5756,-88.0539,16.0001,NULL,NULL,NULL,'2013-10-30 17:15:15',NULL,'2015-06-01 00:00:00',NULL,NULL,1,2,1,1,2,2,2,2,1,'COCONet','http://www.tlalocnet.mx/tlalocnetgsac',NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/CN24.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/CN24.png',NULL,NULL),(2,'P338','WeavrvlAirCN2005',40.7476,-122.923,672.216,NULL,NULL,NULL,'2005-09-21 00:00:00',NULL,'2015-06-06 00:00:00',NULL,NULL,1,2,1,1,3,1,3,3,1,'PBO;PBO Analysis Complete;PBO Core Network',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P338.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P338.png',NULL,NULL),(3,'P780','Cerrillos_PR2008',18.075,-66.5791,154.07,-5565748.2083,-3746572.4236,4577161.3946,'2008-06-20 00:00:00',NULL,'2015-06-12 00:00:00',NULL,NULL,1,2,1,1,2,1,4,4,1,'PBO;PBO Analysis Complete;PBO Core Network;COCONet',NULL,NULL,'http://www.unavco.org/data/gps-gnss/lib/images/station_images/P780.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P780.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -567,4 +567,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-16 12:50:55
+-- Dump completed on 2015-10-21 12:02:23
