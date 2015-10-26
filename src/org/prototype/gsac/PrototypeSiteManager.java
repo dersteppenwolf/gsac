@@ -946,8 +946,8 @@ public class PrototypeSiteManager extends SiteManager {
         site.setMirroredFromURL(mirrored_from_URL);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
 
-        // Look add this value to the site metadata AND make a line showing it on the site HTML web page labeled "Mirrored from" plus ":"
-        if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));}
+        // Look add this value to the site metadata AND make a line showing it on the site HTML web page "copied from"
+        if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "copied from"));}
 
 
         // LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
