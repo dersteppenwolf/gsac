@@ -941,7 +941,7 @@ public class PrototypeSiteManager extends SiteManager {
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
 
         //  To set this value in MySiteManager.java:
-        if (null!= iersdomes ) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
+        if (null!= iersdomes && iersdomes.length() > 4) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
 
         site.setMirroredFromURL(mirrored_from_URL);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
@@ -980,11 +980,7 @@ public class PrototypeSiteManager extends SiteManager {
                  site.setLatestDataDate(ldt); // this will appear on the single site HTML page
                  addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldt.toString() ); // this will appear on the Search Sites first HTML table of all sites found.   
                  //System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
-                 // debug System.err.println("   Prototype SiteManager: ldt =\n      "+  ldt.toString() ) ;
-              }
-              else {
-                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", "no data files for this station." );    
-                 // debug System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
+                 // debug System.err.println("   Prototype SiteManager:  Latest data time="+  ldt.toString()+"_" ) ;
               }
               break;
               }
