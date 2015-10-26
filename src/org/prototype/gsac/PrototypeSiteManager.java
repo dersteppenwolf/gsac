@@ -771,7 +771,7 @@ public class PrototypeSiteManager extends SiteManager {
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPSOID);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
-        String mirrored_from_URL = results.getString(Tables.STATION.COL_MIRRORED_FROM_URL);   // may be null
+        String mirrored_from_URL = results.getString(Tables.STATION.COL_ORIGINATING_AGENCY_URL);   // may be null
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
         int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
