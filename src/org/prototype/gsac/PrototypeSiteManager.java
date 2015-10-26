@@ -173,6 +173,7 @@ public class PrototypeSiteManager extends SiteManager {
                       CAPABILITY_GROUP_SITE_QUERY, "Site with data in date", "Site  with data in date");
             capabilities.add(siteDataDateRange);
             */
+
             // LOOK NEW , could possibly do this:
             // Search for sites with the lastest time of its data files in a requested date range; entry box is a "Date Range" pair of boxes;
             // GsacArgs.java:
@@ -182,7 +183,7 @@ public class PrototypeSiteManager extends SiteManager {
             // public static final String ARG_SITE_LATEST_DATA_TIME_TO  =    ARG_SITE_LATEST_DATA_TIME + ".to";
             /* 
             Capability siteDataDateRange = 
-               initCapability( new Capability(ARG_SITE_LATEST_DATA_TIME, "Site latest data in tim  range", Capability.TYPE_DATERANGE),
+               initCapability( new Capability(ARG_SITE_LATEST_DATA_TIME, "Site latest data in time  range", Capability.TYPE_DATERANGE),
                       CAPABILITY_GROUP_SITE_QUERY, "Site latest data time", "Site latest data time");
             capabilities.add(siteDataDateRange);
             */
@@ -846,9 +847,10 @@ public class PrototypeSiteManager extends SiteManager {
         site.setFromDate(fromDate);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
-        // set latest data date at this station:
-        Date ldd =readDate(results,  Tables.STATION.COL_LATEST_DATA_DATE);
-        site.setLatestDataDate(ldd);
+        // set latest data DATE AND TIME at this station:
+        Date ldtime =readDateTime(results,  Tables.STATION.COL_LATEST_DATA_DATE);
+        site.setLatestDataDate(ldtime);
+        // debug  shows to seconds System.err.println("   SiteManager: station " +fourCharId+ " has latest data time="+ldtime.toString() );
 
         //Add the network(s) for this station, in alphabetical order, to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
@@ -1582,9 +1584,8 @@ public class PrototypeSiteManager extends SiteManager {
     /**
      * Convert a db datetime field to a 'Date' object.
      * NOTE this uses the java sql package ResultSet class and ONLY returns calendar date -- with NO time of day allowed.
-
             could use results.getTime()
-            could use results.getTimeSTAmp() both in java sql
+            could use results.getTimeStamp() both in java sql
      *
      * @param results a row from a qb query which has a datetime field
      * @param column a string name for a db field with  for example a MySQL 'datetime' object,
@@ -1595,6 +1596,16 @@ public class PrototypeSiteManager extends SiteManager {
     private Date readDate(ResultSet results, String column) {
         try {
             return results.getDate(column);
+        } catch (Exception exc) {
+            //if the date is undefined we get an error so we just return null 
+            return null;
+        }
+    }
+
+    // NOTE this uses the java sql package ResultSet class and  returns calendar date  with time of day .
+    private Date readDateTime(ResultSet results, String column) {
+        try {
+            return results.getTime(column);
         } catch (Exception exc) {
             //if the date is undefined we get an error so we just return null 
             return null;
