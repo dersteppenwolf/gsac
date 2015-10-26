@@ -1560,7 +1560,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
         if ( resource.getLatestDataDate() != null) {
-            String dateString = formatDate(resource.getLatestDataDate());
+            String dateString = formatDateTime(resource.getLatestDataDate());
             pw.append(formEntry(request, msgLabel("Latest Data Date"), dateString));
         }
 
@@ -2434,12 +2434,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             */
 
 
-            // show latest data time value from this site: 
+            // show Latest Data Time value from this site: 
             sb.append("<td " + clickEvent + ">");
             // LOOK code to be implemented
             if ( resource.getLatestDataDate()  != null ) 
             {
-               sb.append(resource.getLatestDataDate() );
+               String dateString = formatDateTime(resource.getLatestDataDate());
+               sb.append( dateString );
+               // date but no time sb.append(resource.getLatestDataDate() );
             }  
             else 
             {
