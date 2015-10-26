@@ -592,12 +592,12 @@ public abstract class GsacOutputHandler implements GsacConstants {
      * _more_
      *
      *
-     * @param resourcee _more_
+     * @param resource _more_
      * @return _more_
      */
-    public String formatDate(GsacResource resourcee) {
-        Date fromDate = resourcee.getFromDate();
-        Date toDate   = resourcee.getToDate();
+    public String formatDate(GsacResource resource) {
+        Date fromDate = resource.getFromDate();
+        Date toDate   = resource.getToDate();
         if ((fromDate != null) && (toDate != null)) {
             return formatDate(fromDate) + " - " + formatDate(toDate);
         } else if (fromDate != null) {
