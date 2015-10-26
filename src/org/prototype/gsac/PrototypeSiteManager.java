@@ -846,6 +846,10 @@ public class PrototypeSiteManager extends SiteManager {
         site.setFromDate(fromDate);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
+        // set latest data date at this station:
+        Date ldd =readDate(results,  Tables.STATION.COL_LATEST_DATA_DATE);
+        site.setLatestDataDate(ldd);
+
         //Add the network(s) for this station, in alphabetical order, to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
             List<String> toks = new ArrayList<String>();
