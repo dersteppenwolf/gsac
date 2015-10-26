@@ -601,9 +601,9 @@ public abstract class GsacOutputHandler implements GsacConstants {
         if ((fromDate != null) && (toDate != null)) {
             return formatDate(fromDate) + " - " + formatDate(toDate);
         } else if (fromDate != null) {
-            return formatDate(fromDate);
+            return formatDate(fromDate) + " - " ;
         } else if (toDate != null) {
-            return formatDate(toDate);
+            return  " - " + formatDate(toDate);
         } else {
             return "NA";
         }
