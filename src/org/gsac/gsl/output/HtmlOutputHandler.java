@@ -1559,9 +1559,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
-        if (resource.getPublishDate() != null) {
+        if (resource.getPublishDate() != null ) {
             String dateString = formatDate(resource.getPublishDate());
-            pw.append(formEntry(request, msgLabel("Publish Date"), dateString));
+            if (dateString.length()>3) {
+                pw.append(formEntry(request, msgLabel("Publish Date"), dateString));
+            }
         }
 
         if (resource.getModificationDate() != null) {
@@ -2284,8 +2286,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
             //labels.add(msg("Location") + " (latitude, longitude, elevation)"); // original 2010
-            // use this (preferredi since gps instr locations are in geodetic coordinates, without elevation):
-            labels.add(msg(" ") + "Latitude, Longitude, Ellipsoid hgt.");
+            // Use ellipsoidal height, since GNSS instrument locations are USUALLY in geodetic coordinates. elevation is computed with some choice of Geoid model; there is no set elevation per site):
+            labels.add(msg(" ") + "Latitude, Longitude, ellipsoid height");
             sortValues.add("");
             // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
@@ -2294,16 +2296,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
 
    
-            // somehow ought to check if there is a non-null publish date before you do this: 
-            //if ( resource.getPublishDate()  != null )  { 
+            //  do this only for files:
+            /*if ( resource.getPublishDate()  != null )  { 
             labels.add(msg("Publish Date")); 
-            // }
+             }
             sortValues.add("");
+            */
             
 
-            // for ARG_SITE_LATEST_DATA_TIME
+            // FIX for latest data time , ARG_SITE_LATEST_DATA_TIME
             //labels.add(msg("Latest Data Time") );
             //sortValues.add("");
+
 
             // somehow ought to check if there is a non-null network name before you do this: 
             if (doResourceGroups) {
@@ -2315,9 +2319,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
             TABLE_LABELS     = Misc.listToStringArray(labels);
             TABLE_SORTVALUES = Misc.listToStringArray(sortValues);
-        } // added table labels
+        } // added table column's labels
 
-        // NOW make a row in the table for each of one or more sites:
+
+        // NOW make a row in the table for each of one or more sites, i.e. fill in real value for each row:
         int cnt = 0;
         for (GsacResource resource : resources) {
             GsacResourceManager resourceManager =
@@ -2395,11 +2400,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
 
 
-            // show values of "Dates" (data date range for example at UNAVCO)
+            // show values of "Dates" (data date range for site: installed to most recent(like today))
             if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
                 if (resource.getFromDate() != null) {
-                    sb.append(formatDate(resource));
+                    sb.append( formatDate(resource));
+                    // formatDate(GsacResource resource) gives  both from and to dates, if they are defined.
                 } else {
                     sb.append("N/A");
                 }
@@ -2407,19 +2413,22 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
            
-            // show site info. publish date
-            String dateString = formatDate(resource.getPublishDate());
-            //if ( dateString  != null )  { 
+            // LOOK  do this only for files:
+            /* String dateString = formatDate(resource.getPublishDate());
+            if ( dateString  != null and dateString.length>3)  { 
                 sb.append("<td " + clickEvent + ">");
                 if ( dateString != null) {
                     sb.append( dateString );
                 } else {
-                    sb.append("N/A");
+                    //sb.append("N/A");
+                    sb.append(" ");
                 }
                 sb.append("</td>");
-            //}
+            }
+            */
 
-            // show Latest time of data from this site: nnn
+
+            // FIX show latest data time  from this site: 
             /*
             sb.append("<td " + clickEvent + ">");
             // LOOK code to be implemented
