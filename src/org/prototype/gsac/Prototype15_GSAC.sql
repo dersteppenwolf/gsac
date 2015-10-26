@@ -62,7 +62,7 @@ CREATE TABLE `agency` (
   `agency_individual_name` varchar(100) DEFAULT NULL,
   `other_contact` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`agency_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
-INSERT INTO `agency` VALUES (1,'not specified',NULL,NULL,NULL,NULL);
+INSERT INTO `agency` VALUES (1,'not specified',NULL,NULL,NULL,NULL),(2,'UNAVCO',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -465,8 +465,8 @@ CREATE TABLE `station` (
   `Y` double DEFAULT NULL,
   `Z` double DEFAULT NULL,
   `installed_date` datetime DEFAULT NULL,
-  `published_date` datetime DEFAULT NULL,
   `retired_date` datetime DEFAULT NULL,
+  `published_date` datetime DEFAULT NULL,
   `earliest_data_date` datetime DEFAULT NULL,
   `latest_data_date` datetime DEFAULT NULL,
   `agency_id` int(3) unsigned DEFAULT NULL,
@@ -508,7 +508,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (39,'P340','DashielCrkCN2008',39.4093,-123.0498,865.23,-2691539.1186,-4136726.977,4028080.6731,'2008-02-14 23:38:45',NULL,NULL,NULL,NULL,1,2,1,1,4,3,3,13,'PBO',NULL,'','','http://pboshared.unavco.org/timeseries/P340_timeseries.png',NULL,NULL),(40,'P341','WhiskytownCN2005',40.6507,-122.6069,406.85,NULL,NULL,NULL,'2005-09-23 00:19:00',NULL,NULL,NULL,NULL,1,2,1,1,3,3,3,5,'',NULL,'','','',NULL,NULL),(41,'P343','ChinaPeak_CN2007',40.8871,-123.3342,1617.91,NULL,NULL,NULL,'2007-06-21 04:04:30',NULL,NULL,NULL,NULL,1,2,1,1,4,3,3,6,'',NULL,'','','',NULL,NULL),(42,'P344','VinaHelitkCN2006',39.9291,-122.028,50.29,NULL,NULL,NULL,'2006-08-23 00:00:00',NULL,NULL,NULL,NULL,1,2,1,1,3,3,3,7,'',NULL,'','','',NULL,NULL),(43,'P345','HookerDomeCN2005',40.2712,-122.2708,134.08,NULL,NULL,NULL,'2005-10-01 00:51:30',NULL,NULL,NULL,NULL,1,2,1,1,3,3,3,8,'',NULL,'','','',NULL,NULL),(44,'P346','BuzzardRstCN2007',39.7947,-120.8675,2039.37,NULL,NULL,NULL,'2007-11-26 00:00:00',NULL,NULL,NULL,NULL,1,2,1,1,4,3,3,9,'',NULL,'','','',NULL,NULL),(45,'P347','AdinCTYardCN2007',41.1833,-120.9484,1269.28,NULL,NULL,NULL,'2007-09-13 18:55:00',NULL,NULL,NULL,NULL,1,2,1,1,3,3,3,10,'',NULL,'','','',NULL,NULL),(46,'P348','HatchetMtnCN2005',40.9055,-121.828,1668.07,NULL,NULL,NULL,'2005-09-28 00:16:45',NULL,NULL,NULL,NULL,1,2,1,1,3,3,3,11,'',NULL,'','','',NULL,NULL),(47,'P349','WonderlandCN2005',40.7311,-122.3194,275.4,NULL,NULL,NULL,'2005-10-27 21:08:30',NULL,NULL,NULL,NULL,1,2,1,1,3,3,3,12,'',NULL,'','','',NULL,NULL);
+INSERT INTO `station` VALUES (39,'P340','DashielCrkCN2008',39.4093,-123.0498,865.23,-2691539.1186,-4136726.977,4028080.6731,'2008-02-14 23:38:45','2015-10-25 00:00:00',NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,4,3,3,13,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','http://pbodims.unavco.org/main.php?g2_view=core.DownloadItem&g2_itemId=388816','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P340.png',NULL,NULL),(40,'P341','WhiskytownCN2005',40.6507,-122.6069,406.85,NULL,NULL,NULL,'2005-09-23 00:19:00',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,3,3,3,5,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P341.png',NULL,NULL),(41,'P343','ChinaPeak_CN2007',40.8871,-123.3342,1617.91,NULL,NULL,NULL,'2007-06-21 04:04:30',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,4,3,3,6,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P343.png',NULL,NULL),(42,'P344','VinaHelitkCN2006',39.9291,-122.028,50.29,NULL,NULL,NULL,'2006-08-23 00:00:00',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,3,3,3,7,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P344.png',NULL,NULL),(43,'P345','HookerDomeCN2005',40.2712,-122.2708,134.08,NULL,NULL,NULL,'2005-10-01 00:51:30',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,3,3,3,8,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P345.png',NULL,NULL),(44,'P346','BuzzardRstCN2007',39.7947,-120.8675,2039.37,NULL,NULL,NULL,'2007-11-26 00:00:00',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,4,3,3,9,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P346.png',NULL,NULL),(45,'P347','AdinCTYardCN2007',41.1833,-120.9484,1269.28,NULL,NULL,NULL,'2007-09-13 18:55:00',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,3,3,3,10,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P347.png',NULL,NULL),(46,'P348','HatchetMtnCN2005',40.9055,-121.828,1668.07,NULL,NULL,NULL,'2005-09-28 00:16:45',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,3,3,3,11,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P348.png',NULL,NULL),(47,'P349','WonderlandCN2005',40.7311,-122.3194,275.4,NULL,NULL,NULL,'2005-10-27 21:08:30',NULL,NULL,NULL,'2015-10-25 00:00:00',2,2,1,1,3,3,3,12,'PBO;PBO Analysis Complete;PBO Core Network','http://www.unavco.org/data/data.html','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P349.png',NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -569,4 +569,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-23 12:33:35
+-- Dump completed on 2015-10-26 10:27:36
