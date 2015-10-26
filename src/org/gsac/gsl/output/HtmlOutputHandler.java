@@ -1559,6 +1559,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
+        if ( resource.getLatestDataDate() != null) {
+            String dateString = formatDate(resource.getLatestDataDate());
+            pw.append(formEntry(request, msgLabel("Latest Data Date"), dateString));
+        }
+
+
         if (resource.getPublishDate() != null ) {
             String dateString = formatDate(resource.getPublishDate());
             if (dateString.length()>3) {
@@ -2304,9 +2310,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             */
             
 
-            // FIX for latest data time , ARG_SITE_LATEST_DATA_TIME
-            //labels.add(msg("Latest Data Time") );
-            //sortValues.add("");
+            // make label for latest data time , ARG_SITE_LATEST_DATA_TIME
+            labels.add(msg("Latest Data Time") );
+            sortValues.add("");
 
 
             // somehow ought to check if there is a non-null network name before you do this: 
@@ -2428,8 +2434,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             */
 
 
-            // FIX show latest data time  from this site: 
-            /*
+            // show latest data time value from this site: 
             sb.append("<td " + clickEvent + ">");
             // LOOK code to be implemented
             if ( resource.getLatestDataDate()  != null ) 
@@ -2438,10 +2443,10 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }  
             else 
             {
-               sb.append("TBD");
+               sb.append(" ");
             }
             sb.append("</td>");
-            */
+            
 
             // make column value in many-site HTML results table labeled Networks:
             if (doResourceGroups) {
