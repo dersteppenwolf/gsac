@@ -2302,7 +2302,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
 
    
-            //  do this only for files:
+            //  do this only for files: label column with Publish Date
             /*if ( resource.getPublishDate()  != null )  { 
             labels.add(msg("Publish Date")); 
              }
@@ -2386,8 +2386,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             */
 
-            sb.append("<td " + clickEvent + ">");
 
+            sb.append("<td " + clickEvent + ">");
             // show Location (lat, longi, vertical measure of some kind)
             //    add latitude  to next data box in row:
             sb.append(formatLatLon(resource.getLatitude()));
@@ -2419,8 +2419,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
            
-            // LOOK  do this only for files:
-            /* String dateString = formatDate(resource.getPublishDate());
+            // LOOK  do this only for files:  enter row value for Publish Date
+            /* 
+            String dateString = formatDate(resource.getPublishDate());
             if ( dateString  != null and dateString.length>3)  { 
                 sb.append("<td " + clickEvent + ">");
                 if ( dateString != null) {
@@ -2434,20 +2435,27 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             */
 
 
-            // show Latest Data Time value from this site: 
-            sb.append("<td " + clickEvent + ">");
-            // LOOK code to be implemented
-            if ( resource.getLatestDataDate()  != null ) 
-            {
+            // show Latest Data Time value from this site: latest data time
+            // date but no time  from resource.getLatestDataDate ?
+            if ( resource.getLatestDataDate() != null ) {
                String dateString = formatDateTime(resource.getLatestDataDate());
-               sb.append( dateString );
-               // date but no time sb.append(resource.getLatestDataDate() );
-            }  
-            else 
-            {
-               sb.append(" ");
+               sb.append("<td " + clickEvent + ">");
+               if ( dateString.length() >3) {
+                      //System.err.println(" 1 ldt str =_"+dateString+"_");
+                      sb.append( dateString );
+                   }
+               else {
+                      //System.err.println(" 2 ldt str =_"+dateString+"_");
+                      sb.append(" ");
+                   }
+               sb.append("</td>");
             }
-            sb.append("</td>");
+            else {
+               sb.append("<td " + clickEvent + ">");
+               sb.append("N/A"); // LOOK weird ; appending space " " causes table td outfiles to disappear!
+               sb.append("</td>");
+               //System.err.println(" 3 null ldt");
+            } 
             
 
             // make column value in many-site HTML results table labeled Networks:
@@ -2464,6 +2472,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     sb.append( HtmlUtil.col( getGroupHtml( resource.getResourceGroups(), resource.getResourceClass(), true) + "&nbsp;"));
                 }
             }
+            // end ROW
             sb.append("</tr>\n");
         }
         sb.append("</table>");
