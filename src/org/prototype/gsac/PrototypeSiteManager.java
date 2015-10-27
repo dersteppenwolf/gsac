@@ -848,6 +848,7 @@ public class PrototypeSiteManager extends SiteManager {
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
         // set latest data DATE AND TIME at this station:
+        // OR can do a db search now for the most recent data time at this site; see "LATEST" code above.
         Date ldtime =readDateTime(results,  Tables.STATION.COL_LATEST_DATA_DATE);
         site.setLatestDataDate(ldtime);
         // debug  shows to seconds System.err.println("   SiteManager: station " +fourCharId+ " has latest data time="+ldtime.toString() );
@@ -956,7 +957,8 @@ public class PrototypeSiteManager extends SiteManager {
         if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "copied from"));}
 
 
-        // LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
+        // do a db search now for the most recent data time at this site: "LATEST" code.
+        // LOOK comment out this code block to speed site s earches in repositories with a very large number of data files at many sites.
         // NEW 2 July 2015. for "LatestDataTime': to SHOW latest data time in station information (NOT to search for sites by latest data time at sites).
         // new code here for in effect object ldt = findSiteLatestDataTime(site); site.setLatestDataTime(ldt);
         // with SQL query per site in the datafile table; get latest data time with variables
