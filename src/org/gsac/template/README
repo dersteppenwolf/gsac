@@ -21,7 +21,7 @@ The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for rece
 To build GSAC for Java 1.6, make the following changes:
    - make sure your java and javac are for Java 1.6, not Java 1.7. On Linux, do which java and which javac and make sure the versions are the same and for Java 1.6
    - see the code changes for Java 1.6 in README part 1 (you saw this already).
-   - in PrototypeServer.java find comments " code block for Java ", and un-comment the lines for the Java 1.6 can commnet-out the Java 1.7 lines.
+   - in  your local file MyServer.java find comments " code block for Java ", and un-comment those lines for Java 1.6.  Comment-out the Java 1.7 lines.
    - copy your original local GSAC code build.xml file, like boulder/gsac/build.xml, to a backup file build.xml.Java7
    - in your original local GSAC code, cp build.xml.Java6 build.xml
    - copy the prototype build file gsac-code/src/org/prototype/gsac/build.xml.Java6 to build.xml
