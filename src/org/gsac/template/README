@@ -23,15 +23,12 @@ To build GSAC for Java 1.6, make the following changes:
    - see the code changes for Java 1.6 in README part 1 (you saw this already).
    - in  your local file MyServer.java find comments " code block for Java ", and un-comment those lines for Java 1.6.  Comment-out the Java 1.7 lines.
    - copy your original local GSAC code build.xml file, like boulder/gsac/build.xml, to a backup file build.xml.Java7
-   - in your original local GSAC code, cp build.xml.Java6 build.xml
    - copy the prototype build file gsac-code/src/org/prototype/gsac/build.xml.Java6 to build.xml
    - in that new build.xml replace the word "prototype" in these lines:
         <property name="basename" value="prototype_gsac"/>
         <property name="repository_relative_dir" value="org/prototype/gsac"/>
         <property name="repositorypackage" value="org.prototype.gsac"/>
-     with your words from your file build.xml.J17.  For example, you might replace org.prototype.gsac with org.myrepo.gsac.
-   - in your file like myrepServer.java, edit the file to use the "Java 1.6 version" lines and to comment-out the lines for "Java 1.7 version."
-
+     with your words from the same lines in your file build.xml.Java7.  For example, you might replace org.prototype.gsac with org.myrepo.gsac.
 
 The main steps in README part 2 are these.  In your local GSAC code area, MACRO.SRCDIR@:
 
