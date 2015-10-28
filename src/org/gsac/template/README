@@ -29,6 +29,7 @@ To build GSAC for Java 1.6, make the following changes:
         <property name="repository_relative_dir" value="org/prototype/gsac"/>
         <property name="repositorypackage" value="org.prototype.gsac"/>
      with your words from the same lines in your file build.xml.Java7.  For example, you might replace org.prototype.gsac with org.myrepo.gsac.
+     Also you may need to change "org." in those lines to your top level domain, such as "it.".
 
 The main steps in README part 2 are these.  In your local GSAC code area, MACRO.SRCDIR@:
 
