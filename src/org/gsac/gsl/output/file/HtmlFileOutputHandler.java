@@ -364,11 +364,10 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                            };
                     }
                     else {  
-                       // note that the HTML term for the Greek letter delta is &Delta;
-                       //labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
                        // Standard, and for for prototype GSAC:
-                       labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("MD5 check sum"), msg("File size") };
-                       // CHANGEME for UNR:
+                       //    note that the HTML term for the Greek letter delta is &Delta;    use delta T in place of the longer label 'sample time.'
+                       labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                       // CHANGEME special, only for UNR:
                        //labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data") };
                     }
 
