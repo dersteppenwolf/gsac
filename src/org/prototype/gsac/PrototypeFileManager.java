@@ -106,27 +106,29 @@ public class PrototypeFileManager extends FileManager {
         //  WHERE 
         clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_TYPE_ID, Tables.DATA_TYPE.COL_DATA_TYPE_ID));
         clauses.add(Clause.join(Tables.DATAFILE.COL_DATAFILE_FORMAT_ID, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_ID));
-        clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID));
+        //clauses.add(Clause.join(Tables.DATAFILE.COL_DATA_REFERENCE_FRAME_ID, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_ID));
         //  SELECT what column values to find
-        String cols=SqlUtil.comma(new String[]{Tables.DATA_TYPE.COL_DATA_TYPE_NAME, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME});
+        //String cols=SqlUtil.comma(new String[]{Tables.DATA_TYPE.COL_DATA_TYPE_NAME, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME, Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME});
+        String cols=SqlUtil.comma(new String[]{Tables.DATA_TYPE.COL_DATA_TYPE_NAME, Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME });
         //  FROM   
         tables.add(Tables.DATAFILE.NAME);
         tables.add(Tables.DATA_TYPE.NAME);
         tables.add(Tables.DATAFILE_FORMAT.NAME);
-        tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
+        //tables.add(Tables.DATA_REFERENCE_FRAME.NAME);
 
         ArrayList<String> avalues = new ArrayList<String>();
         ArrayList<String> fmvalues = new ArrayList<String>();
-        ArrayList<String> rfvalues = new ArrayList<String>();
+        //ArrayList<String> rfvalues = new ArrayList<String>();
         Statement statement = getDatabaseManager().select(cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-           //System.err.println("GSAC: queried db datafiles table for data file metadata, type, format, trf" ) ;
+           System.err.println("GSAC: queried db datafiles table for data file metadata, type, format, etc." ) ;
            // process each line in results of db query : 
            while ((results = iter.getNext()) != null) {
                String ftype = results.getString(Tables.DATA_TYPE.COL_DATA_TYPE_NAME);
                String format= results.getString(Tables.DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME);
-               String trf   = results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
+               //System.err.println("    got file of type "+ftype ) ;
+               //String trf   = results.getString(Tables.DATA_REFERENCE_FRAME.COL_DATA_REFERENCE_FRAME_NAME);
                filecount += 1;  // count all files in the datafile table.
                // accumulate distinct types in the array avalues
                int notfound=1;
@@ -139,7 +141,7 @@ public class PrototypeFileManager extends FileManager {
                    if (notfound==1) {
                          avalues.add(ftype);
                          gpsfcnt +=1;
-                         //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
+                         //System.err.println("  this data center has data files of DATA_TYPE.COL_DATA_TYPE_NAME: '" + ftype +"'" ) ;
                    }
                // accumulate distinct format names in the array fmvalues
                notfound=1;
@@ -152,9 +154,10 @@ public class PrototypeFileManager extends FileManager {
                    if (notfound==1) {
                          fmvalues.add(format);
                          fmcnt +=1;
-                         //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
+                         //System.err.println("  this data center has data files of DATAFILE_FORMAT.COL_DATAFILE_FORMAT_NAME: '" + ftype +"'" ) ;
                    }
                // accumulate distinct trf names in the array rfvalues
+               /* skip
                notfound=1;
                for (int vi= 0; vi< rfvalues.size(); vi+=1 ) {
                   if ( rfvalues.get(vi).equals(trf) ) {
@@ -165,8 +168,10 @@ public class PrototypeFileManager extends FileManager {
                    if (notfound==1) {
                          rfvalues.add(trf);
                          trfcnt +=1;
-                         //System.err.println("  this data center has data files of type '" + ftype +"'" ) ;
+                         System.err.println("  this data center has data files of TRF: '" + ftype +"'" ) ;
                    }
+                   */
+ 
                }
         } finally {
            getDatabaseManager().closeAndReleaseConnection(statement);
@@ -179,19 +184,19 @@ public class PrototypeFileManager extends FileManager {
         String [] formatvalues;
         itemArray = new String[fmvalues.size()];
         formatvalues = fmvalues.toArray(itemArray);
-        // types:
-        String [] trfvalues;
-        itemArray = new String[rfvalues.size()];  // declare String[] itemArray with size
-        trfvalues = rfvalues.toArray(itemArray);             // load itemArray
+        // trfs:
+        //String [] trfvalues;
+        //itemArray = new String[rfvalues.size()];  // declare String[] itemArray with size
+        //trfvalues = rfvalues.toArray(itemArray);             // load itemArray
         // The arrays tvalues, formatvalues, and trfvalues are used below to load file query choices.
         // can sort by alphabet: Arrays.sort(values); no, just leave them in order found, more likely commom ones show earlier that way, since you scanned all the files.
         System.err.println   ("GSAC: there are "+filecount+" data files in the database." ) ;
         if ( gpsfcnt>0) {
-           System.err.println("GSAC:                  there are  "+gpsfcnt+  " data types (types of measurements, parameters, or products) among the data files." ) ; }
+           System.err.println("GSAC:   with "+gpsfcnt+  " data types (types of measurements, parameters, or products)." ) ; }
         if ( fmcnt>0) {
-           System.err.println("GSAC:                  there are  "+fmcnt+    " data file formats among the data files." ); }
-        if ( trfcnt>0) {
-           System.err.println("GSAC:                  there are  "+trfcnt+   " Terrestrial Reference Frames among the data files." ); }
+           System.err.println("GSAC:   with "+fmcnt+    " data file formats." ); }
+        //if ( trfcnt>0) {
+        //   System.err.println("GSAC:                  there are  "+trfcnt+   " Terrestrial Reference Frames among the data files." ); }
 
 
         // the following file search choices are added to the web site file search page and available via API options: 
@@ -212,7 +217,7 @@ public class PrototypeFileManager extends FileManager {
               initCapability(new Capability(GsacArgs.ARG_FILE_TYPE,    "Data Type",        tvalues, true,      Capability.TYPE_FILETYPE ),    "File Query", "Data Type" ),
 
               // enable this for choices of File Format; see related code below also with "_FILE_FORMAT"
-              initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "Data File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
+              //initCapability(new Capability(GsacArgs.ARG_FILE_FORMAT,  "Data File Format", formatvalues, true, Capability.TYPE_FILE_FORMAT ), "File Query", "Data file format" ),
 
               // enable this for choices of Data Reference Frame; see related code below also with "_FILE_TRF"
               //initCapability(new Capability(GsacArgs.ARG_FILE_TRF, "Data Reference Frame", trfvalues,  true, Capability.TYPE_TRF ),           "File Query", "Data Reference Frame" ),
@@ -223,17 +228,18 @@ public class PrototypeFileManager extends FileManager {
               //initCapability(new Capability(ARG_FILE_SAMPLEINT,  "Data Sampling Interval (s)",     Capability.TYPE_NUMBERRANGE), "File Query", "instrument data sampling interval")
 
               // enable this for choices of file size. 
-              //initCapability(new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
+              initCapability(new Capability(ARG_FILE_FILESIZE,  "File Size", Capability.TYPE_NUMBERRANGE), "File Query", "File size") 
               // can also use  cap.setSuffixLabel("&nbsp;(bytes)");
         };
 
         for (Capability capability : dflt) {
             capabilities.add(capability);
+            //System.err.println("   FileManager: add file query capability" ) ;
         }
 
-        // Also add all the station-related search choices into the file search web page form, so you can select files from particular sites
-        // (add the choices from the related SiteManager class, to this File search HTML page.)
-        // somwhow this is buried under a [+] button; but how is not set here.
+        // Also add all the SITE, not file, station-related search choices into the file search web page form, so you can select files from particular sites
+        // (i.e., add the choices from the related SiteManager class, to this File search HTML page.)
+        // somwhow this is buried under a [+] button; but how that is done is not set here. LOOK - how to show all site options at first page view?
         capabilities.addAll(getSiteManager().doGetQueryCapabilities());
 
         return capabilities;
