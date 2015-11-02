@@ -5,7 +5,7 @@
  filename              : populate_GSAC_db_datafile_metadata.py
  author                : Stuart Wier
  created               : 2014-09-03
- latest update(version): 2015-10-27             Stuart Wier 
+ latest update(version): 2015-10-30             Stuart Wier 
 
  exit code(s)          : 0, success; 
                        : sys.exit (1),  PROBLEM: curl command to get sites info from remote GSAC failed.
@@ -226,6 +226,9 @@ P341,GNSS RINEX Observation QC Report,2
 
              # Set file type id for this file, as used in the GSAC Prototype 15 database
              usethisfile= True
+             datafile_format_id=0
+             # LOOK new an also set values of datafile_format_id here: ADD NEW CODE here below
+             # `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'plot image'),(9,'UNR  station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED'),(17,'PBO GPS Velocity Field Format'),(18,'PBO GPS Station  Position Time Series, .pos');
              if ('highrate' in  file_url ) :  # special case from UNAVCO
                   usethisfile= False 
                   countskips+=1

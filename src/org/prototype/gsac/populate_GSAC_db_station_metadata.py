@@ -375,9 +375,10 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                  metpack_id = getOrSetTableRow ("metpack_id", "metpack", "metpack_name", metpackname) 
                  logWrite("      metpackname = _"+metpackname+"_  metpack_serial_number =_"+metpack_serial_number+"_   metpack_id="+`metpack_id`  );
 
-             station_photo_URL          = (strlist[28])
+             station_photo_URL          = (strlist[28])  # like http://www.unavco.org/data/gps-gnss/lib/images/station_images/PALX.jpg
 
-             time_series_plot_image_URL = (strlist[29]) 
+             time_series_plot_image_URL = (strlist[29])  # like http://pboshared.unavco.org/timeseries/PALX_timeseries_cleaned.png 
+                                                         #  or  http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/ABMF.png 
 
              networks                   = (strlist[30]) 
              if ""==networks :
