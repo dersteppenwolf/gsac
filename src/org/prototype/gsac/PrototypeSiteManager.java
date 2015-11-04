@@ -759,8 +759,8 @@ public class PrototypeSiteManager extends SiteManager {
     @Override
     public GsacResource makeResource(ResultSet results) throws Exception {
         // "results" is from sql select query on 'station' table in the database.
-        // access values by name of field in database row: 
 
+        // access values by name of field in database row: 
         String    staname  =    results.getString(Tables.STATION.COL_STATION_NAME);
         // to fix bad java-jdbc reading of names in Icelandic or other non-latin characters which are correct in the mysql db:
         if (null!=staname) {
@@ -772,9 +772,9 @@ public class PrototypeSiteManager extends SiteManager {
         double longitude =     results.getDouble(Tables.STATION.COL_LONGITUDE_EAST);
         double ellipsoid_hgt = results.getDouble(Tables.STATION.COL_HEIGHT_ELLIPSOID);
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
-        String mirrored_from_URL = results.getString(Tables.STATION.COL_ORIGINATING_AGENCY_URL);   // may be null
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
+        String originator =     results.getString(Tables.STATION.COL_ORIGINATING_AGENCY_URL);
         int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
         String station_status_id    = results.getString(Tables.STATION.COL_STATUS_ID);             // may be null; is String of an int
         int countryid    =     results.getInt(Tables.STATION.COL_NATION_ID);
@@ -950,11 +950,12 @@ public class PrototypeSiteManager extends SiteManager {
         //  To set this value in MySiteManager.java:
         if (null!= iersdomes && iersdomes.length() > 4) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
 
-        site.setMirroredFromURL(mirrored_from_URL);
+
+        site.setMirroredFromURL(originator);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
 
-        // Look add this value to the site metadata AND make a line showing it on the site HTML web page "copied from"
-        if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "copied from"));}
+        // Look add this value to the site metadata AND make a line showing it on the site HTML web page
+        if (null!=originator ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  originator, "Originator"));}
 
 
         // do a db search now for the most recent data time at this site: "LATEST" code.
