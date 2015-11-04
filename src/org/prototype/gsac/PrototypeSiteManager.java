@@ -830,7 +830,7 @@ public class PrototypeSiteManager extends SiteManager {
         }
 
 
-        // set installed date range at this station:
+        //  get and set installed date range at this station:
         Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
         Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE );
         site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
@@ -847,6 +847,7 @@ public class PrototypeSiteManager extends SiteManager {
         site.setFromDate(fromDate);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
+        // LOOK whoa see lines near 995
         // set latest data DATE AND TIME at this station:
         // OR can do a db search now for the most recent data time at this site; see "LATEST" code above.
         Date ldtime =readDateTime(results,  Tables.STATION.COL_LATEST_DATA_DATE);
@@ -881,7 +882,7 @@ public class PrototypeSiteManager extends SiteManager {
         //  FROM   the select from which tables part 
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.NATION.NAME);
-        //                                          select  what    from      where
+        //                                          select  what    from      where               order-by-clause
         Statement  statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //System.err.println("   SiteManager: country query is " +statement);
         try {
@@ -959,6 +960,11 @@ public class PrototypeSiteManager extends SiteManager {
 
 
         // do a db search now for the most recent data time at this site: "LATEST" code.
+
+        // a working mysql approach is do the query like 
+        // select datafile_stop_time from datafile where station_id=40 order by datafile_stop_time DESC;
+        // and use the first time returned, of many,
+
         // LOOK comment out this code block to speed site s earches in repositories with a very large number of data files at many sites.
         // NEW 2 July 2015. for "LatestDataTime': to SHOW latest data time in station information (NOT to search for sites by latest data time at sites).
         // new code here for in effect object ldt = findSiteLatestDataTime(site); site.setLatestDataTime(ldt);
@@ -980,17 +986,27 @@ public class PrototypeSiteManager extends SiteManager {
         // WHERE
         clauses = new ArrayList<Clause>();
         clauses.add(Clause.eq(Tables.DATAFILE.COL_STATION_ID, station_id));
+        // System.err.println("   Prototype SiteManager:   for ldt, select "+cols+"  from "+tables +"   where "+ clauses ) ;
+        // like  for ldt, select  max( datafile.datafile_stop_time)   from [datafile]   where [datafile.station_id = 47]
+        //                               select  what    from      where              order-by-clause
         statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
+        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");  // NOTE : NOT "yyyy-MM-ddTHH:mm:ss Z"
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");  
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
-              Date ldt =  readDate(qresults, Tables.DATAFILE.COL_DATAFILE_STOP_TIME );
+              // handle the first item (and only item) found:
+              Date ldt =  readDateTime(qresults, "max( datafile.datafile_stop_time)" );
               if (null != ldt) {
-                 site.setLatestDataDate(ldt); // this will appear on the single site HTML page
-                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldt.toString() ); // this will appear on the Search Sites first HTML table of all sites found.   
-                 //System.err.println("   Prototype SiteManager: ldt search cols =\n      "+cols) ;
-                 // debug System.err.println("   Prototype SiteManager:  Latest data time="+  ldt.toString()+"_" ) ;
+                 String ldtstr = sdf.format( ldt);
+                 // debug System.err.println("   Prototype SiteManager: "+fourCharId+", latest data time="+ldtstr+"_" ) ;
+                 site.setLatestDataDate(ldt); // this is to appear on the single site HTML page
+                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldtstr ); // this will appear on the Search Sites first HTML table of all sites found.   
               }
+              else {
+                 ; //System.err.println("   Prototype SiteManager:  NO SITE Latest data time" ) ;
+              }
+
               break;
               }
             } finally {
