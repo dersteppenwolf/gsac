@@ -847,11 +847,10 @@ public class PrototypeSiteManager extends SiteManager {
         site.setFromDate(fromDate);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
-        // LOOK whoa see lines near 995
         // set latest data DATE AND TIME at this station:
         // OR can do a db search now for the most recent data time at this site; see "LATEST" code above.
-        Date ldtime =readDateTime(results,  Tables.STATION.COL_LATEST_DATA_DATE);
-        site.setLatestDataDate(ldtime);
+        //Date ldtime =readDateTime(results,  Tables.STATION.COL_LATEST_DATA_DATE);
+        //site.setLatestDataDate(ldtime);
         // debug  shows to seconds System.err.println("   SiteManager: station " +fourCharId+ " has latest data time="+ldtime.toString() );
 
         //Add the network(s) for this station, in alphabetical order, to the resource group
@@ -990,16 +989,17 @@ public class PrototypeSiteManager extends SiteManager {
         // like  for ldt, select  max( datafile.datafile_stop_time)   from [datafile]   where [datafile.station_id = 47]
         //                               select  what    from      where              order-by-clause
         statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");  // NOTE : NOT "yyyy-MM-ddTHH:mm:ss Z"
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");  
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
               // handle the first item (and only item) found:
-              Date ldt =  readDateTime(qresults, "max( datafile.datafile_stop_time)" );
+              // BUSTED: always given 1970-... but does give a time of day Date ldt =  readDateTime(qresults, "max( datafile.datafile_stop_time)" );
+              Date ldt =  readDate(qresults, "max( datafile.datafile_stop_time)" );// LOOK CRUMMY shows no time of day
               if (null != ldt) {
                  String ldtstr = sdf.format( ldt);
-                 // debug System.err.println("   Prototype SiteManager: "+fourCharId+", latest data time="+ldtstr+"_" ) ;
+                 System.err.println("   Prototype SiteManager:  SITE's Latest data time="+ qresults.toString()  ) ;
+                 System.err.println("   Prototype SiteManager:  SITE's Latest data time="+ldtstr+"_" ) ;
                  site.setLatestDataDate(ldt); // this is to appear on the single site HTML page
                  addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldtstr ); // this will appear on the Search Sites first HTML table of all sites found.   
               }
