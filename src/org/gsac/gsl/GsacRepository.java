@@ -506,6 +506,9 @@ public class GsacRepository implements GsacConstants {
         // makes many on each new gsac deploy om tomcat
 
         String uri   = request.getRequestURI();
+
+        // to list every single thing used to make a new WEB PAGE, not the GSAC query result: System.err.println("GSAC: got requestURI:_" + uri +"_" ); // debug only
+
         int    index = uri.indexOf("?");
         if (index >= 0) {
             uri = uri.substring(0, index);
@@ -524,7 +527,7 @@ public class GsacRepository implements GsacConstants {
 
         //TODO: what to do with a head request
         if (request.getMethod().toUpperCase().equals("HEAD")) {
-            //System.err.println("GSAC: got a  head request:" + uri);
+            // debug only System.err.println("GSAC: ' a head request': got requestURI:_" + uri);
             return;
         }
 
@@ -540,6 +543,9 @@ public class GsacRepository implements GsacConstants {
             boolean serviceRequest = uri.indexOf(URL_HTDOCS_BASE) < 0;
             if (serviceRequest) {
                 numServiceRequests++;
+                // to debug only:  LOOK show in log line the new GSAC request (and make string of new request)
+                // String reqstr=request.toString();
+                //System.out.println    ("GSAC: new request "+reqstr+" at time "+getUTCnowString()  ); 
             }
             String  what              = "other";
 
@@ -599,9 +605,9 @@ public class GsacRepository implements GsacConstants {
                 
                 String reqstr=request.toString();
 
-                if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
-                    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() ); // DEBUG
-                }
+                //if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
+                //    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() ); // DEBUG
+                //}
 
                 int resourceCnt = -1;
                 if (response != null) {
@@ -609,7 +615,10 @@ public class GsacRepository implements GsacConstants {
                 }
                 getLogManager().logAccess(request, what, resourceCnt);
 
-                System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from IP "+request.getOriginatingIP()); // +"  resourceCnt ="+resourceCnt ); // DEBUG
+                // good: System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP()); 
+                System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() + "  or RequestIP "+ request.getRequestIP()  ); 
+                // look weird the IP from request.getOriginatingIP() can show the IP 69.44.86.107 = wes.unavco.org NOT the actual remote non-unavco incoming IP!
+                // + "; URI "+request.getRequestURI(); // +"  resourceCnt ="+resourceCnt ); // DEBUG
 
             }
         } catch (UnknownRequestException exc) {
