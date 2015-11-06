@@ -847,11 +847,6 @@ public class PrototypeSiteManager extends SiteManager {
         site.setFromDate(fromDate);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
 
-        // set latest data DATE AND TIME at this station:
-        // OR can do a db search now for the most recent data time at this site; see "LATEST" code above.
-        //Date ldtime =readDateTime(results,  Tables.STATION.COL_LATEST_DATA_DATE);
-        //site.setLatestDataDate(ldtime);
-        // debug  shows to seconds System.err.println("   SiteManager: station " +fourCharId+ " has latest data time="+ldtime.toString() );
 
         //Add the network(s) for this station, in alphabetical order, to the resource group
         if ((networks != null) && (networks.trim().length() > 0)) {
@@ -964,7 +959,7 @@ public class PrototypeSiteManager extends SiteManager {
         // select datafile_stop_time from datafile where station_id=40 order by datafile_stop_time DESC;
         // and use the first time returned, of many,
 
-        // LOOK comment out this code block to speed site s earches in repositories with a very large number of data files at many sites.
+        // LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
         // NEW 2 July 2015. for "LatestDataTime': to SHOW latest data time in station information (NOT to search for sites by latest data time at sites).
         // new code here for in effect object ldt = findSiteLatestDataTime(site); site.setLatestDataTime(ldt);
         // with SQL query per site in the datafile table; get latest data time with variables
@@ -998,8 +993,7 @@ public class PrototypeSiteManager extends SiteManager {
               Date ldt =  readDate(qresults, "max( datafile.datafile_stop_time)" );// LOOK CRUMMY shows no time of day
               if (null != ldt) {
                  String ldtstr = sdf.format( ldt);
-                 System.err.println("   Prototype SiteManager:  SITE's Latest data time="+ qresults.toString()  ) ;
-                 System.err.println("   Prototype SiteManager:  SITE's Latest data time="+ldtstr+"_" ) ;
+                 //System.err.println("   Prototype SiteManager:  SITE's Latest data time="+ldtstr+"_" ) ;
                  site.setLatestDataDate(ldt); // this is to appear on the single site HTML page
                  addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldtstr ); // this will appear on the Search Sites first HTML table of all sites found.   
               }
