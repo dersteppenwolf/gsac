@@ -1561,14 +1561,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if ( resource.getLatestDataDate() != null) {
             String dateString = formatDateTime(resource.getLatestDataDate());
-            pw.append(formEntry(request, msgLabel("Latest Data Date"), dateString));
+            pw.append(formEntry(request, msgLabel("Latest Data Time"), dateString));
         }
 
 
         if (resource.getPublishDate() != null ) {
             String dateString = formatDate(resource.getPublishDate());
             if (dateString.length()>3) {
-                pw.append(formEntry(request, msgLabel("Publish Date"), dateString));
+                pw.append(formEntry(request, msgLabel("Site Publish Date"), dateString));
             }
         }
 
@@ -2303,11 +2303,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
    
             //  do this only for files: label column with Publish Date
-            /*if ( resource.getPublishDate()  != null )  { 
+            /* if ( resource.getPublishDate()  != null )  { 
             labels.add(msg("Publish Date")); 
              }
             sortValues.add("");
-            */
+             */
             
 
             // make label for latest data time , ARG_SITE_LATEST_DATA_TIME
@@ -2420,25 +2420,25 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
            
             // LOOK  do this only for files:  enter row value for Publish Date
-            /* 
+             
             String dateString = formatDate(resource.getPublishDate());
-            if ( dateString  != null and dateString.length>3)  { 
+            if ( dateString  != null && dateString.length() >3)  { 
                 sb.append("<td " + clickEvent + ">");
                 if ( dateString != null) {
                     sb.append( dateString );
                 } else {
-                    //sb.append("N/A");
-                    sb.append(" ");
+                    sb.append("N/A");
+                    //sb.append(" ");
                 }
                 sb.append("</td>");
             }
-            */
+            
 
 
             // show Latest Data Time value from this site: latest data time
             // date but no time  from resource.getLatestDataDate ?
             if ( resource.getLatestDataDate() != null ) {
-               String dateString = formatDateTime(resource.getLatestDataDate());
+               dateString = formatDateTime(resource.getLatestDataDate());
                sb.append("<td " + clickEvent + ">");
                if ( dateString.length() >3) {
                       //System.err.println(" 1 ldt str =_"+dateString+"_");
