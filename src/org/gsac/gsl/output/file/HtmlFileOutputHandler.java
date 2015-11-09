@@ -574,7 +574,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     }
 
                     // for unavco gsac:
-                    //if (relatedResources.size() > 0) {  
+                    if (relatedResources.size() > 0) {  
                        if (publishTime != null) {
                            //sb.append(HtmlUtil.col( publish ));
                            sb.append("<td align=\"left\" class=\"gsac-ptime\" " + ">");
@@ -586,7 +586,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                            sb.append( "<font size=-2>N/A</font>");
                            sb.append("</td>");
                        }
-                    //}
+                    }
                 }
 
                 //  if not  unavco gsac, show sample interval and the MD5 check sum
