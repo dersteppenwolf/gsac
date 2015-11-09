@@ -507,22 +507,25 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 end skip */
 
+                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 Date startTime   = resource.getFromDate();
                 Date endTime     = resource.getToDate();
                 Date publishTime = resource.getPublishDate();
+                //System.err.println("   stop    time  =" +            sdfDate.format(endTime));       // has time of day from unav GSAC
+                //System.err.println("   publish time  =" +            sdfDate.format(publishTime) );  
+
                 //  to fix a bug original code with GsacOutputHandler:formatDateTime gives a wrong date-time value, hours later than input date-time
-                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String start   = sdfDate.format(startTime);
                 String end     = sdfDate.format(endTime);
                 String publish = sdfDate.format(publishTime);
                 // if publish ends in 00:00:00, cut that part off the end:
-                if ( publish.indexOf( "00:00:00") != -1) {
+                /*if ( publish.indexOf( "00:00:00") != -1) {
                        publish = publish.substring(0,10) ;
-                }
+                } *.
 
 
-                /* skip of no real use; and is only for UNAVCO GSAC:
+                /* skip since relatedresource value is of no real use; and is in the UNAVCO GSAC:
                 // any real "relatedResources" is, so far, from the UNAVCO GSAC instances, not the Prototype GSAC for general use.
                 if (relatedResources.size() > 0) {  
                     //System.err.println("   HTML file list for UNAVCO GSAC ");
@@ -544,11 +547,9 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
                 else 
                 end of skip */
+
+                // show Time range of  etc., and publish time
                 {
-                    //System.err.println("   data file times:"); // debug only
-                    //System.err.println("   start time  =" +            sdfDate.format(startTime) );
-                    //System.err.println("   stop  time  =" +            sdfDate.format(endTime));
-                    //System.err.println("   pub.  time  =" +            sdfDate.format(publishTime) );
                     // more complete info in prototype gsac:
 
                     if (startTime == null && endTime != null) {
@@ -571,16 +572,21 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                            sb.append( "<font size=-2>" +  start + " - " + end +"</font>");
                            sb.append("</td>");
                     }
+
                     // for unavco gsac:
-                    if (relatedResources.size() > 0) {  
+                    //if (relatedResources.size() > 0) {  
                        if (publishTime != null) {
                            //sb.append(HtmlUtil.col( publish ));
                            sb.append("<td align=\"left\" class=\"gsac-ptime\" " + ">");
                            sb.append( "<font size=-2>" + publish +"</font>");
                            sb.append("</td>");
-                           //System.err.println( "pub time in table ="+ publish +"_");
+                           // debug System.err.println( "publish time in files html table ="+ publish +"_");
+                       } else {
+                           sb.append("<td align=\"left\" class=\"gsac-ptime\" " + ">");
+                           sb.append( "<font size=-2>N/A</font>");
+                           sb.append("</td>");
                        }
-                    }
+                    //}
                 }
 
                 //  if not  unavco gsac, show sample interval and the MD5 check sum
