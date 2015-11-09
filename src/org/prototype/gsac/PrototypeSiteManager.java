@@ -72,6 +72,7 @@ import java.text.DecimalFormat;
  * 
  * new variable ARG_SITE_MIRROR_FROM_URL read from the db station table.  
  * @author  S K Wier, 2013 - 2 July 2015
+ * @author  S K Wier, October - 9 Nov 2015; many changes to improve this class. Added among others the concept of latest data time at a site.
  */
 public class PrototypeSiteManager extends SiteManager {
 
@@ -830,22 +831,40 @@ public class PrototypeSiteManager extends SiteManager {
         }
 
 
+        /* demo good code
+        stop_time      = results.getString (col++); // note : what if stop time is before start time?
+        start_time     = results.getString (col++); // from RAW_GPS.START_TIME 
+        // NOTE these values from the gps3 database do NOT have the "T" part of the ISO 8601 time format.
+
+        Date     fromTime= null;
+        Date     toTime  = null;
+        Date     pubTime = null;
+        if ( numCols>11 )
+            {
+            // since value may be like  "2015-11-01 23:59:45.0", cut off last two chars:
+            toTime=   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time.substring(0,19) );
+            fromTime= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start_time.substring(0,19));
+        */
+
         //  get and set installed date range at this station:
-        Date fromDate=readDate(results,  Tables.STATION.COL_INSTALLED_DATE);
-        Date toDate=  readDate(results,  Tables.STATION.COL_RETIRED_DATE );
-        site.setFromDate(fromDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
-        if (toDate != null )
+        String startTimeStr     = results.getString (Tables.STATION.COL_INSTALLED_DATE);
+        String stopTimeStr      = results.getString (Tables.STATION.COL_RETIRED_DATE); // note : what if stop time is before start time?
+        //System.err.println("   SiteManager: station " +fourCharId+ " installed ="+startTimeStr+"_  retired="+stopTimeStr+"_");
+
+        Date startTimeDate=null;  
+        if (startTimeStr != null )
             {
-            ; // System.err.println("   SiteManager: station " +fourCharId+ " was installed to   "+toDate);
+                 startTimeDate =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr.substring(0,19) );
             }
-        else
+
+        Date stopTimeDate=  null;  
+        if (stopTimeStr != null )
             {
-            ; //  toDate = new Date(); // db value is null, so use "now" ie still operating
-            //System.err.println("\n   SiteManager: station " +fourCharId+ " retired date is NULL; so is now, "+toDate);
+                 stopTimeDate =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stopTimeStr.substring(0,19) );
             }
-        site.setToDate(toDate);
-        site.setFromDate(fromDate);
-        // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " installed "+ site.getFromDate()+ " to  "+ site.getToDate());
+        
+        site.setFromDate(startTimeDate);  // uses gsl/model/GsacResource.java: public void setFromDate(Date value). Probably.
+        site.setToDate(stopTimeDate);
 
 
         //Add the network(s) for this station, in alphabetical order, to the resource group
@@ -980,27 +999,26 @@ public class PrototypeSiteManager extends SiteManager {
         // WHERE
         clauses = new ArrayList<Clause>();
         clauses.add(Clause.eq(Tables.DATAFILE.COL_STATION_ID, station_id));
-        // System.err.println("   Prototype SiteManager:   for ldt, select "+cols+"  from "+tables +"   where "+ clauses ) ;
+        //System.err.println("   Prototype SiteManager:   for ldt, select "+cols+"  from "+tables +"   where "+ clauses ) ;
         // like  for ldt, select  max( datafile.datafile_stop_time)   from [datafile]   where [datafile.station_id = 47]
         //                               select  what    from      where              order-by-clause
+        int col = 1 ;
         statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
               // handle the first item (and only item) found:
-              // BUSTED: always given 1970-... but does give a time of day Date ldt =  readDateTime(qresults, "max( datafile.datafile_stop_time)" );
-              Date ldt =  readDate(qresults, "max( datafile.datafile_stop_time)" );// LOOK CRUMMY shows no time of day
-              if (null != ldt) {
-                 String ldtstr = sdf.format( ldt);
-                 //System.err.println("   Prototype SiteManager:  SITE's Latest data time="+ldtstr+"_" ) ;
-                 site.setLatestDataDate(ldt); // this is to appear on the single site HTML page
-                 addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", ldtstr ); // this will appear on the Search Sites first HTML table of all sites found.   
+              //Date latestDateObj   = readDate(qresults, "max( datafile.datafile_stop_time)" );// LOOK CRUMMY shows no time of day
+              String latestTimeStr = qresults.getString (col++);
+              // System.err.println("   Prototype SiteManager:  SITE's latest data time string ="+ latestTimeStr+"_" ) ;
+              Date latestDateObj=null;
+              if ( latestTimeStr != null ) {
+                 latestDateObj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(latestTimeStr.substring(0,19) );
               }
-              else {
-                 ; //System.err.println("   Prototype SiteManager:  NO SITE Latest data time" ) ;
-              }
-
+              site.setLatestDataDate(latestDateObj);                                                                 // this will appear on the SINGLE SITE  HTML page
+              //addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", latestTimeStr ); // this will appear on the Search Sites HTML TABLE of ALL sites found.   
+              // but that ^^^ is already handled by core GSL code.
               break;
               }
             } finally {
@@ -1193,8 +1211,6 @@ public class PrototypeSiteManager extends SiteManager {
      */
     private void readEquipmentMetadata(GsacResource gsacResource) throws Exception {
         //        System.err.println("      called  read EquipmentMetadata");
-        Date indate=null;
-        Date outdate=null;
         Date[] datadateRange=null;
         List<GnssEquipment>  equipmentList  = new ArrayList<GnssEquipment>();
         List<Date>  startDates = new ArrayList<Date>();
@@ -1261,54 +1277,49 @@ public class PrototypeSiteManager extends SiteManager {
         // FROM these tables
         tables.add(Tables.STATION.NAME);
         tables.add(Tables.EQUIP_CONFIG.NAME);
-        //System.err.println("GSAC:  SiteManager:getResource() equip sql query is for " + cols  );
-        //System.err.println("GSAC:  SiteManager:getResource() equip sql query where clause is " + clauses  );
-        statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME, -1);
+        //System.err.println("GSAC:  SiteManager:getResource() equip sql query is  SELECT " + cols + "  FROM + tables + "  WHERE  " + clauses );
+        statement = getDatabaseManager().select(cols,  tables, Clause.and(clauses), " order by " + Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME, -1);   // ORDER By sites equip session select sql
         try {
             SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
             while ((results = iter.getNext()) != null) {
 
-               String sdt=null;
-               Date test = readDate( results, Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME);
-               if (null == test) {
-                    System.err.println("   GSAC DB values ERROR:  station "+gsacResource.getId()+" has invalid (null) EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME");
-                   indate = new Date();  //  better than null?
-               }
-               else {
-                  sdt = results.getString(Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME)+"00";
-                  indate = dateformatter.parse(sdt);
+/*
+ String startTimeStr     = results.getString (Tables.STATION.COL_INSTALLED_DATE);
+        String stopTimeStr      = results.getString (Tables.STATION.COL_RETIRED_DATE); // note : what if stop time is before start time?
+        System.err.println("   SiteManager: station " +fourCharId+ "  startTimeStr ="+startTimeStr+"_ stop-time="+stopTimeStr+"_");
+
+        Date startTimeDate=null;
+        if (startTimeStr != null )
+            {
+                 startTimeDate =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeStr.substring(0,19) );
+            }
+
+*/
+               String sdt= results.getString ( Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_START_TIME);
+               Date indate = null;
+               if (sdt != null) {
+                   indate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sdt.substring(0,19) );
                }
                colCnt++;
 
-               String odt=null;
-               test = readDate( results, Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_STOP_TIME);
-               if (null == test) {
-                   //System.err.println("   the equip session stop time is null, undefined.  "); 
-                   outdate = new Date();  // i.e., now: we presume this is correct and the instrument is still active.
-               }
-               else {
-                  odt = results.getString(Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_STOP_TIME)+"00";
-                  outdate = dateformatter.parse(odt);
+               String odt= results.getString( Tables.EQUIP_CONFIG.COL_EQUIP_CONFIG_STOP_TIME);
+               Date outdate = null;
+               if ( odt != null) {
+                   outdate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(odt.substring(0,19) );
+
                }
                colCnt++;
+               //System.err.println("   SiteManager: station      equip session starts "+sdt+"_ ends ="+odt+"_");
+
                datadateRange = new Date[] { indate, outdate };
 
                if (null!=indate && null!=outdate && indate.after(outdate)) {
-                    System.err.println("   GSAC DB values ERROR:  Dates of equip config session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +" is >  end time: "+ outdate);
+                    System.err.println("   GSAC DB values ERROR:  dates of equip config session (station "+gsacResource.getId()+")  are reversed: begin time: "+ indate +" is >  end time: "+ outdate);
                     continue;
                  }
 
-               //System.err.println("\n   GSAC equip config session at station "+gsacResource.getId()+"from start time: "+ indate +"  to stop time: "+ outdate);
-
-                /* some problem with the column-counting way to get values of returned fields:  int antid  = results.getInt(colCnt++);
-                  String ant_serial_number  = results.getString(colCnt++);
-                  double antenna_height = results.getFloat(colCnt++);
-                  antenna_height = Double.valueOf(fourptForm.format(antenna_height));
-                  int domeid  = results.getInt(colCnt++);
-                */
 
                 int antid  = results.getInt(Tables.EQUIP_CONFIG.COL_ANTENNA_ID);
-                //System.err.println("\n   GSAC got antenna key id number "+antid+"  for station "+gsacResource.getId() );
 
                 String ant_serial_number  = results.getString(Tables.EQUIP_CONFIG.COL_ANTENNA_SERIAL_NUMBER);
                 double antenna_height = results.getFloat(Tables.EQUIP_CONFIG.COL_ANTENNA_HEIGHT);
@@ -1596,9 +1607,7 @@ public class PrototypeSiteManager extends SiteManager {
 
     /**
      * Convert a db datetime field to a 'Date' object.
-     * NOTE this uses the java sql package ResultSet class and ONLY returns calendar date -- with NO time of day allowed.
-            could use results.getTime()
-            could use results.getTimeStamp() both in java sql
+     * NOTE this uses the  ramadda sql package ResultSet class and ONLY returns calendar date -- with NO time of day allowed.
      *
      * @param results a row from a qb query which has a datetime field
      * @param column a string name for a db field with  for example a MySQL 'datetime' object,
@@ -1608,21 +1617,14 @@ public class PrototypeSiteManager extends SiteManager {
      */
     private Date readDate(ResultSet results, String column) {
         try {
+            // for DATE only with no time of day:   
             return results.getDate(column);
+            //return results.getTime(column); // busted always gives 1970-01-01 23:59
         } catch (Exception exc) {
             //if the date is undefined we get an error so we just return null 
             return null;
         }
     }
 
-    // NOTE this uses the java sql package ResultSet class and  returns calendar date  with time of day .
-    private Date readDateTime(ResultSet results, String column) {
-        try {
-            return results.getTime(column);
-        } catch (Exception exc) {
-            //if the date is undefined we get an error so we just return null 
-            return null;
-        }
-    }
 
 }  // end of class
