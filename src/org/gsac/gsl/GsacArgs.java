@@ -242,6 +242,8 @@ public interface GsacArgs {
 
     public static final String ARG_FILE_TRF = ARG_FILE_PREFIX + "trf";
 
+    public static final String ARG_FILE_ORIGINATOR = ARG_FILE_PREFIX + "original_source";
+
 
     /** _more_ */
     public static final String ARG_REPOSITORY = "gsac.repository";
