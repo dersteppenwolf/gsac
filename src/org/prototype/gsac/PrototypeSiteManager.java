@@ -962,6 +962,7 @@ public class PrototypeSiteManager extends SiteManager {
         site.addMetadata(new PoliticalLocationMetadata(country, state, city));  
 
         //  To set this value in MySiteManager.java:
+        // System.err.println("   SiteManager:      makeResource:  iersdomes="+iersdomes+"_");
         if (null!= iersdomes && iersdomes.length() > 4) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
 
 
@@ -978,53 +979,41 @@ public class PrototypeSiteManager extends SiteManager {
         // select datafile_stop_time from datafile where station_id=40 order by datafile_stop_time DESC;
         // and use the first time returned, of many,
 
-        // LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
-        // NEW 2 July 2015. for "LatestDataTime': to SHOW latest data time in station information (NOT to search for sites by latest data time at sites).
-        // new code here for in effect object ldt = findSiteLatestDataTime(site); site.setLatestDataTime(ldt);
+        // get value for, and set, ARG_SITE_LATEST_DATA_DATE, the most recent time of any data file in the GSAC database at this site.
+        // LOOK you may need to comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
         // with SQL query per site in the datafile table; get latest data time with variables
-        // COL_DATAFILE_STOP_TIME  per STATION_ID
-        // select max(datafile_stop_time) from datafile where station_id=60;
-        // ALSO new add this value to the HTML table of Search Site results. 
-        // use new code like next block in effect readAgencyMetadata(site), and with
-        // if (null!=mirrored_from_URL ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  mirrored_from_URL, "Mirrored from"));} for latest time
-        // sample sql:
-        // select max(datafile_stop_time) from datafile where station_id=60;
-        // SELECT what:
-        cols="";
-        //cols=SqlUtil.comma(new String[]{ Tables.DATAFILE.COL_DATAFILE_STOP_TIME });
+        // sample sql:  select max(datafile_stop_time) from datafile where station_id=60;
+        // SELECT the most recent time in the table 'datafile'
         cols= " max( " + SqlUtil.comma(new String[]{ Tables.DATAFILE.COL_DATAFILE_STOP_TIME }) +") " ;
-        // FROM 
+        // FROM the table 'datafile'
         tables = new ArrayList<String>();
         tables.add(Tables.DATAFILE.NAME);
-        // WHERE
+        // WHERE only for this site by its station_id
         clauses = new ArrayList<Clause>();
         clauses.add(Clause.eq(Tables.DATAFILE.COL_STATION_ID, station_id));
         //System.err.println("   Prototype SiteManager:   for ldt, select "+cols+"  from "+tables +"   where "+ clauses ) ;
         // like  for ldt, select  max( datafile.datafile_stop_time)   from [datafile]   where [datafile.station_id = 47]
-        //                               select  what    from      where              order-by-clause
         int col = 1 ;
         statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
               // handle the first item (and only item) found:
-              //Date latestDateObj   = readDate(qresults, "max( datafile.datafile_stop_time)" );// LOOK CRUMMY shows no time of day
               String latestTimeStr = qresults.getString (col++);
               // System.err.println("   Prototype SiteManager:  SITE's latest data time string ="+ latestTimeStr+"_" ) ;
               Date latestDateObj=null;
               if ( latestTimeStr != null ) {
                  latestDateObj = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(latestTimeStr.substring(0,19) );
               }
-              site.setLatestDataDate(latestDateObj);                                                                 // this will appear on the SINGLE SITE  HTML page
-              //addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", latestTimeStr ); // this will appear on the Search Sites HTML TABLE of ALL sites found.   
+              site.setLatestDataDate(latestDateObj);                                                                // this will appear on the SINGLE SITE  HTML page
+              // ok System.err.println("   Prototype SiteManager:  did set ldt ="+ latestTimeStr+"_" ) ;
+              // addPropertyMetadata( site, GsacArgs.ARG_SITE_LATEST_DATA_DATE, "Latest data time", latestTimeStr ); // this will appear on the Search Sites HTML TABLE of ALL sites found.   
               // but that ^^^ is already handled by core GSL code.
               break;
               }
             } finally {
-               ;// LOOK getDatabaseManager().closeAndReleaseConnection(statement);
+               ;
             }
-        // end of LOOK comment out this code block to speed site searches in repositories with a very large number of data files at many sites.
 
         /*
         // following code section is in effect readAgencyMetadata(site);
@@ -1049,9 +1038,6 @@ public class PrototypeSiteManager extends SiteManager {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
         */
-
-        // this value is not in the GSAC prototype database.  Add to db and implement this, if you need this.
-        // readFrequencyStandardMetadata(site);
 
         return site;
     }
@@ -1093,9 +1079,9 @@ public class PrototypeSiteManager extends SiteManager {
     public void doGetMetadata(int level, GsacResource gsacResource)
             throws Exception {
         readIdentificationMetadata(gsacResource);
-        // For the ONE station with the input 4 char ID number gsacResource.getId(), get the metadata for each station session:
+        // For the ONE station with the input 4 char ID number gsacResource.getId(), get the metadata for all of its 'equipment sessions':
         readEquipmentMetadata(gsacResource);
-        // LOOK for data times search at this station,Next check equip session date ranges in the gsacResource thing.
+        // LOOK for data times search at this station, next check equip session date ranges in the gsacResource thing.
     }
 
     /**
@@ -1148,12 +1134,13 @@ public class PrototypeSiteManager extends SiteManager {
 
                 String zstr = results.getString(Tables.STATION.COL_Z);
                 addPropertyMetadata( gsacResource, GsacExtArgs.SITE_TRF_Z, "Z", zstr);
-
-                // The var names "Tables..." comes from the Tables.java file made when you built with ant maketables with your new database.
+                // System.err.println("   SiteManager: readIdentificationMetadata()  site's x,y,z strings = " +xstr+"  "+ystr+"  "+zstr);
 
                 /* get, check, and save value for IERS DOMES. */
+                //String iersdomes= results.getString(Tables.STATION.COL_IERS_DOMES);
+                // System.err.println("   SiteManager: readIdentificationMetadata()  iersdomes=  "+iersdomes);
+
                 /*
-                String idn= results.getString(Tables.STATION.COL_IERS_DOMES);
                 // trap bad value "(A9)", an artifact of some IGS site logs,  and replace with empty string. 
                 if (idn != null && idn.equals("(A9)") ) 
                    { idn = " " ; }
