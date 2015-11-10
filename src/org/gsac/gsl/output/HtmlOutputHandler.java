@@ -1560,13 +1560,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
         if ( resource.getLatestDataDate() != null) {
-            String dateString = formatDateTime(resource.getLatestDataDate());
+            // was String dateString = formatDateTime(resource.getLatestDataDate());
+            String dateString = formatDateTimeHHmmss(resource.getLatestDataDate());
             pw.append(formEntry(request, msgLabel("Latest Data Time"), dateString));
         }
 
 
         if (resource.getPublishDate() != null ) {
-            String dateString = formatDate(resource.getPublishDate());
+            // was String dateString = formatDate(resource.getPublishDate());
+            String dateString = formatDateTimeHHmmss(resource.getLatestDataDate());
             if (dateString.length()>3) {
                 pw.append(formEntry(request, msgLabel("Site Publish Date"), dateString));
             }
@@ -2297,18 +2299,16 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
             // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
-            // for date range ; at unavco this is DATA DATES, but not for all cases
-            if (doDateRange) { labels.add(msg("Dates")); }
+            // for installed date range : first installation to retired date; episodic and intermittent sites do not have a retired data.
+            if (doDateRange) { labels.add(msg("Installed Dates")); }
             sortValues.add("");
-
    
-            //  do this only for files: label column with Publish Date
+            //  usually, do this only for files: make a column for Publish Date
             /* if ( resource.getPublishDate()  != null )  { 
             labels.add(msg("Publish Date")); 
              }
             sortValues.add("");
              */
-            
 
             // make label for latest data time , ARG_SITE_LATEST_DATA_TIME
             labels.add(msg("Latest Data Time") );
@@ -2406,12 +2406,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
 
 
-            // show values of "Dates" (data date range for site: installed to most recent(like today))
+            // show values of "Installed Dates" (data date range for site: installed to RETIRED dates 
             if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
                 if (resource.getFromDate() != null) {
                     sb.append( formatDate(resource));
-                    // formatDate(GsacResource resource) gives  both from and to dates, if they are defined.
+                    //         formatDate(resource) gives TWO values, BOTH from and to dates, if they are defined.
                 } else {
                     sb.append("N/A");
                 }
@@ -2419,7 +2419,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
            
-            // LOOK  do this only for files:  enter row value for Publish Date
+            // LOOK  usuall here but only for files:  enter row value for Publish Date
+
              
             String dateString = formatDate(resource.getPublishDate());
             if ( dateString  != null && dateString.length() >3)  { 
@@ -2438,7 +2439,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             // show Latest Data Time value from this site: latest data time
             // date but no time  from resource.getLatestDataDate ?
             if ( resource.getLatestDataDate() != null ) {
-               dateString = formatDateTime(resource.getLatestDataDate());
+               // was  dateString = formatDateTime(resource.getLatestDataDate());
+               dateString = formatDateTimeHHmmss(resource.getLatestDataDate());
                sb.append("<td " + clickEvent + ">");
                if ( dateString.length() >3) {
                       //System.err.println(" 1 ldt str =_"+dateString+"_");

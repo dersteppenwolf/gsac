@@ -352,15 +352,18 @@ public abstract class GsacOutputHandler implements GsacConstants {
     public String formatDateTime(Date date) {
         return formatDateTime(date, null);
     }
+
+
+
     /**
      * _more_
+     * Why the seconds are not shown in this code is unknown; superceded by next method formatDateTimeHHmmss.
      *
      * @param date _more_
      * @param dflt _more_
      *
      * @return _more_
      */
-
     public String formatDateTime(Date date, String dflt) {
         if (date == null) {
             return dflt;
@@ -369,14 +372,22 @@ public abstract class GsacOutputHandler implements GsacConstants {
         //System.err.println("  formatDateTime: date time string is "+stringdate);  
         // gives  formatDateTime: date time string is Wed Apr 22 09:00:00 MDT 2009
         //return stringdate;
-          
-        /* BUG this origianl code gives date and time in some  time zone, NOT what is supplied!
+        /* BUG this original code gives date and time in some time zone, NOT what is supplied!
         synchronized (dateTimeSdf) {
             return dateTimeSdf.format(date);
         }
         */
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return formatter.format(date);
+    }
+
+
+
+    public String formatDateTimeHHmmss(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
     }
 

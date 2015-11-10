@@ -200,7 +200,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
         Date endTime     = resource.getToDate();
 
         if (publishTime != null) {
-            sb.append(formEntry(request, msgLabel("Publish Date"), formatDate(publishTime)));
+            sb.append(formEntry(request, msgLabel("Publish Date"), formatDate(publishTime)));  // could use the newer formatDateTimeHHmmss
         }
 
         if (startTime != null) {
@@ -357,6 +357,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
 
                     String[] labels = null;
+
+                    //     for unavco gsac only (or if any other GSAc ever uses "related material"):
                     if (  relatedLabel != null)
                     { 
                        // unavco gsac server has this case, since it lacks some file metadata values easily available in the prototype GSAC code
@@ -380,35 +382,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     };
 
                     makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
-
-                    /* 
-                    request.remove(ARG_OUTPUT);
-                    sb.append(HtmlUtil.formPost(request.getUrl(null), HtmlUtil.attr("name", "searchform")));;
-                    sb.append( "<table border=0 cellspacing=0 cellpadding=0 width=\"100%\"><tr><td align=right><div class=gsac-toolbar>");
-                    sb.append(toolbar);
-                    sb.append("</div></td></tr></table>");
-                    boolean includeExtraCol = getRepository().getRemoteHref(resource).length() > 0;
-                    sb.append( "<table class=\"gsac-result-table\" cellspacing=0 cellpadding=0 border=0 width=100%>");
-                    String[] labels = null; 
-                    labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
-                    // * to handle "related content"; and also see below
-                    if ( relatedLabel.equals("") || relatedLabel == null)
-                    {
-                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
-                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
-                        //labels = new String[] { (includeExtraCol ? "&nbsp;" : null), msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
-                        //labels = new String[] {  msg("File"), msg("Type"),                    msg("Date"), msg("File size") };
-                    }
-                    else {
-                        labels = new String[] {  msg("File for download"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5"), msg("File size") };
-                    }
-                    // * /
-                    
-                    String[]   sortValues = new String[] { (includeExtraCol ? "" : null), "", SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
-                    //String[] sortValues = new String[] {  "",                             SORT_FILE_TYPE, "", SORT_FILE_PUBLISHDATE, SORT_FILE_SIZE };
-                    makeSortHeader(request, sb, ARG_FILE_PREFIX, labels, sortValues);
-
-                     */
                 }
                 cnt++;
 
@@ -444,28 +417,6 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
 
-                /* original code which shows, in the table of file-search results, in the "File" column (labeled above), 
-                   a down arrow which is a link to the file for single file download, and a link (a highlighted file name) 
-                   to a "resource page" which in the typical geodesy archive of data files, has no more information than the table of files-found results.
-                   This is deprecated a geodesy archive.  Why click to get a new page with some of the same information you are looking at?
-                // this href serves for a link to the "resource page about the file," not to the file.
-                // onscreen it looks like text like a file name " soph0330.13d.Z"
-                String href = makeResourceViewHref(resource);
-                //                sb.append(HtmlUtil.col(href)); // do this when you want this thing in a column by itself
-                String url = resource.getFileInfo().getUrl();  // url is the ...
-                if (url != null) {
-                    // note ! this 'href' is not the href above 
-                    String downloadHref = HtmlUtil.href(
-                                              url,
-                                              HtmlUtil.img( iconUrl("/down_arrow.gif")));
-                    // so this "File" column will show BOTH these items in this order
-                    String tmp = downloadHref + " " + href;
-                    sb.append(HtmlUtil.col(tmp));
-                } else {
-                    sb.append(HtmlUtil.col("N/A"));
-                }
-                */
-
                 // Show file type for this file, such as 'GNSS RINEX Meteorology'
                 if (resource.getType() != null) {
                     String filetype = resource.getType().getName();
@@ -479,74 +430,15 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 }
 
 
-                /* skip; not of any use:
-                // show "related" content for this file, which is so far oNLY for the UNAVCO GSAC and which is only the special UNAVDCO-only full site ID like "Anguilla_BVI2012 CN02"
-                //  If you have no "related content", skip this
-                //  which gets rid of the mystery original "NA" column in table of file search results
-                //if ( ( !relatedLabel.equals("") || relatedLabel != null) )   //&& resource.getRelatedResources() != null) 
-                if ( relatedLabel!=null && relatedResources!=null && relatedLabel.length() > 0) {
-                  StringBuffer relatedContent = new StringBuffer();
-                  for (int relatedIdx = 0; relatedIdx < relatedResources.size(); relatedIdx++) {
-                    GsacResource relatedResource = relatedResources.get(relatedIdx);
-                    if (relatedIdx > 0) {
-                        relatedContent.append("<br>");
-                    }
-                    if (relatedResource.getId() != null) {
-                        String relatedUrl = makeResourceViewUrl(relatedResource);
-
-                        relatedContent.append("<a href=\"" + relatedUrl + "\">" + relatedResource.getLongLabel() + "</a>");
-                    } else {
-                        relatedContent.append(relatedResource.getLongLabel());
-                    }
-                  }
-                  if (relatedResources.size() == 0) {
-                    relatedContent.append("NA");
-                  }
-                  sb.append(HtmlUtil.col(relatedContent.toString()));
-                    System.err.println("    relatedContent.toString= " +relatedContent.toString() ); // debug only
-                }
-                end skip */
-
                 SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 Date startTime   = resource.getFromDate();
                 Date endTime     = resource.getToDate();
                 Date publishTime = resource.getPublishDate();
-                //System.err.println("   stop    time  =" +            sdfDate.format(endTime));       // has time of day from unav GSAC
-                //System.err.println("   publish time  =" +            sdfDate.format(publishTime) );  
 
-                //  to fix a bug original code with GsacOutputHandler:formatDateTime gives a wrong date-time value, hours later than input date-time
                 String start   = sdfDate.format(startTime);
                 String end     = sdfDate.format(endTime);
                 String publish = sdfDate.format(publishTime);
-                // if publish ends in 00:00:00, cut that part off the end:
-                /*if ( publish.indexOf( "00:00:00") != -1) {
-                       publish = publish.substring(0,10) ;
-                } *.
-
-
-                /* skip since relatedresource value is of no real use; and is in the UNAVCO GSAC:
-                // any real "relatedResources" is, so far, from the UNAVCO GSAC instances, not the Prototype GSAC for general use.
-                if (relatedResources.size() > 0) {  
-                    //System.err.println("   HTML file list for UNAVCO GSAC ");
-                    // original code to preserve legacy output format from the unavco gsac server
-                    if (startTime == null) {
-                        sb.append(HtmlUtil.col(formatDate(publishTime)));
-                        System.err.println("  no start time so show Pub. Time  " + formatDate(publishTime) ); // debug only
-
-                    } 
-                    else {
-                        if ((endTime == null) || endTime.equals(startTime)) {
-                            sb.append(HtmlUtil.col(formatDate(startTime),
-                                    clickEvent));
-                        } else {
-                            sb.append(HtmlUtil.col(formatDate(startTime) + " - "
-                                    + formatDate(endTime), clickEvent));
-                        }
-                    }
-                }
-                else 
-                end of skip */
 
                 // show Time range of  etc., and publish time
                 {
