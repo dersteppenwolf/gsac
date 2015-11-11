@@ -5,7 +5,7 @@
 
 				     Tables, Field Definitions, and Notes.
 
-					             24 Jun 2015          
+			new draft Nov 11 2015          
 
 					      UNAVCO, Boulder Colorado.
 
@@ -14,7 +14,6 @@ This database is desinged to be a general-purpose schema to meet many diverse ne
 
 The schema described here is that of the Prototype15_GSAC.sql file which can be used to make an empty MySQL database with the GSAC Prototype15 schema.
 The Prototype15_GSAC.sql file is in the GSAC prototype area in gsac-code/src/org/prototype/gsac.
-
 
 The database is built around the tables station, equip_config, and datafile.  Other tables have information supporting those three tables.
 
@@ -88,21 +87,118 @@ mysql> show tables;
 +----------------------------+
 
 
-Describe all tables in the database, and show samples of the contents:
+Describe all tables in the database, and show samples of some contents:
+
+mysql> desc station;
++----------------------------+-----------------+------+-----+---------+----------------+
+| Field                      | Type            | Null | Key | Default | Extra          |
++----------------------------+-----------------+------+-----+---------+----------------+
+| station_id                 | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
+| four_char_name             | char(4)         | NO   |     | NULL    |                |
+| station_name               | varchar(50)     | NO   |     | NULL    |                |
+| latitude_north             | double          | NO   |     | NULL    |                |
+| longitude_east             | double          | NO   |     | NULL    |                |
+| height_ellipsoid           | float           | YES  |     | NULL    |                |
+| X                          | double          | YES  |     | NULL    |                |
+| Y                          | double          | YES  |     | NULL    |                |
+| Z                          | double          | YES  |     | NULL    |                |
+| installed_date             | datetime        | YES  |     | NULL    |                |
+| retired_date               | datetime        | YES  |     | NULL    |                |
+| published_date             | datetime        | YES  |     | NULL    |                |
+| agency_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| access_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| style_id                   | int(3) unsigned | YES  | MUL | NULL    |                |
+| status_id                  | int(3) unsigned | NO   | MUL | NULL    |                |
+| monument_style_id          | int(3) unsigned | YES  | MUL | NULL    |                |
+| nation_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| province_state_id          | int(3) unsigned | YES  |     | NULL    |                |
+| locale_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
+| networks                   | varchar(2000)   | YES  |     | NULL    |                |
+| originating_agency_URL     | varchar(120)    | YES  |     | NULL    |                |
+| iers_domes                 | char(9)         | YES  |     | NULL    |                |
+| station_photo_URL          | varchar(100)    | YES  |     | NULL    |                |
+| time_series_plot_image_URL | varchar(100)    | YES  |     | NULL    |                |
+| embargo_duration_hours     | int(6) unsigned | YES  |     | NULL    |                |
+| embargo_after_date         | datetime        | YES  |     | NULL    |                |
++----------------------------+-----------------+------+-----+---------+----------------+
 
 
-mysql> desc access;
+
+mysql> desc equip_config;
++-------------------------+-----------------+------+-----+---------+----------------+
+| Field                   | Type            | Null | Key | Default | Extra          |
++-------------------------+-----------------+------+-----+---------+----------------+
+| equip_config_id         | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id              | int(6) unsigned | NO   | MUL | NULL    |                |
+| equip_config_start_time | datetime        | NO   |     | NULL    |                |
+| equip_config_stop_time  | datetime        | YES  |     | NULL    |                |
+| data_latency_hours      | double          | YES  |     | NULL    |                |
+| data_latency_days       | int(11)         | YES  |     | NULL    |                |
+| data_completeness       | float           | YES  |     | NULL    |                |
+| db_update_time          | datetime        | YES  |     | NULL    |                |
+| antenna_id              | int(3) unsigned | NO   | MUL | NULL    |                |
+| antenna_serial_number   | varchar(20)     | YES  |     | NULL    |                |
+| antenna_height          | float           | YES  |     | NULL    |                |
+| metpack_id              | int(3) unsigned | YES  | MUL | NULL    |                |
+| metpack_serial_number   | varchar(20)     | YES  |     | NULL    |                |
+| radome_id               | int(3) unsigned | NO   | MUL | NULL    |                |
+| radome_serial_number    | varchar(20)     | YES  |     | NULL    |                |
+| receiver_firmware_id    | int(3) unsigned | NO   | MUL | NULL    |                |
+| receiver_serial_number  | varchar(20)     | NO   |     | NULL    |                |
+| satellite_system        | varchar(20)     | YES  |     | NULL    |                |
+| sample_interval         | float           | YES  |     | NULL    |                |
++-------------------------+-----------------+------+-----+---------+----------------+
+An "equip_config" row specifies one "equipment session" which is a period of time during which a sensor and data logger 
+installation at one station has no changes.  One site (station) can have many equipment sessions, as instrumentation changes.
+An equip_config row can exist only if it has a previously-defined station_id, and usually if it has some other previously-defined 
+table key values such as receiver_firmware_id
+
+
+
+mysql> desc datafile
++-------------------------+-----------------+------+-----+---------+----------------+
+| Field                   | Type            | Null | Key | Default | Extra          |
++-------------------------+-----------------+------+-----+---------+----------------+
+| datafile_id             | int(9) unsigned | NO   | PRI | NULL    | auto_increment |
+| station_id              | int(6) unsigned | NO   | MUL | NULL    |                |
+| equip_config_id         | int(6) unsigned | YES  | MUL | NULL    |                |
+| datafile_name           | varchar(120)    | NO   |     | NULL    |                |
+| URL_complete            | varchar(220)    | NO   |     | NULL    |                |
+| URL_protocol            | varchar(7)      | YES  |     | NULL    |                |
+| URL_domain              | varchar(50)     | YES  |     | NULL    |                |
+| URL_path_dirs           | varchar(70)     | YES  |     | NULL    |                |
+| data_type_id            | int(3) unsigned | NO   | MUL | NULL    |                |
+| datafile_format_id      | int(3) unsigned | YES  | MUL | NULL    |                |
+| data_reference_frame_id | int(3) unsigned | YES  | MUL | NULL    |                |
+| datafile_start_time     | datetime        | NO   |     | NULL    |                |
+| datafile_stop_time      | datetime        | NO   |     | NULL    |                |
+| datafile_published_date | datetime        | YES  |     | NULL    |                |
+| sample_interval         | float           | YES  |     | NULL    |                |
+| latency_estimate        | float           | YES  |     | NULL    |                |
+| year                    | year(4)         | YES  |     | NULL    |                |
+| day_of_year             | int(3)          | YES  |     | NULL    |                |
+| size_bytes              | int(10)         | YES  |     | NULL    |                |
+| MD5                     | char(32)        | YES  |     | NULL    |                |
+| originating_agency_URL  | varchar(220)    | YES  |     | NULL    |                |
++-------------------------+-----------------+------+-----+---------+----------------+
+GSAC provides information about data files from its sites, and where to download the files. This information
+is in the table datafile, with one row for each file.  Each row should have a corresponding site.
+A datafile row can exist only if it has a previously-defined station_id and equip_config_id in the database, and usually if it has some other previously-defined 
+table key values such as datafile_format_id
+
+
+
+ desc access;
 +--------------------+-----------------+------+-----+---------+----------------+
 | Field              | Type            | Null | Key | Default | Extra          |
 +--------------------+-----------------+------+-----+---------+----------------+
 | access_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | access_description | varchar(80)     | NO   |     | NULL    |                |
 +--------------------+-----------------+------+-----+---------+----------------+
-2 rows in set (0.00 sec)
-
-mysql> select * from access;
 UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
 MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO  INOPERATE.
+
+mysql> select * from access;
 +-----------+-----------------------------------------+
 | access_id | access_description                      |
 +-----------+-----------------------------------------+
@@ -123,6 +219,64 @@ mysql> desc agency;
 | agency_individual_name   | varchar(100)    | YES  |     | NULL    |                |
 | other_contact            | varchar(150)    | YES  |     | NULL    |                |
 +--------------------------+-----------------+------+-----+---------+----------------+
+
+
+
+mysql> desc data_type;
++-----------------------+-----------------+------+-----+---------+----------------+
+| Field                 | Type            | Null | Key | Default | Extra          |
++-----------------------+-----------------+------+-----+---------+----------------+
+| data_type_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| data_type_name        | varchar(50)     | NO   |     | NULL    |                |
+| data_type_description | varchar(50)     | NO   |     | NULL    |                |
++-----------------------+-----------------+------+-----+---------+----------------+
+The type of measurements, parameters, computed values, or information, in a file.  
+Plots or image files (.jpg, .png) are some type of image file.  (but "RINEX" is not a data type, is it a file format.)
+UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
+MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
+
+mysql> select * from data_type;
++--------------+-----------------------------------------+---------------------------------------------------+
+| data_type_id | data_type_name                          | data_type_description                             |
++--------------+-----------------------------------------+---------------------------------------------------+
+|            1 | instrumental data                       | any type instrumental native, raw, or binary data |  need not be GNSS data
+|            2 | GNSS observation file                   | any GNSS  observations file                       |
+|            3 | GPS navigation file                     | a GPS     navigation file                         |
+|            4 | Galileo navigation file                 | a Galileo navigation file                         |
+|            5 | GLONASS navigation file                 | a GLONASS navigation file                         |
+|            6 | GNSS meteorology file                   | any GNSS  meteorology file                        |
+|            7 | QZSS navigation file                    | a QZSS    navigation file                         |
+|            8 | Beidou navigation file                  | a Beidou  navigation file                         |
+|            9 | Final Daily time series                 | Final Daily time series solution                  |
+|           10 | Rapid Daily time series                 | Rapid Daily time series solution                  |
+|           11 | Rapid 5 minute time series              | Rapid 5 min time series solution                  |
+|           12 | Ultra Rapid 5 minute time series        | Ultra Rapid 5 min time    series solution         |
+|           13 | Ultra Rapid 5 minute Combo time series  | Ultra Rapid 5 min Combo time series solution      |
+|           14 | Nights Ultra Rapid 5 minute time series | Night Ultra Rapid 5 min time series    solution   |
+|           15 | Time series plot                        | Time series static plot image                     |
+|           16 | Time series cleaned plot                | Time series cleaned static plot image             |
+|           17 | Time series Rapid 5 min plot            | Time series Rapid 5  minute plot image            |
+|           18 | SINEX product                           |                                                   |
+|           19 | GNSS sites velocities                   |                                                   |
+|           20 | GNSS sites positions                    |                                                   |
+|           21 | strainmeter observations                |                                                   |
+|           22 | tidegage observations                   |                                                   |
+|           23 | tiltmeter observations                  |                                                   |
+|           24 | DORIS                                   | DORIS                                             |
+|           25 | SLR                                     | SLR                                               |
+|           26 | VLBI                                    | VLBI                                              |
+|           27 | teqc qc S file                          | teqc QC summary S file                            |
++--------------+-----------------------------------------+---------------------------------------------------+
+may be added:
+|           28 | Tiltmeter Plots for Station (7 Day)                |                                                 |
+|           29 | Tiltmeter Plots for Station (30 day)               |                                                 |
+|           30 | Tiltmeter All Plots for Station (multi-year)       |                                                 |
+|           31 | Environmental Plots for Station                    |                                                 |
+|           32 | Strainmeter Raw Rlots for Station                  |                                                 |
+|           33 | Strainmeter 7 Day Raw Plots for Station            |                                                 |
+|           34 | Strainmeter 30 Day Raw Plots for Station           |                                                 |
+|           35 | Strainmeter All Raw Plots for Station (multi-year) |                                                 |
+|           36 | Strainmeter Spectrograms for Station               |                                                 |
 
 
 
@@ -180,107 +334,6 @@ MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPER
 +-------------------------+---------------------------+
 
 
-
-mysql> desc data_type;
-+-----------------------+-----------------+------+-----+---------+----------------+
-| Field                 | Type            | Null | Key | Default | Extra          |
-+-----------------------+-----------------+------+-----+---------+----------------+
-| data_type_id          | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
-| data_type_name        | varchar(50)     | NO   |     | NULL    |                |
-| data_type_description | varchar(50)     | NO   |     | NULL    |                |
-+-----------------------+-----------------+------+-----+---------+----------------+
-3 rows in set (0.00 sec)
-
-The type of measurements, parameters, computed values, or information, in a file.  
-Plots or image files (.jpg, .png) are some type of image file.  (but "RINEX" is not a data type, is it a file format.)
-
-UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS TO ALLOW FEDERATED GSACs TO INOPERATE.
-mysql> select * from data_type;
-+--------------+-----------------------------------------+----------------------------------------------------+
-| data_type_id | data_type_name                          | data_type_description                              |
-+--------------+-----------------------------------------+----------------------------------------------------+
-|            1 | instrument data                     | any type instrument native, raw, or binary file    |
-|            2 | GNSS observation                    | any GNSS obs file                                  |
-|            3 | GPS navigation                      | a GPS navigation file                              |
-|            4 | Galileo navigation                  | a Galileo GNSS navigation file                     |
-|            5 | GLONASS navigation                  | a GLONASS GNSS navigation file                     |
-|            6 | GNSS meteorology                    | a GNSS meteorology file                            |
-|            7 | QZSS navigation                     | a QZSS GNSS navigation file                        |
-|            8 | Beidou navigation                   | a Beidou GNSS navigation file                      |
-|            9 | Final Daily time series                 | Final Daily time series solution                   |
-|           10 | Rapid Daily time series                 | Rapid Daily time series solution                   |
-|           11 | Rapid 5 minute time series              | Rapid 5 min time series solution                   |
-|           12 | Ultra Rapid 5 minute time series        | Ultra Rapid 5 min time series solution             |
-|           13 | Ultra Rapid 5 minute Combo time series  | Ultra Rapid 5 min Combo time series solution       |
-|           14 | Nights Ultra Rapid 5 minute time series | Night Ultra Rapid 5 min time series solution       |
-|           15 | Time series plot                        | Time series static plot image                      |
-|           16 | Time series cleaned plot                | Time series cleaned static plot image              |
-|           17 | Time series Rapid 5 min plot            | Time series Rapid 5 minute plot image              |
-|           18 | SINEX product                           |                                                    |
-|           19 | GNSS sites velocities                   |                                                    |
-|           20 | GNSS sites positions                    |                                                    |
-|           21 | strainmeter observations, raw                      |                                                 |
-|           22 | strainmeter observations, processed                |                                                 |
-|           23 | tiltmeter observations, raw                        |                                                 |
-|           24 | DORIS                                              | DORIS                                           |
-|           25 | SLR                                                | SLR                                             |
-|           26 | VLBI                                               | VLBI                                            |
-|           27 | tidegage observations                              |                                                 |
-|           28 | Tiltmeter Plots for Station (7 Day)                |                                                 |
-|           29 | Tiltmeter Plots for Station (30 day)               |                                                 |
-|           30 | Tiltmeter All Plots for Station (multi-year)       |                                                 |
-|           31 | Environmental Plots for Station                    |                                                 |
-|           32 | Strainmeter Raw Rlots for Station                  |                                                 |
-|           33 | Strainmeter 7 Day Raw Plots for Station            |                                                 |
-|           34 | Strainmeter 30 Day Raw Plots for Station           |                                                 |
-|           35 | Strainmeter All Raw Plots for Station (multi-year) |                                                 |
-|           36 | Strainmeter Spectrograms for Station               |                                                 |
-+--------------+-----------------------------------------+----------------------------------------------------+
-
-
-Table datafile.
-GSAC provides information about data files from its sites, and where to download the files. This information
-is in the table datafile, with one row for each file.  Each row should have a corresponding site.
-mysql> desc datafile;
-+-------------------------+-----------------+------+-----+---------+----------------+
-| Field                   | Type            | Null | Key | Default | Extra          |
-+-------------------------+-----------------+------+-----+---------+----------------+
-| datafile_id             | int(9) unsigned | NO   | PRI | NULL    | auto_increment |
-| station_id              | int(6) unsigned | NO   | MUL | NULL    |                |
-| equip_config_id         | int(6) unsigned | YES  | MUL | NULL    |                |
-| datafile_name           | varchar(120)    | NO   |     | NULL    |                |
-| URL_complete            | varchar(120)    | NO   |     | NULL    |                |
-| URL_protocol            | varchar(7)      | YES  |     | NULL    |                |
-| URL_domain              | varchar(50)     | YES  |     | NULL    |                |
-| URL_path_dirs           | varchar(70)     | YES  |     | NULL    |                |
-| data_type_id            | int(3) unsigned | YES  | MUL | NULL    |                |
-| datafile_format_id      | int(3) unsigned | YES  | MUL | NULL    |                |
-| data_reference_frame_id | int(3) unsigned | YES  | MUL | NULL    |                |
-| datafile_start_time     | datetime        | YES  |     | NULL    |                |
-| datafile_stop_time      | datetime        | YES  |     | NULL    |                |
-| datafile_published_date | datetime        | YES  |     | NULL    |                |
-| sample_interval         | float           | YES  |     | NULL    |                |
-| latency_estimate        | float           | YES  |     | NULL    |                |
-| year                    | year(4)         | YES  |     | NULL    |                |
-| day_of_year             | int(3)          | YES  |     | NULL    |                |
-| size_bytes              | int(10)         | YES  |     | NULL    |                |
-| MD5                     | char(32)        | YES  |     | NULL    |                |
-+-------------------------+-----------------+------+-----+---------+----------------+
-A datafile row can exist only if it has a previously-defined station_id and equip_config_id in the database, and usually if it has some other previously-defined 
-table key values such as datafile_format_id
-
-mysql> select * from datafile;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
-| datafile_id | station_id | equip_config_id | datafile_name  | URL_complete                                                   | URL_protocol | URL_domain      | URL_path_dirs    | data_type_id | datafile_format_id | data_reference_frame_id | datafile_start_time | datafile_stop_time  | datafile_published_date | sample_interval | latency_estimate | year | day_of_year | size_bytes | MD5  |
-+-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
-|           1 |          1 |               1 | AVCA.NA12.tenv | http://geodesy.unr.edu/gps_timeseries/tenv/NA12/AVCA.NA12.tenv | http         | geodesy.unr.edu | /gps_timeseries/ |            9 |                  5 |                       3 | 2003-04-10 00:00:00 | 2015-01-17 00:00:00 | 2015-01-27 00:00:00     |            NULL |            86400 | 2015 |          17 |       NULL | NULL |
-+-------------+------------+-----------------+----------------+----------------------------------------------------------------+--------------+-----------------+------------------+--------------+--------------------+-------------------------+---------------------+---------------------+-------------------------+-----------------+------------------+------+-------------+------------+------+
-
-
-
-
 mysql> desc datafile_format;
 +----------------------+-----------------+------+-----+---------+----------------+
 | Field                | Type            | Null | Key | Default | Extra          |
@@ -288,7 +341,6 @@ mysql> desc datafile_format;
 | datafile_format_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | datafile_format_name | varchar(50)     | NO   |     | NULL    |                |
 +----------------------+-----------------+------+-----+---------+----------------+
-
 A data file format is, well, a file format.  
 Note that a file format does not in general imply the data parameter type in a file, though in some special cases a 
 certain format is used only for one type of information, such as a PBO GPS Network Velocity file.
@@ -328,67 +380,6 @@ mysql> select * from datafile_format;
 
 
 
-mysql> desc ellipsoid;
-+----------------------+-----------------+------+-----+---------+----------------+
-| Field                | Type            | Null | Key | Default | Extra          |
-+----------------------+-----------------+------+-----+---------+----------------+
-| ellipsoid_id         | int(4) unsigned | NO   | PRI | NULL    | auto_increment |
-| ellipsoid_name       | varchar(45)     | NO   |     | NULL    |                |
-| ellipsoid_short_name | varchar(10)     | YES  |     | NULL    |                |
-+----------------------+-----------------+------+-----+---------+----------------+
-
-mysql> select * from ellipsoid;
-UNCHANGING (STATIC) VALUES USED BY ALL PROTOTYPE15 DB GSACs (IF YOU MAY WISH TO WORK WITH OTHER PROTOTYPE15 DB GSACs). YOU
-MAY ADD NEW ROWS BUT DO NOT CHANGE THESE ROWS  TO ALLOW FEDERATED GSACs TO INOPERATE.
-+--------------+----------------+----------------------+
-| ellipsoid_id | ellipsoid_name | ellipsoid_short_name |
-+--------------+----------------+----------------------+
-|            1 | WGS 84         | WGS 84               |
-|            2 | GRS 80         | GRS 80               |
-|            3 | PZ-90          | PZ-90                |
-+--------------+----------------+----------------------+
-
-
-
-mysql> desc equip_config;
-+-------------------------+-----------------+------+-----+---------+----------------+
-| Field                   | Type            | Null | Key | Default | Extra          |
-+-------------------------+-----------------+------+-----+---------+----------------+
-| equip_config_id         | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
-| station_id              | int(6) unsigned | NO   | MUL | NULL    |                |
-| equip_config_start_time | datetime        | NO   |     | NULL    |                |
-| equip_config_stop_time  | datetime        | YES  |     | NULL    |                |
-| db_update_time          | datetime        | NO   |     | NULL    |                |
-| antenna_id              | int(3) unsigned | NO   | MUL | NULL    |                |
-| antenna_serial_number   | varchar(20)     | YES  |     | NULL    |                |
-| antenna_height          | float           | YES  |     | NULL    |                |
-| metpack_id              | int(3) unsigned | YES  | MUL | NULL    |                |
-| metpack_serial_number   | varchar(20)     | YES  |     | NULL    |                |
-| radome_id               | int(3) unsigned | NO   | MUL | NULL    |                |
-| radome_serial_number    | varchar(20)     | YES  |     | NULL    |                |
-| receiver_firmware_id    | int(3) unsigned | NO   | MUL | NULL    |                |
-| receiver_serial_number  | varchar(20)     | NO   |     | NULL    |                |
-| satellite_system        | varchar(20)     | YES  |     | NULL    |                |
-| sample_interval         | float           | YES  |     | NULL    |                |
-+-------------------------+-----------------+------+-----+---------+----------------+
-
-An "equip_config" row specifies one "equipment session" which is a period of time during which a sensor and data logger 
-installation at one station has no changes.  One site (station) can have many equipment sessions, as instrumentation changes.
-
-An equip_config row can exist only if it has a previously-defined station_id, and usually if it has some other previously-defined 
-table key values such as receiver_firmware_id
-
-mysql> select * from equip_config;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+-----------------+------------+-------------------------+------------------------+---------------------+------------+-----------------------+----------------+------------+-----------------------+-----------+----------------------+----------------------+------------------------+------------------+-----------------+
-| equip_config_id | station_id | equip_config_start_time | equip_config_stop_time | db_update_time      | antenna_id | antenna_serial_number | antenna_height | metpack_id | metpack_serial_number | radome_id | radome_serial_number | receiver_firmware_id | receiver_serial_number | satellite_system | sample_interval |
-+-----------------+------------+-------------------------+------------------------+---------------------+------------+-----------------------+----------------+------------+-----------------------+-----------+----------------------+----------------------+------------------------+------------------+-----------------+
-|               1 |          1 | 2014-09-04 00:00:00     | 2014-12-17 23:59:45    | 2014-11-15 00:17:41 |          2 | 5343354885            |         0.0083 |          2 | K2630028              |         2 |                      |                    1 | 5250K40670             | GPS              |              15 |
-|               2 |          1 | 2014-08-15 14:30:30     | 2014-12-16 23:59:45    | 2014-11-15 00:17:41 |          1 | 5000112724            |            0.5 |          2 |                       |         1 |                      |                    1 | 5137K78333             | GPS              |              15 |
-+-----------------+------------+-------------------------+------------------------+---------------------+------------+-----------------------+----------------+------------+-----------------------+-----------+----------------------+----------------------+------------------------+------------------+-----------------+
-
-
-
 mysql> desc locale;
 +-------------+-----------------+------+-----+---------+----------------+
 | Field       | Type            | Null | Key | Default | Extra          |
@@ -398,14 +389,6 @@ mysql> desc locale;
 +-------------+-----------------+------+-----+---------+----------------+
 2 rows in set (0.00 sec)
 
-mysql> select * from locale;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+-----------+-----------------+
-| locale_id | locale_name     |
-+-----------+-----------------+
-|         1 |  some city name |
-+-----------+-----------------+
-
 
 
 mysql> desc metpack;
@@ -418,7 +401,7 @@ mysql> desc metpack;
 2 rows in set (0.00 sec)
 
 mysql> select * from metpack;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
+SAMPLE VALUES ONLY FOR DEMONSTRATION.  
 +------------+--------------+
 | metpack_id | metpack_name |
 +------------+--------------+
@@ -426,24 +409,6 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 |          2 | WXT520       |
 +------------+--------------+
 
-
-
-mysql> desc metpack;
-+--------------+-----------------+------+-----+---------+----------------+
-| Field        | Type            | Null | Key | Default | Extra          |
-+--------------+-----------------+------+-----+---------+----------------+
-| metpack_id   | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| metpack_name | varchar(15)     | NO   |     | NULL    |                |
-+--------------+-----------------+------+-----+---------+----------------+
-
-mysql> select * from metpack;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+------------+--------------+
-| metpack_id | metpack_name |
-+------------+--------------+
-|          1 | WXT510       |
-|          2 | WXT520       |
-+------------+--------------+
 
 
 mysql> desc monument_style;
@@ -475,14 +440,6 @@ mysql> desc nation;
 | nation_name | varchar(70)     | NO   |     | NULL    |                |
 +-------------+-----------------+------+-----+---------+----------------+
 
-mysql> select * from nation;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+-----------+------------------+
-| nation_id | nation_name      |
-+-----------+------------------+
-|         1 | some nation name |
-+-----------+------------------+
-
 
 
 mysql> desc province_state;
@@ -492,14 +449,6 @@ mysql> desc province_state;
 | province_state_id   | int(3) unsigned | NO   | PRI | NULL    | auto_increment |
 | province_state_name | varchar(70)     | NO   |     | NULL    |                |
 +---------------------+-----------------+------+-----+---------+----------------+
-
-mysql> select * from province_state;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-+-------------------+---------------------+
-| province_state_id | province_state_name |
-+-------------------+---------------------+
-|                 1 | some province name  |
-+-------------------+---------------------+
 
 
 
@@ -560,39 +509,6 @@ SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPOND
 
 
 
-mysql> desc station;
-+----------------------------+-----------------+------+-----+---------+----------------+
-| Field                      | Type            | Null | Key | Default | Extra          |
-+----------------------------+-----------------+------+-----+---------+----------------+
-| station_id                 | int(6) unsigned | NO   | PRI | NULL    | auto_increment |
-| four_char_name             | char(4)         | NO   |     | NULL    |                |
-| station_name               | varchar(50)     | NO   |     | NULL    |                |
-| latitude_north             | double          | NO   |     | NULL    |                |
-| longitude_east             | double          | NO   |     | NULL    |                |
-| height_ellipsoid           | float           | YES  |     | NULL    |                |
-| X                          | double          | YES  |     | NULL    |                |
-| Y                          | double          | YES  |     | NULL    |                |
-| Z                          | double          | YES  |     | NULL    |                |
-| installed_date             | datetime        | YES  |     | NULL    |                |
-| retired_date               | datetime        | YES  |     | NULL    |                |
-| agency_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
-| access_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
-| style_id                   | int(3) unsigned | YES  | MUL | NULL    |                |
-| status_id                  | int(3) unsigned | NO   | MUL | NULL    |                |
-| monument_style_id          | int(3) unsigned | YES  | MUL | NULL    |                |
-| nation_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
-| province_state_id          | int(3) unsigned | YES  |     | NULL    |                |
-| locale_id                  | int(3) unsigned | YES  | MUL | NULL    |                |
-| ellipsoid_id               | int(1) unsigned | YES  | MUL | NULL    |                |
-| networks                   | varchar(2000)   | YES  |     | NULL    |                |
-| iers_domes                 | char(9)         | YES  |     | NULL    |                |
-| mirrored_from_URL          | varchar(120)    | YES  |     | NULL    |                |
-| station_photo_URL          | varchar(100)    | YES  |     | NULL    |                |
-| time_series_plot_image_URL | varchar(100)    | YES  |     | NULL    |                |
-| embargo_duration_hours     | int(6) unsigned | YES  |     | NULL    |                |
-| embargo_after_date         | datetime        | YES  |     | NULL    |                |
-+----------------------------+-----------------+------+-----+---------+----------------+
-
 A station (or site) is an instrumented location with a unique name or 4 character ID.  
 In GNSS use, one station has one precise lat-long-elevation location, at the phase center of a GNSS receiver.
 In GNSS use, differing lat-long-elevation locations must have different four_char_name-s, or station_name-s, usually both.
@@ -608,12 +524,6 @@ Field mirrored_from_URL is used if this station and its data is copied from (mir
 from another GSAC.  If this value is not NULL and not the special word 'local' then the station and data from it does not originate at this GSAC's agency.
 This field is used to inform users there is another original source for the data they may prefer to use.  And it is used in federated GSACs 
 to prevent multiple listings of the same information from several GSACs copying the same information.
-
-mysql> select * from station;
-SAMPLE VALUES ONLY FOR DEMONSTRATION.  YOUR DATABASE WILL HAVE VALUES CORRESPONDING TO YOUR METADATA.
-| station_id | four_char_name | station_name     | latitude_north | longitude_east | height_ellipsoid | X             | Y             | Z            | installed_date | retired_date     | agency_id | access_id | style_id | status_id | monument_style_id | nation_id | province_state_id | locale_id | ellipsoid_id | networks                                           | mirrored_from_URL            | iers_domes | station_photo_URL                                                      | time_series_plot_image_URL                                       | embargo_duration_hours | embargo_after_date |
-|          3 | P780           | Cerrillos_PR2008 |         18.075 |       -66.5791 |           154.07 | -5565748.2083 | -3746572.4236 | 4577161.3946 | 2008-06-20 00:00:00 | 2015-06-12 00:00:00 |         1 |         2 |        1 |         1 |                 2 |         1 |                 4 |         4 |            1 | PBO;PBO Analysis Complete;PBO Core Network;COCONet | http://www.myrepo.us/gsacws | NULL       | http://www.unavco.org/data/gps-gnss/lib/images/station_images/P780.jpg                                                | http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P780.png |                      NULL | NULL               |
-[please note P780 station data is not actually copied from myrepo.us]
 
 
 mysql> desc station_status;
