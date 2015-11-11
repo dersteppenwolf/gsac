@@ -3,20 +3,17 @@
  filename              : populate_GSAC_db_station_metadata.py
  author                : Stuart Wier 
  created               : 2014-09-03
- updates               : 2014-09-04 to 2015-07-05.  2015-10-16 to 2015-11-03 ...
+ updates               : 2014-09-04 to 2015-07-05.  2015-10-16 to 2015-11-11 ...
 
- exit code(s)          : 0, success
+ exit Code(s)          : 0, success
                        : sys.exit (1) , curl failed, or no igs rcvr_ant.tab file found.
 
  description           The use is:
                        1. to make the initial population of a GSAC Prototype_15 style database with all stations in the network, and all the equipment sessions at each station.
                        2. to find and add newly-added stations in the network (and the new equipment sessions at that station).
-                       3. to update existing equipment sessions (db equip_config records), when the metadata was changed at the remote GSAC. Usually session stop_time.
+                       3. to update existing equipment sessions (db table equip_config records), when the metadata was changed. Usually session stop_time.
 
-                       The metadata comes from an ascii csv file in "GSAC full csv format" like those output by GSACs on site searches.
-
-                       The metadata from GSAC is provided in a file with format "GSAC full csv file", named in this case stations.csv (see line )
-                       everytime a new file comes in for a station.  If you try to download a new file for a session when the db equip_config_stop_time is older, the download fails.
+                       The metadata comes from an ascii csv file in "GSAC site full csv format" like those output by GSACs on site searches, BUT NO header lines.
 
  configuration:        First, one time only, for your network and operations, revise lines with CHANGE :
 
@@ -28,23 +25,20 @@
                        
  usage:                Run this script to update station metadata in the GSAC.
                   
-                       First, make a csv file called stations_instruments.csv with station metadata you want in the database. example lines are below in .py file."  )
+                       First, make a csv file, the inputfilename, named like stations_instruments.csv, with station metadata you want in the database. 
+                       The file format is that of a GSAC full sites.csv file, lacking the 4 top header lines. 
 
                        This Python is run with a command like this:
 
-                              ./populate_GSAC_db_station_metadata.py   dbhost   dbaccount   dbaccountpw   dbname
+                              ./populate_GSAC_db_station_metadata.py   dbhost   dbaccount   dbaccountpw   dbname  inputfilename
 
                        Use your names for the database account name, account password, and database name such as  "localhost root pw2db Prototype_15_GSAC"
 
                        Running the process takes about 1 second per site; and makes a log file, populate_GSAC_db_station_metadata.log
 
-                       Look at the log file after each run.  Look for errors noted in lines with "PROBLEM" and LOOK  and fix any problems.
+                       Look at the log file after each run.  Look for errors noted in lines with "PROBLEM" and fix any problems.
 
-                       Update these database tables by hand when a new station is added (no such data is available from the from GSAC) 
-                           radome_serial_number in equip_config; and in table station, update field values for agency_id, 
-                                   You may need to insert a new agency in the db agency table, first.
-end FIX
-
+                       You may need to insert a new agency in the db agency table, first.
 
  tested on             Python 2.6.5 on Linux (Ubuntu) ; CentOS Python 2.7.6 (default, Sep 16 2014, 12:23:18) [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)] 
  
@@ -89,6 +83,7 @@ import MySQLdb
 def load_db () :
     global logFile 
     global logfilename 
+    global inputfilename
     global failedcount
     global newstacount
     global eqscount
@@ -104,12 +99,12 @@ def load_db () :
 
     logFile     = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name.
 
-    logWrite("\n    Log of populate_GSAC_db_station_metadata.py "+timestamp + " (log file is "+logfilename+")" )
+    logWrite("\n  Log of populate_GSAC_db_station_metadata.py "+timestamp + " (log file is "+logfilename+")" )
 
-    logWrite("\n ***** *****  Look at the log files after each run.  Look for errors noted in lines with PROBLEM or LOOK and fix those issues. ***** *****\n \n")
+    logWrite("\n  Look at the log files after each run.  Look for errors noted in lines with PROBLEM or LOOK and fix those issues. ***** *****\n")
 
-    logWrite("\n    populate_GSAC_db_station_metadata.py loads or updates a GSAC Prototype_15 database with station and equipment session data from a 'full csv file'."  )
-    logWrite(  "    First, make a csv file called stations_instruments.csv with station metadata you want in the database. example lines are below in .py file."  )
+    logWrite("    populate_GSAC_db_station_metadata.py loads or updates a GSAC Prototype_15 database with station and equipment session data from a full csv file."  )
+    logWrite(  "    First, make a csv inputfile with station metadata you want in the database. "  )
     logWrite(  "    The use is:"  )
     logWrite(  "       1. To make the initial (first time) population of the GSAC database with all stations in the network, and all the equipment sessions at each station."  )
     logWrite(  "       2. Thereafter, for updates, to find and add any newly-added stations in the network (and add the equipment sessions at that station)."  )
@@ -120,8 +115,8 @@ def load_db () :
 
     cstatus1 = 0 # relic of old test
     if cstatus1 == 0 :
-        #   logWrite("    Open the full csv file." );
-        station_metadata_file = open ("stations_instruments.csv");
+        logWrite ("    Open the input file "+ inputfilename );
+        station_metadata_file = open (inputfilename) # ("stations_instruments.csv");
         # read and count how many lines in file
         allLines = station_metadata_file.readlines()
         linecount = len(allLines)
@@ -132,10 +127,10 @@ def load_db () :
         if linecount > 1 : logWrite(    "    There are "+`(linecount-1)`+" station - equipment sessions in this file."  )
         sys.stdout.flush()
 
-        # full csv files have one or more lines for every station, one line per equipment session.  Use the station 4char ID ("code") to keep track which one is in use.
-        code="" # the 4 char id of a station such as ABMF
-        this_station_code="" # working station now
-        previous_station_code=""  # the previous station in use
+        # full csv files have one or more lines for every station, one line per equipment session.  Use the station 4char ID ("four_char_ID") to keep track which one is in use.
+        four_char_ID="" # the 4 char id of a station such as ABMF
+        this_station_four_char_ID="" # working station now
+        previous_station_four_char_ID=""  # the previous station in use
         prev_start_time =""
         prev_stop_time  =""
         donecount=0
@@ -194,14 +189,14 @@ def load_db () :
         # get contents of the rcvr_ant.tab file for later searches:
         igsmap = mmap.mmap(igs_file.fileno(), 0, access=mmap.ACCESS_READ)
 
-        # read each line in the input Full CSV file, the results from the remote GSAC; i is 0 base
+        # read each line in the input file
         for i in range(linecount) :
 
            line = station_metadata_file.readline()
            metadata = line
 
-           # line index from 1 on is data; can use for test say also  i<30 is to bypass lines after 30  if testing 
-           if (i>0 ):
+           # line index from 0 on is data; can use for test also  and  i<30  to bypass lines after 30  if testing 
+           if (i>=0 ):
 
              # one file line is one equipment session for one station. 
              #logWrite("\n     #"+ `(i-3)` + " metadata line in station-session file: "+line[:-1]  );
@@ -217,18 +212,13 @@ def load_db () :
              strlist= string.split( line, "," )
 
              example_line='''
-             a full sites .csv file format example:
-             There are four header lines, not used here. There are 30+ fields: first at [0]
+             a full csv input file format example, for site's info:
 
-#fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date' format='yyyy-MM-ddTHH:mm:  ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,receiver_type[type='string'],         firmware_version[type='string'],receiver_SN[type='string'],sample_interval,city_locale[type='string'],state_prov[type='string'],country[type='string'],X,Y,Z,agencyname[type='string'],metpackname[type='string'],     metpackSN[type='string'],networks[type='string'],site_count
-#   Generated by The     GSAC Repository on 2015-11-04T20:00:58 
-#   Missing times (no characters in ,,) may mean 'not removed' or 'no change.' The CSV convention for point data is 'CF-for-CSV' or 'Well Structured CSV.' 
-#   See http://ramadda.org/repository/entry/show/Home/RAMADDA+Information/Development/CF+for+CSV?entryid=23652828-c6f4-482b-bb2f-041dae14542e 
 P340,DashielCrkCN2008,39.4093,-123.0498,865.23,shallow-drilled braced,,2008-02-15T06:38:45,2009-03-12T05:59:45,TRM29659.00,SCIT,0220382762,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.1-2 19 Apr 2005,4623116489,,,,,-       2691539.1186,-4136726.977,4028080.6731,,,,PBO;PBO Analysis  Complete;PBO Core Network;,1
 P340,DashielCrkCN2008,39.4093,-123.0498,865.23,shallow-drilled braced,,2009-03-12T06:00:00,2010-10-22T05:59:45,TRM29659.00,SCIT,0220377400,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.1-2 19 Apr 2005,4623116489,,,,,-       2691539.1186,-4136726.977,4028080.6731,,,,PBO;PBO Analysis  Complete;PBO Core Network;,1
 P340,DashielCrkCN2008,39.4093,-123.0498,865.23,shallow-drilled braced,,2010-10-22T06:00:00,2015-10-16T05:59:45,TRM29659.00,SCIT,0220377400,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-0,4623116489,,,,,-2691539.1186,-     4136726.977,4028080.6731,,,,PBO;PBO Analysis  Complete;PBO Core Network;,1
 P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2005-09-23T06:19:00,2010-07-18T05:59:45,TRM29659.00,SCIT,0220366152,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.1-2 19 Apr 2005,4518249765,,,,,,,,,,,PBO; PBO Analysis  Complete;PBO Core Network;,2
-P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T06:00:00,2015-10-16T05:59:45,TRM29659.00,SCIT,0220366152,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-0,4518249765,,,,,,,,,,,PBO;PBO          Analysis  Complete;PBO Core Network;,2
+P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T06:00:00,2015-10-16T05:59:45,TRM29659.00,SCIT,0220366152,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-0,4518249765,,,,,,,,,,,PBO;PBO          Analysis  Complete;PBO Core Network;2015-10-14 23:59:45,2
 
                 Note that IERSDOMES may be correctly missing ",," for most stations
 
@@ -258,31 +248,30 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                 26 metpack name
                 27 metpack serial number
                 28 "networks": a  ;-separated list of network names for this station and time interval
-                29 station_photo_URL          
-                30 time_series_plot_image_URL 
+                29 latest data time 
                 (last item in each line is a site count, not used by GSAC)
              '''
 
              SQLstatement=""
 
-             code= (strlist[0]) # the 4 char id of a station such as ABMF
-             if (len(code)>4) :  # should not occur; attempt to do something useful.
-                 code=code[:4]
-                 # logWrite("  BAD station 4 char id is > 4 chars: "+strlist[0] +"; will use just "+code  );
+             four_char_ID= (strlist[0]) # the 4 char id of a station such as ABMF
+             if (len(four_char_ID)>4) :  # should not occur; attempt to do something useful.
+                 four_char_ID=four_char_ID[:4]
+                 # logWrite("  BAD station 4 char id is > 4 chars: "+strlist[0] +"; will use just "+four_char_ID  );
 
 
              # when at a new station ; this happens first only after one station has been processed:
-             if this_station_code != code :
-                     if previous_station_code != "" :
-                         logWrite(   "*******   Station "+ previous_station_code +" is up-to-date in the database (station count so far is "+`donecount`+") "  );
-                     # if "" != this_station_code : # not the first time
-                     previous_station_code = this_station_code
-                     logWrite  (   "\n*******  Check station " + code );
+             if this_station_four_char_ID != four_char_ID :
+                     if previous_station_four_char_ID != "" :
+                         logWrite(   "*******   Station "+ previous_station_four_char_ID +" is up-to-date in the database (station count so far is "+`donecount`+") "  );
+                     # if "" != this_station_four_char_ID : # not the first time
+                     previous_station_four_char_ID = this_station_four_char_ID
+                     logWrite  (   "\n*******  Check station " + four_char_ID );
                      sys.stdout.flush()
                      sys.stdout.flush()
                      donecount += 1
 
-             this_station_code = code
+             this_station_four_char_ID = four_char_ID
 
              ## logWrite(metadata line; this to compare results of several run of this script, to see if the INPUT is the same
              logWrite("\n    Station and an equip session metadata line in csv file:\n      "+line[:70] ); # first part of line
@@ -315,7 +304,7 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
              if (len(equipSessStopTime)>19) :
                  equipSessStopTime=equipSessStopTime[:19]
 
-             #logWrite("      This input equip_config sesssion for station "+code +" has equip_config_start time= "+equipSessStartTime+ "  stop time=_"+equipSessStopTime )
+             #logWrite("      This input equip_config sesssion for station "+four_char_ID +" has equip_config_start time= "+equipSessStartTime+ "  stop time=_"+equipSessStopTime )
 
              anttype  =  (strlist[9])
              item = anttype
@@ -338,7 +327,6 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                             +   "   has unexpected RADOME "+item+ ", not in http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab  \n "
                   logWrite ( errormsg)
                   # continue  
-
 
              antsn  =  (strlist[11])
              adz  =  (strlist[12]) # char string of a number
@@ -388,17 +376,16 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                 #logWrite("      networks="+`networks`  );
                 pass
              
-             station_photo_URL          = (strlist[29])  # like http://www.unavco.org/data/gps-gnss/lib/images/station_images/PALX.jpg
-
-             time_series_plot_image_URL = (strlist[30])  # like http://pboshared.unavco.org/timeseries/PALX_timeseries_cleaned.png 
-                                                         #  or  http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/ABMF.png 
+             station_photo_URL          = "" # like http://www.unavco.org/data/gps-gnss/lib/images/station_images/PALX.jpg
+             time_series_plot_image_URL = "http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/"+four_char_ID + ".png"  # like http://pboshared.unavco.org/timeseries/PALX_timeseries_cleaned.png 
+                                             #  or  http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/ABMF.png 
 
              # Finally, insert the station metadata in the database -- if not already there. 
 
-             #  find the station_id number in the db for this 4 char ID code and the station name
+             #  find the station_id number in the db for this 4 char ID four_char_ID and the station name
              try:
-                  #logWrite("      get station id number for  station with  4charID="+code +"_ name="+staname+"_ ")
-                  cursor.execute("""SELECT station_id from station where four_char_name = %s and station_name = %s """, (code, staname ) )
+                  #logWrite("      get station id number for  station with  4charID="+four_char_ID +"_ name="+staname+"_ ")
+                  cursor.execute("""SELECT station_id from station where four_char_name = %s and station_name = %s """, (four_char_ID, staname ) )
                   #  not used for selects  :  gsacdb.commit()
 
                   # rows= cursor.fetchall() # gives array of array for each row, like ['Bob', '9123 4567'] for one row result of 2 values
@@ -406,24 +393,20 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                   row= cursor.fetchone()
                   station_id=  row[0];
                   station_id=  int(station_id); # fix the "L" value returned
-                  #  Already have row "+`station_id`+" in the db station table for "+code+", so will not add new station data to the table.
-                  logWrite(  "      Already have station "+code +" in the database at  station_id= "+`station_id` );
+                  #  Already have row "+`station_id`+" in the db station table for "+four_char_ID+", so will not add new station data to the table.
+                  logWrite(  "      Already have station "+four_char_ID +" in the database at  station_id= "+`station_id` );
                   sys.stdout.flush()
-                  if code not in sta_ID_list:
-                      sta_ID_list.append(code)
+                  if four_char_ID not in sta_ID_list:
+                      sta_ID_list.append(four_char_ID)
              except:
                    # the station is not in the database, so add it:
-                   logWrite( "\n      Station is NEW; not in database, so insert this new station "+code+" with name="+staname+" in the GSAC db station table:"  );
+                   logWrite( "\n      Station is NEW; not in database, so insert this new station "+four_char_ID+" with name="+staname+" in the GSAC db station table:"  );
                    skip='''
                    logWrite( "      "  );
                    logWrite( "      ######################################################################################################################### "  );
-                   logWrite( "      LOOK: "  );
-                   logWrite( "      For this new station, you need to insert in the database some more information, not avaiable from remote GSAC results: "  );
-                   logWrite( "      in the database agency table, insert a new row for the the operator_agency  "  );
-                   logWrite( "      in station table for this station:  insert the new operator_agency_id "  );
-                   logWrite( "      in station table for this station:  the station_image_URL  "  );
-                   logWrite( "      in station table for this station:  the time_series_URL "  );
-                   logWrite( "      in table equip_config, insert the radome serial number and the metpack_serial_number.  "  );
+                   logWrite( "      For this new station, you need to insert in the database some more information, not avaiable from the input file. "  );
+                   logWrite( "      such as the station_photo_URL  in table station for each station, and ");
+                   logWrite( "      in table equip_config, insert the radome serial number. "  );
                    logWrite( "      ######################################################################################################################### "  );
                    logWrite( "      "  );
                    '''
@@ -443,7 +426,7 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                     # get or set monument_style_id based on monument_style_description value:
                    if ""==monument_style_description :
                         # default value of "not specified" at id=1 in db is used
-                        #logWrite("       no monument style in GSAC full csv file results " );
+                        logWrite("       no monument style in input file" );
                         pass
                    else:
                         # id= getOrSetTableRow (idname, tablename,  rowname, rowvalue)
@@ -472,7 +455,7 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                    '''
                    if ""==locale_info:
                         # default value of "not specified" at id=1 in db is used
-                        logWrite("       no locale info in GSAC full csv file results"  );
+                        logWrite("       no locale info input"  );
                         pass
                    else:
                         # id= getOrSetTableRow (idname, tablename,  rowname, rowvalue)
@@ -481,7 +464,7 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
 
                    if ""== nation_name:
                         # default value of "not specified" at id=1 in db is used
-                        logWrite("       no country name in  full csv file results"  );
+                        logWrite("       no country name in  input"  );
                         pass
                    else:
                         # id= getOrSetTableRow (idname, tablename,  rowname, rowvalue)
@@ -511,7 +494,7 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                    '''
                    province_state_id=1
                    if ""== province_name:
-                        logWrite("       no province in  full csv file results"  );
+                        logWrite("       no province in  input"  );
                         pass
                    else:
                         # id= getOrSetTableRow (idname, tablename,  rowname, rowvalue)
@@ -532,7 +515,7 @@ P341,WhiskytownCN2005,40.6507,-122.6069,406.85,deep-drilled braced,,2010-07-18T0
                        '''
                    agency_id=1
                    if ""== agencyname:
-                        logWrite("       no agency in  full csv file results"  );
+                        logWrite("       no agency in  input"  );
                         pass
                    else:
                         # id= getOrSetTableRow (idname, tablename,  rowname, rowvalue)
@@ -600,9 +583,9 @@ metpackname[type='string'],metpack_serial_number[type='string']
                    # But if say X= "123.45" then  insert X with format %s works fine.
 
                    if ""==X:
-                       SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_ellipsoid, installed_date, agency_id,access_id, style_id, status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL,networks)   values  (    '%s', '%s',  %s,             %s,            %s,       '%s',              %s,       %s,       %s,      %s,       %s,            %s,        %s,                 %s,        '%s',       '%s',               '%s' , '%s' )"  %                                  ( code, staname,              latstr,         lonstr,         ellphgtstr,   equipSessStartTime,agency_id,access_id,style_id,status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL, networks) )
+                       SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_ellipsoid, installed_date, agency_id,access_id, style_id, status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL,networks)   values  (    '%s', '%s',  %s,             %s,            %s,       '%s',              %s,       %s,       %s,      %s,       %s,            %s,        %s,                 %s,        '%s',       '%s',               '%s' , '%s' )"  %                                  ( four_char_ID, staname,              latstr,         lonstr,         ellphgtstr,   equipSessStartTime,agency_id,access_id,style_id,status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL, networks) )
                    else:
-                       SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_ellipsoid,X,Y,Z, installed_date, agency_id,access_id, style_id, status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL,networks)   values  (    '%s', '%s',  %s,             %s,            %s,       %s,%s,%s, '%s',              %s,       %s,       %s,      %s,       %s,            %s,        %s,                 %s,        '%s',       '%s',               '%s' , '%s' )"  %                                  ( code, staname,              latstr,         lonstr,         ellphgtstr,   X,Y,Z, equipSessStartTime,agency_id,access_id,style_id,status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL, networks) )
+                       SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_ellipsoid,X,Y,Z, installed_date, agency_id,access_id, style_id, status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL,networks)   values  (    '%s', '%s',  %s,             %s,            %s,       %s,%s,%s, '%s',              %s,       %s,       %s,      %s,       %s,            %s,        %s,                 %s,        '%s',       '%s',               '%s' , '%s' )"  %                                  ( four_char_ID, staname,              latstr,         lonstr,         ellphgtstr,   X,Y,Z, equipSessStartTime,agency_id,access_id,style_id,status_id,monument_style_id, nation_id,province_state_id, locale_id, iers_domes, station_photo_URL, time_series_plot_image_URL, networks) )
 
                    logWrite("       Insert the new station into station table with SQL \n       "+SQLstatement   )
 
@@ -616,28 +599,28 @@ metpackname[type='string'],metpack_serial_number[type='string']
                        sys.stdout.flush()
 
                    except:
-                       # bogus fails logWrite(" PROBLEM FAILED  MySQL insert command to add new station code=" +code+" name="+staname+" "  );
+                       # bogus fails logWrite(" PROBLEM FAILED  MySQL insert command to add new station four_char_ID=" +four_char_ID+" name="+staname+" "  );
                        #logWrite(               "      BUT sometimes actually succeeded: look in the database."  );
                        #logWrite(               "     (bogus insert failure message - why?)"  );
                        pass # skip always gets false failure of above insert; cf "INSERT into" below which does not
 
                    station_counter += 1;
-                   if code not in sta_ID_list:
-                          sta_ID_list.append(code)
+                   if four_char_ID not in sta_ID_list:
+                          sta_ID_list.append(four_char_ID)
 
                    stm=" "
                    try:
-                       stm = ("SELECT station_id from station where four_char_name = '%s'  and station_name= '%s' " % (code, staname    ) )
-                       #cursor.execute("""SELECT station_id from station where four_char_name = '%s'  and station_name= '%s' """, (code, staname ) )
+                       stm = ("SELECT station_id from station where four_char_name = '%s'  and station_name= '%s' " % (four_char_ID, staname    ) )
+                       #cursor.execute("""SELECT station_id from station where four_char_name = '%s'  and station_name= '%s' """, (four_char_ID, staname ) )
                        # logWrite("   2nd try to find new station id with SQL   \n      "+stm  );
                        cursor.execute(stm)
                        gsacdb.commit()
                        row= cursor.fetchone()
                        station_id=  row[0];
                        station_id=  int(station_id); # fix the "L" value returned
-                       logWrite( "      New station "+code+" in database has station_id "+`station_id`  )
+                       logWrite( "      New station "+four_char_ID+" in database has station_id "+`station_id`  )
                    except:
-                       #logWrite( " PROBLEM maybe FAILED to get the id for station code="+code + "\n       with SQL = "+stm + "\n      for case of metadata \n    "+metadata)
+                       #logWrite( " PROBLEM maybe FAILED to get the id for station four_char_ID="+four_char_ID + "\n       with SQL = "+stm + "\n      for case of metadata \n    "+metadata)
                        #logWrite( "      BUT sometimes actually succeeds: look in the database."  );
                        pass
 
@@ -673,7 +656,7 @@ metpackname[type='string'],metpack_serial_number[type='string']
                 +-------------------------+-----------------+------+-----+---------+----------------+
 
               the csv data file has:
-                #fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date'            format='yyyy-MM-ddTHH:mm:ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,             receiver_type[type='string'],firmware_version[type='string'],receiver_SN[type='string'],receiver_sample_interval,city_locale[type='string'],state_prov[type='string'],country[type='string'],X,Y,Z,                    agencyname[type='string'],metpackname[type='string'],metpack_serial_number[type='string'],station_photo_URL[type='string'],time_series_plot_image_URL[type='string'],networks[type='string']
+                #fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date'            format='yyyy-MM-ddTHH:mm:ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,             receiver_type[type='string'],firmware_version[type='string'],receiver_SN[type='string'],receiver_sample_interval,city_locale[type='string'],state_prov[type='string'],country[type='string'],X,Y,Z,                    agencyname[type='string'],metpackname[type='string'],metpack_serial_number[type='string'],networks[type='string']
 
                       so can add to an equip session:
 
@@ -766,7 +749,7 @@ metpackname[type='string'],metpack_serial_number[type='string']
                      #logWrite("      the SQL is "+statement)
                      cursor.execute(statement)
                      gsacdb.commit()
-                     logWrite("      Updated the equip_config_stop_time in the db, for station "+code+" and at equip_config_id "+`esid` +", "  )
+                     logWrite("      Updated the equip_config_stop_time in the db, for station "+four_char_ID+" and at equip_config_id "+`esid` +", "  )
                      stoptimeupdatecount += 1
                      # end of processing one metadata line from the GSAC .csv file
                      #'''
@@ -797,7 +780,7 @@ metpackname[type='string'],metpack_serial_number[type='string']
                  if ""== antenna_name:
                         # default value of "not specified" at id=1 in db is used
                         antenna_id  =  1 # not specified
-                        # if logflag>=2: # logWrite("       no antenna name in  full csv file "  );
+                        logWrite("       no antenna name in input "  );
                  else:
                         antenna_id  = getOrSetTableRow ("antenna_id", "antenna", "antenna_name", antenna_name)
                         # debug logWrite("        antenna name and id " +antenna_name+"   "+`antenna_id` );
@@ -876,7 +859,7 @@ metpackname[type='string'],metpack_serial_number[type='string']
                  # '''
 
                  try:
-                       # orig dw code SQLstatement=("INSERT into equip_config (station_id, create_time, equip_config_start_time, equip_config_stop_time, antenna_id, antenna_serial_number, antenna_height, radome_id, radome_serial_number, receiver_firmware_id, receiver_serial_number, satellite_system,sample_interval) values (%s, '%s', '%s', '%s',  %s, '%s', %s,  %s, '%s', %s, '%s',  '%s', %s)" % ( station_id, create_time, new_equip_config_start_time, new_equip_config_stop_time, antenna_id, antenna_serial_number, antenna_height, radome_id, radome_serial_number, receiver_id, receiver_serial_number, satellite_system, rcvsampInt)) 
+                       # orig  SQLstatement=("INSERT into equip_config (station_id, create_time, equip_config_start_time, equip_config_stop_time, antenna_id, antenna_serial_number, antenna_height, radome_id, radome_serial_number, receiver_firmware_id, receiver_serial_number, satellite_system,sample_interval) values (%s, '%s', '%s', '%s',  %s, '%s', %s,  %s, '%s', %s, '%s',  '%s', %s)" % ( station_id, create_time, new_equip_config_start_time, new_equip_config_stop_time, antenna_id, antenna_serial_number, antenna_height, radome_id, radome_serial_number, receiver_id, receiver_serial_number, satellite_system, rcvsampInt)) 
                        SQLstatement=("INSERT into equip_config (station_id, equip_config_start_time,           equip_config_stop_time, antenna_id, antenna_serial_number, antenna_height, radome_id,  receiver_firmware_id, receiver_serial_number, sample_interval, metpack_id, metpack_serial_number, db_update_time) values (%s,        '%s',                              '%s',                   %s,                 '%s',             %s,             %s,            %s,                 '%s',                          %s,                   %s,        '%s',                 '%s')" % ( station_id,  new_equip_config_start_time, new_equip_config_stop_time, antenna_id, antenna_serial_number, antenna_height, radome_id,  receiver_id,          receiver_serial_number, rcvsampInt,     metpack_id, metpack_serial_number, db_update_time)) 
                        #logWrite("      Insert this new equipment session into the db with SQL: \n      "+SQLstatement  )
                        logWrite("      "+SQLstatement  )
@@ -895,18 +878,18 @@ metpackname[type='string'],metpack_serial_number[type='string']
              # end if NOT haveit, so add it
              #'''  # end devel
 
-           previous_station_code = this_station_code
+           previous_station_four_char_ID = this_station_four_char_ID
 
            # end of adding station info and ALL equipment session info
-           if this_station_code != code :
-                 if "" != this_station_code : # not the first time
-                     previous_station_code = this_station_code
-                     #if logflag>=1:  logWrite(  "  Station "+ previous_station_code +" data in the database is up-to-date (station count "+`donecount`+")."
+           if this_station_four_char_ID != four_char_ID :
+                 if "" != this_station_four_char_ID : # not the first time
+                     previous_station_four_char_ID = this_station_four_char_ID
+                     #if logflag>=1:  logWrite(  "  Station "+ previous_station_four_char_ID +" data in the database is up-to-date (station count "+`donecount`+")."
 
         # close the GSAC Full CSV input file 
         #station_metadata_file.close()
 
-        logWrite(  "*******   Station "+ previous_station_code +" is up-to-date in the database (station count "+`donecount`+") "  );
+        logWrite(  "*******   Station "+ previous_station_four_char_ID +" is up-to-date in the database (station count "+`donecount`+") "  );
 
         logWrite("\n   Finished reading input station metadata .csv file ."  ); # station_metadata_file
 
@@ -995,6 +978,7 @@ def makedatetime (dtstr) :
 
 global logFile 
 global logfilename 
+global inputfilename
 global logflag 
 global newstacount
 global newsessioncount
@@ -1029,6 +1013,7 @@ dbhost   = args[1]
 dbacct   = args[2]
 dbacctpw = args[3]
 dbname   = args[4]
+inputfilename = args[5]
 
 # connect to the database to write to, uses import MySQLdb
 gsacdb = MySQLdb.connect(dbhost, dbacct, dbacctpw, dbname)
