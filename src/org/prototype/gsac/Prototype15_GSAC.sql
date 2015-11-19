@@ -227,6 +227,31 @@ INSERT INTO `datafile_format` VALUES (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ellipsoid`
+--
+
+DROP TABLE IF EXISTS `ellipsoid`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ellipsoid` (
+  `ellipsoid_id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+  `ellipsoid_name` varchar(45) NOT NULL,
+  `ellipsoid_short_name` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`ellipsoid_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ellipsoid`
+--
+
+LOCK TABLES `ellipsoid` WRITE;
+/*!40000 ALTER TABLE `ellipsoid` DISABLE KEYS */;
+INSERT INTO `ellipsoid` VALUES (1,'WGS 84','WGS 84'),(2,'GRS 80','GRS 80'),(3,'PZ-90','PZ-90');
+/*!40000 ALTER TABLE `ellipsoid` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `equip_config`
 --
 
@@ -264,7 +289,7 @@ CREATE TABLE `equip_config` (
   CONSTRAINT `radome_id` FOREIGN KEY (`radome_id`) REFERENCES `radome` (`radome_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `receiver_firmware_id` FOREIGN KEY (`receiver_firmware_id`) REFERENCES `receiver_firmware` (`receiver_firmware_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `station_id` FOREIGN KEY (`station_id`) REFERENCES `station` (`station_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -273,7 +298,7 @@ CREATE TABLE `equip_config` (
 
 LOCK TABLES `equip_config` WRITE;
 /*!40000 ALTER TABLE `equip_config` DISABLE KEYS */;
-INSERT INTO `equip_config` VALUES (10,42,'2011-12-02 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 17:50:06',10,'0220368169',0.0083,2,'G3260009',2,NULL,29,'4614207064',NULL,15),(22,47,'2008-09-03 00:00:00','2010-07-08 23:59:45',NULL,NULL,NULL,'2015-10-23 17:50:07',10,'0220366150',0.0083,1,'C5010030',2,NULL,28,'4527253331',NULL,15),(23,47,'2010-07-09 00:00:00',NULL,NULL,NULL,NULL,'2015-10-23 17:50:07',10,'0220366150',0.0083,1,'C5010030',2,NULL,29,'4527253331',NULL,15),(45,39,'2008-02-14 23:38:45','2009-03-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220382762',0.0083,3,'',2,NULL,28,'4623116489',NULL,15),(46,39,'2009-03-12 00:00:00','2010-10-21 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220377400',0.0083,3,'',2,NULL,28,'4623116489',NULL,15),(47,39,'2010-10-22 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220377400',0.0083,3,'',2,NULL,29,'4623116489',NULL,15),(48,40,'2005-09-23 00:19:00','2010-07-17 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220366152',0.0083,3,'',2,NULL,28,'4518249765',NULL,15),(49,40,'2010-07-18 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220366152',0.0083,3,'',2,NULL,29,'4518249765',NULL,15),(50,41,'2007-06-21 04:04:30','2010-06-12 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220346567',0.0083,3,'',2,NULL,28,'4541260323',NULL,15),(51,41,'2010-12-06 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220346567',0.0083,3,'',2,NULL,29,'4541260323',NULL,15),(52,42,'2006-08-23 00:00:00','2010-07-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220368169',0.0083,3,'',2,NULL,28,'4614207064',NULL,15),(53,42,'2010-07-12 00:00:00','2011-12-01 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220368169',0.0083,3,'',2,NULL,29,'4614207064',NULL,15),(54,43,'2005-10-01 00:51:30','2008-09-02 21:19:00',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220365593',0.0083,3,'',2,NULL,28,'4518249763',NULL,15),(55,43,'2008-09-02 21:20:30','2008-09-10 21:56:30',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,28,'4518249763',NULL,15),(56,43,'2008-10-09 23:32:45','2010-07-08 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,28,'4539259362',NULL,15),(57,43,'2010-07-09 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,29,'4539259362',NULL,15),(58,44,'2007-11-26 00:00:00','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379511',0.0083,3,'',2,NULL,28,'4625209417',NULL,15),(59,44,'2010-07-15 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379511',0.0083,3,'',2,NULL,29,'4625209417',NULL,15),(60,45,'2007-09-13 18:55:00','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'4623A16401',0.0083,3,'',2,NULL,28,'4625209636',NULL,15),(61,45,'2010-07-15 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'4623A16401',0.0083,3,'',2,NULL,29,'4625209636',NULL,15),(62,46,'2005-09-28 00:16:45','2010-07-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366135',0.0083,3,'',2,NULL,28,'4516248599',NULL,15),(63,46,'2010-07-12 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366135',0.0083,3,'',2,NULL,29,'4516248599',NULL,15),(64,47,'2005-10-27 21:08:30','2008-09-02 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366150',0.0083,3,'',2,NULL,28,'4527253331',NULL,15);
+INSERT INTO `equip_config` VALUES (10,42,'2011-12-02 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 17:50:06',10,'0220368169',0.0083,2,'G3260009',2,NULL,29,'4614207064',NULL,15),(22,47,'2008-09-03 00:00:00','2010-07-08 23:59:45',NULL,NULL,NULL,'2015-10-23 17:50:07',10,'0220366150',0.0083,1,'C5010030',2,NULL,28,'4527253331',NULL,15),(23,47,'2010-07-09 00:00:00',NULL,NULL,NULL,NULL,'2015-10-23 17:50:07',10,'0220366150',0.0083,1,'C5010030',2,NULL,29,'4527253331',NULL,15),(45,39,'2008-02-14 23:38:45','2009-03-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220382762',0.0083,3,'',2,NULL,28,'4623116489',NULL,15),(46,39,'2009-03-12 00:00:00','2010-10-21 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220377400',0.0083,3,'',2,NULL,28,'4623116489',NULL,15),(47,39,'2010-10-22 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220377400',0.0083,3,'',2,NULL,29,'4623116489',NULL,15),(48,40,'2005-09-23 00:19:00','2010-07-17 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220366152',0.0083,3,'',2,NULL,28,'4518249765',NULL,15),(49,40,'2010-07-18 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220366152',0.0083,3,'',2,NULL,29,'4518249765',NULL,15),(50,41,'2007-06-21 04:04:30','2010-06-12 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220346567',0.0083,3,'',2,NULL,28,'4541260323',NULL,15),(51,41,'2010-12-06 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220346567',0.0083,3,'',2,NULL,29,'4541260323',NULL,15),(52,42,'2006-08-23 00:00:00','2010-07-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220368169',0.0083,3,'',2,NULL,28,'4614207064',NULL,15),(53,42,'2010-07-12 00:00:00','2011-12-01 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220368169',0.0083,3,'',2,NULL,29,'4614207064',NULL,15),(54,43,'2005-10-01 00:51:30','2008-09-02 21:19:00',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220365593',0.0083,3,'',2,NULL,28,'4518249763',NULL,15),(55,43,'2008-09-02 21:20:30','2008-09-10 21:56:30',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,28,'4518249763',NULL,15),(56,43,'2008-10-09 23:32:45','2010-07-08 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,28,'4539259362',NULL,15),(57,43,'2010-07-09 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,29,'4539259362',NULL,15),(58,44,'2007-11-26 00:00:00','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379511',0.0083,3,'',2,NULL,28,'4625209417',NULL,15),(59,44,'2010-07-15 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379511',0.0083,3,'',2,NULL,29,'4625209417',NULL,15),(60,45,'2007-09-13 18:55:00','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'4623A16401',0.0083,3,'',2,NULL,28,'4625209636',NULL,15),(61,45,'2010-07-15 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'4623A16401',0.0083,3,'',2,NULL,29,'4625209636',NULL,15),(62,46,'2005-09-28 00:16:45','2010-07-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366135',0.0083,3,'',2,NULL,28,'4516248599',NULL,15),(63,46,'2010-07-12 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366135',0.0083,3,'',2,NULL,29,'4516248599',NULL,15),(64,47,'2005-10-27 21:08:30','2008-09-02 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366150',0.0083,3,'',2,NULL,28,'4527253331',NULL,15),(65,48,'2008-08-30 16:35:15','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-11-11 16:02:57',10,'0220382763',0.0083,3,'',2,NULL,28,'4704127081',NULL,15),(66,48,'2010-07-15 00:00:00','2015-11-10 23:59:45',NULL,NULL,NULL,'2015-11-11 16:02:57',10,'0220382763',0.0083,3,'',2,NULL,29,'4704127081',NULL,15);
 /*!40000 ALTER TABLE `equip_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -288,7 +313,7 @@ CREATE TABLE `locale` (
   `locale_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `locale_name` varchar(70) NOT NULL,
   PRIMARY KEY (`locale_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -297,7 +322,7 @@ CREATE TABLE `locale` (
 
 LOCK TABLES `locale` WRITE;
 /*!40000 ALTER TABLE `locale` DISABLE KEYS */;
-INSERT INTO `locale` VALUES (1,'not specified'),(2,'Felipe Carrillo Puerto'),(3,'Weaverville'),(4,'Cerrillos'),(5,'Whiskeytown'),(6,'Del Loma'),(7,'Corning'),(8,'Red Bluff'),(9,'Laporte'),(10,'Adin'),(11,'Burney'),(12,'Shasta Lake'),(13,'Potter Valley');
+INSERT INTO `locale` VALUES (1,'not specified'),(2,'Felipe Carrillo Puerto'),(3,'Weaverville'),(4,'Cerrillos'),(5,'Whiskeytown'),(6,'Del Loma'),(7,'Corning'),(8,'Red Bluff'),(9,'Laporte'),(10,'Adin'),(11,'Burney'),(12,'Shasta Lake'),(13,'Potter Valley'),(15,'Fairfield');
 /*!40000 ALTER TABLE `locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -360,7 +385,7 @@ CREATE TABLE `nation` (
   `nation_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `nation_name` varchar(70) NOT NULL,
   PRIMARY KEY (`nation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +409,7 @@ CREATE TABLE `province_state` (
   `province_state_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `province_state_name` varchar(70) NOT NULL,
   PRIMARY KEY (`province_state_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -393,7 +418,7 @@ CREATE TABLE `province_state` (
 
 LOCK TABLES `province_state` WRITE;
 /*!40000 ALTER TABLE `province_state` DISABLE KEYS */;
-INSERT INTO `province_state` VALUES (1,'not specified'),(2,'Quintana Roo'),(3,'California'),(4,'Puerto Rico');
+INSERT INTO `province_state` VALUES (1,'not specified'),(2,'Quintana Roo'),(3,'California'),(4,'Puerto Rico'),(5,'Idaho');
 /*!40000 ALTER TABLE `province_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -483,6 +508,7 @@ CREATE TABLE `station` (
   `time_series_plot_image_URL` varchar(100) DEFAULT NULL,
   `embargo_duration_hours` int(6) unsigned DEFAULT NULL,
   `embargo_after_date` datetime DEFAULT NULL,
+  `ellipsoid_id` int(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`station_id`),
   KEY `style_id_idx` (`style_id`),
   KEY `status_id_idx` (`status_id`),
@@ -491,6 +517,8 @@ CREATE TABLE `station` (
   KEY `nation_id_idx` (`nation_id`),
   KEY `locale_id_idx` (`locale_id`),
   KEY `agency_id_idx` (`agency_id`),
+  KEY `ellipsoid_id` (`ellipsoid_id`),
+  CONSTRAINT `ellipsoid_id` FOREIGN KEY (`ellipsoid_id`) REFERENCES `ellipsoid` (`ellipsoid_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `access_id` FOREIGN KEY (`access_id`) REFERENCES `access` (`access_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `agency_id` FOREIGN KEY (`agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `locale_id` FOREIGN KEY (`locale_id`) REFERENCES `locale` (`locale_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -498,7 +526,7 @@ CREATE TABLE `station` (
   CONSTRAINT `nation_id` FOREIGN KEY (`nation_id`) REFERENCES `nation` (`nation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -507,7 +535,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
-INSERT INTO `station` VALUES (39,'P340','DashielCrkCN2008',39.4093,-123.0498,865.23,-2691539.1186,-4136726.977,4028080.6731,'2008-02-14 23:38:45',NULL,NULL,2,2,1,1,4,3,3,13,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P340.jpg','http://pboshared.unavco.org/timeseries/P340_timeseries_cleaned.png',NULL,NULL),(40,'P341','WhiskytownCN2005',40.6507,-122.6069,406.85,NULL,NULL,NULL,'2005-09-23 00:19:00',NULL,NULL,2,2,1,1,3,3,3,5,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P341.jpg','http://pboshared.unavco.org/timeseries/P341_timeseries_cleaned.png',NULL,NULL),(41,'P343','ChinaPeak_CN2007',40.8871,-123.3342,1617.91,NULL,NULL,NULL,'2007-06-21 04:04:30',NULL,NULL,2,2,1,1,4,3,3,6,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P343.jpg','http://pboshared.unavco.org/timeseries/P343_timeseries_cleaned.png',NULL,NULL),(42,'P344','VinaHelitkCN2006',39.9291,-122.028,50.29,NULL,NULL,NULL,'2006-08-23 00:00:00',NULL,NULL,2,2,1,1,3,3,3,7,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P344.jpg','http://pboshared.unavco.org/timeseries/P344_timeseries_cleaned.png',NULL,NULL),(43,'P345','HookerDomeCN2005',40.2712,-122.2708,134.08,NULL,NULL,NULL,'2005-10-01 00:51:30',NULL,NULL,2,2,1,1,3,3,3,8,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P345.jpg','http://pboshared.unavco.org/timeseries/P345_timeseries_cleaned.png',NULL,NULL),(44,'P346','BuzzardRstCN2007',39.7947,-120.8675,2039.37,NULL,NULL,NULL,'2007-11-26 00:00:00',NULL,NULL,2,2,1,1,4,3,3,9,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P346.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P346.png',NULL,NULL),(45,'P347','AdinCTYardCN2007',41.1833,-120.9484,1269.28,NULL,NULL,NULL,'2007-09-13 18:55:00',NULL,NULL,2,2,1,1,3,3,3,10,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P347.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P347.png',NULL,NULL),(46,'P348','HatchetMtnCN2005',40.9055,-121.828,1668.07,NULL,NULL,NULL,'2005-09-28 00:16:45',NULL,NULL,2,2,1,1,3,3,3,11,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P348.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P348.png',NULL,NULL),(47,'P349','WonderlandCN2005',40.7311,-122.3194,275.4,NULL,NULL,NULL,'2005-10-27 21:08:30',NULL,NULL,2,2,1,1,3,3,3,12,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P349.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P349.png',NULL,NULL);
+INSERT INTO `station` VALUES (39,'P340','DashielCrkCN2008',39.4093,-123.0498,865.23,-2691539.1186,-4136726.977,4028080.6731,'2008-02-14 23:38:45',NULL,NULL,2,2,1,1,4,3,3,13,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P340.jpg','http://pboshared.unavco.org/timeseries/P340_timeseries_cleaned.png',NULL,NULL,NULL),(40,'P341','WhiskytownCN2005',40.6507,-122.6069,406.85,NULL,NULL,NULL,'2005-09-23 00:19:00',NULL,NULL,2,2,1,1,3,3,3,5,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P341.jpg','http://pboshared.unavco.org/timeseries/P341_timeseries_cleaned.png',NULL,NULL,NULL),(41,'P343','ChinaPeak_CN2007',40.8871,-123.3342,1617.91,NULL,NULL,NULL,'2007-06-21 04:04:30',NULL,NULL,2,2,1,1,4,3,3,6,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P343.jpg','http://pboshared.unavco.org/timeseries/P343_timeseries_cleaned.png',NULL,NULL,NULL),(42,'P344','VinaHelitkCN2006',39.9291,-122.028,50.29,NULL,NULL,NULL,'2006-08-23 00:00:00',NULL,NULL,2,2,1,1,3,3,3,7,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P344.jpg','http://pboshared.unavco.org/timeseries/P344_timeseries_cleaned.png',NULL,NULL,NULL),(43,'P345','HookerDomeCN2005',40.2712,-122.2708,134.08,NULL,NULL,NULL,'2005-10-01 00:51:30',NULL,NULL,2,2,1,1,3,3,3,8,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P345.jpg','http://pboshared.unavco.org/timeseries/P345_timeseries_cleaned.png',NULL,NULL,NULL),(44,'P346','BuzzardRstCN2007',39.7947,-120.8675,2039.37,NULL,NULL,NULL,'2007-11-26 00:00:00',NULL,NULL,2,2,1,1,4,3,3,9,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P346.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P346.png',NULL,NULL,NULL),(45,'P347','AdinCTYardCN2007',41.1833,-120.9484,1269.28,NULL,NULL,NULL,'2007-09-13 18:55:00',NULL,NULL,2,2,1,1,3,3,3,10,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P347.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P347.png',NULL,NULL,NULL),(46,'P348','HatchetMtnCN2005',40.9055,-121.828,1668.07,NULL,NULL,NULL,'2005-09-28 00:16:45',NULL,NULL,2,2,1,1,3,3,3,11,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P348.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P348.png',NULL,NULL,NULL),(47,'P349','WonderlandCN2005',40.7311,-122.3194,275.4,NULL,NULL,NULL,'2005-10-27 21:08:30',NULL,NULL,2,2,1,1,3,3,3,12,'PBO;PBO Analysis  Complete;PBO Core Network;','UNAVCO','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P349.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P349.png',NULL,NULL,NULL),(48,'P350','SmokyDome_ID2008',43.5328,-114.8628,2388.3,NULL,NULL,NULL,'2008-08-30 16:35:15',NULL,NULL,1,2,1,1,3,3,5,15,'PBO;PBO Analysis Complete;PBO Core Network;',NULL,'','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P350.png',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -568,4 +596,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-11-10 12:03:41
+-- Dump completed on 2015-11-19 11:13:59
