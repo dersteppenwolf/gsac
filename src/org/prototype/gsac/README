@@ -1,43 +1,50 @@
-#######################################################################/
+####################################################################### #######################################################################
 
-                  Prototype GSAC Installation     
+                                      Using Prototype GSAC Code to make Your GSAC     
 
-                       README, Part 2.
+                                                   README, Part 2.
 
-                  30 Mar 2015.   SKW  UNAVCO
+                                               4 Dec 2015.   SKW  UNAVCO
+
+
+If you use the Prototype15 GSAC database (the Prototype15_GSAC.sql files is in the GSAC package) you can build a working GSAC with no new JAVA code.
+The Prototype GSAC code is ready to use, after some small code changes for your repository.
+You use code and directories beginning at gsac-code/src/org/prototype/.  For your own GSAC you do not need to rename
+any of these files and directories.  The word "prototype" will not appear in public use of your GSAC, even though you use files including
+for example ProtptypeSiteManager.java.  You will edit some properties files and some HTML for your GSAC's details.
+
 
 You have completed the installation in the first README file ("Part 1"), in the GSAC code area, gsac-code/src/org/gsac/.
 This README (Part 2) file is located in the "prototype GSAC code area", src/org/prototype/gsac/.
 
-This README file describes how to complete your new Prototype GSAC, to provide web service access to site-located data in a geoscience data repository.
-This file sometimes uses for examples a hypothetical "Boulder" agency running GSAC.  You will use your own names for these.
+This file has, for examples, a hypothetical "Boulder" agency running GSAC.  You will use your own agency's name.
 
-The Prototype GSAC code is ready to use, after some small code changes for your repository name.
+The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for recent security features.  
 
-
-The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for recent security features.  To build GSAC for Java 1.6, make the following changes:
+To build GSAC for Java 1.6, make the following changes:
    - make sure your java and javac are for Java 1.6, not Java 1.7. On Linux, do which java and which javac and make sure the versions are the same and for Java 1.6
    - see the code changes for Java 1.6 in README part 1 (you saw this already).
    - in PrototypeServer.java find comments " code block for Java ",  un-comment the lines for Java 1.6, and comment-out the Java 1.7 lines.
    - copy the file gsac-code/src/org/prototype/gsac/build.xml.Java6 to build.xml
 
-
-The main steps in this Dataworks GSAC README part 2 are these.
+The main steps in this GSAC README part 2 are these.
 
     - edit src/org/prototype/gsac/resources/gsac.properties
     - edit src/org/prototype/gsac/dbresources/gsacdb_test.properties
     - edit the web page HTML files.
     - ant           (this builds GSAC with your properties files. There should be no errors.)
-    - ant runserver (to execute and test your complete new GSAC on your local development platform, on your browser).
 
+    - deploy GSAC war file to Tomcat
+
+You can test your gsac on your desktop with
+    - ant runserver 
+to execute and test your complete new GSAC on your local development platform, on your browser.
 Stop ant runserver with CTRL-c.
-
-    - deploy GSAC to Tomcat
 
 
 ########################################################################
 
-Adding Your Repository's Details: The "GSAC Resources Properties" File.
+Adding Your Repository's Details: The "GSAC Properties" File.
 
 The file org/prototype/gsac/resources/gsac.properties has 3 properties about your GSAC installation (not the database), for example, 
 gsac.baseurl will be part of the full URL for your GSAC repository.
@@ -47,15 +54,15 @@ Some values were created in the initial ant build you just made.
 An example, a file boulder/gsac/resources/gsac.properties might have (be sure to start the baseurl with / ): 
 
     ##what is the base url used; this appears in the GSAC URL, like http://mydomain.org/prototypegsac/
-    gsac.baseurl = /prototypegsac
+    gsac.baseurl = /bouldergsac
 
     # used on the highlighted label line near top of the 'Information' web page, and perhaps used in some product files like (?) Sinex, GAMIT, full csv formats.
     # Enter your agency name between The    and    GSAC
-    gsac.repository.name=The   GSAC Repository
+    gsac.repository.name=The Boulder GSAC Repository
 
     # used on text line near top of the 'Information' web page 
     # Enter your agency name between  the         and                   Repository
-    gsac.repository.description=GSAC Web Services to Access Data from the   Repository
+    gsac.repository.description=GSAC Web Services for the Boulder Repository
 
 
 Change the items for your GSAC repository.
@@ -67,6 +74,23 @@ The items repository.name and repository.description are used as labels on the w
 
 Comment out this limit on zip file max size, unless you need it:
 #    file.zip.maxsize=100000000
+
+########################################################################
+
+Adapt build.xml.
+
+Edit this line in build.xml:
+
+  <property name="basename" value="prototype_gsac"/>
+
+changing 'prototype' to something like
+
+  <property name="basename" value="bouldergsac"/>
+
+This will make your Tomcat .war file named bouldergsac.war.
+
+This new word should match the baseurl word or value in gsac/resources/gsac.properties .
+
 
 ########################################################################
 
@@ -114,7 +138,7 @@ This can be a little confusing if you attempt to keep track of the several prope
 
 ########################################################################
 
-Initial compile of GSAC in your new GSAC code area
+Compile GSAC in your new GSAC code area.
 
     Do the command 'ant' in org/prototype/gsac: 
 
@@ -123,7 +147,7 @@ ant
     When the ant command runs you will see output to the screen something like this
 
 compile:
-    [javac] Compiling 6 source files
+    [javac] Compiling 7 source files
     [javac] Note: Some input files use unchecked or unsafe operations.
     [javac] Note: Recompile with -Xlint:unchecked for details.
 gsacjar:
@@ -150,21 +174,19 @@ The source Java (.java) files compiled are like these in org/prototype/gsac
 -rw-r--r-- 1 wier wier  1408 2013-03-04 10:13 PrototypeServer.class
 -rw-r--r-- 1 wier wier  1355 2013-03-04 10:13 PrototypeDatabaseManager.class
 -rw-r--r-- 1 wier wier 17399 2013-03-04 10:13 PrototypeSiteManager.class
-
-and also database/Tables.class.
+-rw-r--r-- 1 wier wier  1768 2013-03-04 10:13 database/Tables.class
 
 This ant command builds GSAC for your repository
 
 It uses core GSAC (GSL) code from the jar file  gsac-code/lib/gsacws.jar.  If you change core GSAC code,
 as if you do an svn update to get new core code from SourceForge for GSAC,
-you must rebuild with ant in gsac-code/, and then rebuild your GSAC with ant in org/prototype/gsac
+you must rebuild with ant in the top level directory, gsac-code/, and then rebuild your GSAC with ant in gsac-code/src/org/prototype/gsac.
 
-Your ant build also creates a new Tomcat "war" file, named something like gsacboulder.war, located in gsac-code/dist/, 
-which will be used as the servlet (application) container for your public web site, if you use Tomcat. 
+Your ant build also creates a new Tomcat "war" file, named something like bouldergsac.war, located in gsac-code/dist/, 
+which is the "servlet (application) container" for your public web site, if you use Tomcat. 
 
 (If you happen to use two or more GSACs, doing 'ant' one for one removes the .class files for the others.  So you
 must do ant again for another GSAC to do ant runserver there, after doing ant in this GSAC area.)
-
 Doing ant in the core GSAC code area src/org/gsac/ also removes all local GSAC .class files
 so you must do ant in src.org/prototype/gsac/ again to make a new prototype GSAC war file.
 
