@@ -1,12 +1,14 @@
 ##############################################################################################################################
 
-                                                     GSAC Installation
+                                                    GSAC Installation
 
-                          Installing the GSAC Web Services Software Package for a Data Repository
-                            README, Part 1.  Creating an Initial GSAC server at your Data Center 
+                                                      README, Part 1.  
 
-                                            29 Apr 2015    Stuart Wier, UNAVCO
-                                          Copyright (C) 2013, 2014, 2015 UNAVCO
+                                     Creating an Initial GSAC server at your Data Center 
+                                              and How to Build a Federated GSAC 
+
+                                           4 December 2015   Stuart Wier, UNAVCO
+                                           Copyright (C) 2013, 2014, 2015 UNAVCO
 
 Quick Install
 
@@ -33,7 +35,9 @@ This README Part 1 (and the GSAC Quick Installation guide) tells how to do "a."
 
 GSAC instructions use a hypothetical "Boulder" data repository; you will of course use your own terms.
 
-README Part 2 tells how to do "b," complete your "local GSAC files". You will create two important new Java code files (for example BoulderSiteManager.java) in your "local GSAC files".
+README Part 2 tells how to do "b," complete your "local GSAC files". You will create two important new Java code files 
+(for example, BoulderSiteManager.java and BoulderFileManager.java) in your "local GSAC files". Or you can use the "Prototype" Java files provided in the
+GSAC package, including the Prototype15 database schema .sql file.
 
 And section 4 below describes the optional installation of a "federated GSAC" which makes an online service merging
 GSAC services from several separate data repository GSACs.  To install a federated GSAC, follow the instructions in this README 
@@ -87,20 +91,26 @@ Analysis Laboratory (SEGAL), Universidade da Beira Interior, Departamento de Inf
 GSAC can work with MySQL and Oracle databases, and Postgre is is having a bug fixed (Jan. 2015). To install the MySQL server on Debian or Ubuntu, simply do the command sudo apt-get install mysql-server
 This requests you to "enter the root password", which is a new password for the MySQL root account, not your Linux system root password.
 
-Prior to 2015, GSAC using Java 1.6 was installed on Debian, Ubuntu, OpenSUSE, RedHat Linux, MacBook Air (10.8), Windows 7, CentOS, and Free BSD, with no known installation errors due to GSAC code problems. About the earlier Java 1.6 GSAC:
+Prior to 2015, GSAC using Java 1.6 was installed on Debian, Ubuntu, OpenSUSE, RedHat Linux, MacBook Air (10.8), Windows 7, CentOS, and Free BSD, with no known installation errors due to GSAC code problems.
 
-For help with installation of GSAC on Mac OS, Windows 7, Free BSD, and CentOS see the contributed notes listed just below, and in the UNAVCO GSAC web site.
+ About the earlier Java 1.6 GSAC:
 
-We have no reports of problems installing GSAC on any Linux-type operating systems other than CentOS and Fedora.
- GSAC has been installed on CentOS, but CentOS is the not first choice, since it lacks recent software and some system updates and changes are required. Fedora appears to have problems similar to CentOS.
+    For help with installation of GSAC on Mac OS, Windows 7, Free BSD, and CentOS see the contributed notes listed just below, and in the UNAVCO GSAC web site.
 
-On a MacBook Air, see Installing GSAC on MacBook Air http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/macbook-air/macbook-air.html, contributed by David Zuliani, CRS, Istituto Nazionale di Oceanografia e di Geofisica Sperimentale (OGS). This may work with other Macs as well.
+    We have no reports of problems installing GSAC on any Linux-type operating systems other than CentOS and Fedora.
 
-On Windows 7, see Installing GSAC on Windows 7, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/windows/gsac-windows.txt, contributed by David Gómez, Rodríguez Department of Geodesy, Institut Cartogràfic i Geològic de Catalunya.
+    On a MacBook Air, see Installing GSAC on MacBook Air http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/macbook-air/macbook-air.html, contributed by David Zuliani, CRS,        
+       Instituto Nazionale di Oceanografia e di Geofisica Sperimentale (OGS). This may work with other Macs as well.
 
-On FreeBSD, see Installing GSAC on FreeBSD, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/freebsd/freebsd.html, created and contributed by Xanthos Papanikolaou, National Technical University of Athens, Dionysos Satellite Observatory, Higher Geodesy Laboratory.
+    On Windows 7, see Installing GSAC on Windows 7, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/windows/gsac-windows.txt, contributed by David Gómez, 
+       Rodríguez Department of Geodesy, Institut Cartogràfic i Geològic de Catalunya.
 
-GSAC CentOS Installation Tips, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/centos/GSAC_CentOS_installation_tips.pdf, contributed by  James Matykiewicz and Susanna Gross of UNAVCO. This may not be complete. 
+    On FreeBSD, see Installing GSAC on FreeBSD, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/freebsd/freebsd.html, created and contributed by Xanthos Papanikolaou,
+       National Technical University of Athens, Dionysos Satellite Observatory, Higher Geodesy Laboratory.
+
+    GSAC CentOS Installation Tips, http://beta-web-server.win.int.unavco.org/software/data-management/gsac/installation/centos/GSAC_CentOS_installation_tips.pdf, contributed by  James Matykiewicz and
+       Susanna Gross of UNAVCO. This may not be complete.  GSAC has been installed on CentOS, but CentOS is the not first choice, since it lacks recent software and some system updates and changes
+       are required. Fedora appears to have complexities similar to CentOS.
 
 
 ##########################################
@@ -474,28 +484,22 @@ Install GSAC core code, as described in the GSAC web site, repeated here:
 
                         ###########################################
 
-4b. Specify connections to remote GSACs.
+4b. Set names, and connections to remote GSACs.
 
-Edit gsac-code/src/org/gsac/gsl/resources/gsac.properties:
- 
- setvalues for:
+Edit gsac-code/src/org/gsac/gsl/resources/gsac.properties, to set values:
 
     ##Basic information for this repository
     gsac.baseurl=/gsacfederated
     gsac.repository.name=geoCenter Federated GSAC Repository
     gsac.repository.description=Provides access to a set of external repositories
 
-Values shown here are only examples.
-
+Values shown here are only examples. The baseurl will be part of the complete URL to use the new GSAC.
 
 Federated GSACs use the services provided by other GSAC installations, usually at remote locations. 
 You must tell your federated GSAC about the other GSACs to use.  Federated GSACs do not use a local database.
 
-Go to the gsac/federated/ directory in your GSAC package, for example, something like gsac-code/src/org/gsac/federated/.  
-The files to make a federated GSAC are here.
-
-Edit the file gsac-code/src/org/gsac/federated/resources/gsacserver_test.properties to specify the values for the remote 
-GSACs to use.  Lines beginning with '#' are comments.  Here is an example of the complete file:
+Edit the file  gsac-code/src/org/gsac/federated/resources/gsacserver_test.properties 
+to specify connections to remote GSACs.  Lines beginning with '#' are comments.  Here is an example of the complete file:
 
     # For a federated GSAV, specify remote GSACs to use, and your GSAC's host.
     # (This file gsacserver_test.properties gets copied to gsacserver.properties when you do ant.)
@@ -510,7 +514,7 @@ GSACs to use.  Lines beginning with '#' are comments.  Here is an example of the
                                     # GSAC web site (which can in some cases be incorrect).
     #gsac.federated.<id>.name=name  To show this name on your federated GSAC, a name for a remote GSAC repository 
     #gsac.federated.<id>.icon=url   To link to small icon for that remote repository. Will be used inside web page tables of results,
-                                    # so a height < 50 pixels is good.
+                                    # An icon with height < 50 pixels is good.
 
     # examples  only:
 
@@ -528,17 +532,20 @@ Ignore the file resources/gsacserver_production.properties.
 
                            ###########################################
 
-Make no changes to any java files in gsac/federated/.
+
+4c. Edit files for your federated GSAC's home web page, header, and footer.
+
+Edit the file gsac/federated/resources/header.html to create your GSAC web page's header.
+Edit the file gsac/federated/htdocs/index.html to create your GSAC home page contents.
+
+There is a complete HTML footer file, gsac/federated/resources/footer.html, for all your GSAC web pages.
+You may change it, if you wish to.  
+
+Image files used in web pages are kept in federated/resources/htdocs/ .
+
+
+Make no changes to any Java files in gsac/federated/.
 The FederatedSiteManager.java and FederatedResourceManager.java files should NOT be changed. 
-
-
-4c. Edit files for your federated GSAC's web page header and footer.
-
-Edit the file federated/resources/header.html to create your GSAC web page's header.
-Edit the file federated/htdocs/index.html to create your GSAC home page contents.
-There is a complete HTML footer file, federated/resources/footer.html, for all your GSAC web pages.
-You may change it, if you wish to.  Image files are kept in federated/resources/htdocs.
-
 
 
                            ###########################################
@@ -549,11 +556,11 @@ To build your federated GSAC:
 
 Copy the correct build.xml template file in gsac-code/src/org/gsac/federated/ for your Java version to build.xml,  like
 
-cp build.xml.Java7 build.xml
+  cp build.xml.Java7 build.xml
 
-Then, in gsac-code/src/org/gsac/federated/,  build the federated GSAC .war file with:
+Then, in gsac-code/src/org/gsac/federated/, build the federated GSAC .war file with:
 
-ant
+  ant
 
 This ant command builds a .jar file and a .war file, and copies resources/gsacserver_test.properties 
 to resources/gsacserver.properties.
@@ -585,16 +592,14 @@ To see the exact path for your gsacfederated.war file, look in the ant build scr
 
 Copy the gsacfederated.war file to your web server host, in the Tomcat server area, such as
 
-/usr/local/apachetomcat/webapps/
+ cp /home/dev/GSAC/gsac-code/dist/gsacfederated.war  /usr/local/apachetomcat/webapps/
 
 If you use Tomcat HotDeploy the new GSAC server will be deployed and the federated GSAC will be available.
 Without HotDeploy you will need to restart the Tomcat service.
 
 Your federated GSAC URL will have a Base URL something like http://www.boulder.org/gsacfederated.
 
-
 End of README for installing a federated GSAC.
-
 
 ##############################################################c################################################################
 ##############################################################c################################################################
