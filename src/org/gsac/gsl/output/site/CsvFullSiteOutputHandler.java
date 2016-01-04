@@ -164,7 +164,10 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         addHeader(pw);
         //Get all the sites in the results (response) from the GSAC site query made by the user: 
         List<GsacSite> sites = response.getSites();
-        sitecount=0;
+
+        // sitecount=0; // LOOK FIX may be a bug; resetting sitecount to zero in long lists
+        // System.out.println("       CsvFullSiteOutputHandler.java output handler calls handleResult" );
+
         //For each site, get and append the information :
         for (GsacSite site : sites) {
             //Call this to ensure that all of the metadata is added to the site
