@@ -55,8 +55,11 @@ public class FileInfo {
     /** _more_ */
     private long fileSize = 0;
 
-    /** _more_ */
+    /** MD5 check sum value of the datafile itself. */
     private String md5="";
+
+    /**  TRF the terrestrial reference frame for the datafile's data. */
+    private String TRF="";
 
     /** _more_ */
     private String station4charId="";
@@ -241,7 +244,7 @@ public class FileInfo {
     }
 
     /**
-     *  Set the Md5 property.
+     *  Set the MD5 property.
      *
      *  @param value The new value for Md5
      */
@@ -249,12 +252,29 @@ public class FileInfo {
         md5 = value;
     }
     /**
-     *  Get the Md5 property.
+     *  Get the MD5 property.
      *
      *  @return The Md5
      */
     public String getMd5() {
         return md5;
+    }
+
+    /**
+     *  Set the TRF property.
+     *
+     *  @param value The new value for TRF the terrestrial reference frame for the datafile's data. 
+     */
+    public void setTRF(String value) {
+        TRF = value;
+    }
+    /**
+     *  Get the TRF property.
+     *
+     *  @return the TRF
+     */
+    public String getTRF() {
+        return TRF;
     }
 
     /**
@@ -266,9 +286,9 @@ public class FileInfo {
         station4charId = id;
     }
     /**
-     *  Get the Md5 property.
+     *  Get the 
      *
-     *  @return The Md5
+     *  @return The station4charId
      */
     public String getStation4charId() {
         return station4charId;
