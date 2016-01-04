@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -1453,7 +1453,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * _more_
+     * [ make a single site's web page (?) SKW ] 
      *
      * @param request The request
      * @param pw appendable to append to
@@ -1542,11 +1542,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (includeMap) {
             StringBuffer mapSB = new StringBuffer();
             if ( !request.get(ARG_WRAPXML, false)) {
+                /* hide 4 jan 2016 until FIX DEBUG
+                // make map in single site web page
                 js = createMap(request,
                                (List<GsacResource>) Misc.newList(resource),
                                mapSB, 600, 400, true, false);
-                               /* original map size map area map extent map pixels 
-                               mapSB, 400, 200, true, false); */
+                               // original map size map area map extent map pixels mapSB, 400, 200, true, false); 
+                */
+                ;
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
                                    formatLatLonNoCommas(resource) + mapSB));
@@ -1554,7 +1557,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
         if (resource.getFromDate() != null) {
-            String dateString = formatDate(resource);
+            String dateString = formatDate(resource); // trick for TWO dates
             pw.append(formEntry(request, msgLabel("Date Range"), dateString));
         }
 
@@ -1568,7 +1571,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (resource.getPublishDate() != null ) {
             // was String dateString = formatDate(resource.getPublishDate());
-            String dateString = formatDateTimeHHmmss(resource.getLatestDataDate());
+            String dateString = formatDateTimeHHmmss(resource.getPublishDate());
             if (dateString.length()>3) {
                 pw.append(formEntry(request, msgLabel("Site Publish Date"), dateString));
             }
@@ -1579,6 +1582,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             pw.append(formEntry(request, msgLabel("Modification Date"),                              dateString ));
         }
 
+        // show site's associated network names (?):
         // FIX after testing: what does msgLabel( 2 args) do?
         /*
         List<ResourceGroup> groups = resource.getResourceGroups();
@@ -1997,6 +2001,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             String href    = makeResourceViewHref(resource);
             String mapInfo = href + HtmlUtil.br() + resource.getLabel();
             //Only include the full html when there are fewer than 100 resource
+            // LOOK why? Only include the full html when there are fewer than 100 resource
             if (resources.size() < 100) {
                 StringBuffer mapInfoSB = new StringBuffer();
                 getResourceHtml(request, mapInfoSB, resource, false, false,
@@ -2048,7 +2053,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             throws IOException {
 
         StringBuffer js     = new StringBuffer();
+
         boolean      doFlat = true;
+
         if (isGoogleEarthEnabled(request)) {
             //            doFlat = false;
             StringBuffer pw = new StringBuffer();
@@ -2059,11 +2066,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         if (doFlat) {
+            System.err.println("GSAC    HtmlOutputHandler.java - hide buggy flat map code until debugged" );
+            /* hide 4 jan 2016 until FIX DEBUG
             StringBuffer pw = new StringBuffer();
             js.append(createFlatMap(request, resources, pw, width, height,
                                     addToggle, showList));
             tabTitles.add(msg("Map"));
             tabContents.add(pw.toString());
+            */
         }
 
         return js.toString();
