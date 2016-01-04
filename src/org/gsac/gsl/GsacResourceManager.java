@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -464,7 +464,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
 
 
     /**
-     * Main entry point to handle search requests for resources
+     * handleRequest(): "Main entry point to handle search requests for resources." JMW    [i.e. compose and do the database SQL query for this request, and time that.  SKW]
+     *
      * Handle the resource request. A derived class can overwrite this method to do
      * whatever they feel like doing. If not overwritten then this method
      * does a basic select query and processes the results making use of the
@@ -483,6 +484,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
     public void handleRequest(GsacRequest request, GsacResponse response) throws Exception {
 
         //System.err.println("    GsacResourceManager handleRequest called "); // at time "+getUTCnowString() );
+        System.out.println    ("GSAC: new request "+request.toString() +"   from IP "+request.getOriginatingIP() );
 
         String columns = getResourceSelectColumns();
         if (columns == null) {
@@ -505,7 +507,8 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         }
 
         Statement statement;
-        // origainl single line:    statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
+        // originally was one line:    
+        //  statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
 
         // New June 2015:
         if ( ! columns.contains( "station.four_char_name" )) {
@@ -529,11 +532,11 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
 
         // DEBUG: to time the SQL query:
-        //   long t1 = System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
         int rowCount = processStatement(request, response, statement, request.getOffset(), request.getLimit());
         // DEBUG
-        //   long t2 = System.currentTimeMillis();
-        //System.err.println("      GsacResourceManager: processStatement() completed and got "+rowCount+" rows in " + (t2 - t1) + " ms"); // at time "+getUTCnowString()); // DEBUG
+        long t2 = System.currentTimeMillis();
+        System.err.println("GSAC: GsacResourceManager:processStatement() request's SQL completed and got "+rowCount+" results in " + (t2 - t1) + " ms"); // at time "+getUTCnowString());
     }
 
 
