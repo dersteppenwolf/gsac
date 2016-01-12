@@ -4,10 +4,10 @@
  filename              : mirrorData.py
  author                : Stuart Wier
  created               : 2014-09-03
- latest update(version): 2014-12-17; ...;  2015-01-22; 2015-02-20; 2015-06-02; 2015-06-26 Stuart Wier 
+ latest update(version): 2016-01-12
 
  exit code(s)          : 0, success; 
-                       : sys.exit (1),  PROBLEM: curl command to get sites info from remote GSAC failed.
+
  description           : To populate or update a  UNAVCO Dataworks  database which has the UNAVCO Dataworks schema with GNSS datafiles from UNAVCO's GSAC or from other remote GSAC.
                        : Populates the data files metadata (table datafile) and also copies the complete GNSS data files to this computer.
                        : This process is run once a day by the ops crontab file; which see (do crontab -l).
@@ -17,15 +17,15 @@
                        : CHANGE the nominal domain in this line (at or near line 357 below) to your domain for your FTP server.
                        local_domain  = "ftp://coconet1.sgc.gov.co/rinex"
 
-	               : CHANGE: once, set the value of logflag the code line below  near line number 575, to set if log output goes to the screen as well as to the log file. 
+	                   : CHANGE: once, set the value of logflag the code line below  near line number 575, to set if log output goes to the screen as well as to the log file. 
                        logflag= 1  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
+
+                       : This mirrorData.py process is run once a day by the ops account crontab file; which see (do crontab -l).
 
                        : Must already have in the database all the correct 'equip_config' table entries, the information about the stations' equipment sessions.
                        : That is achieved by running mirrorStations.py just before you run this script.
 
-                       : This mirrorData.py process is run once a day by the ops account crontab file; which see (do crontab -l).
-
-                       : or you can run this program by hand with commands like this, for example, to get datafiles for the one-month date range shown: 
+                       : You can run this program by hand with explicit dates like this, for example to get datafiles for the date range shown: 
 
                          ./mirrorData.py localhost dbacct dbacctpw dbname 2014-04-01 2014-04-30  networkname
 
@@ -38,30 +38,26 @@
 
                         The words "4daysback today" are special input arguments to cover the most recent days.  see code below dealing with '4daysback'.
 
-                        This takes about 2 to 6 minutes to check for and update GNSS data files from UNAVCO for 100 stations for the past 4 days.
-
-                        Or, for a station name or name list in place of a network name (TLALOCNet), use, for separate stations use:  
+                        Or, for a station name list in place of a network name (TLALOCNet), use, for separate stations use:  
                            Inside a single pair of quotation marks "", have:
                               a. a single station's four char ID  like "POAL"
-                              b. or, semi-colon separated list of four char IDs, separated with ";"   like    "p123;p456"  
+                              b. semi-colon separated list of four char IDs, separated with ";"   like    "p123;p456"  
                                  The semi-colon separates the items in station group list.
-                              c. or, wildcards using * like "TN*"
-                        So for the station group, put any or all of a. thru c. in one string with no spaces inside " ", like  "POAL;P12*;TN*"
+                              c. wildcards using * like "TN*"
+                        So for the station group, put any or all of a. thru c. in one string with no spaces, like  "POAL;P12*;TN*"
                         Upper case and lower case in station four char IDs are the same in GSAC use.
                         So a purely hypothetical command is like
 
-                        /dataworks/mirror_gps_data_from_unavco/mirrorData.py localhost DWdbacct   dataworksdbpw   Dataworks_DB_name   2015-05-01 2015-05-31  "CN10"
+                        /dataworks/mirror_gps_data_from_unavco/mirrorData.py localhost dataworks tlalocnetdataworks Dataworks 4daysback today "PALX;PHJX;PJZX;PLPX;PLTX;PTAX;PTEX"
 
-                        or like
+                       If you do wish to mirror those stations' data files routinely, simply add this one command line to your crontab file for daily operation.
 
-                        /dataworks/mirror_gps_data_from_unavco/mirrorData.py localhost TNgsacacct gsacdb          Dataworks           4daysback  today       "PALX;PHJX;PJZX;PLPX;PLTX;PTAX;PTEX"
-
-                       If you wish to mirror those stations' data files routinely, simply add this one new command line to your crontab file for daily operation.
+                       This takes about 2 to 6 minutes to check for and update GNSS data files from UNAVCO for 100 stations for the past 4 days.
 
  tested on             : Python 2.6.5 on Linux (on Ubuntu 10)
                        : "Python 2.6.6 (r266:84292, Jan 22 2014, 09:42:36) [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)] on linux2" (on CentOS)
  *
- * Copyright 2014, 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014, 2015, 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -377,12 +373,12 @@ def parseOneSiteMetadata ():
                     '''
 
                  # CHANGE the next line of code to define part of your path to files in your ftp server:
-                 # change dataworksserver.umx.edu to your top level path directory name for your FTP server:
-                 # example local_domain = "ftp://coconet1.sgc.gov.co/rinex"  WITHOUT FINAL /
-                 local_domain  = "ftp://dataworks1:8080/rinex"  # CHANGE to your ftp service URL
+                 # example local_domain = "ftp://coconet1.sgc.gov.co/rinex"  
+                 # LOOK WITHOUT FINAL /
+                 local_domain           = "ftp://coconet1.sgc.gov.co/rinex"
 
                  # make the ftp  users' downloads of datafiles from your Dataworks system (not from UNAVCO):
-                 URL_path =      local_domain +"/"+ file_type +"/"+ year +"/"+ day_of_year + "/" + datafile_name
+                 URL_path =             local_domain +"/"+ file_type +"/"+ year +"/"+ day_of_year + "/" + datafile_name
 
                  # check if this  datafile's metadata is already in the db table 'datafile':
                  haveitinDB=False
@@ -454,7 +450,6 @@ def parseOneSiteMetadata ():
 
                  if haveitinDB :
                         # Now download the datafile itself from url file_url 
-	                logWrite(  "     next, download data file from " + file_url)
                         cmd4 = "wget -N -nv -x -nH -P /data "+file_url
 			# wget manuals: http://www.gnu.org/software/wget/manual/wget.html;   http://www.gnu.org/software/wget/manual/
 			#  -N means wget will ask the server for the last-modified date. If the local file has the same timestamp as the server, or a newer one, the remote file 
@@ -467,7 +462,7 @@ def parseOneSiteMetadata ():
                         # (stored in the exact same file path as at remote server)
                         # options not used:
                         # --mirror is for recurvise downloads.
-                        #  -c means 'continues if interrupted', and SKIP downloading if file is there already. But -c checks for EXACT same size and same name,
+                        #  -c means 'continues if interrupted', and skip downloading if file is there already. But -c checks for EXACT same size and same name,
                         #  so the wget with -c downlaod FAILS if the file size has changed as does happen at UNAVCO, and gives status 2048 error.  Don't use -c!
                         # -N is right for our use: get a newer version, regardless of size changes, and don't download if not newer.
 
@@ -640,7 +635,7 @@ global nogetcount
 global timefixcount
 
 # CHANGE
-logflag= 1  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
+logflag= 2  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
 
 dbhost=""
 dbacct=""
@@ -706,16 +701,40 @@ dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file 
 logfilename = "/dataworks/logs/mirrorData.py.log."+dom
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
 
+orig='''
 # compose the remote  GSAC's API query string.  stationgroup can be a network name like TLALOCNet
-httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search/sites.csv?output=site.csv&site.interval=interval.normal&site.status=active&site.group=' + stationgroup+'"'
+#httppart='"http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search/sites.csv?output=sitefull.csv&site.interval=interval.normal&site.status=active&site.group=' + stationgroup+'&user=sgc"'
+#  use      http://www.unavco.org/gsacws
+httppart=' "http://www.unavco.org/gsacws/gsacapi/site/search/sites.csv?output=sitefull.csv&site.interval=interval.normal&site.status=active&site.group=' + stationgroup+'&user=sgc"'
 
 # or in case of a list of separate station IDs:
 if ";" in stationgroup or len(stationgroup)== 4:
    # search for site by ID, and cut off trailing final ";" 
-   httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search/sites.csv?output=site.csv&site.interval=interval.normal&site.code=' + stationgroup+'"'
+   httppart=' "http://www.unavco.org/gsacws/gsacapi/site/search/sites.csv?output=sitefull.csv&site.interval=interval.normal&site.code=' + stationgroup+'&user=sgc"'
    logfilename = logfilename + ".extras"
 
-cmd1 = "/usr/bin/curl -L "+ httppart + " > dataworks_sites_short.csv"
+'''
+
+
+
+# compose the remote GSAC's API query string.
+# like /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"                      > somefilename.csv
+httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc&site.interval=interval.normal&user=sgc" '
+# CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
+
+# in case of separate station IDs:
+if ";" in stationgroup or len(stationgroup)<5:
+        # search for site by ID, and cut off trailing final ";" 
+        # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
+        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=sgc"'
+        logfilename = logfilename + ".extras"
+
+
+
+
+# compose the command to make the query using the Linux 'curl' command line utility:
+cmd1 = "/usr/bin/curl -L "+ httppart + " > dataworks_sites_full.csv"
+# -L handles any HTML address redirect on remote server end.
 
 logFile     = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name.
 logWrite( "\n    Run mirrorData.py  ")
@@ -729,47 +748,51 @@ logWrite( "\n    Get list of sites from the remote GSAC server.  The Linux comma
 sys.stdout.flush()
 
 
-# Do the query to the remote GSAC to make a list of stations in the file dataworks_sites_short.csv:
+# Do the query to the remote GSAC to make a list of stations in the file dataworks_sites_full.csv:
 # with resulting metadata in the "GSAC short csv file format"
 cstatus1 = os.system(cmd1)
 # note that this Python process pauses until the cmd1 process completes. Typical time elaspsed is about 30 seconds.
 
-# handle failed connection: 
-if cstatus1 != 0 :
-          logWrite("\n    PROBLEM: curl command to get sites info from remote GSAC failed." );
-          logWrite(  "    curl command was "+cmd1 +"\n" );
-          print ("\n    PROBLEM: curl command to get sites info from remote GSAC failed." );
-          print (  "    curl command was "+cmd1 + "\n" );
-          sys.exit (1)
-
 # For each  station in the list, get metadata about its data files, and download the data files>
 if cstatus1 == 0 :
-    listFile = open ("dataworks_sites_short.csv");
+    listFile = open ("dataworks_sites_full.csv");
     allLines = listFile.readlines()
     linecount = len(allLines)
-    logWrite( "\n    remote GSAC site search query succeeded. Have site list dataworks_sites_short.csv with "+`linecount-1`+" stations. ")
+    logWrite( "\n    remote GSAC site search query succeeded. Have site list dataworks_sites_full.csv with "+`linecount-1`+" stations. ")
     listFile.seek(0) # rewind to beginning
 
     # Main loop on all stations
-    # read the lines in dataworks_sites_short.csv, the station file lines, one line per station
+    # read the lines in dataworks_sites_full.csv, the station file lines, one line per station
     for i in range(linecount) :
       siteline = listFile.readline() 
 
-      # skip first 1 header lines:
-      if (i>=1):  # and i<7):  for test limit 
+      # skip first 4 header lines:
+      if (i>=4):  # and i<7):  for test limit 
 
         linelist= string.split( siteline, "," )
+        logWrite("      the station's metadata line = _" +siteline[:-1] + "_ " );
         thissitecode = (linelist[0])
+
+        #  the 28th item is  networks names string    ";" separated
+        networks = linelist[28]
+        logWrite("      the station's own network(s) names string = _" +networks + "_ " );
+
+        # CHANGE
+        # look to NOT get local stations such as "GeoRED" stations put back in the GSAC where they originated:
+        #if "GeoRED" in networks:
+        #        logWrite("      SKIP copying any data from UNAVCO for the GeoRED station _"+ thissitecode +" since this agency already has GeoRED data; go to next station line in metadata file:" );
+        #        continue
 
         # for debugging, to limit to either of two sites use code like this if ( ("USMX"== thissitecode or "POAL"==thissitecode) and  4== len(thissitecode)):
 
-        # Normally, do all stations:
+        #  do all stations:
+
         if ( 4== len(thissitecode)):
             # query the remote GSAC server for this one station's data file info, with results in a csv file:
-            httppart = ' "http://www.unavco.org/data/web-services/gsacws/gsacapi/file/search?file.sortorder=ascending&site.code='+thissitecode+'&file.datadate.from='+datadatefrom+'&output=file.csv&site.name.searchtype=exact&site.code.searchtype=exact&limit=5000&file.datadate.to='+datadateto+'&site.interval=interval.normal" '
+            httppart = ' "http://www.unavco.org/gsacws/gsacapi/file/search?file.sortorder=ascending&site.code='+thissitecode+'&file.datadate.from='+datadatefrom+'&output=file.csv&site.name.searchtype=exact&site.code.searchtype=exact&limit=5000&file.datadate.to='+datadateto+'&site.interval=interval.normal" '
             cmd2= "/usr/bin/curl -L "+ httppart + " > data_file_info.csv"
             sitecount += 1
-            logWrite("\n   "+`sitecount`+"  Next Station "+thissitecode+":" )
+            logWrite("\n   "+`sitecount`+"  Next station session for station "+thissitecode+":" )
 
             testing = ''' to only do 3 stations around station count near 72 such as lcsb
             if ( sitecount < 70 ):
@@ -793,17 +816,17 @@ else :
 
 
 logWrite( "\n  \n        Summary of mirroring data files from remote GSAC such as UNAVCO, during "+datadatefrom+" to "+datadateto+":")
-logWrite( "\n          number of "+stationgroup+" stations in the remote GSAC archive checked for GNSS data files in this time interval: "+`numbstawithdata`)
+logWrite( "\n          number of "+stationgroup+" station sessions in the remote GSAC archive checked for GNSS data files in this time interval: "+`numbstawithdata`)
+logWrite( "\n          obs file count=   "+`countobs`)
+logWrite(   "          nav file count=   "+`countnav`)
+logWrite(   "          met file count=   "+`countmet`)
 # LOOK format float values:
 logWrite( "\n          obs files totalsize=   %9.3f  MB" % obsfilestotalsize)
 logWrite(   "          nav files totalsize=   %9.3f  MB" % navfilestotalsize)
 logWrite(   "          met files totalsize=   %9.3f  MB" % metfilestotalsize)
 logWrite(   "          total size all files=  %9.3f  MB  or %9.3f GB" % (totalsizes, (totalsizes/1024) ) )
-logWrite( "\n          obs file count=   "+`countobs`)
-logWrite(   "          nav file count=   "+`countnav`)
-logWrite(   "          met file count=   "+`countmet`)
 all = countobs + countnav  + countmet
-logWrite( "          count of all required data files found in this time interval "+`all` +" (sum of 3 items above)")
+logWrite(   "          count of all data files found in this time interval "+`all` +" (sum of 3 items above)")
 # logWrite( "          count of not required data files is "+`countskips` + " (types not wanted for a Dataworks mirror)")
 logWrite("\n          About new files to download:")
 logWrite(  "          db: count of data files' info TO insert in the db                 "+`toinserts`)
