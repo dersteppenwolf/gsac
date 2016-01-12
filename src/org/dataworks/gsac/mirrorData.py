@@ -701,24 +701,9 @@ dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file 
 logfilename = "/dataworks/logs/mirrorData.py.log."+dom
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
 
-orig='''
-# compose the remote  GSAC's API query string.  stationgroup can be a network name like TLALOCNet
-#httppart='"http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search/sites.csv?output=sitefull.csv&site.interval=interval.normal&site.status=active&site.group=' + stationgroup+'&user=sgc"'
-#  use      http://www.unavco.org/gsacws
-httppart=' "http://www.unavco.org/gsacws/gsacapi/site/search/sites.csv?output=sitefull.csv&site.interval=interval.normal&site.status=active&site.group=' + stationgroup+'&user=sgc"'
-
-# or in case of a list of separate station IDs:
-if ";" in stationgroup or len(stationgroup)== 4:
-   # search for site by ID, and cut off trailing final ";" 
-   httppart=' "http://www.unavco.org/gsacws/gsacapi/site/search/sites.csv?output=sitefull.csv&site.interval=interval.normal&site.code=' + stationgroup+'&user=sgc"'
-   logfilename = logfilename + ".extras"
-
-'''
-
 
 
 # compose the remote GSAC's API query string.
-# like /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"                      > somefilename.csv
 httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc&site.interval=interval.normal&user=sgc" '
 # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
 
@@ -791,7 +776,7 @@ if cstatus1 == 0 :
             # query the remote GSAC server for this one station's data file info, with results in a csv file:
             httppart = ' "http://www.unavco.org/gsacws/gsacapi/file/search?file.sortorder=ascending&site.code='+thissitecode+'&file.datadate.from='+datadatefrom+'&output=file.csv&site.name.searchtype=exact&site.code.searchtype=exact&limit=5000&file.datadate.to='+datadateto+'&site.interval=interval.normal" '
             cmd2= "/usr/bin/curl -L "+ httppart + " > data_file_info.csv"
-            sitecount += 1
+            sitecount += 1 # LOOK actually counts station sessions not stations 
             logWrite("\n   "+`sitecount`+"  Next station session for station "+thissitecode+":" )
 
             testing = ''' to only do 3 stations around station count near 72 such as lcsb

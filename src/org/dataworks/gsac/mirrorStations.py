@@ -3,7 +3,7 @@
  filename              : mirrorStations.py
  author                : Stuart Wier 
  created               : 2014-09-03
- updates               : 2014-09-04 to 2015-06-26. 
+ updates               : 2016-01-12
 
  exit code(s)          : 0, success
                        : sys.exit (1) , curl failed
@@ -13,33 +13,26 @@
                        2. to find and add newly-added stations in the network (and the new equipment sessions at that station).
                        3. to update existing equipment sessions (db equip_config records), when the metadata was changed at the remote GSAC. Usually session stop_time.
 
-                       The metadata comes from a remote GSAC.
+                       The metadata comes from a remote GSAC such as the UNAVCO GSAC at http://www.unavco.org/software/data-management/gsac/gsac.html. (see [1])
 
                        The metadata from GSAC is provided in a file with format "GSAC full csv file", named in this case dataworks_stations.csv (see [1])
 
                        NOTE You MUST run this script everytime you run mirrorData.py, before you run mirrorData.py, since the remote GSAC should change equipment session end times
                          everytime a new file comes in for a station.  If you try to download a new file for a session when the db equip_config_stop_time is older, the download fails.
 
- configuration:        First, one time only, for your network and operations, revise lines with CHANGE :
+ configuration:        : First, one time only, for your network and operations, revise satellite_system ="GPS"    # default  could be for example "GPS,GLONASS"   CHANGE    near line 487
+ 
+			           for CHANGE:
 
-                           satellite_system       ="GPS" # default; or could be for example "GPS,GLONASS"   CHANGE
+			           CHANGE # look to NOT get local stations such as "GeoRED" stations put back in the SGC GSAC, where they originated, enable code near line 480.
 
-			   # CHANGE 
-			   # set the id for the foreign keys, to be reset in in this program based in onfo in the gsac full csv input file:
-			   network_id     = 5    # CHANGE set id for whatever your network is. AND May first need to insert a new row in the database table network.
-			   agency_id      = 30   # CHANGE set id for whatever your agency is.  AND May first need to insert a new row in the database table agency.
+                       and set the line
+                       network_id     = 1    # in the database, COCONet's network id number, or whatever your network is. CHANGE
 
-                           AND : 
-			   for monument_style_id, may first need to insert a new row in the database table monument_style.
-			   for country_id,        may first need to insert a new row in the database table country.
-			   for locale_id,         may first need to insert a new row in the database table locale.
-
-                           And, optionally, you may change the value of logflag to choose if you want to see output on the terminal screen:
-
-                           logflag =1   # controls screen output.  CHANGE: use =1 for routine operations, or use =2 to print log lines to screen, for testing
-
+			           and set the value of logflag to choose if you want to see output to the terminal:
+                       logflag =1                 # controls screen output.  CHANGE: USE =1 for routine operations. OR use =2 to print log lines to screen, for testing, near line 674
                        
- usage:                Run this script daily with the Dataworks 'ops' account's  Linux crontab job (do command crontab -l to see current active crontab configuration.)
+ usage:                Run this script daily with the Dataworks 'ops' account's  Linux crontab job, to look for new or changed station info:
                   
                            This Python is run with a command like this:
 
@@ -47,14 +40,14 @@
 
                            Use your names for the database account name, account password, and database name such as Dataworks
 
-                           For the "stationgroup" command line argument or value, you use the network name (like TLALOCNet) as found in 
+                           For the "stationgroup" command line argument or value, you use the network name (like COCONet) as found in 
                            the remote GSAC archive which you mirror. 
 
                             so the nominal command 
                               /dataworks/mirror_station_metadata/mirrorStations.py   stationgroup  dbhost    dbaccount   dbaccountpw          dbname
 
                             becomes something like
-                             /dataworks/mirror_station_metadata/mirrorStations.py    TLALOCNet     localhost  dataworks  tlalocnetdataworks   Dataworks
+                             /dataworks/mirror_station_metadata/mirrorStations.py    COCONet     localhost  dataworks  tlalocnetdataworks   Dataworks
 
                            Or, for stationgroup use, for separate stations, not a network name,  
                            inside "", have:
@@ -72,21 +65,18 @@
 
                           Use this option with caution; you can add a lot of stations not in your network to your system with one simple command.
 
-
-
                           Running the process takes about 1 second per site; and makes a log file, /dataworks/logs/mirrorStations.py.log
 
-                        2. Look at the log file after each run.  Look for errors noted in lines with "PROBLEM" and LOOK  and fix any problems.
+                          Look at the log file after each run.  Look for errors noted in lines with "PROBLEM" and LOOK  and fix any problems.
 
-                        3. Update these database tables by hand when a new station is added (no such data is available from the from GSAC): 
+                          Update these database tables by hand when a new station is added (no such data is available from the from GSAC): 
                            radome_serial_number in equip_config; and in table station, update field values for  operator_agency_id, 
                                   and data_publisher_agency_id. You may need to insert a new agency in the db agency table, first.
 
- tested on             : Python 2.6.5 on Linux (Ubuntu) ; CentOS Python 2.7.6 (default, Sep 16 2014, 12:23:18) [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)] 
- 
+ tested on             : Python 2.6.5 on Linux (Ubuntu) ; CentOS Python 2.6 
 
  *
- * Copyright 2014, 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014, 2015, 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -140,49 +130,48 @@ def load_db ():
 
     # [1]
     # Do the query to the remote GSAC's API, to make a list of all stations' info in your network, in the file dataworks_stations.csv.
-    # The metadata is obtained using a remote GSAC service.
+    # The metadata is obtained using a remote GSAC service, such as at UNAVCO (http://www.unavco.org/software/data-management/gsac/gsac.html). 
     # The metadata from GSAC is provided in a "GSAC full csv file", named in this case dataworks_stations.csv.
 
     dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file name
-    #logfilename = "mirrorStations.py.log."+dom   # you can rename this  local log file
+    #logfilename = "mirrorStations.py.log."+dom   # CHANGE use this for a local log file
     logfilename = "/dataworks/logs/mirrorStations.py.log."+dom
     timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
 
     # compose the remote GSAC's API query string.
-    # This URL is for demonstration purposes only.  Do not mirro data from UNAVCO routinely without first asking UNAVCO.
+    # like /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"                      > somefilename.csv
+    httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc&site.interval=interval.normal" '
+    # original httppart=  ' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc" '
     # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-    httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active" '
 
     # in case of separate station IDs:
     if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
-        # This URL is for demonstration purposes only.  Do not mirro data from UNAVCO routinely without first asking UNAVCO.
         # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'"'
+        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=sgc"'
         logfilename = logfilename + ".extras"
 
     # compose the command to make the query using the Linux 'curl' command line utility:
     cmd1 = "/usr/bin/curl -L "+ httppart + " > dataworks_stations.csv"
+    # -L handles any HTML address redirect on remote server end.
 
     logFile     = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name.
 
-    logWrite("\n    Log of mirrorStations.py "+timestamp + " (log file is "+logfilename+")" )
-
-    logWrite("\n ***** *****  Look at the log files after each run.  Look for errors noted in lines with PROBLEM or LOOK and fix those issues. ***** *****\n \n")
-
-    logWrite("\n    mirrorStations.py loads or updates a GSAC dataworks database with station and equipment session data from a 'GSAC full csv file' made by the GSAC server."  )
+    skip='''logWrite("\n    Log of mirrorStations.py "+timestamp + ".  The log file is "+logfilename )
+    logWrite(  "    Look at the log file after each run.  Look for errors noted in lines with PROBLEM or LOOK and fix those issues. ***** *****")
+    logWrite(  "    mirrorStations.py loads or updates a GSAC dataworks database with station and equipment session data from a 'GSAC full csv file' made by the GSAC server."  )
     logWrite(  "    The use is:"  )
     logWrite(  "       1. To make the initial (first time) population of your Dataworks database with all stations in the network, and all the equipment sessions at each station."  )
     logWrite(  "       2. To find and add any newly-added stations in the network (and add the equipment sessions at that station)."  )
     logWrite(  "       4. To update the equip session end times at the still-active sessions (which should have end time of 'end of today') "  )
+    '''
 
     if ";" in stationgroup or len(stationgroup)<5:
       logWrite("\n    Update these individual sites: "+stationgroup );
     else:
       logWrite("\n    Update all sites in the station network "+stationgroup );
 
-    logWrite("\n    First, get site and equipment metadata at those sites from the remote GSAC. The GSAC API Linux command is \n    "+cmd1 )
-    # -L handles HTML address redirect on remote server end.
+    logWrite(    "    First, get site and equipment metadata at those sites from the remote GSAC. The GSAC API Linux command is \n    "+cmd1 )
     sys.stdout.flush()
 
     # execute the command to make the query using the Linux 'curl' command line utility:
@@ -192,16 +181,27 @@ def load_db ():
     donecount=0
     # handle failed connection: 
     if cstatus1 != 0 :
-	      logWrite("\n    PROBLEM: curl command to get sites info from remote GSAC failed." );
-	      logWrite(  "    curl command was "+cmd1 +"\n" );
-	      print ("\n    PROBLEM: curl command to get sites info from remote GSAC failed." );
-	      print (  "    curl command was "+cmd1 + "\n" );
-	      sys.exit (1) 
+          logWrite("\n    PROBLEM: curl command to get sites info from remote GSAC failed." );
+          logWrite(  "    curl command was "+cmd1 +"\n" );
+          #print ("\n    PROBLEM: curl command to get sites info from remote GSAC failed." );
+          #print (  "    curl command was "+cmd1 + "\n" );
+
+          time.sleep(60) # approx. 60 seconds
+          cstatus1 = os.system(cmd1)
+          if cstatus1 != 0 :
+              logWrite("\n    PROBLEM: 2nd try of the curl command, after 60 sec pause, to get sites info from remote GSAC failed. Exit." );
+              sys.exit (1)
+
 
 
     # For each  station in the list, get metadata about the station and equipment sessions there.
 
-    if cstatus1 == 0 :
+    if cstatus1 != 0 :
+        logWrite("\n    PROBLEM: non-zero status value=" +`cstatus1` + "  from "+cmd1 +" \n Exit. \n" );
+        sys.exit (1)
+    elif cstatus1 == 0 :
+        logWrite("\n    Success running "+cmd1 );
+        logWrite("\n    Open the file dataworks_stations.csv \n" );
         station_metadata_file = open ("dataworks_stations.csv");
         # logWrite("    Opened 'GSAC full csv file' of station and equipment session data, dataworks_stations.csv, made with the GSAC query."  );
         # read and count how many lines in file
@@ -235,32 +235,44 @@ def load_db ():
     | at igscb @ igscb.jpl.nasa.gov with any comments.                             |   
         The file lists IGS's names for Domes, Receivers and Antennae.                           '''
         igsfileok=False
+
         # get the IGS file to get the  list of IGS radomes, receivers, and antenna names in the official IGS file, at this URL:
         # print "\n    The IGS file to get is igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab: \n";
-        igs_cmd= "wget -v -N http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab"
-        logWrite("\n    Get complete IGS definitions of 'correct' Domes, Receivers and Antennae names with \n     "+igs_cmd)
+        igs_cmd= "wget -v -N --no-check-certificate http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab"
+        logWrite("\n    Get IGS file rcvr_ant.tab, with definitions of 'correct' Domes, Receivers and Antennae names, using command \n     "+igs_cmd)
+        print("\n    Get IGS file rcvr_ant.tab, with definitions of 'correct' Domes, Receivers and Antennae names, using command \n     "+igs_cmd)
         try:
            igs_status1 = os.system(igs_cmd)
            if igs_status1 != 0 :
                logWrite("  PROBLEM: command "+isg_cmd+" returned status="+`igs_status1`)
+               print("  PROBLEM: command "+isg_cmd+" FAILED: returned status="+`igs_status1`)
         except :
-           logWrite("    PROBLEM: try of command to run wget for rcvr_ant.tab failed. (NOT that the wget ram and failed to get a file)")
+           pass # logWrite("    PROBLEM: try of command   "+isg_cmd+"    failed.")
 
-        try:  #  regardless of wget results, an igs rcvr table file should be here already.
+        # Regardless of wget results, an old (or brand new) igs rcvr_ant.tab file should be here.
+        # try file open in current working directory.
+        try:
            igs_file = open ("rcvr_ant.tab");
+           #logWrite("    igs file open OK, for rcvr_ant.tab in current working directory.")
            igsfileok=True
         except :
            #logWrite("    no local copy of rcvr_ant.tab yet")
            pass
+        if False==igsfileok :
+            # or try file open here:
+            try:
+                igs_file = open ("/dataworks/mirror_station_metadata/rcvr_ant.tab");
+                #logWrite("    igs file open OK, for /dataworks/mirror_station_metadata/rcvr_ant.tab")
+                igsfileok=True
+            except :
+                pass #logWrite("    igs file open fails,  for /dataworks/mirror_station_metadata/rcvr_ant.tab")
+        if igsfileok :
+            logWrite   ("    Got and opened the most recent IGS file rcvr_ant.tab")
+            print      ("    Got and opened the most recent IGS file rcvr_ant.tab")
+        else :
+            logWrite("    PROBLEM: could not find and open an IGS rcvr_ant.tab file. Exit.  \n");
+            sys.exit(1)
 
-        try:
-              igs_file = open ("/dataworks/mirror_station_metadata/rcvr_ant.tab");
-              logWrite("    igs file open OK, for /dataworks/mirror_station_metadata/rcvr_ant.tab")
-              igsfileok=True
-        except :
-              logWrite("    igs file open fails,  for /dataworks/mirror_station_metadata/rcvr_ant.tab")
-
-        logWrite   ("    Got and opened IGS file rcvr_ant.tab")
 
         # get contents of the rcvr_ant.tab file for later searches:
         igsmap = mmap.mmap(igs_file.fileno(), 0, access=mmap.ACCESS_READ)
@@ -274,11 +286,12 @@ def load_db ():
            # i>3 is to bypass 4 header lines ; and perhaps some others if testing is the i<35 say
            if (i>3):
 
-             # one file line is one equipment session for one station. 
 
              # to skip a "PENDING" station: trap the SPECIAL UNAVCO magic values:
              # as in CN45,CN_Toco_GPS_2013,10.837,-60.9383,33.2,building wall,,2050-01-01T00:00:00,1980-01-01T00:00:00,TRM59800.00,SCIT,5225354537,0.0083, ...
              if  "2050-01-01" in line and "1980-01-01" in line:
+                # one file line is one equipment session for one station. 
+                logWrite("\n    "+ `(i-3)` + " line in station-session file: "+line  );
                 # SKIP this station,  and go try the next line
                 logWrite("      This is a 'pending' station an UNAVCO, with start time 2050-01-01 and end time in 1980; skip entry of this metadata."  );
                 continue
@@ -290,14 +303,19 @@ def load_db ():
              a full sites csv file format example:
              There are four header lines, not used here. There are  fields: first at [0]
 
-                #fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,receiver_type[type='string'],firmware_version[type='string'],receiver_SN[type='string'],receiver_sample_interval,city_locale[type='string'],state_prov[type='string'],country[type='string'],X,Y,Z,agencyname[type='string'],metpackname[type='string'],metpackSN[type='string'],site_count
+                #fields=ID[type='string'],station_name[type='string'],latitude,longitude,ellip_height[unit='m'],monument_description[type='string'],IERSDOMES[type='string'],session_start_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],session_stop_time[type='date' format='yyyy-MM-ddTHH:mm:ss zzzzz'],antenna_type[type='string'],dome_type[type='string'],antenna_SN[type='string'],Ant_dZ,Ant_dN,Ant_dE,receiver_type[type='string'],firmware_version[type='string'],receiver_SN[type='string'],receiver_sample_interval,city_locale[type='string'],state_prov[type='string'],country[type='string'],X,Y,Z,agencyname[type='string'],metpackname[type='string'],metpackSN[type='string'],networks[type='string'],site_count
                 #   Generated by UNAVCO GSAC Repository on 2014-08-29T16:38:13 
                 #   Missing times (no characters) may mean 'not removed' or 'no change.' 
                 #   The CSV convention for point data is CF for CSV; 
-                BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2013-07-04T00:00:00,2013-08-22T23:59:45,TRM59800.00,SCIS,5220354476,0.0000,0.0000,0.0000,TRIMBLE NETR9,4.80,5115K74983,15,Barahona,,Dominican Republic,,,,,WXT520,G3920007,7
-BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2013-08-23T00:00:00,2014-04-26T23:59:45,TRM59800.00,SCIS,5220354476,0.0000,0.0000,0.0000,TRIMBLE NETR9,4.81,5115K74983,15,Barahona,,Dominican Republic,,,,,WXT520,G3920007,7
-BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-04-27T00:00:00,2014-05-07T23:59:45,TRM59800.00,SCIS,5220354476,0.0000,0.0000,0.0000,TRIMBLE NETR9,4.81,5115K74983,15,Barahona,,Dominican Republic,,,,,WXT520,G3920007,7
-BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,2014-11-25T23:59:45,TRM59800.00,SCIS,5220354476,0.0000,0.0000,0.0000,TRIMBLE NETR9,4.85,5115K74983,15,Barahona,,Dominican Republic,,,,,WXT520,G3920007,7
+ABMF,Aeroport du Raizet -LES ABYMES - Mitio France,16.2623,-61.5275,-25.67,building roof,97103M001,2015-04-28T15:00:30,2015-12-07T23:59:30,TRM57971.00,NONE,1441112501,0.0000,0.0000,0.0000,LEICA GR25,3.11,1830399,30,LES ABYMES,Guadeloupe,France,,,,,,,COCONet;COCONetPartner;IGS;Low Latency;PBO Analysis Complete;,1
+ABVI,Anegada,18.7297,-64.3325,-35.55,deep foundation pillar,,2011-02-04T15:12:15,2012-09-13T23:59:45,TRM29659.00,SCIT,02200669,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-0  05 Apr 2010,4720132687,15,Anegada,,British Virgin Islands,,,,,,,COCONet;COCONetPartner;Met Sites;PBO Analysis Complete;Puerto Rico;,2
+ABVI,Anegada,18.7297,-64.3325,-35.55,deep foundation pillar,,2012-09-14T00:00:00,2013-04-22T23:59:45,TRM29659.00,SCIT,02200669,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-1 10/DEC/2010,4720132687,15,Anegada,,British Virgin Islands,,,,,,,COCONet;COCONetPartner;Met Sites;PBO Analysis Complete;Puerto Rico;,2
+ABVI,Anegada,18.7297,-64.3325,-35.55,deep foundation pillar,,2013-04-23T00:00:00,2014-04-30T23:59:45,TRM29659.00,SCIT,02200669,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-2,4720132687,15,Anegada,,British Virgin Islands,,,,,,,COCONet;COCONetPartner;Met Sites;PBO Analysis Complete;Puerto Rico;,2
+ABVI,Anegada,18.7297,-64.3325,-35.55,deep foundation pillar,,2014-06-16T00:00:00,2015-10-19T23:59:45,TRM29659.00,SCIT,02200669,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-2,4720132687,15,Anegada,,British Virgin Islands,,,,,WXT520,J0510007,COCONet;COCONetPartner;Met Sites;PBO Analysis Complete;Puerto Rico;,2
+ACP1,ACP1,9.3714,-79.9499,12.76,deep-drilled braced,,2008-10-24T00:00:00,2011-05-19T23:59:45,TRM41249.00,NONE,60216597,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.1-3,4720132691,15,Sherman,,Panama,,,,,,,COCONet;COCONetPartner;PBO Analysis Complete;,3
+ACP1,ACP1,9.3714,-79.9499,12.76,deep-drilled braced,,2012-04-13T18:10:30,2015-11-18T23:59:45,TRM41249.00,NONE,60216597,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.3-1,4720132691,15,Sherman,,Panama,,,,,,,COCONet;COCONetPartner;PBO Analysis Complete;,3
+ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-11-18T23:59:45,TRM41249.00,NONE,60187024,0.0083,0.0000,0.0000,TRIMBLE NETRS,1.1-3,4702127016,15,Panama,,Panama,,,,,,,COCONet;COCONetPartner;PBO Analysis Complete;,4
+
 
                 Note that IERSDOMES may be missing ",," for Dataworks.
                 Note that state name, x,y,z, and site_count are not used by Dataworks.
@@ -327,7 +345,8 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                 25 agency name 
                 26 metpack name
                 27 metpack serial number
-                28 site count                                       NOT used by Dataworks      
+                28 networks names string    ";" separated
+                29 site count                                       NOT used by Dataworks      
              '''
 
              SQLstatement=""
@@ -335,8 +354,9 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
              code= (strlist[0]) # the 4 char id of a station such as ABMF
              if (len(code)>4) : # should not occur; attempt to do something useful.
                  code=code[:4]
-                 # logWrite("  BAD station 4 char id is > 4 chars: "+strlist[0] +"; will use just "+code  );
+                 logWrite("  PROBLEM station 4 char id is > 4 chars: "+strlist[0] +"; will use just "+code  );
 
+             # logWrite  (   "*******  Station " + code );
 
              # when at a new station ; this happens first only after one station has been processed:
              if this_station_code != code :
@@ -344,16 +364,19 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                          logWrite(   "*******   Station "+ previous_station_code +" is up-to-date in the database (station count so far is "+`donecount`+") "  );
                      # if "" != this_station_code : # not the first time
                      previous_station_code = this_station_code
-                     logWrite  (   "\n*******  Check station " + code );
+                     logWrite  (   "\n*******  Check new station " + code );
                      sys.stdout.flush()
                      sys.stdout.flush()
                      donecount += 1
 
              this_station_code = code
 
+             # one file line is one equipment session for one station. 
+             logWrite("\n    "+ `(i-3)` + " line in station-session file: "+line [:-1] );
+
              ## logWrite(metadata line; this to compare results of several run of this script, to see if the INPUT is the same
-             logWrite("\n    Next equip session metadata line in csv file from remote GSAC: "+line[:70] ); # first part of line
-             logWrite  ("      "+line[70:-1]  ); # second half of line
+             #logWrite("    Next equip session metadata line in csv file from remote GSAC: "+line[:70] ); # first part of line
+             #logWrite  ("      "+line[70:-1]  ); # second half of line
              sys.stdout.flush()
 
              staname = (strlist[1]) # station name
@@ -383,19 +406,21 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
              item = anttype
 
              if igsmap.find(item) != -1:
-                  logWrite  (   "      Antenna name "+item+" is a valid IGS name, and in the IGS file rcvr_ant.tab")
+                  #logWrite  (   "      Antenna name "+item+" is a valid IGS name, and in the IGS file rcvr_ant.tab")
+                  pass
              else :
                   errormsg= "\n PROBLEM FIX: Antenna name name "+item+" is NOT a valid IGS name. (got from the remote GSAC.) " \
                             + "\n  The GSAC data for station "+code+" beginning at "+equipSessStartTime \
                             +  " has INVALID  Antenna name "+item+ ", not in http://igscb.jpl.nasa.gov/igscb/station/general/rcvr_ant.tab  \n "
                   logWrite ( errormsg)
-                  #continue  # go ahead and use it
+                  #continue  
 
              radometype  =  (strlist[10])
              item = radometype
 
              if igsmap.find(item) != -1:
-                  logWrite  (   "      RADOME name "+item+" is a valid IGS name, and in the IGS file rcvr_ant.tab")
+                  #logWrite  (   "      RADOME name "+item+" is a valid IGS name, and in the IGS file rcvr_ant.tab")
+                  pass
              else :
                   errormsg= "\n PROBLEM: RADOME name "+item+" is NOT a valid IGS name. (got from the remote GSAC.) " \
                             + "\n The remote GSAC data for station "+code+" beginning at "+equipSessStartTime \
@@ -413,7 +438,8 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
              rcvtype  =  (strlist[15])
              item = rcvtype
              if igsmap.find(item) != -1:
-                  logWrite  (   "      Receiver name "+item+" is a valid IGS name, and in the IGS file rcvr_ant.tab");
+                  #logWrite  (   "      Receiver name "+item+" is a valid IGS name, and in the IGS file rcvr_ant.tab");
+                  pass
              else :
                   errormsg= "\n PROBLEM: Receiver name "+item+" is NOT a valid IGS name. (got from the remote GSAC.) " \
                             + "\n The remote GSAC data for station "+code+" beginning at "+equipSessStartTime \
@@ -425,7 +451,7 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
              rcvfwvers  =  (strlist[16])
              rcvsn  =  (strlist[17])
              rcvsampInt  =  (strlist[18]) # a string for a number
-             logWrite("      rcvsampInt  = _" + rcvsampInt   );
+             #logWrite("      rcvsampInt  = _" + rcvsampInt   );
              sitecount =  (strlist[25])
              monument_style_description   = (strlist[5])
              locale_info   = (strlist[19])
@@ -443,12 +469,22 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
              #        metpackname = _WXT520_  metpackSN =_K2950011_
              metpack_id=0
              metpack_id = getOrSetTableRow ("metpack_id", "metpack", "metpack_name", metpackname) 
-             logWrite("      metpackname = _"+metpackname+"_  metpackSN =_"+metpackSN+"_   metpack_id="+`metpack_id`  );
+             #logWrite("      metpackname = _"+metpackname+"_  metpackSN =_"+metpackSN+"_   metpack_id="+`metpack_id`  );
+
+             networks =    strlist[28]
+
+             # CHANGE
+             # look to NOT get local stations such as "GeoRED" stations put back in the GSAC where they originated:
+             #if "GeoRED" in networks:
+             #   logWrite("\n >>> SKIPPED GeoRED station _"+code +"  <<<< <<<< <<<< \n")
+             #   continue
+
+             logWrite("      networks names string = _" +networks + "_ " )
 
              #state         = (strlist[20])  # NOT used by dataworks, as per design specification announced in a meeting.
              # as per instructions of Fran Boler, Oct 29 2014, do NOT store state or province name anywhere in the Dataworks database; so skip these 4 lines:
 
-             logWrite("      This input equip_config sesssion for station "+code +" has equip_config_start time= "+equipSessStartTime+ "  stop time=_"+equipSessStopTime )
+             #logWrite("      This input equip_config sesssion for station "+code +" has equip_config_start time= "+equipSessStartTime+ "  stop time=_"+equipSessStopTime )
 
              # Finally, insert the station metadata in the database -- if not already there. 
 
@@ -493,16 +529,13 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                    status_id      = 1    # Active 
                    access_id      = 2    # full public access
                    ellipsoid_id   = 1    # WGS 84
+                   network_id     = 1    # COCONet or whatever your network is. CHANGE
+                   agency_id      = 30   # "not supplied by remote GSAC           (and not shown by GSAC, so no way to get the value from the db by remote user.)
 
-                   # CHANGE 
-                   # set the id for the foreign keys, to be reset in in this program based in onfo in the gsac full csv input file:
-                   network_id     = 5    # CHANGE set id for whatever your network is.
-                   agency_id      = 30   # CHANGE set if for whatever your agency is.
-
-                   monument_style_id = 1 # id value 1 is "not specified"
-                   country_id=1          #  id for name of country
-                   locale_id=1           # id for name of city or place etc.
-
+                   # get  or set the id for the foreign keys, to be reset in in this program based in onfo in the gsac full csv input file:
+                   monument_style_id = 1 # id value is "not specified"
+                   country_id=1          # not specified
+                   locale_id=1           # "not specified"
                    the_id=1
                     # get or set monument_style_id based on monument_style_description value:
                    if ""==monument_style_description :
@@ -529,20 +562,19 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                         # id= getOrSetTableRow (idname, tablename,  rowname, rowvalue)
                         country_id  = getOrSetTableRow ("country_id", "country", "country_name", country_name) 
 
-                   logWrite ("        got values of ids monument_style_id, locale_id, country_id = "+`monument_style_id`+"  "+`locale_id`+"   "+ `country_id`)
+                   #logWrite ("        got values of ids monument_style_id, locale_id, country_id = "+`monument_style_id`+"  "+`locale_id`+"   "+ `country_id`)
 
                    station_photo_URL= "" 
                    time_series_plot_photo_URL="" 
 
                    # New May 26 2015
                    #SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_above_ellipsoid,installed_date, style_id, status_id, access_id,  ellipsoid_id ,  iers_domes, network_id,country_id,locale_id,monument_style_id, latest_data_time ) values  ('%s', '%s', %s,  %s,  %s, '%s', %s, %s,  %s, %s, '%s', '%s', '%s', %s, %s, '%s')" % ( code, staname, latstr, lonstr, ellphgtstr, equipSessStartTime,  style_id, status_id, access_id, ellipsoid_id, domesiers,  network_id, country_id,locale_id, monument_style_id, equipSessStopTime))
-
-                   SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_above_ellipsoid,installed_date, style_id, status_id, access_id,  ellipsoid_id ,  iers_domes, network_id,country_id,locale_id,monument_style_id ) values  ('%s', '%s', %s,  %s,  %s, '%s', %s, %s,  %s, %s, '%s',   %s, %s, %s, %s)" % ( code, staname, latstr, lonstr, ellphgtstr, equipSessStartTime,  style_id, status_id, access_id, ellipsoid_id, domesiers,  network_id, country_id, locale_id, monument_style_id))
+                   SQLstatement=("INSERT INTO station (four_char_name,station_name,latitude_north,longitude_east,height_above_ellipsoid,installed_date, style_id, status_id, access_id,  ellipsoid_id ,  iers_domes, network_id,country_id,locale_id,monument_style_id ) values  ('%s', '%s', %s,  %s,  %s, '%s', %s, %s,  %s, %s, '%s', '%s', '%s', %s, %s)" % ( code, staname, latstr, lonstr, ellphgtstr, equipSessStartTime,  style_id, status_id, access_id, ellipsoid_id, domesiers,  network_id, country_id,locale_id, monument_style_id))
 
                    try:
                        # add this new station to the Dataworks database 'station' table.
                        # rows in foreign keys' tables must be populated already in the database.
-                       logWrite("       Insert the new station into station table with SQL \n       "+SQLstatement   )
+                       #logWrite("       Insert the new station into station table with SQL \n       "+SQLstatement   )
                        cursor.execute(SQLstatement)
                        gsacdb.commit()
                        logWrite( " ***** *****  Inserted new STATION: "+four_char_name+",  "+station_name   )
@@ -568,7 +600,7 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                        row= cursor.fetchone()
                        station_id=  row[0];
                        station_id=  int(station_id); # fix the "L" value returned
-                       logWrite( "      Station "+code+" has station_id "+`station_id`  )
+                       #logWrite( "      Station "+code+" has station_id "+`station_id`  )
                    except:
                        #logWrite( " PROBLEM maybe FAILED to get the id for station code="+code + "\n       with SQL = "+stm + "\n      for case of metadata \n    "+metadata)
                        #logWrite( "      BUT sometimes actually succeeds: look in the database."  );
@@ -663,7 +695,7 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                    #logWrite("      Look for this particular equipment session at station_id="+`station_id` ) # +"  in the db with SQL \n      "+statement
                    # ONLY check for this station and this start time;  end time given by UNAVCO GSAC is variable for the current active session.
                    SQLstatement=("SELECT equip_config_id,equip_config_start_time,equip_config_stop_time from equip_config where station_id= %s and equip_config_start_time= '%s'" % (station_id, new_equip_config_start_time))
-                   logWrite("      Look for this equip config record in the dq with sql  ... \n      "+ SQLstatement)
+                   #logWrite("      Look for this equip config record in the dq with sql  ... \n      "+ SQLstatement)
                    cursor.execute(SQLstatement)
                    #logWrite("      1") 
                    row     = cursor.fetchone()
@@ -693,8 +725,8 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
              if  haveit: 
                  logWrite("      This session # "+`esid`+" is already in the db. ") 
                  if newequipSessStartTimeDT == dbeqstart  and newequipSessStopTimeDT == dbeqstop :
-                     logWrite("      No new GNSS data for this station from the remote GSAC archive today (the former and new session start and stop times match). ") 
-                     logWrite("      Done with this equip session data set line. Go try next input metadata line from the  GSAC .csv file.\n  ") 
+                     logWrite("      No new metadata for this station from the remote GSAC archive today (the former and new session start and stop times match). ") 
+                     #logWrite("      Done with this equip session data set line. Go try next input metadata line from the  GSAC .csv file.\n  ") 
                      doAddSession=False
                  elif newequipSessStopTimeDT > dbeqstop :
                      doAddSession=False
@@ -705,7 +737,7 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
                      #logWrite("      the SQL is "+statement)
                      cursor.execute(statement)
                      gsacdb.commit()
-                     logWrite("      Updated the equip_config_stop_time in the db, for station "+code+" and at equip_config_id "+`esid` +", "  )
+                     #logWrite("      Updated the equip_config_stop_time in the db, for station "+code+" and at equip_config_id "+`esid` +", "  )
                      stoptimeupdatecount += 1
                      # end of processing one metadata line from the GSAC .csv file
 
@@ -755,9 +787,9 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
 
              sys.stdout.flush()
 
-             # DON'T have this equipment session in the db yet so add it:
+             # DON'T have this session in the db yet so add it:
              if ( haveit == False ) :
-                 logWrite("       add equip session")
+                 #logWrite("       add equip session")
                  antenna_serial_number   =antsn
                  antenna_height          =adz
                  radome_serial_number   =" " # not available from UNAVCO GSAC
@@ -878,7 +910,6 @@ BARA,Barahona,18.2086,-71.098,78,building wall,40801M001,2014-05-08T00:00:00,201
 
 
 
-
 def  logWrite (text):
      global logFile 
      global logfilename 
@@ -886,7 +917,6 @@ def  logWrite (text):
      logFile.write(text + "\n")
      if logflag>=2 :
        print (text)
-
 
 
 def getOrSetTableRow (idname, tablename,  rowname, rowvalue) :
@@ -1014,7 +1044,7 @@ gsacdb.close()
 logWrite("\n   SUMMARY of mirrorStation.py processing: ")
 
 if newstacount>0 :
-    logWrite("\n ***** *****  Inserted "+`newstacount`    +" new stations. (look in this log file for 'Inserted.') "  )
+    logWrite("\n ***** *****  Inserted "+`newstacount`    +" new stations. (look in the log file for 'Inserted.') "  )
     ## logWrite("\n ***** *****  Inserted "+`newstacount`    +" new stations, without problems.")  );
     pass
 else :
@@ -1022,18 +1052,18 @@ else :
     pass
 
 if newsessioncount>0  :
-    logWrite("\n ***** *****  Inserted "+`newsessioncount`+" new equipment sessions. (look in this log file for 'Inserted.')"  )
+    logWrite("\n ***** *****  Inserted "+`newsessioncount`+" new equipment sessions. (look in the log file for 'Inserted.')"  )
     ## logWrite("\n ***** *****  Inserted "+`newsessioncount`+" new equipment sessions, without problems. \n \n")
     pass
 else :
     logWrite("\n ***** ***** No new equipment sessions added."  )
     pass
 
-logWrite(    "\n ***** ***** There are "+`donecount`+" stations in the database."  )
+logWrite(    "\n ***** ***** There were "+`donecount`+" stations checked in the database."  )
 
-logWrite(    "\n ***** ***** To update latest data end times in station - equipment sessions in the database:"  )
-logWrite(      " ***** *****   There are "+`eqscount`+" station - equipment sessions matches with existing equipment sessions in the database."  )
-logWrite(      " ***** *****   Updated "+`stoptimeupdatecount`+" equip config table (equipment sessions) end times."  )
+logWrite(    "\n ***** ***** There were "+`eqscount`+" station - equipment sessions matches in the database."  )
+
+logWrite(    "\n ***** ***** Updated "+`stoptimeupdatecount`+" equip config table stop times."  )
 
 notused='''
 if failedcount>0  :
