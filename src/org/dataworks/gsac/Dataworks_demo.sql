@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: Dataworks_GSAC_ver201508261131
+-- Host: localhost    Database: Dataworks_GSAC_database_test-13jan2016
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `Dataworks_GSAC_ver201508261131`
+-- Current Database: `Dataworks_GSAC_database_test-13jan2016`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Dataworks_GSAC_ver201508261131` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Dataworks_GSAC_database_test-13jan2016` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `Dataworks_GSAC_ver201508261131`;
+USE `Dataworks_GSAC_database_test-13jan2016`;
 
 --
 -- Table structure for table `access`
@@ -60,7 +60,7 @@ CREATE TABLE `agency` (
   `agency_name` varchar(100) NOT NULL,
   `agency_short_name` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`agency_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,7 +69,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
-INSERT INTO `agency` VALUES (0,'NOT AVAILABLE','NOT AVAILA'),(1,'UNAVCO','UNAVCO'),(2,'NCEDC','NCEDC'),(3,'PANGA','PANGA');
+INSERT INTO `agency` VALUES (0,'NOT AVAILABLE','NOT AVAILA'),(1,'agency name 1','1');
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -344,7 +344,7 @@ CREATE TABLE `network` (
   `network_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `network_name` varchar(50) NOT NULL,
   PRIMARY KEY (`network_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,7 +353,7 @@ CREATE TABLE `network` (
 
 LOCK TABLES `network` WRITE;
 /*!40000 ALTER TABLE `network` DISABLE KEYS */;
-INSERT INTO `network` VALUES (0,'NOT AVAILABLE');
+INSERT INTO `network` VALUES (0,'NOT AVAILABLE'),(1,'network 2'),(2,'network 3');
 /*!40000 ALTER TABLE `network` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -420,17 +420,12 @@ CREATE TABLE `station` (
   `four_char_name` char(4) NOT NULL,
   `station_name` varchar(50) NOT NULL,
   `unique_site_id` varchar(50) DEFAULT NULL,
-  `X` double DEFAULT NULL,
-  `Y` double DEFAULT NULL,
-  `Z` double DEFAULT NULL,
   `latitude_north` double NOT NULL,
   `longitude_east` double NOT NULL,
   `height_above_ellipsoid` float NOT NULL,
-  `published_date` datetime DEFAULT NULL,
-  `installed_date` datetime DEFAULT NULL,
+  `installed_date` datetime NOT NULL,
+  `latest_data_time` datetime DEFAULT NULL,
   `retired_date` datetime DEFAULT NULL,
-  `earliest_data_date` datetime DEFAULT NULL,
-  `latest_data_date` datetime DEFAULT NULL,
   `style_id` int(3) unsigned NOT NULL,
   `status_id` int(3) unsigned NOT NULL,
   `access_id` int(3) unsigned NOT NULL,
@@ -465,7 +460,7 @@ CREATE TABLE `station` (
   CONSTRAINT `operator_agency_id` FOREIGN KEY (`operator_agency_id`) REFERENCES `agency` (`agency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `status_id` FOREIGN KEY (`status_id`) REFERENCES `station_status` (`station_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `style_id` FOREIGN KEY (`style_id`) REFERENCES `station_style` (`station_style_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -534,4 +529,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-26 11:30:12
+-- Dump completed on 2016-01-14 10:59:13
