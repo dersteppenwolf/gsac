@@ -4,25 +4,31 @@
  filename              : mirrorData.py
  author                : Stuart Wier
  created               : 2014-09-03
- latest update(version): 2016-01-12
+ latest update(version): 2016-01-14 log file working changes 
 
  exit code(s)          : 0, success; 
 
- description           : To populate or update a  UNAVCO Dataworks  database which has the UNAVCO Dataworks schema with GNSS datafiles from UNAVCO's GSAC or from other remote GSAC.
+ description           UNAVCO GSAC, "Dataworks code" to populate the GSAC database datafile table information using a query to another GSAC for the information.
+
+                       : To populate or update a  UNAVCO Dataworks  database which has the UNAVCO Dataworks schema with GNSS datafiles from UNAVCO's GSAC or from other remote GSAC.
                        : Populates the data files metadata (table datafile) and also copies the complete GNSS data files to this computer.
                        : This process is run once a day by the ops crontab file; which see (do crontab -l).
 
- usage                 : Initial setup (one time): revise these Python code lines, each line is flagged with the word CHANGE,  to configure your use of this script:
+                       : This mirrorData.py process is run once a day by the ops account crontab file; which see (do crontab -l).
 
-                       : CHANGE the nominal domain in this line (at or near line 357 below) to your domain for your FTP server.
-                       local_domain  = "ftp://coconet1.sgc.gov.co/rinex"
+
+ configuration         : Initial setup (one time): revise these Python code lines, each line is flagged with the word CHANGE,  to configure your use of this script:
+
+                       : CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
+                       : CHANGE the  domain in this line (at or near line 357 below) to your domain for your FTP server.
+                         local_domain           = "ftp://myagency.org/gps/"
 
 	                   : CHANGE: once, set the value of logflag the code line below  near line number 575, to set if log output goes to the screen as well as to the log file. 
                        logflag= 1  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
 
-                       : This mirrorData.py process is run once a day by the ops account crontab file; which see (do crontab -l).
+                       : CHANGE # look to NOT get local stations such as "GeoRED" stations put back in the your GSAC, where they originated:
 
-                       : Must already have in the database all the correct 'equip_config' table entries, the information about the stations' equipment sessions.
+ usage                 : Must already have in the database all the correct 'equip_config' table entries, the information about the stations' equipment sessions.
                        : That is achieved by running mirrorStations.py just before you run this script.
 
                        : You can run this program by hand with explicit dates like this, for example to get datafiles for the date range shown: 
@@ -57,7 +63,7 @@
  tested on             : Python 2.6.5 on Linux (on Ubuntu 10)
                        : "Python 2.6.6 (r266:84292, Jan 22 2014, 09:42:36) [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)] on linux2" (on CentOS)
  *
- * Copyright 2014, 2015, 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014, 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -123,7 +129,7 @@ def parseOneSiteMetadata ():
 
 
         sample_full_log_lines = '''
-	   station VERA: this data file's metadata from UNAVCO GSAC is 
+	   station VERA: this data file's metadata from remote GSAC is 
 	    VERA,GNSS RINEX Observation (Hatanaka  Unix Compressed),97e92344504b8f6531525d54c3754117,706374,2015-05-07 00:00:00,ftp://data-out.unavco.org/pub/rinex/obs/2015/126/vera1260.15d.Z,2015-05-06 00:00:00,2015-05-06 23:59:45,15.0,
 	   For the data file vera1260.15d.Z, find its equipment sessions' id number, load database datafile table with the file's metadata, and download the file from UNAVCO
 	      data file to load in db, and to download is  vera1260.15d.Z
@@ -146,9 +152,11 @@ def parseOneSiteMetadata ():
         linecount = len(allLines)
         dataListFile.seek(0) # rewind to beginning
         if linecount>0 : 
-            logWrite ( "    Count of gps datafiles for this station from UNAVCO GSAC in this time interval: "+`linecount-2` )
+            logWrite ( "    Count of gps datafiles for this station from remote GSAC in this time interval: "+`linecount-2` )
         else:
             logWrite ( "    NO gps data files to download for this station in this time interval. ")
+            return;
+            
 
         allstationcount=0
         stationcount=0
@@ -168,7 +176,7 @@ def parseOneSiteMetadata ():
           line = dataListFile.readline()
 
           # skip first 2 lines in the .csv file, the header info: 
-          if (i> 2 ) :   # add 'and i < 11' for test limit 
+          if (i> 2 ) :   # add 'and i < 11' for testing limit 
 
              # split out values from line, at commas
              strlist= string.split( line, "," )
@@ -188,30 +196,33 @@ def parseOneSiteMetadata ():
 
              sample_interval    = float( (strlist[8]) ) # data sample interval, seconds
 
-             logWrite( "\n  site "+staid+" data file metadata is " +line[0:-1] )  
+             logWrite( "\n      site "+staid+" data file metadata is " +line[0:-1] )  
              # :-1] means do not print the line's terminal line return \n 
-             # full logWrite( "\n   station "+staid+": this data file's metadata from UNAVCO GSAC is \n    " +line[0:-1] )  # :-1] means do not print the line's terminal line return \n 
+             # full logWrite( "\n   station "+staid+": this data file's metadata from remote GSAC is \n    " +line[0:-1] )  # :-1] means do not print the line's terminal line return \n 
              #logWrite(   " id code, filetype, MD5, published time, file URL, datafile_start_time, datafile_stop_time")
 
              filext =file_url[-3:]
+             logWrite( "      datafile URL is  " +file_url )  
+             logWrite( "      datafile type is " +ftype )  
+             logWrite( "      datafile ext is  " +filext )  
 
              # from file type name strings from the input file, select the file type id number for the  UNAVCO Dataworks  standard db schema:
              doc='''
-		mysql> select * from datafile_type;
-		+------------------+-------------------------------+-----------------------+----------------------------------------------------+
-		| datafile_type_id | datafile_type_name            | datafile_type_version | datafile_type_description                          |
-		+------------------+-------------------------------+-----------------------+----------------------------------------------------+
-		|                1 | instrument data file          |                       | Any type or format of native, raw, or binary file  |
-		|                2 | RINEX observation file        |                       | a RINEX 'o' obs file; may be compressed            |
-		|                3 | RINEX GPS navigation file     |                       | a RINEX 'n' nav file; may be compressed            |
-		|                4 | RINEX Galileo navigation file |                       | a RINEX 'e' nav file; may be compressed            |
-		|                5 | RINEX GLONASS navigation file |                       | a RINEX 'g' nav file; may be compressed            |
-		|                6 | RINEX meteorology file        |                       | a RINEX 'm' met file; may be compressed            |
-		|                7 | RINEX QZSS navigation file    |                       | a RINEX 'j' nav file; may be compressed            |
-		|                8 | RINEX Beidou navigation file  |                       | a RINEX 'c' nav file; may be compressed            |
-		+------------------+-------------------------------+-----------------------+----------------------------------------------------+
-		8 rows in set (0.00 sec)
-	     '''
+                mysql> select * from datafile_type;
+                +------------------+-------------------------------+-----------------------+----------------------------------------------------+
+                | datafile_type_id | datafile_type_name            | datafile_type_version | datafile_type_description                          |
+                +------------------+-------------------------------+-----------------------+----------------------------------------------------+
+                |                1 | instrument data file          |                       | Any type or format of native, raw, or binary file  |
+                |                2 | RINEX observation file        |                       | a RINEX 'o' obs file; may be compressed            |
+                |                3 | RINEX GPS navigation file     |                       | a RINEX 'n' nav file; may be compressed            |
+                |                4 | RINEX Galileo navigation file |                       | a RINEX 'e' nav file; may be compressed            |
+                |                5 | RINEX GLONASS navigation file |                       | a RINEX 'g' nav file; may be compressed            |
+                |                6 | RINEX meteorology file        |                       | a RINEX 'm' met file; may be compressed            |
+                |                7 | RINEX QZSS navigation file    |                       | a RINEX 'j' nav file; may be compressed            |
+                |                8 | RINEX Beidou navigation file  |                       | a RINEX 'c' nav file; may be compressed            |
+                +------------------+-------------------------------+-----------------------+----------------------------------------------------+
+                8 rows in set (0.00 sec)
+             '''
              filetypeid=0    # for the file type id number database.
              file_type="nav" # used in the ftp url for the local ftp service.
 
@@ -252,8 +263,7 @@ def parseOneSiteMetadata ():
              else:
                   usethisfile= False 
                   countskips+=1
-                  # full log logWrite( "    Skip this file: its file type, "+file_url + ", is not wanted.")
-                  logWrite( "    skip this file, its file type is not used by Dataworks.")
+                  logWrite( "    Skip this file "+file_url + ", its file type is not wanted.")
 
              #print "\n    one datafile's values for station "+staid+": \n    ftype="+ftype+"_  file_MD5="+file_MD5+"_   fsize="+fsize+"_bytes  file_url="
              #  +file_url+"_  datafile_start_time="+datafile_start_time+"_  datafile_stop_time="+datafile_stop_time+"_  si="+`si`+"_"
@@ -374,11 +384,12 @@ def parseOneSiteMetadata ():
 
                  # CHANGE the next line of code to define part of your path to files in your ftp server:
                  # example local_domain = "ftp://coconet1.sgc.gov.co/rinex"  
-                 # LOOK WITHOUT FINAL /
-                 local_domain           = "ftp://coconet1.sgc.gov.co/rinex"
+                 # LOOK NO FINAL /
+                 local_domain = "ftp://myagency.org/gps/rinex"
 
                  # make the ftp  users' downloads of datafiles from your Dataworks system (not from UNAVCO):
-                 URL_path =             local_domain +"/"+ file_type +"/"+ year +"/"+ day_of_year + "/" + datafile_name
+                 # this is the normal UNAVCO directory structure suggested for FTP sites with daily GPS datafiles.
+                 URL_path     =  local_domain +"/"+ file_type +"/"+ year +"/"+ day_of_year + "/" + datafile_name
 
                  # check if this  datafile's metadata is already in the db table 'datafile':
                  haveitinDB=False
@@ -449,11 +460,15 @@ def parseOneSiteMetadata ():
                      #print "        running values:        size total =     "+`totalMB` +" MB"
 
                  if haveitinDB :
+
+                        # LOOK CHANGE: enable this code blaock to downlaod files from the remore gsac
+                        pass
+                        skip='''
                         # Now download the datafile itself from url file_url 
                         cmd4 = "wget -N -nv -x -nH -P /data "+file_url
-			# wget manuals: http://www.gnu.org/software/wget/manual/wget.html;   http://www.gnu.org/software/wget/manual/
-			#  -N means wget will ask the server for the last-modified date. If the local file has the same timestamp as the server, or a newer one, the remote file 
-			#     will not be re-fetched. However, if the remote file is more recent, Wget will proceed to fetch it.
+                        # wget manuals: http://www.gnu.org/software/wget/manual/wget.html;   http://www.gnu.org/software/wget/manual/
+                        #  -N means wget will ask the server for the last-modified date. If the local file has the same timestamp as the server, or a newer one, the remote file 
+                        #     will not be re-fetched. However, if the remote file is more recent, Wget will proceed to fetch it.
                         # -nv means not verbose; restrict the screen output. -v is very verbose logging.
                         #  -x means make dirs, when needed.  
                         # -nH means do not use the remote domain hostname, the 'data-out.unavco.org' part in ftp://data-out.unavco.org/pub/rinex/obs/2013/334/acp13340.13d.Z 
@@ -463,13 +478,14 @@ def parseOneSiteMetadata ():
                         # options not used:
                         # --mirror is for recurvise downloads.
                         #  -c means 'continues if interrupted', and skip downloading if file is there already. But -c checks for EXACT same size and same name,
-                        #  so the wget with -c downlaod FAILS if the file size has changed as does happen at UNAVCO, and gives status 2048 error.  Don't use -c!
+                        #  so the wget with -c download FAILS if the file size has changed as does happen, and gives status 2048 error. SO - Don't use -c!
                         # -N is right for our use: get a newer version, regardless of size changes, and don't download if not newer.
 
                         if isPriorLoad:
                             logWrite( "     Verify already having this data file with command "+cmd4)  #  check for OK name and size if already here.
                         else :
-                            # full log logWrite( "     Download this data file with command "+cmd4)  #  get the file if not already here.
+                            # full log 
+                            logWrite( "     Download this data file with command "+cmd4)  #  get the file if not already here.
                             pass
  
                         cstatus4 = os.system(cmd4)
@@ -481,6 +497,7 @@ def parseOneSiteMetadata ():
                         else :
                             logWrite("     PROBLEM: command "+cmd4+"\n     returned status="+`cstatus4`+".  Repeat that wget command by hand, with -v verbose (not -nv) to see error.")
                             nogetcount +=1
+                        '''
                  else :
                         pass
 
@@ -698,30 +715,36 @@ cursor = gsacdb.cursor()
 
 # open log file; also describing processing results which need later attention:
 dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file name
-logfilename = "/dataworks/logs/mirrorData.py.log."+dom
+# CHANGE: set path to log file:
+# like perhaps logfilename = "/dataworks/logs/mirrorData.py.log."+dom
+# or a local file 
+logfilename = "mirrorData.py.log."+dom
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
 
 
+# compose the remote GSAC's API query string, using Linux 'curl' utility, like
+# /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"  > somefilename.csv
 
-# compose the remote GSAC's API query string.
-httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc&site.interval=interval.normal&user=sgc" '
+# first make httppart. note that you must include " " in the string:
+# CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
+# CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unknown&site.interval=interval.normal" '
 # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
 
 # in case of separate station IDs:
 if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
         # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=sgc"'
+        # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unknown"'
         logfilename = logfilename + ".extras"
 
-
-
-
-# compose the command to make the query using the Linux 'curl' command line utility:
+# compose the complete 'curl' command line:
 cmd1 = "/usr/bin/curl -L "+ httppart + " > dataworks_sites_full.csv"
 # -L handles any HTML address redirect on remote server end.
 
-logFile     = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name.
+logFile     = open (logfilename, 'w')  # NOTE this creates a NEW empty file of the same log file name (with day of month), destroying the previous log file of this name from the previous month.
+
 logWrite( "\n    Run mirrorData.py  ")
 logWrite(   "    Process to search for and download GPS data files from the remote GSAC, from _"+datadatefrom+"_ through _"+datadateto+"_")
 logWrite(   "    Log file describing processing by mirrorData.py")
@@ -743,7 +766,7 @@ if cstatus1 == 0 :
     listFile = open ("dataworks_sites_full.csv");
     allLines = listFile.readlines()
     linecount = len(allLines)
-    logWrite( "\n    remote GSAC site search query succeeded. Have site list dataworks_sites_full.csv with "+`linecount-1`+" stations. ")
+    logWrite( "\n    remote GSAC site search query succeeded. Have site list dataworks_sites_full.csv with "+`linecount-1`+" station equipment sessions. ")
     listFile.seek(0) # rewind to beginning
 
     # Main loop on all stations
@@ -752,32 +775,30 @@ if cstatus1 == 0 :
       siteline = listFile.readline() 
 
       # skip first 4 header lines:
-      if (i>=4):  # and i<7):  for test limit 
+      if (i>=4):  # and i<7):  for testing 
 
         linelist= string.split( siteline, "," )
-        logWrite("      the station's metadata line = _" +siteline[:-1] + "_ " );
+        #logWrite("      the station's metadata line = _" +siteline[:-1] + "_ " );
         thissitecode = (linelist[0])
 
         #  the 28th item is  networks names string    ";" separated
         networks = linelist[28]
-        logWrite("      the station's own network(s) names string = _" +networks + "_ " );
+        #logWrite("      the station's own network(s) names string = _" +networks + "_ " );
 
-        # CHANGE
-        # look to NOT get local stations such as "GeoRED" stations put back in the GSAC where they originated:
+        # CHANGE # look to NOT get local stations such as "GeoRED" stations put back in the your GSAC, where they originated:
         #if "GeoRED" in networks:
-        #        logWrite("      SKIP copying any data from UNAVCO for the GeoRED station _"+ thissitecode +" since this agency already has GeoRED data; go to next station line in metadata file:" );
-        #        continue
+        #     logWrite("      SKIP copying any data from remote GSAC for the GeoRED station _"+ thissitecode +" since already have all GeoRED data; go to next station line in metadata file:" );
+        #     continue
 
         # for debugging, to limit to either of two sites use code like this if ( ("USMX"== thissitecode or "POAL"==thissitecode) and  4== len(thissitecode)):
 
-        #  do all stations:
-
+        # Normally, do all stations:
         if ( 4== len(thissitecode)):
             # query the remote GSAC server for this one station's data file info, with results in a csv file:
             httppart = ' "http://www.unavco.org/gsacws/gsacapi/file/search?file.sortorder=ascending&site.code='+thissitecode+'&file.datadate.from='+datadatefrom+'&output=file.csv&site.name.searchtype=exact&site.code.searchtype=exact&limit=5000&file.datadate.to='+datadateto+'&site.interval=interval.normal" '
             cmd2= "/usr/bin/curl -L "+ httppart + " > data_file_info.csv"
-            sitecount += 1 # LOOK actually counts station sessions not stations 
-            logWrite("\n   "+`sitecount`+"  Next station session for station "+thissitecode+":" )
+            sitecount += 1
+            logWrite("\n   "+`sitecount`+"  Next equipment session, at station "+thissitecode+":" )
 
             testing = ''' to only do 3 stations around station count near 72 such as lcsb
             if ( sitecount < 70 ):
@@ -786,7 +807,7 @@ if cstatus1 == 0 :
                continue
             '''
 
-            logWrite(  "   Get metadata about all gps data files from station "+thissitecode+" in the given date range,  with linux command \n    "+cmd2)
+            logWrite(  "   Get datafiles' metadata from "+thissitecode+" in the given date range,  with linux command \n    "+cmd2)
             cstatus2 = os.system(cmd2)
             if cstatus2 == 0 :
                 parseOneSiteMetadata()
@@ -800,7 +821,7 @@ else :
     logWrite( "  PROBLEM: Linux comand to get the complete list of sites failed: "+ cmd1 +"\n")
 
 
-logWrite( "\n  \n        Summary of mirroring data files from remote GSAC such as UNAVCO, during "+datadatefrom+" to "+datadateto+":")
+logWrite( "\n  \n        Summary of mirroring data files from remote GSAC, during "+datadatefrom+" to "+datadateto+":")
 logWrite( "\n          number of "+stationgroup+" station sessions in the remote GSAC archive checked for GNSS data files in this time interval: "+`numbstawithdata`)
 logWrite( "\n          obs file count=   "+`countobs`)
 logWrite(   "          nav file count=   "+`countnav`)
