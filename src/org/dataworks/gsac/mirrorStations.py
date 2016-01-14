@@ -3,12 +3,14 @@
  filename              : mirrorStations.py
  author                : Stuart Wier 
  created               : 2014-09-03
- updates               : 2016-01-12
+ latest update         : 2015-01-14 improve comments and log file wording.
 
  exit code(s)          : 0, success
-                       : sys.exit (1) , curl failed
+                       : sys.exit (1), curl failed
 
- description           The use is:
+ description           UNAVCO GSAC, "Dataworks code" to populate the GSAC database station table and equip_config table information using a query to another GSAC for the information.
+
+                       The use is:
                        1. to make the initial population of a Dataworks database with all stations in the network, and all the equipment sessions at each station.
                        2. to find and add newly-added stations in the network (and the new equipment sessions at that station).
                        3. to update existing equipment sessions (db equip_config records), when the metadata was changed at the remote GSAC. Usually session stop_time.
@@ -22,17 +24,18 @@
 
  configuration:        : First, one time only, for your network and operations, revise satellite_system ="GPS"    # default  could be for example "GPS,GLONASS"   CHANGE    near line 487
  
-			           for CHANGE:
+                         and see to these CHANGE lines:
 
-			           CHANGE # look to NOT get local stations such as "GeoRED" stations put back in the SGC GSAC, where they originated, enable code near line 480.
+                       : CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
+                       : CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
 
-                       and set the line
-                       network_id     = 1    # in the database, COCONet's network id number, or whatever your network is. CHANGE
+			           : CHANGE # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
 
-			           and set the value of logflag to choose if you want to see output to the terminal:
-                       logflag =1                 # controls screen output.  CHANGE: USE =1 for routine operations. OR use =2 to print log lines to screen, for testing, near line 674
+			           : set the value of logflag to choose if you want to see output to the terminal:
+                         logflag =1  # controls screen output.  CHANGE: USE =1 for routine operations. OR use =2 to print log lines to screen, for testing, near line 674
                        
- usage:                Run this script daily with the Dataworks 'ops' account's  Linux crontab job, to look for new or changed station info:
+
+ usage:                    Run this script (as with Linux crontab job), to look for new or changed station info.
                   
                            This Python is run with a command like this:
 
@@ -67,16 +70,16 @@
 
                           Running the process takes about 1 second per site; and makes a log file, /dataworks/logs/mirrorStations.py.log
 
-                          Look at the log file after each run.  Look for errors noted in lines with "PROBLEM" and LOOK  and fix any problems.
+                        2. Look at the log file after each run.  Look for errors noted in lines with "PROBLEM" and LOOK  and fix any problems.
 
-                          Update these database tables by hand when a new station is added (no such data is available from the from GSAC): 
+                        3. Update these database tables by hand when a new station is added (no such data is available from the from GSAC): 
                            radome_serial_number in equip_config; and in table station, update field values for  operator_agency_id, 
                                   and data_publisher_agency_id. You may need to insert a new agency in the db agency table, first.
 
  tested on             : Python 2.6.5 on Linux (Ubuntu) ; CentOS Python 2.6 
 
  *
- * Copyright 2014, 2015, 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014, 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -134,31 +137,36 @@ def load_db ():
     # The metadata from GSAC is provided in a "GSAC full csv file", named in this case dataworks_stations.csv.
 
     dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file name
-    #logfilename = "mirrorStations.py.log."+dom   # CHANGE use this for a local log file
-    logfilename = "/dataworks/logs/mirrorStations.py.log."+dom
+
+    # local log file:
+    logfilename = "mirrorStations.py.log."+dom   # CHANGE use this for a local log file
+    # or with full path like logfilename = "/dataworks/logs/mirrorStations.py.log."+dom
+    logFile = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name from previous month.
+
     timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
+    logWrite("\n    Log of mirrorStations.py "+timestamp + ".  The log file is "+logfilename )
+    logWrite(  "    Look at this log file after each run.  Look for errors noted in lines with PROBLEM or LOOK and fix those issues. ***** *****")
 
     # compose the remote GSAC's API query string.
     # like /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"                      > somefilename.csv
-    httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc&site.interval=interval.normal" '
-    # original httppart=  ' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=sgc" '
+
     # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
+    # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+    httppart=  ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unknown&site.interval=interval.normal" '
 
     # in case of separate station IDs:
     if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
         # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=sgc"'
+        # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unknown"'
         logfilename = logfilename + ".extras"
 
     # compose the command to make the query using the Linux 'curl' command line utility:
     cmd1 = "/usr/bin/curl -L "+ httppart + " > dataworks_stations.csv"
     # -L handles any HTML address redirect on remote server end.
 
-    logFile     = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name.
-
-    skip='''logWrite("\n    Log of mirrorStations.py "+timestamp + ".  The log file is "+logfilename )
-    logWrite(  "    Look at the log file after each run.  Look for errors noted in lines with PROBLEM or LOOK and fix those issues. ***** *****")
+    skip='''
     logWrite(  "    mirrorStations.py loads or updates a GSAC dataworks database with station and equipment session data from a 'GSAC full csv file' made by the GSAC server."  )
     logWrite(  "    The use is:"  )
     logWrite(  "       1. To make the initial (first time) population of your Dataworks database with all stations in the network, and all the equipment sessions at each station."  )
@@ -169,7 +177,7 @@ def load_db ():
     if ";" in stationgroup or len(stationgroup)<5:
       logWrite("\n    Update these individual sites: "+stationgroup );
     else:
-      logWrite("\n    Update all sites in the station network "+stationgroup );
+      logWrite("\n    Update all stations in the "+stationgroup+" network." );
 
     logWrite(    "    First, get site and equipment metadata at those sites from the remote GSAC. The GSAC API Linux command is \n    "+cmd1 )
     sys.stdout.flush()
@@ -291,7 +299,7 @@ def load_db ():
              # as in CN45,CN_Toco_GPS_2013,10.837,-60.9383,33.2,building wall,,2050-01-01T00:00:00,1980-01-01T00:00:00,TRM59800.00,SCIT,5225354537,0.0083, ...
              if  "2050-01-01" in line and "1980-01-01" in line:
                 # one file line is one equipment session for one station. 
-                logWrite("\n    "+ `(i-3)` + " line in station-session file: "+line  );
+                logWrite("\n    "+ `(i-3)` + " Next line in stations' equipment session file: "+line  );
                 # SKIP this station,  and go try the next line
                 logWrite("      This is a 'pending' station an UNAVCO, with start time 2050-01-01 and end time in 1980; skip entry of this metadata."  );
                 continue
@@ -474,7 +482,7 @@ ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-1
              networks =    strlist[28]
 
              # CHANGE
-             # look to NOT get local stations such as "GeoRED" stations put back in the GSAC where they originated:
+             # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
              #if "GeoRED" in networks:
              #   logWrite("\n >>> SKIPPED GeoRED station _"+code +"  <<<< <<<< <<<< \n")
              #   continue
@@ -529,7 +537,7 @@ ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-1
                    status_id      = 1    # Active 
                    access_id      = 2    # full public access
                    ellipsoid_id   = 1    # WGS 84
-                   network_id     = 1    # COCONet or whatever your network is. CHANGE
+                   network_id     = 1    # COCONet or whatever your network is.
                    agency_id      = 30   # "not supplied by remote GSAC           (and not shown by GSAC, so no way to get the value from the db by remote user.)
 
                    # get  or set the id for the foreign keys, to be reset in in this program based in onfo in the gsac full csv input file:
@@ -723,7 +731,7 @@ ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-1
              #doUpdateStopTime=False
              # but when you got some kind of match session in the db:
              if  haveit: 
-                 logWrite("      This session # "+`esid`+" is already in the db. ") 
+                 logWrite("      This equipment session at id "+`esid`+" is already in the db equip-config table.") 
                  if newequipSessStartTimeDT == dbeqstart  and newequipSessStopTimeDT == dbeqstop :
                      logWrite("      No new metadata for this station from the remote GSAC archive today (the former and new session start and stop times match). ") 
                      #logWrite("      Done with this equip session data set line. Go try next input metadata line from the  GSAC .csv file.\n  ") 
@@ -996,7 +1004,7 @@ global stationgroup
 global eqscount
 global donecount
 
-logflag =1 # CHANGE USE =1 for routine operations.  use 2 for testing  and details
+logflag =2 # CHANGE USE =1 for routine operations.  use 2 for testing  and details
 
 # open log file describing processing results 
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
