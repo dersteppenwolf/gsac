@@ -2067,7 +2067,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (doFlat) {
             System.err.println("GSAC    HtmlOutputHandler.java - hide buggy flat map code until debugged" );
-            /* hide 4 jan 2016 until FIX DEBUG
+            /* hide 4 jan 2016 until FIX DEBUG flat map
             StringBuffer pw = new StringBuffer();
             js.append(createFlatMap(request, resources, pw, width, height,
                                     addToggle, showList));
@@ -2338,7 +2338,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         } // added table column's labels
 
 
-        // NOW make a row in the table for each of one or more sites, i.e. fill in real value for each row:
+        // NOW make a row in the table for each of one or more sites, i.e. fill in real field values for each row:
         int cnt = 0;
         for (GsacResource resource : resources) {
             GsacResourceManager resourceManager =
@@ -2397,8 +2397,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             */
 
 
-            sb.append("<td " + clickEvent + ">");
             // show Location (lat, longi, vertical measure of some kind)
+            sb.append("<td " + clickEvent + ">");
             //    add latitude  to next data box in row:
             sb.append(formatLatLon(resource.getLatitude()));
             //    comma separator between latitude and longitude may be confused with European comma for decimal point, so use space:
@@ -2429,16 +2429,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
            
-            // LOOK  usuall here but only for files:  enter row value for Publish Date
+            // LOOK  usual here but only for files:  enter row value for Publish Date
 
-             
             String dateString = formatDate(resource.getPublishDate());
             if ( dateString  != null && dateString.length() >3)  { 
                 sb.append("<td " + clickEvent + ">");
                 if ( dateString != null) {
                     sb.append( dateString );
                 } else {
-                    sb.append("N/A");
+                    ; // sb.append("N/A");
                     //sb.append(" ");
                 }
                 sb.append("</td>");
@@ -2462,12 +2461,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                    }
                sb.append("</td>");
             }
+            /*
             else {
                sb.append("<td " + clickEvent + ">");
                sb.append("N/A"); // LOOK weird ; appending space " " causes table td outfiles to disappear!
                sb.append("</td>");
                //System.err.println(" 3 null ldt");
             } 
+            */
             
 
             // make column value in many-site HTML results table labeled Networks:
@@ -2484,6 +2485,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                     sb.append( HtmlUtil.col( getGroupHtml( resource.getResourceGroups(), resource.getResourceClass(), true) + "&nbsp;"));
                 }
             }
+
             // end ROW
             sb.append("</tr>\n");
         }
