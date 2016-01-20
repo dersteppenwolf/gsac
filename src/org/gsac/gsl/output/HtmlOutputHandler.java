@@ -367,10 +367,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             return;
         }
         String[][] tuples = new String[][] {
-            { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },
-            { SORT_FILE_TYPE, msg("Resource Type") },
-            { SORT_FILE_SIZE, msg("Size") },
-            { SORT_FILE_PUBLISHDATE, msg("Publish Date") }
+            { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },                 // says "-Any-"
+            { SORT_FILE_PUBLISHDATE, msg("Publish Date") },
+            { SORT_FILE_DATADATE, msg("Data Date") }                      // NOTE NO comma after last item in list
+            //{ SORT_FILE_SIZE, msg("File Size") },
+            //{ SORT_FILE_TYPE, msg("Resource Type") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
         String valueWidget        = HtmlUtil.select(ARG_FILE_SORT_VALUE, tfos,
@@ -2066,7 +2067,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         if (doFlat) {
-            System.err.println("GSAC    HtmlOutputHandler.java - hide buggy flat map code until debugged" );
+            //System.err.println("GSAC    HtmlOutputHandler.java - hide buggy flat map code until debugged" );
             /* hide 4 jan 2016 until FIX DEBUG flat map
             StringBuffer pw = new StringBuffer();
             js.append(createFlatMap(request, resources, pw, width, height,
