@@ -369,9 +369,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         String[][] tuples = new String[][] {
             { ARG_UNDEFINED_VALUE, ARG_UNDEFINED_LABEL },                 // says "-Any-"
             { SORT_FILE_PUBLISHDATE, msg("Publish Date") },
-            { SORT_FILE_DATADATE, msg("Data Date") }                      // NOTE NO comma after last item in list
-            //{ SORT_FILE_SIZE, msg("File Size") },
-            //{ SORT_FILE_TYPE, msg("Resource Type") }
+            { SORT_FILE_DATADATE, msg("Data Date") },                      // NOTE NO comma after last item in list
+            { SORT_FILE_SIZE, msg("File Size") },
+            { SORT_FILE_TYPE, msg("File Type") }
         };
         List<TwoFacedObject> tfos = toTfoList(tuples);
         String valueWidget        = HtmlUtil.select(ARG_FILE_SORT_VALUE, tfos,
