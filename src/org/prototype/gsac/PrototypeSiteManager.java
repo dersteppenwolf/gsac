@@ -96,7 +96,14 @@ public class PrototypeSiteManager extends SiteManager {
      */
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
+
+        long t1 = System.currentTimeMillis();
+
         super.handleRequest(request, response);
+
+        long t2 = System.currentTimeMillis();
+        System.err.println("GSAC: local SiteManager handleRequest() took "+ (t2-t1)+ " ms");
+
     }
 
     /** do we get the data ranges: where used? */
@@ -1012,7 +1019,7 @@ public class PrototypeSiteManager extends SiteManager {
               break;
               }
             } finally {
-               ;
+               getDatabaseManager().closeAndReleaseConnection(statement);
             }
 
         /*
@@ -1529,6 +1536,10 @@ public class PrototypeSiteManager extends SiteManager {
                 }
             }
             Collections.sort(groups);
+
+            //System.err.println("       doGetResourceGroups(): close conn ");
+            getDatabaseManager().closeAndReleaseConnection(statement);
+
             return groups;
 
         } catch (Exception exc) {
