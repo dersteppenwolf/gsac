@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015,2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -485,7 +485,6 @@ public class PrototypeFileManager extends FileManager {
         //tables.add(Tables.RECEIVER_SESSION.NAME);
 
         // show sql SQL query command string
-        //System.err.println("GSAC: FileHandler:handleRequest(): db SQL query is:" );
         //System.err.println("SELECT "+cols+" FROM "+tables+" WHERE "+mainClause+" ;");
 
         // do sql query type "select distinct " columns:
@@ -493,12 +492,14 @@ public class PrototypeFileManager extends FileManager {
 
         Statement statement = getDatabaseManager().select(distinctCols,  tables,  mainClause, " order by " + Tables.DATAFILE.COL_DATAFILE_START_TIME+", "+Tables.STATION.COL_FOUR_CHAR_NAME, -1);
 
+        // System.err.println("GSAC: FileManager:handleRequest():  do SQL" );
         try {
             ResultSet results = null;
 
             // get each line of values returned from the sql select command
-            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
-            //  or SqlUtil.Iterator iter = SqlUtil.getIterator(statement, request.getOffset(), request.getLimit());
+            //SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
+            //  or SqlUtil.Iterator 
+            SqlUtil.Iterator iter = SqlUtil.getIterator(statement, request.getOffset(), request.getLimit());
 
             // process each line (row) returned by the select query: 
             while ((results = iter.getNext()) != null) {

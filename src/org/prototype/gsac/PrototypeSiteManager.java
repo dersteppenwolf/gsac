@@ -101,8 +101,11 @@ public class PrototypeSiteManager extends SiteManager {
 
         super.handleRequest(request, response);
 
+        int cct= getDatabaseManager().getConnectionCount();
+        System.err.println ("GSAC: local SiteManager; now have " + cct +" db connections" ); 
+
         long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: local SiteManager handleRequest() took "+ (t2-t1)+ " ms");
+        System.err.println ("GSAC: local SiteManager:handleRequest() took "+ (t2-t1)+ " ms");
 
     }
 
