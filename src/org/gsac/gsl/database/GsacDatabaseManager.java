@@ -308,7 +308,7 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         dataSource.setRemoveAbandonedTimeout(60);
         dataSource.setLogWriter(new PrintWriter(System.err));
 
-        //2010: LOOK TODO: For now log abandoned but we'll want to turn this off for performance sometime
+        //2010: LOOK  For now log abandoned but we'll want to turn this off for performance sometime
         dataSource.setLogAbandoned(true);
 
         return dataSource;
@@ -424,22 +424,24 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
     public Connection getConnection() throws Exception {
         Connection connection;
 
-        // shows getConnection jdbcUrl:_jdbc:mysql://localhost:3306/IsCGPS_GSAC_database_
+        //  System.err.println("     getConnection jdbcUrl:_" + jdbcUrl);
+        //uses for example jdbcUrl:_jdbc:mysql://localhost:3306/IsCGPS_GSAC_database_
 
         // original JMcW code
         //TODO: lets try out not using the connection pooling
         connection = DriverManager.getConnection(jdbcUrl, connectionProps);  
-        //        connection = dataSource.getConnection();
+        //        connection = dataSource.getConnection();   // LOOK what is this? SW
         
         // TRY to get non-latin or non-ascii charcters from a mysql query for station names, want to do
         //      like     DriverManager.getConnection( "jdbc:mysql://"+host+"/"+dbName+"?useUnicode=true&characterEncoding=UTF-8",user,pass);
-        //  System.err.println("     getConnection jdbcUrl:_" + jdbcUrl);
-        //         gives         getConnection jdbcUrl:_jdbc:mysql://localhost:3306/IsCGPS_GSAC_database
-        //connection = DriverManager.getConnection(jdbcUrl+"?useUnicode=true&characterEncoding=UTF-8", connectionProps);  
-        // no change!!!!!  still gives bad chars in station names from iceland db, which are correct Icelandic letters in the mysql database
+        //  connection = DriverManager.getConnection(jdbcUrl+"?useUnicode=true&characterEncoding=UTF-8", connectionProps);  
+        // no change.  still gives bad chars in station names from iceland db, which are correct Icelandic letters in the mysql database
+        // see CREATE line in db .sql file.
 
         incrConnectionCount();
-        //        System.err.println ("open:" + connectionCnt);
+        int cct=getConnectionCount();
+        System.err.println ("GSAC: GsacDatabaseManager:opened db connection; now have " + cct +" connections" ); //     +"  with jdbcUrl=" + jdbcUrl);
+
         return connection;
     }
 
