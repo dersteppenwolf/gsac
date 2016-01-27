@@ -483,8 +483,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      */
     public void handleRequest(GsacRequest request, GsacResponse response) throws Exception {
 
-        //System.err.println("    GsacResourceManager handleRequest called "); // at time "+getUTCnowString() );
-        System.out.println    ("GSAC: new request "+request.toString() +"   from IP "+request.getOriginatingIP() );
+        //System.out.println    ("GSAC: GsacResourceManager:handleRequest() incoming new request is "+request.toString() +"   from IP "+request.getOriginatingIP() );
 
         String columns = getResourceSelectColumns();
         if (columns == null) {
@@ -536,7 +535,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         int rowCount = processStatement(request, response, statement, request.getOffset(), request.getLimit());
         // DEBUG
         long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: GsacResourceManager:processStatement() request's SQL completed and got "+rowCount+" results in " + (t2 - t1) + " ms"); // at time "+getUTCnowString());
+        System.err.println("GSAC: GsacResourceManager:handleRequest(): SQL completed and got "+rowCount+" results in " + (t2 - t1) + " ms"); // at time "+getUTCnowString());
+
+        // dup of one call in process statement getDatabaseManager().closeAndReleaseConnection(statement);
     }
 
 
@@ -592,7 +593,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         }
         iter.close();
 
-        getDatabaseManager().closeAndReleaseConnection(statement);
+        // this is taken care of by the same call in code after each process Statement call:   getDatabaseManager().closeAndReleaseConnection(statement);
 
         int itcount=iter.getCount();
 
@@ -600,7 +601,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //System.err.println("      GsacResourceManager, processStatement() took "+ (t2-t1)+ " ms"); // DEBUG
 
         return itcount;
-    }
+    } // end process statement
 
 
 
