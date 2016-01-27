@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -102,8 +102,17 @@ public class DataworksSiteManager extends SiteManager {
      */
     public void handleRequest(GsacRequest request, GsacResponse response)
             throws Exception {
+        long t1 = System.currentTimeMillis();
+
         super.handleRequest(request, response);
         // which is in GSAC/gsac-code/src/org/gsac/gsl/GsacResourceManager.java
+
+        int cct= getDatabaseManager().getConnectionCount();
+        System.err.println ("GSAC: local DataworksSiteManager; now have " + cct +" db connections" );
+
+        long t2 = System.currentTimeMillis();
+        System.err.println ("GSAC: local DataworksSiteManager:handleRequest() took "+ (t2-t1)+ " ms");
+
     }
 
     /** do we get the data ranges */
