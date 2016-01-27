@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -940,9 +940,12 @@ public class GsacRequest implements GsacConstants {
      */
     public int getLimit() {
         int limit = get(ARG_LIMIT, DEFAULT_LIMIT);
-        // debug: shows actual limit to hamw many items returned from a query:
-        //         System.err.println(" limit= " + limit);
-        return Math.min(limit, MAX_LIMIT);
+        // debug: shows actual limit to how many items returned from a query:
+        // System.err.println("     GsacRequest:getLimit() : limit=" + limit+"."); //  MAX_LIMIT, ARG_LIMIT, DEFAULT_LIMIT
+        // or, what for?:
+        // return Math.min(limit, MAX_LIMIT);
+
+        return limit;
     }
 
     /**
