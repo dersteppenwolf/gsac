@@ -531,11 +531,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
 
         // DEBUG: to time the SQL query:
-        long t1 = System.currentTimeMillis();
+        //long t1 = System.currentTimeMillis();
+
         int rowCount = processStatement(request, response, statement, request.getOffset(), request.getLimit());
-        // DEBUG
-        long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: GsacResourceManager:handleRequest(): SQL completed and got "+rowCount+" results in " + (t2 - t1) + " ms"); // at time "+getUTCnowString());
+
+        //long t2 = System.currentTimeMillis();
+        //System.err.println("GSAC: GsacResourceManager:handleRequest(): SQL completed and got "+rowCount+" results in " + (t2 - t1) + " ms"); // at time "+getUTCnowString());
+        
 
         // dup of one call in process statement getDatabaseManager().closeAndReleaseConnection(statement);
     }
