@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2010-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -492,7 +492,7 @@ public class GsacRepository implements GsacConstants {
 
 
     /**
-     * Main entry point for incoming requests
+     * Main entry point for incoming GSAC requests.
      *
      * @param request the request
      *
@@ -503,11 +503,12 @@ public class GsacRepository implements GsacConstants {
             throws IOException, ServletException {
 
         // DEBUG System.out.println    ("GSAC: Start GsacRepository:handleRequest()  at time "+getUTCnowString()) ;  //+", from IP "+request.getOriginatingIP() );
-        // makes many on each new gsac deploy om tomcat
+        // makes many on each new gsac deploy o tomcat
 
         String uri   = request.getRequestURI();
 
-        // to list every single thing used to make a new WEB PAGE, not the GSAC query result: System.err.println("GSAC: got requestURI:_" + uri +"_" ); // debug only
+        // to list every single thing used to make a new WEB PAGE, not the GSAC query result: 
+        // System.err.println("GSAC: got requestURI:_" + uri +"_" ); // debug only
 
         int    index = uri.indexOf("?");
         if (index >= 0) {
@@ -530,6 +531,9 @@ public class GsacRepository implements GsacConstants {
             // debug only System.err.println("GSAC: ' a head request': got requestURI:_" + uri);
             return;
         }
+
+        // Time the complete GSAC request handling               ttttime
+        long starttime = System.currentTimeMillis();
 
         // import java.text.SimpleDateFormat;
         //Date now = new Date();
@@ -605,26 +609,46 @@ public class GsacRepository implements GsacConstants {
                 
                 String reqstr=request.toString();
 
+                // DEBUG
                 //if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
-                //    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() ); // DEBUG
+                //    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() ); 
                 //}
 
-                int resourceCnt = -1;
+                int resourceCnt = 0;
                 if (response != null) {
                     resourceCnt = response.getNumResources();
                 }
-                getLogManager().logAccess(request, what, resourceCnt);
+                //  getLogManager().logAccess(request, what, resourceCnt);
 
-                // good: System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP()); 
-                System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() + "  or RequestIP "+ request.getRequestIP()  ); 
-                // look weird the IP from request.getOriginatingIP() can show the IP 69.44.86.107 = wes.unavco.org NOT the actual remote non-unavco incoming IP!
-                // + "; URI "+request.getRequestURI(); // +"  resourceCnt ="+resourceCnt ); // DEBUG
+                /* debug ddd
+                // Time the complete GSAC request handling               ttttime
+                // from above: long starttime = System.currentTimeMillis();
+                long donetime = System.currentTimeMillis();
+                // if request was a file search, site search, or something else like asking for a page on a GSAC web tool
+                if (reqstr.indexOf("file/search")>=0 ) {
+                    System.err.println("GSAC: GsacRepository: GSAC file  search : total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
+                } else if (reqstr.indexOf("site/search")>=0 ) {
+                    System.err.println("GSAC: GsacRepository: GSAC site  search : total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
+                } else {
+                    System.err.println("GSAC: GsacRepository: GSAC other request: total time used " + (donetime - starttime) + "ms about "+ (resourceCnt+1) +" items to return"); 
+                }
+                */
+
+                System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    //  + "  or RequestIP "+ request.getRequestIP()  ); 
+
+                /* DEBUG
+                // LOOK weird: the IP from request.getOriginatingIP() can show the IP 69.44.86.107 = wes.unavco.org NOT the actual remote non-unavco incoming IP!
+                // known to occur for COCONet GSACs
+                // + "; URI "+request.getRequestURI(); // +"  resourceCnt ="+resourceCnt ); 
+                */
 
             }
         } catch (UnknownRequestException exc) {
             System.out.println         ("GSAC: new request is unrecognized: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
             getLogManager().logError   ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
             request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC: unknown request is: " + uri);
+            long donetime = System.currentTimeMillis();
+            System.err.println("GSAC: GsacRepository: bad GSAC request: total time used " + (donetime - starttime) + "ms"); 
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection
         } catch (Exception exc) {
@@ -635,6 +659,8 @@ public class GsacRepository implements GsacConstants {
             System.out.println         ("GSAC:         the stacktrace is " );
             exc.printStackTrace(System.out);
             getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
+            long donetime = System.currentTimeMillis();
+            System.err.println("GSAC: GsacRepository: bad GSAC request 2: total time used " + (donetime - starttime) + "ms"); 
             try {
                 request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
             } catch (Exception ignoreThisOne) {}
