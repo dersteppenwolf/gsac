@@ -2068,13 +2068,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         if (doFlat) {
             //System.err.println("GSAC    HtmlOutputHandler.java - hide buggy flat map code until debugged" );
-            /* hide 4 jan 2016 until FIX DEBUG flat map
+            // * hide 4 jan 2016 until FIX DEBUG flat map
+
             StringBuffer pw = new StringBuffer();
-            js.append(createFlatMap(request, resources, pw, width, height,
-                                    addToggle, showList));
+            js.append(createFlatMap(request, resources, pw, width, height, addToggle, showList));
             tabTitles.add(msg("Map"));
             tabContents.add(pw.toString());
-            */
+
+            // */
         }
 
         return js.toString();
