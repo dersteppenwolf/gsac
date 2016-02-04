@@ -61,7 +61,7 @@ import javax.servlet.http.*;
 
 
 /**
- * This is the base class for the GSL repository. The main entry point is
+ * This is the base class for the GSAC GSL repository. The main entry point is
  * the method:{@link #handleRequest(GsacRequest)}
  * This serves to dispatch the request to the appropriate handler
  *
@@ -137,7 +137,6 @@ public class GsacRepository implements GsacConstants {
     private List<GsacResourceManager> resourceManagers =
         new ArrayList<GsacResourceManager>();
 
-
     /** html header. Initialize in initServlet */
     private String htmlHeader = "<html><body>";
 
@@ -149,7 +148,6 @@ public class GsacRepository implements GsacConstants {
 
     /** html footer for mobile. Initialize in initServlet */
     private String mobileFooter = "</body></html>";
-
 
     /** holds phrase translations */
     private Properties msgProperties = new Properties();
@@ -175,6 +173,9 @@ public class GsacRepository implements GsacConstants {
 
     /** Keeps track of the number of service requests for the stats page */
     private int numServiceRequests = 0;
+
+    /** Keeps track of the  requests  */
+    private long requestsCount = 0L;
 
     /** for the stats page */
     private Date startDate = new Date();
@@ -535,6 +536,8 @@ public class GsacRepository implements GsacConstants {
         // Time the complete GSAC request handling               ttttime
         long starttime = System.currentTimeMillis();
 
+        requestsCount++;
+
         // import java.text.SimpleDateFormat;
         //Date now = new Date();
         //SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z"); // ISO 8601
@@ -620,21 +623,32 @@ public class GsacRepository implements GsacConstants {
                 }
                 //  getLogManager().logAccess(request, what, resourceCnt);
 
-                /* debug ddd
+                // / *  debug ddd
                 // Time the complete GSAC request handling               ttttime
                 // from above: long starttime = System.currentTimeMillis();
                 long donetime = System.currentTimeMillis();
                 // if request was a file search, site search, or something else like asking for a page on a GSAC web tool
                 if (reqstr.indexOf("file/search")>=0 ) {
-                    System.err.println("GSAC: GsacRepository: GSAC file  search : total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
-                } else if (reqstr.indexOf("site/search")>=0 ) {
-                    System.err.println("GSAC: GsacRepository: GSAC site  search : total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
-                } else {
-                    System.err.println("GSAC: GsacRepository: GSAC other request: total time used " + (donetime - starttime) + "ms about "+ (resourceCnt+1) +" items to return"); 
-                }
-                */
+                    //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: this file search total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
+                    System.err.println("GSAC: request # "+requestsCount+"  " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
 
-                System.out.println    ("GSAC: completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    //  + "  or RequestIP "+ request.getRequestIP()  ); 
+                } else if (reqstr.indexOf("site/search")>=0 ) {
+                    //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: this site search total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
+                    System.err.println("GSAC: request # "+requestsCount+"  " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
+
+                } else { 
+                    if  ( (resourceCnt+1)> 0 ) {
+                    //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: other request    total time used " + (donetime - starttime) + "ms to handle "+ (resourceCnt+1) +" items to return (like a web page)"); 
+                    System.err.println("GSAC: request # "+requestsCount+"  " + (donetime - starttime) + "ms to handle "+ (resourceCnt+1) +" items to return (like a web page)"); 
+                    }
+                }
+                // */
+
+
+                // LOOK do not change this line; it is key for GSAC use metrics
+                System.out.println    ("GSAC: request # "+requestsCount+" completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    
+
+                //  + "  or RequestIP "+ request.getRequestIP()  ); 
 
                 /* DEBUG
                 // LOOK weird: the IP from request.getOriginatingIP() can show the IP 69.44.86.107 = wes.unavco.org NOT the actual remote non-unavco incoming IP!
@@ -644,26 +658,30 @@ public class GsacRepository implements GsacConstants {
 
             }
         } catch (UnknownRequestException exc) {
-            System.out.println         ("GSAC: new request is unrecognized: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
-            getLogManager().logError   ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
-            request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC: unknown request is: " + uri);
+            //getLogManager().logError   ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
+            //request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC: unknown request is: " + uri);
             long donetime = System.currentTimeMillis();
-            System.err.println("GSAC: GsacRepository: bad GSAC request: total time used " + (donetime - starttime) + "ms"); 
+            System.err.println("GSAC: request # "+requestsCount+" GsacRepository: 'unknown' GSAC request: total time used " + (donetime - starttime) + "ms"); 
+            System.out.println("GSAC: request # "+requestsCount+" GsacRepository: the request is unrecognized: "+request.toString()+ "  at time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            System.err.println("GSAC: request # "+requestsCount+" unknown request uri is: " + uri);
         } catch (java.net.SocketException sexc) {
-            //Ignore the client closing the connection
+            //Ignore the client closing the connection 
+            // LOOK check database db connection count is?
         } catch (Exception exc) {
-            //Get the actual exception
-            Throwable thr = LogUtil.getInnerException(exc);
-            System.out.println         ("GSAC: new request with Error processing request: "+request.toString()+ ", time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
-            System.out.println         ("GSAC:         the error's Java exception is: \n"+thr.toString() );
-            System.out.println         ("GSAC:         the stacktrace is " );
-            exc.printStackTrace(System.out);
-            getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
+            //getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
             long donetime = System.currentTimeMillis();
-            System.err.println("GSAC: GsacRepository: bad GSAC request 2: total time used " + (donetime - starttime) + "ms"); 
-            try {
-                request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
-            } catch (Exception ignoreThisOne) {}
+            System.err.println("GSAC: request # "+requestsCount+" 'bad' GSAC request: total time used " + (donetime - starttime) + "ms"); 
+            System.err.println("GSAC: request # "+requestsCount+" 'bad' GSAC request was " +request.toString()+"  at time "+getUTCnowString()+", from "+request.getOriginatingIP() );
+            System.err.println("GSAC: request # "+requestsCount+" 'bad' request uri is: " + uri);
+            //Get the actual exception, and log the stack trace.
+            Throwable thr = LogUtil.getInnerException(exc);
+            System.out.println("GSAC: request # "+requestsCount+" 'bad' GSAC request, error's Java exception is: \n"+thr.toString() );
+            System.out.println("GSAC: request # "+requestsCount+" 'bad' GSAC request, stacktrace is:" );
+            exc.printStackTrace(System.out);
+            // old System.out.println         ("GSAC: request # "+requestsCount+".  Request with Error processing request: "+request.toString()+ "  at time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
+            //try {
+            //    request.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred:" + thr);
+            //} catch (Exception ignoreThisOne) {}
         }
 
     }
