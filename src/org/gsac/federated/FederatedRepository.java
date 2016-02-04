@@ -118,7 +118,7 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
         } 
         else  */
         if (serverList != null) {
-            System.err.println("GSAC: Federated: servers federated in this GSAC :" + serverList);
+            //System.err.println("GSAC: Federated: servers federated in this GSAC :" + serverList);
             //Look at each repository id and find the url, name and icon properties.
             //Note: We end up asking each repository for its own information so things like the
             //name and the icon can get overwritten
@@ -133,41 +133,19 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                     continue;
                 }
                 //logInfo("Loading remote server:" + url);
-                System.err.println("GSAC: Federated: add remote server " + url );
-                //System.err.println("GSAC: Federated:                             :" + "gsac.federated." + server + ".name  at url="+url);
+                // only an initial list; some may fail to connect:  System.err.println("GSAC: Federated: add remote server " + url );
 
                 servers.add(new GsacRepositoryInfo(url,
                         getProperty("gsac.federated." + server + ".name", url), 
                         getProperty("gsac.federated." + server + ".icon", (String) null)));
             }
         } else {
-            System.err.println("GSAC: Federated: manual add servers federated in this GSAC ");
+            ;
             /*
-            servers.add(
-                new GsacRepositoryInfo(
-                    "http://cddis.gsfc.nasa.gov/gsacws", "CDDIS GSAC Server",
-                    "http://cddis.gsfc.nasa.gov/favicon.ico"));
-            servers.add(
-                new GsacRepositoryInfo(
-                    "http://www.unavco.org/gsacws",
-                    "UNAVCO GSAC Server",
+            System.err.println("GSAC: Federated: hard code to add servers to federated in this GSAC ");
                     "http://www.unavco.org/favicon.ico"));
-            servers.add(
-                new GsacRepositoryInfo(
-                    "http://geoappdev02.ucsd.edu/gsacws",
-                    "SOPAC GSAC Server",
-                    "http://sopac.ucsd.edu/favicon.ico"));
+            servers.add( new GsacRepositoryInfo( "http://geoappdev02.ucsd.edu/gsacws", "SOPAC GSAC Server", "http://sopac.ucsd.edu/favicon.ico"));
             */
-            servers.add(
-                new GsacRepositoryInfo(
-                    "http://www.unavco.org/gsacws",
-                    "UNAVCO GSAC Server",
-                    "http://www.unavco.org/favicon.ico"));
-            servers.add(
-                new GsacRepositoryInfo(
-                    "http://geogsac.ucsd.edu:8080/gsacws",
-                    "SOPAC GSAC Server",
-                    "http://sopac.ucsd.edu/favicon.ico"));
 
         }
     }
@@ -373,13 +351,13 @@ public class FederatedRepository extends GsacRepository implements GsacConstants
                         synchronized (msgBuff) {
                             msgBuff.append("<li> " + repository.getName() + ": " + message);
                         }
-                        System.err.println("GSAC: Federated : handleFederatedRequest OK  request  = "+request.toString() );
+                        //System.err.println("GSAC: Federated : handleFederatedRequest OK  request  = "+request.toString() );
                         // like good request  = /gsacfederated/gsacapi/site/search?site.code=mo*&gsac.repository=http%3A%2F%2Fgeogsac.ucsd.edu%3A8080%2Fgsacws&output=site.html&site.name.searchtype=exact&search.y=0&search.x=0&site.code.searchtype=exact&limit=500&site.interval=interval.normal
 
                         //System.err.println("GSAC: Fed: handleFederatedRequest did ok\n ");
                     } catch (Exception exc) {
                         // logError("Error processing request for server:" + repository, exc);
-                        System.err.println("GSAC: Federated : handleFederatedRequest BAD request  = "+request.toString() );
+                        //System.err.println("GSAC: Federated : handleFederatedRequest BAD request  = "+request.toString() );
                         System.err.println("GSAC: Federated: handleFederatedRequest(): Error processing request for server:" + repository );
                         System.err.println("      "+exc +"\n" );
                         //System.out.println("GSAC: request was\n      "+request.toString() +"\n" );
