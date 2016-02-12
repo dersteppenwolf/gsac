@@ -1,5 +1,5 @@
 /*
- * Copyright 2013; 2014 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2013; 2014-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -157,6 +157,8 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
      */
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
+        // System.out.println("       CsvFullSiteOutputHandler.java output handler calls handleResult" );
+
         // The next line sets output mime type (how browser handles it; text lets user see query results in a browser, and can also get form the gsac client with file name sitesfull.csv)
         // But in this case where file extension is ".csv"  the browser may probably ignore this 'text' value and try to load the file in some doc processor like Excel.
         response.startResponse(GsacResponse.MIME_CSV);
@@ -165,8 +167,7 @@ public class CsvFullSiteOutputHandler extends GsacOutputHandler {
         //Get all the sites in the results (response) from the GSAC site query made by the user: 
         List<GsacSite> sites = response.getSites();
 
-        // sitecount=0; // LOOK FIX may be a bug; resetting sitecount to zero in long lists
-        // System.out.println("       CsvFullSiteOutputHandler.java output handler calls handleResult" );
+        sitecount=0; // LOOK FIX may be a bug; resetting sitecount to zero in long lists
 
         //For each site, get and append the information :
         for (GsacSite site : sites) {
