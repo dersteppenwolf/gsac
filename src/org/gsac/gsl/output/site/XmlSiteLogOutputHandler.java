@@ -421,9 +421,15 @@ public class XmlSiteLogOutputHandler extends GsacOutputHandler {
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
                                   myFormatDateTime(equipment.getToDate())));
                 String satelliteSystem = equipment.getSatelliteSystem();
-                if (satelliteSystem.length() == 0) {
+                if (satelliteSystem == null) {
                     satelliteSystem = "GPS";
+                    System.err.println("GSAC: XmlSiteLogOutputHandler:addSiteEquip() "+site.getLongName()+" satelliteSystem is null ");
                 }
+                else if (satelliteSystem.length() == 0) {
+                    satelliteSystem = "GPS";
+                    System.err.println("GSAC: XmlSiteLogOutputHandler:addSiteEquip() "+site.getLongName()+" satelliteSystem is empty ''  ");
+                }
+
                 pw.append(makeTag(XmlSiteLog.TAG_EQUIP_SATELLITESYSTEM, "",
                                   satelliteSystem));
                 pw.append(
