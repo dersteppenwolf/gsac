@@ -646,7 +646,8 @@ public class GsacRepository implements GsacConstants {
 
 
                 // LOOK do not change this line; it is key for GSAC use metrics
-                System.out.println    ("GSAC: request # "+requestsCount+" completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    
+                //System.out.println    ("GSAC: request # "+requestsCount+" completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    
+                System.out.println    ("GSAC: completed the request "+requestsCount+"  "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() +"\n" );    
 
                 //  + "  or RequestIP "+ request.getRequestIP()  ); 
 
@@ -2437,9 +2438,9 @@ public class GsacRepository implements GsacConstants {
                                   String urlArgs, String output)
             throws Exception {
 
-        System.err.println("\nGSAC:    GSACRepository: getRemoteObject was called to connect to a remote GSAC and get its XML capabilities file (federating GSACs).");
+        // debug federated gsac System.err.println("\nGSAC:    GSACRepository: getRemoteObject was called to connect to a remote GSAC and get its XML capabilities file (federating GSACs).");
         // repositoryUrl is to the remote GSAC to federate
-        System.err.println  ("GSAC:    GSACRepository: getRemoteObject input is repositoryUrl="+ repositoryUrl+", urlPath="+urlPath+", urlArgs="+urlArgs+", output="+output+".");
+        // debug federated gsac nSystem.err.println  ("GSAC:    GSACRepository: getRemoteObject input is repositoryUrl="+ repositoryUrl+", urlPath="+urlPath+", urlArgs="+urlArgs+", output="+output+".");
 
         boolean     zipit          = false;
         GsacServlet servlet        = getServlet();
@@ -2455,11 +2456,11 @@ public class GsacRepository implements GsacConstants {
                      + HtmlUtil.args(new String[] { ARG_REMOTEREPOSITORY, thisRepository, ARG_GZIP, zipit + "", ARG_OUTPUT, output });
 
         // 1.
-        System.err.println("GSAC:    GSACRepository: getRemoteObject connect to remote GSAC at URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
+        // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject connect to remote GSAC at URL "+ repositoryUrl); // some more GSAC URL:  + "   "+urlPath +"  "+urlArgs);  
         URLConnection connection = new URL(url).openConnection();
-        System.err.println("GSAC:    GSACRepository:                  OK did openConnection() at that URL to the remote GSAC, and " );
-        System.err.println("GSAC:    GSACRepository:                  the URLConnection with the GSAC API request for the XML file is:" );
-        System.err.println("         "+ connection.toString() );
+        // debug federated gsac System.err.println("GSAC:    GSACRepository:                  OK did openConnection() at that URL to the remote GSAC, and " );
+        // debug federated gsac System.err.println("GSAC:    GSACRepository:                  the URLConnection with the GSAC API request for the XML file is:" );
+        // debug federated gsac System.err.println("         "+ connection.toString() );
 
         // 2. 
         //System.err.println    ("GSAC:    GSACRepository: getRemoteObject call getUserAgent() " );
@@ -2469,16 +2470,16 @@ public class GsacRepository implements GsacConstants {
 
             //System.err.println("GSAC:    GSACRepository: getRemoteObject call connection.setRequestProperty() " );
             connection.setRequestProperty("User-Agent", userAgent);
-            System.err.println("GSAC:    GSACRepository: getRemoteObject  OK did connection.setRequestProperty('User-Agent', userAgent)" );
+            // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject  OK did connection.setRequestProperty('User-Agent', userAgent)" );
         }
         else {
-            System.err.println("GSAC:    GSACRepository: getRemoteObject call to getUserAgent() got NULL; return null from getRemoteObject(). no capabilities file recovered.  \n " ); 
+            // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject call to getUserAgent() got NULL; return null from getRemoteObject(). no capabilities file recovered.  \n " ); 
             return null;
         }
 
         // 3. 
         connection.setConnectTimeout(1000 * URL_TIMEOUT_SECONDS);
-        System.err.println("GSAC:    GSACRepository: getRemoteObject call connection.getInputStream() for the XML capabilites file, from "+ repositoryUrl );
+        // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject call connection.getInputStream() for the XML capabilites file, from "+ repositoryUrl );
 
         InputStream inputStream = connection.getInputStream();
         Object xmlfile;
@@ -2486,8 +2487,9 @@ public class GsacRepository implements GsacConstants {
            ;// System.err.println("GSAC:    GSACRepository: getRemoteObject  OK did connection.getInputStream()" );
         }
         else {
-            System.err.println("GSAC:    GSACRepository: getRemoteObject  failed: connection.getInputStream() got NULL; no capabilities file recovered.  \n " ); 
+            // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject  failed: connection.getInputStream() got NULL; no capabilities file recovered.  \n " ); 
             //return null;
+            ;
         }
 
         if (zipit) {
@@ -2498,11 +2500,11 @@ public class GsacRepository implements GsacConstants {
 
         xmlfile = decodeObject(IOUtil.readContents(inputStream));
         if (xmlfile != null) {
-            System.err.println("GSAC:    GSACRepository: getRemoteObject: did connection.getInputStream() and decoded the inputStream(XML capab file) , so can use remote GSAC.  ");
+            // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject: did connection.getInputStream() and decoded the inputStream(XML capab file) , so can use remote GSAC.  ");
             return xmlfile;
         }
         else {
-            System.err.println("GSAC:    GSACRepository: getRemoteObject  failed to decode the inputStream. getRemoteObject returns NULL.  No connection with the remote GSAC. \n  " ); 
+            // debug federated gsac System.err.println("GSAC:    GSACRepository: getRemoteObject  failed to decode the inputStream. getRemoteObject returns NULL.  No connection with the remote GSAC. \n  " ); 
             return xmlfile;
         }
     }
