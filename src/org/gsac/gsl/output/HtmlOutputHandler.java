@@ -165,7 +165,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * _more_
+     * _more_  ? for federated GSAC? 
      *
      * @param request The request
      * @param pw _more_
@@ -178,24 +178,36 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (allServers.size() == 0) {
             return;
         }
+
         List         urls = request.get(ARG_REPOSITORY, new ArrayList());
         StringBuffer sb   = new StringBuffer();
         for (GsacRepositoryInfo info : allServers) {
             String url = info.getUrl();
+
             sb.append(HtmlUtil.checkbox(ARG_REPOSITORY, url, urls.size() == 0 | urls.contains(url)));
 
-            /* original: sb.append(HtmlUtil.href(info.getUrl(), info.getName())); */
+            /* original: 
+            sb.append(HtmlUtil.href(info.getUrl(), info.getName())); 
+            */
             // If a remote service has chosen the ambiguous name 'GSAC Repository', append their url to disambiguate among federated services
-            // yep it happened with the 2nd GSAC installed.
-            String newname = info.getName();
-            if (newname == "GSAC Repository") {
-               newname += " at " + url;
+            String itsname = info.getName();
+            //System.err.println("     HtmlOutputHandler: federated GSAC.  remote gsac's local name is _" + itsname +"_" );
+            if (itsname.equals("GSAC Repository") ) {
+               itsname = "Gsac at " + url;
+               //System.err.println("     HtmlOutputHandler: federated GSAC.  remote gsac's NEW local name is _" + itsname +"_" );
             }
-            sb.append(HtmlUtil.href(info.getUrl(), newname));
+            // or to replace the name "GSAC" at SOPAC:
+            if (url.indexOf("geogsac.ucsd.edu:8080/gsacws")>0 ) {
+               itsname = "SOPAC GSAC";
+            }
+
+            sb.append(HtmlUtil.href(info.getUrl(), itsname));
 
             sb.append(HtmlUtil.br());
         }
+        // label page section
         pw.append(getHeader(msg("Search in Repositories")));
+        // show the choices
         pw.append(HtmlUtil.makeShowHideBlock(msg(""), sb.toString(), true));
     }
 
@@ -1051,6 +1063,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         sb.append( HtmlUtil.importJS( "http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"));
         */
         sb.append( HtmlUtil.importJS(makeHtdocsUrl("/openlayers/OpenLayers.js")));
+
+        // sets map center and zoom level:
         sb.append(HtmlUtil.importJS(makeHtdocsUrl("/repositorymap.js")));
 
         sb.append( HtmlUtil.div( "", HtmlUtil.style( "border:2px #888888 solid; width:" + width + "px; height:" + height + "px") + " "
