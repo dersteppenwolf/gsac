@@ -509,6 +509,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         // originally was one line:    
         //  statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
 
+        // DEBUG: to time the SQL query:
+        long t0 = System.currentTimeMillis();
+
         // New June 2015:
         if ( ! columns.contains( "station.four_char_name" )) {
             statement = getDatabaseManager().select(columns, clause.getTableNames(tableNames), clause, suffix, -1 );                       
@@ -519,6 +522,10 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             // otherwise you can get multiples of the same returned row (same site duplicated) from the SQL search when looking for, say, sites with some antenna name.
             statement = getDatabaseManager().select( distinct (columns),  clause.getTableNames(tableNames), clause, suffix, -1 );                       
         }
+
+        // DEBUG: to time the SQL query:
+        long t1 = System.currentTimeMillis();
+        System.err.println("GSAC: GsacResourceManager:handleRequest(): 'select' took           " + ( t1 - t0 ) + " ms"); // at time "+getUTCnowString());
 
         //System.err.println("GSAC: GsacResourceManager:handleRequest() db query SQL is \n      " + statement ); // + "; at time "+getUTCnowString()  ); //  for mysql
 
@@ -531,13 +538,12 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
 
         // DEBUG: to time the SQL query:
-        //long t1 = System.currentTimeMillis();
+        t1 = System.currentTimeMillis();
 
         int rowCount = processStatement(request, response, statement, request.getOffset(), request.getLimit());
 
-        //long t2 = System.currentTimeMillis();
-        //System.err.println("GSAC: GsacResourceManager:handleRequest(): SQL completed and got "+rowCount+" results in " + (t2 - t1) + " ms"); // at time "+getUTCnowString());
-        
+        long t2 = System.currentTimeMillis();
+        System.err.println("GSAC: GsacResourceManager:handleRequest(): 'processStatement' took " + ( t2 - t1 ) + " ms  and got "+rowCount+" results");
 
         // dup of one call in process statement getDatabaseManager().closeAndReleaseConnection(statement);
     }
@@ -559,16 +565,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
      * @throws Exception On badness
      */
     public int processStatement(GsacRequest request, GsacResponse response, Statement statement, int offset, int limit) throws Exception {
-        long t1 = System.currentTimeMillis();
-        long t0=t1;
-        long totalms=0;
+        //long t1 = System.currentTimeMillis();
 
         //Iterate on the query results
         SqlUtil.Iterator iter = SqlUtil.getIterator(statement, offset, limit);
 
-        long t2 = System.currentTimeMillis();
-        totalms += (t2 - t1); 
-        //System.err.println      ("      processStatement():SqlUtil.getIterator() completed in " + (t2 - t1) + " ms"); // DEBUG
+        //long t2 = System.currentTimeMillis();
+        //System.err.println      ("          GResMan processStatement():SqlUtil.getIterator() completed in " + (t2 - t1) + " ms"); // DEBUG
 
         while (iter.getNext() != null) {
             //t1 = System.currentTimeMillis();
@@ -576,7 +579,7 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             //System.err.println("        GRM: processStatement() call to makeResource(): ");
             GsacResource resource = makeResource(request, iter.getResults());
 
-            t2 = System.currentTimeMillis();
+            // t2 = System.currentTimeMillis();
             //System.err.println("        GRM: processStatement() call to makeResource() completed in " + (t2 - t1) + " ms"  ); // DEBUG
 
             if (resource == null) {
