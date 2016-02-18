@@ -51,6 +51,12 @@ import javax.servlet.http.*;
  * Class description
  *
  * author J McWhirter 2011
+ *
+ *
+ * Creates the HTML page(s) to show following a site or file search. (Stuart Wier)
+ * For code to make maps on the web page, search here for "Map(" lines.
+ * Mapping code should be replaced with something much newer and better.
+ *
  */
 public class HtmlOutputHandler extends GsacOutputHandler {
 
@@ -74,8 +80,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
     /** _more_ */
     public static final String PROP_GOOGLE_APIKEYS = "gsac.google.apikeys";
-
-
 
     /** _more_ */
     private static String[] NAV_LABELS;
@@ -1557,14 +1561,11 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (includeMap) {
             StringBuffer mapSB = new StringBuffer();
             if ( !request.get(ARG_WRAPXML, false)) {
-                /* hide 4 jan 2016 until FIX DEBUG
                 // make map in single site web page
-                js = createMap(request,
-                               (List<GsacResource>) Misc.newList(resource),
+                //  LOOK may be a problem doing this; will deal with it when update to all new Map code.
+                js = createMap(request, (List<GsacResource>) Misc.newList(resource),
                                mapSB, 600, 400, true, false);
-                               // original map size map area map extent map pixels mapSB, 400, 200, true, false); 
-                */
-                ;
+                // original map size map area map extent map pixels mapSB, 400, 200, true, false); 
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
                                    formatLatLonNoCommas(resource) + mapSB));
@@ -1592,13 +1593,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
         }
 
+
         if (resource.getModificationDate() != null) {
             String dateString = formatDate(resource.getModificationDate());
-            pw.append(formEntry(request, msgLabel("Modification Date"),                              dateString ));
+            pw.append(formEntry(request, msgLabel("Modification Date"), dateString ));
         }
 
         // show site's associated network names (?):
-        // FIX after testing: what does msgLabel( 2 args) do?
+        // LOOK FIX after testing: what does msgLabel( 2 args) do?
         /*
         List<ResourceGroup> groups = resource.getResourceGroups();
         if (groups.size() > 0) {
@@ -2081,9 +2083,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
         if (doFlat) {
-            //System.err.println("GSAC    HtmlOutputHandler.java - hide buggy flat map code until debugged" );
-            // * hide 4 jan 2016 until FIX DEBUG flat map
-
+            //System.err.println("GSAC    HtmlOutputHandler(): call createFlatMap() " );
             StringBuffer pw = new StringBuffer();
             js.append(createFlatMap(request, resources, pw, width, height, addToggle, showList));
             tabTitles.add(msg("Map"));
@@ -2319,17 +2319,18 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             //sortValues.add(SORT_SITE_TYPE);
 
             // About ellipsoidal height or elevation, depending on what parameter's data is available:
-            //labels.add(msg("Location") + " (latitude, longitude, elevation)"); // original 2010
-            // Use ellipsoidal height, since GNSS instrument locations are USUALLY in geodetic coordinates. elevation is computed with some choice of Geoid model; there is no set elevation per site):
+            //labels.add(msg("Location") + " (latitude, longitude, elevation)");  original 2010 but the data available is not elevation values.
+            // Use ellipsoidal height, since GNSS instrument locations are in geodetic coordinates. elevation is computed from ellipsoid height, plus some choice of Geoid height.
+            // Ellipsoidal heights are NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
             labels.add(msg(" ") + "Latitude, Longitude, ellipsoid height");
             sortValues.add("");
-            // most gps instrument data gives ellipsoidal height NOT elevation; they can differ by 30 meters or more. A very big deal to our users.
 
             // for installed date range : first installation to retired date; episodic and intermittent sites do not have a retired data.
             if (doDateRange) { labels.add(msg("Installed Dates")); }
             sortValues.add("");
    
             //  usually, do this only for files: make a column for Publish Date
+            // LOOK test and implement for file searches.
             /* if ( resource.getPublishDate()  != null )  { 
             labels.add(msg("Publish Date")); 
              }
