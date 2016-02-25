@@ -108,10 +108,11 @@ public class DataworksSiteManager extends SiteManager {
         // which is in GSAC/gsac-code/src/org/gsac/gsl/GsacResourceManager.java
 
         int cct= getDatabaseManager().getConnectionCount();
-        System.err.println ("GSAC: local DataworksSiteManager; now have " + cct +" db connections" );
+        //System.err.println ("GSAC: local DataworksSiteManager; now have " + cct +" db connections" );
 
-        long t2 = System.currentTimeMillis();
-        System.err.println ("GSAC: local DataworksSiteManager:handleRequest() took "+ (t2-t1)+ " ms");
+        // time timing of requests speed
+        // long t2 = System.currentTimeMillis();
+        //System.err.println ("GSAC: local DataworksSiteManager:handleRequest() took "+ (t2-t1)+ " ms");
 
     }
 
@@ -491,6 +492,7 @@ public class DataworksSiteManager extends SiteManager {
         }
 
         // query for DATA time range at a site NEW 28 Aug 2015
+        /* not yet implemented
         try {
             clauses.addAll(getDateRangeClause(request, msgBuff,
                     ARG_SITE_DATADATE_FROM, ARG_SITE_DATADATE_TO, "Site data times",
@@ -499,7 +501,7 @@ public class DataworksSiteManager extends SiteManager {
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
-
+        */
 
         // debug System.err.println("   SiteManager: grc gives search clauses so far="+clauses) ;
 
