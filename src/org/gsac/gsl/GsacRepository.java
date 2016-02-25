@@ -341,7 +341,7 @@ public class GsacRepository implements GsacConstants {
 
         if (gsacDirectory != null) {
             //System.err.println("GSAC: using gsac directory: " + gsacDirectory);
-            getLogManager().initLogDir(gsacDirectory);
+            //getLogManager().initLogDir(gsacDirectory);
             File localPropertiesFile = new File(gsacDirectory
                                            + "/gsac.properties");
             //System.err.println("GSAC: looking for: " + localPropertiesFile);
@@ -621,6 +621,10 @@ public class GsacRepository implements GsacConstants {
                 if (response != null) {
                     resourceCnt = response.getNumResources();
                 }
+                if (resourceCnt == -1) {
+                    resourceCnt = 0;
+                }
+
                 //  getLogManager().logAccess(request, what, resourceCnt);
 
                 // / *  debug ddd
@@ -647,7 +651,7 @@ public class GsacRepository implements GsacConstants {
 
                 // LOOK do not change this line; it is key for GSAC use metrics
                 //System.out.println    ("GSAC: request # "+requestsCount+" completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    
-                System.out.println    ("GSAC: completed the request "+requestsCount+"  "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() +"\n" );    
+                System.out.println    ("GSAC: completed the request "+requestsCount+"  "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP()  );    
 
                 //  + "  or RequestIP "+ request.getRequestIP()  ); 
 
@@ -1005,7 +1009,7 @@ public class GsacRepository implements GsacConstants {
                     anyErrors = true;
                     // System.err.println("GSAC: Initializing remote repository:" + info + " " + exc);
                     exc.printStackTrace();
-                    getLogManager().logError( "Initializing remote repository:" + info, exc);
+                    //getLogManager().logError( "Initializing remote repository:" + info, exc);
                 }
             }
             //If there were any errors then reset the ttl for the list holder
