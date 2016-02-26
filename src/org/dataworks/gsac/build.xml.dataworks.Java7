@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- GSAC's ant build.xml file for Dataworks GSAC 
+<!-- 
+     The Java 1.7 version of GSAC's ant build.xml file for the Dataworks GSAC.
 
-     Java 1.7 version of build.xml
+     To build Dataworks GSAC with Java 1.7, first cp this file to build.xml, i.e.:
+     cp build.xml.dataworks.Java7 build.xml
 -->
 
 <!-- 
@@ -25,14 +27,17 @@
 <project basedir="../../../.." default="test_build" name="GSAC Build">
 
     <target name="localinit">
-        <!-- base name for build products -->
+        <!-- base name for build products, i.e. makes the Tomcat war file's name,  gsac-code/dist/dataworksgsac.war -->
         <property name="basename" value="dataworksgsac"/>
 
-        <!-- Where the main source dir is at (relative to the top level src dir) -->
+        <!-- Where the main source dir is at (relative to the top level src/ directory. ) -->
         <property name="repository_relative_dir" value="org/dataworks/gsac"/>
+
+        <!-- Java package name -->
         <property name="repositorypackage" value="org.dataworks.gsac"/>
 
         <property name="serverclass" value="${repositorypackage}.DataworksServer"/>
+
         <property name="repositoryclass" value="${repositorypackage}.DataworksRepository"/>
 
         <!-- The root of the Tomcat URL -->
