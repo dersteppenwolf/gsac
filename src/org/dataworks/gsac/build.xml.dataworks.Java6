@@ -4,7 +4,7 @@
 
      Java 1.6 version of build.xml for the dataworks GSAC. 
 
-     To build Dataworks GSAC with Java 1.6, first cp this file  to build.xml
+     To build Dataworks GSAC with Java 1.6, first cp this file to build.xml, i.e.:
      cp build.xml.dataworks.Java6 build.xml
 -->
 
@@ -14,6 +14,8 @@
              src
              lib
              dist (this gets created by the build)
+    i.e., like gsac-code/src/ , gsac-code/lib/ , gsac-code/dist/ .
+    All source Java is included below gsac-code/src/.
     The basedir (below) needs to be set to the base_directory relative to this build.xml
     The localinit target defines the properties for the build. These properties need to be changed.
     
@@ -28,14 +30,18 @@
 <project basedir="../../../.." default="test_build" name="GSAC Build">
 
     <target name="localinit">
-        <!-- base name for build products -->
-        <property name="basename" value="dataworks_gsac"/>
+        <!-- base name for build product, i.e the Tomcat .war file, gsac-code/dist/dataworksgsac.war -->
+        <!-- typical value of  <property name="basename" value="dataworksgsac"/> -->
+        <property name="basename" value="dataworksgsac"/>
 
-        <!-- Where the main source dir is at (relative to the top level src dir) -->
+        <!-- Where the main source dir is at (relative to the higher src/ directory) -->
         <property name="repository_relative_dir" value="org/dataworks/gsac"/>
+
+        <!-- Java package name: -->
         <property name="repositorypackage" value="org.dataworks.gsac"/>
 
         <property name="serverclass" value="${repositorypackage}.DataworksServer"/>
+
         <property name="repositoryclass" value="${repositorypackage}.DataworksRepository"/>
 
         <!-- The root of the Tomcat URL -->
