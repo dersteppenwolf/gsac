@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- GSAC's ant build.xml file for GSAC for Dataworks
-
-     Java 1.6 version of build.xml for the dataworks GSAC. 
+<!-- 
+     The Java 1.6 version of GSAC's ant build.xml file for the Dataworks GSAC.
 
      To build Dataworks GSAC with Java 1.6, first cp this file to build.xml, i.e.:
      cp build.xml.dataworks.Java6 build.xml
