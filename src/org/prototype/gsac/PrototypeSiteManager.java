@@ -775,13 +775,12 @@ public class PrototypeSiteManager extends SiteManager {
         String station_photo_URL = results.getString(Tables.STATION.COL_STATION_PHOTO_URL);
         String ts_image_URL =  results.getString(Tables.STATION.COL_TIME_SERIES_PLOT_IMAGE_URL); 
         String iersdomes =     results.getString(Tables.STATION.COL_IERS_DOMES);
-        String originator =     results.getString(Tables.STATION.COL_ORIGINATING_AGENCY_URL);
         int station_style_id = results.getInt(Tables.STATION.COL_STYLE_ID);
         String station_status_id    = results.getString(Tables.STATION.COL_STATUS_ID);             // may be null; is String of an int
         int countryid    =     results.getInt(Tables.STATION.COL_NATION_ID);
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
         int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
-        int agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID); 
+        int agencyid    =      results.getInt(Tables.STATION.COL_OPERATOR_AGENCY_ID); 
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_STYLE_ID);
         int station_id      =     results.getInt(Tables.STATION.COL_STATION_ID);
 
@@ -965,13 +964,11 @@ public class PrototypeSiteManager extends SiteManager {
         // System.err.println("   SiteManager:      makeResource:  iersdomes="+iersdomes+"_");
         if (null!= iersdomes && iersdomes.length() > 4) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
 
-
-        site.setMirroredFromURL(originator);
+        // CHANGE LOOK if mirroring site info from another GSAC
+        //site.setMirroredFromURL(originator);   add an agency's URL web page here; have to go through the agency table, using  agencyid    =      results.getInt(Tables.STATION.COL_OPERATOR_AGENCY_ID);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
-
-        // Look add this value to the site metadata AND make a line showing it on the site HTML web page
-        if (null!=originator ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  originator, "Originator"));}
-
+        // LOOK add this value to the site metadata AND make a line showing it on the site HTML web page
+        //if (null!=originator ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  originator, "Originator"));}
 
         // do a db search now for the most recent data time at this site: "LATEST" code.
 
