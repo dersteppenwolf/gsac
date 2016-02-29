@@ -4,7 +4,7 @@
 
                                                    README, Part 2.
 
-                                               4 Dec 2015.   SKW  UNAVCO
+                                               Feb 29, 2016  Stuart Wier  UNAVCO
 
 
 If you use the Prototype15 GSAC database (the Prototype15_GSAC.sql files is in the GSAC package) you can build a working GSAC with no new JAVA code.
@@ -140,6 +140,8 @@ This can be a little confusing if you attempt to keep track of the several prope
 
 Compile GSAC in your new GSAC code area.
 
+    In org/prototype/gsac, save backup copies of PrototypeSiteManager.java and PrototypeFileManager.java
+
     Do the command 'ant' in org/prototype/gsac: 
 
 ant 
@@ -243,6 +245,31 @@ The Jetty servlet is for local testing, which saves the trouble of deploying a .
 You have made an operational GSAC server which has complete core GSAC code, but which lacks specific details about your repository,
 that is, where to find station and instrument metadata, and geodesy file info, in your database.
 Now you need to specify those important parts of your data repository for GSAC.
+
+
+########################################################################
+
+Making a new database and its new Tables.java file.
+
+If you make a new database schema, you will need to make a new Tables.java file in your local (prototype/gsac/) area.
+
+in prototype/gsac/:
+
+Do this:
+1. You did save your very first original files PrototypeFileManager.java and PrototypeSiteManager.java to backup copies?
+2. do ant clean
+3. edit  dbresources/gsacdb_test.properties to use the new name of the new database
+4. rm -rf database/
+5. use the backup original files for PrototypeFileManager.java and PrototypeSiteManager.java.
+6. ant
+7. ant tables [this makes a new file Tables.java in prototype/gsac/]
+8. mkdir database/
+9. edit Tables.java in prototype/gsac/ to have line 3 become  package org.prototype.gsac.database;
+10. mv Tables.java  prototype/gsac/database/
+11. ant
+12. replace your complete working files for PrototypeFileManager.java and PrototypeSiteManager.java
+13. ant
+14. test with ant runserver
 
 
 ########################################################################
