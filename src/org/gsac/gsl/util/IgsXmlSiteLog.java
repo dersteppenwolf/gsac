@@ -37,9 +37,9 @@ public class IgsXmlSiteLog {
     public static final String TAG_gmdCI_ResponsibleParty    = "gmd.CI_ResponsibleParty";
     public static final String TAG_gcoCharacterString    = "gco:CharacterString";
     public static final String TAG_gmdindividualName    = "gmd:individualName";
-    public static final String TAG_gmdorganisationName    = "gmd:organisationName";
-    public static final String TAG_gmdrole    = "gmd:role";
-    public static final String TAG_gmdCI_RoleCode    = "gmd:CI_RoleCode";
+    public static final String TAG_gmdorganisationName  = "gmd:organisationName";
+    public static final String TAG_gmdrole              = "gmd:role";
+    public static final String TAG_gmdCI_RoleCode       = "gmd:CI_RoleCode";
     
     //public static final String TAG_    = "";
 

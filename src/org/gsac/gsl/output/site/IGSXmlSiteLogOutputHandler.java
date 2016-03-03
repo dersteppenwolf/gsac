@@ -230,8 +230,8 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
 <gmd:CI_ResponsibleParty id="DrJohnDawsonGA"><gmd:individualName><gco:CharacterString>Dr John Dawson</gco:CharacterString></gmd:individualName><gmd:organisationName><gco:CharacterString>Geoscience Australia</gco:CharacterString></gmd:organisationName><gmd:role><gmd:CI_RoleCode codeListValue="" codeList="">Section Leader - National Geospatial Reference Systems Section</gmd:CI_RoleCode></gmd:role></gmd:CI_ResponsibleParty>
          using 
     public static final String TAG_gmdCI_ResponsibleParty    = "gmd.CI_ResponsibleParty";
-    public static final String TAG_gcoCharacterString    = "gco:CharacterString";
     public static final String TAG_gmdindividualName    = "gmd:individualName";
+    public static final String TAG_gcoCharacterString    = "gco:CharacterString";
     public static final String TAG_gmdorganisationName    = "gmd:organisationName";
     public static final String TAG_gmdrole    = "gmd:role";
     public static final String TAG_gmdCI_RoleCode    = "gmd:CI_RoleCode";
@@ -239,6 +239,7 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
         String rpname="Responsible Party's name";
         String name2= "Responsible Party's name 2";
         String orgname= "OrganisationName";
+        String rolename= "role Name";
         pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdCI_ResponsibleParty +" id=\""+ rpname +"\"" ));
 
         pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdindividualName));
@@ -253,6 +254,11 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gcoCharacterString));
         pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdorganisationName));
 
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdrole));
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdCI_RoleCode +"  codeListValue=\"\" codeList=\"\" "));
+        pw.append(rolename);
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdCI_RoleCode));
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdrole));
 
         pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdCI_ResponsibleParty));
 
@@ -269,7 +275,6 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
                                   myFormatDateTime(date)));
         }
         */
-
         // for the <geo:Monument gml:id="MONUMENT_1"> section:
         /*
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_MONUMENTINSCRIPTION, "", ""));

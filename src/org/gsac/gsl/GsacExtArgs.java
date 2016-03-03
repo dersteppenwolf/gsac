@@ -46,7 +46,7 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
 
-    /** dome name or type, NOT the "IERSDOMES" value  */
+    /** the radome name or type, NOT the "IERSDOMES" value  */
     public static final String ARG_DOME = GsacArgs.ARG_SITE_PREFIX + "dome";
 
     /** _more_ */
@@ -70,7 +70,6 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_STATE = GsacArgs.ARG_SITE_PREFIX + "state";
 
-    public static final String ARG_NETWORK = GsacArgs.ARG_SITE_PREFIX + "network";
 
     /** Name of station's tectonic plate.  */
     public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX + "tectonicplate";
@@ -85,9 +84,26 @@ public interface GsacExtArgs {
 
     public static final String SITE_METADATA_INDIVIDUALCALIBRATION = "site.metadata.calibration";
 
-    public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
+    // only for IGS XML site log use, March 2016:
+    public static final String SITE_METADATA_GEOTYPECODESPACE  = "site.metadata.geo.type.codeSpace";
+    public static final String SITE_METADATA_RESPONSIBLEPARTY  = "site.metadata.ResponsibleParty";
+    public static final String SITE_METADATA_INDIVIDUALNAME    = "site.metadata.individualName";
+    public static final String SITE_METADATA_GMDCIROLECODE     = "site.metadata.gmd.CI_RoleCode";
 
+    // next also used for IGS XML site log organisationName:
+    public static final String SITE_METADATA_NAME_OPERATOR_AGENCY  = "site.metadata.nameoperatoragency";
+
+
+
+
+
+
+    public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
+  
     public static final String SITE_METADATA_NAMEAGENCY  = "site.metadata.nameagency";
+
+
+    public static final String SITE_METADATA_NAME_PUBLISHER_AGENCY  = "site.metadata.namepublisheragency";
 
     public static final String SITE_METADATA_NAMEMETPACK = "site.metadata.namemetpack";
 
