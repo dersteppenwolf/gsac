@@ -112,16 +112,8 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
     public void handleResult(GsacRequest request, GsacResponse response)
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
-        PrintWriter pw = response.getPrintWriter();
-        // pw.append(XmlUtil.XML_HEADER + "\n"); which is <?xml version="1.0" encoding="ISO-8859-1"?>
-        String line1=  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        pw.append(  line1 + "\n"); 
 
-        Date now = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
-        System.out.println("GSAC: request for IGS XML site log at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
-
-        /* make this:
+        /* write header lines like this:
 <?xml version="1.0" encoding="UTF-8"?>
 <geo:GeodesyML gml:id="GEO_1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:geo="urn:xml-gov-au:icsm:egeodesy:0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="urn:xml-gov-au:icsm:egeodesy:0.2 https://icsm.govspace.gov.au/files/2015/09/siteLog.xsd">
     <!--
@@ -131,6 +123,15 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
         @Description: Demonstration file using GeodesyML 0.2 to demonstrate encapsulation of a site, site-log, regulation 13 site certificate, and a national adjustment weekly solution time series. 
     -->
         */
+
+        PrintWriter pw = response.getPrintWriter();
+        // pw.append(XmlUtil.XML_HEADER + "\n"); which is <?xml version="1.0" encoding="ISO-8859-1"?>
+        String line1=  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        pw.append(  line1 + "\n"); 
+
+        Date now = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
+        System.out.println("GSAC: request for IGS XML site log at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
         //Add the open tag with all of the namespaces
         
@@ -150,18 +151,21 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
             IgsXmlSiteLog.ATTR_XSI_SCHEMALOCATION, IgsXmlSiteLog.VALUE_XSI_SCHEMALOCATION
         }))); */
 
+        String filelabel= " ";
+        pw.append( " <!--\n      @Name "+filelabel+"\n      @Author "+getRepository().getRepositoryName() +"\n      @Date "+myFormatDate(new Date())+ "\n      @Description: made by GSAC web services\n  -->" );
 
-        //pw.append( ' <!--' +'\n' +'      @Name MOBS_SiteLog.xml' +'\n' +'      @Author some name'' +'\n' +'      @Date 2015-06-03' +'\n' +'      @Description: made by GSAC web services' +'\n' +'  -->' );
 
-
-        //"We can have any number of sites here. Need to figure out how to handle multiple sitea" - J MW
+        //"We can have any number of sites here. Need to figure out how to handle multiple sites" - J MW
         List<GsacSite> sites = response.getSites();
+        int sitenumber = 0;
         for (GsacSite site : sites) {
+            sitenumber +=1;
             //Call this to ensure that all of the metadata is added to the site
             getRepository().doGetFullMetadata(-1, site);
+
             //Add the various content areas
-            // not in igs wml log addFormInformation(pw);
-            //addSiteIdentification(pw, site);
+
+            addSiteIdentification(pw, site, sitenumber);
             addSiteLocation(pw, site);
             //addSiteEquipment(pw, site);
             //addSiteStream(pw, site);
@@ -198,39 +202,62 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
     }
 
     /**
-     * _more_
+     * makes some of an "IGS XML GNSS site log" formatted file.
      *
      * @param pw _more_
      * @param site _more_
      *
      * @throws Exception _more_
      */
-    private void addSiteIdentification(PrintWriter pw, GsacSite site)
+    private void addSiteIdentification(PrintWriter pw, GsacSite site, int sitenumber)
             throws Exception {
-        /*
-          <siteIdentification>
-          <mi:siteName>TresPiedraNM2006</mi:siteName>
-          <mi:fourCharacterID>P123</mi:fourCharacterID>
-          <mi:monumentInscription/>
-          <mi:iersDOMESNumber/>
-          <mi:cdpNumber/>
-          <mi:monumentDescription>DEEP-DRILLED BRACED</mi:monumentDescription>
-          <mi:heightOfTheMonument> (m)</mi:heightOfTheMonument>
-          <mi:monumentFoundation/>
-          <mi:foundationDepth> (m)</mi:foundationDepth>
-          <mi:markerDescription>NONE</mi:markerDescription>
-          <mi:dateInstalled>2006-02-27T00:00:00Z</mi:dateInstalled>
-          <mi:geologicCharacteristic/>
-          <mi:bedrockType/>
-          <mi:bedrockCondition/>
-          <mi:fractureSpacing/>
-          <mi:faultZonesNearby/>
-          <mi:distance-Activity/>
-          <mi:notes/>
-          </siteIdentification>
-        */
+        String sitenumstr=""+sitenumber;
 
-        pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION));
+        /* do like this
+<geo:Site gml:id="SITE_1"><geo:type codeSpace="">CORS</geo:type><geo:Monument xlink:href="#MONUMENT_1"/></geo:Site>i
+
+<gmd:CI_ResponsibleParty id="DrJohnDawsonGA"><gmd:individualName><gco:CharacterString>Dr John Dawson</gco:CharacterString></gmd:individualName><gmd:organisationName><gco:CharacterString>Geoscience Australia</gco:CharacterString></gmd:organisationName><gmd:role><gmd:CI_RoleCode codeListValue="" codeList="">Section Leader - National Geospatial Reference Systems Section</gmd:CI_RoleCode></gmd:role></gmd:CI_ResponsibleParty>
+        */
+        pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION +" gml:id=\"SITE_"+sitenumstr +"\"" ));
+        String stype=""; //"sometype"
+        String line1="<geo:type codeSpace=\"\">"+stype+"</geo:type>";
+        pw.append(line1);
+        String line2="<geo:Monument xlink:href=\"#MONUMENT_"+sitenumstr+"\"/>";
+        pw.append(line2);
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION));
+
+        /* do like this
+<gmd:CI_ResponsibleParty id="DrJohnDawsonGA"><gmd:individualName><gco:CharacterString>Dr John Dawson</gco:CharacterString></gmd:individualName><gmd:organisationName><gco:CharacterString>Geoscience Australia</gco:CharacterString></gmd:organisationName><gmd:role><gmd:CI_RoleCode codeListValue="" codeList="">Section Leader - National Geospatial Reference Systems Section</gmd:CI_RoleCode></gmd:role></gmd:CI_ResponsibleParty>
+         using 
+    public static final String TAG_gmdCI_ResponsibleParty    = "gmd.CI_ResponsibleParty";
+    public static final String TAG_gcoCharacterString    = "gco:CharacterString";
+    public static final String TAG_gmdindividualName    = "gmd:individualName";
+    public static final String TAG_gmdorganisationName    = "gmd:organisationName";
+    public static final String TAG_gmdrole    = "gmd:role";
+    public static final String TAG_gmdCI_RoleCode    = "gmd:CI_RoleCode";
+        */
+        String rpname="Responsible Party's name";
+        String name2= "Responsible Party's name 2";
+        String orgname= "OrganisationName";
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdCI_ResponsibleParty +" id=\""+ rpname +"\"" ));
+
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdindividualName));
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gcoCharacterString));
+        pw.append(name2);
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gcoCharacterString));
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdindividualName));
+
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdorganisationName));
+        pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gcoCharacterString));
+        pw.append(orgname);
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gcoCharacterString));
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdorganisationName));
+
+
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdCI_ResponsibleParty));
+
+
+        /* old sopac code
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_SITENAME, "",
                               // site.getLongName())); can fail if name has a "&"
                               removeAndSymbol(site.getLongName ()) )   );
@@ -241,6 +268,10 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
             pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_DATEINSTALLED, "",
                                   myFormatDateTime(date)));
         }
+        */
+
+        // for the <geo:Monument gml:id="MONUMENT_1"> section:
+        /*
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_MONUMENTINSCRIPTION, "", ""));
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_IERSDOMESNUMBER, "",
                               getProperty(site,
@@ -267,8 +298,10 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_FRACTURESPACING, "", ""));
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_FAULTZONESNEARBY, "", ""));
         pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_DISTANCE_ACTIVITY, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_NOTES, "", ""));
-        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION));
+        */
+
+        // notes pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_NOTES, "", ""));
+
     }
 
     /**
