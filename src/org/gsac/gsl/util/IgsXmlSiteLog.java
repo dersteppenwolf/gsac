@@ -34,6 +34,15 @@ public class IgsXmlSiteLog {
 
     public static final String TAG_IGSSITELOG = "geo:GeodesyML";
 
+    public static final String TAG_gmdCI_ResponsibleParty    = "gmd.CI_ResponsibleParty";
+    public static final String TAG_gcoCharacterString    = "gco:CharacterString";
+    public static final String TAG_gmdindividualName    = "gmd:individualName";
+    public static final String TAG_gmdorganisationName    = "gmd:organisationName";
+    public static final String TAG_gmdrole    = "gmd:role";
+    public static final String TAG_gmdCI_RoleCode    = "gmd:CI_RoleCode";
+    
+    //public static final String TAG_    = "";
+
     public static final String ATTR_XMLNS_XMLNS = "xmlns";
     public static final String ATTR_XMLNS_REALTIME = "xmlns:realtime";
     public static final String ATTR_XMLNS_EQUIP = "xmlns:equip";
@@ -79,7 +88,9 @@ public class IgsXmlSiteLog {
     public static final String TAG_DATEPREPARED = "datePrepared";
     public static final String TAG_geo_REPORTTYPE = "geo:reportType";
     public static final String TAG_REPORTTYPE = "reportType";
-    public static final String TAG_SITEIDENTIFICATION = "siteIdentification";
+
+    public static final String TAG_SITEIDENTIFICATION = "geo:Site";
+
     public static final String TAG_geo_SITENAME = "geo:siteName";
     public static final String TAG_SITENAME = "Name"; // used by OpsXML output to mimic web page labels for one site
     public static final String TAG_SITETYPE = "Type";
