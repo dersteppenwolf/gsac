@@ -27,68 +27,37 @@ package org.gsac.gsl.util;
  *
  * @version        Wed. May 19, '10, for XML site log format.
  * @author         J McWhirter
- * @version        21 Apr 2104.  more items added for improved GSAC XML site log format
+ * @version        21 Apr 2014.  more items added for improved GSAC XML site log format
  * @author         S K Wier
  */
 
 public class XmlSiteLog {
 
-    /** _more_ */
     public static final String ATTR_XMLNS_XMLNS = "xmlns";
-    /** _more_ */
-    public static final String XMLNS_XMLNS = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
-
-    /** _more_ */
     public static final String ATTR_XMLNS_REALTIME = "xmlns:realtime";
-
-    /** _more_ */
     public static final String ATTR_XMLNS_EQUIP = "xmlns:equip";
-
-    /** _more_ */
     public static final String ATTR_XMLNS_XSI = "xmlns:xsi";
-
-    /** _more_ */
     public static final String ATTR_XMLNS_MI = "xmlns:mi";
-
-    /** _more_ */
     public static final String ATTR_XMLNS_LI = "xmlns:li";
-
-    /** _more_ */
     public static final String ATTR_XMLNS_CONTACT = "xmlns:contact";
-
-    /** _more_ */
     public static final String ATTR_XSI_SCHEMALOCATION = "xsi:schemaLocation";
-
-    public static final String ATTR_GSAC_SCHEMALOCATION = "schemaLocation";
-    /** _more_ */
-    public static final String VALUE_XSI_SCHEMALOCATION =
-        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd";
-
     public static final String VALUE_GSAC_SCHEMALOCATION = "";
 
-    /** _more_ */
+    /** for SOPAC XML site log formatting */
+    public static final String XMLNS_XMLNS = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
+    public static final String VALUE_XSI_SCHEMALOCATION = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011  http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011/igsSiteLog.xsd";
     public static final String XMLNS_XMLNS_CONTACT = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004";
-
-    /** _more_ */
     public static final String XMLNS_XMLNS_EQUIP = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004";
-
-    /** _more_ */
     public static final String XMLNS_XMLNS_LI = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/localInterferences/2004";
-
-    /** _more_ */
     public static final String XMLNS_XMLNS_MI = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/monumentInfo/2004";
-
-    /** _more_ */
-    public static final String XMLNS_XMLNS_REALTIME =
-        "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011";
-
-    /** _more_ */
+    public static final String XMLNS_XMLNS_REALTIME = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011";
     public static final String XMLNS_XMLNS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
-
-    /** _more_ */
     public static final String TAG_IGSSITELOG = "igsSiteLog";
 
-    /** for GSAC XML formatting */
+    /** for IGS XML site log formatting */
+
+
+    /** for GSAC XML formatting, and anyone else who can use one. */
     public static final String TAG_GSACOPSXML       = "GsacOpsXmlSiteInfo";
     public static final String TAG_DATEINSTALLED    = "FromDate"; //dateInstalled;
     public static final String TAG_PUBLISHDATE      = "PublishDate";
@@ -99,59 +68,30 @@ public class XmlSiteLog {
     public static final String TAG_LASTARCHIVEDATE  = "latestArchiveDate";
     public static final String TAG_SITESTATUS       = "Status";
 
-    /** _more_ */
     public static final String TAG_FORMINFORMATION = "formInformation";
-
-    /** _more_ */
     public static final String TAG_SITEBLOCK = "site";
-
-    /** _more_ */
     public static final String TAG_MI_PREPAREDBY = "mi:preparedBy";
     public static final String TAG_PREPAREDBY = "preparedBy";
-
-    /** _more_ */
     public static final String TAG_MI_DATEPREPARED = "mi:datePrepared";
     public static final String TAG_DATEPREPARED = "datePrepared";
-
-    /** _more_ */
     public static final String TAG_MI_REPORTTYPE = "mi:reportType";
     public static final String TAG_REPORTTYPE = "reportType";
-
-    /** _more_ */
     public static final String TAG_SITEIDENTIFICATION = "siteIdentification";
-
-    /** _more_ */
     public static final String TAG_MI_SITENAME = "mi:siteName";
     public static final String TAG_SITENAME = "Name"; // used by OpsXML output to mimic web page labels for one site
-
     public static final String TAG_SITETYPE = "Type";
-
-    /** _more_ */
     public static final String TAG_MI_FOURCHARACTERID = "mi:fourCharacterID";
     public static final String TAG_FOURCHARACTERID = "Site"; // used by OpsXML output to mimic web page labels for one site
-
-    /** _more_ */
     public static final String TAG_MI_MONUMENTINSCRIPTION = "mi:monumentInscription";
     public static final String TAG_MONUMENTINSCRIPTION = "monumentInscription";
-
-    /** _more_ */
     public static final String TAG_MI_IERSDOMESNUMBER = "mi:iersDOMESNumber";
     public static final String TAG_IERSDOMESNUMBER = "IERSDOMES";
-
     public static final String TAG_DATAARCHIVEDATE = "latestDataArchiveDate";
-
-    /** _more_ */
     public static final String TAG_MI_CDPNUMBER = "mi:cdpNumber";
     public static final String TAG_CDPNUMBER = "cdpNumber";
-
-    /** _more_ */
     public static final String TAG_MI_MONUMENTDESCRIPTION = "mi:monumentDescription";
     public static final String TAG_MONUMENTDESCRIPTION = "MonumentStyle"; // used by OpsXML output to mimic web page labels for one site
-
-    /** _more_ */
     public static final String TAG_MI_HEIGHTOFTHEMONUMENT = "mi:heightOfTheMonument";
-
-    /** _more_ */
     public static final String TAG_MI_MONUMENTFOUNDATION = "mi:monumentFoundation";
 
     /** _more_ */
