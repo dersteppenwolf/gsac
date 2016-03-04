@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: Prototype15_GSAC_Feb29
+-- Host: localhost    Database: Prototype15_GSAC
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `Prototype15_GSAC_Feb29`
+-- Current Database: `Prototype15_GSAC`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype15_GSAC_Feb29` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Prototype15_GSAC` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `Prototype15_GSAC_Feb29`;
+USE `Prototype15_GSAC`;
 
 --
 -- Table structure for table `access`
@@ -56,15 +56,15 @@ DROP TABLE IF EXISTS `agency`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agency` (
   `agency_id` int(4) unsigned NOT NULL AUTO_INCREMENT,
-  `operating_agency_name` varchar(100) NOT NULL,
-  `operating_agency_short_name` varchar(50) DEFAULT NULL,
-  `operating_agency_URL` varchar(150) DEFAULT NULL,
-  `operating_agency_address` varchar(150) DEFAULT NULL,
-  `operating_agency_email` varchar(100) DEFAULT NULL,
+  `agency_name` varchar(100) NOT NULL,
+  `agency_short_name` varchar(50) DEFAULT NULL,
+  `agency_URL` varchar(150) DEFAULT NULL,
+  `agency_address` varchar(150) DEFAULT NULL,
+  `agency_email` varchar(100) DEFAULT NULL,
   `agency_individual_name` varchar(100) DEFAULT NULL,
   `other_contact` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`agency_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,7 +73,7 @@ CREATE TABLE `agency` (
 
 LOCK TABLES `agency` WRITE;
 /*!40000 ALTER TABLE `agency` DISABLE KEYS */;
-INSERT INTO `agency` VALUES (0,'agency unknown','agency unknown','agency URL unknown',NULL,NULL,NULL,NULL);
+INSERT INTO `agency` VALUES (0,'agency unknown','agency unknown','agency URL unknown',NULL,NULL,NULL,NULL),(1,'UNAVCO','UNAVCO','http://www.unavco.org','6350 Nautilus Drive Boulder, CO 80301-5394 U.S.A.',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `agency` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ CREATE TABLE `antenna` (
 
 LOCK TABLES `antenna` WRITE;
 /*!40000 ALTER TABLE `antenna` DISABLE KEYS */;
-INSERT INTO `antenna` VALUES (0,'antenna unknown','N'), (1,'TRM57971.00','Y'),(2,'TRM59800.00','Y'),(3,'ASH701945B_M','Y'),(4,'TRM55971.00','Y'),(5,'TRM41249.00','N'),(6,'TRM22020.00+GP','N'),(7,'AOAD/M_T','N'),(8,'TRM14532.00','N'),(9,'ASH700936D_M','N'),(10,'TRM29659.00','N'),(11,'TRM22020.00-GP','N');
+INSERT INTO `antenna` VALUES (0,'antenna unknown','N'),(1,'TRM57971.00','Y'),(2,'TRM59800.00','Y'),(3,'ASH701945B_M','Y'),(4,'TRM55971.00','Y'),(5,'TRM41249.00','N'),(6,'TRM22020.00+GP','N'),(7,'AOAD/M_T','N'),(8,'TRM14532.00','N'),(9,'ASH700936D_M','N'),(10,'TRM29659.00','N'),(11,'TRM22020.00-GP','N');
 /*!40000 ALTER TABLE `antenna` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -122,7 +122,7 @@ CREATE TABLE `data_reference_frame` (
 
 LOCK TABLES `data_reference_frame` WRITE;
 /*!40000 ALTER TABLE `data_reference_frame` DISABLE KEYS */;
-INSERT INTO `data_reference_frame` VALUES (0,'data_reference_frame unknown'), (1,'WGS84'),(2,'IGS08'),(3,'NA12'),(4,'GTRF09'),(5,'ETRS89'),(6,'FID (UNR)'),(7,'SNARF');
+INSERT INTO `data_reference_frame` VALUES (0,'data_reference_frame unknown'),(1,'WGS84'),(2,'IGS08'),(3,'NA12'),(4,'GTRF09'),(5,'ETRS89'),(6,'FID (UNR)'),(7,'SNARF');
 /*!40000 ALTER TABLE `data_reference_frame` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,7 +147,7 @@ CREATE TABLE `data_type` (
 
 LOCK TABLES `data_type` WRITE;
 /*!40000 ALTER TABLE `data_type` DISABLE KEYS */;
-INSERT INTO `data_type` VALUES (0,'data type unknown',''), (1,'instrumental data','any type instrumental native, raw, or binary data'),(2,'GNSS observation file','any GNSS obs file'),(3,'GPS navigation file','a GPS          navigation file, RINEX 2'),(4,'Galileo navigation file','a Galileo GNSS navigation file, RINEX 2'),(5,'GLONASS navigation file','a GLONASS GNSS navigation file, RINEX 2'),(6,'GNSS meteorology file','a GNSS meteorology        file, RINEX 2'),(7,'QZSS navigation file','a QZSS GNSS navigation    file, RINEX 2'),(8,'Beidou navigation file','a Beidou GNSS navigation  file, RINEX 2'),(9,'',''),(10,'',''),(11,'',''),(12,'GNSS nav file','GNSS nav file, any format or system'),(13,'GNSS met file','GNSS met file, any format or system'),(14,'',''),(15,'',''),(16,'Time series solution','time series solution'),(17,'Time series plot','time series plot image file'),(18,'',''),(19,'GNSS sites velocities','GNSS sites velocity solution'),(20,'GNSS sites positions','GNSS sites positions solution'),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter observations',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI'),(27,'teqc qc S file','teqc QC summary S file');
+INSERT INTO `data_type` VALUES (0,'data type unknown',''),(1,'instrumental data','any type instrumental native, raw, or binary data'),(2,'GNSS observation file','any GNSS obs file'),(3,'GPS navigation file','a GPS          navigation file, RINEX 2'),(4,'Galileo navigation file','a Galileo GNSS navigation file, RINEX 2'),(5,'GLONASS navigation file','a GLONASS GNSS navigation file, RINEX 2'),(6,'GNSS meteorology file','a GNSS meteorology        file, RINEX 2'),(7,'QZSS navigation file','a QZSS GNSS navigation    file, RINEX 2'),(8,'Beidou navigation file','a Beidou GNSS navigation  file, RINEX 2'),(9,'',''),(10,'',''),(11,'',''),(12,'GNSS nav file','GNSS nav file, any format or system'),(13,'GNSS met file','GNSS met file, any format or system'),(14,'',''),(15,'',''),(16,'Time series solution','time series solution'),(17,'Time series plot','time series plot image file'),(18,'',''),(19,'GNSS sites velocities','GNSS sites velocity solution'),(20,'GNSS sites positions','GNSS sites positions solution'),(21,'strainmeter observations',''),(22,'tidegage observations',''),(23,'tiltmeter observations',''),(24,'DORIS','DORIS'),(25,'SLR','SLR'),(26,'VLBI','VLBI'),(27,'teqc qc S file','teqc QC summary S file');
 /*!40000 ALTER TABLE `data_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,7 +223,7 @@ CREATE TABLE `datafile_format` (
 
 LOCK TABLES `datafile_format` WRITE;
 /*!40000 ALTER TABLE `datafile_format` DISABLE KEYS */;
-INSERT INTO `datafile_format` VALUES (0,'data file format unknown'), (1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'image file (.png, .jpg, etc.)'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED'),(17,'PBO GPS Velocity Field Format'),(18,'PBO GPS Station Position Time Series, .pos'),(19,'teqc qc summary S file'),(20,'IGS XML site log'),(21,'IGS ASCII site log');
+INSERT INTO `datafile_format` VALUES (0,'data file format unknown'),(1,'RINEX 2'),(2,'RINEX 3'),(3,'BINEX'),(4,'SINEX'),(5,'UNR tenv3 northings and eastings'),(6,'UNR txyz2 Cartesian xyz'),(7,'UNR tenv traditional NEU'),(8,'image file (.png, .jpg, etc.)'),(9,'UNR station QC estimate .qa file'),(10,'UNR kenv 5 minute products'),(11,'UNR krms RMS products'),(12,'DORIS'),(13,'SLR'),(14,'VLBI'),(15,'BOTTLE'),(16,'SEED'),(17,'PBO GPS Velocity Field Format'),(18,'PBO GPS Station Position Time Series, .pos'),(19,'teqc qc summary S file'),(20,'IGS XML site log'),(21,'IGS ASCII site log');
 /*!40000 ALTER TABLE `datafile_format` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,7 +248,7 @@ CREATE TABLE `ellipsoid` (
 
 LOCK TABLES `ellipsoid` WRITE;
 /*!40000 ALTER TABLE `ellipsoid` DISABLE KEYS */;
-INSERT INTO `ellipsoid` VALUES (0,'ellipsoid unknown', 'unknown'),(1,'WGS 84','WGS 84'),(2,'GRS 80','GRS 80'),(3,'PZ-90','PZ-90');
+INSERT INTO `ellipsoid` VALUES (0,'ellipsoid unknown','unknown'),(1,'WGS 84','WGS 84'),(2,'GRS 80','GRS 80'),(3,'PZ-90','PZ-90');
 /*!40000 ALTER TABLE `ellipsoid` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -299,6 +299,7 @@ CREATE TABLE `equip_config` (
 
 LOCK TABLES `equip_config` WRITE;
 /*!40000 ALTER TABLE `equip_config` DISABLE KEYS */;
+INSERT INTO `equip_config` VALUES (10,42,'2011-12-02 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 17:50:06',10,'0220368169',0.0083,2,'G3260009',2,NULL,29,'4614207064',NULL,15),(22,47,'2008-09-03 00:00:00','2010-07-08 23:59:45',NULL,NULL,NULL,'2015-10-23 17:50:07',10,'0220366150',0.0083,1,'C5010030',2,NULL,28,'4527253331',NULL,15),(23,47,'2010-07-09 00:00:00',NULL,NULL,NULL,NULL,'2015-10-23 17:50:07',10,'0220366150',0.0083,1,'C5010030',2,NULL,29,'4527253331',NULL,15),(45,39,'2008-02-14 23:38:45','2009-03-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220382762',0.0083,3,'',2,NULL,28,'4623116489',NULL,15),(46,39,'2009-03-12 00:00:00','2010-10-21 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220377400',0.0083,3,'',2,NULL,28,'4623116489',NULL,15),(47,39,'2010-10-22 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220377400',0.0083,3,'',2,NULL,29,'4623116489',NULL,15),(48,40,'2005-09-23 00:19:00','2010-07-17 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220366152',0.0083,3,'',2,NULL,28,'4518249765',NULL,15),(49,40,'2010-07-18 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'0000-00-00 00:00:00',10,'0220366152',0.0083,3,'',2,NULL,29,'4518249765',NULL,15),(50,41,'2007-06-21 04:04:30','2010-06-12 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220346567',0.0083,3,'',2,NULL,28,'4541260323',NULL,15),(51,41,'2010-12-06 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220346567',0.0083,3,'',2,NULL,29,'4541260323',NULL,15),(52,42,'2006-08-23 00:00:00','2010-07-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220368169',0.0083,3,'',2,NULL,28,'4614207064',NULL,15),(53,42,'2010-07-12 00:00:00','2011-12-01 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220368169',0.0083,3,'',2,NULL,29,'4614207064',NULL,15),(54,43,'2005-10-01 00:51:30','2008-09-02 21:19:00',NULL,NULL,NULL,'2015-10-23 18:01:25',10,'0220365593',0.0083,3,'',2,NULL,28,'4518249763',NULL,15),(55,43,'2008-09-02 21:20:30','2008-09-10 21:56:30',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,28,'4518249763',NULL,15),(56,43,'2008-10-09 23:32:45','2010-07-08 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,28,'4539259362',NULL,15),(57,43,'2010-07-09 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379553',0.0083,3,'',2,NULL,29,'4539259362',NULL,15),(58,44,'2007-11-26 00:00:00','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379511',0.0083,3,'',2,NULL,28,'4625209417',NULL,15),(59,44,'2010-07-15 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220379511',0.0083,3,'',2,NULL,29,'4625209417',NULL,15),(60,45,'2007-09-13 18:55:00','2010-07-14 23:59:45',NULL,NULL,NULL,'0000-00-00 00:00:00',10,'4623A16401',0.0083,3,'',2,NULL,28,'4625209636',NULL,15),(61,45,'2010-07-15 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'4623A16401',0.0083,3,'',2,NULL,29,'4625209636',NULL,15),(62,46,'2005-09-28 00:16:45','2010-07-11 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366135',0.0083,3,'',2,NULL,28,'4516248599',NULL,15),(63,46,'2010-07-12 00:00:00','2015-10-15 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366135',0.0083,3,'',2,NULL,29,'4516248599',NULL,15),(64,47,'2005-10-27 21:08:30','2008-09-02 23:59:45',NULL,NULL,NULL,'2015-10-23 18:01:26',10,'0220366150',0.0083,3,'',2,NULL,28,'4527253331',NULL,15),(65,48,'2008-08-30 16:35:15','2010-07-14 23:59:45',NULL,NULL,NULL,'2015-11-11 16:02:57',10,'0220382763',0.0083,3,'',2,NULL,28,'4704127081',NULL,15),(66,48,'2010-07-15 00:00:00','2015-11-10 23:59:45',NULL,NULL,NULL,'2015-11-11 16:02:57',10,'0220382763',0.0083,3,'',2,NULL,29,'4704127081',NULL,15);
 /*!40000 ALTER TABLE `equip_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -313,7 +314,7 @@ CREATE TABLE `locale` (
   `locale_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `locale_name` varchar(70) NOT NULL,
   PRIMARY KEY (`locale_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,7 +323,7 @@ CREATE TABLE `locale` (
 
 LOCK TABLES `locale` WRITE;
 /*!40000 ALTER TABLE `locale` DISABLE KEYS */;
-INSERT INTO `locale` VALUES (0,'locale unknown or not supplied');
+INSERT INTO `locale` VALUES (0,'locale unknown or not supplied'),(1,'Buzzards Roost');
 /*!40000 ALTER TABLE `locale` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -346,7 +347,7 @@ CREATE TABLE `metpack` (
 
 LOCK TABLES `metpack` WRITE;
 /*!40000 ALTER TABLE `metpack` DISABLE KEYS */;
-INSERT INTO `metpack` VALUES (0,'metpack unknown'), (1,'no metpack'),(2,'WXT520'),(3,'WXT510');
+INSERT INTO `metpack` VALUES (0,'metpack unknown'),(1,'no metpack'),(2,'WXT520'),(3,'WXT510');
 /*!40000 ALTER TABLE `metpack` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -361,7 +362,7 @@ CREATE TABLE `monument_style` (
   `monument_style_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `monument_style_description` varchar(70) NOT NULL,
   PRIMARY KEY (`monument_style_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -385,7 +386,7 @@ CREATE TABLE `nation` (
   `nation_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `nation_name` varchar(70) NOT NULL,
   PRIMARY KEY (`nation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -394,7 +395,7 @@ CREATE TABLE `nation` (
 
 LOCK TABLES `nation` WRITE;
 /*!40000 ALTER TABLE `nation` DISABLE KEYS */;
-INSERT INTO `nation` VALUES (0,'nation unknown or not supplied');
+INSERT INTO `nation` VALUES (0,'nation unknown or not supplied'),(1,'U.S.A.');
 /*!40000 ALTER TABLE `nation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,7 +410,7 @@ CREATE TABLE `province_state` (
   `province_state_id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `province_state_name` varchar(70) NOT NULL,
   PRIMARY KEY (`province_state_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -418,7 +419,7 @@ CREATE TABLE `province_state` (
 
 LOCK TABLES `province_state` WRITE;
 /*!40000 ALTER TABLE `province_state` DISABLE KEYS */;
-INSERT INTO `province_state` VALUES (0,'province unknown or not supplied');
+INSERT INTO `province_state` VALUES (0,'province unknown or not supplied'),(1,'California');
 /*!40000 ALTER TABLE `province_state` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -443,7 +444,7 @@ CREATE TABLE `radome` (
 
 LOCK TABLES `radome` WRITE;
 /*!40000 ALTER TABLE `radome` DISABLE KEYS */;
-INSERT INTO `radome` VALUES (0,'radome unknown','N'), (1,'NONE','Y'),(2,'SCIT','Y'),(3,'SCIS','Y');
+INSERT INTO `radome` VALUES (0,'radome unknown','N'),(1,'NONE','Y'),(2,'SCIT','Y'),(3,'SCIS','Y');
 /*!40000 ALTER TABLE `radome` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -460,7 +461,7 @@ CREATE TABLE `receiver_firmware` (
   `receiver_firmware` varchar(20) NOT NULL,
   `igs_defined` char(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`receiver_firmware_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -537,6 +538,7 @@ CREATE TABLE `station` (
 
 LOCK TABLES `station` WRITE;
 /*!40000 ALTER TABLE `station` DISABLE KEYS */;
+INSERT INTO `station` VALUES (39,'P340','DashielCrkCN2008',39.4093,-123.0498,865.23,-2691539.1186,-4136726.977,4028080.6731,'2008-02-14 23:38:45',NULL,NULL,2,2,2,1,1,4,3,3,13,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://   www.unavco.org/data/gps-gnss/lib/images/station_images/P340.jpg','http://pboshared.unavco.org/timeseries/P340_timeseries_cleaned.png',NULL,NULL,NULL),(40,'P341','WhiskytownCN2005',40.6507,-122.6069,406.85,NULL,NULL,NULL,'2005-09-23 00:19:00',NULL,NULL,2,2,2,1,1,3,3,3,5,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P341.jpg','http://pboshared.unavco.org/timeseries/P341_timeseries_cleaned.png',NULL,NULL,NULL),(41,'P343','ChinaPeak_CN2007',40.8871,-123.3342,1617.91,NULL,NULL,NULL,'2007-06-21 04:04:30',NULL,NULL,2,2,2,1,1,4,3,3,6,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/      station_images/P343.jpg','http://pboshared.unavco.org/timeseries/P343_timeseries_cleaned.png',NULL,NULL,NULL),(42,'P344','VinaHelitkCN2006',39.9291,-122.028,50.29,NULL,NULL,NULL,'2006-08-23 00:00:00',NULL,NULL,2,2,2,1,1,3,3,3,7,'PBO;   PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P344.jpg','http://pboshared.unavco.org/timeseries/P344_timeseries_cleaned.png',NULL,NULL,NULL),(43,'P345','HookerDomeCN2005',40.2712,-122.2708,134.08,NULL,NULL,NULL,'2005-10-01 00:51:30',NULL,NULL,2,2,2,1,1,3,3,3,8,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P345.jpg','http://pboshared.     unavco.org/timeseries/P345_timeseries_cleaned.png',NULL,NULL,NULL),(44,'P346','BuzzardRstCN2007',39.7947,-120.8675,2039.37,-2518526.883,-4213579.929,4061802.1799,'2007-11-26 00:00:00',NULL,NULL,2,2,2,1,1,4,1,1,1,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P346.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P346.png',NULL,NULL,1),(45,'P347','AdinCTYardCN2007',41.1833,-120.9484,1269.28,NULL,NULL,NULL,'2007-09-13 18:55:00',NULL,NULL,2,2,2,1,1,3,3,3,10,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P347.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P347.png',NULL,NULL,NULL),(46,'P348','HatchetMtnCN2005',40.9055,-121.828,1668.07,NULL,NULL,NULL,'2005-09-28 00:16:45',NULL,NULL,2,2,2,1,1,3,3,3,11,'PBO;PBO Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/           station_images/P348.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P348.png',NULL,NULL,NULL),(47,'P349','WonderlandCN2005',40.7311,-122.3194,275.4,NULL,NULL,NULL,'2005-10-27 21:08:30',NULL,NULL,2,2,2,1,1,3,3,3,12,'PBO;PBO        Analysis  Complete;PBO Core Network;','','http://www.unavco.org/data/gps-gnss/lib/images/station_images/P349.jpg','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries/P349.png',NULL,NULL,NULL),(48,'P350','SmokyDome_ID2008',43.5328,-114.8628,2388.3,NULL,NULL,NULL,'2008-08-30 16:35:15',NULL,NULL,2,1,2,1,1,3,3,5,15,'PBO;PBO Analysis Complete;PBO Core Network;','','','http://geodesy.unr.edu/tsplots/IGS08/TimeSeries_cleaned/P350.png',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `station` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -560,7 +562,7 @@ CREATE TABLE `station_status` (
 
 LOCK TABLES `station_status` WRITE;
 /*!40000 ALTER TABLE `station_status` DISABLE KEYS */;
-INSERT INTO `station_status` VALUES (0,'status unknown' ),(1,'Active'),(2,'Inactive/intermittent'),(3,'Retired'),(4,'Pending');
+INSERT INTO `station_status` VALUES (0,'status unknown'),(1,'Active'),(2,'Inactive/intermittent'),(3,'Retired'),(4,'Pending');
 /*!40000 ALTER TABLE `station_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -584,7 +586,7 @@ CREATE TABLE `station_style` (
 
 LOCK TABLES `station_style` WRITE;
 /*!40000 ALTER TABLE `station_style` DISABLE KEYS */;
-INSERT INTO `station_style` VALUES (0,'style unknown' ),(1,'GPS/GNSS Continuous'),(2,'GPS/GNSS Campaign'),(3,'GPS/GNSS Mobile'),(4,'GPS/GNSS Episodic');
+INSERT INTO `station_style` VALUES (0,'style unknown'),(1,'GPS/GNSS Continuous'),(2,'GPS/GNSS Campaign'),(3,'GPS/GNSS Mobile'),(4,'GPS/GNSS Episodic');
 /*!40000 ALTER TABLE `station_style` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -597,4 +599,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-29 12:37:46
+-- Dump completed on 2016-03-04 11:56:27
