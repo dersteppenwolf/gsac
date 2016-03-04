@@ -965,7 +965,7 @@ public class PrototypeSiteManager extends SiteManager {
         if (null!= iersdomes && iersdomes.length() > 4) site.addMetadata(new PropertyMetadata(GsacExtArgs.SITE_METADATA_IERDOMES, iersdomes,  "IERS DOMES" ));
 
         // CHANGE LOOK if mirroring site info from another GSAC
-        //site.setMirroredFromURL(originator);   add an agency's URL web page here; have to go through the agency table, using  agencyid    =      results.getInt(Tables.STATION.COL_OPERATOR_AGENCY_ID);
+        //site.setMirroredFromURL(originator);   add an agency's URL web page here; have to go through the agency table, using  agencyid    =      results.getInt(Tables.STATION.COL_AGENCY_ID);
         // debug System.err.println("   SiteManager:      makeResource:  station " +fourCharId+ " mirror URL="+site.getMirroredFromURL());
         // LOOK add this value to the site metadata AND make a line showing it on the site HTML web page
         //if (null!=originator ) {  site.addMetadata(new PropertyMetadata(GsacArgs.ARG_SITE_MIRROR_FROM_URL,  originator, "Originator"));}
@@ -1012,12 +1012,12 @@ public class PrototypeSiteManager extends SiteManager {
                ;
             }
 
-        /*
+        // *
         // following code section is in effect readAgencyMetadata(site);
         clauses = new ArrayList<Clause>();
         tables = new ArrayList<String>();
         cols="";
-        clauses.add(Clause.join(Tables.STATION.COL_AGENCY_ID, Tables.AGENCY.COL_AGENCY_ID));
+        clauses.add(Clause.join(Tables.STATION.COL_OPERATOR_AGENCY_ID, Tables.AGENCY.COL_AGENCY_ID));
         clauses.add(Clause.eq(Tables.AGENCY.COL_AGENCY_ID, agencyid));
         cols=SqlUtil.comma(new String[]{Tables.AGENCY.COL_AGENCY_NAME});
         tables.add(Tables.STATION.NAME);
@@ -1034,7 +1034,7 @@ public class PrototypeSiteManager extends SiteManager {
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-        */
+        // */
 
         return site;
     }
