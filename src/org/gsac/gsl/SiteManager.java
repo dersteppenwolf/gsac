@@ -174,7 +174,7 @@ public abstract class SiteManager extends GsacResourceManager {
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  
 
         // placeholder for the new IGS XML site log format, 2016. Not yet operational complete or correct.  Do not use.
-        // new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
+        new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
         // for SOPAC XML site log format  
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
