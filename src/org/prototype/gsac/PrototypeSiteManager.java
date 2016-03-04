@@ -781,6 +781,7 @@ public class PrototypeSiteManager extends SiteManager {
         int stateid      =     results.getInt(Tables.STATION.COL_PROVINCE_STATE_ID);
         int cityid      =     results.getInt(Tables.STATION.COL_LOCALE_ID);
         int agencyid    =      results.getInt(Tables.STATION.COL_OPERATOR_AGENCY_ID); 
+        // debug System.err.println("GSAC:  GSAC found site agency id " + agencyid);
         int monument_description_id = results.getInt(Tables.STATION.COL_MONUMENT_STYLE_ID);
         int station_id      =     results.getInt(Tables.STATION.COL_STATION_ID);
 
@@ -839,7 +840,7 @@ public class PrototypeSiteManager extends SiteManager {
         Date     toTime  = null;
         Date     pubTime = null;
         if ( numCols>11 )
-            {
+            
             // since value may be like  "2015-11-01 23:59:45.0", cut off last two chars:
             toTime=   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stop_time.substring(0,19) );
             fromTime= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start_time.substring(0,19));
@@ -1012,29 +1013,27 @@ public class PrototypeSiteManager extends SiteManager {
                ;
             }
 
-        // *
-        // following code section is in effect readAgencyMetadata(site);
-        clauses = new ArrayList<Clause>();
-        tables = new ArrayList<String>();
-        cols="";
-        clauses.add(Clause.join(Tables.STATION.COL_OPERATOR_AGENCY_ID, Tables.AGENCY.COL_AGENCY_ID));
-        clauses.add(Clause.eq(Tables.AGENCY.COL_AGENCY_ID, agencyid));
         cols=SqlUtil.comma(new String[]{Tables.AGENCY.COL_AGENCY_NAME});
-        tables.add(Tables.STATION.NAME);
+        tables = new ArrayList<String>();
+        clauses = new ArrayList<Clause>();
+        cols=SqlUtil.comma(new String[]{Tables.AGENCY.COL_AGENCY_NAME});
+        //tables.add(Tables.STATION.NAME);
         tables.add(Tables.AGENCY.NAME);
+        //clauses.add(Clause.join(Tables.STATION.COL_OPERATOR_AGENCY_ID, Tables.AGENCY.COL_AGENCY_ID));
+        clauses.add(Clause.eq(Tables.AGENCY.COL_AGENCY_ID, agencyid));
         statement = getDatabaseManager().select (cols,  tables,  Clause.and(clauses),  (String) null,  -1);
         //                               select  fields   from     where
         try {
            SqlUtil.Iterator iter = getDatabaseManager().getIterator(statement);
            while ((qresults = iter.getNext()) != null) {
-               String agency = new String( qresults.getBytes(Tables.AGENCY.COL_AGENCY_NAME), "UTF-8"); // qresults.getString( Tables.AGENCY.COL_AGENCY_NAME);
+               String agency = new String( qresults.getBytes(Tables.AGENCY.COL_AGENCY_NAME), "UTF-8"); // Note trick to get odd letters in UTF-8, NOT qresults.getString( Tables.AGENCY.COL_AGENCY_NAME);
+               System.err.println("GSAC:       GSAC found site agency  " +agency);
                addPropertyMetadata( site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, "Agency", agency);    
                break;
                }
             } finally {
                getDatabaseManager().closeAndReleaseConnection(statement);
             }
-        // */
 
         return site;
     }
@@ -1135,7 +1134,11 @@ public class PrototypeSiteManager extends SiteManager {
 
                 /* get, check, and save value for IERS DOMES. */
                 //String iersdomes= results.getString(Tables.STATION.COL_IERS_DOMES);
-                // System.err.println("   SiteManager: readIdentificationMetadata()  iersdomes=  "+iersdomes);
+                String iersdomes = new String( results.getBytes(Tables.STATION.COL_IERS_DOMES), "UTF-8");
+                //System.err.println("   SiteManager: readIdentificationMetadata()  iersdomes=  "+iersdomes);
+                if (iersdomes == null ) 
+                   {iersdomes =   "" ; }
+                addPropertyMetadata( gsacResource, GsacExtArgs.SITE_METADATA_IERDOMES, "IERS DOMES", iersdomes);
 
                 /*
                 // trap bad value "(A9)", an artifact of some IGS site logs,  and replace with empty string. 
