@@ -22,8 +22,10 @@ package org.gsac.gsl.util;
 
 
 /**
- * Class description
+ * Defined values to support generation of IGS XML site logs for GSAC site search results.
  *
+ * Note this is a provisional draft and really only a place holder for what will be completely new code using online .xsd files for xml creation.
+ * This is not operational, complete, or correct.
  *
  * @version        2 Mar 2016
  * @author         S K Wier
@@ -54,10 +56,11 @@ public class IgsXmlSiteLog {
     public static final String ATTR_GML1 = "gml:id";
 
     /** for IGS XML site log formatting */
-    /** convert SOPAC XML site log formatting */
     public static final String VALUE_GML1 = "GEO_1";
-    public static final String XMLNS_XMLNS = "http://www.w3.org/2000/svg"; //"http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
+    public static final String XMLNS_XMLNS = "http://www.w3.org/2000/svg"; 
 
+    /* relic sopac stuff; only for examples.
+    public static final String XMLNS_XMLNS = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
     public static final String VALUE_XSI_SCHEMALOCATION = "urn:xml-gov-au:icsm:egeodesy:0.2 https://icsm.govspace.gov.au/files/2015/09/siteLog.xsd";
     public static final String XMLNS_XMLNS_CONTACT = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004";
     public static final String XMLNS_XMLNS_EQUIP = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004";
@@ -66,7 +69,7 @@ public class IgsXmlSiteLog {
     public static final String XMLNS_XMLNS_REALTIME = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011";
     public static final String XMLNS_XMLNS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
     public static final String VALUE_GSAC_SCHEMALOCATION = "";
-
+    */
 
 
     /** for GSAC XML formatting, and anyone else who can use one. */

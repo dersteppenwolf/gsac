@@ -50,17 +50,20 @@ import javax.servlet.http.*;
 /**
  * Creates GSAC site search results in IGS XML site log format, using "GeodesyML."
  *
- * References (as of February '16:
-    https://igscb.jpl.nasa.gov/pipermail/igs-dcwg/2015-June/000112.html
-    with:
-    The latest version of GeodesyML (v0.2): https://icsm.govspace.gov.au/egeodesy/geodesyml-0-2-schema/
-     which links to the sample log, MOBS_SiteLog.xml from https://icsm.govspace.gov.au/files/2015/09/MOBS_SiteLog.xml 
+ * Note this is a provisional draft and really only a place holder for what will be completely new code using online .xsd files for xml creation.
+ * This is not operational, complete, or correct.
+ *
+ * References:
 
-    The-Use-of-GeodesyML-to-Encode-IGS-Site-Log-Data_04062015.pdf
-    Url : https://igscb.jpl.nasa.gov/pipermail/igs-dcwg/attachments/20150604/e32d991f/attachment-0002.pdf 
+   key site: https://icsm.govspace.gov.au/egeodesy/geodesyml-0-2-schema/
+    
+   a sample log, MOBS_SiteLog.xml from https://icsm.govspace.gov.au/files/2015/09/MOBS_SiteLog.xml 
 
-    White Paper - Metadata Standard from Global Geodesy.pdf
-    https://igscb.jpl.nasa.gov/pipermail/igs-dcwg/attachments/20150604/e32d991f/attachment-0003.pdf 
+   The-Use-of-GeodesyML-to-Encode-IGS-Site-Log-Data_04062015.pdf
+   Url : https://igscb.jpl.nasa.gov/pipermail/igs-dcwg/attachments/20150604/e32d991f/attachment-0002.pdf 
+
+   White Paper - Metadata Standard from Global Geodesy.pdf
+   https://igscb.jpl.nasa.gov/pipermail/igs-dcwg/attachments/20150604/e32d991f/attachment-0003.pdf 
 
  *
  */
@@ -358,7 +361,7 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
      */
     private void addSiteLocation(PrintWriter pw, GsacSite site)
             throws Exception {
-        /*
+        /* old sopca for, example:
           <siteLocation>
           <mi:city>Tres Piedras</mi:city>
           <mi:state>New Mexico</mi:state>
@@ -375,6 +378,13 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
           <mi:notes/>
           </siteLocation>
         */
+
+        /* IGS XML site log example:
+
+
+        */
+
+
         pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_SITELOCATION));
 
         List<GsacMetadata> politicalMetadata =
