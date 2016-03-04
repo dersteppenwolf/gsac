@@ -55,8 +55,14 @@ import javax.servlet.http.*;
  *
  * References:
 
-   key site: https://icsm.govspace.gov.au/egeodesy/geodesyml-0-2-schema/
-    
+   key sites: 
+   https://icsm.govspace.gov.au/egeodesy/geodesyml-0-2-schema/
+   code starting point: http://stackoverflow.com/questions/12147428/creating-an-xml-file-from-xsd-from-jaxb/33233061#33233061
+   see "After trying for couple of days, eventually i was able to create the xml from xsd properly using the code given below."
+ 
+   creator of the thing: 
+   nicholas.brown@ga.gov.au
+
    a sample log, MOBS_SiteLog.xml from https://icsm.govspace.gov.au/files/2015/09/MOBS_SiteLog.xml 
 
    The-Use-of-GeodesyML-to-Encode-IGS-Site-Log-Data_04062015.pdf
@@ -116,6 +122,40 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
             throws Exception {
         response.startResponse(GsacResponse.MIME_XML);
 
+        /*
+          item order:
+
+<?xml version="1.0" encoding="UTF-8"?>
+done
+
+<geo:GeodesyML gml:id="GEO_1" xmlns:gml="http:// ...
+done
+
+    <geo:Site gml:id="SITE_1">
+done
+
+    <gmd:CI_ResponsibleParty id="DrJohnDawsonGA">
+done
+
+    <geo:Monument gml:id="MONUMENT_1">              BIG lots of real information
+
+    <geo:gnssReceiver gml:id="GNSS_REC_1">    <<<< MULTIPLE
+
+    <geo:gnssAntenna gml:id="GNSS_ANT_2">
+
+    ( dont use     <geo:SiteCertificate gml:id="SITECERT_1">  something for Australian bureaucracy.)
+
+    <geo:Position gml:id="POS_1_H" srsName="http://www.opengis.net/gml/srs/epsg.xml#4283">
+
+    <geo:Position gml:id="POS_1_V" srsName="http://www.opengis.net/gml/srs/epsg.xml#4283">
+
+    <geo:siteLog gml:id="SITELOG_1">    This is BIG.                                                         (yep the site log xml format has one small section called siteLog )
+    
+    and a bunch more stuff which may be meaningless so far as GSAC data is concerned.
+
+
+
+
         /* write header lines like this:
 <?xml version="1.0" encoding="UTF-8"?>
 <geo:GeodesyML gml:id="GEO_1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:geo="urn:xml-gov-au:icsm:egeodesy:0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="urn:xml-gov-au:icsm:egeodesy:0.2 https://icsm.govspace.gov.au/files/2015/09/siteLog.xsd">
@@ -134,7 +174,8 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
 
         Date now = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
-        System.out.println("GSAC: request for IGS XML site log at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
+
+        // debug only System.out.println("GSAC: request for IGS XML site log at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
         //Add the open tag with all of the namespaces
         
@@ -155,7 +196,7 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
         }))); */
 
         String filelabel= " ";
-        pw.append( " <!--\n      @Name "+filelabel+"\n      @Author "+getRepository().getRepositoryName() +"\n      @Date "+myFormatDate(new Date())+ "\n      @Description: made by GSAC web services\n  -->" );
+        pw.append( " <!--\n      Provisional IGS XML site log made by GSAC. Not for operational use.  \n\n      @Name "+filelabel+"\n      @Author "+getRepository().getRepositoryName() +"\n      @Date "+myFormatDate(new Date())+ "\n      @Description: made by GSAC web services\n  -->" );
 
 
         //"We can have any number of sites here. Need to figure out how to handle multiple sites" - J MW
@@ -175,6 +216,7 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
         }
         //pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_IGSSITELOG));
         pw.append("</geo:GeodesyML>");
+
         //Done
         response.endResponse();
     }
@@ -221,10 +263,12 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
 
 <gmd:CI_ResponsibleParty id="DrJohnDawsonGA"><gmd:individualName><gco:CharacterString>Dr John Dawson</gco:CharacterString></gmd:individualName><gmd:organisationName><gco:CharacterString>Geoscience Australia</gco:CharacterString></gmd:organisationName><gmd:role><gmd:CI_RoleCode codeListValue="" codeList="">Section Leader - National Geospatial Reference Systems Section</gmd:CI_RoleCode></gmd:role></gmd:CI_ResponsibleParty>
         */
+        pw.append("\n"); // optional, simply for human readability.
         pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION +" gml:id=\"SITE_"+sitenumstr +"\"" ));
-        String stype=""; //"sometype"
+        String stype=""; //"some type"
         String line1="<geo:type codeSpace=\"\">"+stype+"</geo:type>";
         pw.append(line1);
+
         String line2="<geo:Monument xlink:href=\"#MONUMENT_"+sitenumstr+"\"/>";
         pw.append(line2);
         pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION));
@@ -239,10 +283,12 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
     public static final String TAG_gmdrole    = "gmd:role";
     public static final String TAG_gmdCI_RoleCode    = "gmd:CI_RoleCode";
         */
-        String rpname="Responsible Party's name";
-        String name2= "Responsible Party's name 2";
-        String orgname= "OrganisationName";
-        String rolename= "role Name";
+        String rpname=""; // not available from std gsac
+        String name2= ""; // not available from std gsac
+        String rolename= ""; // not available from std gsac
+        
+        String      agencyname =getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, ""); 
+
         pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdCI_ResponsibleParty +" id=\""+ rpname +"\"" ));
 
         pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdindividualName));
@@ -253,7 +299,7 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
 
         pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gmdorganisationName));
         pw.append(XmlUtil.openTag (IgsXmlSiteLog.TAG_gcoCharacterString));
-        pw.append(orgname);
+        pw.append(agencyname);
         pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gcoCharacterString));
         pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_gmdorganisationName));
 
@@ -384,6 +430,7 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
 
         */
 
+        pw.append("\n"); // FIX for development only
 
         pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_SITELOCATION));
 
@@ -411,27 +458,29 @@ public class IGSXmlSiteLogOutputHandler extends GsacOutputHandler {
 
         pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_geo_APPROXIMATEPOSITIONITRF));
 
-        if (el.hasXYZ()) {
-            pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_XCOORDINATEINMETERS, "",
-                                  el.getX() + ""));
-            pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_YCOORDINATEINMETERS, "",
-                                  el.getY() + ""));
-            pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_ZCOORDINATEINMETERS, "",
-                                  el.getZ() + ""));
-        } else {
-            //What should we do here? Add empty tags?
-        }
+        // working elsewhere:
+        //city       =getProperty(site, GsacExtArgs.ARG_CITY, "");
+        //state      =getProperty(site, GsacExtArgs.ARG_STATE, "");
+        //country    =getProperty(site, GsacExtArgs.ARG_COUNTRY, "");
+        String Xstr       =getProperty(site, GsacExtArgs.SITE_TRF_X, "");
+        String Ystr       =getProperty(site, GsacExtArgs.SITE_TRF_Y, "");
+        String Zstr       =getProperty(site, GsacExtArgs.SITE_TRF_Z, "");
+        //mondesc    =getProperty(site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
 
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_LATITUDE_NORTH, "",
-                              formatLocation(el.getLatitude())));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_LONGITUDE_EAST, "",
-                              formatLocation(el.getLongitude())));
+        // show x,y,z
+        //if (el.hasXYZ()) {
+            pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_XCOORDINATEINMETERS, "", Xstr + ""));
+                                  // was el.getX() + ""));
+            pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_YCOORDINATEINMETERS, "", Ystr + ""));
+                                  //el.getY() + ""));
+            pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_ZCOORDINATEINMETERS, "", Zstr + ""));
+                                  //el.getZ() + ""));
+        //} 
 
-        // About ellipsoidal height:
-        // could show zero value here if you have elevation above a geoid, not true ellipsoid heights:
-        //pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_ELEVATION_M_ELLIPS, "",
-         //                     elevationFormat.format(el.getElevation())));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_ELEVATION_M_ELLIPS, "", elevationFormat.format( 0.0 )));
+        // show latitude longitude height
+        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_LATITUDE_NORTH, "", formatLocation(el.getLatitude())));
+        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_LONGITUDE_EAST, "", formatLocation(el.getLongitude())));
+        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_ELEVATION_M_ELLIPS, "", elevationFormat.format(el.getElevation())));
 
         pw.append(
             XmlUtil.closeTag(IgsXmlSiteLog.TAG_geo_APPROXIMATEPOSITIONITRF));
