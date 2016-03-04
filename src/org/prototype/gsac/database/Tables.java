@@ -33,16 +33,16 @@ public abstract class Tables {
         public String getName() {return NAME;}
         public String getColumns() {return COLUMNS;}
         public static final String COL_AGENCY_ID =  NAME + ".agency_id";
-        public static final String COL_OPERATING_AGENCY_NAME =  NAME + ".operating_agency_name";
-        public static final String COL_OPERATING_AGENCY_SHORT_NAME =  NAME + ".operating_agency_short_name";
-        public static final String COL_OPERATING_AGENCY_URL =  NAME + ".operating_agency_URL";
-        public static final String COL_OPERATING_AGENCY_ADDRESS =  NAME + ".operating_agency_address";
-        public static final String COL_OPERATING_AGENCY_EMAIL =  NAME + ".operating_agency_email";
+        public static final String COL_AGENCY_NAME =  NAME + ".agency_name";
+        public static final String COL_AGENCY_SHORT_NAME =  NAME + ".agency_short_name";
+        public static final String COL_AGENCY_URL =  NAME + ".agency_URL";
+        public static final String COL_AGENCY_ADDRESS =  NAME + ".agency_address";
+        public static final String COL_AGENCY_EMAIL =  NAME + ".agency_email";
         public static final String COL_AGENCY_INDIVIDUAL_NAME =  NAME + ".agency_individual_name";
         public static final String COL_OTHER_CONTACT =  NAME + ".other_contact";
 
         public static final String[] ARRAY = new String[] {
-            COL_AGENCY_ID,COL_OPERATING_AGENCY_NAME,COL_OPERATING_AGENCY_SHORT_NAME,COL_OPERATING_AGENCY_URL,COL_OPERATING_AGENCY_ADDRESS,COL_OPERATING_AGENCY_EMAIL,COL_AGENCY_INDIVIDUAL_NAME,COL_OTHER_CONTACT
+            COL_AGENCY_ID,COL_AGENCY_NAME,COL_AGENCY_SHORT_NAME,COL_AGENCY_URL,COL_AGENCY_ADDRESS,COL_AGENCY_EMAIL,COL_AGENCY_INDIVIDUAL_NAME,COL_OTHER_CONTACT
         };
         public static final String COLUMNS = SqlUtil.comma(ARRAY);
         public static final String NODOT_COLUMNS = SqlUtil.commaNoDot(ARRAY);
