@@ -173,6 +173,9 @@ public abstract class SiteManager extends GsacResourceManager {
         // for Google Earth KMZ 
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  
 
+        // placeholder for the new IGS XML site log format, 2016. Not yet operational complete or correct.  Do not use.
+        // new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
+
         // for SOPAC XML site log format  
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
@@ -191,15 +194,10 @@ public abstract class SiteManager extends GsacResourceManager {
         //  for the 2010 GSAC XML site info format; functionally replaced by the GSAC Ops XML site info format.
         new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        // defer; no indication anyone used this output format in 2014.
-        //new RssSiteOutputHandler(getRepository(), getResourceClass());  // no sign it's ever been used but the idea is interesting
-
-        // defer; no indication anyone used this output format in 2014.
-        //    the 2013 GSAC plain text format for human readability; 
-        //    new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); 
-
-        // defer; no indication anyone used this output format in 2014.
+        // there is no indication that anyone used these output formats since 2013:
+        // new RssSiteOutputHandler(getRepository(), getResourceClass()); 
         // new AtomSiteOutputHandler(getRepository(), getResourceClass());
+        // new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); //  GSAC format in plain text for human readability; 
     }
 
 
