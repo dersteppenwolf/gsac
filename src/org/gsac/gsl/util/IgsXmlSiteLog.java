@@ -24,12 +24,11 @@ package org.gsac.gsl.util;
 /**
  * Defined values to support generation of IGS XML site logs for GSAC site search results.
  *
- * Note this is a provisional draft and really only a place holder for what will be completely new code using online .xsd files for xml creation.
- * This is not operational, complete, or correct.
+ * Note this is a provisional draft for what will be completely new code using online .xsd files for xml creation.
  *
  * @version        2 Mar 2016
  * @author         S K Wier
- * @version        2016 first development
+ * @version        2016 first development; 7 Mar; 
  */
 
 public class IgsXmlSiteLog {
@@ -92,12 +91,16 @@ public class IgsXmlSiteLog {
     public static final String TAG_geo_REPORTTYPE = "geo:reportType";
     public static final String TAG_REPORTTYPE = "reportType";
 
-    public static final String TAG_SITEIDENTIFICATION = "geo:Site";
-
-    public static final String TAG_geo_SITENAME = "geo:siteName";
     public static final String TAG_SITENAME = "Name"; // used by OpsXML output to mimic web page labels for one site
     public static final String TAG_SITETYPE = "Type";
+    public static final String TAG_geo_SITEFOURCHARACTERID = "geo:fourCharacterID";
+
+
+    public static final String TAG_geo_SITENAME          = "geo:siteName";
+    public static final String TAG_geo_SITEIDENTIFICATION    = "geo:Site";
+    public static final String TAG_geo_SITEMONUMENT          = "geo:Monument";
     public static final String TAG_geo_FOURCHARACTERID = "geo:fourCharacterID";
+
     public static final String TAG_FOURCHARACTERID = "Site"; // used by OpsXML output to mimic web page labels for one site
     public static final String TAG_geo_MONUMENTINSCRIPTION = "geo:monumentInscription";
     public static final String TAG_MONUMENTINSCRIPTION = "monumentInscription";
@@ -118,7 +121,6 @@ public class IgsXmlSiteLog {
     public static final String TAG_geo_MARKERDESCRIPTION = "geo:markerDescription";
 
     /** _more_ */
-    public static final String TAG_geo_DATEINSTALLED = "geo:dateInstalled";
     
     /** _more_ */
     public static final String TAG_geo_GEOLOGICCHARACTERISTIC = "geo:geologicCharacteristic";
@@ -139,7 +141,6 @@ public class IgsXmlSiteLog {
     public static final String TAG_geo_DISTANCE_ACTIVITY = "geo:distance-Activity";
 
     /** _more_ */
-    public static final String TAG_geo_NOTES = "geo:notes";
 
     /** _more_ */
     public static final String TAG_SITELOCATION = "geo:siteLocation";
@@ -207,8 +208,6 @@ public class IgsXmlSiteLog {
     /** _more_ */
     public static final String TAG_EQUIP_SATELLITESYSTEM = "equip:satelliteSystem";
 
-    /** _more_ */
-    public static final String TAG_EQUIP_SERIALNUMBER = "equip:serialNumber";
 
     /** _more_ */
     public static final String TAG_EQUIP_FIRMWAREVERSION = "equip:firmwareVersion";
@@ -228,42 +227,61 @@ public class IgsXmlSiteLog {
     /** _more_ */
     public static final String TAG_EQUIP_NOTES = "equip:notes";
 
-    /** _more_ */
-    public static final String TAG_GNSSANTENNA = "gnssAntenna";
+/*
+           // Add antenna section
+            if (equipment.hasAntenna()) {
+                pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_GNSSANTENNA));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNATYPE, "",
+                                  getNonNullString(equipment.getAntenna())));
+                pw.append(
+                    makeTag(
+                        IgsXmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
+                        getNonNullString(equipment.getAntennaSerial())));
+                double[] xyz = equipment.getXyzOffset();
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "",
+                                  offsetFormat.format(xyz[2])));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC,
+                                  "", offsetFormat.format(xyz[1])));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
+                                  offsetFormat.format(xyz[0])));
+                pw.append(
+                    makeTag(
+                        IgsXmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH, "", ""));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "",
+                                  getNonNullString(equipment.getDome())));
+                pw.append(
+                    makeTag(
+                        IgsXmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
+                        getNonNullString(equipment.getDomeSerial())));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "",
+                                  ""));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH,
+                                  "", ""));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
+                                  myFormatDateTime(equipment.getFromDate())));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
+                                  myFormatDateTime(equipment.getToDate())));
+                pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_GNSSANTENNA));
+            }
+            // end Add antenna section
+*/
+    public static final String TAG_GNSSANTENNA = "geo:gnssAntenna";
+    public static final String TAG_EQUIP_SERIALNUMBER = "geo:manufacturerSerialNumber";
+    public static final String TAG_EQUIP_ANTENNATYPE = "geo:antennaType";
+    public static final String TAG_geo_SERIALNUMBER = "geo:serialNumber";
+    public static final String TAG_EQUIP_ANTENNAREFERENCEPOINT = "geo:antennaReferencePoint";
+    public static final String TAG_EQUIP_MARKER_ARPUPECC = "geo:marker-arpUpEcc";
+    public static final String TAG_EQUIP_MARKER_ARPNORTHECC = "geo:marker-arpNorthEcc";
+    public static final String TAG_EQUIP_MARKER_ARPEASTECC = "geo:marker-arpEastEcc";
+    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH = "geo:alignmentFromTrueNorth";
+    public static final String TAG_EQUIP_ANTENNARADOMETYPE = "geo:antennaRadomeType";
+    public static final String TAG_EQUIP_RADOMESERIALNUMBER = "geo:radomeSerialNumber";
+    public static final String TAG_EQUIP_ANTENNACABLETYPE = "geo:antennaCableType";
+    public static final String TAG_EQUIP_ANTENNACABLELENGTH = "geo:antennaCableLength";
+    public static final String TAG_geo_DATEINSTALLED = "geo:dateInstalled";
+    public static final String TAG_geo_DATEREMOVED = "geo:dateRemoved";
+    public static final String TAG_geo_NOTES = "geo:notes";
 
-    /** _more_ */
-    public static final String TAG_EQUIP_ANTENNATYPE = "equip:antennaType";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_ANTENNAREFERENCEPOINT = "equip:antennaReferencePoint";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_MARKER_ARPUPECC = "equip:marker-arpUpEcc";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_MARKER_ARPNORTHECC = "equip:marker-arpNorthEcc";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_MARKER_ARPEASTECC = "equip:marker-arpEastEcc";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH = "equip:alignmentFromTrueNorth";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_ANTENNARADOMETYPE = 
-      "equip:antennaRadomeType";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_RADOMESERIALNUMBER = 
-           "equip:radomeSerialNumber";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_ANTENNACABLETYPE = 
-         "equip:antennaCableType";
-
-    /** _more_ */
-    public static final String TAG_EQUIP_ANTENNACABLELENGTH = 
-         "equip:antennaCableLength";
 
     /** _more_ */
     public static final String TAG_FREQUENCYSTANDARD = 

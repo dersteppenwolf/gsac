@@ -153,9 +153,6 @@ done
     
     and a bunch more stuff which may be meaningless so far as GSAC data is concerned.
 
-
-
-
         /* write header lines like this:
 <?xml version="1.0" encoding="UTF-8"?>
 <geo:GeodesyML gml:id="GEO_1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:geo="urn:xml-gov-au:icsm:egeodesy:0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="urn:xml-gov-au:icsm:egeodesy:0.2 https://icsm.govspace.gov.au/files/2015/09/siteLog.xsd">
@@ -174,7 +171,6 @@ done
 
         Date now = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
-
         // debug only System.out.println("GSAC: request for IGS XML site log at time "+ft.format(now)+", from IP "+request.getOriginatingIP() );
 
         //Add the open tag with all of the namespaces
@@ -196,7 +192,7 @@ done
         }))); */
 
         String filelabel= " ";
-        pw.append( " <!--\n      Provisional IGS XML site log made by GSAC. Not for operational use.  \n\n      @Name "+filelabel+"\n      @Author "+getRepository().getRepositoryName() +"\n      @Date "+myFormatDate(new Date())+ "\n      @Description: made by GSAC web services\n  -->" );
+        pw.append( " <!--\n      Provisional IGS XML site log. Not for operational use. Not complete.\n      The Geodesy ML is defined in https://icsm.govspace.gov.au/egeodesy/\n\n      @Name "+filelabel+"\n      @Author Made by GSAC web services at "+getRepository().getRepositoryName() +"\n      @Date "+myFormatDate(new Date())+ "\n      @Description:\n  -->" );
 
 
         //"We can have any number of sites here. Need to figure out how to handle multiple sites" - J MW
@@ -210,12 +206,17 @@ done
             //Add the various content areas
 
             addSiteIdentification(pw, site, sitenumber);
+
+            int monumentnumber=sitenumber; // unless a site has several monuments
+            addMonument(pw, site, monumentnumber);
+
+            addSiteEquipment_Ant (pw, site);
+
             addSiteLocation(pw, site);
-            //addSiteEquipment(pw, site);
             //addSiteStream(pw, site);
         }
-        //pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_IGSSITELOG));
-        pw.append("</geo:GeodesyML>");
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_IGSSITELOG));
+        //pw.append("</geo:GeodesyML>");
 
         //Done
         response.endResponse();
@@ -246,6 +247,73 @@ done
                             IgsXmlSiteLog.TAG_geo_REPORTTYPE, "", "DYNAMIC")));
     }
 
+
+
+
+    /**
+     * makes some of an "IGS XML GNSS site log" formatted file.
+     *
+     * @param pw _more_
+     * @param site _more_
+     *
+     * @throws Exception _more_
+     */
+    private void addMonument(PrintWriter pw, GsacSite site, int monnumber)
+        throws Exception {
+        String monnumstr=""+monnumber;
+
+        //pw.append("\n"); // optional, simply for human readability.
+
+        pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_geo_SITEMONUMENT +" gml:id=\"MONUMENT_"+monnumstr +"\"" ));
+
+        String itemNA="Not Available"; 
+        String item=""; //some value 
+
+        String nextline="<gml:description>"+itemNA+"</gml:description>";
+        pw.append(nextline);
+
+        item= site.getLongName (); //getProperty(site, GsacArgs.ARG_SITE_NAME, "");
+        nextline="<gml:name codeSpace=\"urn:ga-gov-au:monument-siteName\">"+item+"</gml:name>";
+        pw.append(nextline);
+
+        item= site.getShortName (); //getProperty(site, GsacArgs.ARG_SITE_CODE, "");
+        nextline="<gml:name codeSpace=\"urn:ga-gov-au:monument-fourCharacterID\">"+item+"</gml:name>";
+        pw.append(nextline);
+
+        item=  getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, ""); //getProperty(site, GsacExtArgs.SITE_METADATA_IERDOMES, "");
+        if (item.length() == 0) {
+              item=itemNA;
+        }
+        nextline="<gml:name codeSpace=\"urn:ga-gov-au:monument-iersDOMESNumber\">"+item+"</gml:name>";
+        pw.append(nextline);
+
+        nextline="<gml:name codeSpace=\"urn:ga-gov-au:monument-cdpNumber\">"+itemNA+"</gml:name>";
+        pw.append(nextline);
+
+        nextline="<geo:type codeSpace=\"urn:ga-gov-au:monument-type\">"+itemNA+"</geo:type>";
+        pw.append(nextline);
+
+        // "from date", the site's begin-operations date (as in the UNAVCO GSAC from the db gps3 value)
+        //SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ISO 8601 
+        nextline="<geo:installedDate></geo:installedDate>";
+        Date date = site.getFromDate();
+        if (date != null) {
+           SimpleDateFormat ft2 = new SimpleDateFormat("yyyy-MM-dd"); // ISO 8601 
+           item = ft2.format(date);
+           nextline="<geo:installedDate>"+item+"</geo:installedDate>";
+        }
+        pw.append(nextline);
+
+        // only one of these parameters are available from any known GSAC:
+        item=        getProperty( site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION, "");
+        nextline="<geo:remarks></geo:remarks><geo:inscription/><geo:monumentDescription codeSpace=\"urn:ga-gov-au:monument-description\">"+item+"</geo:monumentDescription><geo:height uomLabels=\"m\"></geo:height><geo:foundation codeSpace=\"urn:ga-gov-au:monument-foundation\"></geo:foundation><geo:foundationDepth uomLabels=\"m\"></geo:foundationDepth><geo:markerDescription></geo:markerDescription><geo:geologicCharacteristic codeSpace=\"urn:ga-gov-au:monument-geologicCharacteristic\"></geo:geologicCharacteristic><geo:bedrockType codeSpace=\"urn:ga-gov-au:monument-bedrockType\"></geo:bedrockType><geo:bedrockCondition codeSpace=\"urn:ga-gov-au:monument-bedrockCondition\"></geo:bedrockCondition><geo:fractureSpacing codeSpace=\"urn:ga-gov-au:monument-fractureSpacing\"></geo:fractureSpacing><geo:faultZonesNearby codeSpace=\"urn:ga-gov-au:monument-faultZonesNearby\"></geo:faultZonesNearby>";
+        pw.append(nextline);
+
+
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_geo_SITEMONUMENT));
+    }  // end of add Monument
+
+
     /**
      * makes some of an "IGS XML GNSS site log" formatted file.
      *
@@ -255,7 +323,7 @@ done
      * @throws Exception _more_
      */
     private void addSiteIdentification(PrintWriter pw, GsacSite site, int sitenumber)
-            throws Exception {
+        throws Exception {
         String sitenumstr=""+sitenumber;
 
         /* do like this
@@ -264,14 +332,15 @@ done
 <gmd:CI_ResponsibleParty id="DrJohnDawsonGA"><gmd:individualName><gco:CharacterString>Dr John Dawson</gco:CharacterString></gmd:individualName><gmd:organisationName><gco:CharacterString>Geoscience Australia</gco:CharacterString></gmd:organisationName><gmd:role><gmd:CI_RoleCode codeListValue="" codeList="">Section Leader - National Geospatial Reference Systems Section</gmd:CI_RoleCode></gmd:role></gmd:CI_ResponsibleParty>
         */
         pw.append("\n"); // optional, simply for human readability.
-        pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION +" gml:id=\"SITE_"+sitenumstr +"\"" ));
+        pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_geo_SITEIDENTIFICATION +" gml:id=\"SITE_"+sitenumstr +"\"" ));
         String stype=""; //"some type"
-        String line1="<geo:type codeSpace=\"\">"+stype+"</geo:type>";
+        String itemNA="Not Available"; 
+        String line1="<geo:type codeSpace=\"\">"+itemNA+"</geo:type>";
         pw.append(line1);
 
         String line2="<geo:Monument xlink:href=\"#MONUMENT_"+sitenumstr+"\"/>";
         pw.append(line2);
-        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_SITEIDENTIFICATION));
+        pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_geo_SITEIDENTIFICATION));
 
         /* do like this
 <gmd:CI_ResponsibleParty id="DrJohnDawsonGA"><gmd:individualName><gco:CharacterString>Dr John Dawson</gco:CharacterString></gmd:individualName><gmd:organisationName><gco:CharacterString>Geoscience Australia</gco:CharacterString></gmd:organisationName><gmd:role><gmd:CI_RoleCode codeListValue="" codeList="">Section Leader - National Geospatial Reference Systems Section</gmd:CI_RoleCode></gmd:role></gmd:CI_ResponsibleParty>
@@ -283,9 +352,10 @@ done
     public static final String TAG_gmdrole    = "gmd:role";
     public static final String TAG_gmdCI_RoleCode    = "gmd:CI_RoleCode";
         */
-        String rpname=""; // not available from std gsac
-        String name2= ""; // not available from std gsac
-        String rolename= ""; // not available from std gsac
+        String na="Not Available";
+        String rpname=na; // not available from std gsac
+        String name2= na; // not available from std gsac
+        String rolename= na; // not available from std gsac
         
         String      agencyname =getProperty(site, GsacExtArgs.SITE_METADATA_NAMEAGENCY, ""); 
 
@@ -325,34 +395,6 @@ done
         }
         */
         // for the <geo:Monument gml:id="MONUMENT_1"> section:
-        /*
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_MONUMENTINSCRIPTION, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_IERSDOMESNUMBER, "",
-                              getProperty(site,
-                                          GsacExtArgs.SITE_METADATA_IERDOMES,
-                                          "")));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_CDPNUMBER, "",
-                              getProperty(site,
-                                          GsacExtArgs.SITE_METADATA_CDPNUM,
-                                          "")));
-        pw.append(
-            XmlUtil.tag(
-                IgsXmlSiteLog.TAG_geo_MONUMENTDESCRIPTION, "",
-                getProperty(
-                    site, GsacExtArgs.SITE_METADATA_MONUMENTDESCRIPTION,
-                    "")));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_HEIGHTOFTHEMONUMENT, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_MONUMENTFOUNDATION, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_FOUNDATIONDEPTH, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_MARKERDESCRIPTION, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_GEOLOGICCHARACTERISTIC, "",
-                              ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_BEDROCKTYPE, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_BEDROCKCONDITION, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_FRACTURESPACING, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_FAULTZONESNEARBY, "", ""));
-        pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_DISTANCE_ACTIVITY, "", ""));
-        */
 
         // notes pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_NOTES, "", ""));
 
@@ -511,26 +553,18 @@ done
      *
      * @throws Exception _more_
      */
-    private void addSiteEquipment(PrintWriter pw, GsacSite site)
-            throws Exception {
-        /*
-          <gnssReceiver>
-          <equip:receiverType>TRIMBLE NETRS</equip:receiverType>
-          <equip:satelliteSystem>GPS</equip:satelliteSystem>
-          <equip:serialNumber>4545260798</equip:serialNumber>
-          <equip:firmwareVersion>1.1-2 19 Apr 2005</equip:firmwareVersion>
-          <equip:elevationCutoffSetting>0 deg</equip:elevationCutoffSetting>
-          <equip:dateInstalled>2006-02-28T00:00:00.000Z</equip:dateInstalled>
-          <equip:dateRemoved>2010-07-08T20:53:00.000Z</equip:dateRemoved>
-          <equip:temperatureStabilization/>
-          <equip:notes/>
-          </gnssReceiver>
-        */
-        List<GsacMetadata> equipmentMetadata =
-            site.findMetadata(
-                new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+    private void addSiteEquipment_Ant (PrintWriter pw, GsacSite site)
+        throws Exception {
+        List<GsacMetadata> equipmentMetadata = site.findMetadata( new GsacMetadata.ClassMetadataFinder(GnssEquipment.class));
+
+        int counter=0;
+        // for each equipment session ("visit") at this site
         for (GsacMetadata metadata : equipmentMetadata) {
             GnssEquipment equipment = (GnssEquipment) metadata;
+            counter+=1;
+
+            /*
+            // add receiver section
             if (equipment.hasReceiver()) {
                 pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_GNSSRECEIVER));
                 pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_RECEIVERTYPE, "",
@@ -564,53 +598,99 @@ done
                         ""));
                 pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_NOTES, "", ""));
                 pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_GNSSRECEIVER));
-            }
+            }  // end add receiver section
+            */
 
+            /*
+            <geo:gnssAntenna gml:id="GNSS_ANT_2">
+                <geo:manufacturerSerialNumber>CR20020709</geo:manufacturerSerialNumber>
+                <geo:antennaType codeSpace="urn:igs-org:gnss-antenna-model-code" >ASH701945C_M      NONE</geo:antennaType>
+                <geo:serialNumber>CR20020709</geo:serialNumber>
+                <geo:antennaReferencePoint>BPA</geo:antennaReferencePoint>
+                <geo:marker-arpUpEcc.>0.0</geo:marker-arpUpEcc.>
+                <geo:marker-arpNorthEcc.>0.0</geo:marker-arpNorthEcc.>
+                <geo:marker-arpEastEcc.>0.0</geo:marker-arpEastEcc.>
+                <geo:alignmentFromTrueNorth>0</geo:alignmentFromTrueNorth>
+                <geo:antennaRadomeType codeSpace="urn:igs-org:gnss-antenna-radome-type">NONE</geo:antennaRadomeType>
+                <geo:radomeSerialNumber/>
+                <geo:antennaCableType/>
+                <geo:antennaCableLength>12</geo:antennaCableLength>
+                <geo:dateInstalled>2002-10-21Z</geo:dateInstalled>
+                <geo:dateRemoved/>
+                <geo:notes/>
+            </geo:gnssAntenna>
+
+    public static final String TAG_GNSSANTENNA = "geo:gnssAntenna";
+    public static final String TAG_EQUIP_SERIALNUMBER = "geo:manufacturerSerialNumber";
+    public static final String TAG_EQUIP_ANTENNATYPE = "geo:antennaType";
+    public static final String TAG_geo_SERIALNUMBER = "geo:serialNumber";
+    public static final String TAG_EQUIP_ANTENNAREFERENCEPOINT = "geo:antennaReferencePoint";
+    public static final String TAG_EQUIP_MARKER_ARPUPECC = "geo:marker-arpUpEcc";
+    public static final String TAG_EQUIP_MARKER_ARPNORTHECC = "geo:marker-arpNorthEcc";
+    public static final String TAG_EQUIP_MARKER_ARPEASTECC = "geo:marker-arpEastEcc";
+    public static final String TAG_EQUIP_ALIGNMENTFROMTRUENORTH = "geo:alignmentFromTrueNorth";
+    public static final String TAG_EQUIP_ANTENNARADOMETYPE = "geo:antennaRadomeType";
+    public static final String TAG_EQUIP_RADOMESERIALNUMBER = "geo:radomeSerialNumber";
+    public static final String TAG_EQUIP_ANTENNACABLETYPE = "geo:antennaCableType";
+    public static final String TAG_EQUIP_ANTENNACABLELENGTH = "geo:antennaCableLength";
+    public static final String TAG_geo_DATEINSTALLED = "geo:dateInstalled";
+    public static final String TAG_geo_DATEREMOVED = "geo:dateRemoved";
+    public static final String TAG_geo_NOTES = "geo:notes";
+
+            */
+
+            // Add antenna section
+            String value="";
             if (equipment.hasAntenna()) {
-                pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_GNSSANTENNA));
+                pw.append(XmlUtil.openTag(IgsXmlSiteLog.TAG_GNSSANTENNA +" gml:id=\"GNSS_ANT_"+counter+"\"" ));
 
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNATYPE, "",
-                                  getNonNullString(equipment.getAntenna())));
-                pw.append(
-                    makeTag(
-                        IgsXmlSiteLog.TAG_EQUIP_SERIALNUMBER, "",
-                        getNonNullString(equipment.getAntennaSerial())));
+                value=""; 
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_EQUIP_SERIALNUMBER, "", value));
+
+                value=getNonNullString(equipment.getAntenna()); 
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_EQUIP_ANTENNATYPE, "", value));
+
+                //value=       getNonNullString(equipment.getAntenna()); // sample code lines
+                //pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_, "", value));
+
+                value=       getNonNullString(equipment.getAntennaSerial());
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_geo_SERIALNUMBER, "", value));
+
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_EQUIP_ANTENNAREFERENCEPOINT, "", ""));
 
                 double[] xyz = equipment.getXyzOffset();
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "",
-                                  offsetFormat.format(xyz[2])));
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC,
-                                  "", offsetFormat.format(xyz[1])));
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "",
-                                  offsetFormat.format(xyz[0])));
-                pw.append(
-                    makeTag(
-                        IgsXmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH, "", ""));
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPUPECC, "", 
+                      offsetFormat.format(xyz[2]) ));
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPNORTHECC, "", 
+                      offsetFormat.format(xyz[1]) ));
+                pw.append(XmlUtil.tag(IgsXmlSiteLog.TAG_EQUIP_MARKER_ARPEASTECC, "", 
+                      offsetFormat.format(xyz[0]) ));
+
+                pw.append( makeTag( IgsXmlSiteLog.TAG_EQUIP_ALIGNMENTFROMTRUENORTH, "", ""));
 
                 pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNARADOMETYPE, "",
                                   getNonNullString(equipment.getDome())));
-                pw.append(
-                    makeTag(
-                        IgsXmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
+
+                pw.append( makeTag( IgsXmlSiteLog.TAG_EQUIP_RADOMESERIALNUMBER, "",
                         getNonNullString(equipment.getDomeSerial())));
 
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "",
-                                  ""));
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH,
-                                  "", ""));
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNACABLETYPE, "", ""));
 
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_DATEINSTALLED, "",
+                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_ANTENNACABLELENGTH, "", ""));
+
+                pw.append(makeTag(IgsXmlSiteLog.TAG_geo_DATEINSTALLED, "",
                                   myFormatDateTime(equipment.getFromDate())));
-                pw.append(makeTag(IgsXmlSiteLog.TAG_EQUIP_DATEREMOVED, "",
+
+                pw.append(makeTag(IgsXmlSiteLog.TAG_geo_DATEREMOVED, "",
                                   myFormatDateTime(equipment.getToDate())));
+
+                pw.append(makeTag(IgsXmlSiteLog.TAG_geo_NOTES, "", ""));
+
                 pw.append(XmlUtil.closeTag(IgsXmlSiteLog.TAG_GNSSANTENNA));
-
             }
-
-
+            // end Add antenna section
         }
-
-    }
+    } // end addSiteEquipment_Ant 
 
 
     /**
