@@ -57,72 +57,24 @@ public class IgsXmlSiteLog {
     /** for IGS XML site log formatting */
     public static final String VALUE_GML1 = "GEO_1";
     public static final String XMLNS_XMLNS = "http://www.w3.org/2000/svg"; 
-
-    /* relic sopac stuff; only for examples.
-    public static final String XMLNS_XMLNS = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/2011";
-    public static final String VALUE_XSI_SCHEMALOCATION = "urn:xml-gov-au:icsm:egeodesy:0.2 https://icsm.govspace.gov.au/files/2015/09/siteLog.xsd";
-    public static final String XMLNS_XMLNS_CONTACT = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/contact/2004";
-    public static final String XMLNS_XMLNS_EQUIP = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/equipment/2004";
-    public static final String XMLNS_XMLNS_LI = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/localInterferences/2004";
-    public static final String XMLNS_XMLNS_MI = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/monumentInfo/2004";
-    public static final String XMLNS_XMLNS_REALTIME = "http://sopac.ucsd.edu/ns/geodesy/doc/igsSiteLog/realtimeDataInfo/2011";
-    public static final String XMLNS_XMLNS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
-    public static final String VALUE_GSAC_SCHEMALOCATION = "";
-    */
-
-
-    /** for GSAC XML formatting, and anyone else who can use one. */
-    public static final String TAG_GSACOPSXML       = "GsacOpsXmlSiteInfo";
-    public static final String TAG_DATEINSTALLED    = "FromDate"; //dateInstalled;
-    public static final String TAG_PUBLISHDATE      = "PublishDate";
-    public static final String TAG_MODDATE          = "ModificationDate";  // from the archive db gps3 value "Site modify date" in MV_DAI_PRO.COL_LAST_UPDATED
-    public static final String TAG_TODATE           = "ToDate"; // most recent operational date; usually  yesterday (when data was received?) 
-    public static final String TAG_SAMPLEINTERVAL   = "SampleInterval";
-    public static final String TAG_NETWORK          = "network";
-    public static final String TAG_LASTARCHIVEDATE  = "latestArchiveDate";
-    public static final String TAG_SITESTATUS       = "Status";
-
-    public static final String TAG_FORMINFORMATION = "formInformation";
-    public static final String TAG_SITEBLOCK = "site";
-    public static final String TAG_geo_PREPAREDBY = "geo:preparedBy";
-    public static final String TAG_PREPAREDBY = "preparedBy";
-    public static final String TAG_geo_DATEPREPARED = "geo:datePrepared";
-    public static final String TAG_DATEPREPARED = "datePrepared";
-    public static final String TAG_geo_REPORTTYPE = "geo:reportType";
-    public static final String TAG_REPORTTYPE = "reportType";
-
-    public static final String TAG_SITENAME = "Name"; // used by OpsXML output to mimic web page labels for one site
-    public static final String TAG_SITETYPE = "Type";
     public static final String TAG_geo_SITEFOURCHARACTERID = "geo:fourCharacterID";
-
-
-    public static final String TAG_geo_SITENAME          = "geo:siteName";
+    public static final String TAG_geo_SITENAME              = "geo:siteName";
     public static final String TAG_geo_SITEIDENTIFICATION    = "geo:Site";
+    public static final String TAG_geo_SITELOG               = "geo:siteLog";
+    public static final String TAG_geo_atSite                = "geo:atSite";
+    public static final String TAG_geo_monumentIdentification= "geo:monumentIdentification";
     public static final String TAG_geo_SITEMONUMENT          = "geo:Monument";
-    public static final String TAG_geo_FOURCHARACTERID = "geo:fourCharacterID";
-
-    public static final String TAG_FOURCHARACTERID = "Site"; // used by OpsXML output to mimic web page labels for one site
-    public static final String TAG_geo_MONUMENTINSCRIPTION = "geo:monumentInscription";
-    public static final String TAG_MONUMENTINSCRIPTION = "monumentInscription";
-    public static final String TAG_geo_IERSDOMESNUMBER = "geo:iersDOMESNumber";
-    public static final String TAG_IERSDOMESNUMBER = "IERSDOMES";
-    public static final String TAG_DATAARCHIVEDATE = "latestDataArchiveDate";
+    public static final String TAG_geo_FOURCHARACTERID       = "geo:fourCharacterID";
+    public static final String TAG_geo_REPORTTYPE = "geo:reportType";
+    public static final String TAG_geo_PREPAREDBY = "geo:preparedBy";
+    public static final String TAG_geo_DATEPREPARED = "geo:datePrepared";
     public static final String TAG_geo_CDPNUMBER = "geo:cdpNumber";
-    public static final String TAG_CDPNUMBER = "cdpNumber";
     public static final String TAG_geo_MONUMENTDESCRIPTION = "geo:monumentDescription";
     public static final String TAG_MONUMENTDESCRIPTION = "MonumentStyle"; // used by OpsXML output to mimic web page labels for one site
     public static final String TAG_geo_HEIGHTOFTHEMONUMENT = "geo:heightOfTheMonument";
     public static final String TAG_geo_MONUMENTFOUNDATION = "geo:monumentFoundation";
-
-    /** _more_ */
-    public static final String TAG_geo_FOUNDATIONDEPTH = "geo:foundationDepth";
-
-    /** _more_ */
-    public static final String TAG_geo_MARKERDESCRIPTION = "geo:markerDescription";
-
-    /** _more_ */
-    
-    /** _more_ */
+    public static final String TAG_geo_MONUMENTINSCRIPTION = "geo:monumentInscription";
+    public static final String TAG_geo_IERSDOMESNUMBER = "geo:iersDOMESNumber";
     public static final String TAG_geo_GEOLOGICCHARACTERISTIC = "geo:geologicCharacteristic";
 
     /** _more_ */
@@ -139,11 +91,47 @@ public class IgsXmlSiteLog {
 
     /** _more_ */
     public static final String TAG_geo_DISTANCE_ACTIVITY = "geo:distance-Activity";
-
-    /** _more_ */
-
-    /** _more_ */
+    public static final String TAG_geo_FOUNDATIONDEPTH = "geo:foundationDepth";
+    public static final String TAG_geo_MARKERDESCRIPTION = "geo:markerDescription";
     public static final String TAG_SITELOCATION = "geo:siteLocation";
+
+
+
+    /** for GSAC XML formatting, and anyone else who can use one. */
+    public static final String TAG_GSACOPSXML       = "GsacOpsXmlSiteInfo";
+    public static final String TAG_DATEINSTALLED    = "FromDate"; //dateInstalled;
+    public static final String TAG_PUBLISHDATE      = "PublishDate";
+    public static final String TAG_MODDATE          = "ModificationDate";  // from the archive db gps3 value "Site modify date" in MV_DAI_PRO.COL_LAST_UPDATED
+    public static final String TAG_TODATE           = "ToDate"; // most recent operational date; usually  yesterday (when data was received?) 
+    public static final String TAG_SAMPLEINTERVAL   = "SampleInterval";
+    public static final String TAG_NETWORK          = "network";
+    public static final String TAG_LASTARCHIVEDATE  = "latestArchiveDate";
+    public static final String TAG_SITESTATUS       = "Status";
+
+    public static final String TAG_FORMINFORMATION = "formInformation";
+    public static final String TAG_SITEBLOCK = "site";
+    public static final String TAG_PREPAREDBY = "preparedBy";
+    public static final String TAG_DATEPREPARED = "datePrepared";
+    public static final String TAG_REPORTTYPE = "reportType";
+
+    public static final String TAG_SITENAME = "Name"; // used by OpsXML output to mimic web page labels for one site
+    public static final String TAG_SITETYPE = "Type";
+
+    public static final String TAG_FOURCHARACTERID = "Site"; // used by OpsXML output to mimic web page labels for one site
+    public static final String TAG_MONUMENTINSCRIPTION = "monumentInscription";
+    public static final String TAG_IERSDOMESNUMBER = "IERSDOMES";
+    public static final String TAG_DATAARCHIVEDATE = "latestDataArchiveDate";
+    public static final String TAG_CDPNUMBER = "cdpNumber";
+
+
+
+    /** _more_ */
+    
+    /** _more_ */
+
+    /** _more_ */
+
+    /** _more_ */
 
     /** _more_ */
     public static final String TAG_SITEQUALITY = "siteQuality";
@@ -198,22 +186,22 @@ public class IgsXmlSiteLog {
     public static final String TAG_ELEVATION_M_ELLIPS = "ellipsoid_height";
 
     /** _more_ */
-    public static final String TAG_GNSSRECEIVER = "gnssReceiver";
+    public static final String TAG_geo_GNSSRECEIVER = "geo:gnssReceiver";
 
     /** _more_ */
-    public static final String TAG_EQUIP_RECEIVERTYPE = "equip:receiverType";
+    public static final String TAG_EQUIP_RECEIVERTYPE = "geo:receiverType";
 
     public static final String TAG_EQUIP_SAMPLEINTERVAL = "equip:sampleInterval";
 
     /** _more_ */
-    public static final String TAG_EQUIP_SATELLITESYSTEM = "equip:satelliteSystem";
+    public static final String TAG_EQUIP_SATELLITESYSTEM = "geo:satelliteSystem";
 
 
     /** _more_ */
-    public static final String TAG_EQUIP_FIRMWAREVERSION = "equip:firmwareVersion";
+    public static final String TAG_EQUIP_FIRMWAREVERSION = "geo:firmwareVersion";
 
     /** _more_ */
-    public static final String TAG_EQUIP_ELEVATIONCUTOFFSETTING = "equip:elevationCutoffSetting";
+    public static final String TAG_EQUIP_ELEVATIONCUTOFFSETTING = "geo:elevationCutoffSetting";
 
     /** _more_ */
     public static final String TAG_EQUIP_DATEINSTALLED = "equip:dateInstalled";
