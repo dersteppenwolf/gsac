@@ -91,6 +91,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
     private int tabCnt = 0;
 
 
+    /** date format */
+    protected SimpleDateFormat sdformatter = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * ctor
@@ -1472,7 +1474,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * [ make a single site's web page (?) SKW ] 
+     *  make HTML for a table of site search results
      *
      * @param request The request
      * @param pw appendable to append to
@@ -1507,6 +1509,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
+
         pw.append(HtmlUtil.formTable());
         String              label           = (includeLink
                 ? makeResourceViewHref(resource)
@@ -1561,7 +1564,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         if (includeMap) {
             StringBuffer mapSB = new StringBuffer();
             if ( !request.get(ARG_WRAPXML, false)) {
-                // make map in single site web page
+                // make map in single site web page  "hide map"
                 //  LOOK may be a problem doing this; will deal with it when update to all new Map code.
                 js = createMap(request, (List<GsacResource>) Misc.newList(resource),
                                mapSB, 600, 400, true, false);
@@ -1572,8 +1575,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
+        //System.err.println("         append Date Range to single site web page" ); // debug
         if (resource.getFromDate() != null) {
-            String dateString = formatDate(resource); // trick for TWO dates
+            String dateString = sdformatter.format(resource.getFromDate()) + " - " ;
+            if (resource.getToDate() != null) {
+                  dateString += sdformatter.format(resource.getToDate());
+            }
             pw.append(formEntry(request, msgLabel("Date Range"), dateString));
         }
 
@@ -2304,6 +2311,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
         String[] TABLE_SORTVALUES = null;
 
+        // For table of sites from site search results:
+
         if (TABLE_LABELS == null) {
             List<String> labels     = new ArrayList<String>();
             List<String> sortValues = new ArrayList<String>();
@@ -2338,8 +2347,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
              */
 
             // make label for latest data time , ARG_SITE_LATEST_DATA_TIME
-            labels.add(msg("Latest Data Time") );
-            sortValues.add("");
+            // not yet - no such value available usually labels.add(msg("Latest Data Time") );
+            //sortValues.add("");
 
 
             // somehow ought to check if there is a non-null network name before you do this: 
@@ -2433,21 +2442,30 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sb.append("</td>");
 
 
-            // show values of "Installed Dates" (data date range for site: installed to RETIRED dates 
+            // show values of two "Installed Dates" - label at line near 2331 above -  (data date range for site: installed to RETIRED dates 
+            //System.err.println("         show table row entry for Installed Dates" ); // debug
             if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
                 if (resource.getFromDate() != null) {
-                    sb.append( formatDate(resource));
-                    //         formatDate(resource) gives TWO values, BOTH from and to dates, if they are defined.
-                } else {
+                    String dateString = sdformatter.format(resource.getFromDate()) + " - " ;
+                    if (resource.getToDate() != null) {
+                          //dateString += (resource.getToDate()).toString(); wordy format
+                          dateString += sdformatter.format(resource.getToDate()) ;
+                    }
+                sb.append( dateString );
+                }
+                // original code- if (resource.getFromDate() != null) {
+                //    sb.append( formatDate(resource));
+                //    //         formatDate(resource) gives TWO values, BOTH from and to dates, if they are defined.
+                //} 
+                else {
                     sb.append("N/A");
                 }
                 sb.append("</td>");
             }
 
            
-            // LOOK  usual here but only for files:  enter row value for Publish Date
-
+            // LOOK  only for files:  enter row value for Publish Date
             String dateString = formatDate(resource.getPublishDate());
             if ( dateString  != null && dateString.length() >3)  { 
                 sb.append("<td " + clickEvent + ">");
@@ -2461,9 +2479,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
             
 
-
             // show Latest Data Time value from this site: latest data time
             // date but no time  from resource.getLatestDataDate ?
+            /* LOOK FIX
             if ( resource.getLatestDataDate() != null ) {
                // was  dateString = formatDateTime(resource.getLatestDataDate());
                dateString = formatDateTimeHHmmss(resource.getLatestDataDate());
@@ -2478,7 +2496,6 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                    }
                sb.append("</td>");
             }
-            /*
             else {
                sb.append("<td " + clickEvent + ">");
                sb.append("N/A"); // LOOK weird ; appending space " " causes table td outfiles to disappear!

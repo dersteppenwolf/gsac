@@ -59,6 +59,8 @@ public abstract class GsacOutputHandler implements GsacConstants {
 
     /** date format */
     protected SimpleDateFormat dateSdf = makeDateFormat("yyyy-MM-dd");
+    //protected SimpleDateFormat sdformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
 
     /** date format */
     protected SimpleDateFormat dateTimeSdf = makeDateFormat("yyyy-MM-dd HH:mm");
@@ -608,7 +610,14 @@ public abstract class GsacOutputHandler implements GsacConstants {
      */
     public String formatDate(GsacResource resource) {
         Date fromDate = resource.getFromDate();
+        if (fromDate != null)  {
+           System.err.println("     GsacOutputHandler.java  formatDate(resource): 'resource' from-to date range is from _"+ dateTimeSdf.format(fromDate) );  
+         }
         Date toDate   = resource.getToDate();
+        if ( (toDate != null)) {
+           System.err.println("     GsacOutputHandler.java  formatDate(resource): 'resource' from-to date range is  to  _"+  dateTimeSdf.format (toDate)+"_");  
+           }
+
         if ((fromDate != null) && (toDate != null)) {
             return formatDate(fromDate) + " - " + formatDate(toDate);
         } else if (fromDate != null) {
