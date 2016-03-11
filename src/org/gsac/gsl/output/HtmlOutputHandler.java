@@ -2338,13 +2338,15 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if (doDateRange) { labels.add(msg("Installed Dates")); }
             sortValues.add("");
    
-            //  usually, do this only for files: make a column for Publish Date
-            // LOOK test and implement for file searches.
-            /* if ( resource.getPublishDate()  != null )  { 
-            labels.add(msg("Publish Date")); 
-             }
+
+            // pd   Publish Date
+            String dateString = formatDate( (resources.get(0)).getPublishDate());
+            if ( dateString  != null && dateString.length() >3)  { 
+               //if ( resource.getPublishDate()  != null )  { 
+               labels.add(msg("Publish Date")); 
+            }
             sortValues.add("");
-             */
+            
 
             // make label for latest data time , ARG_SITE_LATEST_DATA_TIME
             // not yet - no such value available usually labels.add(msg("Latest Data Time") );
@@ -2435,14 +2437,13 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                 formatLatLon(
                     EarthLocation.normalizeLongitude(
                         resource.getLongitude())));
-            //    comma separator may be confused with European comma for decimal point, so use space:
-            //sb.append(",");
+            //sb.append(","); //  comma separator may be confused with European comma for decimal point, so use spaces:
             sb.append("&nbsp; &nbsp;");
             sb.append(formatElevation(resource.getElevation()));
             sb.append("</td>");
 
 
-            // show values of two "Installed Dates" - label at line near 2331 above -  (data date range for site: installed to RETIRED dates 
+            // show values of two "Installed Dates" - label at line near 2338 above - date range for site: installed to RETIRED dates 
             //System.err.println("         show table row entry for Installed Dates" ); // debug
             if (doDateRange) {
                 sb.append("<td " + clickEvent + ">");
@@ -2452,9 +2453,12 @@ public class HtmlOutputHandler extends GsacOutputHandler {
                           //dateString += (resource.getToDate()).toString(); wordy format
                           dateString += sdformatter.format(resource.getToDate()) ;
                     }
+                    else {
+                          dateString += "Current" ;
+                    }
                 sb.append( dateString );
                 }
-                // original code- if (resource.getFromDate() != null) {
+                // original code- also works but obscure and does not add Current.     if (resource.getFromDate() != null) {
                 //    sb.append( formatDate(resource));
                 //    //         formatDate(resource) gives TWO values, BOTH from and to dates, if they are defined.
                 //} 
@@ -2465,7 +2469,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             }
 
            
-            // LOOK  only for files:  enter row value for Publish Date
+            // LOOK  only for files:  enter row value for Publish Date pd  
             String dateString = formatDate(resource.getPublishDate());
             if ( dateString  != null && dateString.length() >3)  { 
                 sb.append("<td " + clickEvent + ">");
