@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -27,7 +27,7 @@ package org.gsac.gsl;
  *
  *
  * @version  Aug 29, 2013 
- * @author   JM; SKW; 2010-2015.
+ * @author   JM; SKW; 2010-2016.
  */
 public interface GsacExtArgs {
 
@@ -42,6 +42,8 @@ public interface GsacExtArgs {
 
     /** HtCod is for GAMIT station.info format */
     public static final String ARG_ANTENNA_HTCOD = GsacArgs.ARG_SITE_PREFIX + "antenna.htcod";
+
+    public static final String ARG_NETWORK = GsacArgs.ARG_SITE_PREFIX + "network";
 
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
