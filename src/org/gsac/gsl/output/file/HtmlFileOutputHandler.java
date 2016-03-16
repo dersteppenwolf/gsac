@@ -372,7 +372,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                     else {  
                        // Standard GSAC and prototype GSAC:
                        //    note that the HTML term for the Greek letter delta is &Delta;    use delta T in place of the longer label 'sample time.'
-                       labels = new String[] {                  msg("File & URL link"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                       // Ok 16 mar 16 labels = new String[] {                  msg("File & URL link"), msg("File type"),msg("Time range of data"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
+                       labels = new String[] {                  msg("File & URL link"), msg("File type"),msg("Time range of data"), msg("Published"), msg("&Delta;t"), msg("MD5 check sum"), msg("File size") };
                        // CHANGEME special, only for UNR:
                        //labels = new String[] {  msg("File URL to download"), msg("File type"),msg("Time range of data") };
                     }
@@ -403,6 +404,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                 */
 
                 sb.append("</tr></table></td>\n");
+
+                // Now, append actual column data values in the rows.
 
                 // show link to the url, the complete URL to download one file 
                 String url = resource.getFileInfo().getUrl();  
@@ -438,7 +441,7 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
 
                 String start   = sdfDate.format(startTime);
                 String end     = sdfDate.format(endTime);
-                String publish = sdfDate.format(publishTime);
+                // old see below String publish = sdfDate.format(publishTime);
 
                 // show Time range of  etc., and publish time
                 {
@@ -465,9 +468,12 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                            sb.append("</td>");
                     }
 
-                    // for unavco gsac:
-                    if (relatedResources.size() > 0) {  
+                    // show file published DATE
+                    // do this test to show publish time ONLY for unavco gsac:
+                    //if (relatedResources.size() > 0) {  
                        if (publishTime != null) {
+                           SimpleDateFormat pDate = new SimpleDateFormat("yyyy-MM-dd");
+                           String publish = pDate.format(publishTime);
                            //sb.append(HtmlUtil.col( publish ));
                            sb.append("<td align=\"left\" class=\"gsac-ptime\" " + ">");
                            sb.append( "<font size=-2>" + publish +"</font>");
@@ -478,7 +484,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                            sb.append( "<font size=-2>N/A</font>");
                            sb.append("</td>");
                        }
-                    }
+                    //} if only for unavco
+                    
                 }
 
                 //  if not  unavco gsac, show sample interval and the MD5 check sum
@@ -494,9 +501,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append( "" +  resource.getFileInfo().getSampleInterval() );
                         sb.append("</td>");
                     } else {
-                        //sb.append(HtmlUtil.col(" unknown"));
-                        // CHANGEME or for UNR:
-                        ;
+                        // must put something in the cell or the column labels are messed up
+                        sb.append(HtmlUtil.col("N/A"));
                     }
 
                     // show MD5 value for this file if any (prototype gsac servers)
@@ -505,9 +511,8 @@ public class HtmlFileOutputHandler extends HtmlOutputHandler {
                         sb.append( "<font size=-2>" +  resource.getFileInfo().getMd5() +"</font>");
                         sb.append("</td>");
                     } else {
+                        // must put something in the cell or the column labels are messed up
                         sb.append(HtmlUtil.col("N/A"));
-                        // CHANGEME  for UNR:
-                        ;
                     }
                 }
 
