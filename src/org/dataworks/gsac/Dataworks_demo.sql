@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.69, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: Dataworks_GSAC_database_test-13jan2016
+-- Host: localhost    Database: Dataworks_GSAC_database
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `Dataworks_GSAC_database_test-13jan2016`
+-- Current Database: `Dataworks_GSAC_database`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Dataworks_GSAC_database_test-13jan2016` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `Dataworks_GSAC_database` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `Dataworks_GSAC_database_test-13jan2016`;
+USE `Dataworks_GSAC_database`;
 
 --
 -- Table structure for table `access`
