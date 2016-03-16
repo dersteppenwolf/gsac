@@ -5,6 +5,8 @@
  created               : 2014-09-03
  latest update         : 2015-01-14 improve comments and log file wording.
 
+ tested and verified   : 2016-03-16 tested with latest GSAC dataworks code in SourceForge.  Correctly loaded COCONet networks station and instrument data.
+
  exit code(s)          : 0, success
                        : sys.exit (1), curl failed
 
@@ -29,7 +31,7 @@
                        : CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
                        : CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
 
-			           : CHANGE # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
+		       : CHANGE # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
 
 			           : set the value of logflag to choose if you want to see output to the terminal:
                          logflag =1  # controls screen output.  CHANGE: USE =1 for routine operations. OR use =2 to print log lines to screen, for testing, near line 674
@@ -50,7 +52,7 @@
                               /dataworks/mirror_station_metadata/mirrorStations.py   stationgroup  dbhost    dbaccount   dbaccountpw          dbname
 
                             becomes something like
-                             /dataworks/mirror_station_metadata/mirrorStations.py    COCONet     localhost  dataworks  tlalocnetdataworks   Dataworks
+                             ./mirrorStations.py  COCONet  localhost  root  batenococ Dataworks_GSAC_database 
 
                            Or, for stationgroup use, for separate stations, not a network name,  
                            inside "", have:
@@ -152,14 +154,14 @@ def load_db ():
 
     # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
     # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
-    httppart=  ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unknown&site.interval=interval.normal" '
+    httppart=  ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unavcotest&site.interval=interval.normal" '
 
     # in case of separate station IDs:
     if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
         # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
         # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
-        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unknown"'
+        httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unavcotest"'
         logfilename = logfilename + ".extras"
 
     # compose the command to make the query using the Linux 'curl' command line utility:
@@ -483,9 +485,9 @@ ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-1
 
              # CHANGE
              # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
-             #if "GeoRED" in networks:
-             #   logWrite("\n >>> SKIPPED GeoRED station _"+code +"  <<<< <<<< <<<< \n")
-             #   continue
+             if "GeoRED" in networks:
+                logWrite("\n >>> SKIPPED GeoRED station _"+code +"  <<<< <<<< <<<< \n")
+                continue
 
              logWrite("      networks names string = _" +networks + "_ " )
 
