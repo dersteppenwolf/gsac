@@ -205,15 +205,15 @@ def parseOneSiteMetadata ():
 
              sample_interval    = float( (strlist[8]) ) # data sample interval, seconds
 
-             logWrite( "\n      site "+staid+" data file metadata is " +line[0:-1] )  
+             logWrite( "      site "+staid+" data file metadata is " +line[0:-1] )  
              # :-1] means do not print the line's terminal line return \n 
              # full logWrite( "\n   station "+staid+": this data file's metadata from remote GSAC is \n    " +line[0:-1] )  # :-1] means do not print the line's terminal line return \n 
              #logWrite(   " id code, filetype, MD5, published time, file URL, datafile_start_time, datafile_stop_time")
 
              filext =file_url[-3:]
-             logWrite( "      datafile URL is  " +file_url )  
-             logWrite( "      datafile type is " +ftype )  
-             logWrite( "      datafile ext is  " +filext )  
+             # debug logWrite( "      datafile URL is  " +file_url )  
+             #debug logWrite( "      datafile type is " +ftype )  
+             # debug logWrite( "      datafile ext is  " +filext )  
 
              # from file type name strings from the input file, select the file type id number for the  UNAVCO Dataworks  standard db schema:
              doc='''
@@ -812,7 +812,8 @@ if cstatus1 == 0 :
                continue
             '''
 
-            logWrite(  "   Get datafiles' metadata from "+thissitecode+" in the given date range,  with linux command \n    "+cmd2)
+            # debug logWrite(  "   Get datafiles' metadata from "+thissitecode+" in the given date range,  with linux command \n    "+cmd2)
+            logWrite(  "   Get datafiles' metadata from "+thissitecode+" in the given date range,  with GSAC request. " )
             cstatus2 = os.system(cmd2)
             if cstatus2 == 0 :
                 parseOneSiteMetadata()
@@ -823,7 +824,7 @@ if cstatus1 == 0 :
             logWrite("  PROBLEM: "+thissitecode+" station ID is invalid (not 4 characters)")
 
 else :
-    logWrite( "  PROBLEM: Linux comand to get the complete list of sites failed: "+ cmd1 +"\n")
+    logWrite( "  PROBLEM: Linux comand failed to get the complete list of sites: "+ cmd1 +"\n")
 
 
 logWrite( "\n  \n        Summary of mirroring data files from remote GSAC, during "+datadatefrom+" to "+datadateto+":")
@@ -839,7 +840,7 @@ logWrite(   "          total size all files=  %9.3f  MB  or %9.3f GB" % (totalsi
 all = countobs + countnav  + countmet
 logWrite(   "          count of all data files found in this time interval "+`all` +" (sum of 3 items above)")
 # logWrite( "          count of not required data files is "+`countskips` + " (types not wanted for a Dataworks mirror)")
-logWrite("\n          About new files to download:")
+logWrite("\n          About new datafiles:")
 logWrite(  "          db: count of data files' info TO insert in the db                 "+`toinserts`)
 logWrite(  "          db: count of data files' info Inserted in the db                  "+`countinserts`)
 logWrite(  "          db: count of data files' info FAILED inserts in the db            "+`failinserts`)
