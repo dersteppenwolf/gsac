@@ -3,7 +3,7 @@
  filename              : mirrorStations.py
  author                : Stuart Wier 
  created               : 2014-09-03
- latest update         : 2015-01-14 improve comments and log file wording.
+ latest update         : 2016-03-16
 
  tested and verified   : 2016-03-16 tested with latest GSAC dataworks code in SourceForge.  Correctly loaded COCONet networks station and instrument data.
 
@@ -52,7 +52,7 @@
                               /dataworks/mirror_station_metadata/mirrorStations.py   stationgroup  dbhost    dbaccount   dbaccountpw          dbname
 
                             becomes something like
-                             ./mirrorStations.py  COCONet  localhost  root  batenococ Dataworks_GSAC_database 
+                             ./mirrorStations.py  COCONet  localhost  root  mydbpw  Dataworks_GSAC_database 
 
                            Or, for stationgroup use, for separate stations, not a network name,  
                            inside "", have:
@@ -81,7 +81,7 @@
  tested on             : Python 2.6.5 on Linux (Ubuntu) ; CentOS Python 2.6 
 
  *
- * Copyright 2014, 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014- 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
