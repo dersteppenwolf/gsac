@@ -4,29 +4,34 @@
  filename              : mirrorData.py
  author                : Stuart Wier
  created               : 2014-09-03
- latest update(version): 2016-01-14 log file working changes 
+ latest update(version): 2016-03-15, 2016-03-16, 2016-03-17, 
+
+ tested and verified   : 2016-03-16 tested with latest GSAC dataworks code in SourceForge.  Correctly loaded COCONet datafile information.
 
  exit code(s)          : 0, success; 
 
- description           UNAVCO GSAC, "Dataworks code" to populate the GSAC database datafile table information using a query to another GSAC for the information.
+ description           This is part of the UNAVCO GSAC "Dataworks code" to populate the GSAC database datafile table information using a query to another GSAC for the information.
 
                        : To populate or update a  UNAVCO Dataworks  database which has the UNAVCO Dataworks schema with GNSS datafiles from UNAVCO's GSAC or from other remote GSAC.
                        : Populates the data files metadata (table datafile) and also copies the complete GNSS data files to this computer.
                        : This process is run once a day by the ops crontab file; which see (do crontab -l).
 
-                       : This mirrorData.py process is run once a day by the ops account crontab file; which see (do crontab -l).
+                       : This mirrorData.py process is run once a day by a crontab job.
 
 
  configuration         : Initial setup (one time): revise these Python code lines, each line is flagged with the word CHANGE,  to configure your use of this script:
 
-                       : CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-                       : CHANGE the  domain in this line (at or near line 357 below) to your domain for your FTP server.
+                       : CHANGE URL for for your FTP server, where your datafiles are available with FTP (or with HTML).
+                       :  in this line (at or near line 397 below) to your domain for your FTP server, such as
                          local_domain           = "ftp://myagency.org/gps/"
 
-	                   : CHANGE: once, set the value of logflag the code line below  near line number 575, to set if log output goes to the screen as well as to the log file. 
+                       : CHANGE GeoRED # look to NOT get local stations such as "GeoRED" stations put back in the your GSAC, where they originated:
+  
+                       : CHANGE download data files: enable this code block to downlaod files from the remote gsac
+
+	                   : CHANGE: set the value of logflag the code line below  near line number 575, to set if log output goes to the screen as well as to the log file. 
                        logflag= 1  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
 
-                       : CHANGE # look to NOT get local stations such as "GeoRED" stations put back in the your GSAC, where they originated:
 
  usage                 : Must already have in the database all the correct 'equip_config' table entries, the information about the stations' equipment sessions.
                        : That is achieved by running mirrorStations.py just before you run this script.
@@ -36,15 +41,19 @@
                          ./mirrorData.py localhost dbacct dbacctpw dbname 2014-04-01 2014-04-30  networkname
 
                        : dbhost is like 'localhost', dbacct and dbacctpw are the MySQL account names and password to write to the database dbname such as "Dataworks".
-                       : stationgroup is a UNAVCO archive name for a network, like COCONet or TLALOCNet
+                       : stationgroup is a UNAVCO archive name for a network, like COCONet.
 
                         The command run by crontab is like: 
                         
-                        /dataworks/mirror_gps_data_from_unavco/mirrorData.py localhost dataworks tlalocnetdataworks Dataworks 4daysback today TLALOCNet
+                        /dataworks/mirror_gps_data_from_unavco/mirrorData.py localhost dataworks tlalocnetdataworks Dataworks   4daysback today COCONet
+
+                            becomes something like
+
+                        ./mirrorData.py                                      localhost  root  mydbpw Dataworks_GSAC_database 4daysback today COCONet
 
                         The words "4daysback today" are special input arguments to cover the most recent days.  see code below dealing with '4daysback'.
 
-                        Or, for a station name list in place of a network name (TLALOCNet), use, for separate stations use:  
+                        Or, for a station name list in place of a network name like COCONet, for separate stations use:  
                            Inside a single pair of quotation marks "", have:
                               a. a single station's four char ID  like "POAL"
                               b. semi-colon separated list of four char IDs, separated with ";"   like    "p123;p456"  
@@ -58,12 +67,12 @@
 
                        If you do wish to mirror those stations' data files routinely, simply add this one command line to your crontab file for daily operation.
 
-                       This takes about 2 to 6 minutes to check for and update GNSS data files from UNAVCO for 100 stations for the past 4 days.
+                       This takes about 5 to 10 minutes to check for and update GNSS data files from UNAVCO for 100 stations for the past 4 days.
 
  tested on             : Python 2.6.5 on Linux (on Ubuntu 10)
                        : "Python 2.6.6 (r266:84292, Jan 22 2014, 09:42:36) [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)] on linux2" (on CentOS)
  *
- * Copyright 2014, 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014- 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -382,7 +391,7 @@ def parseOneSiteMetadata ():
                     | URL_path            | varchar(120)    | NO   |     | NULL    |                |
                     '''
 
-                 # CHANGE the next line of code to define part of your path to files in your ftp server:
+                 # CHANGE URL the next line of code to define part of your path to files in your ftp server:
                  # example local_domain = "ftp://coconet1.sgc.gov.co/rinex"  
                  # LOOK NO FINAL /
                  local_domain = "ftp://myagency.org/gps/rinex"
@@ -461,7 +470,7 @@ def parseOneSiteMetadata ():
 
                  if haveitinDB :
 
-                        # LOOK CHANGE: enable this code blaock to downlaod files from the remore gsac
+                        # CHANGE download data files: enable this code block to downlaod files from the remote gsac
                         pass
                         skip='''
                         # Now download the datafile itself from url file_url 
@@ -651,8 +660,8 @@ global countmet
 global nogetcount
 global timefixcount
 
-# CHANGE
-logflag= 2  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
+# CHANGE logflag
+logflag= 2  # Note: use 1 for operations.    use =2 for debugging runs, to see more output on screen.
 
 dbhost=""
 dbacct=""
@@ -715,27 +724,23 @@ cursor = gsacdb.cursor()
 
 # open log file; also describing processing results which need later attention:
 dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file name
-# CHANGE: set path to log file:
+# CHANGE: set log file path 
 # like perhaps logfilename = "/dataworks/logs/mirrorData.py.log."+dom
-# or a local file 
 logfilename = "mirrorData.py.log."+dom
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
 
-
 # compose the remote GSAC's API query string, using Linux 'curl' utility, like
 # /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"  > somefilename.csv
-
-# first make httppart. note that you must include " " in the string:
+# first make httppart. note that you must include " " inside the string.
 # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-# CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+#  revise 'unknown' in this line to have your acronym in place of 'unknown':
 httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unknown&site.interval=interval.normal" '
-# CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
 
 # in case of separate station IDs:
 if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
         # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-        # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+        #  revise 'unknown' in this line to have your acronym in place of 'unknown':
         httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unknown"'
         logfilename = logfilename + ".extras"
 
@@ -781,14 +786,14 @@ if cstatus1 == 0 :
         #logWrite("      the station's metadata line = _" +siteline[:-1] + "_ " );
         thissitecode = (linelist[0])
 
-        #  the 28th item is  networks names string    ";" separated
+        #  the 28th item is the networks names string    ";" separated
         networks = linelist[28]
         #logWrite("      the station's own network(s) names string = _" +networks + "_ " );
 
-        # CHANGE # look to NOT get local stations such as "GeoRED" stations put back in the your GSAC, where they originated:
-        #if "GeoRED" in networks:
-        #     logWrite("      SKIP copying any data from remote GSAC for the GeoRED station _"+ thissitecode +" since already have all GeoRED data; go to next station line in metadata file:" );
-        #     continue
+        # CHANGE GeoRED # look to NOT get local station network such as "GeoRED" station datafiles put back in the your GSAC, where they originated:
+        if "GeoRED" in networks:
+             logWrite("      SKIP copying any data from remote GSAC for the GeoRED station _"+ thissitecode +" since already have all GeoRED data; go to next station line in metadata file:" );
+             continue
 
         # for debugging, to limit to either of two sites use code like this if ( ("USMX"== thissitecode or "POAL"==thissitecode) and  4== len(thissitecode)):
 
