@@ -65,27 +65,29 @@ public abstract class FileManager extends GsacResourceManager {
     /**
      * Create the output handlers for this resource. Each makes a different format for file search results.
      * The order of the cstrs here fixes the order of the itmes in the web site choice box for file search results output type.  
-     * Revised 11 Feb 2104 to show most used choices in order.
-     * Revised 13 Apr 2015 to remove the as yet unused and unwanted RSS choice.
+     * Revised 11 Feb 2104 to show choices in order of approximate interest.
+     * Revised 13 Apr 2015 to remove the RSS choice.
+     * Revised March 25 2016. reorder and remove the GSAC-style XML format which will be replaced soon by the IGS XML format choice.
      */
     @Override
     public void initOutputHandlers() {
         super.initOutputHandlers();
         new HtmlFileOutputHandler(getRepository(), getResourceClass());
-        new WgetFileOutputHandler(getRepository(), getResourceClass());
+
         new UrlFileOutputHandler(getRepository(), getResourceClass());
+
         new CsvFileOutputHandler(getRepository(), getResourceClass());
 
-        // to provide a jnlp script for files downloading with Java Webstart:
-        // no one has ever used this so far as we know 
-        // new DownloaderFileOutputHandler(getRepository(), getResourceClass());
+        new WgetFileOutputHandler(getRepository(), getResourceClass());
 
-        new JsonFileOutputHandler(getRepository(), getResourceClass());
         new ZipFileOutputHandler(getRepository(), getResourceClass());
 
-        // no interest or support for this yet: new RssFileOutputHandler(getRepository(), getResourceClass());
+        new JsonFileOutputHandler(getRepository(), getResourceClass());
 
-        new XmlFileOutputHandler(getRepository(), getResourceClass());
+        // to provide a jnlp script for files downloading with Java Webstart, very little or no interest. Since this choice was removed no one has asked for it after > 300,000 GSAC API queries:
+        //                       new DownloaderFileOutputHandler(getRepository(), getResourceClass());
+        // no interest for this: new RssFileOutputHandler(getRepository(), getResourceClass());
+        // ditto :               new XmlFileOutputHandler(getRepository(), getResourceClass()); // which will be replaced soon by the IGS XML format choice.
     }
 
 
