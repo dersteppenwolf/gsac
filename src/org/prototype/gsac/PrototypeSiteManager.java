@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -52,7 +52,7 @@ import java.text.DecimalFormat;
 /**
  * The GSAC SiteManager classes handle all of a GSAC repository's site(station)-related requests.  
  *
- * This PrototypeSiteManager.java is for the GSAC Prototype15 databasce schema and code, of 2015.
+ * This PrototypeSiteManager.java is for the GSAC Prototype15 databasce schema and code, of 2015-2016.
  *
  * The base class is in gsac/gsl/SiteManager.java.  Each GSAC application instance also has its own site manager, such as src/org/myrepo/gsac/MyrepoSiteManager.java.
  *
@@ -434,7 +434,7 @@ public class PrototypeSiteManager extends SiteManager {
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
-    } // end doGetQueryCapabilities
+    } // end do GetQueryCapabilities
 
 
     /**
