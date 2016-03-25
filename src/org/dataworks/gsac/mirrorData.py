@@ -4,37 +4,35 @@
  filename              : mirrorData.py
  author                : Stuart Wier
  created               : 2014-09-03
- latest update(version): 2016-03-15, 2016-03-16, 2016-03-17, 
+ latest update(version): 2016-03-15, 2016-03-16, 2016-03-17, 2016-03-25 
 
- tested and verified   : 2016-03-16 tested with latest GSAC dataworks code in SourceForge.  Correctly loaded COCONet datafile information.
+ tested and verified   : 2016-03-16 tested with latest GSAC dataworks code in SourceForge. 
 
  exit code(s)          : 0, success; 
 
- description           This is part of the UNAVCO GSAC "Dataworks code" to populate the GSAC database datafile table information using a query to another GSAC for the information.
+ description           This is part of the UNAVCO GSAC "Dataworks code" 
+                       This populates the GSAC database datafile table, using a query to another GSAC for the information, and optionally downloads datafiles from a remote server,  
 
-                       : To populate or update a  UNAVCO Dataworks  database which has the UNAVCO Dataworks schema with GNSS datafiles from UNAVCO's GSAC or from other remote GSAC.
-                       : Populates the data files metadata (table datafile) and also copies the complete GNSS data files to this computer.
-                       : This process is run once a day by the ops crontab file; which see (do crontab -l).
+                       To populate or update a  UNAVCO "Dataworks" database for GSAC, which has the UNAVCO Dataworks schema,  with GNSS datafiles from some remote GSAC.
+                       Populates the data files metadata (table datafile) and also optinally copies the complete GNSS datafiles to this computer.
+                       Usually this process is run once a day by the crontab file; which see (do crontab -l).
 
-                       : This mirrorData.py process is run once a day by a crontab job.
+ CONFIGURATION : Initial setup (one time): revise Python code lines with the word CONFIGURATION,  to configure your use of this script:
 
-
- configuration         : Initial setup (one time): revise these Python code lines, each line is flagged with the word CHANGE,  to configure your use of this script:
-
-                       : CHANGE URL for for your FTP server, where your datafiles are available with FTP (or with HTML).
-                       :  in this line (at or near line 397 below) to your domain for your FTP server, such as
-                         local_domain           = "ftp://myagency.org/gps/"
-
-                       : CHANGE GeoRED # look to NOT get local stations such as "GeoRED" stations put back in the your GSAC, where they originated:
-  
-                       : CHANGE download data files: enable this code block to downlaod files from the remote gsac
-
-	                   : CHANGE: set the value of logflag the code line below  near line number 575, to set if log output goes to the screen as well as to the log file. 
-                       logflag= 1  # Note: use 1 for operations.    use =2 for debugging runs, to see output on screen as well as in logFile
+                 # CONFIGURATION : here set any domain such as "zzz.yyy.org", to NOT get datafiles put back in the your GSAC, where they originated:
+                 # CONFIGURATION : set the next line of code for files on your FTP server:
+                 # CONFIGURATION : you may define the ftp complete URL for datafiles as you wish.
+                 # CONFIGURATION : to download data files: enable this code block to download files from the remote gsac
+                 # CONFIGURATION : x use 1 for automatic operations; or you can use =2 for debugging runs, to see more output on screen.
+                 # CONFIGURATION : set log file path 
+                 # CONFIGURATION : set the URL for the remote GSAC,
+                 and again 
+                 # CONFIGURATION : set the URL for the remote GSAC (2),
+                 # CONFIGURATION : here set any network name of sites such as "GeoRED", to NOT get datafiles put back in the your GSAC, where they originated:
 
 
- usage                 : Must already have in the database all the correct 'equip_config' table entries, the information about the stations' equipment sessions.
-                       : That is achieved by running mirrorStations.py just before you run this script.
+ usage                 : Must already have in the database all the correct entries in the tables 'station" and 'equip_config' the information about the stations' equipment sessions.
+                       : That is achieved by running mirrorStations.py before you run this script, or by other GSAC database maintenance work if needed.
 
                        : You can run this program by hand with explicit dates like this, for example to get datafiles for the date range shown: 
 
@@ -72,7 +70,7 @@
  tested on             : Python 2.6.5 on Linux (on Ubuntu 10)
                        : "Python 2.6.6 (r266:84292, Jan 22 2014, 09:42:36) [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)] on linux2" (on CentOS)
  *
- * Copyright 2014- 2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2014-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -199,7 +197,7 @@ def parseOneSiteMetadata ():
              file_MD5           = (strlist[2])      # MD5 check sum value of the data file
              fsize              = (strlist[3])      # in bytes
              published_time     = (strlist[4])      # published date of the data file in its native archive
-             file_url           = (strlist[5])      # the URL to download this gps file from UNAVCO
+             file_url           = (strlist[5])      # the URL to download this gps file from  the remote GSAC
              datafile_start_time= (strlist[6])      # data start time, ISO 8601 format
              datafile_stop_time = (strlist[7])      # data end time
 
@@ -215,7 +213,7 @@ def parseOneSiteMetadata ():
              #debug logWrite( "      datafile type is " +ftype )  
              # debug logWrite( "      datafile ext is  " +filext )  
 
-             # from file type name strings from the input file, select the file type id number for the  UNAVCO Dataworks  standard db schema:
+             # from file type name strings from the input file, select the file type id number for the UNAVCO Dataworks  standard db schema:
              doc='''
                 mysql> select * from datafile_type;
                 +------------------+-------------------------------+-----------------------+----------------------------------------------------+
@@ -299,7 +297,7 @@ def parseOneSiteMetadata ():
                  if staid != filestacode:
                      logWrite("   PROBLEM: data file "+file_url+" is not for station(id) associated in GSAC file info list, id="+staid +". \n")
                      sys.stdout.flush()
-                     # to force this file not to be loaded, and skip to next file
+                     # force this file not to be loaded, and skip to next file
                      continue
                      filestacode="Bad_site_for_file"
                      # or could do, to halt processing:
@@ -309,7 +307,14 @@ def parseOneSiteMetadata ():
                  tmp=file_url[i1:]
                  i2 = tmp.find("/") 
                  file_url_ip_domain = tmp[:i2]
-                 #print "          file_url_ip_domain = _"+ file_url_ip_domain +"_"
+                 # debug print "          file_url_ip_domain = _"+ file_url_ip_domain +"_"
+
+                 originator_url_domain = file_url_ip_domain
+                 # CONFIGURATION : here set any domain such as "zzz.yyy.org", to NOT get datafiles put back in the your GSAC, where they originated:
+                 if "zzz.yyy.org"  == originator_url_domain:
+                     #logWrite("      SKIP copying any data from remote domain "+ originator_url_domain
+                     continue
+
 
                  ind = tmp.rfind("/") +1 ;  # find index after last /
                  file_url_folders = tmp[i2:ind]
@@ -391,13 +396,14 @@ def parseOneSiteMetadata ():
                     | URL_path            | varchar(120)    | NO   |     | NULL    |                |
                     '''
 
-                 # CHANGE URL the next line of code to define part of your path to files in your ftp server:
+                 # CONFIGURATION : set the next line of code for files on your FTP server:
                  # example local_domain = "ftp://coconet1.sgc.gov.co/rinex"  
-                 # LOOK NO FINAL /
+                 # NO FINAL /
                  local_domain = "ftp://myagency.org/gps/rinex"
 
-                 # make the ftp  users' downloads of datafiles from your Dataworks system (not from UNAVCO):
-                 # this is the normal UNAVCO directory structure suggested for FTP sites with daily GPS datafiles.
+                 # make the ftp complete URL for remote users' downloads of datafiles from your Dataworks system :
+                 # This is the directory structure suggested for FTP sites with daily GPS datafiles.
+                 # CONFIGURATION : you may define the ftp complete URL for datafiles as you wish.
                  URL_path     =  local_domain +"/"+ file_type +"/"+ year +"/"+ day_of_year + "/" + datafile_name
 
                  # check if this  datafile's metadata is already in the db table 'datafile':
@@ -437,10 +443,10 @@ def parseOneSiteMetadata ():
                              #logWrite( "      this data file belongs to equip session # "+`esid`+".")
                      except:
                              # no longer matters logWrite("  PROBLEM:  FAILED to get equip session id with SQL \n     "+statement+". \n      Find fault and redo this process. \n")
-                             logWrite( "      no equip session for this data file's time  is in the database yet  Try again later after the sessions are updated. ")
+                             logWrite( "      No equipment session for this data file's time is in the database yet.  Try again later after the sessions are updated. ")
                              pass 
                               
-                     # LOOK now always insert the data file metadata in the db even if esid is None
+                     # LOOK now always insert the data file metadata in the db even if esid is None  file_url_ip_domain
                      insertstmt=""
                      try:
                                     if esid == None :
@@ -448,15 +454,17 @@ def parseOneSiteMetadata ():
                                     else :
 					    # full log logWrite( "     Insert the gps data file's metadata into the db:")
 					    toinserts = toinserts +1 
-					    insertstmt=("INSERT into datafile (station_id,  equip_config_id, datafile_name, original_datafile_name, datafile_type_id, sample_interval, datafile_start_time, datafile_stop_time, published_time, year, day_of_year, size_bytes, MD5, URL_path) values (%s, %s, '%s', '%s', %s, %s, '%s', '%s', '%s', %s, %s, %s,  '%s', '%s')"  %  (`station_id`, `esid`, datafile_name, original_datafile_name, datafile_type_id, sample_interval, datafile_start_time, datafile_stop_time, published_time, year, day_of_year, size_bytes, MD5, URL_path ))
-					    # if logflag==2 : print "        SQL is "+insertstmt 
+					    insertstmt=("INSERT into datafile (station_id,  equip_config_id, datafile_name, original_datafile_name, datafile_type_id, sample_interval, datafile_start_time, datafile_stop_time, published_time, year, day_of_year, size_bytes, MD5, URL_path,data_originator_url_domain ) values (%s, %s, '%s', '%s', %s, %s, '%s', '%s', '%s', %s, %s, %s,  '%s', '%s', '%s')"  %  (`station_id`, `esid`, datafile_name, original_datafile_name, datafile_type_id, sample_interval, datafile_start_time, datafile_stop_time, published_time, year, day_of_year, size_bytes, MD5, URL_path, originator_url_domain))
+
+					    # if logflag==2 : 
+                        #print "        SQL is "+insertstmt 
 					    cursor.execute(insertstmt)
 					    gsacdb.commit()
 					    countinserts = countinserts +1 
 					    logWrite(  "     Inserted data file's metadata into db." )
 					    haveitinDB=True
                      except:
-                                    logWrite(  "    PROBLEM: failed to insert this data file's ("+file_url+") metadata into the db table datafile  for equip session "+esid)
+                                    logWrite(  "    PROBLEM: failed to insert this data file's ("+file_url+") metadata into the db table datafile for equip session "+`esid`)
                                     logWrite(  "    with SQL "+insertstmt)
                                     failinserts = failinserts +1 
                                     gsacdb.rollback()
@@ -470,7 +478,7 @@ def parseOneSiteMetadata ():
 
                  if haveitinDB :
 
-                        # CHANGE download data files: enable this code block to downlaod files from the remote gsac
+                        # CONFIGURATION : to download data files: enable this code block to download files from the remote gsac
                         pass
                         skip='''
                         # Now download the datafile itself from url file_url 
@@ -660,8 +668,8 @@ global countmet
 global nogetcount
 global timefixcount
 
-# CHANGE logflag
-logflag= 2  # Note: use 1 for operations.    use =2 for debugging runs, to see more output on screen.
+# CONFIGURATION :  use 1 for automatic operations; or you can use =2 for debugging runs, to see more output on screen.
+logflag= 2  
 
 dbhost=""
 dbacct=""
@@ -724,7 +732,7 @@ cursor = gsacdb.cursor()
 
 # open log file; also describing processing results which need later attention:
 dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file name
-# CHANGE: set log file path 
+# CONFIGURATION : set log file path 
 # like perhaps logfilename = "/dataworks/logs/mirrorData.py.log."+dom
 logfilename = "mirrorData.py.log."+dom
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
@@ -732,15 +740,15 @@ timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())
 # compose the remote GSAC's API query string, using Linux 'curl' utility, like
 # /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"  > somefilename.csv
 # first make httppart. note that you must include " " inside the string.
-# CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-#  revise 'unknown' in this line to have your acronym in place of 'unknown':
+# CONFIGURATION : set the URL for the remote GSAC,
+# and revise 'unknown' in this line to have your acronym in place of 'unknown':
 httppart=             ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unknown&site.interval=interval.normal" '
 
 # in case of separate station IDs:
 if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
-        # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-        #  revise 'unknown' in this line to have your acronym in place of 'unknown':
+        # CONFIGURATION : set the URL for the remote GSAC (2),
+        # and revise 'unknown' in this line to have your acronym in place of 'unknown':
         httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unknown"'
         logfilename = logfilename + ".extras"
 
@@ -790,7 +798,7 @@ if cstatus1 == 0 :
         networks = linelist[28]
         #logWrite("      the station's own network(s) names string = _" +networks + "_ " );
 
-        # CHANGE GeoRED # look to NOT get local station network such as "GeoRED" station datafiles put back in the your GSAC, where they originated:
+        # CONFIGURATION : here set any network name of sites such as "GeoRED", to NOT get datafiles put back in the your GSAC, where they originated:
         if "GeoRED" in networks:
              logWrite("      SKIP copying any data from remote GSAC for the GeoRED station _"+ thissitecode +" since already have all GeoRED data; go to next station line in metadata file:" );
              continue
