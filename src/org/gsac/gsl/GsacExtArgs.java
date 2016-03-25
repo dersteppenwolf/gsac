@@ -20,14 +20,12 @@
 
 package org.gsac.gsl;
 
-
-
 /**
- * Interface description: defines GSAC variables; declares names of them (such as "site....") to use making API queries and in making results returned.
+ * Interface description: 
+ * Defines more core gsac api url arguments
  *
- *
- * @version  Aug 29, 2013 
- * @author   JM; SKW; 2010-2016.
+ * @version  Mar 25 2016 
+ * @author   JMcW 2010; SKW 2013-2016.
  */
 public interface GsacExtArgs {
 
@@ -48,7 +46,7 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_REGION = GsacArgs.ARG_SITE_PREFIX + "region";
 
-    /** the radome name or type, NOT the "IERSDOMES" value  */
+    /** the radome model name or type, NOT the "IERSDOMES" value  */
     public static final String ARG_DOME = GsacArgs.ARG_SITE_PREFIX + "dome";
 
     /** _more_ */
@@ -72,7 +70,6 @@ public interface GsacExtArgs {
     /** _more_ */
     public static final String ARG_STATE = GsacArgs.ARG_SITE_PREFIX + "state";
 
-
     /** Name of station's tectonic plate.  */
     public static final String ARG_TECTONICPLATE = GsacArgs.ARG_SITE_PREFIX + "tectonicplate";
 
@@ -95,15 +92,9 @@ public interface GsacExtArgs {
     // next also used for IGS XML site log organisationName:
     public static final String SITE_METADATA_NAME_OPERATOR_AGENCY  = "site.metadata.nameoperatoragency";
 
-
-
-
-
-
     public static final String SITE_METADATA_CDPNUM  = "site.metadata.cdpnum";
   
     public static final String SITE_METADATA_NAMEAGENCY  = "site.metadata.nameagency";
-
 
     public static final String SITE_METADATA_NAME_PUBLISHER_AGENCY  = "site.metadata.namepublisheragency";
 

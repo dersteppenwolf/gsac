@@ -26,7 +26,8 @@ package org.gsac.gsl;
  * Defines the core gsac api url arguments
  *
  *
- * @author  Jeff McWhirter mcwhirter@unavco.org
+ * @author  Jeff McWhirter 2010; SKW 2013-2016.
+ * @version  Mar 25 2016 
  */
 public interface GsacArgs {
 
@@ -84,6 +85,9 @@ public interface GsacArgs {
     /** site DATA in date range: alternate: as per Fran 21 Aug., 2015: to search for sites by data time range (ignorning any data gaps) */
     public static final String ARG_SITE_LATEST_DATA_DATE = ARG_SITE_PREFIX + "latest_data_date";
     public static final String ARG_SITE_EARLIEST_DATA_DATE = ARG_SITE_PREFIX + "earliest_data_date";
+
+    public static final String ARG_DATA_ORIGINATOR_URL_DOMAIN = ARG_SITE_PREFIX + "originator_url_domain"; // the domain in the URL (ftp or http) where a datafile came from originally.
+    // used to help prevent endless circular copies of datafiles between GSACs, and to retain the name of the source of the data.
 
     /** _more_ */
     public static final String ARG_SITE_CREATEDATE = ARG_SITE_PREFIX + "createdate";
