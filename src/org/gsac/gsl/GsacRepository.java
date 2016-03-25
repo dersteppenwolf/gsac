@@ -607,15 +607,10 @@ public class GsacRepository implements GsacConstants {
                 //getLogManager().logError("Unknown request:" + uri, null);
             }
 
-            //Only log the access if it is actually a service request (as opposed to htdocs requests)
+            // JMcW: "log the access if it is actually a service request (as opposed to htdocs requests)" - seems to log all requests...
             if (serviceRequest) {
                 
                 String reqstr=request.toString();
-
-                // DEBUG
-                //if (reqstr.contains("kmz")  && reqstr.contains("COCON") ) {
-                //    System.out.println("GSAC: another coconut kmz file request at "+getUTCnowString()+", from IP "+request.getOriginatingIP() ); 
-                //}
 
                 int resourceCnt = 0;
                 if (response != null) {
@@ -625,35 +620,26 @@ public class GsacRepository implements GsacConstants {
                     resourceCnt = 0;
                 }
 
-                //  getLogManager().logAccess(request, what, resourceCnt);
+                // old  getLogManager().logAccess(request, what, resourceCnt);
 
-                // / *  debug ddd
                 // Time the complete GSAC request handling               ttttime
                 // from above: long starttime = System.currentTimeMillis();
                 long donetime = System.currentTimeMillis();
                 // if request was a file search, site search, or something else like asking for a page on a GSAC web tool
+                //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: this file search total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
                 if (reqstr.indexOf("file/search")>=0 ) {
-                    //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: this file search total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
-                    System.err.println("GSAC: request # "+requestsCount+"  " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
-
+                    System.err.println("GSAC: timing: request # "+requestsCount+" took " + (donetime - starttime) + "ms to find "+resourceCnt+" files"); 
                 } else if (reqstr.indexOf("site/search")>=0 ) {
-                    //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: this site search total time used " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
-                    System.err.println("GSAC: request # "+requestsCount+"  " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
-
+                    System.err.println("GSAC: timing: request # "+requestsCount+" took " + (donetime - starttime) + "ms to find "+resourceCnt+" sites"); 
                 } else { 
                     if  ( (resourceCnt+1)> 0 ) {
-                    //System.err.println("GSAC: request # "+requestsCount+" GsacRepository timing: other request    total time used " + (donetime - starttime) + "ms to handle "+ (resourceCnt+1) +" items to return (like a web page)"); 
-                    System.err.println("GSAC: request # "+requestsCount+"  " + (donetime - starttime) + "ms to handle "+ (resourceCnt+1) +" items to return (like a web page)"); 
+                    System.err.println("GSAC: timing: request # "+requestsCount+" took " + (donetime - starttime) + "ms to return "+ (resourceCnt+1) +" items (web page)"); 
                     }
                 }
-                // */
-
 
                 // LOOK do not change this line; it is key for GSAC use metrics
-                //System.out.println    ("GSAC: request # "+requestsCount+" completed the request "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP() );    
                 System.out.println    ("GSAC: completed the request "+requestsCount+"  "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP()  );    
-
-                //  + "  or RequestIP "+ request.getRequestIP()  ); 
+                //  + " (RequestIP="+ request.getRequestIP()  ); 
 
                 /* DEBUG
                 // LOOK weird: the IP from request.getOriginatingIP() can show the IP 69.44.86.107 = wes.unavco.org NOT the actual remote non-unavco incoming IP!
