@@ -173,7 +173,7 @@ public abstract class SiteManager extends GsacResourceManager {
         // for Google Earth KMZ 
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  
 
-        // placeholder for the new IGS XML site log format, March 1, 2016. Not yet operational complete or correct.  Do not use.
+        // placeholder for the new IGS XML site log formatting code, March 8, 2016. Not yet operational complete or correct.  use at your risk.
         //new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
         // for SOPAC XML site log format  
