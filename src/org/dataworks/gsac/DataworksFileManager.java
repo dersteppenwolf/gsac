@@ -200,7 +200,7 @@ public class DataworksFileManager extends FileManager {
         //  Add entry box for user to select by station 4 character id
         addStringSearch(request, ARG_SITECODE, ARG_SITECODE_SEARCHTYPE, msgBuff, "Site Code", Tables.STATION.COL_FOUR_CHAR_NAME, clauses);
         
-        // FROM SiteManager: 
+        // like code in SiteManager: 
         String latCol  = Tables.STATION.COL_LATITUDE_NORTH;
         String lonCol  = Tables.STATION.COL_LONGITUDE_EAST;
              // query for the station's name string  
@@ -225,7 +225,7 @@ public class DataworksFileManager extends FileManager {
             clauses.add( Clause.ge( lonCol, request.get(ARG_WEST, 0.0)));
             appendSearchCriteria(msgBuff, "west&gt;=", "" + request.get(ARG_WEST, 0.0));
         }
-        // end FROM SiteManager
+        // end like SiteManager
 
         /*
         if (request.defined(ARG_FILESIZE_MIN)) {
@@ -280,7 +280,7 @@ public class DataworksFileManager extends FileManager {
             appendSearchCriteria(msgBuff, "Data date&lt;=", "" + format(dataDateRange[1]));
         }
 
-        // new 6 may
+        // new 6 May
         // use the data range requested by the user, from the input from web search form / API, to search on the "publish time" of data files:
         Date[] usersDateRange = request.getDateRange(ARG_FILE_PUBLISHDATE_FROM, ARG_FILE_PUBLISHDATE_TO, null, null);
         //                                                pubDateRange[0]
@@ -327,7 +327,7 @@ public class DataworksFileManager extends FileManager {
              Tables.DATAFILE.COL_MD5,
              Tables.DATAFILE.COL_URL_PATH,
              Tables.DATAFILE.COL_DATAFILE_NAME,
-             // not yet in dataworks database  Tables.DATAFILE.COL_ACCESS_ID,
+             //uuu  not yet in dataworks database  Tables.DATAFILE.COL_ACCESS_ID,
              // not yet in dataworks database  Tables.DATAFILE.COL_EMBARGO_DURATION_HOURS,
              // not yet in dataworks database  Tables.DATAFILE.COL_EMBARGO_AFTER_DATE,
              Tables.STATION.COL_FOUR_CHAR_NAME,
@@ -335,7 +335,8 @@ public class DataworksFileManager extends FileManager {
              // not yet in dataworks database  Tables.STATION.COL_EMBARGO_DURATION_HOURS,
              // not yet in dataworks database  Tables.STATION.COL_EMBARGO_AFTER_DATE,
              Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_ID,
-             Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME             // last item has no final ,
+             Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME,             // last item has no final ,
+             Tables.DATAFILE.COL_DATA_ORIGINATOR_URL_DOMAIN
              });
 
         //  for the sql select FROM clause, which tables to select from
@@ -398,6 +399,13 @@ public class DataworksFileManager extends FileManager {
 
                String file_type_name = results.getString (Tables.DATAFILE_TYPE.COL_DATAFILE_TYPE_NAME);
 
+               // new March 24 2016, for the important new concept of where the datafile was copied from (as from another GSAC),
+               // since copying each others data files around is the big new cool idea.
+               // datafiles copied from unavco to this other GSAC for example should have the value "data-out.unavco.org":
+               // Thereafter if unavco updates this file, there will be two versions of the "same file."
+               String originator_url_domain = results.getString (Tables.DATAFILE.COL_DATA_ORIGINATOR_URL_DOMAIN);
+               //debug System.err.println("   datafile originator = _" + originator_url_domain +"_");
+
                String sample_interval = "0.0"; 
                sample_interval = results.getString (Tables.DATAFILE.COL_SAMPLE_INTERVAL);
                if (null == sample_interval) {
@@ -418,7 +426,7 @@ public class DataworksFileManager extends FileManager {
 
                int  sta_access_permission_id  = results.getInt(Tables.STATION.COL_ACCESS_ID);
 
-               /*
+               /* from more complex prototype GSAC:
                int  sta_embargo_duration_hours  = results.getInt(Tables.STATION.COL_EMBARGO_DURATION_HOURS);
                Date sta_embargo_after_date  = results.getDate(Tables.STATION.COL_EMBARGO_AFTER_DATE);
                //    where access permission_id is  1 |  no public access
@@ -438,9 +446,7 @@ public class DataworksFileManager extends FileManager {
                      //System.err.println("  station restriction: do not show this file (file is more recent that station's embargo date) : " + file_url);
                      continue;
                      }
-               */
 
-               /* from more complex prototype GSAC:
                // Check in the file's gnss_data_file table rows, all types of file access permissions and limits. If fails, do not allow downloading,
                // and do not show this file in GSAC results sent to the user.
                int access_permission_id  = results.getInt(Tables.DATAFILE.COL_ACCESS_ID);
@@ -465,7 +471,9 @@ public class DataworksFileManager extends FileManager {
                      }
                */
 
-               // OK this file may be shown to user for downloading
+
+
+               //  make a GsacFile object from the above metadata.
 
                ResourceType rt = new ResourceType(TYPE_GNSS_OBSERVATION , " geodesy instrument data");
                if (file_type_name != null) {
@@ -474,16 +482,16 @@ public class DataworksFileManager extends FileManager {
 
                // make and populate a FileInfo object for this file, used by other parts of GSAC for output handling.
                FileInfo fileinfo = new FileInfo(file_url);
-               String sizestr = ""+file_size;
+               String sizestr = ""+file_size; // ftoa itoa
                fileinfo.setMd5(file_md5);
                fileinfo.setFileSize(file_size);
-               //String sampintstr = ""+ sample_interval;
                float sampint = Float.parseFloat(sample_interval);
                fileinfo.setSampleInterval(sampint);
+               fileinfo.setOriginator_url_domain(originator_url_domain);
 
                // make and populate a GsacFile object for this file, used by other parts of GSAC for output handling.
-               GsacFile gsacFile = new GsacFile(siteID, fileinfo,                                   null, published_date,  data_start_time, data_stop_time, rt);
                // from Gsac File(String   repositoryId,  FileInfo fileInfo, GsacResource relatedResource, Date publishTime, Date startTime, Date endTime,   ResourceType type)
+               GsacFile gsacFile = new GsacFile(siteID, fileinfo,                                   null, published_date,  data_start_time, data_stop_time, rt);
 
                // collect all the GsacFile objects made; this is the array of results from the GSAC file search:
                response.addResource(gsacFile);
