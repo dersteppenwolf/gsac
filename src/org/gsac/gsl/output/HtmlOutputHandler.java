@@ -198,9 +198,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             // If a remote service has chosen the ambiguous name 'GSAC Repository', append their url to disambiguate among federated services
             String itsname = info.getName();
             //System.err.println("     HtmlOutputHandler: federated GSAC.  remote gsac's local name is _" + itsname +"_" );
-            if (itsname.equals("GSAC Repository") ) {
+            if (itsname.equals("GSAC Repository") || itsname.length() < 3) {
                itsname = "Gsac at " + url;
-               //System.err.println("     HtmlOutputHandler: federated GSAC.  remote gsac's NEW local name is _" + itsname +"_" );
+               //System.err.println("     HtmlOutputHandler: federated GSAC.  remote server's listed name is _" + itsname +"_" );
             }
             // or to replace the name "GSAC" at SOPAC:
             if (url.indexOf("geogsac.ucsd.edu:8080/gsacws")>0 ) {
@@ -688,6 +688,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             cnt++;
         }
 
+        // move this to after "results" and "SearcH" button:
+        // debug  test LOOK test show version date: FIX: improve code here to show 
+        //pw.append("<br> <p>  <font size="-2">March 11 2016 SourceForge GSAC revision # </font> </p>");
     }
 
 
