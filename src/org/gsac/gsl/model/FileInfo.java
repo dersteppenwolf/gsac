@@ -58,6 +58,11 @@ public class FileInfo {
     /** MD5 check sum value of the datafile itself. */
     private String md5="";
 
+    /** originator_url_domain; is empty str "" by default, not null. */
+    // the domain in the URL (ftp or http) where a datafile came from originally.
+    // used to help prevent endless circular copies of datafiles between GSACs, and to retain the name of the source of the data.
+    private String originator_url_domain="";
+
     /**  TRF the terrestrial reference frame for the datafile's data. */
     private String TRF="";
 
@@ -241,6 +246,24 @@ public class FileInfo {
      */
     public float getSampleInterval() {
         return sample_interval;
+    }
+
+
+    /**
+     *  Set the originator_url_domain property.
+     *
+     *  @param value The new value for originator_url_domain
+     */
+    public void setOriginator_url_domain(String value) {
+        originator_url_domain = value;
+    }
+    /**
+     *  Get the originator_url_domain property.
+     *
+     *  @return originator_url_domain 
+     */
+    public String getOriginator_url_domain() {
+        return originator_url_domain;
     }
 
     /**
