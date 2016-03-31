@@ -24,17 +24,15 @@
                        NOTE You MUST run this script everytime you run mirrorData.py, before you run mirrorData.py, since the remote GSAC should change equipment session end times
                          everytime a new file comes in for a station.  If you try to download a new file for a session when the db equip_config_stop_time is older, the download fails.
 
- configuration:        : First, one time only, for your network and operations, revise satellite_system ="GPS"    # default  could be for example "GPS,GLONASS"   CHANGE    near line 487
- 
-                         and see to these CHANGE lines:
+ configuration:        : First, one time only, edit this Python file for your operations, set these values in the lines indicated with these CONFIGURATION comments:
 
-                       : CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-                       : CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
-
-		       : CHANGE # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
-
-			           : set the value of logflag to choose if you want to see output to the terminal:
-                         logflag =1  # controls screen output.  CHANGE: USE =1 for routine operations. OR use =2 to print log lines to screen, for testing, near line 674
+    # CONFIGURATION URL for a different GSAC API URL from another GSAC.
+    # CONFIGURATION revise 'unknown' in this line; use have your acronym in place of 'unknown':
+        # CONFIGURATION URL for a different GSAC API URL from another GSAC.
+        # CONFIGURATION revise 'unknown' in this line; use have your acronym in place of 'unknown':
+             # CONFIGURATION to NOT get stations from a network such as "GeoRED" put in your GSAC.
+                 # CONFIGURATION you can change this; for example "GPS,GLONASS"
+ # CONFIGURATION USE =1 for routine operations.  use 2 for testing  and details
                        
 
  usage:                    Run this script (as with Linux crontab job), to look for new or changed station info.
@@ -141,7 +139,7 @@ def load_db ():
     dom =strftime("%d", gmtime())  # day of month, such as "16", to use in log file name
 
     # local log file:
-    logfilename = "mirrorStations.py.log."+dom   # CHANGE use this for a local log file
+    logfilename = "mirrorStations.py.log."+dom   # you may of course use some other log file name.
     # or with full path like logfilename = "/dataworks/logs/mirrorStations.py.log."+dom
     logFile = open (logfilename, 'w')  # NOTE this creates a NEW file of the same log file name, destroying any previous log file of this name from previous month.
 
@@ -152,15 +150,15 @@ def load_db ():
     # compose the remote GSAC's API query string.
     # like /usr/bin/curl -L "http://www.unavco.org/gsacws/gsacapi/site/search?site.group=COCONet&output=sitefull.csv&site.interval=interval.normal&site.status=active"                      > somefilename.csv
 
-    # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-    # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
-    httppart=  ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unavcotest&site.interval=interval.normal" '
+    # CONFIGURATION URL for a different GSAC API URL from another GSAC.
+    # CONFIGURATION revise 'unknown' in this line; use have your acronym in place of 'unknown':
+    httppart=  ' "http://www.unavco.org/gsacws/gsacapi/site/search?output=sitefull.csv&site.group='+stationgroup+'&site.status=active&user=unknown&site.interval=interval.normal" '
 
     # in case of separate station IDs:
     if ";" in stationgroup or len(stationgroup)<5:
         # search for site by ID, and cut off trailing final ";" 
-        # CHANGE URL for a different domain and a similar GSAC API URL from other remote GSACs.
-        # CHANGE revise 'unknown' in this line to have your acronym in place of 'unknown':
+        # CONFIGURATION URL for a different GSAC API URL from another GSAC.
+        # CONFIGURATION revise 'unknown' in this line; use have your acronym in place of 'unknown':
         httppart=' "http://www.unavco.org/data/web-services/gsacws/gsacapi/site/search?output=sitefull.csv&site.code='+stationgroup+'&user=unavcotest"'
         logfilename = logfilename + ".extras"
 
@@ -483,13 +481,13 @@ ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-1
 
              networks =    strlist[28]
 
-             # CHANGE
-             # look to NOT get local stations such as "GeoRED" stations put back in your GSAC, where they originated:
+             # CONFIGURATION to NOT get stations from a network such as "GeoRED" put in your GSAC.
+             # This is to prevent endless or circular copying between two GSACs.
              if "GeoRED" in networks:
                 logWrite("\n >>> SKIPPED GeoRED station _"+code +"  <<<< <<<< <<<< \n")
                 continue
 
-             logWrite("      networks names string = _" +networks + "_ " )
+             #logWrite("      networks names string = _" +networks + "_ " )
 
              #state         = (strlist[20])  # NOT used by dataworks, as per design specification announced in a meeting.
              # as per instructions of Fran Boler, Oct 29 2014, do NOT store state or province name anywhere in the Dataworks database; so skip these 4 lines:
@@ -804,7 +802,8 @@ ACP6,ACP6,9.2385,-79.4078,943.56,deep-drilled braced,,2008-10-14T19:28:00,2015-1
                  antenna_height          =adz
                  radome_serial_number   =" " # not available from UNAVCO GSAC
                  receiver_serial_number =rcvsn
-                 satellite_system       ="GPS" # default; or could be for example "GPS,GLONASS"   CHANGE
+                 # CONFIGURATION you can change this; for example "GPS,GLONASS"
+                 satellite_system       ="GPS" # default
                  esid=0
 
                  #  for foreign key fields
@@ -1006,7 +1005,8 @@ global stationgroup
 global eqscount
 global donecount
 
-logflag =2 # CHANGE USE =1 for routine operations.  use 2 for testing  and details
+# CONFIGURATION USE =1 for routine operations.  use 2 for testing  and details
+logflag =1 
 
 # open log file describing processing results 
 timestamp   =strftime("%Y-%m-%d_%H:%M:%S", gmtime())

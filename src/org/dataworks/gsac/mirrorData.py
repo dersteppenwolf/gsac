@@ -4,7 +4,7 @@
  filename              : mirrorData.py
  author                : Stuart Wier
  created               : 2014-09-03
- latest update(version): 2016-03-15, 2016-03-16, 2016-03-17, 2016-03-25 
+ latest update(version): 2016-03-15, 2016-03-16, 2016-03-17, 2016-03-25, 2016-03-31
 
  tested and verified   : 2016-03-16 tested with latest GSAC dataworks code in SourceForge. 
 
@@ -17,10 +17,13 @@
                        Populates the data files metadata (table datafile) and also optinally copies the complete GNSS datafiles to this computer.
                        Usually this process is run once a day by the crontab file; which see (do crontab -l).
 
- CONFIGURATION : Initial setup (one time): revise Python code lines with the word CONFIGURATION,  to configure your use of this script:
+ CONFIGURATION : First, one time only, edit this Python file for your operations, set these values in the lines indicated with these CONFIGURATION comments:
 
-                 # CONFIGURATION : here set any domain such as "zzz.yyy.org", to NOT get datafiles put back in the your GSAC, where they originated:
-                 # CONFIGURATION : set the next line of code for files on your FTP server:
+                 # CONFIGURATION : here set any domain such as "zzz.yyy.org", to NOT put datafiles' information from this domain, in your GSAC database.
+                 # CONFIGURATION : set the next line of code to give the correct domain for files on your FTP server:
+                     # note, there is NO FINAL /
+                     # Here is a fake example (do not use this!):
+                     local_domain = "ftp://replace.this.org/rinex"  
                  # CONFIGURATION : you may define the ftp complete URL for datafiles as you wish.
                  # CONFIGURATION : to download data files: enable this code block to download files from the remote gsac
                  # CONFIGURATION : x use 1 for automatic operations; or you can use =2 for debugging runs, to see more output on screen.
@@ -310,11 +313,11 @@ def parseOneSiteMetadata ():
                  # debug print "          file_url_ip_domain = _"+ file_url_ip_domain +"_"
 
                  originator_url_domain = file_url_ip_domain
-                 # CONFIGURATION : here set any domain such as "zzz.yyy.org", to NOT get datafiles put back in the your GSAC, where they originated:
+                 # CONFIGURATION : here set any domain such as "zzz.yyy.org", to NOT put datafiles' information from this domain, in your GSAC database.
+                 # this is to prevent endless or circular copies of files between two GSACs.
                  if "zzz.yyy.org"  == originator_url_domain:
-                     #logWrite("      SKIP copying any data from remote domain "+ originator_url_domain
+                     #logWrite("      SKIP copying data from remote domain "+ originator_url_domain
                      continue
-
 
                  ind = tmp.rfind("/") +1 ;  # find index after last /
                  file_url_folders = tmp[i2:ind]
@@ -396,10 +399,10 @@ def parseOneSiteMetadata ():
                     | URL_path            | varchar(120)    | NO   |     | NULL    |                |
                     '''
 
-                 # CONFIGURATION : set the next line of code for files on your FTP server:
-                 # example local_domain = "ftp://coconet1.sgc.gov.co/rinex"  
-                 # NO FINAL /
-                 local_domain = "ftp://myagency.org/gps/rinex"
+                 # CONFIGURATION : set the next line of code to give the correct domain for files on your FTP server:
+                 # note, there is NO FINAL /
+                 # Here is a fake example (do not use this!):
+                 local_domain = "ftp://replace.this.org/rinex"  
 
                  # make the ftp complete URL for remote users' downloads of datafiles from your Dataworks system :
                  # This is the directory structure suggested for FTP sites with daily GPS datafiles.
