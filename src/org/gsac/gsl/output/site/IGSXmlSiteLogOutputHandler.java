@@ -48,17 +48,21 @@ import javax.servlet.http.*;
 
 
 /**
- * Creates GSAC site search results in IGS XML site log format, using "GeodesyML."
+ * Incomplete, provisional, and experimental code for GSAC site search results in IGS XML site log format, using "GeodesyML."
+ * Not for for operational use.  Will be replaced in part by new Java code created for this purpose by IGS or its associates.
  *
  * March 9 2016
  *
  * Note this is a provisional draft and really only a place holder for what will be completely new code using online .xsd files for xml creation.
  * This is not operational, complete, or correct.
  *
- * for future use, see this code starting point: http://stackoverflow.com/questions/12147428/creating-an-xml-file-from-xsd-from-jaxb/33233061#33233061
- * see "After trying for couple of days, eventually i was able to create the xml from xsd properly using the code given below."
+
+          for future development, see this code starting point: http://stackoverflow.com/questions/12147428/creating-an-xml-file-from-xsd-from-jaxb/33233061#33233061
+          see "After trying for couple of days, eventually i was able to create the xml from xsd properly using the code given below."
  
-   creator of the thing: 
+   See: 
+
+   creator of the IGS XML format: 
    nicholas.brown@ga.gov.au
 
    References:
