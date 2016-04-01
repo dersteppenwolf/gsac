@@ -21,21 +21,21 @@ Dataworks includes:
   GSAC package at gsac-code/src/org/dataworks/gsac/. 
   Make a database with this .sql file (myslq command "source Dataworks_demo.sql) before you install GSAC.
 
-- a particular instance of GSAC, what you are building here.
-
-For Dataworks GSAC, be sure you used the main GSAC package in SourceForge, not an earlier 'branch' or 'release'.  The main GSAC installation is described in the
-GSAC installation web page http://www.unavco.org/software/data-management/gsac/installation/installation.html
-and in the README files in the main GSAC package, with dates after 16 March 2015.
-
-Before you can make the Dataworks GSAC, you need to
-create and populate your database, starting with the file Dataworks_demo.sql. You may change the name of the database
-from "Dataworks_demo" to some other name, by editing the file Dataworks_demo.sql.  You need not change the name. 
-You may use the db name Dataworks_demo with no problem, or change it.
+- a particular instance of GSAC (what you are building here).
 
 
-You have completed the code GSAC installation in the first README file ("Part 1" in the GSAC core code area gsac-code/src/org/gsac/).
+This README (install GSAC README Part 2) file is located in your "local GSAC code area" src/org/dataworks/gsac/.
+This README file describes how to complete your new Dataworks GSAC.  
 
-This README file describes how to complete your new Dataworks GSAC.  This README (Part 2) file is located in your new "local GSAC code area" src/org/dataworks/gsac/.
+
+You should have completed the code GSAC installation in the first README file ("Part 1" in the GSAC core code area gsac-code/src/org/gsac/).
+
+
+Before you can make the Dataworks GSAC, you need to create and populate your database, starting with the file Dataworks_demo.sql. 
+Follow the instructions in the README file called README_create_MySQL_database, found here in dataworks/gsac/ 
+(or in the gitlab package at Dataworks-SW/database/README_create_MySQL_database.) You use the MySQL file Dataworks_demo.sql
+ 
+
 
 
 The GSAC package is ready for Java 1.7 builds.  Java 1.7 is recommended for recent security features.
@@ -99,26 +99,20 @@ The database host (like localhost or boulderdev.mydomain.org), port (8080), acco
 When the GSL assembles the JDBC URL it finds the user name and password from these.  
 The database must have an account GSAC can use to read from the database.  (GSAC does not write to any database.)
 
-Oracle and Postgres have different syntax for the 'jdbc' line in this filex, as shown.  Also for Postgres the form is 
-
+Oracle and Postgres have different syntax for the 'jdbc' line in this file, as shown.  For Postgres the form is 
 =jdbc:postgresql://<hostname>:<port>/<database>.  
 
 One Oracle JDBC URL is of the form:
-
 =jdbc:oracle:thin:${username}/${password}@<hostname>:<port>:<database>, 
    e.g:
 =jdbc:oracle:thin:${username}/${password}@db1.ap.int.program.org:1521:gpsdb
 
 The file org/dataworks/gsac/dbresources/gsacdb_production.properties is not used now. It can be empty.
 
-(Everytime you do "ant" to build your repository, the file
-   myrepo/gsac/dbresources/gsacdb_test.properties
-is copied to the file
-   myrepo/gsac/resources/gsacdb.properties
-and also copied to
-   myrepo/gsac/resources/gsacserver.properties.
-This can be a little confusing if you attempt to keep track of the several properties files.)
-
+(Everytime you do "ant" to build your repository, the file myrepo/gsac/dbresources/gsacdb_test.properties
+is copied to the file myrepo/gsac/resources/gsacdb.properties
+and also copied to myrepo/gsac/resources/gsacserver.properties.
+This can be confusing if you attempt to keep track of the several properties files.)
 
 
 Building GSAC
@@ -171,7 +165,7 @@ must do ant again for another GSAC to do ant runserver there, after doing ant in
 Doing ant in the core GSAC code area also removes all local GSAC .class files so you must do ant here again.
 
 
-(The file database/Tables.ajav provides the link between your database and your GSAC code.  
+(The file database/Tables.java provides the link between your database and your GSAC code.  
 Names of items (Java variables) in the class files made from Tables.java to identify your database tables and columns (fields)
 in GSAC Java code.  For example, one table name may be, in GSAC code, Tables.STATION, and a column (field) in that table might be 
 Tables.STATION.COL_LATITUDE or COL_IERS_DOMES_NUMBER.  Look at your Tables.java file; you will use variable namees in it when coding soon.
