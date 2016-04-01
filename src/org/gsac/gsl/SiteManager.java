@@ -173,11 +173,8 @@ public abstract class SiteManager extends GsacResourceManager {
         // for Google Earth KMZ 
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  
 
-        // placeholder for the new IGS XML site log formatting code, March 8, 2016. Not yet operational complete or correct.  use at your risk.
+        // placeholder for the function to make the new IGS XML site log format.  Not yet operational complete or correct.  
         //new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
-
-        // for SOPAC XML site log format  
-        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
         // for the GSAC JSON site info format. This GSAC output is used by a supersites aggregator tool or web site.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
@@ -191,13 +188,16 @@ public abstract class SiteManager extends GsacResourceManager {
         // for the GSAC Ops XML site info format; new on 22 May 2014; creatted for UNAVCO field engineering operations.
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
-        //  for the 2010 GSAC XML site info format; functionally replaced by the GSAC Ops XML site info format.
-        new XmlSiteOutputHandler(getRepository(), getResourceClass());
+        // for SOPAC XML site log format  
+        new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
+
+        //  for the 2010 GSAC XML site info format; functionally replaced by the GSAC Ops XML site info format. There is no sign this was ever used.
+        //new XmlSiteOutputHandler(getRepository(), getResourceClass());
 
         // there is no indication that anyone used these output formats since 2013:
         // new RssSiteOutputHandler(getRepository(), getResourceClass()); 
         // new AtomSiteOutputHandler(getRepository(), getResourceClass());
-        // new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); //  GSAC format in plain text for human readability; 
+        // new PlainTextSiteOutputHandler(getRepository(), getResourceClass()); a GSAC format in plain text for human readability; not wanted.
     }
 
 

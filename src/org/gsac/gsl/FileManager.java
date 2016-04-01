@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
+ * Copyright 2015-2016 UNAVCO, 6350 Nautilus Drive, Boulder, CO 80301
  * http://www.unavco.org
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -48,6 +48,7 @@ import java.util.List;
  *
  *
  * @author  Jeff McWhirter 2010
+ * @version Stuart Wier 2012-2016
  */
 public abstract class FileManager extends GsacResourceManager {
 
@@ -67,7 +68,7 @@ public abstract class FileManager extends GsacResourceManager {
      * The order of the cstrs here fixes the order of the itmes in the web site choice box for file search results output type.  
      * Revised 11 Feb 2104 to show choices in order of approximate interest.
      * Revised 13 Apr 2015 to remove the RSS choice.
-     * Revised March 25 2016. reorder and remove the GSAC-style XML format which will be replaced soon by the IGS XML format choice.
+     * Revised March 25 2016. reorder, and remove the GSAC-style XML format .
      */
     @Override
     public void initOutputHandlers() {
@@ -87,7 +88,7 @@ public abstract class FileManager extends GsacResourceManager {
         // to provide a jnlp script for files downloading with Java Webstart, very little or no interest. Since this choice was removed no one has asked for it after > 300,000 GSAC API queries:
         //                       new DownloaderFileOutputHandler(getRepository(), getResourceClass());
         // no interest for this: new RssFileOutputHandler(getRepository(), getResourceClass());
-        // ditto :               new XmlFileOutputHandler(getRepository(), getResourceClass()); // which will be replaced soon by the IGS XML format choice.
+        // ditto :               new XmlFileOutputHandler(getRepository(), getResourceClass()); 
     }
 
 
