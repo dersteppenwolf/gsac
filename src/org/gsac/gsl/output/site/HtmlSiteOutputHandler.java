@@ -310,12 +310,13 @@ public class HtmlSiteOutputHandler extends HtmlOutputHandler {
 
         resultsTitles.add(msg("Sites"));
 
-        // for tab "Map"
+        // for tab "Map"  
+        // comment out to hide map   .
         // make a tab title to create map for Search Results site search results web page
-        // createMap(GsacRequest request, List<GsacResource> resources, List<String> tabTitles, 
-        //               List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
         // "Map" label is hidden somewhere here.
-        String js = createMap(request, (List<GsacResource>) new ArrayList(sites),resultsTitles, resultsContents, 600,        400, false,             true);
+        // 8-arg createMap:  definition:
+        //createMap(GsacRequest request, List<GsacResource> resources,             List<String> tabTitles, List<String> tabContents, int width, int height, boolean addToggle, boolean showList)
+        String js = createMap(  request, (List<GsacResource>) new ArrayList(sites),resultsTitles,           resultsContents,           600,        400,           false,             true);
 
         //        pw.append(HtmlUtil.makeShowHideBlock(msg("Sites"), listSB.toString(), false));
 
