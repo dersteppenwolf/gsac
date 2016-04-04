@@ -438,9 +438,9 @@ public abstract class GsacDatabaseManager extends GsacManager implements SqlUtil
         // no change.  still gives bad chars in station names from iceland db, which are correct Icelandic letters in the mysql database
         // see CREATE line in db .sql file.
 
-        incrConnectionCount();
-        int cct=getConnectionCount();
-        System.err.println ("GSAC: GsacDatabaseManager:opened db connection; now have " + cct +" connections" ); //     +"  with jdbcUrl=" + jdbcUrl);
+        incrConnectionCount(); // only increments a counter; does not count actual database connections
+        int cct=getConnectionCount();  // only shows the counter value which may not be count actual database connections
+        // debug System.err.println ("GSAC: GsacDatabaseManager:opened db connection; now have " + cct +" connections" ); //     +"  with jdbcUrl=" + jdbcUrl);
 
         return connection;
     }
