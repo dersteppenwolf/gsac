@@ -1488,9 +1488,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
      *
      * @throws IOException On badness
      */
-    public void getResourceHtml(GsacRequest request, Appendable pw,
-                                GsacResource resource, boolean fullMetadata,
-                                boolean includeMap, boolean includeLink)
+    public void getResourceHtml(GsacRequest request, Appendable pw, GsacResource resource, boolean fullMetadata, boolean includeMap, boolean includeLink)
             throws IOException {
 
         if (resource == null) {
@@ -1569,9 +1567,9 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             if ( !request.get(ARG_WRAPXML, false)) {
                 // make map in single site web page  "hide map"
                 //  LOOK may be a problem doing this; will deal with it when update to all new Map code.
-                js = createMap(request, (List<GsacResource>) Misc.newList(resource),
-                               mapSB, 600, 400, true, false);
-                // original map size map area map extent map pixels mapSB, 400, 200, true, false); 
+                // the 7-arg createMap:
+                js = createMap(request, (List<GsacResource>) Misc.newList(resource), mapSB, 600, 400, true, false);
+                // original set     map size map area map extent map pixels mapSB, 400, 200, true, false); 
             }
             pw.append(formEntryTop(request, msgLabel("Location"),
                                    formatLatLonNoCommas(resource) + mapSB));
@@ -1924,7 +1922,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * _more_
+     * the 7-arg createMap:
      *
      * @param request The request
      * @param resources Resources to show in map
@@ -2031,8 +2029,8 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             // LOOK why? Only include the full html when there are fewer than 100 resource
             if (resources.size() < 100) {
                 StringBuffer mapInfoSB = new StringBuffer();
-                getResourceHtml(request, mapInfoSB, resource, false, false,
-                                true);
+                //                                                   \/ \/ includeMap
+                getResourceHtml(request, mapInfoSB, resource, false, false, true);
                 mapInfo = mapInfoSB.toString();
             }
             mapInfo = mapInfo.replace("\r", " ");
@@ -2057,7 +2055,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
     /**
-     * _more_
+     * the 8-arg createMap:
      *
      * @param request _more_
      * @param resources _more_
