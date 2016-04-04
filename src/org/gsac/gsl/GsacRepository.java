@@ -622,6 +622,7 @@ public class GsacRepository implements GsacConstants {
 
                 // old  getLogManager().logAccess(request, what, resourceCnt);
 
+                /* debug
                 // Time the complete GSAC request handling               ttttime
                 // from above: long starttime = System.currentTimeMillis();
                 long donetime = System.currentTimeMillis();
@@ -636,34 +637,40 @@ public class GsacRepository implements GsacConstants {
                     System.err.println("GSAC: timing: request # "+requestsCount+" took " + (donetime - starttime) + "ms to return "+ (resourceCnt+1) +" items (web page)"); 
                     }
                 }
-
-                // LOOK do not change this line; it is key for GSAC use metrics
-                System.out.println    ("GSAC: completed the request "+requestsCount+"  "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP()  );    
-                //  + " (RequestIP="+ request.getRequestIP()  ); 
+                */
 
                 /* DEBUG
+                //  + " (RequestIP="+ request.getRequestIP()  ); 
                 // LOOK weird: the IP from request.getOriginatingIP() can show the IP 69.44.86.107 = wes.unavco.org NOT the actual remote non-unavco incoming IP!
                 // known to occur for COCONet GSACs
                 // + "; URI "+request.getRequestURI(); // +"  resourceCnt ="+resourceCnt ); 
                 */
 
+
+                // LOOK DO NOT CHANGE THIS LINE: it is key for GSAC use metrics
+                System.out.println    ("GSAC: completed the request "+requestsCount+"  "+reqstr+" at time "+getUTCnowString()+", from "+request.getOriginatingIP()  );    
+
             }
         } catch (UnknownRequestException exc) {
             //getLogManager().logError   ("GSAC: unknown request is: " + uri + "?" + request.getUrlArgs(), null);
             //request.sendError(HttpServletResponse.SC_NOT_FOUND, "GSAC: unknown request is: " + uri);
+            /* debug
             long donetime = System.currentTimeMillis();
             System.err.println("GSAC: request # "+requestsCount+" GsacRepository: 'unknown' GSAC request: total time used " + (donetime - starttime) + "ms"); 
             System.out.println("GSAC: request # "+requestsCount+" GsacRepository: the request is unrecognized: "+request.toString()+ "  at time "+getUTCnowString()+", from IP "+request.getOriginatingIP());
             System.err.println("GSAC: request # "+requestsCount+" unknown request uri is: " + uri);
+            */
         } catch (java.net.SocketException sexc) {
             //Ignore the client closing the connection 
             // LOOK check database db connection count is?
         } catch (Exception exc) {
             //getLogManager().logError("Error processing request:" + uri + "?" + request.getUrlArgs(), thr);
+            /* debug
             long donetime = System.currentTimeMillis();
             System.err.println("GSAC: request # "+requestsCount+" 'bad' GSAC request: total time used " + (donetime - starttime) + "ms"); 
             System.err.println("GSAC: request # "+requestsCount+" 'bad' GSAC request was " +request.toString()+"  at time "+getUTCnowString()+", from "+request.getOriginatingIP() );
             System.err.println("GSAC: request # "+requestsCount+" 'bad' request uri is: " + uri);
+            */
             //Get the actual exception, and log the stack trace.
             Throwable thr = LogUtil.getInnerException(exc);
             System.out.println("GSAC: request # "+requestsCount+" 'bad' GSAC request, error's Java exception is: \n"+thr.toString() );
