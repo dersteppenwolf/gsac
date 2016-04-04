@@ -79,8 +79,8 @@ import org.mortbay.jetty.servlet.ServletHolder;
  * the doMakeServlet factory method to create a servlet with their own implementation of
  * the GsacRepository.
  *
- * 29 Jan 2015: merged version for either Java 1.6 or Java 1.7 GSAC builds.
- * Look for lines with " Java 1.6 " and " Java 1.7 " after line 120, and above in the imports lines, and use the lines for your version of Java accordingly.
+ * 29 Jan 2015: merged version for either builds.
+ * Look for lines with " Java 1.6 " and " Java 1.7 " after line 120, and above in the imports lines, and use the lines for your version of java accordingly.
  *
  */
 public class GsacServer {
