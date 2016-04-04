@@ -523,9 +523,9 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
             statement = getDatabaseManager().select( distinct (columns),  clause.getTableNames(tableNames), clause, suffix, -1 );                       
         }
 
-        // DEBUG: to time the SQL query:
-        long t1 = System.currentTimeMillis();
-        System.err.println("GSAC: GsacResourceManager:handleRequest(): 'select' took           " + ( t1 - t0 ) + " ms"); // at time "+getUTCnowString());
+        //  time the SQL query:
+        //long t1 = System.currentTimeMillis();
+        // metrics System.err.println("GSAC: GsacResourceManager:handleRequest(): 'select' took           " + ( t1 - t0 ) + " ms"); // at time "+getUTCnowString());
 
         //System.err.println("GSAC: GsacResourceManager:handleRequest() db query SQL is \n      " + statement ); // + "; at time "+getUTCnowString()  ); //  for mysql
 
@@ -537,13 +537,13 @@ public abstract class GsacResourceManager extends GsacRepositoryManager {
         //System.err.println("    GsacResourceManager handleRequest SQL is  SELECT " + columns.toString() +" from "+ 
         //         fromtables.substring(1, fromtables.length()-1) +" where " +clause +" "+ suffix.toString() ); 
 
-        // DEBUG: to time the SQL query:
-        t1 = System.currentTimeMillis();
+        // metrics;  time the SQL query:
+        //t1 = System.currentTimeMillis();
 
         int rowCount = processStatement(request, response, statement, request.getOffset(), request.getLimit());
 
-        long t2 = System.currentTimeMillis();
-        System.err.println("GSAC: GsacResourceManager:handleRequest(): 'processStatement' took " + ( t2 - t1 ) + " ms  and got "+rowCount+" results");
+        //long t2 = System.currentTimeMillis();
+        // metrics System.err.println("GSAC: GsacResourceManager:handleRequest(): 'processStatement' took " + ( t2 - t1 ) + " ms  and got "+rowCount+" results");
 
         // dup of one call in process statement getDatabaseManager().closeAndReleaseConnection(statement);
     }
