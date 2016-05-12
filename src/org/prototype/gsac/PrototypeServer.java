@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 /*
  * code block for Java 1.7 version:
  * Uncomment these lines to build a Prototype GSAC with Java 1.7
-*/
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Connector;
@@ -51,10 +50,12 @@ import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+*/
 
 /* 
  * code block for Java 1.6 
  * Uncomment these lines to build a Prototype GSAC with Java 1.6
+*/
 import org.mortbay.jetty.*;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -68,7 +69,6 @@ import org.mortbay.jetty.handler.AbstractHandler;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
-*/
 
 
 /** 

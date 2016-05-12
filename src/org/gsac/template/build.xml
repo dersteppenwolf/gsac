@@ -63,7 +63,7 @@
         <!-- for postgres in place of mysql, use postgresql-9.3-1102.jdbc41.jar in place of mysql-connector-java-5.1.34-bin.jar -->
         <!-- for oracle in place of mysql,   use ojdbc7.jar                     in place of mysql-connector-java-5.1.34-bin.jar -->
 
-        <property name="classpath"     value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/>
+        <property name="classpath" value="${srcdir}:${libdir}/mysql-connector-java-5.1.34-bin.jar:${libdir}/${commons-dbcp.jar}:${libdir}/${commons-pool.jar}:${libdir}/commons-logging-1.2.jar:${libdir}/log4j-1.2.17.jar:${libdir}/javax.servlet-api-3.1.0.jar:${libdir}/gsacws.jar:${libdir}/xercesImpl-2.11.0.jar:${libdir}/xml-apis-2.10.0.jar:${libdir}/unidata_idv.jar:${libdir}/jetty-all-9.2.6.v20141205.jar:${libdir}/gson-2.3.1.jar"/>
 
         <property name="build.sysclasspath"    value="ignore" />
 

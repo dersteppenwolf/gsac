@@ -158,7 +158,7 @@ public abstract class SiteManager extends GsacResourceManager {
            For example if you do NOT want to provide ATOM, comment out new AtomSiteOutputHandler(getRepository(), getResourceClass());
         */
 
-        // 1. results in HTML format, for GSAC web pages. The common first results for site searches.
+        // 1. to format results in HTML format, for GSAC web pages. The common first results for site searches.
         //  Always list the HTML handler first,
         new HtmlSiteOutputHandler(getRepository(), getResourceClass());
 
@@ -173,9 +173,6 @@ public abstract class SiteManager extends GsacResourceManager {
         // for Google Earth KMZ 
         new KmlSiteOutputHandler(getRepository(), getResourceClass());  
 
-        // placeholder for the function to make the new IGS XML site log format.  Not yet operational complete or correct.  
-        //new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
-
         // for the GSAC JSON site info format. This GSAC output is used by a supersites aggregator tool or web site.
         new JsonSiteOutputHandler(getRepository(), getResourceClass());
         
@@ -188,7 +185,11 @@ public abstract class SiteManager extends GsacResourceManager {
         // for the GSAC Ops XML site info format; new on 22 May 2014; creatted for UNAVCO field engineering operations.
         new OpsXmlSiteOutputHandler(getRepository(), getResourceClass());
 
+        // function to make the new IGS XML site log format.  Not yet complete.  
+        new IGSXmlSiteLogOutputHandler(getRepository(), getResourceClass());
+
         // for SOPAC XML site log format  
+        //    to be replaced by others 
         new XmlSiteLogOutputHandler(getRepository(), getResourceClass());
 
         //  for the 2010 GSAC XML site info format; functionally replaced by the GSAC Ops XML site info format. There is no sign this was ever used.

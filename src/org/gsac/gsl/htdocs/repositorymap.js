@@ -5,12 +5,13 @@
 */
 
 /*  set zoom level for map of GSAC sites; zoom level 3 is about 10,000 km wide; 4 ~ 4000 km;  5 ~ 2000 km;  6 ~ km. */
-var defaultZoomLevel = 4;
+var defaultZoomLevel = 6;
 
 /*  set center of GSAC site map, with (LONGITUDE, LATITUDE ) ; longitude east (west is negative), latitude north */
 
-var defaultLocation = new OpenLayers.LonLat(-99.00, 38.00);         /* center of lower 48 states; use zoom 4 */
-/*var defaultLocation = new OpenLayers.LonLat(-116.00, 39.00);       /* western US; use zoom 5 */
+var defaultLocation = new OpenLayers.LonLat(84.2, 28.20);         /* nepal */
+/* var defaultLocation = new OpenLayers.LonLat(-99.00, 38.00);  */       /* center of lower 48 states; use zoom 4 */
+/*var defaultLocation = new OpenLayers.LonLat(-116.00, 39.00);    */   /* western US; use zoom 5 */
 /* var defaultLocation = new OpenLayers.LonLat(15.00, 45.00); */     /* Europe */
 /* var defaultLocation = new OpenLayers.LonLat(-76.00, 16.00); */    /* Caribbean Sea area: use zoom 4 */
 

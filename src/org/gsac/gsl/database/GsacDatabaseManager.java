@@ -37,6 +37,7 @@ package org.gsac.gsl.database;
 // Choose either java 1.6 or 1.7:
 //  for Java 1.6 version, use this one line 
 //import org.apache.commons.dbcp.BasicDataSource;
+
 //  for Java 1.7 version, use this one line
 import org.apache.commons.dbcp2.BasicDataSource;
 
