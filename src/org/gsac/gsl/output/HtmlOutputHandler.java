@@ -1577,6 +1577,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
 
 
         //System.err.println("         append Date Range to single site web page" ); // debug
+        // Note for the [unavco gsac]  this is this is the date range of the data, not station installation date range.
         if (resource.getFromDate() != null) {
             String dateString = sdformatter.format(resource.getFromDate()) + " - " ;
             if (resource.getToDate() != null) {
@@ -1586,11 +1587,14 @@ public class HtmlOutputHandler extends GsacOutputHandler {
         }
 
 
+        // defunct:
+        /*
         if ( resource.getLatestDataDate() != null) {
             // was String dateString = formatDateTime(resource.getLatestDataDate());
             String dateString = formatDateTimeHHmmss(resource.getLatestDataDate());
-            pw.append(formEntry(request, msgLabel("Latest Data Time"), dateString));
-        }
+            // not wanted pw.append(formEntry(request, msgLabel("Latest Data Time"), dateString));
+        } 
+        */
 
 
         if (resource.getPublishDate() != null ) {
@@ -2336,7 +2340,7 @@ public class HtmlOutputHandler extends GsacOutputHandler {
             sortValues.add("");
 
             // for installed date range : first installation to retired date; episodic and intermittent sites do not have a retired data.
-            if (doDateRange) { labels.add(msg("Installed Dates")); }
+            if (doDateRange) { labels.add(msg("Date Range")); }
             sortValues.add("");
    
 
