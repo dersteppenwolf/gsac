@@ -153,6 +153,57 @@ public class KmlSiteOutputHandler extends HtmlOutputHandler {
                 }
             }
 
+            /* to set an icon replacing the fat yellow pushpin as the point placemark icon:
+            
+
+The <href> element in KML takes a URL. The URL can be an absolute or relative location.
+
+To get it working suggest you first move the KML file and the image to the same folder then refer to the image by its filename.
+
+<Style id="icon">
+        <IconStyle>
+          <Icon>
+            <href>etnasss.jpg</href>
+          </Icon>
+        </IconStyle>
+ </Style>
+
+Source: https://developers.google.com/kml/documentation/kmlreference#href
+
+Next you could refer to the image by its absolute location (e.g. file:///C:/etnasss.jpg) but Google Earth has security policy regarding access to local files on the file system outside the context of the KML file. You'd have to allow access to local files which generally is not recommended.
+
+Alternatively you could create a KMZ file (aka ZIP file) and include the image within the KMZ archive file and reference it in the KML file.
+
+see also http://dagik.org/kml_intro/E/point.html:
+Change the icon of the marker<Style>, <IconStyle>, <styleUrl>
+
+<?xml version="1.0" encoding="UTF-8"?> 
+<kml xmlns="http://earth.google.com/kml/2.0"> <Document>
+
+<Style id="My_Style">
+ <IconStyle> <Icon> <href>ball.png</href> </Icon></IconStyle>
+</Style> 
+
+<Placemark>
+ <name> New point</name> 
+ <description>This is a new point to learn KML format.</description>
+ <styleUrl> #My_Style</styleUrl> 
+ <Point>
+  <coordinates>
+   135.2, 35.4, 0.
+  </coordinates>
+ </Point> 
+</Placemark>
+
+</Document> </kml>
+
+Save "ball.png" in the same folder with the above kml file.
+Image file can be a file on WWW, such as "http://www...../ball.png" .
+"styleUrl" can also be a style file on WWW.
+To make one file with image files and kml file, combine the kml file and image files with "zip" command, and set the extension ".kmz", such as "test.kmz". 
+
+            */
+
             String  url          = getIconUrl(request, site);
             Element styleElement = iconMap.get(url);
             String  styleId;
